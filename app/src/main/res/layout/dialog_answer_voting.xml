@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ 		android:layout_width="match_parent"
+ 		android:layout_height="match_parent"
+ 		android:paddingBottom="12dp"
+ 		android:background="#FFFFFF">
+    
+    <RelativeLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:background="#FFFFFF">
+    	
+        <TextView
+		    android:id="@+id/form_freetext_info"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentTop="true"		    
+		    android:layout_marginTop="10dp"
+		    android:layout_centerHorizontal="true"
+		    android:text="test"
+		    android:textColor="#666666"
+		    android:textSize="14dp" />
+        
+        <TextView 
+            android:id="@+id/titleTime" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:layout_below="@+id/form_freetext_info"
+            android:layout_marginTop="10dp" 
+            android:layout_marginLeft="@dimen/margin10"
+            android:layout_alignParentLeft="true"
+            android:textSize="20sp"
+            android:text="titleTime:" />
+        
+        <TextView
+		    android:id="@+id/textViewTime"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_toRightOf="@+id/titleTime"
+		    android:layout_marginLeft="20dp" 
+		    android:layout_alignBottom="@+id/titleTime"
+		    android:layout_centerHorizontal="true"
+		    android:text="21:02:33"
+		    android:textSize="20sp" />
+		
+        <TextView
+		    android:id="@+id/form_header_edit"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/textViewTime"
+		    android:paddingLeft="@dimen/margin10"
+		    android:paddingRight="0dp"
+		    android:paddingTop="@dimen/margin10"
+		    android:paddingBottom="@dimen/margin10"
+		    android:textSize="@dimen/margin15"
+		    android:textColor="#00A4E3"
+		    android:text="header">
+		</TextView>
+		
+        <View
+		    android:id="@+id/form_header_divider"
+		    android:layout_width="match_parent"
+		    android:layout_height="2dp"
+		    android:layout_marginLeft="@dimen/margin10"
+	    	android:layout_marginRight="@dimen/margin10"
+		    android:layout_alignBottom="@+id/form_header_edit"
+		    android:layout_alignParentLeft="true"
+		    android:background="#00A4E3" />
+		
+		<TextView 
+	    	android:id="@+id/multi_tfpopup_edit"
+	    	android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_centerHorizontal="true"
+	    	android:layout_below="@+id/form_header_divider"
+	    	android:layout_marginTop="@dimen/margin10"
+	    	android:layout_marginLeft="@dimen/margin10"
+	    	android:layout_marginRight="@dimen/margin10"
+	    	android:textColor="#666666"
+	    	android:textSize="@dimen/margin15"
+            android:singleLine="false"
+            android:maxLines="2"
+            android:text="test">
+		</TextView>
+		
+		<TextView
+		    android:id="@+id/form_header_answer"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/multi_tfpopup_edit"
+		    android:paddingLeft="@dimen/margin10"
+		    android:paddingRight="0dp"
+		    android:paddingTop="@dimen/margin10"
+		    android:paddingBottom="@dimen/margin10"
+		    android:textSize="@dimen/margin15"
+		    android:textColor="#00A4E3"
+		    android:text="Pilihan Jawaban">
+		</TextView>
+		
+		<ScrollView
+		    android:id="@+id/scollviewContent"
+	 		android:layout_width="match_parent"
+	 		android:layout_height="wrap_content"
+	 		android:layout_below="@+id/form_header_answer">
+	 		
+		<RelativeLayout
+	    	android:layout_width="match_parent"
+	    	android:layout_height="match_parent">
+	 		
+		<LinearLayout 
+		    android:id="@+id/ly_dynamicView"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"		    
+		    android:layout_marginTop="10dp"
+		    android:orientation="vertical" >
+		
+		</LinearLayout>
+
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_below="@+id/ly_dynamicView"
+		    android:layout_marginTop="@dimen/margin10"
+		    android:gravity="center"
+		    android:orientation="horizontal" >
+			
+		    <Button
+		        android:id="@+id/multi_confirm_ok"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="@dimen/margin10"
+		        android:layout_marginRight="@dimen/margin10"
+		        android:layout_weight="1"
+		        android:text="OK"
+		        android:textSize="@dimen/margin10" />
+
+		    
+		</LinearLayout>
+		
+		</RelativeLayout>
+		
+		</ScrollView>
+        
+    </RelativeLayout>
+
+</RelativeLayout>

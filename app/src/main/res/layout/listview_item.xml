@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="UnusedAttribute">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/colorBackground">
+
+        <include layout="@layout/pinned_header_listview_side_header" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativelay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/margin20"
+        android:paddingRight="@dimen/margin10">
+
+        <LinearLayout
+            android:id="@+id/linearimagePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.joooonho.SelectableRoundedImageView
+                android:id="@+id/imagePhoto"
+                android:layout_width="@dimen/margin45"
+                android:layout_height="@dimen/margin45"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:transitionName="@string/activity_image_trans"
+                android:scaleType="centerCrop"
+                app:sriv_left_top_corner_radius="12dip"
+                app:sriv_right_top_corner_radius="12dip"
+                app:sriv_left_bottom_corner_radius="12dip"
+                app:sriv_right_bottom_corner_radius="12dip"
+                app:sriv_border_width="1dip"
+                app:sriv_border_color="@color/gray"
+                />
+
+            <View
+                android:id="@+id/dividerContactBlank"
+                android:layout_width="fill_parent"
+                android:layout_height="15dp"
+                android:background="@null" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textTitle"
+            style="@style/TextMediumBlack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/linearimagePhoto"
+            android:layout_toLeftOf="@+id/dateInfo"
+            android:layout_toRightOf="@+id/linearimagePhoto"
+            android:text="Medium Text" />
+
+        <com.rockerhieu.emojicon.EmojiconTextView
+            android:id="@+id/textInfo"
+            style="@style/TextLightGray"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textTitle"
+            android:layout_toRightOf="@id/linearimagePhoto"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@id/dateInfo"
+            style="@style/TextRegularGraySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:paddingRight="5dp"
+            android:text="12/03/2013"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/dividerContact"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/textInfo"
+            android:layout_marginTop="@dimen/margin5"
+            android:layout_toEndOf="@+id/linearimagePhoto"
+            android:layout_toRightOf="@+id/linearimagePhoto"
+            android:background="@color/grayList" />
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+
+            <ImageButton
+                android:id="@+id/roomsOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/btn_open_room" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

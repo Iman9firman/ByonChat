@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/createGroupImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_no_photo" />
+    <!-- TODO The next icon has to be changed -->
+
+    <TextView
+        android:id="@+id/createGroupInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/createGroupImage"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="30dp"
+        android:layout_toRightOf="@id/createGroupImage"
+        android:text="@string/group_create_info"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/creategroupName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/createGroupImage"
+        android:layout_alignRight="@id/createGroupInfo"
+        android:layout_below="@id/createGroupImage"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:hint="Type group name" >
+
+        <requestFocus />
+    </EditText>
+
+</RelativeLayout>

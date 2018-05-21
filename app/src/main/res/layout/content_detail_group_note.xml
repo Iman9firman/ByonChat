@@ -1,0 +1,128 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <include  android:id="@+id/abMain" layout="@layout/toolbar_back" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <RelativeLayout  android:layout_marginTop="@dimen/margin5" android:layout_height="wrap_content" android:background="#c1c463" android:layout_width="fill_parent">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/background_color"
+                android:background="@drawable/center">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/topPanelLeft"
+                    android:background="@drawable/top_left"
+                    android:layout_alignParentLeft="true"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentTop="true"
+                    />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/topPanelRight"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/top_right"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/btmPanelLeft"
+                    android:background="@drawable/bottom_left"
+                    android:layout_alignParentLeft="true"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/btmPanelRight"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/bottom_right"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/btmPanelRightRight"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/note_create_right"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/btmPanelRightLeft"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/note_create_left"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/btmPanelButtom"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/note_create_btm"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:id="@+id/btmPanelTop"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/note_create_top"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    />
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Title : NOTE 1"
+                    android:id="@+id/textTitle"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/black"
+                    android:layout_toRightOf="@+id/textView4"
+                    android:layout_toEndOf="@+id/textView4"
+                    android:layout_marginTop="31dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Content :"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/black"
+                    android:layout_below="@+id/textTitle"
+                    android:layout_toRightOf="@+id/btmPanelRightLeft"
+                    android:layout_toEndOf="@+id/btmPanelRightLeft"
+                    android:id="@+id/textView4" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lorem ipsum itu amit bala bala syui suiii yplanda ada pakbas dnya dusna diasmmasd ansdknasd asdjkkajsd asdjkjasd :"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/black"
+                    android:layout_below="@+id/textView4"
+                    android:layout_toRightOf="@+id/textView4"
+                    android:layout_toLeftOf="@+id/btmPanelRightRight"
+                    android:layout_toStartOf="@+id/btmPanelRightRight" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </RelativeLayout>
+</LinearLayout>

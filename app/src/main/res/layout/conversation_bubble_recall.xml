@@ -1,0 +1,78 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+
+    android:id="@+id/rel_layout_left"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/txtDate"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/lblMsgFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="kfhdjbh"
+        android:textColor="@color/colorPrimary"
+        android:textSize="12dp"
+        android:textStyle="italic"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/lblMsgFrom"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <FrameLayout
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/imageView"
+            android:background="@drawable/recall_bubble"
+            >
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/margin10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="3dip"
+                android:layout_gravity="bottom|right"
+                android:layout_below="@+id/leftMessage"
+                android:layout_alignRight="@+id/leftMessage"
+                android:layout_alignEnd="@+id/leftMessage"
+                android:orientation="horizontal"
+                >
+
+            <TextView
+                android:id="@+id/leftTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20:00"
+                android:textColor="@android:color/black"
+                android:textSize="10dp"
+                android:textStyle="italic"
+                />
+            </LinearLayout>
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:id="@+id/leftMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imageView"
+                android:layout_toEndOf="@+id/lblMsgFrom"
+                android:layout_toRightOf="@+id/imageView"
+                android:text="Your Message is being recalled"
+                android:textColor="@android:color/white"
+                style="?android:attr/textAppearanceSmall"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="0dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="0dp"
+                android:layout_gravity="left|center_vertical" />
+        </FrameLayout>
+    </RelativeLayout>
+</RelativeLayout>

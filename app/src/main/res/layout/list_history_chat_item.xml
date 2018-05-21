@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="UnusedAttribute">
+
+    <RelativeLayout
+        android:id="@+id/message_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/margin20"
+        android:paddingRight="@dimen/margin10">
+
+        <com.joooonho.SelectableRoundedImageView
+            android:id="@+id/imagePhoto"
+            android:layout_width="@dimen/margin45"
+            android:layout_height="@dimen/margin45"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="@dimen/margin10"
+            android:layout_marginBottom="@dimen/margin10"
+            android:transitionName="@string/activity_image_trans"
+            android:scaleType="centerCrop"
+            app:sriv_left_top_corner_radius="12dip"
+            app:sriv_right_top_corner_radius="12dip"
+            app:sriv_left_bottom_corner_radius="12dip"
+            app:sriv_right_bottom_corner_radius="12dip"
+            app:sriv_border_width="1dip"
+            app:sriv_border_color="@color/gray"
+            />
+
+        <RelativeLayout
+            android:id="@+id/layoutTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imagePhoto"
+            android:layout_toEndOf="@+id/imagePhoto"
+            android:layout_toRightOf="@+id/imagePhoto">
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:id="@+id/textTitle"
+                style="@style/TextMediumBlack"
+                android:singleLine="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/dateInfo"
+                android:layout_toStartOf="@+id/dateInfo"
+                android:text="Medium Text" />
+
+            <TextView
+                android:id="@id/dateInfo"
+                style="@style/TextRegularGraySmall"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingRight="5dp"
+                android:text="12/03/2013" />
+        </RelativeLayout>
+        <com.rockerhieu.emojicon.EmojiconTextView
+            android:id="@+id/textInfo"
+            style="@style/TextLightGray"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutTitle"
+            android:layout_marginRight="@dimen/margin10"
+            android:singleLine="true"
+            android:layout_toRightOf="@id/imagePhoto"
+            android:text="TextView" />
+
+        <View
+            android:id="@+id/dividerContact"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_toRightOf="@id/imagePhoto"
+            android:layout_alignParentBottom="true"
+            android:background="@color/grayList" />
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/relativelay"
+    android:paddingTop="5dp"
+    android:paddingRight="10dp"
+    >
+    <com.byonchat.android.widget.ContactsCompletionView
+        android:id="@+id/searchView"
+        android:padding="@dimen/margin5"
+        android:background="@drawable/backgroud_conversation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
+        android:textSize="16sp"
+        android:lineSpacingExtra="1dp"
+        android:nextFocusDown="@+id/editText"
+        android:inputType="text|textNoSuggestions|textMultiLine"
+        android:focusableInTouchMode="true" />
+    </LinearLayout>

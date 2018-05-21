@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingTop="@dimen/margin5"
+	android:paddingRight="@dimen/margin15"
+	android:paddingLeft="@dimen/margin15"
+	>
+
+	<RelativeLayout android:layout_height="wrap_content" android:background="@color/brownVoting" android:layout_width="fill_parent"
+		android:id="@+id/relativeLayout6">
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/background_color"
+			>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:background="@drawable/s_vote_center"
+				android:layout_alignParentLeft="true"
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:id="@+id/topPanelLeft"
+				android:background="@drawable/s_vote_left"
+				android:layout_alignParentLeft="true"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				>
+			</LinearLayout>
+			<LinearLayout
+				android:orientation="horizontal"
+				android:id="@+id/topPanelRight"
+				android:layout_alignParentRight="true"
+				android:background="@drawable/s_vote_right"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				/>
+
+
+		</RelativeLayout>
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:orientation="horizontal"
+			android:gravity="center_vertical"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:paddingLeft="@dimen/margin30"
+			android:layout_marginRight="20dp"
+			android:layout_marginEnd="20dp">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Bukan saya : "
+				android:textSize="@dimen/margin15"
+				android:textStyle="bold"
+				android:id="@+id/titleNotes"
+				/>
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Bukan saya asaaaaaaaaaaaaadadsasdasdasdasd"
+				android:singleLine="true"
+				android:textSize="@dimen/margin15"
+				android:id="@+id/contentNotes"
+				/>
+		</LinearLayout>
+	</RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,272 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+
+    android:id="@+id/rel_layout_left"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/txtDate"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/lblMsgFrom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="kfhdjbh"
+        android:textColor="@color/colorPrimary"
+        android:textSize="12dp"
+        android:textStyle="italic"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblMsgFrom"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25">
+
+            <RelativeLayout
+                android:id="@+id/leftImageLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bubble_left"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/leftTextHeaderImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="Header"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+                <RelativeLayout
+                    android:id="@+id/frameImageLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.byonchat.android.utils.ChatImageRounded
+                        android:id="@+id/leftImageMessage"
+                        android:layout_width="240dp"
+                        android:layout_height="200dp"
+                        android:layout_centerHorizontal="true"
+                        android:adjustViewBounds="true"
+                        android:background="@color/bubbleLeft"
+                        android:maxHeight="200dp"
+                        android:maxWidth="240dp"
+                        android:scaleType="centerCrop" />
+                    <!--<carbon.widget.LinearLayout
+                        android:id="@+id/leftLinearImageMessage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:maxHeight="200dp"
+                        android:orientation="vertical"
+                        app:carbon_cornerRadius="10dp">
+
+                        <com.byonchat.android.utils.PicassoView
+                            android:id="@+id/leftImageMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:adjustViewBounds="true"
+                            android:background="@color/white"
+                            android:maxHeight="200dp"
+                            android:scaleType="centerCrop"
+                            android:visibility="invisible"
+                            app:carbon_inAnimation="none"
+                            app:carbon_outAnimation="none" />
+                    </carbon.widget.LinearLayout>-->
+
+                    <com.byonchat.android.widget.CircleProgressBar
+                        android:id="@+id/left_progressBar"
+                        android:layout_width="@dimen/progressBar_dimen"
+                        android:layout_height="@dimen/progressBar_dimen"
+                        android:layout_centerInParent="true" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBarInfinite"
+                        android:layout_width="@dimen/progressBar_dimen"
+                        android:layout_height="@dimen/progressBar_dimen"
+                        android:layout_centerInParent="true" />
+
+                    <ImageButton
+                        android:id="@+id/leftImagePlay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:src="@drawable/ic_play_white" />
+
+                    <ImageButton
+                        android:id="@+id/leftButtonDownload"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:src="@drawable/ic_download"
+                        android:visibility="gone" />
+                </RelativeLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/frameImageLeft"
+                    android:layout_toRightOf="@+id/imageView"
+                    android:orientation="horizontal">
+
+                    <com.rockerhieu.emojicon.EmojiconTextView
+                        android:id="@+id/leftCaptionImage"
+                        style="?android:attr/textAppearanceSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="0dp"
+                        android:text="Message"
+                        android:textColor="@android:color/black"
+                        emojicon:emojiconSize="30sp" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:orientation="horizontal"
+                    android:paddingRight="3dip">
+
+                    <ImageView
+                        android:id="@+id/imageStatusMedia"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_message_pending"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/leftTimeMedia"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="20:10"
+                        android:textColor="@android:color/black"
+                        android:textSize="10dp"
+                        android:textStyle="italic" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <FrameLayout
+                android:id="@+id/frameMainText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/imageView"
+                android:background="@drawable/bubble_left"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/leftMessage"
+                    android:layout_alignRight="@+id/leftMessage"
+                    android:layout_below="@+id/leftMessage"
+                    android:layout_gravity="bottom|right"
+                    android:orientation="horizontal"
+                    android:paddingRight="3dip">
+
+                    <ImageView
+                        android:id="@+id/imageStatus"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_message_pending"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/leftTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="20:00"
+                        android:textColor="@android:color/black"
+                        android:textSize="10dp"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+
+                <com.rockerhieu.emojicon.EmojiconTextView
+                    android:id="@+id/leftMessage"
+                    style="?android:attr/textAppearanceSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignTop="@+id/imageView"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_toEndOf="@+id/lblMsgFrom"
+                    android:layout_toRightOf="@+id/imageView"
+                    android:text="Message"
+                    android:textColor="@android:color/black" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.75"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <!-- <ImageView
+         android:id="@+id/imageView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentStart="true"
+         android:layout_below="@+id/lblMsgFrom"
+         android:src="@drawable/bubble_left"
+         />
+ -->
+    <RelativeLayout
+        android:id="@+id/RelatifOpen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btnOpenLink"
+            style="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_selector_bubble_open"
+            android:text="open"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/leftTimeDua"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/btnOpenLink"
+            android:layout_marginTop="@dimen/margin5"
+            android:text="20:00"
+            android:textColor="@android:color/black"
+            android:textSize="10dp"
+            android:textStyle="italic" />
+    </RelativeLayout>
+
+</RelativeLayout>

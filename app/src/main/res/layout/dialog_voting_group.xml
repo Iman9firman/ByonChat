@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="12dp"
+    android:background="#FFFFFF">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:id="@+id/form_freetext_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:text="test"
+            android:textColor="#666666"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/form_header_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/form_freetext_info"
+            android:paddingLeft="@dimen/margin10"
+            android:paddingRight="0dp"
+            android:paddingTop="@dimen/margin10"
+            android:paddingBottom="@dimen/margin10"
+            android:textSize="@dimen/margin20"
+            android:textColor="#00A4E3"
+            android:text="header">
+        </TextView>
+
+        <View
+            android:id="@+id/form_header_divider"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginLeft="@dimen/margin10"
+            android:layout_marginRight="@dimen/margin10"
+            android:layout_alignBottom="@+id/form_header_edit"
+            android:layout_alignParentLeft="true"
+            android:background="#00A4E3" />
+
+        <EditText
+            android:id="@+id/multi_tfpopup_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/form_header_divider"
+            android:layout_marginTop="@dimen/margin10"
+            android:layout_marginLeft="@dimen/margin10"
+            android:layout_marginRight="@dimen/margin10"
+            android:textColor="#666666"
+            android:textSize="@dimen/margin20"
+            android:hint="Isi Voting"
+            android:cursorVisible="true"
+            android:singleLine="false"
+            android:maxLines="2">
+        </EditText>
+
+        <TextView
+            android:id="@+id/form_sifat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:paddingLeft="@dimen/margin10"
+            android:paddingRight="0dp"
+            android:layout_below="@+id/multi_tfpopup_edit"
+            android:textSize="@dimen/margin15"
+            android:textColor="#00A4E3"
+            android:text="Sifat">
+        </TextView>
+
+        <Spinner
+            android:id="@+id/form_spinner_sifat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/multi_tfpopup_edit"
+            android:layout_marginTop="-1dp"
+            android:layout_marginLeft="@dimen/margin10"
+            android:layout_marginRight="@dimen/margin10"
+            android:layout_toRightOf="@+id/form_sifat">
+        </Spinner>
+
+        <TextView
+            android:id="@+id/form_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:paddingLeft="@dimen/margin10"
+            android:paddingRight="0dp"
+            android:layout_below="@+id/form_spinner_sifat"
+            android:textSize="@dimen/margin15"
+            android:textColor="#00A4E3"
+            android:text="Batas Waktu">
+        </TextView>
+
+        <Spinner
+            android:id="@+id/form_spinner_timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/form_spinner_sifat"
+            android:layout_marginTop="-1dp"
+            android:layout_marginLeft="@dimen/margin10"
+            android:layout_marginRight="@dimen/margin10"
+            android:layout_toRightOf="@+id/form_timer">
+        </Spinner>
+
+        <TextView
+            android:id="@+id/form_header_answer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/form_spinner_timer"
+            android:paddingLeft="@dimen/margin10"
+            android:paddingRight="0dp"
+            android:paddingTop="15dp"
+            android:paddingBottom="0dp"
+            android:textSize="@dimen/margin15"
+            android:textColor="#00A4E3"
+            android:text="Pilihan Jawaban">
+        </TextView>
+
+        <ScrollView
+            android:id="@+id/scollviewContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/form_header_answer">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/ly_dynamicView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical" >
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/ly_answer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ly_dynamicView"
+                    android:background="#FFFFFF">
+
+                    <ImageView
+                        android:id="@+id/add_answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="50dp"
+                        android:contentDescription="addAnswer"
+                        android:src="@android:drawable/ic_menu_add" />
+
+                    <ImageView
+                        android:id="@+id/remove_answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginRight="50dp"
+                        android:layout_toLeftOf="@+id/add_answer"
+                        android:contentDescription="removeAnswer"
+                        android:src="@android:drawable/ic_menu_delete" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/ly_answer"
+                    android:layout_marginTop="@dimen/margin10"
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+                    <!--
+                    <Button
+                        android:id="@+id/multi_confirm_ok"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/transaction_confirm_button_margin_leftright"
+                        android:layout_marginRight="@dimen/transaction_confirm_button_margin_leftright"
+                        android:layout_weight="1"
+                        android:text="BUAT"
+                        android:textSize="@dimen/transaction_confirm_message_size" />
+                    -->
+
+                    <Button
+                        android:id="@+id/multi_confirm_ok"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin10"
+                        android:layout_marginRight="@dimen/margin10"
+                        android:layout_weight="1"
+                        android:text="BUAT"
+                        android:textSize="@dimen/margin15" />
+
+                    <Button
+                        android:id="@+id/multi_confirm_cancel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin10"
+                        android:layout_marginRight="@dimen/margin10"
+                        android:layout_weight="1"
+                        android:text="BATAL"
+                        android:textSize="@dimen/margin15" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
+
+</RelativeLayout>

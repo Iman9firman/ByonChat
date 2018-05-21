@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_conversation_copy"
+        android:title="@string/menu_conversation_copy"/>
+    <item
+        android:id="@+id/menu_conversation_resend"
+        android:title="@string/menu_conversation_resend"/>
+    <item
+        android:id="@+id/menu_conversation_forwad"
+        android:title="@string/menu_conversation_forward"/>
+</menu>

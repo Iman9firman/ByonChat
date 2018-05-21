@@ -1,0 +1,19 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginRight="10dp"
+    android:orientation="horizontal"
+    >
+
+
+    <ImageButton
+        android:layout_alignParentBottom="true"
+        android:id="@+id/button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/btn_close_atas"
+        android:background="@null"
+       />
+
+</RelativeLayout>

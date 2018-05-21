@@ -1,0 +1,15 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Non focused states -->
+    <item android:state_focused="false" android:state_selected="false" android:state_pressed="false" android:drawable="@drawable/tab_un_main_room" />
+    <item android:state_focused="false" android:state_selected="true" android:state_pressed="false" android:drawable="@drawable/tab_selected_main_contact" />
+
+    <!-- Focused states -->
+    <item android:state_focused="true" android:state_selected="false" android:state_pressed="false" android:drawable="@drawable/tab_focused_main_contact" />
+    <item android:state_focused="true" android:state_selected="true" android:state_pressed="false" android:drawable="@drawable/tab_focused_main_contact" />
+
+    <!-- Pressed -->
+    <item android:state_selected="true" android:state_pressed="true" android:drawable="@drawable/tab_pressed_main_contact" />
+    <item android:state_pressed="true" android:drawable="@drawable/tab_pressed_main_contact" />
+
+</selector>

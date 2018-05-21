@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="@dimen/margin15">
+
+
+    <TextView
+        android:id="@+id/textDialog"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="GPS WARNING !"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"
+        />
+   <TextView
+       android:layout_below="@+id/textDialog"
+        android:id="@+id/textContent"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       android:layout_marginTop="@dimen/margin15"
+       android:layout_marginBottom="@dimen/margin5"
+        android:text="Aktifkan GPS anda sekarang. Tanpa GPS anda tidak bisa melanjutkan aktifitas kerja."
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        />
+
+    <Button
+        android:layout_below="@+id/textContent"
+        android:id="@+id/submitBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" SETTINGS "
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_alignParentRight="true"
+        />
+    <Button
+        android:id="@+id/cancelBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" CANCEL "
+        android:layout_alignTop="@+id/submitBtn"
+        android:layout_toLeftOf="@+id/submitBtn"
+        android:layout_toStartOf="@+id/submitBtn" />
+
+</RelativeLayout>

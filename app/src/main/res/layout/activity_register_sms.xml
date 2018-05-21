@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/textView4"
+            style="@style/Base.TextAppearance.AppCompat.Headline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin10"
+            android:layout_marginTop="@dimen/margin10"
+            android:gravity="center"
+            android:text="REGISTER"
+            android:textColor="@color/white" />
+
+        <TextView
+            style="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="Quota Sesama"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:textColor="@color/white" />
+
+        <EditText
+            android:id="@+id/editQuotaSesama"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin8"
+            android:background="@drawable/backgroud_white"
+            android:hint="0"
+            android:inputType="number"
+            android:padding="@dimen/margin10" />
+
+        <TextView
+            style="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:text="Quota Operator Lain"
+            android:textColor="@color/white" />
+
+        <EditText
+            android:id="@+id/editQuotaLain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin8"
+            android:background="@drawable/backgroud_white"
+            android:hint="0"
+            android:inputType="number"
+            android:padding="@dimen/margin10" />
+
+        <TextView
+            style="@style/Base.TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:text="Paket"
+            android:textColor="@color/white" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_gap">
+
+            <RadioButton
+                android:id="@+id/radioHarian"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textColor="@color/white"
+                android:text="Daily" />
+
+            <RadioButton
+                android:id="@+id/radioMingguan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Weekly" />
+
+            <RadioButton
+                android:id="@+id/radioBulanan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Monthly" />
+            <RadioButton
+                android:id="@+id/radioCostume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="Custom" />
+        </RadioGroup>
+
+        <TableLayout
+            android:id="@+id/viewShow"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="*"
+            android:stretchColumns="*">
+            <!-- Row 1 with single column -->
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fab_margin">
+
+                <LinearLayout
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tanggal Mulai"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/tanggalMulai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin8"
+                        android:background="@drawable/backgroud_white"
+                        android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                        android:editable="false"
+                        android:hint="22/01/2017"
+                        android:padding="@dimen/margin10" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/arrow_right" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tanggal Selesai"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/tanggalSelesai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin8"
+                        android:background="@drawable/backgroud_white"
+                        android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                        android:editable="false"
+                        android:hint="23/0/2017"
+                        android:padding="@dimen/margin10" />
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fab_margin">
+
+                <LinearLayout
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Waktu Mulai"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/waktuMulai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin8"
+                        android:background="@drawable/backgroud_white"
+                        android:drawableRight="@android:drawable/ic_lock_idle_alarm"
+                        android:editable="false"
+                        android:hint="12:00"
+                        android:padding="@dimen/margin10" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/arrow_right" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Waktu Selesai"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:id="@+id/waktuSelesai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin8"
+                        android:background="@drawable/backgroud_white"
+                        android:drawableRight="@android:drawable/ic_lock_idle_alarm"
+                        android:editable="false"
+                        android:hint="12:30"
+                        android:padding="@dimen/margin10" />
+                </LinearLayout>
+            </TableRow>
+
+        </TableLayout>
+
+        <Button
+            android:id="@+id/submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin30"
+            android:background="@drawable/button_background"
+            android:padding="@dimen/margin10"
+            android:text="SUBMIT" />
+
+    </LinearLayout>
+
+</ScrollView>

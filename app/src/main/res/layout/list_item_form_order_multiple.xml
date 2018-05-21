@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relativelay"
+    android:paddingTop="5dp"
+    android:descendantFocusability="blocksDescendants">
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:stretchColumns="0,1,2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/title_order"
+            android:layout_weight="2"
+            android:text="ada asdkajsdkajsdkasdasdasdasdasdasdasdasd"
+            android:gravity="left"/>
+
+        <TextView
+            android:id="@+id/detail_order"
+            android:layout_weight="5"
+            android:text="123"
+            android:visibility="gone"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:gravity="right"/>
+
+        <TextView
+            android:id="@+id/price_order"
+            android:layout_weight="4"
+            android:text="123456789"
+            android:visibility="gone"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:gravity="right"/>
+    </TableRow>
+
+
+</RelativeLayout>

@@ -1,0 +1,28 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@color/blue"/>
+    <item>
+        <animation-list>
+            <item android:drawable="@drawable/byonchat01" android:duration="100" />
+            <item android:drawable="@drawable/byonchat02" android:duration="100" />
+            <item android:drawable="@drawable/byonchat03" android:duration="100" />
+            <item android:drawable="@drawable/byonchat04" android:duration="100" />
+            <item android:drawable="@drawable/byonchat05" android:duration="100" />
+            <item android:drawable="@drawable/byonchat06" android:duration="100" />
+            <item android:drawable="@drawable/byonchat07" android:duration="100" />
+            <item android:drawable="@drawable/byonchat08" android:duration="100" />
+            <item android:drawable="@drawable/byonchat09" android:duration="100" />
+            <item android:drawable="@drawable/byonchat10" android:duration="100" />
+            <item android:drawable="@drawable/byonchat11" android:duration="100" />
+            <item android:drawable="@drawable/byonchat12" android:duration="100" />
+            <item android:drawable="@drawable/byonchat13" android:duration="100" />
+            <item android:drawable="@drawable/byonchat14" android:duration="100" />
+            <item android:drawable="@drawable/byonchat15" android:duration="1000" />
+            <item android:drawable="@drawable/byonchat14" android:duration="100" />
+            <item android:drawable="@drawable/byonchat16" android:duration="100" />
+            <item android:drawable="@drawable/byonchat17" android:duration="100" />
+            <item android:drawable="@drawable/byonchat18" android:duration="100" />
+            <item android:drawable="@drawable/byonchat01" android:duration="2000" />
+        </animation-list>
+    </item>
+</layer-list>

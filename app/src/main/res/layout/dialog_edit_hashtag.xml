@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <com.rockerhieu.emojicon.EmojiconTextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please add your hashtags here"
+        style="@style/TextLightGraySmalles"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_gravity="center_horizontal"/>
+    <com.rockerhieu.emojicon.EmojiconTextView
+        android:id="@+id/title2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="For example: #jakarta #Batik #Solo"
+        style="@style/TextLightGraySmalles"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_gravity="center_horizontal"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/line"
+        android:layout_marginTop="@dimen/card_margin"
+        android:layout_marginBottom="@dimen/card_margin"/>
+
+    <!--<EditText-->
+        <!--android:id="@+id/hashtag1"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:inputType="text"-->
+        <!--android:drawableLeft="@drawable/ic_hashtag"-->
+        <!--android:drawablePadding="2dp"-->
+        <!--android:textCursorDrawable="@null"/>-->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/dialog_hashtag_space_edittext">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:fontFamily="sans-serif-light"
+                android:layout_gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/hashtag1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_voucher"
+                android:layout_marginLeft="@dimen/dialog_hashtag_space_edittext"
+                android:fontFamily="sans-serif-light"
+                android:inputType="text|textCapSentences"
+                android:padding="5dp"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="13dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/dialog_hashtag_space_edittext">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:fontFamily="sans-serif-light"
+                android:layout_gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/hashtag2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_voucher"
+                android:layout_marginLeft="@dimen/dialog_hashtag_space_edittext"
+                android:fontFamily="sans-serif-light"
+                android:inputType="text|textCapSentences"
+                android:padding="5dp"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="13dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/dialog_hashtag_space_edittext">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:fontFamily="sans-serif-light"
+                android:layout_gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/hashtag3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_voucher"
+                android:layout_marginLeft="@dimen/dialog_hashtag_space_edittext"
+                android:fontFamily="sans-serif-light"
+                android:inputType="text|textCapSentences"
+                android:padding="5dp"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="13dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/dialog_hashtag_space_edittext">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:fontFamily="sans-serif-light"
+                android:layout_gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/hashtag4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_voucher"
+                android:layout_marginLeft="@dimen/dialog_hashtag_space_edittext"
+                android:fontFamily="sans-serif-light"
+                android:inputType="text|textCapSentences"
+                android:padding="5dp"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="13dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/dialog_hashtag_space_edittext">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:fontFamily="sans-serif-light"
+                android:layout_gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/hashtag5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_voucher"
+                android:layout_marginLeft="@dimen/dialog_hashtag_space_edittext"
+                android:fontFamily="sans-serif-light"
+                android:inputType="text|textCapSentences"
+                android:padding="5dp"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="13dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/dialog_hashtag_space_edittext">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:fontFamily="sans-serif-light"
+                android:layout_gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/hashtag6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_voucher"
+                android:layout_marginLeft="@dimen/dialog_hashtag_space_edittext"
+                android:fontFamily="sans-serif-light"
+                android:inputType="text|textCapSentences"
+                android:padding="5dp"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="13dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/dialog_hashtag_space_edittext">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:fontFamily="sans-serif-light"
+                android:layout_gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/hashtag7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_voucher"
+                android:layout_marginLeft="@dimen/dialog_hashtag_space_edittext"
+                android:fontFamily="sans-serif-light"
+                android:inputType="text|textCapSentences"
+                android:padding="5dp"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="13dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/dialog_hashtag_space_edittext">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:fontFamily="sans-serif-light"
+                android:layout_gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/hashtag8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_voucher"
+                android:layout_marginLeft="@dimen/dialog_hashtag_space_edittext"
+                android:fontFamily="sans-serif-light"
+                android:inputType="text|textCapSentences"
+                android:padding="5dp"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="13dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/dialog_hashtag_space_edittext"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/btnSAVE"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="SAVE"
+                android:textColor="@color/text_button"
+                android:background="@drawable/button_background"
+                android:layout_gravity="center_horizontal"/>
+
+            <Button
+                android:id="@+id/btnCANCEL"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="CANCEL"
+                android:textColor="@color/text_button"
+                android:background="@drawable/button_background"
+                android:layout_gravity="center_horizontal"/>
+            </LinearLayout>
+
+    </LinearLayout>
+
+<requestFocus />
+
+</LinearLayout>

@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/relativelay"
+    android:paddingTop="5dp"
+    android:paddingRight="10dp"
+  >
+
+    <TextView
+        android:id="@+id/namePickup"
+        android:text="Nama"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/grayList"
+        android:padding="@dimen/margin5"
+        android:layout_marginRight="@dimen/padding5dp"
+        android:layout_toLeftOf="@+id/linearBtn"
+        android:layout_toStartOf="@+id/linearBtn" />
+
+    <EditText
+        android:layout_below="@+id/namePickup"
+        android:id="@+id/valuePickup"
+        android:background="@drawable/backgroud_conversation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/grayList"
+        android:padding="@dimen/margin5"
+        android:layout_marginRight="@dimen/padding5dp"
+        android:layout_toLeftOf="@+id/linearBtn"
+        android:layout_toStartOf="@+id/linearBtn"
+        >
+    </EditText>
+
+    <LinearLayout
+        android:id="@+id/linearBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignBottom="@+id/valuePickup"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+        <ImageButton
+
+            android:scaleType="centerInside"
+            android:id="@+id/btnOption"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/add_circle_black"
+            />
+        <ImageButton
+            android:scaleType="centerInside"
+            android:id="@+id/btnCancel"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/cancel_circle_black"
+             />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

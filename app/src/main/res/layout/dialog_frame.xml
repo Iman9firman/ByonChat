@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/dialog_voucher_rounded"
+    android:orientation="vertical">
+
+<ListView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/listview"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="@dimen/margin15"
+        android:gravity="center"
+        android:orientation="vertical">
+        <TextView
+            android:visibility="gone"
+            android:layout_margin="@dimen/margin10"
+            android:gravity="center"
+            android:id="@+id/emptyList"
+            android:text=""
+            android:singleLine="true"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/oto_feed_item_profile_name"
+            android:textStyle="bold"
+            android:textColor="@color/judul" />
+
+
+        <Button
+            android:id="@+id/btn_proceed"
+            android:layout_width="@dimen/margin100"
+            android:layout_height="@dimen/margin30"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/margin20"
+            android:background="@drawable/oval_btn_room"
+            android:padding="5dp"
+            android:text="Close"
+            android:textAllCaps="false"
+            android:textColor="@drawable/selector_txt_blue_white"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</LinearLayout>

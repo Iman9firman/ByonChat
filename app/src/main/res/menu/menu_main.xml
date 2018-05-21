@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+    <item android:id="@+id/action_settings_c" android:title="create group"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:visible="false" android:id="@+id/action_settings_d" android:title="create broadcast"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item
+        android:visible="false"
+        android:id="@+id/action_search"
+        android:title="Search"
+        android:icon="@drawable/bt_search_all"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+</menu>

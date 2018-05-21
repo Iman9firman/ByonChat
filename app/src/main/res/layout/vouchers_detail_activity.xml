@@ -1,0 +1,177 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context="com.rockerhieu.emojicon.example.MainActivity$PlaceholderFragment">
+
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:elevation="8dp"
+        app:layout_scrollFlags="scroll|enterAlways"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    </android.support.v7.widget.Toolbar>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg_voucher">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_alignParentLeft="true"
+                    android:background="@drawable/wallet_background_left" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/wallet_background_right" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_toEndOf="@+id/topPanelLeft"
+                        android:layout_toLeftOf="@+id/topPanelRight"
+                        android:layout_toRightOf="@+id/topPanelLeft"
+                        android:layout_toStartOf="@+id/topPanelRight"
+                        android:background="@drawable/wallet_background_top" />
+
+                    <LinearLayout
+                        android:id="@+id/topPanelLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:background="@drawable/top_benang_left"
+                        android:orientation="horizontal" />
+
+                    <LinearLayout
+                        android:id="@+id/topPanelRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/top_benang_right"
+                        android:orientation="horizontal" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutKiri"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/relativeLayout5"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/relativeLayout4"
+                    android:background="@drawable/jahitan_kiri"
+                    android:orientation="horizontal" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutKanan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/relativeLayout5"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/relativeLayout4"
+                    android:background="@drawable/jahitan_kanan"
+                    android:orientation="horizontal" />
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/buttomPanelLeft"
+                        android:layout_toLeftOf="@+id/buttomPanelright"
+                        android:layout_toRightOf="@+id/buttomPanelLeft"
+                        android:layout_toStartOf="@+id/buttomPanelright"
+                        android:background="@drawable/wallet_background_buttom" />
+
+                    <LinearLayout
+                        android:id="@+id/buttomPanelLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:background="@drawable/buttom_benang_left"
+                        android:orientation="horizontal" />
+
+                    <LinearLayout
+                        android:id="@+id/buttomPanelright"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/buttom_benang_right"
+                        android:orientation="horizontal" />
+                </RelativeLayout>
+
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/swipe_refresh_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/relativeLayout5"
+                    android:layout_below="@+id/relativeLayout4"
+                    android:layout_toEndOf="@+id/linearLayoutKiri"
+                    android:layout_toLeftOf="@+id/linearLayoutKanan"
+                    android:layout_toRightOf="@+id/linearLayoutKiri"
+                    android:layout_toStartOf="@+id/linearLayoutKanan">
+
+                    <ListView
+                        android:id="@+id/list"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:divider="@null"
+                        android:paddingTop="5dp"
+                        android:scrollbars="none"></ListView>
+                </android.support.v4.widget.SwipeRefreshLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="@dimen/margin20"
+                android:layout_marginRight="@dimen/margin20"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:id="@+id/relativelay"
+    android:paddingTop="5dp"
+    android:paddingRight="10dp"
+    >
+
+    <ImageView
+        android:id="@+id/imagePhoto"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:cropToPadding="true"
+        android:src="@drawable/ic_no_photo" />
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imagePhoto"
+        android:text="Medium Text"
+        style="@style/TextMediumBlack" />
+
+    <com.rockerhieu.emojicon.EmojiconTextView
+        android:id="@+id/textInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textTitle"
+        android:layout_toRightOf="@id/imagePhoto"
+        android:text="TextView"
+        style="@style/TextLightGray"
+        />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/imagePhoto"
+        android:layout_toRightOf="@id/imagePhoto"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp"
+        android:background="@color/grayList"/>
+</RelativeLayout>

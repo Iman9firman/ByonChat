@@ -1,0 +1,25 @@
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_conversation_attachment"
+        android:icon="@drawable/ic_action_attachment"
+        android:title="Add Attachment"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_conversation_contact"
+        android:title="View Contact"/>
+    <item
+        android:id="@+id/menu_conversation_group"
+        android:title="View Group Info"/>
+    <item
+        android:id="@+id/menu_create_sticky"
+        android:title="Add Sticky Note"/>
+    <item
+        android:id="@+id/menu_create_voting"
+        android:title="Create Voting"/>
+    <item
+        android:id="@+id/menu_exit"
+        android:title="Exit Group"/>
+
+</menu>

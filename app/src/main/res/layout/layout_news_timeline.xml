@@ -1,0 +1,340 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/margin5"
+        android:layout_marginRight="@dimen/margin5"
+        android:layout_marginTop="@dimen/margin4">
+
+        <carbon.widget.LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin1"
+            android:orientation="vertical"
+            app:carbon_cornerRadius="10dp">
+
+            <com.byonchat.android.utils.PicassoView
+                android:id="@+id/profilePic"
+                android:layout_width="@dimen/margin40"
+                android:layout_height="@dimen/margin40"
+                android:background="@android:color/white"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_no_photo"
+                android:visibility="visible"
+                app:carbon_inAnimation="none"
+                app:carbon_outAnimation="none" />
+        </carbon.widget.LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/profile_rounded_border">
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+        </RelativeLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/news_background"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/margin10"
+        android:paddingLeft="@dimen/margin10"
+        android:paddingRight="@dimen/margin10"
+        android:paddingTop="@dimen/margin5">
+
+        <com.rockerhieu.emojicon.EmojiconTextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Title" />
+
+        <com.rockerhieu.emojicon.EmojiconTextView
+            android:id="@+id/timestamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="Updates on : 10-08-2016"
+            android:textSize="10sp" />
+
+        <RelativeLayout
+            android:id="@+id/pesanLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                android:id="@+id/expandableLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:ael_duration="500"
+                app:ael_expanded="false"
+                app:ael_interpolator="fastOutSlowIn"
+                app:ael_orientation="vertical">
+
+                <com.rockerhieu.emojicon.EmojiconTextView
+                    android:id="@+id/txtStatusMsg"
+                    style="@style/Text.ReadMore"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:text="pesan_Load_more"
+                    android:textColor="@color/description"
+                    android:textSize="@dimen/feed_item_profile_status"
+                    android:visibility="invisible" />
+            </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+            <TextView
+                android:id="@+id/expandButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/expandableLayout"
+                android:background="@null"
+                android:text="Read more"
+                android:textSize="12sp" />
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:id="@+id/overlayText"
+                style="@style/Text.ReadMore.Overlay"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/description"
+                android:textSize="@dimen/feed_item_profile_status" />
+        </RelativeLayout>
+
+        <com.byonchat.android.personalRoom.NoteFeedImageView
+            android:id="@+id/feedImage1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:scaleType="fitXY"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="@dimen/feed_item_margin_replies"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/feed_item_margin"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/LinearHiddenComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/hidden_comment_background"
+                android:gravity="center_vertical|center_horizontal"
+                android:padding="@dimen/margin5"> <!-- 1 -->
+
+                <com.rockerhieu.emojicon.EmojiconTextView
+                    android:id="@+id/hiddenComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/note_button_space"
+                    android:layout_marginRight="@dimen/note_button_space"
+                    android:maxLines="2"
+                    android:text="Bayu :  ..."
+                    android:textColor="@color/text_like_counter"
+                    android:textSize="@dimen/feed_item_button" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LinearLoading"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/hidden_comment_background"
+                android:gravity="center_vertical|center_horizontal"
+                android:visibility="gone"> <!-- 1 -->
+                <TextView
+                    android:id="@+id/Loading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/note_button_space"
+                    android:layout_marginRight="@dimen/note_button_space"
+                    android:text="Loading..."
+                    android:textColor="@color/text_like_counter"
+                    android:textSize="@dimen/feed_item_button" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutComment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin3"
+            android:orientation="horizontal"
+            android:padding="@dimen/margin10">
+
+            <LinearLayout
+                android:id="@+id/btLoves"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin25"
+                android:background="@drawable/button_timeline_background"
+                android:gravity="center_vertical|center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin7"
+                    android:text="Loves"
+                    android:textColor="@color/text_like_counter"
+                    android:textSize="@dimen/notification_subtext_size" />
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/margin3"
+                    android:layout_marginRight="@dimen/margin3"
+                    android:background="@color/button_timeline_background_border" />
+
+                <TextSwitcher
+                    android:id="@+id/tsLikesCounter1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin7"
+                    android:layout_marginTop="@dimen/margin2"
+                    android:inAnimation="@anim/slide_in_likes_counter"
+                    android:outAnimation="@anim/slide_out_likes_counter">
+
+                    <TextView
+                        android:id="@+id/totalLoves"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLength="3"
+                        android:text="123"
+                        android:textColor="@color/text_like_counter"
+                        android:textSize="@dimen/notification_subtext_size" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_like_counter" />
+                </TextSwitcher>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="15dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"> <!-- 2 -->
+
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="4dp"
+                    android:layout_marginLeft="@dimen/margin5"
+                    android:layout_marginRight="@dimen/margin5"
+                    android:background="@drawable/bg_dot" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btNix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"> <!-- 3 -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nix"
+                    android:textColor="@color/text_like_counter"
+                    android:textSize="@dimen/notification_subtext_size" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"> <!-- 4 -->
+
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="4dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/margin5"
+                    android:layout_marginRight="@dimen/margin5"
+                    android:background="@drawable/bg_dot" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btComment"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/margin25"
+                android:background="@drawable/button_timeline_background"
+                android:gravity="center_vertical|center_horizontal"><!-- 5 -->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin7"
+                    android:text="Comments"
+                    android:textColor="@color/text_like_counter"
+                    android:textSize="@dimen/notification_subtext_size" />
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/note_button_space_divider"
+                    android:layout_marginRight="@dimen/note_button_space_divider"
+                    android:background="@color/button_timeline_background_border" />
+
+                <TextSwitcher
+                    android:id="@+id/tsLikesCounter2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin7"
+                    android:inAnimation="@anim/slide_in_likes_counter"
+                    android:outAnimation="@anim/slide_out_likes_counter">
+
+                    <TextView
+                        android:id="@+id/totalComments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLength="3"
+                        android:paddingTop="@dimen/margin2"
+                        android:text="123"
+                        android:textColor="@color/text_like_counter"
+                        android:textSize="@dimen/notification_subtext_size" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_like_counter" />
+                </TextSwitcher>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"><!-- 6 -->
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

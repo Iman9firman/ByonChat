@@ -1,0 +1,88 @@
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:id="@+id/relativelay"
+    android:paddingTop="@dimen/margin10"
+    android:paddingBottom="@dimen/margin10"
+    android:paddingRight="@dimen/margin10"
+    android:paddingLeft="@dimen/margin10"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground"
+        >
+    <com.byonchat.android.adapter.CircularContactView
+        android:id="@+id/imageText"
+        android:layout_width="@dimen/margin50"
+        android:layout_height="@dimen/margin50"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_marginLeft="@dimen/margin5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/dateInfo"
+        android:layout_toRightOf="@id/imageText"
+        android:singleLine="true"
+        android:text="Medium Text"
+        style="@style/TextMediumBlack" />
+
+    <com.rockerhieu.emojicon.EmojiconTextView
+        android:id="@+id/textInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        style="@style/TextLightGray"
+        android:singleLine="true"
+        android:gravity="center_vertical"
+        android:layout_alignBottom="@+id/imageText"
+        android:layout_below="@+id/titleText"
+        android:layout_alignRight="@+id/titleText"
+        android:layout_alignEnd="@+id/titleText"
+        android:layout_toLeftOf="@+id/imageText"
+        android:layout_alignLeft="@+id/titleText"
+        android:layout_alignStart="@+id/titleText" />
+
+
+    <TextView
+        android:id="@id/dateInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:paddingRight="5dp"
+        android:text="12/03/2013"
+        style="@style/TextRegularGraySmall"/>
+
+
+    <TextView
+        android:id="@+id/statusTxt"
+        android:layout_width="@dimen/margin50"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:background="@drawable/status_work"
+        android:text="New"
+        android:textColor="@android:color/white"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_below="@+id/titleText"
+        android:layout_alignRight="@id/dateInfo"
+        android:layout_alignEnd="@id/dateInfo" />
+
+        <TextView
+            android:visibility="gone"
+            android:layout_marginLeft="@dimen/margin5"
+            android:layout_marginRight="@dimen/margin5"
+            android:id="@+id/titleCenter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medium Text Center"
+            style="@style/TextMediumBlack"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/statusTxt"
+            android:layout_toRightOf="@+id/imageText"
+            android:layout_toEndOf="@+id/imageText"
+            android:layout_toStartOf="@+id/statusTxt" />
+
+    </RelativeLayout>

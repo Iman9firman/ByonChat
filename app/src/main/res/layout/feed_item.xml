@@ -1,0 +1,1287 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/WriteProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/margin33"
+        android:elevation="12dp"
+        android:innerRadius="0dp"
+        android:shape="ring"
+        android:thicknessRatio="1.9"
+        android:visibility="invisible"
+        app:cardBackgroundColor="@color/my_notes_write_your_profile_background"
+        app:cardCornerRadius="8dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+            <TextView
+                android:id="@+id/profileStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
+                android:editable="true"
+                android:focusableInTouchMode="true"
+                android:hint="Write your profile..."
+                android:maxLength="290"
+                android:text="" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/custom_card_margin"
+        android:elevation="12dp"
+        android:innerRadius="0dp"
+        android:shape="ring"
+        android:thicknessRatio="1.9"
+        app:cardCornerRadius="8dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/feed_item_margin"
+            android:paddingTop="@dimen/margin10"
+            android:adjustViewBounds="true"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/feed_item_margin">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp">
+
+                    <carbon.widget.LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_margin="@dimen/margin1"
+                        app:carbon_cornerRadius="10dp">
+
+                        <com.byonchat.android.utils.PicassoView
+                            android:id="@+id/profilePic"
+                            android:layout_width="43dp"
+                            android:layout_height="43dp"
+                            android:src="@drawable/ic_no_photo"
+                            android:background="@android:color/white"
+                            android:scaleType="centerInside"
+                            android:visibility="visible"
+                            app:carbon_inAnimation="none"
+                            app:carbon_outAnimation="none" />
+                    </carbon.widget.LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/profile_rounded_border">
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </RelativeLayout>
+                </FrameLayout>
+
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:text="name"
+                        android:textSize="@dimen/feed_item_profile_name"
+                        android:textStyle="bold"
+                        android:textColor="@color/judul"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/timestamp"
+                        android:text="timestamp"
+                        android:fontFamily="sans-serif-light"
+                        android:textColor="@color/timestamp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/feed_item_timestamp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/feed_item_profile_status"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtStatusMsg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:paddingLeft="@dimen/feed_item_margin"
+                    android:paddingRight="@dimen/feed_item_margin"
+                    android:textColor="@color/description"
+                    android:textSize="@dimen/feed_item_profile_status" />
+
+                <com.byonchat.android.personalRoom.NoteFeedImageView
+                    android:id="@+id/feedImage1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:paddingLeft="@dimen/feed_item_margin"
+                    android:scaleType="fitXY"
+                    android:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/feed_item_margin"
+                    android:paddingRight="@dimen/feed_item_margin">
+
+                    <LinearLayout
+                        android:id="@+id/btLoves"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/button_timeline_background"
+                        android:gravity="center_vertical|center_horizontal"> <!-- 1 -->
+
+                        <TextView
+                            android:id="@+id/labelLoves"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:text="Loves"
+                            android:textColor="@color/text_like_counter"
+                            android:textSize="@dimen/feed_item_button" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/note_button_space_divider"
+                            android:layout_marginRight="@dimen/note_button_space_divider"
+                            android:background="@color/button_timeline_background_border" />
+
+                        <TextSwitcher
+                            android:id="@+id/tsLikesCounter1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:inAnimation="@anim/slide_in_likes_counter"
+                            android:outAnimation="@anim/slide_out_likes_counter">
+
+                            <TextView
+                                android:id="@+id/totalLoves"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="5"
+                                android:textColor="@color/text_like_counter"
+                                android:textSize="@dimen/feed_item_button" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_like_counter" />
+                        </TextSwitcher>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 2 -->
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="4dp"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:background="@drawable/bg_dot" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/btNix"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 3 -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nix"
+                            android:textColor="@color/text_like_counter"
+                            android:textSize="@dimen/feed_item_button" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 4 -->
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="4dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:background="@drawable/bg_dot" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/btComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/button_timeline_background"
+                        android:gravity="center_vertical|center_horizontal"><!-- 5 -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:text="Comments"
+                            android:textColor="@color/text_like_counter"
+                            android:textSize="@dimen/feed_item_button" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/note_button_space_divider"
+                            android:layout_marginRight="@dimen/note_button_space_divider"
+                            android:background="@color/button_timeline_background_border" />
+
+                        <TextSwitcher
+                            android:id="@+id/tsLikesCounter2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:inAnimation="@anim/slide_in_likes_counter"
+                            android:outAnimation="@anim/slide_out_likes_counter">
+
+                            <TextView
+                                android:id="@+id/totalComments"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="123"
+                                android:textColor="@color/text_like_counter"
+                                android:textSize="@dimen/feed_item_button" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_like_counter" />
+                        </TextSwitcher>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"><!-- 6 -->
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- TESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="@dimen/feed_item_margin_replies"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/feed_item_margin"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:id="@+id/LinearHiddenComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@drawable/hidden_comment_background"
+                    android:gravity="center_vertical|center_horizontal"> <!-- 1 -->
+
+                    <TextView
+                        android:id="@+id/hiddenComment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/note_button_space"
+                        android:layout_marginRight="@dimen/note_button_space"
+                        android:text="Bayu : jasjdf hasdfh shaf hskjfhsafhkjasdfhsj ..."
+                        android:textColor="@color/text_like_counter"
+                        android:textSize="@dimen/feed_item_button" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LinearLoading"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@drawable/hidden_comment_background"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:visibility="gone"> <!-- 1 -->
+
+                    <TextView
+                        android:id="@+id/Loading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/note_button_space"
+                        android:layout_marginRight="@dimen/note_button_space"
+                        android:text="Loading..."
+                        android:textColor="@color/text_like_counter"
+                        android:textSize="@dimen/feed_item_button" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <!-- TESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS -->
+
+            <LinearLayout
+                android:id="@+id/LinearReply"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/feed_item_margin"
+                android:layout_marginTop="@dimen/feed_item_margin_reply"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/feed_item_margin">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.byonchat.android.personalRoom.volley.RoundedNetworkImageView
+                        android:id="@+id/profilePic_reply"
+                        android:layout_width="@dimen/feed_item_profile_pic"
+                        android:layout_height="@dimen/feed_item_profile_pic"
+                        android:background="@drawable/button_timeline_background"
+                        android:scaleType="fitXY"
+                        ></com.byonchat.android.personalRoom.volley.RoundedNetworkImageView>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/feed_item_profile_info_padd">
+
+                        <TextView
+                            android:id="@+id/name_reply"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Lukman Prayogo Utomo"
+                            android:textSize="@dimen/feed_item_profile_name"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/timestamp_reply"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Jun 22, 2014"
+                            android:textColor="@color/timestamp"
+                            android:textSize="@dimen/feed_item_timestamp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtStatusMsg_reply"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="@dimen/feed_item_status_pad_top"
+                    android:text="Mas ngomongnya pake bahasa indo dong, aku englishnya kurang paham euy"
+                    android:textSize="@dimen/feed_item_profile_status" />
+
+                <!--<TextView-->
+                <!--android:id="@+id/txtUrl"-->
+                <!--android:text="https://bc.com"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:linksClickable="true"-->
+                <!--android:paddingBottom="10dp"-->
+                <!--android:paddingRight="@dimen/feed_item_status_pad_left_right"-->
+                <!--android:textColorLink="@color/link" />-->
+
+                <com.byonchat.android.personalRoom.NoteFeedImageView
+                    android:id="@+id/feedImage1_reply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:scaleType="fitXY"
+                    android:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/button_timeline_background"
+                        android:gravity="center_vertical|center_horizontal"> <!-- 1 -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:text="Loves"
+                            android:textColor="@color/text_like_counter"
+                            android:textSize="@dimen/feed_item_button" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/note_button_space_divider"
+                            android:layout_marginRight="@dimen/note_button_space_divider"
+                            android:background="@color/button_timeline_background_border" />
+
+                        <TextSwitcher
+                            android:id="@+id/tsLikesCounter1_reply"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:inAnimation="@anim/slide_in_likes_counter"
+                            android:outAnimation="@anim/slide_out_likes_counter">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="5"
+                                android:textColor="@color/text_like_counter"
+                                android:textSize="@dimen/feed_item_button" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_like_counter" />
+                        </TextSwitcher>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 2 -->
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="4dp"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:background="@drawable/bg_dot" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 3 -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nix"
+                            android:textColor="@color/text_like_counter"
+                            android:textSize="@dimen/feed_item_button" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 4 -->
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="4dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:background="@drawable/bg_dot" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/button_timeline_background"
+                        android:gravity="center_vertical|center_horizontal"><!-- 5 -->
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:text="Reply"
+                            android:textColor="@color/text_like_counter"
+                            android:textSize="@dimen/feed_item_button" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/note_button_space_divider"
+                            android:layout_marginRight="@dimen/note_button_space_divider"
+                            android:background="@color/button_timeline_background_border" />
+
+                        <TextSwitcher
+                            android:id="@+id/tsLikesCounter2_reply"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:inAnimation="@anim/slide_in_likes_counter"
+                            android:outAnimation="@anim/slide_out_likes_counter">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="123"
+                                android:textColor="@color/text_like_counter"
+                                android:textSize="@dimen/feed_item_button" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_like_counter" />
+                        </TextSwitcher>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"><!-- 6 -->
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/inner_recycler"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+            <!--REPLY 1 -->
+            <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginRight="@dimen/feed_item_margin"-->
+            <!--android:layout_marginTop="@dimen/feed_item_margin_reply"-->
+            <!--android:paddingLeft="@dimen/feed_item_margin"-->
+            <!--android:orientation="vertical" >-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<com.byonchat.android.personalRoom.volley.RoundedNetworkImageView-->
+            <!--android:id="@+id/profilePic_reply"-->
+            <!--android:layout_width="@dimen/feed_item_profile_pic"-->
+            <!--android:layout_height="@dimen/feed_item_profile_pic"-->
+            <!--android:src="@drawable/cheese_4"-->
+            <!--android:background="@drawable/button_timeline_background"-->
+            <!--android:scaleType="fitXY" >-->
+            <!--</com.byonchat.android.personalRoom.volley.RoundedNetworkImageView>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical"-->
+            <!--android:paddingLeft="@dimen/feed_item_profile_info_padd" >-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/name_reply"-->
+            <!--android:text="Lukman Prayogo Utomo"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="@dimen/feed_item_profile_name"-->
+            <!--android:textStyle="bold" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/timestamp_reply"-->
+            <!--android:text="Jun 22, 2014"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/timestamp"-->
+            <!--android:textSize="@dimen/feed_item_timestamp" />-->
+            <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/txtStatusMsg_reply"-->
+            <!--android:text="Mas ngomongnya pake bahasa indo dong, aku englishnya kurang paham euy"-->
+            <!--android:textSize="@dimen/feed_item_profile_status"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingBottom="5dp"-->
+            <!--android:paddingTop="@dimen/feed_item_status_pad_top" />-->
+
+            <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/txtUrl"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="https://bc.com"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="fill_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:linksClickable="true"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:paddingBottom="10dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:paddingRight="@dimen/feed_item_status_pad_left_right"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColorLink="@color/link" />&ndash;&gt;-->
+
+            <!--<com.byonchat.android.personalRoom.NoteFeedImageView-->
+            <!--android:id="@+id/feedImage1_reply"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@color/white"-->
+            <!--android:scaleType="fitXY"-->
+            <!--android:visibility="visible" />-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_marginTop="8dp">-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:background="@drawable/button_timeline_background"-->
+            <!--android:gravity="center_vertical|center_horizontal"> &lt;!&ndash; 1 &ndash;&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Loves"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space"/>-->
+
+            <!--<View-->
+            <!--android:layout_width="2dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@color/button_timeline_background_border"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space_divider"-->
+            <!--android:layout_marginRight="@dimen/note_button_space_divider" />-->
+
+            <!--<TextSwitcher-->
+            <!--android:id="@+id/tsLikesCounter1_reply"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:inAnimation="@anim/slide_in_likes_counter"-->
+            <!--android:outAnimation="@anim/slide_out_likes_counter"-->
+            <!--android:layout_marginRight="@dimen/note_button_space">-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="5"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+            <!--</TextSwitcher>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"> &lt;!&ndash; 2 &ndash;&gt;-->
+
+            <!--<View-->
+            <!--android:layout_width="4dp"-->
+            <!--android:layout_height="4dp"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space"-->
+            <!--android:layout_marginRight="@dimen/note_button_space"-->
+            <!--android:background="@drawable/bg_dot"/>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"> &lt;!&ndash; 3 &ndash;&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Nix"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"> &lt;!&ndash; 4 &ndash;&gt;-->
+
+            <!--<View-->
+            <!--android:layout_width="4dp"-->
+            <!--android:layout_height="4dp"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space"-->
+            <!--android:layout_marginRight="@dimen/note_button_space"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:background="@drawable/bg_dot"/>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:background="@drawable/button_timeline_background"-->
+            <!--android:gravity="center_vertical|center_horizontal">&lt;!&ndash; 5 &ndash;&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Reply"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space" />-->
+
+            <!--<View-->
+            <!--android:layout_width="2dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space_divider"-->
+            <!--android:layout_marginRight="@dimen/note_button_space_divider"-->
+            <!--android:background="@color/button_timeline_background_border" />-->
+
+            <!--<TextSwitcher-->
+            <!--android:id="@+id/tsLikesCounter2_reply"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:inAnimation="@anim/slide_in_likes_counter"-->
+            <!--android:outAnimation="@anim/slide_out_likes_counter"-->
+            <!--android:layout_marginRight="@dimen/note_button_space">-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="123"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+            <!--</TextSwitcher>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:gravity="center_horizontal">&lt;!&ndash; 6 &ndash;&gt;-->
+
+            <!--<ImageView-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"/>-->
+
+            <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
+
+            <!--&lt;!&ndash;REPLY 2 &ndash;&gt;-->
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="fill_parent"-->
+            <!--android:layout_marginLeft="@dimen/feed_item_margin_reply_2"-->
+            <!--android:layout_marginTop="@dimen/feed_item_margin_reply"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<com.byonchat.android.personalRoom.volley.RoundedNetworkImageView-->
+            <!--android:id="@+id/profilePic_reply_2"-->
+            <!--android:layout_width="@dimen/feed_item_profile_pic"-->
+            <!--android:layout_height="@dimen/feed_item_profile_pic"-->
+            <!--android:src="@drawable/cheese_3"-->
+            <!--android:background="@drawable/button_timeline_background"-->
+            <!--android:scaleType="fitXY" >-->
+            <!--</com.byonchat.android.personalRoom.volley.RoundedNetworkImageView>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical"-->
+            <!--android:paddingLeft="@dimen/feed_item_profile_info_padd" >-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/name_reply_2"-->
+            <!--android:text="Alexander Nystrom"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="@dimen/feed_item_profile_name"-->
+            <!--android:textStyle="bold" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/timestamp_reply_2"-->
+            <!--android:text="Jun 22, 2014"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/timestamp"-->
+            <!--android:textSize="@dimen/feed_item_timestamp" />-->
+            <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/txtStatusMsg_reply_2"-->
+            <!--android:text="ehehe oke bro next ill use bahasa..."-->
+            <!--android:textSize="@dimen/feed_item_profile_status"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingBottom="5dp"-->
+            <!--android:paddingTop="@dimen/feed_item_status_pad_top" />-->
+
+            <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/txtUrl"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="https://bc.com"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="fill_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:linksClickable="true"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:paddingBottom="10dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:paddingRight="@dimen/feed_item_status_pad_left_right"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColorLink="@color/link" />&ndash;&gt;-->
+
+            <!--<com.byonchat.android.personalRoom.NoteFeedImageView-->
+            <!--android:id="@+id/feedImage1_reply_2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@color/white"-->
+            <!--android:scaleType="fitXY"-->
+            <!--android:visibility="visible" />-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_marginTop="8dp">-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:background="@drawable/button_timeline_background"-->
+            <!--android:gravity="center_vertical|center_horizontal"> &lt;!&ndash; 1 &ndash;&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Loves"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space"/>-->
+
+            <!--<View-->
+            <!--android:layout_width="2dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@color/button_timeline_background_border"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space_divider"-->
+            <!--android:layout_marginRight="@dimen/note_button_space_divider" />-->
+
+            <!--<TextSwitcher-->
+            <!--android:id="@+id/tsLikesCounter1_reply_2"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:inAnimation="@anim/slide_in_likes_counter"-->
+            <!--android:outAnimation="@anim/slide_out_likes_counter"-->
+            <!--android:layout_marginRight="@dimen/note_button_space">-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="5"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+            <!--</TextSwitcher>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"> &lt;!&ndash; 2 &ndash;&gt;-->
+
+            <!--<View-->
+            <!--android:layout_width="4dp"-->
+            <!--android:layout_height="4dp"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space"-->
+            <!--android:layout_marginRight="@dimen/note_button_space"-->
+            <!--android:background="@drawable/bg_dot"/>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"> &lt;!&ndash; 3 &ndash;&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Nix"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"> &lt;!&ndash; 4 &ndash;&gt;-->
+
+            <!--<View-->
+            <!--android:layout_width="4dp"-->
+            <!--android:layout_height="4dp"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space"-->
+            <!--android:layout_marginRight="@dimen/note_button_space"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:background="@drawable/bg_dot"/>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:background="@drawable/button_timeline_background"-->
+            <!--android:gravity="center_vertical|center_horizontal">&lt;!&ndash; 5 &ndash;&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Reply"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space" />-->
+
+            <!--<View-->
+            <!--android:layout_width="2dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space_divider"-->
+            <!--android:layout_marginRight="@dimen/note_button_space_divider"-->
+            <!--android:background="@color/button_timeline_background_border" />-->
+
+            <!--<TextSwitcher-->
+            <!--android:id="@+id/tsLikesCounter2_reply_2"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:inAnimation="@anim/slide_in_likes_counter"-->
+            <!--android:outAnimation="@anim/slide_out_likes_counter"-->
+            <!--android:layout_marginRight="@dimen/note_button_space">-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="123"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+            <!--</TextSwitcher>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:gravity="center_horizontal">&lt;!&ndash; 6 &ndash;&gt;-->
+
+            <!--<ImageView-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"/>-->
+
+            <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
+
+            <!--&lt;!&ndash;REPLY 3 &ndash;&gt;-->
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="fill_parent"-->
+            <!--android:layout_marginLeft="@dimen/feed_item_margin_reply_2"-->
+            <!--android:layout_marginTop="@dimen/feed_item_margin_reply"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<com.byonchat.android.personalRoom.volley.RoundedNetworkImageView-->
+            <!--android:id="@+id/profilePic_reply_3"-->
+            <!--android:layout_width="@dimen/feed_item_profile_pic"-->
+            <!--android:layout_height="@dimen/feed_item_profile_pic"-->
+            <!--android:src="@drawable/cheese_4"-->
+            <!--android:background="@drawable/button_timeline_background"-->
+            <!--android:scaleType="fitXY" >-->
+            <!--</com.byonchat.android.personalRoom.volley.RoundedNetworkImageView>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical"-->
+            <!--android:paddingLeft="@dimen/feed_item_profile_info_padd" >-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/name_reply_3"-->
+            <!--android:text="Lukman Prayogo Utomo"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textSize="@dimen/feed_item_profile_name"-->
+            <!--android:textStyle="bold" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/timestamp_reply_3"-->
+            <!--android:text="Jun 22, 2014"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/timestamp"-->
+            <!--android:textSize="@dimen/feed_item_timestamp" />-->
+            <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/txtStatusMsg_reply_3"-->
+            <!--android:text="nah gitu dong kan jadi keliatan paham gitu."-->
+            <!--android:textSize="@dimen/feed_item_profile_status"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingBottom="5dp"-->
+            <!--android:paddingTop="@dimen/feed_item_status_pad_top" />-->
+
+            <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/txtUrl"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="https://bc.com"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="fill_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:linksClickable="true"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:paddingBottom="10dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:paddingRight="@dimen/feed_item_status_pad_left_right"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColorLink="@color/link" />&ndash;&gt;-->
+
+            <!--<com.byonchat.android.personalRoom.NoteFeedImageView-->
+            <!--android:id="@+id/feedImage1_reply_3"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@color/white"-->
+            <!--android:scaleType="fitXY"-->
+            <!--android:visibility="visible" />-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_marginTop="8dp">-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:background="@drawable/button_timeline_background"-->
+            <!--android:gravity="center_vertical|center_horizontal"> &lt;!&ndash; 1 &ndash;&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Loves"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space"/>-->
+
+            <!--<View-->
+            <!--android:layout_width="2dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@color/button_timeline_background_border"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space_divider"-->
+            <!--android:layout_marginRight="@dimen/note_button_space_divider" />-->
+
+            <!--<TextSwitcher-->
+            <!--android:id="@+id/tsLikesCounter1_reply_3"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:inAnimation="@anim/slide_in_likes_counter"-->
+            <!--android:outAnimation="@anim/slide_out_likes_counter"-->
+            <!--android:layout_marginRight="@dimen/note_button_space">-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="5"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+            <!--</TextSwitcher>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"> &lt;!&ndash; 2 &ndash;&gt;-->
+
+            <!--<View-->
+            <!--android:layout_width="4dp"-->
+            <!--android:layout_height="4dp"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space"-->
+            <!--android:layout_marginRight="@dimen/note_button_space"-->
+            <!--android:background="@drawable/bg_dot"/>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"> &lt;!&ndash; 3 &ndash;&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Nix"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"> &lt;!&ndash; 4 &ndash;&gt;-->
+
+            <!--<View-->
+            <!--android:layout_width="4dp"-->
+            <!--android:layout_height="4dp"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space"-->
+            <!--android:layout_marginRight="@dimen/note_button_space"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:background="@drawable/bg_dot"/>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:background="@drawable/button_timeline_background"-->
+            <!--android:gravity="center_vertical|center_horizontal">&lt;!&ndash; 5 &ndash;&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Reply"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space" />-->
+
+            <!--<View-->
+            <!--android:layout_width="2dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_marginLeft="@dimen/note_button_space_divider"-->
+            <!--android:layout_marginRight="@dimen/note_button_space_divider"-->
+            <!--android:background="@color/button_timeline_background_border" />-->
+
+            <!--<TextSwitcher-->
+            <!--android:id="@+id/tsLikesCounter2_reply_3"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:inAnimation="@anim/slide_in_likes_counter"-->
+            <!--android:outAnimation="@anim/slide_out_likes_counter"-->
+            <!--android:layout_marginRight="@dimen/note_button_space">-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="123"-->
+            <!--android:textSize="@dimen/feed_item_button"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/text_like_counter" />-->
+            <!--</TextSwitcher>-->
+
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:gravity="center_horizontal">&lt;!&ndash; 6 &ndash;&gt;-->
+
+            <!--<ImageView-->
+            <!--android:layout_width="50dp"-->
+            <!--android:layout_height="50dp"/>-->
+
+            <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
+
+            <!--&lt;!&ndash;REPLY 4 &ndash;&gt;-->
+
+            <!--&lt;!&ndash;REPLY 4 &ndash;&gt;-->
+
+            <!--</LinearLayout>-->
+            <!--&lt;!&ndash;REPLY 3 &ndash;&gt;-->
+
+            <!--</LinearLayout>-->
+            <!--&lt;!&ndash;REPLY 2 &ndash;&gt;-->
+
+            <!--</LinearLayout>-->
+            <!--REPLY 1 -->
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <!--</LinearLayout>-->
+</LinearLayout>

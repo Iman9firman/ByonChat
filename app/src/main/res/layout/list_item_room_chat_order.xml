@@ -1,0 +1,117 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="@dimen/margin4"
+    android:paddingLeft="@dimen/margin7"
+    android:paddingRight="@dimen/margin7"
+    android:paddingTop="@dimen/margin3">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="false">
+        <!--android:layout_height="60dp"-->
+
+        <LinearLayout
+            android:id="@+id/topPanelLeft2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal">
+            <!--android:layout_height="match_parent"-->
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <carbon.widget.LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="@dimen/margin1"
+                    app:carbon_cornerRadius="10dp">
+
+                    <com.byonchat.android.utils.PicassoView
+                        android:id="@+id/imagePhoto"
+                        android:layout_width="@dimen/margin43"
+                        android:layout_height="@dimen/margin43"
+                        android:background="@color/white"
+                        android:scaleType="centerInside"
+                        android:visibility="invisible"
+                        app:carbon_inAnimation="none"
+                        app:carbon_outAnimation="none" />
+                </carbon.widget.LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="@dimen/margin45"
+                    android:layout_height="@dimen/margin45"
+                    android:background="@drawable/profile_rounded_border">
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/margin3"
+            android:layout_toLeftOf="@+id/topPanelRight2"
+            android:layout_toRightOf="@+id/topPanelLeft2"
+            android:background="@drawable/chat_room"
+            android:orientation="vertical">
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:id="@+id/textTitle"
+                style="@style/TextLightGraySmalles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textTitle"
+                android:singleLine="true"
+                android:text="TextView"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:id="@+id/textInfo"
+                style="@style/TextLightGraySmalles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textTitle"
+                android:maxLines="2"
+                android:text="Dapatkan potongan harga sdasdasdadsas  dasdas dasdas dasda sdasda sdasdasd adsasdad"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/topPanelRight2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/margin3"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/btnChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/chat"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:scaleType="fitStart" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</FrameLayout>

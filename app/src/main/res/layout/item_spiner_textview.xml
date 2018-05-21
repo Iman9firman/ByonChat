@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin5"
+        android:layout_marginTop="@dimen/margin3" />
+
+    <TextView
+        android:id="@+id/titleKode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin5"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/lastSpinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/backgroud_conversation"
+        android:padding="@dimen/margin5"
+        android:paddingLeft="@dimen/margin15"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/grayList"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/lastImage"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:visibility="gone">
+
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/loader_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible"
+            app:indicator="BallPulse"
+            app:indicator_color="@color/color_primary_blue_dark" />
+
+        <ImageView
+            android:id="@+id/value"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/margin5" />
+    </RelativeLayout>
+
+</LinearLayout>

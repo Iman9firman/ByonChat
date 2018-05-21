@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relativelay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:paddingTop="5dp">
+
+    <TableRow
+        android:id="@+id/tableRow1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:stretchColumns="0,1,2">
+
+        <LinearLayout
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="left"
+                android:singleLine="true"
+                android:text="ada asdkajsdkajsdkasdasdasdasdasdasdasdasd"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/detail_order"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="left"
+                android:singleLine="true"
+                android:text="2 x 1,000,000,00"
+                android:textColor="@color/grayDark" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/price_order"
+            android:layout_weight="4"
+            android:ellipsize="marquee"
+            android:gravity="right"
+            android:singleLine="true"
+            android:text="123456789"
+            android:textColor="@android:color/black" />
+    </TableRow>
+
+
+</RelativeLayout>

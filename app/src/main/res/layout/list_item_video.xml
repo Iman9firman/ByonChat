@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--    list_item_video.xml   -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:id="@+id/relview">
+
+    <FrameLayout
+        android:id="@+id/frame_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        >
+
+        <carbon.widget.LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/margin1"
+            app:carbon_cornerRadius="10dp">
+            <com.byonchat.android.utils.PicassoView
+                android:id="@+id/item_img"
+                android:layout_width="@dimen/margin80"
+                android:layout_height="@dimen/margin80"
+                android:src="@drawable/bt_no_video"
+                android:background="@android:color/white"
+                android:scaleType="centerCrop"
+                android:visibility="visible"
+                app:carbon_inAnimation="none"
+                app:carbon_outAnimation="none" />
+        </carbon.widget.LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="82dp"
+            android:layout_height="82dp"
+            android:background="@drawable/profile_rounded_border">
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
+    </FrameLayout>
+
+    <!--<com.byonchat.android.personalRoom.view.SelectableRoundedImageView-->
+        <!--android:id="@+id/item_img"-->
+        <!--android:layout_width="90dp"-->
+        <!--android:layout_height="90dp"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--app:sriv_left_top_corner_radius="15dip"-->
+        <!--app:sriv_right_top_corner_radius="15dip"-->
+        <!--app:sriv_left_bottom_corner_radius="15dip"-->
+        <!--app:sriv_right_bottom_corner_radius="15dip"-->
+        <!--app:sriv_border_width="1dip"-->
+        <!--app:sriv_border_color="@color/activity_profile_picture"-->
+        <!--app:sriv_oval="false"/>-->
+
+    <TextView
+        android:id="@+id/duration_item_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_alignBottom="@+id/frame_img"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/frame_img"
+        android:layout_alignEnd="@+id/frame_img" />
+</RelativeLayout>
+

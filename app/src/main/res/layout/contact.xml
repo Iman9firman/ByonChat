@@ -1,0 +1,25 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       >
+        <lb.library.PinnedHeaderListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"
+            android:dividerHeight="0px"
+            android:fadeScrollbars="false"
+            android:fastScrollEnabled="true"
+            android:listSelector="@drawable/listview_selector"
+            android:scrollingCache="false"
+            tools:listitem="@layout/listview_item"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

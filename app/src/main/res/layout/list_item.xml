@@ -1,0 +1,158 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relativelay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_gravity="center_vertical"
+    android:paddingRight="10dp"
+    android:paddingTop="5dp">
+
+    <LinearLayout
+        android:id="@+id/linearimagePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/imagePhotoFrame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:visibility="gone">
+
+            <carbon.widget.LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin1"
+                android:orientation="vertical"
+                app:carbon_cornerRadius="10dp">
+
+                <com.byonchat.android.utils.PicassoView
+                    android:id="@+id/imagePhotoPicasso"
+                    android:layout_width="43dp"
+                    android:layout_height="43dp"
+                    android:background="@color/white"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_room_door"
+                    android:visibility="visible"
+                    app:carbon_inAnimation="none"
+                    app:carbon_outAnimation="none" />
+            </carbon.widget.LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/profile_rounded_border">
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/imagePhoto"
+            android:layout_width="@dimen/margin43"
+            android:layout_height="@dimen/margin43"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_no_photo" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textTitle"
+        style="@style/TextMediumBlack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_toLeftOf="@+id/dateInfo"
+        android:layout_toRightOf="@id/linearimagePhoto"
+        android:text="Medium Text" />
+
+    <com.rockerhieu.emojicon.EmojiconTextView
+        android:id="@+id/textInfo"
+        style="@style/TextLightGray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textTitle"
+        android:visibility="gone"
+        android:layout_toRightOf="@id/linearimagePhoto"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/dateInfo"
+        style="@style/TextRegularGraySmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:paddingRight="5dp"
+        android:text="12/03/2013" />
+
+    <TextView
+        android:id="@+id/textTitleBiasa"
+        style="@style/TextMediumBlack"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/dateInfoBiasa"
+        android:layout_toRightOf="@id/linearimagePhoto"
+        android:text="Medium Text" />
+
+    <com.rockerhieu.emojicon.EmojiconTextView
+        android:id="@+id/textInfoBiasa"
+        style="@style/TextLightGray"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/margin10"
+        android:layout_below="@id/textTitleBiasa"
+        android:layout_toRightOf="@id/linearimagePhoto"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/dateInfoBiasa"
+        style="@style/TextRegularGraySmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"
+        android:layout_marginTop="10dp"
+        android:paddingRight="5dp"
+        android:text="12/03/2013" />
+
+    <View
+        android:id="@+id/relativeLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/linearimagePhoto"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/linearimagePhoto"
+        android:background="@color/grayList" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true">
+
+        <ImageButton
+            android:id="@+id/roomsOpen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/btn_open_room" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/optionlist"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@drawable/backgroud_conversation"
+    android:padding="@dimen/margin5">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_add_cild"
+            android:layout_width="@dimen/margin100"
+            android:layout_height="@dimen/margin30"
+            android:text="Add"
+            android:layout_gravity="center"
+            android:background="@drawable/oval_btn_room"
+            android:padding="5dp"
+            android:textAllCaps="false"
+            android:textColor="@drawable/selector_txt_blue_white"
+            android:textSize="14sp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+    <TableRow
+        android:paddingTop="@dimen/margin5"
+        android:id="@+id/tableRow1"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:stretchColumns="0,1,2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/titleName"
+            android:layout_weight="2"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:text="Nama"
+            android:textColor="@android:color/black"
+            android:gravity="left"/>
+    </TableRow>
+
+    <ListView
+        android:id="@+id/listOrder"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:orientation="horizontal"
+        android:showDividers="none|middle|beginning|end"
+        android:dividerPadding="2dp"/>
+
+    <TableRow
+        android:paddingTop="@dimen/margin5"
+        android:id="@+id/tableRow2"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:stretchColumns="0,1,2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/title_order"
+            android:layout_weight="2"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:text="Total"
+            android:textColor="@android:color/black"
+            android:gravity="left"/>
+
+        <TextView
+            android:id="@+id/total_price_order"
+            android:layout_weight="4"
+            android:text="10000"
+            android:textColor="@android:color/black"
+            android:gravity="right"/>
+    </TableRow>
+
+
+</LinearLayout>

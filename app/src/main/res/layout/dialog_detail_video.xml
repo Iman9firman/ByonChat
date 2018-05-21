@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+    <!--android:minWidth="500dp"-->
+    <!--android:minHeight="500dp"-->
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="250dp"
+        android:background="@android:color/black"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin10">
+
+        <VideoView
+            android:id="@+id/video_preview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_gravity="center" />
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:layout_gravity="center" />
+
+        <ImageView
+            android:id="@+id/imagePlay"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_play_white" />
+    </RelativeLayout>
+
+    <com.byonchat.android.widget.VideoSlaceSeekBar
+        android:id="@+id/seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_caption"
+        android:layout_marginBottom="@dimen/margin10"
+        android:layout_marginTop="@dimen/margin10"
+        android:padding="@dimen/margin20"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/margin10">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/margin5">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:fontFamily="sans-serif-light"
+                        android:paddingRight="@dimen/margin5"
+                        android:text="Title"
+                        android:textAppearance="?android:attr/textAppearanceSmallPopupMenu" />
+
+                    <EditText
+                        android:id="@+id/title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_voucher"
+                        android:fontFamily="sans-serif-light"
+                        android:inputType="text|textCapSentences"
+                        android:padding="5dp"
+                        android:textCursorDrawable="@drawable/cursor"
+                        android:textSize="13dp" />
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/margin5">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top|center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="top|center_vertical"
+                            android:fontFamily="sans-serif-light"
+                            android:paddingRight="@dimen/margin5"
+                            android:text="Description"
+                            android:textAppearance="?android:attr/textAppearanceSmallPopupMenu" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_voucher"
+                        android:fontFamily="sans-serif-light"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:lines="4"
+                        android:gravity="top"
+                        android:maxLines="6"
+                        android:padding="5dp"
+                        android:textCursorDrawable="@drawable/cursor"
+                        android:textSize="13dp" />
+
+                </TableRow>
+
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/margin5"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/btnSUBMIT"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="5dp"
+                            android:background="@drawable/button_background"
+                            android:text="SUBMIT"
+                            android:textColor="@color/text_button" />
+
+
+                        <Button
+                            android:id="@+id/btnCANCEL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="5dp"
+                            android:background="@drawable/button_background"
+                            android:text="CANCEL"
+                            android:textColor="@color/text_button" />
+                    </LinearLayout>
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <requestFocus />
+
+</LinearLayout>

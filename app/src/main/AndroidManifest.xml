@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.byonchat.android">
+
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.LOCATION_HARDWARE" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+
+    <permission
+        android:name="com.byonchat.android.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.byonchat.android.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <!-- for Samsung -->
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+
+    <!-- for htc -->
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
+
+    <!-- for sony -->
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+
+    <!-- for apex -->
+    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
+
+    <!-- for solid -->
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+
+    <permission-group
+        android:name="android.permission-group.LOCATION"
+        android:label="A label for your permission" />
+
+    <application
+        android:name="android.support.multidex.MultiDexApplication"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:persistent="true"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <receiver android:name=".communication.ServiceAutoStart">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".utils.ConnectionChangeReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="com.byonchat.android.utils.ConnectionChangeReceiver" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Firebase Notifications -->
+        <service android:name=".communication.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".communication.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="io.github.memfis19.annca.internal.ui.camera.Camera1Activity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeFullscreen" />
+        <activity
+            android:name="io.github.memfis19.annca.internal.ui.camera2.Camera2Activity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeFullscreen" />
+        <activity
+            android:name="io.github.memfis19.annca.internal.ui.preview.PreviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeFullscreen" />
+        <activity
+            android:name=".communication.DummyActivity"
+            android:allowTaskReparenting="true"
+            android:alwaysRetainTaskState="false"
+            android:clearTaskOnLaunch="true"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true"
+            android:noHistory="true"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.NoDisplay" />
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SplashScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RegistrationActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".CountryListSelectorActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/registration_select_country"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ActivationCodeActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/activationcode"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".LoadContactScreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".MemberDetailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_members_detail"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SkinSelectorActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_skin_selector" />
+        <activity
+            android:name=".createMeme.PhotoSortrActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_create_meme"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SearchThemesActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_search_themes" />
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+        <activity
+            android:name="com.vdopia.ads.lw.LVDOAdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+        <activity
+            android:name="com.vdopia.ads.lw.mraid.LVDOBrowserActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+        <activity
+            android:name=".ConversationActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ConversationGalleryActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ConfirmationSendFile"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_confirmation_send_file"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".UpdateProfileActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Set Status"
+            android:windowSoftInputMode="adjustPan" />
+
+        <service android:name=".utils.UploadProfileService">
+            <intent-filter>
+                <action android:name="com.byonchat.android.util.UploadProfileService" />
+            </intent-filter>
+        </service>
+        <service android:name=".utils.ThrowProfileService">
+            <intent-filter>
+                <action android:name="com.byonchat.android.util.ThrowProfileService" />
+            </intent-filter>
+        </service>
+
+        <!--
+        <activity
+            android:name=".SelectContactActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+        </activity>
+        -->
+        <activity
+            android:name=".AccountSettingActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_acount_setting" />
+
+        <service android:name=".communication.MessengerConnectionService" />
+        <service android:name=".utils.RefreshContactService" />
+        <service android:name=".utils.StreamService" />
+        <service android:name=".utils.UploadService">
+            <intent-filter>
+                <action android:name="com.byonchat.android.util.UploadService" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".communication.MyJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver
+            android:name=".communication.MyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <activity
+            android:name=".WebViewByonActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_web_view_byon"
+            android:theme="@style/MyNoActionBarShadowTheme" />
+        <activity
+            android:name=".PickUserActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Message Broadcast" />
+        <activity
+            android:name=".BroadcastSendActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Message Broadcast" />
+
+        <receiver android:name=".communication.NotificationReceiver">
+            <intent-filter>
+                <action android:name="com.byonchat.android.communication.MessengerConnectionService.messageReceived" />
+                <action android:name="com.byonchat.android.communication.MessengerConnectionService.addCard" />
+                <action android:name="com.byonchat.android.communication.MessengerConnectionService.inviteGroup" />
+                <action android:name="com.byonchat.android.communication.MessengerConnectionService.reqGps" />
+                <action android:name="com.byonchat.android.communication.MessengerConnectionService.taskDone" />
+                <action android:name="com.byonchat.android.communication.MessengerConnectionService.refreshRoom" />
+            </intent-filter>
+        </receiver>
+        <!--
+        <receiver
+            android:name="NetworkChangeReceiver"
+            android:label="NetworkChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        -->
+        <!--
+            <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        -->
+        <!--
+            <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCB8QQQv-94C4cw2wHcJ-1CwohQRGuq2kc" />
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs" />
+        <!--
+           API debug
+           android:value="AIzaSyC9uE41626BAiFV-eFvvfwu2guhsX3cxMo" />
+        -->
+        <!--
+            API Prod
+            android:value="AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs" />
+        -->
+
+        <activity
+            android:name=".FinalizingActivity"
+            android:label="@string/title_activity_finalizing"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CreateGroupActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_create_group"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ConversationGroupActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ZoomImageViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ViewProfileActivity"
+            android:label="@string/title_activity_view_profile"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".FullScreenUpdateProfileActivity"
+            android:label="@string/title_activity_view_profile"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".GroupInfoActivity"
+            android:label="@string/title_activity_group_info"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DetailGroupNote"
+            android:label="@string/title_activity_detail_group_note"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DetailGroupVoting"
+            android:label="@string/title_activity_detail_group_vote"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GroupAddInfoActivity"
+            android:label="@string/title_activity_detail_group_vote"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".GroupAddPickUserActivity"
+            android:label="@string/title_activity_detail_group_vote"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".GroupAddInviteUsersActivity"
+            android:label="@string/title_activity_detail_group_vote"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ByonChatMainRoomActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".PlayVideoStreaming"
+            android:label="@string/title_activity_room"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".room.DetailRoomTaskActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MediaPlayCatalogActivity"
+            android:label="Video Player"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".DialogPopUpActivity"
+            android:label="AleartMeassage"
+            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".MainSettingActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NewSearchRoomActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ImagePickerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".ConfirmationSendFileMultiple"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_confirmation_send_file"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ConfirmationSendFileVideo"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_confirmation_send_file"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".NewSelectContactActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".FragmentDinamicRoom.RoomPOSdetail" />
+        <activity
+            android:name=".FragmentDinamicRoom.LoginRoomActivity"
+            android:label="@string/title_activity_login_room" />
+        <activity android:name=".FragmentDinamicRoom.DinamicRoomTaskActivity" />
+        <activity android:name=".LoadingGetTabRoomActivity" />
+
+        <!-- lukman -->
+        <activity
+            android:name=".personalRoom.PersonalRoomActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden" />
+        <activity
+            android:name=".personalRoom.PictureUploadActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".personalRoom.PictureDetailActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".personalRoom.FullScreenDetailPicture"
+            android:label="Personal Room"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".personalRoom.NoteCommentActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".personalRoom.PRCoverUploadActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".personalRoom.VideoDetailActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".personalRoom.VideoPreviewActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".personalRoom.PlayVideoActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".personalRoom.NoteCreateStatusActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
+            tools:ignore="NewApi" />
+        <!-- end lukman -->
+        <activity
+            android:name=".ActivityVouchersDetail"
+            android:label="@string/title_activity_vouchers"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DownloadUtilsActivity"
+            android:label="@string/title_activity_download_utils"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DownloadSqliteDinamicActivity"
+            android:label="@string/title_activity_download_utils"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DownloadFileByonchat"
+            android:label="@string/title_activity_download"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NewsDetailActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".location.MoveToFriend"
+            android:label="Friend Direction" />
+        <activity
+            android:name=".location.ActivityDirection"
+            android:label="Friend Direction Dua" />
+        <activity
+            android:name=".CaptureSignature"
+            android:label="Signature Confirmation"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+        <activity android:name=".ReaderOcr" />
+        <activity
+            android:name=".smsSolders.HomeSMSSolders"
+            android:theme="@style/AppTheme.NoActionBar" ></activity>
+        <activity android:name=".smsSolders.RegisterSMSActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".smsSolders.WelcomeActivitySMS"
+            android:theme="@style/AppTheme.NoActionBar" >
+        <intent-filter>
+            <action android:name="android.intent.action.CREATE_SHORTCUT" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        </activity>
+        <activity
+            android:name=".smsSolders.HistorySmsActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/optionlist"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/listview_ripple_background_selector"
+    android:padding="@dimen/margin5"
+    android:clickable="true">
+
+    <TextView
+        android:id="@+id/namePickup"
+        android:text="Start"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/grayList"
+        android:padding="@dimen/margin5"
+        />
+
+    <TextView
+        android:id="@+id/valuePickup"
+        android:background="@drawable/backgroud_conversation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/grayList"
+        android:padding="@dimen/margin5"
+        />
+    <TextView
+        android:layout_marginTop="@dimen/margin5"
+        android:id="@+id/nameEnd"
+        android:text="End"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/grayList"
+        android:padding="@dimen/margin5"
+        />
+
+    <TextView
+        android:id="@+id/valueEnd"
+        android:background="@drawable/backgroud_conversation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/grayList"
+        android:padding="@dimen/margin5"
+        />
+    <TextView
+        android:layout_marginTop="@dimen/margin5"
+        android:id="@+id/nameJarak"
+        android:text="Jarak"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/grayList"
+        android:padding="@dimen/margin5"
+        />
+
+    <TextView
+        android:id="@+id/valueJarak"
+        android:background="@drawable/backgroud_conversation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/grayList"
+        android:padding="@dimen/margin5"
+        />
+</LinearLayout>

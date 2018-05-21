@@ -1,0 +1,176 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <LinearLayout
+        android:layout_marginTop="@dimen/margin10"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/margin70"
+            android:gravity="center|left"
+            android:paddingLeft="@dimen/margin20"
+            android:paddingRight="@dimen/margin20"
+            android:weightSum="1"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Mute"
+                android:id="@+id/textView5"
+                android:layout_alignTop="@+id/switch1"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmallInverse"
+                android:textColor="@color/grayList"
+                android:text="All notifications will be muted "
+                android:id="@+id/textView6"
+                android:layout_below="@+id/textView5"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/switch1"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/margin70"
+            android:gravity="center|left"
+            android:paddingLeft="@dimen/margin20"
+            android:paddingRight="@dimen/margin20"
+            android:weightSum="1"
+            android:background="@drawable/selector_no_stroke"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Sound"
+                android:id="@+id/textView9"
+                android:layout_above="@+id/textView8"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmallInverse"
+                android:textColor="@color/grayList"
+                android:text="plashis (default)"
+                android:id="@+id/textView8"
+                android:layout_alignBottom="@+id/imageButton"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/grayList"
+                android:id="@+id/relativeLayout3"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageButton"
+                android:src="@android:drawable/ic_media_play"
+                android:background="@android:color/transparent"
+                android:layout_centerVertical="true"
+                android:layout_alignRight="@+id/relativeLayout3"
+                android:layout_alignEnd="@+id/relativeLayout3" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/grayList"
+                android:id="@+id/relativeLayout2"
+                android:layout_alignParentTop="true"
+                android:layout_alignRight="@+id/imageButton"
+                android:layout_alignEnd="@+id/imageButton" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/margin70"
+            android:gravity="center|left"
+            android:paddingLeft="@dimen/margin20"
+            android:paddingRight="@dimen/margin20"
+            android:weightSum="1"
+            android:background="@drawable/selector_no_stroke"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Vibrate"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/textView7" />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/grayList"
+                android:id="@+id/relativeLayout32"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/switch2"
+                android:layout_alignTop="@+id/textView7"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:checked="false" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/margin70"
+            android:gravity="center|left"
+            android:paddingLeft="@dimen/margin20"
+            android:paddingRight="@dimen/margin20"
+            android:weightSum="1"
+            android:background="@drawable/selector_no_stroke"
+            android:orientation="vertical" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="LED"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/textView17" />
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/grayList"
+                android:id="@+id/relativeLayout5"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/switch3"
+                android:layout_alignTop="@+id/textView17"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:checked="false" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>
+

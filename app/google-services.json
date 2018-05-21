@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "1058627568492",
+    "firebase_url": "https://byonchat-d7fe0.firebaseio.com",
+    "project_id": "byonchat-d7fe0",
+    "storage_bucket": "byonchat-d7fe0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1058627568492:android:016cb3061148d394",
+        "android_client_info": {
+          "package_name": "com.byonchat.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1058627568492-vkh3sucv07cj1nobjvjcnprp960ot8rg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.byonchat.android",
+            "certificate_hash": "a0dbac86adbf78a0f7ebfbdcd41d8deca800ffa6"
+          }
+        },
+        {
+          "client_id": "1058627568492-bie14hgnplr9nt78c8nbtv0pj9e6q86m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.byonchat.android",
+            "certificate_hash": "9cb2504ac7a824afde0701122ae90eff5555a47f"
+          }
+        },
+        {
+          "client_id": "1058627568492-be5jeib771mllrl5j0qd63ol1o42o5o3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeRHIvSKa_6mAYUtYEy3TcvWv2GItQCn4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1058627568492-be5jeib771mllrl5j0qd63ol1o42o5o3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

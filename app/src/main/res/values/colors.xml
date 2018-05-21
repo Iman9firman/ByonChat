@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#006b9c</color>
+    <color name="colorPrimaryDark">#004a6d</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+    <color name="colorAccent">#c8e8ff</color>
+    <color name="colorAccentDark">#a4d9ff</color>
+    <color name="bubbleRight">#9acff4</color>
+    <color name="colorMenu">#81b3d7</color>
+    <color name="bubbleLeft">#e7e7e7</color>
+    <color name="grayOffTab">#9eb5c0</color>
+    <color name="grayTab">#e6e6e6</color>
+    <color name="grayList">#d2d3d5</color>
+    <color name="grayDark">#a4a4a4</color>
+    <color name="colorOffers">#b79c69</color>
+    <color name="colorWallet">#8f3213</color>
+    <color name="cyan">#78c4dc</color>
+    <color name="blueBackApps">#3a5fa6</color>
+    <color name="blueLine">#2eacd4</color>
+    <color name="blueDark">#2263a7</color>
+    <color name="softBlue1">#a2bcc8</color>
+    <color name="softBlue2">#00618b</color>
+    <color name="softBlue3">#bdcdd4</color>
+    <color name="gray">#bdcdd4</color>
+    <color name="text_offers">#2e2411</color>
+    <color name="blue_open_bubble">#2c91c9</color>
+    <color name="blue_open_bubble_press">#22719d</color>
+    <color name="backgroundMenuSlide">#3a4040</color>
+    <color name="brownVoting">#ccae88</color>
+    <color name="transparent">#46000000</color>
+    <color name="full_transparent">#00000000</color>
+    <color name="listview_pressed">#FFdddddd</color>
+    <color name="listview_focused">#FF7dbcd3</color>
+    <color name="listview_checked">#FFededed</color>
+    <color name="colorAcent">#006b9c</color>
+    <color name="bg_voucher">#2a2a2a</color>
+    <color name="accent_500">#f80900</color>
+    <color name="accent_700">#b80900</color>
+    <integer-array name="contacts_text_background_colors">
+        <item>0xFF9C27B0</item>
+        <item>0xFFFF5722</item>
+        <item>0xFF3F51B5</item>
+        <item>0xFFDB4437</item>
+        <item>0xFFEF6C00</item>
+        <item>0xFF689F38</item>
+        <item>0xFF757575</item>
+        <item>0xFF0F9D58</item>
+        <item>0xFF3F51B5</item>
+        <item>0xFF0097A7</item>
+    </integer-array>
+    <!-- Lukman -->
+    <color name="verticaltextview_shadow">#a8000000</color>
+    <color name="verticaltextview_shadow_top">#c3efefef</color>
+    <color name="window_background">#FFF5F5F5</color>
+    <color name="blue">#4476b3</color>
+    <color name="red">#8b0002</color>
+    <color name="white_transparent">#bebebe</color>
+    <color name="white">#ffffff</color>
+    <color name="feed_bg">#d3d6db</color>
+    <color name="feed_item_bg">#ffffff</color>
+    <color name="feed_item_border">#c2c3c8</color>
+    <color name="link">#0a80d1</color>
+    <!--<color name="timestamp">#a0a3a7</color>-->
+    <color name="judul">#333</color>
+    <color name="timestamp">#2d2d30</color>
+    <color name="description">#2d2d30</color>
+    <color name="line">#d3d6db</color>
+    <!--<color name="transparent">#46000000</color>-->
+    <color name="tab">#205174</color>
+    <color name="tab_text_selected">#ffffff</color>
+    <color name="tab_text">#a2fafafa</color>
+    <color name="grey">#d3d6db</color>
+    <color name="my_profile_text">#79899c</color>
+    <color name="my_profile_text_hint">#c9d0d9</color>
+
+    <color name="button_background">#d3d6db</color>
+    <color name="button_border">#9b9c9f</color>
+    <color name="button_background_focus">#b8bdbf</color>
+    <color name="button_border_focus">#6d7171</color>
+    <color name="text_button">#454646</color>
+    <color name="color_shadow">#44000000</color>
+    <color name="color_primary_red">#f44336</color>
+    <color name="color_primary_red_dark">#d32f2f</color>
+    <color name="color_primary_green">#4caf50</color>
+    <color name="color_primary_green_dark">#388e3c</color>
+    <color name="color_primary_blue">#2196f3</color>
+    <color name="color_primary_blue_dark">#1976d2</color>
+    <color name="color_accent_pink">#ff4081</color>
+    <color name="button_timeline_background">#fcfcfc</color>
+    <color name="button_timeline_background_border">#e7e7e7</color>
+    <color name="button_timeline_background_pressed">#dedede</color>
+    <color name="button_timeline_background_border_pressed">#e7e7e7</color>
+
+    <color name="hidden_comment_background">#e7e7e7</color>
+    <color name="hidden_comment_background_border">#e7e7e7</color>
+    <color name="hidden_comment_background_pressed">#dedede</color>
+    <color name="hidden_comment_background_border_pressed">#dedede</color>
+
+    <color name="button_timeline_dot">#707070</color>
+    <color name="my_notes_write_your_profile_background">#fcfcfc</color>
+    <color name="activity_profile_picture">#44000000</color>
+
+    <color name="verticaltext_transparent">#a2fafafa</color>
+    <color name="voucher_title">#d40101</color>
+    <color name="voucher_title_new">#3575b1</color>
+
+    <color name="style_color_primary">#2d5d82</color>
+    <color name="style_color_primary_dark">#21425d</color>
+    <color name="style_color_accent">#01bcd5</color>
+
+    <color name="fab_color_pressed">#007787</color>
+    <!--<color name="fab_color_shadow">#44000000</color>-->
+    <color name="fab_color_shadow">#2c000000</color>
+
+    <color name="btn_default_light_normal">#00000000</color>
+    <color name="btn_default_light_pressed">#40ffffff</color>
+    <color name="btn_send_normal">#02c754</color>
+    <color name="btn_send_pressed">#006633</color>
+    <color name="btn_default_shadow">#99000000</color>
+    <color name="btn_context_menu_normal">#ffffff</color>
+    <color name="btn_context_menu_pressed">#40000000</color>
+    <color name="btn_context_menu_text_red">#ffff0000</color>
+
+    <color name="text_like_counter">#2b5a83</color>
+
+    <color name="bg_comments">#ffffff</color>
+    <color name="separator">#f1f1f1</color>
+
+    <color name="pr_profile_desc">#2d2d30</color>
+    <color name="pr_profile_hashtag">#67676c</color>
+    <color name="pr_picture_desc">#2d2d30</color>
+    <color name="pr_picture_timestamp">#2d2d30</color>
+
+    <color name="black_overlay">#66000000</color>
+
+    <!-- Lukman -->
+    <!-- dark theme -->
+    <color name="carbon_white">#ffffffff</color>
+    <color name="carbon_divider_dark">#1fffffff</color>
+    <color name="carbon_ripple_dark">#42cccccc</color>
+    <color name="carbon_icon_light">#ffffffff</color>
+
+    <color name="carbon_background_dark">#ff333333</color>
+
+    <!-- light theme -->
+    <color name="carbon_black">#ff000000</color>
+    <color name="carbon_divider_light">#1f000000</color>
+    <color name="carbon_ripple_light">#42999999</color>
+    <color name="carbon_icon_dark">#8a000000</color>
+
+    <color name="carbon_background_light">#ffeeeeee</color>
+
+    <color name="carbon_debug">#ffDE3226</color>
+
+    <color name="carbon_white_30">#4dffffff</color>
+    <color name="carbon_white_70">#b3ffffff</color>
+    <color name="carbon_black_26">#42000000</color>
+    <color name="carbon_black_54">#8a000000</color>
+    <color name="carbon_black_87">#de000000</color>
+
+    <color name="carbon_tab_text_selected">#ff000000</color>
+    <color name="carbon_tab_text_unselected">#8a000000</color>
+    <color name="black_alpha_50">#80000000</color>
+    <color name="teal">#009688</color>
+    <color name="line_button">#565758</color>
+    <color name="black_translucent">#50000000</color>
+    <color name="shadow_color">#FF000000</color>
+    <color name="line_color">#FF15FF00</color>
+    <color name="background_video_color">#2f3031</color>
+    <color name="background_progress_color">#6C6D6D</color>
+    <color name="progress_color">@color/colorPrimary</color>
+
+
+    <!-- Screens background color-->
+    <color name="bg_screen1">#f64c73</color>
+    <color name="bg_screen2">#20d2bb</color>
+    <color name="bg_screen3">#3395ff</color>
+    <color name="bg_screen4">#c873f4</color>
+
+    <!-- dots inactive colors -->
+    <color name="dot_dark_screen1">#d1395c</color>
+    <color name="dot_dark_screen2">#14a895</color>
+    <color name="dot_dark_screen3">#2278d4</color>
+    <color name="dot_dark_screen4">#00ffffff</color>
+
+    <!-- dots active colors -->
+    <color name="dot_light_screen1">#f98da5</color>
+    <color name="dot_light_screen2">#8cf9eb</color>
+    <color name="dot_light_screen3">#93c6fd</color>
+    <color name="dot_light_screen4">#00e7b8ff</color>
+
+    <array name="array_dot_active">
+        <item>@color/dot_light_screen1</item>
+        <item>@color/dot_light_screen2</item>
+        <item>@color/dot_light_screen3</item>
+        <item>@color/dot_light_screen4</item>
+    </array>
+
+    <array name="array_dot_inactive">
+        <item>@color/dot_dark_screen1</item>
+        <item>@color/dot_dark_screen2</item>
+        <item>@color/dot_dark_screen3</item>
+        <item>@color/dot_dark_screen4</item>
+    </array>
+
+
+
+</resources>

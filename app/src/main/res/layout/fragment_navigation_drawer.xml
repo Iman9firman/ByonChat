@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@color/backgroundMenuSlide"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="7dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="byonchat"
+            style="@style/TextLightGray"
+            android:textSize="31sp"
+            android:textColor="@android:color/white"
+            />
+
+        <ImageView
+            android:id="@+id/photo_menu_slide"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_no_photo"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"/>
+        <TextView
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/name_menu_slide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            style="@style/TextLightGray"
+            android:textSize="21sp"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Menu"
+            android:drawablePadding="5dp"
+            style="@style/TextRegularWhite"
+            android:textSize="16dp"
+            android:textColor="@android:color/white"
+            android:drawableLeft="@drawable/line_blue"
+            />
+        <View
+            android:layout_marginTop="3dp"
+            android:layout_width="fill_parent"
+            android:layout_height="1.5dip"
+            android:background="@color/gray" />
+        <LinearLayout
+            android:id="@+id/list_menu_slide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,143 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f1f1f1"
+    tools:context="com.byonchat.android.personalRoom.NoteCommentActivity">
+    <include  android:id="@+id/abMain" layout="@layout/toolbar_comment" />
+<ProgressBar
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    />
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/contentRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/abMain"
+        android:background="@color/bg_comments"
+        android:elevation="8dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#f1f1f1">
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/WriteProfile"
+                android:layout_alignParentTop="true">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:padding="@dimen/margin10"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="none"
+                    android:background="#f1f1f1" />
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/shadow_top" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/llAddComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_comments"
+            android:elevation="2dp"
+            android:gravity="center_vertical">
+            <LinearLayout android:id="@+id/footer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal|center_vertical"
+                android:background="#ffffffff"
+                android:padding="3dp"
+                android:layout_marginBottom="2dp"
+                >
+                <ImageButton
+                    android:id="@+id/btn_add_emoticon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentRight="true"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/smiley"
+                    android:background="@drawable/btn_costume_selector"/>
+                <com.rockerhieu.emojicon.EmojiconEditText
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:minLines="2"
+                    android:maxLines="6"
+                    android:background="@drawable/backgroud_conversation"
+                    android:id="@+id/writeComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@+id/btnSend"
+                    android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
+                    android:textSize="16sp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    emojicon:emojiconSize="30sp"
+                    >
+                    <requestFocus />
+                </com.rockerhieu.emojicon.EmojiconEditText>
+
+                <ImageButton
+                    android:visibility="gone"
+                    android:id="@+id/btnMic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_alignParentRight="true"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@android:drawable/ic_btn_speak_now"
+                    android:background="@drawable/btn_costume_selector"/>
+                <Button
+                    android:id="@+id/btnSend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_alignParentRight="true"
+                    android:text="Send"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#ffffffff"
+                    android:background="@drawable/btn_send_costume_selector"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/emojiconsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+                <fragment
+                    android:id="@+id/emojicons"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    class="com.rockerhieu.emojicon.EmojiconsFragment"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

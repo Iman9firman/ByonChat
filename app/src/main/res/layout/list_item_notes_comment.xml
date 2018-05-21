@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+        <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/custom_card_margin"
+        android:elevation="12dp"
+        app:cardCornerRadius="8dp"
+        android:layout_centerHorizontal="true"
+        android:innerRadius="0dp"
+        android:shape="ring"
+        android:thicknessRatio="1.9">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/feed_item_margin"
+            android:orientation="vertical"
+            android:adjustViewBounds="true"
+            android:paddingBottom="@dimen/feed_item_margin"
+            android:paddingTop="@dimen/margin10"  >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp">
+
+                    <carbon.widget.LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_margin="@dimen/margin1"
+                        app:carbon_cornerRadius="10dp">
+
+                        <com.byonchat.android.utils.PicassoView
+                            android:id="@+id/profilePic"
+                            android:layout_width="43dp"
+                            android:layout_height="43dp"
+                            android:src="@drawable/ic_no_photo"
+                            android:background="@android:color/white"
+                            android:scaleType="centerInside"
+                            android:visibility="visible"
+                            app:carbon_inAnimation="none"
+                            app:carbon_outAnimation="none" />
+                    </carbon.widget.LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/profile_rounded_border">
+
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </RelativeLayout>
+                </FrameLayout>
+
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                     >
+
+                    <com.rockerhieu.emojicon.EmojiconTextView
+                        android:id="@+id/name"
+                        android:text="name"
+                        android:textSize="@dimen/feed_item_profile_name"
+                        android:textStyle="bold"
+                        android:textColor="@color/judul"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <com.rockerhieu.emojicon.EmojiconTextView
+                        android:id="@+id/timestamp"
+                        android:text="timestamp"
+                        android:fontFamily="sans-serif-light"
+                        android:textColor="@color/timestamp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/feed_item_timestamp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/feed_item_profile_status" >
+
+                <com.rockerhieu.emojicon.EmojiconTextView
+                    android:id="@+id/txtStatusMsg"
+                    android:textSize="@dimen/feed_item_profile_status"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/description"
+                    android:fontFamily="sans-serif-light"
+                    android:paddingLeft="@dimen/feed_item_margin"
+                    android:paddingRight="@dimen/feed_item_margin"/>
+
+                <com.byonchat.android.personalRoom.NoteFeedImageView
+                    android:id="@+id/feedImage1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:scaleType="fitXY"
+                    android:visibility="visible"
+                    android:paddingLeft="@dimen/feed_item_margin" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp"
+                    android:paddingLeft="@dimen/feed_item_margin"
+                    android:paddingRight="@dimen/feed_item_margin">
+
+                    <LinearLayout
+                        android:id="@+id/btLoves"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/button_timeline_background"
+                        android:gravity="center_vertical|center_horizontal"> <!-- 1 -->
+
+                        <com.rockerhieu.emojicon.EmojiconTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Loves"
+                            android:textSize="@dimen/feed_item_button"
+                            android:textColor="@color/text_like_counter"
+                            android:layout_marginLeft="@dimen/note_button_space"/>
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/button_timeline_background_border"
+                            android:layout_marginLeft="@dimen/note_button_space_divider"
+                            android:layout_marginRight="@dimen/note_button_space_divider" />
+
+                        <TextSwitcher
+                            android:id="@+id/tsLikesCounter1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inAnimation="@anim/slide_in_likes_counter"
+                            android:outAnimation="@anim/slide_out_likes_counter"
+                            android:layout_marginRight="@dimen/note_button_space">
+
+                            <com.rockerhieu.emojicon.EmojiconTextView
+                                android:id="@+id/totalLoves"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="5"
+                                android:textSize="@dimen/feed_item_button"
+                                android:textColor="@color/text_like_counter" />
+
+                            <com.rockerhieu.emojicon.EmojiconTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_like_counter" />
+                        </TextSwitcher>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 2 -->
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="4dp"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:background="@drawable/bg_dot"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/btNix"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 3 -->
+
+                        <com.rockerhieu.emojicon.EmojiconTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nix"
+                            android:textSize="@dimen/feed_item_button"
+                            android:textColor="@color/text_like_counter" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 4 -->
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="4dp"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:layout_gravity="center_vertical"
+                            android:background="@drawable/bg_dot"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/btComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/button_timeline_background"
+                        android:gravity="center_vertical|center_horizontal"><!-- 5 -->
+
+                        <com.rockerhieu.emojicon.EmojiconTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Comments"
+                            android:textSize="@dimen/feed_item_button"
+                            android:textColor="@color/text_like_counter"
+                            android:layout_marginLeft="@dimen/note_button_space" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/note_button_space_divider"
+                            android:layout_marginRight="@dimen/note_button_space_divider"
+                            android:background="@color/button_timeline_background_border" />
+
+                        <TextSwitcher
+                            android:id="@+id/tsLikesCounter2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inAnimation="@anim/slide_in_likes_counter"
+                            android:outAnimation="@anim/slide_out_likes_counter"
+                            android:layout_marginRight="@dimen/note_button_space">
+
+                            <com.rockerhieu.emojicon.EmojiconTextView
+                                android:id="@+id/totalComments"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="123"
+                                android:textSize="@dimen/feed_item_button"
+                                android:textColor="@color/text_like_counter" />
+
+                            <com.rockerhieu.emojicon.EmojiconTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_like_counter" />
+                        </TextSwitcher>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"><!-- 6 -->
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="@dimen/feed_item_margin_replies"
+                android:paddingLeft="@dimen/feed_item_margin"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:id="@+id/LinearHiddenComment"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@drawable/hidden_comment_background"
+                    android:gravity="center_vertical|center_horizontal"> <!-- 1 -->
+
+                    <com.rockerhieu.emojicon.EmojiconTextView
+                        android:id="@+id/hiddenComment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Bayu : jasjdf hasdfh shaf hskjfhsafhkjasdfhsj ..."
+                        android:textSize="@dimen/feed_item_button"
+                        android:textColor="@color/text_like_counter"
+                        android:layout_marginLeft="@dimen/note_button_space"
+                        android:layout_marginRight="@dimen/note_button_space"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LinearLoading"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@drawable/hidden_comment_background"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:visibility="gone"> <!-- 1 -->
+
+                    <com.rockerhieu.emojicon.EmojiconTextView
+                        android:id="@+id/Loading"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Loading..."
+                        android:textSize="@dimen/feed_item_button"
+                        android:textColor="@color/text_like_counter"
+                        android:layout_marginLeft="@dimen/note_button_space"
+                        android:layout_marginRight="@dimen/note_button_space"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <!-- TESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS -->
+            <!--REPLY 1 -->
+            <LinearLayout
+                android:id="@+id/LinearReply"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="@dimen/feed_item_margin"
+                android:layout_marginTop="@dimen/feed_item_margin_reply"
+                android:paddingLeft="@dimen/feed_item_margin"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.byonchat.android.personalRoom.volley.RoundedNetworkImageView
+                        android:id="@+id/profilePic_reply"
+                        android:layout_width="@dimen/feed_item_profile_pic"
+                        android:layout_height="@dimen/feed_item_profile_pic"
+                        android:background="@drawable/button_timeline_background"
+                        android:scaleType="fitXY" >
+                    </com.byonchat.android.personalRoom.volley.RoundedNetworkImageView>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="@dimen/feed_item_profile_info_padd" >
+
+                        <com.rockerhieu.emojicon.EmojiconTextView
+                            android:id="@+id/name_reply"
+                            android:text="Lukman Prayogo Utomo"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/feed_item_profile_name"
+                            android:textStyle="bold" />
+
+                        <com.rockerhieu.emojicon.EmojiconTextView
+                            android:id="@+id/timestamp_reply"
+                            android:text="Jun 22, 2014"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/timestamp"
+                            android:textSize="@dimen/feed_item_timestamp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.rockerhieu.emojicon.EmojiconTextView
+                    android:id="@+id/txtStatusMsg_reply"
+                    android:text="Mas ngomongnya pake bahasa indo dong, aku englishnya kurang paham euy"
+                    android:textSize="@dimen/feed_item_profile_status"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="@dimen/feed_item_status_pad_top" />
+
+                <!--<com.rockerhieu.emojicon.EmojiconTextView-->
+                <!--android:id="@+id/txtUrl"-->
+                <!--android:text="https://bc.com"-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:linksClickable="true"-->
+                <!--android:paddingBottom="10dp"-->
+                <!--android:paddingRight="@dimen/feed_item_status_pad_left_right"-->
+                <!--android:textColorLink="@color/link" />-->
+
+                <com.byonchat.android.personalRoom.NoteFeedImageView
+                    android:id="@+id/feedImage1_reply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:scaleType="fitXY"
+                    android:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/button_timeline_background"
+                        android:gravity="center_vertical|center_horizontal"> <!-- 1 -->
+
+                        <com.rockerhieu.emojicon.EmojiconTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Loves"
+                            android:textSize="@dimen/feed_item_button"
+                            android:textColor="@color/text_like_counter"
+                            android:layout_marginLeft="@dimen/note_button_space"/>
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/button_timeline_background_border"
+                            android:layout_marginLeft="@dimen/note_button_space_divider"
+                            android:layout_marginRight="@dimen/note_button_space_divider" />
+
+                        <TextSwitcher
+                            android:id="@+id/tsLikesCounter1_reply"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inAnimation="@anim/slide_in_likes_counter"
+                            android:outAnimation="@anim/slide_out_likes_counter"
+                            android:layout_marginRight="@dimen/note_button_space">
+
+                            <com.rockerhieu.emojicon.EmojiconTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="5"
+                                android:textSize="@dimen/feed_item_button"
+                                android:textColor="@color/text_like_counter" />
+
+                            <com.rockerhieu.emojicon.EmojiconTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_like_counter" />
+                        </TextSwitcher>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 2 -->
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="4dp"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:background="@drawable/bg_dot"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 3 -->
+
+                        <com.rockerhieu.emojicon.EmojiconTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nix"
+                            android:textSize="@dimen/feed_item_button"
+                            android:textColor="@color/text_like_counter" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"> <!-- 4 -->
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="4dp"
+                            android:layout_marginLeft="@dimen/note_button_space"
+                            android:layout_marginRight="@dimen/note_button_space"
+                            android:layout_gravity="center_vertical"
+                            android:background="@drawable/bg_dot"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:background="@drawable/button_timeline_background"
+                        android:gravity="center_vertical|center_horizontal"><!-- 5 -->
+
+                        <com.rockerhieu.emojicon.EmojiconTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Reply"
+                            android:textSize="@dimen/feed_item_button"
+                            android:textColor="@color/text_like_counter"
+                            android:layout_marginLeft="@dimen/note_button_space" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/note_button_space_divider"
+                            android:layout_marginRight="@dimen/note_button_space_divider"
+                            android:background="@color/button_timeline_background_border" />
+
+                        <TextSwitcher
+                            android:id="@+id/tsLikesCounter2_reply"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inAnimation="@anim/slide_in_likes_counter"
+                            android:outAnimation="@anim/slide_out_likes_counter"
+                            android:layout_marginRight="@dimen/note_button_space">
+
+                            <com.rockerhieu.emojicon.EmojiconTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="123"
+                                android:textSize="@dimen/feed_item_button"
+                                android:textColor="@color/text_like_counter" />
+
+                            <com.rockerhieu.emojicon.EmojiconTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/text_like_counter" />
+                        </TextSwitcher>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"><!-- 6 -->
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/inner_recycler"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        </android.support.v7.widget.CardView>
+</LinearLayout>

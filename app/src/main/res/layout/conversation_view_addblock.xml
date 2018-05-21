@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/add_block_view"
+        >
+
+        <TableLayout
+            android:id="@+id/widget135"
+            android:layout_width="fill_parent"
+            android:layout_height="35dp"
+            android:orientation="vertical"
+            >
+            <TableRow>
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Add"
+                    android:id="@+id/headerBtnAdd"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/btn_send_costume_selector"
+                    android:padding="5dp"
+                    />
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Block"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/headerBtnLock"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/btn_send_costume_selector"
+                    android:layout_gravity="center"
+                    android:padding="5dp"
+                    />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+
+</LinearLayout>

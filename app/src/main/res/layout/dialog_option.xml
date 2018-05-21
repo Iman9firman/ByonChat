@@ -1,0 +1,278 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/dialog_voucher_rounded"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical">
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/margin10"
+                android:text="Select an action"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/blue" />
+
+            <FrameLayout
+                android:id="@+id/frameLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/dialog_frame_bottom_rounded">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:id="@+id/btnDelete"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin40"
+                        android:visibility="gone"
+                        android:background="@drawable/dialog_frame_not_rounded">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Delete"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/btnDeleteRounded"
+                        android:layout_width="match_parent"
+                        android:visibility="gone"
+                        android:layout_height="@dimen/margin40"
+                        android:background="@drawable/dialog_frame_bottom_rounded">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Delete"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+
+                    <View
+                        android:id="@+id/garis1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/margin17"
+                        android:layout_marginRight="@dimen/margin17"
+                        android:background="@color/line"/>
+
+                    <FrameLayout
+                        android:id="@+id/btnCopy"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin40"
+                        android:background="@drawable/dialog_frame_not_rounded"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Copy"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+
+                    <View
+                        android:id="@+id/garis2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/margin17"
+                        android:layout_marginRight="@dimen/margin17"
+                        android:background="@color/line"
+                        android:visibility="gone" />
+
+                    <FrameLayout
+                        android:id="@+id/btnResend"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin40"
+                        android:background="@drawable/dialog_frame_not_rounded"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Resend"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+
+                    <View
+                        android:id="@+id/garis3"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/margin17"
+                        android:layout_marginRight="@dimen/margin17"
+                        android:background="@color/line"
+                        android:visibility="gone" />
+
+                    <FrameLayout
+                        android:id="@+id/btnForward"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin40"
+                        android:background="@drawable/dialog_frame_not_rounded"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Forward"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/btnForwardRounded"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin43"
+                        android:background="@drawable/dialog_frame_bottom_rounded"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/forwardTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Forward"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+
+                    <View
+                        android:id="@+id/garis4"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/margin17"
+                        android:layout_marginRight="@dimen/margin17"
+                        android:background="@color/line"
+                        android:visibility="gone" />
+
+                    <FrameLayout
+                        android:id="@+id/btnShare"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin40"
+                        android:background="@drawable/dialog_frame_not_rounded"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Share"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+
+                    <View
+                        android:id="@+id/garis5"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/margin17"
+                        android:layout_marginRight="@dimen/margin17"
+                        android:background="@color/line"
+                        android:visibility="gone" />
+
+                    <FrameLayout
+                        android:id="@+id/btnEditMeme"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin40"
+                        android:background="@drawable/dialog_frame_not_rounded"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Edit as meme"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/btnEditMemeRounded"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin40"
+                        android:background="@drawable/dialog_frame_bottom_rounded"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Edit as meme"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+
+                    <View
+                        android:id="@+id/garis6"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="@dimen/margin17"
+                        android:layout_marginRight="@dimen/margin17"
+                        android:background="@color/line"
+                        android:visibility="gone" />
+
+                    <FrameLayout
+                        android:id="@+id/btnRecall"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin43"
+                        android:background="@drawable/dialog_frame_bottom_rounded"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Recall Message"
+                            android:textAllCaps="false"
+                            android:textSize="@dimen/text16"
+                            android:textStyle="normal" />
+                    </FrameLayout>
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/img_dialog" />
+
+</RelativeLayout>

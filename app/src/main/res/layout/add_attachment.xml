@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_marginBottom="1dp"
+    android:background="@drawable/backgroud_white_shadow"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/btn_addatt_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@null"
+        android:contentDescription="Location"
+        android:text="Location"
+        android:drawablePadding="8dp"
+        android:padding="10dp"
+        android:drawableTop="@drawable/ic_att_location"
+        style="@style/TextLightGrayMobile"/>
+
+    <Button
+        android:id="@+id/btn_addatt_meme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@null"
+        android:contentDescription="Create Meme"
+        android:drawablePadding="8dp"
+        android:padding="10dp"
+        android:drawableTop="@drawable/ic_att_meme"
+        android:text="Meme"
+        style="@style/TextLightGrayMobile"/>
+
+    <Button
+        android:id="@+id/btn_addatt_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@null"
+        android:contentDescription="Camera"
+        android:drawablePadding="8dp"
+        android:text="Photo"
+        android:padding="10dp"
+        android:drawableTop="@drawable/ic_att_photo"
+        style="@style/TextLightGrayMobile"/>
+
+    <Button
+        android:id="@+id/btn_addatt_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@null"
+        android:contentDescription="Video"
+        android:drawablePadding="8dp"
+        android:padding="10dp"
+        android:drawableTop="@drawable/ic_att_video"
+        android:text="Video"
+        style="@style/TextLightGrayMobile"/>
+</LinearLayout>
+</LinearLayout>

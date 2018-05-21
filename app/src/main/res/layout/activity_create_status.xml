@@ -1,0 +1,159 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f1f1f1">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:theme="@style/ToolbarTheme">
+
+        <TextView
+            android:id="@+id/title_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:singleLine="true"
+            android:text="Create"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@android:color/white" />
+
+        <!--<ImageView-->
+            <!--android:id="@+id/buttonSave"-->
+            <!--android:layout_width="?attr/actionBarSize"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:layout_gravity="right|center_vertical"-->
+            <!--android:backgroundTint="@color/tab"-->
+            <!--android:elevation="8dp"-->
+            <!--android:src="@drawable/button_save"-->
+            <!--android:clickable="true"-->
+            <!--android:focusableInTouchMode="false"-->
+            <!--app:layout_collapseMode="parallax" />-->
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:id="@+id/contentRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:background="@color/bg_comments"
+        android:elevation="8dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#f1f1f1">
+
+            <com.rockerhieu.emojicon.EmojiconEditText
+                android:id="@+id/writeStatus"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/WriteProfile"
+                android:hint="Write your status..."
+                android:layout_alignParentTop="true"
+                android:gravity="left|top"
+                android:padding="@dimen/margin10"
+                android:background="@drawable/background_note_status"
+                android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
+                android:textSize="16sp"
+                emojicon:emojiconSize="30sp">
+
+                <requestFocus />
+            </com.rockerhieu.emojicon.EmojiconEditText>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/shadow_top" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/llAddComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_comments"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/footer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:background="#ffffffff"
+                android:gravity="left|center_vertical"
+                android:orientation="horizontal"
+                android:padding="3dp">
+
+                <ImageButton
+                    android:id="@+id/btn_add_emoticon"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/btn_costume_selector"
+                    android:src="@drawable/smiley"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnMic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/btn_costume_selector"
+                    android:src="@android:drawable/ic_btn_speak_now"
+                    android:textSize="14sp"
+                    android:textStyle="bold"/>
+
+                <ImageButton
+                    android:id="@+id/btnKeyboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/btn_costume_selector"
+                    android:src="@drawable/keyboard"
+                    android:textColor="#ffffffff"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/emojiconsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <fragment
+                    android:id="@+id/emojicons"
+                    class="com.rockerhieu.emojicon.EmojiconsFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <include layout="@layout/att_menu_conversation" />
+</RelativeLayout>

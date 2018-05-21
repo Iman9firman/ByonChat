@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#FFFFFF"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+            <EditText android:id="@+id/inputSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:hint="Search ..."
+                android:inputType="textVisiblePassword"
+                android:layout_toLeftOf="@+id/btn_add_bot"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_weight="1"
+                android:background="@drawable/backgroud_conversation"
+                android:padding="5dp"
+                />
+            <ImageButton
+                android:layout_marginLeft="5dp"
+                android:id="@+id/btn_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_search"
+                android:background="@drawable/btn_costume_selector"/>
+
+        </LinearLayout>
+
+        <com.byonchat.android.widget.LoadMoreListView
+            android:id="@+id/listCatalog"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:drawSelectorOnTop="true"
+            android:divider="@null"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scrollbars="none"
+            android:listSelector="@android:color/transparent">
+    </com.byonchat.android.widget.LoadMoreListView>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/txtEmpty"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/rooms_not_available"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

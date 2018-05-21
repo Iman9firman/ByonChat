@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/frameSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="@dimen/custom_card_margin"
+                    android:layout_marginRight="@dimen/custom_card_margin"
+                    android:layout_marginTop="@dimen/margin7"
+                    android:minHeight="100dp"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/profileStatus"
+                        style="@style/TextLightGray"
+                        android:layout_width="match_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_personal"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="top"
+                        android:hint="Write your status..."
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:minLines="4"
+                        android:maxLength="250"
+                        android:minHeight="100dp"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="50dp"
+                        android:paddingTop="5dp"
+                        android:textCursorDrawable="@drawable/cursor" />
+
+                    <ImageView
+                        android:id="@+id/btSaveProfile"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="right|end|top"
+                        android:clickable="true"
+                        android:focusableInTouchMode="false"
+                        android:src="@drawable/button_save"
+                        app:backgroundTint="@color/white"
+                        app:elevation="8dp"
+                        app:layout_anchor="@id/profileStatus"
+                        app:layout_anchorGravity="right|end|top" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/frameEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="@dimen/custom_card_margin"
+                    android:layout_marginRight="@dimen/custom_card_margin"
+                    android:layout_marginTop="@dimen/margin7"
+                    android:minHeight="100dp">
+
+                    <FrameLayout
+                        android:id="@+id/cardview"
+                        android:layout_width="match_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittext_personal"
+                        android:minHeight="100dp">
+
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/statusTxt"
+                                style="@style/TextLightGray"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:focusableInTouchMode="true"
+                                android:fontFamily="sans-serif-light"
+                                android:maxLength="250"
+                                android:paddingBottom="5dp"
+                                android:paddingLeft="5dp"
+                                android:paddingRight="50dp"
+                                android:paddingTop="5dp" />
+                        </ScrollView>
+
+                    </FrameLayout>
+
+                    <ImageView
+                        android:id="@+id/btEditProfile"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="right|end|top"
+                        android:clickable="true"
+                        android:focusableInTouchMode="true"
+                        android:src="@drawable/button_edit"
+                        app:backgroundTint="@color/white"
+                        app:layout_anchor="@id/cardview"
+                        app:layout_anchorGravity="right|end|top" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/cv2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/toolbar"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="@dimen/custom_card_margin"
+                    android:layout_marginRight="@dimen/custom_card_margin"
+                    android:layout_marginTop="@dimen/margin10"
+                    android:background="@drawable/edittext_personal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/pr_profile_margin"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TextLightGray"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-light"
+                            android:gravity="center_horizontal"
+                            android:text="My current hashtags"
+                            android:textColor="@color/pr_profile_hashtag" />
+
+                        <View
+                            android:layout_width="fill_parent"
+                            android:layout_height="1dip"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginBottom="@dimen/pr_profile_separator_margin"
+                            android:layout_marginTop="@dimen/pr_profile_separator_margin"
+                            android:background="@color/separator" />
+
+                        <TextView
+                            android:id="@+id/hashtag"
+                            style="@style/TextLightGray"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-light"
+                            android:gravity="center_horizontal"
+                            android:textColor="@color/pr_profile_hashtag" />
+                        <!--android:text="@string/hashtag"-->
+
+                    </LinearLayout>
+                </FrameLayout>
+
+                <Button
+                    android:id="@+id/btnedit"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/button_background"
+                    android:text="Edit Hashtag"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_button" />
+            </LinearLayout>
+        </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
+
+
+</android.support.design.widget.CoordinatorLayout>

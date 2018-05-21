@@ -1,0 +1,188 @@
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:fitsSystemWindows="true">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:fitsSystemWindows="true"
+                android:id="@+id/profile_id"
+                app:layout_collapseMode="parallax" />
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin" />
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffe5e5e5"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="10dp">
+
+            <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="@dimen/margin10"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:id="@+id/textViewStatus"
+                        android:text="Voting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        style="@style/TextLightBlue"/>
+                    <View
+                        android:id="@+id/sparatorStatus"
+                        android:padding="2dp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0.5dp"
+                        android:background="#ccc"
+                        android:layout_below="@+id/textViewStatus"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="8dp"
+                        />
+                    <com.rockerhieu.emojicon.EmojiconTextView
+                        android:id="@+id/textProfileDataStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Data Status"
+                        android:layout_below="@+id/sparatorStatus"
+                        style="@style/TextRegularGrayMedium"
+                        />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="@dimen/margin10"
+                >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:id="@+id/textViewPhone"
+                        android:text="Participant"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        style="@style/TextLightBlue"/>
+                    <View
+                        android:id="@+id/sparatorPhone"
+                        android:padding="2dp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0.5dp"
+                        android:background="#ccc"
+                        android:layout_below="@+id/textViewPhone"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="8dp"
+                        />
+                    <LinearLayout
+                        android:layout_below="@+id/sparatorPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:id="@+id/linearLayoutAdd"
+                        android:orientation="horizontal"
+                        android:background="@drawable/selector_no_stroke"
+                        >
+                        <ImageView
+                            android:id="@+id/imagePhoto"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="true"
+                            android:padding="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:cropToPadding="true"
+                            android:src="@drawable/ic_add_members" />
+
+                        <TextView
+                            android:id="@+id/textTitle"
+                            android:layout_marginTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="Add Participant..."
+                            style="@style/TextMediumBlack" />
+                    </LinearLayout>
+                    <View
+                        android:id="@+id/sparatorAdd"
+                        android:padding="2dp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="0.5dp"
+                        android:background="#ccc"
+                        android:layout_below="@+id/linearLayoutAdd"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="8dp"
+                        />
+                    <LinearLayout
+                        android:layout_below="@+id/sparatorAdd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/linearLayout"
+                        android:orientation="vertical"
+                        ></LinearLayout>
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin10"
+                android:text="EXIT GROUP"
+                android:id="@+id/btn_exit"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,169 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:id="@+id/toolbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/backgroud_white"
+            android:elevation="8dp"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/linlaHeaderProgress"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/pbHeaderProgress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></ProgressBar>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/emptyList"
+        style="@style/TextRegularGrayMedium"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/gonelist"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/toolbar_container"
+        android:divider="@null"
+        android:padding="@dimen/margin10" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:visibility="gone"
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_below="@+id/toolbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <lb.library.PinnedHeaderListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"
+            android:dividerHeight="0px"
+            android:fadeScrollbars="false"
+            android:fastScrollEnabled="true"
+            android:listSelector="@drawable/listview_selector"
+            android:scrollingCache="false"
+            tools:listitem="@layout/listview_item"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/linearTrending"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/toolbar_container"
+        android:gravity="center_horizontal"
+        android:visibility="visible"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/margin10"
+        android:paddingTop="@dimen/margin10">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_vertical_margin"
+            android:paddingTop="@dimen/activity_vertical_margin">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/backgroud_white"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="@dimen/margin50"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/margin10"
+                    android:paddingLeft="@dimen/margin10"
+                    android:paddingRight="@dimen/margin10"
+                    android:paddingTop="@dimen/margin10"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TextMediumBlack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="Trending searches"
+                        android:textColor="@color/blueLine"
+                        android:textSize="20sp" />
+
+                    <ImageView
+                        android:id="@+id/btn_refresh"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/ic_refresh_black_18dp"/>
+                </RelativeLayout>
+
+                <ScrollView
+                    android:id="@+id/tags_laoyut"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible">
+
+                    <com.byonchat.android.FlowLayout.FlowLayout
+                        xmlns:f="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/flowLayout"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center"
+                        android:gravity="fill"
+                        android:orientation="horizontal"
+                        android:paddingBottom="@dimen/margin10"
+                        android:paddingLeft="@dimen/margin10"
+                        android:paddingRight="@dimen/margin10"
+                        f:debugDraw="true"
+                        f:layoutDirection="ltr"
+                        f:weightDefault="1.0">
+
+                        <com.byonchat.android.TagTrending.TagView
+                            android:id="@+id/tag_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp" />
+                    </com.byonchat.android.FlowLayout.FlowLayout>
+
+                </ScrollView>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

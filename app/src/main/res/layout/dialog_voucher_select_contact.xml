@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/dialog_voucher_rounded"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/frame_tengah"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:id="@+id/frame_1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin30"
+            android:background="@drawable/dialog_voucher_title_rounded">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="@dimen/margin45"
+                    android:layout_height="@dimen/margin45"
+                    android:layout_gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/btn_back"
+                        android:layout_width="@dimen/margin30"
+                        android:layout_height="@dimen/margin30"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:src="@drawable/ic_arrow_back_white" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Select Contact"
+                    android:textColor="@drawable/selector_txt_blue_white"
+                    android:textSize="@dimen/margin17" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:gravity="right">
+
+                <FrameLayout
+                    android:layout_width="@dimen/margin45"
+                    android:layout_height="@dimen/margin45"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/btn_done"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="left|center_vertical"
+                        android:text="Done"
+                        android:textColor="@drawable/selector_txt_blue_white"
+                        android:textSize="@dimen/margin17" />
+                </FrameLayout>
+            </RelativeLayout>
+
+        </FrameLayout>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/frame_2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin45">
+        <!--android:background="#d40101"-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="@dimen/margin45"
+                android:layout_height="@dimen/margin45">
+
+                <ImageView
+                    android:id="@+id/btn_back2"
+                    android:layout_width="@dimen/margin45"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:src="@drawable/bt_search_all" />
+            </FrameLayout>
+
+            <EditText
+                android:id="@+id/searchlist"
+                style="@android:style/Theme.Panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/white"
+                android:text="Search"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/margin15" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recylerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:choiceMode="singleChoice"
+        android:paddingBottom="@dimen/margin15"
+        android:paddingTop="@dimen/margin15" />
+
+</LinearLayout>

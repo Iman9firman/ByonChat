@@ -1,0 +1,486 @@
+<resources>
+    <string name="app_name">ByonChat</string>
+    <string name="app_version">1.1.0.6.1(UAT 2)</string>
+    <string name="action_settings">Settings</string>
+    <string name="str_delete">Delete</string>
+    <string name="group_create_info">Please provide group name</string>
+    <string name="sql_createtable_configurations">CREATE TABLE IF NOT EXISTS configurations(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT);</string>
+    <string name="sql_createtable_configurations_index">CREATE INDEX IF NOT EXISTS configuration_name ON configurations(name);</string>
+    <string name="sql_createtable_group">CREATE TABLE IF NOT EXISTS groups(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, jid TEXT, status TEXT);</string>
+    <string name="sql_createtable_group_index">CREATE UNIQUE INDEX IF NOT EXISTS group_jid ON groups(jid COLLATE NOCASE);</string>
+    <!-- <string name="sql_createtable_contact">CREATE TABLE IF NOT EXISTS contacts(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, jid TEXT, status TEXT, addrbook_id TEXT, type INTEGER DEFAULT 0);</string> -->
+    <string name="sql_createtable_contact">CREATE TABLE IF NOT EXISTS contacts(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, realname TEXT, jid TEXT, status TEXT, addrbook_id TEXT,point TEXT,gender TEXT, birthdate TEXT, email TEXT,facebookId TEXT,city TEXT,cp INTEGER DEFAULT 0);</string>
+    <string name="sql_altertable_contact">ALTER TABLE contacts ADD COLUMN cp INTEGER DEFAULT 0</string>
+    <string name="sql_createtable_contact_index">CREATE UNIQUE INDEX IF NOT EXISTS contact_jid ON contacts(jid COLLATE NOCASE);</string>
+    <string name="sql_createtable_conversation">CREATE TABLE IF NOT EXISTS messages(_id INTEGER PRIMARY KEY AUTOINCREMENT, packet_id TEXT, source TEXT, source_info TEXT, destination TEXT, send_date INTEGER DEFAULT 0, delivered_date DEFAULT 0, message TEXT,is_retry INTEGER DEFAULT 0, status INTEGER DEFAULT 1, type TEXT, is_group_chat INTEGER DEFAULT 0);</string>
+    <string name="sql_createtable_time_line">CREATE TABLE IF NOT EXISTS time_line(_id INTEGER PRIMARY KEY AUTOINCREMENT,jid TEXT, status TEXT, send_date INTEGER DEFAULT 0);</string>
+    <string name="sql_createtable_conversation_index_source">CREATE INDEX IF NOT EXISTS messages_source ON messages(source);</string>
+    <string name="sql_createtable_conversation_index_destination">CREATE INDEX IF NOT EXISTS messages_destination ON messages(destination);</string>
+    <string name="sql_createtable_conversation_index_packetid">CREATE INDEX IF NOT EXISTS messages_packetid ON messages(packet_id);</string>
+
+    <string name="sql_chat_list">SELECT cv.*, co.name, co.jid FROM (
+          SELECT * FROM (
+            SELECT *, source number from messages where source != ? and type != ? GROUP BY source
+            union
+            SELECT *, destination number from messages where destination != ? and type !=? GROUP BY destination
+            ) t
+          GROUP BY number ORDER BY  _id DESC, delivered_date  ) cv
+        LEFT JOIN
+        (SELECT name, jid FROM contacts UNION SELECT name, jid FROM groups) as co ON cv.number=co.jid;</string>
+
+    <string name="sql_insert_configuration">INSERT INTO configurations (name, value) VALUES(?, ?);</string>
+    <string name="sql_contact_by_jid">SELECT * FROM contacts WHERE jid=?;</string>
+    <string name="sql_group_by_jid">SELECT * FROM groups WHERE jid=?;</string>
+    <string name="sql_message_by_packetid">SELECT * FROM messages WHERE packet_id=?;</string>
+    <string name="sql_all_jid">SELECT * FROM contacts;</string>
+
+    <string-array name="nav_drawer_labels">
+        <item>@string/nav_item_home</item>
+        <item>@string/nav_item_friends</item>
+        <item>@string/nav_item_notifications</item>
+    </string-array>
+    <string name="nav_item_home">Home</string>
+    <string name="list_empty">No item</string>
+    <string name="nav_item_friends">Friends</string>
+    <string name="nav_item_notifications">Messages</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="tabtitle_contact">Contacts</string>
+    <string name="tabtitle_chat">Chats</string>
+    <string name="tabtitle_offers">Offers</string>
+    <string name="tabtitle_offers_vouchers">Vouchers and Offers</string>
+    <string name="tabtitle_rooms">Rooms</string>
+    <string name="tabtitle_MyMembers">My Memberships</string>
+
+    <string name="activationcode">Activation Code </string>
+    <string name="activationcode_info">We have sent you an SMS</string>
+    <string name="activationcode_info_second">with verification code to the number below</string>
+    <string name="activationcode_enter_digit">To complete your phone number verification, please enter the 6-digit activation code.</string>
+
+    <string name="registration_hint_countrycode">Code</string>
+    <string name="registration_hint_phone">Enter your phone number</string>
+    <string name="registration_select_country">Select Country</string>
+    <string name="registration_resend_new_code">Resend number to get a new code</string>
+    <string name="registration_time_remaning">Time remaning</string>
+    <string name="registration_no_internet">Network Required \n\n ByonChat requires an active Internet connection to go through the setup process. EDGE, 3G, and Wi-Fi are supported.</string>
+    <string name="registration_alert_title">Number Confirmation</string>
+    <string name="registration_alert_content">\n\nIs your phone number above correct?</string>
+    <string name="registration_infoplus">ByonChat will send one time SMS message to verify your phone number. Carrier SMS charges may apply</string>
+    <string name="error_invalid_number">Invalid phone number</string>
+    <string name="title_activity_country">Choose a country</string>
+    <string name="error_invalid_code">Invalid country code length (1-3 digits only)</string>
+    <string name="registration_info">Please confirm your country code and enter your phone number</string>
+
+    <string name="setting_up_byonchat">Now setting up ByonChat\n</string>
+    <string name="create_group_byonchat">Create Group Chat</string>
+    <string name="name_group_byonchat">Your Group Name</string>
+    <string name="title_activity_members_detail">Members Detail</string>
+    <string name="delete_all_contacts">DELETE FROM contacts where _id > 1;</string>
+
+    <string name="share_subject">Install ByonChat</string>
+    <string name="share_title">Invite Friends</string>
+    <string name="share_body">Check out ByonChat for your smartphone. Download it today from http://campaignmanager.asia/market/</string>
+
+    <string name="pleaseTryAgain">Please try again later</string>
+    <string name="no_internet">No Internet Connection</string>
+    <string name="rooms_not_available">Rooms not available</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_conversation_delete">Delete</string>
+    <string name="menu_conversation_copy">Copy</string>
+    <string name="menu_conversation_forward">Forward</string>
+    <string name="menu_conversation_tarik">Recall Message</string>
+    <string name="menu_conversation_resend">Resend</string>
+    <string name="menu_group_create">New Group</string>
+    <string name="menu_status">Status</string>
+    <string name="menu_profile">Set Profile Picture</string>
+    <string name="menu_account">Settings</string>
+    <string name="menu_skin">Select Themes</string>
+    <string name="menu_broadcast_create">New Broadcast</string>
+    <string name="menu_failed_retry">Resend</string>
+    <string name="menu_failed_retry_all">Retry All</string>
+    <string name="menu_contact_refresh">Refresh Contacts</string>
+    <string name="menu_next">Next</string>
+    <string name="accept">accept</string>
+    <string name="file_too_large">the file size is too large</string>
+
+    <string name="title_activity_select_contact">Select Contact</string>
+    <string name="googlemap_static_url">http://maps.googleapis.com/maps/api/staticmap</string>
+    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="title_activity_confirmation_send_file">Confirmation Send</string>
+    <string name="themes_not_available">Themes not available</string>
+    <string name="themes_aktif">Themes is being used</string>
+    <string name="btntext_apply">Apply</string>
+    <string name="btntext_detail">Detail</string>
+    <string name="btntext_delete">Delete</string>
+    <string name="title_activity_skin_selector">Themes Selection</string>
+    <string name="title_activity_create_meme">Create Meme</string>
+    <string name="title_activity_search_themes">Search Themes</string>
+    <string name="title_activity_acount_setting">Settings</string>
+    <string name="title_activity_search_apps">Search Apps</string>
+    <string name="title_activity_my_apps">My Apps</string>
+    <string name="title_activity_web_view_byon">Web ViewByon Activity</string>
+    <string name="use_voucher">Use Voucher</string>
+    <string name="transfer_voucher">Transfer Voucher</string>
+    <string name="participant_outlets">Participants Outlets</string>
+    <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="amount">Amount</string>
+    <string name="serial_number">Serial Number</string>
+    <string name="valid_until">Valid until</string>
+    <string name="redeem_place">Redeem Place</string>
+    <string name="input_outlet_id">Input Outlet ID</string>
+    <string name="byonchat_id">or Byonchat ID</string>
+    <string name="select_contact">Select Contact</string>
+    <string name="to">To</string>
+    <string name="title_activity_vouchers">ByonChat Vouchers</string>
+    <string name="content_open_popup">Choose Action</string>
+
+    <style name="TextRegularBlackNamaProfile">
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">21sp</item>
+    </style>
+
+    <style name="TextLightGraySmall">
+        <item name="android:textColor">#777777</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextRegularGraySmall">
+        <item name="android:textColor">#777777</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextRegularGrayMedium">
+        <item name="android:textColor">#777777</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <string-array name="CountryCodes">
+        <!--  <item>93,AF</item>
+          <item>355,AL</item>
+          <item>213,DZ</item>
+          <item>376,AD</item>
+          <item>244,AO</item>
+          <item>672,AQ</item>
+          <item>54,AR</item>
+          <item>374,AM</item>
+          <item>297,AW</item>
+          <item>61,AU</item>
+          <item>43,AT</item>
+          <item>994,AZ</item>
+          <item>973,BH</item>
+          <item>880,BD</item>
+          <item>375,BY</item>
+          <item>32,BE</item>
+          <item>501,BZ</item>
+          <item>229,BJ</item>
+          <item>975,BT</item>
+          <item>591,BO</item>
+          <item>387,BA</item>
+          <item>267,BW</item>
+          <item>55,BR</item>
+          <item>673,BN</item>
+          <item>359,BG</item>
+          <item>226,BF</item>
+          <item>95,MM</item>
+          <item>257,BI</item>
+          <item>855,KH</item>
+          <item>237,CM</item>
+          <item>1,CA</item>
+          <item>238,CV</item>
+          <item>236,CF</item>
+          <item>235,TD</item>
+          <item>56,CL</item>
+          <item>86,CN</item>
+          <item>61,CX</item>
+          <item>61,CC</item>
+          <item>57,CO</item>
+          <item>269,KM</item>
+          <item>242,CG</item>
+          <item>243,CD</item>
+          <item>682,CK</item>
+          <item>506,CR</item>
+          <item>385,HR</item>
+          <item>53,CU</item>
+          <item>357,CY</item>
+          <item>420,CZ</item>
+          <item>45,DK</item>
+          <item>253,DJ</item>
+          <item>670,TL</item>
+          <item>593,EC</item>
+          <item>20,EG</item>
+          <item>503,SV</item>
+          <item>240,GQ</item>
+          <item>291,ER</item>
+          <item>372,EE</item>
+          <item>251,ET</item>
+          <item>500,FK</item>
+          <item>298,FO</item>
+          <item>679,FJ</item>
+          <item>358,FI</item>
+          <item>33,FR</item>
+          <item>689,PF</item>
+          <item>241,GA</item>
+          <item>220,GM</item>
+          <item>995,GE</item>
+          <item>49,DE</item>
+          <item>233,GH</item>
+          <item>350,GI</item>
+          <item>30,GR</item>
+          <item>299,GL</item>
+          <item>502,GT</item>
+          <item>224,GN</item>
+          <item>245,GW</item>
+          <item>592,GY</item>
+          <item>509,HT</item>
+          <item>504,HN</item>
+          <item>852,HK</item>
+          <item>36,HU</item>
+          <item>91,IN</item>-->
+        <item>62,ID</item>
+        <!--  <item>98,IR</item>
+        <item>964,IQ</item>
+        <item>353,IE</item>
+        <item>44,IM</item>
+        <item>972,IL</item>
+        <item>39,IT</item>
+        <item>225,CI</item>
+        <item>81,JP</item>
+        <item>962,JO</item>
+        <item>7,KZ</item>
+        <item>254,KE</item>
+        <item>686,KI</item>
+        <item>965,KW</item>
+        <item>996,KG</item>
+        <item>856,LA</item>
+        <item>371,LV</item>
+        <item>961,LB</item>
+        <item>266,LS</item>
+        <item>231,LR</item>
+        <item>218,LY</item>
+        <item>423,LI</item>
+        <item>370,LT</item>
+        <item>352,LU</item>
+        <item>853,MO</item>
+        <item>389,MK</item>
+        <item>261,MG</item>
+        <item>265,MW</item>
+        <item>60,MY</item>
+        <item>960,MV</item>
+        <item>223,ML</item>
+        <item>356,MT</item>
+        <item>692,MH</item>
+        <item>222,MR</item>
+        <item>230,MU</item>
+        <item>262,YT</item>
+        <item>52,MX</item>
+        <item>691,FM</item>
+        <item>373,MD</item>
+        <item>377,MC</item>
+        <item>976,MN</item>
+        <item>382,ME</item>
+        <item>212,MA</item>
+        <item>258,MZ</item>
+        <item>264,NA</item>
+        <item>674,NR</item>
+        <item>977,NP</item>
+        <item>31,NL</item>
+        <item>599,AN</item>
+        <item>687,NC</item>
+        <item>64,NZ</item>
+        <item>505,NI</item>
+        <item>227,NE</item>
+        <item>234,NG</item>
+        <item>683,NU</item>
+        <item>850,KP</item>
+        <item>47,NO</item>
+        <item>968,OM</item>
+        <item>92,PK</item>
+        <item>680,PW</item>
+        <item>507,PA</item>
+        <item>675,PG</item>
+        <item>595,PY</item>
+        <item>51,PE</item>
+        <item>63,PH</item>
+        <item>870,PN</item>
+        <item>48,PL</item>
+        <item>351,PT</item>
+        <item>1,PR</item>
+        <item>974,QA</item>
+        <item>40,RO</item>
+        <item>7,RU</item>
+        <item>250,RW</item>
+        <item>590,BL</item>
+        <item>685,WS</item>
+        <item>378,SM</item>
+        <item>239,ST</item>
+        <item>966,SA</item>
+        <item>221,SN</item>
+        <item>381,RS</item>
+        <item>248,SC</item>
+        <item>232,SL</item>
+        <item>65,SG</item>
+        <item>421,SK</item>
+        <item>386,SI</item>
+        <item>677,SB</item>
+        <item>252,SO</item>
+        <item>27,ZA</item>
+        <item>82,KR</item>
+        <item>34,ES</item>
+        <item>94,LK</item>
+        <item>290,SH</item>
+        <item>508,PM</item>
+        <item>249,SD</item>
+        <item>597,SR</item>
+        <item>268,SZ</item>
+        <item>46,SE</item>
+        <item>41,CH</item>
+        <item>963,SY</item>
+        <item>886,TW</item>
+        <item>992,TJ</item>
+        <item>255,TZ</item>
+        <item>66,TH</item>
+        <item>228,TG</item>
+        <item>690,TK</item>
+        <item>676,TO</item>
+        <item>216,TN</item>
+        <item>90,TR</item>
+        <item>993,TM</item>
+        <item>688,TV</item>
+        <item>971,AE</item>
+        <item>256,UG</item>
+        <item>44,GB</item>
+        <item>380,UA</item>
+        <item>598,UY</item>
+        <item>1,US</item>
+        <item>998,UZ</item>
+        <item>678,VU</item>
+        <item>39,VA</item>
+        <item>58,VE</item>
+        <item>84,VN</item>
+        <item>681,WF</item>
+        <item>967,YE</item>
+        <item>260,ZM</item>
+        <item>263,ZW</item>-->
+    </string-array>
+
+    <style name="TextMediumBlack">
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="TextLightGray">
+        <item name="android:textColor">#777777</item>
+        <item name="android:textSize">15sp</item>
+
+    </style>
+
+    <style name="TextLightGraySmalles">
+        <item name="android:textColor">#777777</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tittle_version">Hello blank fragment</string>
+    <string name="title_activity_finalizing">Finalizing Setup</string>
+    <string name="title_activity_create_group">Create Group</string>
+    <string name="title_pick_activity_create_group">Pick Members Group</string>
+    <string name="title_activity_conversation_group">ConversationGroupActivity</string>
+
+
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_login">Login</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_view_profile">View Profile Activity</string>
+    <string name="title_activity_change_password">Change Password</string>
+    <string name="title_activity_group_info">Group Info</string>
+    <string name="title_activity_group_note_create">GroupNoteCreateActivity</string>
+    <string name="title_activity_detail_group_note">Detail Group Note</string>
+    <string name="title_activity_detail_group_vote">Detail Group Voting</string>
+    <string name="title_activity_room">ByonChat Room</string>
+    <string name="title_activity_detail_room_task">PDAM TASK DETAIL</string>
+
+    <string-array name="colorOffers">
+        <item>#fbf7c3</item>
+        <item>#aa3bc9</item>
+        <item>#3bc93d</item>
+        <item>#3ba6c9</item>
+        <item>#c9543b</item>
+        <item>#3325ff</item>
+    </string-array>
+    <string name="title_activity_login_room">Login</string>
+
+    <!-- Lukman -->
+    <string name="camera">Camera</string>
+    <string name="post">POST</string>
+    <string name="hashtag">#indonesia #perahu #pantai #nelayan #bendera #byonchat #jakarta #byonchat #jakarta</string>
+    <string name="edit_info">Edit Info</string>
+    <string name="delete_picture">Delete Picture</string>
+    <string name="delete_videos">Delete Video</string>
+    <string name="title_activity_download_utils">DownloadUtilsActivity</string>
+    <string name="title_activity_download">DownloadFileByonchat</string>
+
+    <string name="title_activity_splash_screen">SplashScreen</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_news_detail">NewsDetailActivity</string>
+    <string name="title_activity_direction_bearing">DirectionBearingActivity</string>
+    <!--Lukman -->
+    <string name="activity_image_trans">activity_image_transition</string>
+    <string name="permission_write_external_rationale">Allow access external storage to select images</string>
+
+    <string name="ok">OK</string>
+    <string name="done">DONE</string>
+    <string name="image_directory">Camera</string>
+
+    <string name="title_folder">Folder</string>
+    <string name="send_to">Send to </string>
+    <string name="title_select_image">Tap to select images</string>
+    <string name="title_permission_denied">Permission denied</string>
+
+    <string name="selected">%d selected</string>
+    <string name="selected_with_limit">%1$d/%2$d selected</string>
+
+    <string name="error_create_image_file">Failed to create image file</string>
+    <string name="error_no_camera">No camera found</string>
+    <string name="error_null_cursor">Oops, something went wrong!</string>
+
+    <string name="msg_empty_images">No images found</string>
+    <string name="msg_no_write_external_permission">Please grant storage permission to select images</string>
+    <string name="msg_no_camera_permission">Please grant camera permission to capture image</string>
+    <string name="msg_limit_images">Image selection limit</string>
+    <string name="short_seconds">sec</string>
+    <string name="megabyte">MB</string>
+    <string name="kilobyte">KB</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">REGISTER</string>
+
+    <string name="slide_1_title">Banyak SMS!</string>
+    <string name="slide_1_desc">Punya banyak SMS ke sesama atau lain operator!</string>
+
+    <string name="slide_2_title">Pemanfaatan SMS</string>
+    <string name="slide_2_desc">Setiap SMS yang kami gunakan akan di konfersi menjadi POIN!</string>
+
+    <string name="slide_3_title">POIN!</string>
+    <string name="slide_3_desc">POIN yang diperoleh dapat di tukarkan dengan apa saja</string>
+
+    <string name="slide_4_title">SMS SOLDIER</string>
+    <string name="slide_4_desc">SMS SOLDIER bersifat global Ulasan terbesar penyedia teknologi keuangan dunia yang didedikasikan untuk solusi. SMS Soldier memberdayakan Dunia Keuangan dengan perangkat lunak, layanan, konsultasi dan outsourcing solusi fokus pada ritel dan institusional perbankan, pembayaran, aset dan kekayaan manajemen, risiko dan kepatuhan, pemberdayaan perdagangan, proses transaksi dan pencatatan.</string>
+
+
+</resources>

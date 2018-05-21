@@ -1,0 +1,108 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/dialog_voucher_rounded"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginTop="40dp"
+            android:gravity="center_horizontal|center_vertical">
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:id="@+id/confirmationTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_marginBottom="@dimen/margin10"
+                android:layout_marginLeft="@dimen/margin10"
+                android:layout_marginRight="@dimen/margin10"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="Confirmation"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/blue" />
+
+            <FrameLayout
+                android:id="@+id/frameLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/confirmationTxt"
+                android:background="@drawable/dialog_frame_bottom_rounded">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/confirmationDesc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="confirmation description"
+                        android:visibility="gone"
+                        android:textSize="@dimen/text16"
+                        android:paddingTop="@dimen/margin10"
+                        android:textStyle="normal"
+                        android:gravity="center"
+                        android:layout_gravity="center"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/margin80"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnNo"
+                            android:layout_width="@dimen/margin100"
+                            android:layout_height="@dimen/margin30"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="@dimen/margin20"
+                            android:background="@drawable/oval_btn_room"
+                            android:padding="5dp"
+                            android:text="No"
+                            android:textAllCaps="false"
+                            android:textColor="@drawable/selector_txt_black_white"
+                            android:textSize="14sp" />
+
+                        <Button
+                            android:id="@+id/btnYes"
+                            android:layout_width="@dimen/margin100"
+                            android:layout_height="@dimen/margin30"
+                            android:layout_gravity="center"
+                            android:background="@drawable/oval_btn_room"
+                            android:padding="5dp"
+                            android:text="Yes"
+                            android:textAllCaps="false"
+                            android:textColor="@drawable/selector_txt_black_white"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </FrameLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/img_dialog" />
+
+</RelativeLayout>

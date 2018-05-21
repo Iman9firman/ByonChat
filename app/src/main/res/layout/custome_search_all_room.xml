@@ -1,0 +1,20 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearSearch"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingRight="@dimen/margin10"
+    android:background="?attr/selectableItemBackground"
+    android:orientation="horizontal" >
+
+<ImageView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="2dp"
+    android:src="@drawable/bt_search_all"/>
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:text="Search\nAll"
+    android:gravity="center_vertical"
+    android:textSize="@dimen/margin10"/>
+</LinearLayout>

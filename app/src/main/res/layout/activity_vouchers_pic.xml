@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/dialog_voucher_rounded"
+    >
+
+
+    <FrameLayout
+        android:id="@+id/linear_propotionalimageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:weightSum="1">
+
+        <com.joooonho.SelectableRoundedImageView
+            android:id="@+id/bg_vouchers"
+            android:layout_width="wrap_content"
+            android:layout_height="580dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:fitsSystemWindows="true"
+            app:sriv_left_top_corner_radius="8dip"
+            app:sriv_right_top_corner_radius="8dip"
+            app:sriv_left_bottom_corner_radius="8dip"
+            app:sriv_right_bottom_corner_radius="8dip"
+            android:scaleType="centerCrop" />
+        <!--android:src="@drawable/bg_voucher"-->
+        <!--android:background="@drawable/background_vouchers_rounded_shadow"-->
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin60">
+            <FrameLayout
+                android:layout_width="@dimen/margin60"
+                android:layout_height="@dimen/margin60"
+                android:layout_gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/btn_back"
+                    android:layout_width="@dimen/margin30"
+                    android:layout_height="@dimen/margin30"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:src="@drawable/ic_arrow_back_white" />
+            </FrameLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left|end"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/margin30"
+        android:paddingLeft="@dimen/verticaltextview_size_15">
+        <!--android:paddingBottom="@dimen/verticaltextview_size_20"-->
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_verticaltextview_vouchers_top"
+                    android:paddingTop="@dimen/margin30">
+
+                    <com.byonchat.android.utils.VerticalTextView
+                        android:id="@+id/voucher_value"
+                        style="@style/verticalTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/margin12"
+                        android:text="Rp 100.000"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/margin25" />
+                    <!--android:paddingRight="1dp"-->
+                </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="@dimen/margin5"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_verticaltextview_vouchers_down"
+                    android:paddingBottom="@dimen/margin20">
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <com.byonchat.android.utils.VerticalTextView
+                            android:id="@+id/tgl_valid"
+                            style="@style/verticalTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="-10dp"
+                            android:padding="10dp"
+                            android:text="Valid until 30-8-2016"
+                            android:textColor="@color/verticaltext_transparent"
+                            android:textSize="@dimen/margin14" />
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <com.byonchat.android.utils.VerticalTextView
+                            android:id="@+id/serial_number"
+                            style="@style/verticalTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="-10dp"
+                            android:padding="10dp"
+                            android:text="SN : 43435353434"
+                            android:textColor="@color/verticaltext_transparent"
+                            android:textSize="@dimen/margin14" />
+                    </FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:paddingBottom="@dimen/margin20"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:layout_marginBottom="@dimen/margin5">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@color/full_transparent">
+
+                <Button
+                    android:id="@+id/use_voucher"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:background="@drawable/oval_btn_room"
+                    android:padding="5dp"
+                    android:text="@string/use_voucher"
+                    android:textAllCaps="false"
+                    android:textColor="@drawable/selector_txt_blue_white"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <!--<RelativeLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginRight="-3dp"-->
+            <!--android:background="@color/full_transparent">-->
+
+            <!--<ImageView-->
+            <!--android:id="@+id/btn_kado"-->
+            <!--android:layout_width="35dp"-->
+            <!--android:layout_height="35dp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:background="@color/full_transparent"-->
+            <!--android:src="@drawable/ico_use_voucher"-->
+            <!--android:text="Button" />-->
+            <!--</RelativeLayout>-->
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginBottom="@dimen/margin5">
+
+            <Button
+                android:id="@+id/transfer_voucher"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/oval_btn_room"
+                android:padding="5dp"
+                android:text="@string/transfer_voucher"
+                android:textAllCaps="false"
+                android:textColor="@drawable/selector_txt_blue_white"
+                android:textSize="14sp"></Button>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginBottom="@dimen/margin5">
+
+            <Button
+                android:id="@+id/participant_outlets"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/oval_btn_room"
+                android:padding="5dp"
+                android:text="@string/participant_outlets"
+                android:textAllCaps="false"
+                android:textColor="@drawable/selector_txt_blue_white"
+                android:textSize="14sp"></Button>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginBottom="@dimen/margin20">
+
+            <Button
+                android:id="@+id/terms_and_conditions"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/oval_btn_room"
+                android:padding="5dp"
+                android:text="@string/terms_and_conditions"
+                android:textAllCaps="false"
+                android:textColor="@drawable/selector_txt_blue_white"
+                android:textSize="14sp"></Button>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+    <!--<android.support.v7.widget.Toolbar-->
+    <!--android:id="@+id/detail_toolbar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="?attr/actionBarSize"-->
+    <!--app:elevation="0dp"-->
+    <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
+    <!--android:background="@android:color/transparent"-->
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/detail_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:elevation="0dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,141 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2eacd4">
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/activationTextInfo"
+        style="@style/TextRegularBlackNamaProfile"
+        android:textColor="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/activationcode_info" />
+    <TextView
+        android:id="@+id/activationTextInfoSecond"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        style="@style/TextLightGraySmall"
+        android:textColor="@android:color/white"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@id/activationTextInfo"
+        android:text="@string/activationcode_info_second" />
+
+    <ImageButton
+        android:id="@+id/activationEditBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/activationTextInfoSecond"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="10dp"
+        android:background="@null"
+        android:src="@drawable/ic_pencil_white"
+        android:text="Edit Number" />
+
+    <TextView
+        android:id="@+id/activationTextConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activationPhoneNumber"
+        android:gravity="center"
+        android:padding="10dp"
+        android:paddingTop="20dp"
+        style="@style/TextLightGraySmall"
+        android:textColor="@android:color/white"
+        android:text="@string/activationcode_enter_digit"
+        android:autoText="false" />
+
+    <Button
+        android:id="@+id/activationButton"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/activationTextCode"
+        android:textColor="@android:color/white"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/btn_selector_registration"
+        android:text="Verify" />
+
+    <TextView
+        android:id="@+id/textResend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activationTextCode"
+        android:layout_marginTop="20dp"
+        android:paddingRight="10dp"
+        android:gravity="center"
+        android:text="@string/registration_resend_new_code"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/activationButtonResend"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Resend"
+        android:layout_below="@+id/textResend"
+        android:visibility="gone"
+        android:textColor="@android:color/white"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/btn_selector_registration"
+        />
+
+    <TextView
+        android:id="@+id/textTimeRemaning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="20dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:text="@string/registration_time_remaning"
+        android:layout_below="@+id/activationButton"/>
+    <TextView
+        android:id="@+id/textTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="20dp"
+        android:text="00:00"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/textTimeRemaning"/>
+
+    <EditText
+        android:id="@+id/activationPhoneNumber"
+        android:layout_marginLeft="@dimen/margin10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:freezesText="true"
+        android:gravity="center_vertical"
+        android:textColor="@android:color/white"
+        android:inputType="phone"
+        android:layout_below="@+id/activationTextInfoSecond"
+        android:layout_toRightOf="@+id/textResend"
+        android:layout_toLeftOf="@+id/activationEditBtn"
+        android:layout_toStartOf="@+id/activationEditBtn" />
+
+    <EditText
+        android:layout_marginRight="@dimen/margin10"
+        android:layout_marginLeft="@dimen/margin10"
+        android:id="@+id/activationTextCode"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/background_register_gray"
+        android:ems="10"
+        android:inputType="number"
+        android:padding="5dp"
+        android:maxLength="6"
+        android:layout_below="@+id/activationTextConfirm"
+        android:layout_toEndOf="@+id/activationButtonResend"
+        android:layout_toRightOf="@+id/activationButtonResend">
+    </EditText>
+
+</RelativeLayout>

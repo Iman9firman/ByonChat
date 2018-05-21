@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_child"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/margin10"
+    android:paddingRight="@dimen/margin10">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="@dimen/margin70"
+            android:layout_height="@dimen/margin40"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="note" />
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:focusable="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/button4"
+            android:layout_toRightOf="@+id/button4" />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin10"
+        android:background="@drawable/backgroud_conversation"
+        android:gravity="left"
+        android:layoutDirection="rtl"
+        android:padding="@dimen/margin5"
+        android:visibility="gone" />
+</LinearLayout>

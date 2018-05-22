@@ -2507,7 +2507,19 @@ public class MessengerConnectionService extends Service {
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 20000);
                 HttpClient httpclient = new DefaultHttpClient(httpParameters);
-                HttpPost httppost = new HttpPost("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/get_tab_rooms.php");
+
+                String uri = new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl(key[0]) ;
+
+                if (key[1].equalsIgnoreCase("null") || key[1] == null) {
+                    Cursor cur = botListDB.getSingleRoom(key[0]);
+                    if (cur.getCount() > 0) {
+                        uri = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "e");
+                    }
+                } else {
+                    uri = key[1];
+                }
+
+                HttpPost httppost = new HttpPost(uri+ "/bc_voucher_client/webservice/get_tab_rooms.php");
 
                 // Add your data
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -2554,11 +2566,11 @@ public class MessengerConnectionService extends Service {
                             lu = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_LASTUPDATE));
                             if (!lu.equalsIgnoreCase(lastUpdate)) {
                                 botListDB.deleteRoomsbyTAB(username);
-                                Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer), backdrop, lastUpdate, icon, firstTab, time_str);
+                                Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer,uri), backdrop, lastUpdate, icon, firstTab, time_str);
                                 botListDB.insertRooms(rooms);
                             }
                         } else {
-                            Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer), backdrop, lastUpdate, icon, firstTab, time_str);
+                            Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer,uri), backdrop, lastUpdate, icon, firstTab, time_str);
                             botListDB.insertRooms(rooms);
                         }
                         cursor.close();
@@ -2695,13 +2707,14 @@ public class MessengerConnectionService extends Service {
         }
     }
 
-    private String jsonCreateType(String idContent, String type, String desc, String of) {
+    private String jsonCreateType(String idContent, String type, String desc, String of,String tatge) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("a", idContent);
             obj.put("b", type);
             obj.put("c", desc);
             obj.put("d", of);
+            obj.put("e", tatge);
         } catch (JSONException e) {
             e.printStackTrace();
         }

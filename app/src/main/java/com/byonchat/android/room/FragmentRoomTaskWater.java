@@ -253,7 +253,7 @@ public class FragmentRoomTaskWater extends Fragment {
 
             String titLes = Message.parsedMessageText(JsonToStringKey(title));
 
-            Log.w("2abubu",titLes);
+            Log.w("2abubu", titLes);
 
             if (titLes.contains("https")) {
                 titLes = desc;
@@ -261,7 +261,12 @@ public class FragmentRoomTaskWater extends Fragment {
             }
 
             ContentRoom contentRoom = new ContentRoom(aa.getId(), titLes, date, desc, "", status, "");
-            listItem.add(contentRoom);
+            if (!status.equalsIgnoreCase("11")) {
+                if (!listItem.equals(contentRoom)) {
+                    listItem.add(contentRoom);
+                }
+            }
+
         }
         Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
         requestKey();
@@ -678,7 +683,7 @@ public class FragmentRoomTaskWater extends Fragment {
             status = aa.getFlag_content();
             String titLes = Message.parsedMessageText(JsonToStringKey(title));
 
-            Log.w("2abubu",titLes);
+            Log.w("2abubu", titLes);
 
             if (titLes.contains("https")) {
                 titLes = desc;

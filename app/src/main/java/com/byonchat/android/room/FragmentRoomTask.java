@@ -148,7 +148,14 @@ public class FragmentRoomTask extends Fragment {
 
 
             ContentRoom contentRoom = new ContentRoom(aa.getId(), titLes, date, desc, "", status, "");
-            listItem.add(contentRoom);
+
+            if (!status.equalsIgnoreCase("11")) {
+                if (!listItem.equals(contentRoom)) {
+                    listItem.add(contentRoom);
+                }
+            }
+
+
         }
 
 

@@ -14,6 +14,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -90,9 +91,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = layoutInflater.inflate(R.layout.expandable_cild, null);
         }
 
+        final TextView txtCheckBox = (TextView) convertView.findViewById(R.id.txt_check_box);
         final CheckBox text1 = (CheckBox) convertView.findViewById(R.id.checkbox);
-        Button button = (Button) convertView.findViewById(R.id.button4);
+        ImageButton button = (ImageButton) convertView.findViewById(R.id.button4);
         final EditText editText = (EditText) convertView.findViewById(R.id.editText);
+        final TextView txtNumb = (TextView) convertView.findViewById(R.id.txt_numb);
 
         //text1.setChecked(false);
 
@@ -100,7 +103,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
             JSONObject jsonObject = new JSONObject(expandedListText);
 
-            text1.setText((expandedListPosition + 1) + ". " + jsonObject.getString("t"));
+            txtCheckBox.setText(jsonObject.getString("t"));
+            txtNumb.setText(" ." + (expandedListPosition + 1));
 
             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", types);
             if (cEdit.getCount() > 0) {
@@ -226,8 +230,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
             }
         });
-
-
 
 
         return convertView;

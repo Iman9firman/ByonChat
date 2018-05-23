@@ -4,32 +4,47 @@
     android:id="@+id/layout_child"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/margin10"
-    android:paddingRight="@dimen/margin10">
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="100">
 
-        <Button
+        <ImageButton
             android:id="@+id/button4"
-            android:layout_width="@dimen/margin70"
-            android:layout_height="@dimen/margin40"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:text="note" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:background="@null"
+            android:src="@drawable/ico_notes_off" />
 
         <CheckBox
             android:id="@+id/checkbox"
-            android:focusable="false"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/button4"
-            android:layout_toRightOf="@+id/button4" />
-    </RelativeLayout>
+            android:focusable="false"
+            android:layout_weight="9"
+            android:textColor="@color/grayDark" />
+
+        <TextView
+            android:id="@+id/txt_check_box"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="79"
+            android:gravity="right"
+            android:textColor="@color/grayDark" />
+
+        <TextView
+            android:id="@+id/txt_numb"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:gravity="right"
+            android:textColor="@color/grayDark" />
+
+    </LinearLayout>
 
     <EditText
         android:id="@+id/editText"
@@ -38,7 +53,6 @@
         android:layout_marginBottom="@dimen/margin10"
         android:background="@drawable/backgroud_conversation"
         android:gravity="left"
-        android:layoutDirection="rtl"
         android:padding="@dimen/margin5"
         android:visibility="gone" />
 </LinearLayout>

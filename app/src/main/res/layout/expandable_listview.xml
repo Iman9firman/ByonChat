@@ -10,7 +10,6 @@
         android:divider="@color/grayDark"
         android:dividerHeight="1dp"
         android:indicatorRight="?android:attr/expandableListPreferredItemIndicatorRight"
-        android:layoutDirection="rtl"
         android:scrollbars="none" />
 
 </RelativeLayout>

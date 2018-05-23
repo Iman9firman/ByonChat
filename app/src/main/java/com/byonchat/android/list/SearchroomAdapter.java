@@ -63,7 +63,7 @@ import java.util.List;
 
 public class SearchroomAdapter extends BaseAdapter implements Filterable {
 
-    String URLLAPORSELECTED  = "https://"+ MessengerConnectionService.HTTP_SERVER+"/room/selectapop.php";
+    String URLLAPORSELECTED = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/selectapop.php";
     private static ArrayList<ContactBot> catArrayList = new ArrayList<ContactBot>();
     private static ArrayList<ContactBot> catArray = new ArrayList<ContactBot>();
     private LayoutInflater inflater;
@@ -140,14 +140,14 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
             convertView.setTag(holder);
         } else holder = (ViewHolder) convertView.getTag();
 
-        if (catArrayList.get(position).getLink().equalsIgnoreCase("") || catArrayList.get(position).getLink().equalsIgnoreCase("null")){
+        if (catArrayList.get(position).getLink().equalsIgnoreCase("") || catArrayList.get(position).getLink().equalsIgnoreCase("null")) {
             Picasso.with(context).load(R.drawable.ic_no_photo).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.imagePhoto);
-        }else{
+        } else {
             Picasso.with(context).load(catArrayList.get(position).getLink()).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.imagePhoto);
         }
         holder.txtName.setText(Message.highlightText(bold, catArrayList.get(position).getRealname()));
         String desc = catArrayList.get(position).getDesc();
-        if (Message.isJSONValid(catArrayList.get(position).getDesc())){
+        if (Message.isJSONValid(catArrayList.get(position).getDesc())) {
             JSONObject jObject = null;
             try {
                 jObject = new JSONObject(catArrayList.get(position).getDesc());
@@ -269,8 +269,18 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                                 desc = catArrayList.get(position).getDesc();
                                 realname = catArrayList.get(position).getRealname();
                                 link = catArrayList.get(position).getLink();
+                                String targetURL = "";
+
+                                try {
+                                    JSONObject jObj = new JSONObject(catArrayList.get(position).getType());
+                                    targetURL = jObj.getString("path");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
                                 type = "2";
-                                insertToDB(String.valueOf(position + 1), catArrayList.get(position).getName(), catArrayList.get(position).getDesc(), catArrayList.get(position).getRealname(), catArrayList.get(position).getLink(), "2");
+                                insertToDB(String.valueOf(position + 1), catArrayList.get(position).getName(), catArrayList.get(position).getDesc(), catArrayList.get(position).getRealname(), catArrayList.get(position).getLink(), "2", targetURL);
                                 popup.dismiss();
                                 break;
                             default:
@@ -298,7 +308,16 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                                 realname = catArrayList.get(position).getRealname();
                                 link = catArrayList.get(position).getLink();
                                 type = "2";
-                                insertToDB(String.valueOf(position + 1), catArrayList.get(position).getName(), catArrayList.get(position).getDesc(), catArrayList.get(position).getRealname(), catArrayList.get(position).getLink(), "2");
+                                String targetURL = "";
+
+                                try {
+                                    JSONObject jObj = new JSONObject(catArrayList.get(position).getType());
+                                    targetURL = jObj.getString("path");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                insertToDB(String.valueOf(position + 1), catArrayList.get(position).getName(), catArrayList.get(position).getDesc(), catArrayList.get(position).getRealname(), catArrayList.get(position).getLink(), "2", targetURL);
                                 popup.dismiss();
                                 break;
                             default:
@@ -315,7 +334,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         popup.show();
     }
 
-    public void insertToDB(String id, String name, String desc, String realname, String link, String type) {
+    public void insertToDB(String id, String name, String desc, String realname, String link, String type, String path) {
         if (roomsDB == null) {
             roomsDB = new RoomsDB(context);
         }
@@ -326,11 +345,11 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         if (catArray.size() > 0) {
             Toast.makeText(context, realname + " is already added to selected rooms", Toast.LENGTH_SHORT).show();
         } else {
-            requestKey();
+            requestKey(path);
         }
     }
 
-    private void requestKey() {
+    private void requestKey(final String path) {
         RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
             @Override
             public void onTaskDone(String key) {
@@ -338,7 +357,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                     Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                 } else {
                     laporSelectedRoom = new LaporSelectedRoom(context);
-                    laporSelectedRoom.execute(key);
+                    laporSelectedRoom.execute(key, path);
                 }
             }
         }, context);
@@ -358,6 +377,8 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         private boolean error = false;
         private Context mContext;
         private ProgressDialog progressDialog;
+
+        String path = "";
 
         public LaporSelectedRoom(Context context) {
             this.mContext = context;
@@ -383,6 +404,8 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                 nameValuePairs.add(new BasicNameValuePair("key", key[0]));
                 nameValuePairs.add(new BasicNameValuePair("room_id", name));
                 nameValuePairs.add(new BasicNameValuePair("aksi", "1"));
+
+                path = key[1];
 
                 HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
                 HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
@@ -436,7 +459,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                             Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                         } else {
                             laporSelectedRoom = new LaporSelectedRoom(context);
-                            laporSelectedRoom.execute(key);
+                            laporSelectedRoom.execute(key, path);
                         }
                     } else {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -450,7 +473,14 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                 ContactBot contactBot = new ContactBot(name, desc, realname, link, type);
                 roomsDB.insertRooms(contactBot);
                 roomsDB.close();
-                Toast.makeText(context, realname +" has been added to selected rooms", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(context, ByonChatMainRoomActivity.class);
+                intent.putExtra(ConversationActivity.KEY_JABBER_ID, name);
+                intent.putExtra(ConversationActivity.KEY_TITLE, path);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+
+                Toast.makeText(context, realname + " has been added to selected rooms", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -245,6 +245,53 @@ public class FragmentRoomMultipleTask extends Fragment {
         intent.putExtra(UploadService.KEY_MESSAGE, message);
         startService(intent);
         */
+
+       /* if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+            Log.w("disini", "2");
+            if (!roomsDetail.getId().equalsIgnoreCase("")) {
+                Log.w("disini", "3");
+                String[] ff = roomsDetail.getId().split("\\|");
+                if (ff.length == 2) {
+                    BotListDB db = BotListDB.getInstance(getContext());
+                    Cursor cursorValue = db.getSingleRoomDetailFormWithFlag(roomsDetail.getId(), username, idTab, "value");
+                    if (cursorValue.getCount() == 0) {
+
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("idDetail", roomsDetail.getId());
+                            jsonObject.put("username", username);
+                            jsonObject.put("idTab", idTab);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(mContext);
+
+                        Cursor cc = submitingRoomDB.getSingleContactByContent(jsonObject.toString());
+
+                        if (cc.getCount() == 0) {
+
+                            SubmitingModel submitingModel = new SubmitingModel();
+                            submitingModel.setStatus("0");
+                            submitingModel.setContent(jsonObject.toString());
+
+                            Message message = new Message();
+                            message.setMessage(jsonObject.toString());
+                            message.setId(submitingRoomDB.createContact(submitingModel));
+
+                            Intent intent = new Intent(mContext, UploadService.class);
+                            intent.putExtra(UploadService.ACTION, "downloadValueForm");
+                            intent.putExtra(UploadService.KEY_MESSAGE, message);
+                            mContext.startService(intent);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        */
     }
 
     private String JsonToStringKey(String title) {
@@ -504,53 +551,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 if (ff.length == 2) {
                                     botListDB.deleteDetailRoomWithFlagContent(roomsDetail);
                                 }
-                            }else {
-                                Log.w("disini", "1");
-                                if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                                    Log.w("disini", "2");
-                                    if (!roomsDetail.getId().equalsIgnoreCase("")) {
-                                        Log.w("disini", "3");
-                                        String[] ff = roomsDetail.getId().split("\\|");
-                                        if (ff.length == 2) {
-                                            BotListDB db = BotListDB.getInstance(getContext());
-                                            Cursor cursorValue = db.getSingleRoomDetailFormWithFlag(roomsDetail.getId(), username, idTab, "value");
-                                            if (cursorValue.getCount() == 0) {
-
-                                                JSONObject jsonObject = new JSONObject();
-                                                try {
-                                                    jsonObject.put("idDetail", roomsDetail.getId());
-                                                    jsonObject.put("username", username);
-                                                    jsonObject.put("idTab", idTab);
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-
-                                                SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(mContext);
-
-                                                Cursor cc = submitingRoomDB.getSingleContactByContent(jsonObject.toString());
-
-                                                if (cc.getCount() == 0) {
-
-                                                    SubmitingModel submitingModel = new SubmitingModel();
-                                                    submitingModel.setStatus("0");
-                                                    submitingModel.setContent(jsonObject.toString());
-
-                                                    Message message = new Message();
-                                                    message.setMessage(jsonObject.toString());
-                                                    message.setId(submitingRoomDB.createContact(submitingModel));
-
-                                                    Intent intent = new Intent(mContext, UploadService.class);
-                                                    intent.putExtra(UploadService.ACTION, "downloadValueForm");
-                                                    intent.putExtra(UploadService.KEY_MESSAGE, message);
-                                                    mContext.startService(intent);
-
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
                             }
                         }
                     }

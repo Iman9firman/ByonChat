@@ -6809,7 +6809,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         db.updateDetailRoomWithFlagContentParent(orderModel);
 
 
-                        if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                        uploadFileChild("pertama");
+                       /* if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
 
                             SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
                             SubmitingModel submitingModel = new SubmitingModel();
@@ -6833,7 +6834,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         }
 
-                        finish();
+                        finish();*/
 
                     }
                 });

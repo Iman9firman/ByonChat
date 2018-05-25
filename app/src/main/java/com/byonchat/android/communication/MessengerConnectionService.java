@@ -363,6 +363,7 @@ public class MessengerConnectionService extends Service {
                 if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
                     Log.w("aa1a2", "jalan");
 
+                    /* service
                     ArrayList<SubmitingModel> ss = SubmitingRoomDB.getInstance(getApplicationContext()).getAllSubmitingModel();
 
                     Log.w("alal1", ss.size() + "");
@@ -385,7 +386,7 @@ public class MessengerConnectionService extends Service {
                         intent.putExtra(UploadService.KEY_MESSAGE, message);
                         startService(intent);
 
-                    }
+                    }*/
 
                     Contact contact = databaseHelper.getMyContact();
 

@@ -81,6 +81,7 @@ import java.util.Random;
 @SuppressLint("ValidFragment")
 public class FragmentRoomMultipleTask extends Fragment {
 
+    public static String GETTABDETAILPULLMULTIPLE = "/bc_voucher_client/webservice/category_tab/list_task_pull_multiple.php";
     RecyclerView mRecyclerView;
     DinamicListTaskAdapter myadapter;
     Contact contact;
@@ -310,97 +311,100 @@ public class FragmentRoomMultipleTask extends Fragment {
 
     public String abs(String ctn, String type) {
         String content = ctn;
-        if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
-            Random random = new SecureRandom();
-            char[] result = new char[6];
-            char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-            for (int i = 0; i < result.length; i++) {
-                int randomCharIndex = random.nextInt(CHARSET_AZ_09.length);
-                result[i] = CHARSET_AZ_09[randomCharIndex];
-            }
-            content = "IMG_" + new String(result);
-        } else if (type.equalsIgnoreCase("map")) {
-            String[] latlong = content.split(
-                    Message.LOCATION_DELIMITER);
-            if (latlong.length > 4) {
-                String text = "<u><b>" + (String) latlong[2] + "</b></u><br/>";
-                content = text + latlong[3];
-            }
-        } else if (type.equalsIgnoreCase("form_child")) {
-            content = "";
-        } else if (type.equalsIgnoreCase("dropdown_form")) {
-            content = "";
-        } else if (type.equalsIgnoreCase("input_kodepos")) {
-            content = jsonResultType(content, "a");
-        } else if (type.equalsIgnoreCase("dropdown_wilayah")) {
-            content = jsonResultType(content, "b") + " , " + jsonResultType(content, "c") + " , " + jsonResultType(content, "d") + " , " + jsonResultType(content, "e") + " , " + jsonResultType(content, "a");
-        } else if (type.equalsIgnoreCase("checkbox")) {
-            if (!content.startsWith("[")) {
-                content = "[" + content + "]";
-            }
-            JSONArray jsA = null;
-            try {
-                jsA = new JSONArray(content);
-                if (jsA.length() > 0) {
-                    content = jsA.getJSONObject(0).getString("c").toString();
+        if (type!=null){
+            if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
+                Random random = new SecureRandom();
+                char[] result = new char[6];
+                char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+                for (int i = 0; i < result.length; i++) {
+                    int randomCharIndex = random.nextInt(CHARSET_AZ_09.length);
+                    result[i] = CHARSET_AZ_09[randomCharIndex];
                 }
-            } catch (JSONException e) {
+                content = "IMG_" + new String(result);
+            } else if (type.equalsIgnoreCase("map")) {
+                String[] latlong = content.split(
+                        Message.LOCATION_DELIMITER);
+                if (latlong.length > 4) {
+                    String text = "<u><b>" + (String) latlong[2] + "</b></u><br/>";
+                    content = text + latlong[3];
+                }
+            } else if (type.equalsIgnoreCase("form_child")) {
                 content = "";
-                e.printStackTrace();
-            }
-        } else if (type.equalsIgnoreCase("image_load")) {
-            content = "image load";
-        } else if (type.equalsIgnoreCase("ocr")) {
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(content);
-                Iterator<String> keys = jsonObject.keys();
-                String aa = jsonObject.get(keys.next()).toString();
-                content = aa;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                content = "ocr";
-            }
-        } else if (type.equalsIgnoreCase("dropdown_dinamis") || type.equalsIgnoreCase("new_dropdown_dinamis") || type.equalsIgnoreCase("master_data")) {
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(content);
-
-                if (content.contains("Name")) {
-                    content = jsonObject.getString("Name");
-                } else if (content.contains("Nama")) {
-                    content = jsonObject.getString("Nama");
-                } else {
+            } else if (type.equalsIgnoreCase("dropdown_form")) {
+                content = "";
+            } else if (type.equalsIgnoreCase("input_kodepos")) {
+                content = jsonResultType(content, "a");
+            } else if (type.equalsIgnoreCase("dropdown_wilayah")) {
+                content = jsonResultType(content, "b") + " , " + jsonResultType(content, "c") + " , " + jsonResultType(content, "d") + " , " + jsonResultType(content, "e") + " , " + jsonResultType(content, "a");
+            } else if (type.equalsIgnoreCase("checkbox")) {
+                if (!content.startsWith("[")) {
+                    content = "[" + content + "]";
+                }
+                JSONArray jsA = null;
+                try {
+                    jsA = new JSONArray(content);
+                    if (jsA.length() > 0) {
+                        content = jsA.getJSONObject(0).getString("c").toString();
+                    }
+                } catch (JSONException e) {
+                    content = "";
+                    e.printStackTrace();
+                }
+            } else if (type.equalsIgnoreCase("image_load")) {
+                content = "image load";
+            } else if (type.equalsIgnoreCase("ocr")) {
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(content);
                     Iterator<String> keys = jsonObject.keys();
-                    final String ke = keys.next();
-                    if (ke.contains("ID")) {
-                        String bodre = content.replace("{", "").replace("\"", "");
-                        String bodre2 = bodre.substring(0, bodre.indexOf(":"));
-                        if (!bodre2.contains("ID")) {
-                            content = jsonObject.getString(bodre2);
+                    String aa = jsonObject.get(keys.next()).toString();
+                    content = aa;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    content = "ocr";
+                }
+            } else if (type.equalsIgnoreCase("dropdown_dinamis") || type.equalsIgnoreCase("new_dropdown_dinamis") || type.equalsIgnoreCase("master_data")) {
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(content);
+
+                    if (content.contains("Name")) {
+                        content = jsonObject.getString("Name");
+                    } else if (content.contains("Nama")) {
+                        content = jsonObject.getString("Nama");
+                    } else {
+                        Iterator<String> keys = jsonObject.keys();
+                        final String ke = keys.next();
+                        if (ke.contains("ID")) {
+                            String bodre = content.replace("{", "").replace("\"", "");
+                            String bodre2 = bodre.substring(0, bodre.indexOf(":"));
+                            if (!bodre2.contains("ID")) {
+                                content = jsonObject.getString(bodre2);
+                            } else {
+                                content = jsonObject.get(keys.next()).toString();
+                            }
                         } else {
                             content = jsonObject.get(keys.next()).toString();
                         }
-                    } else {
-                        content = jsonObject.get(keys.next()).toString();
-                    }
 
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    content = "";
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else if (type.equalsIgnoreCase("upload_document")) {
+                content = jsonResultType(content, "a");
+            } else if (type.equalsIgnoreCase("signature")) {
+                content = "signature";
+            } else if (type.equalsIgnoreCase("distance_estimation")) {
+                content = jsonResultType(content, "d");
+            } else if (type.equalsIgnoreCase("rate")) {
+
+            } else if (type.equalsIgnoreCase("form_isian")) {
                 content = "";
             }
-        } else if (type.equalsIgnoreCase("upload_document")) {
-            content = jsonResultType(content, "a");
-        } else if (type.equalsIgnoreCase("signature")) {
-            content = "signature";
-        } else if (type.equalsIgnoreCase("distance_estimation")) {
-            content = jsonResultType(content, "d");
-        } else if (type.equalsIgnoreCase("rate")) {
-
-        } else if (type.equalsIgnoreCase("form_isian")) {
-            content = "";
         }
+
         return content;
     }
 
@@ -753,6 +757,16 @@ public class FragmentRoomMultipleTask extends Fragment {
 
 
 
+            if (aa.getId().contains("|")) {
+                Cursor cursorValue = BotListDB.getInstance(getContext()).getSingleRoomDetailFormWithFlag(aa.getId(), username, idTab, "value");
+                if (cursorValue.getCount() == 0) {
+                    if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
+                        if (username != null) {
+                            new Refresh(getActivity()).execute(new ValidationsKey().getInstance(getContext()).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, aa.getId());
+                        }
+                    }
+                }
+            }
 
             if (!status.equalsIgnoreCase("11")) {
                 if (!listItem.equals(contentRoom)) {
@@ -767,6 +781,141 @@ public class FragmentRoomMultipleTask extends Fragment {
 
         myadapter.notifyDataSetChanged();
     }
+
+
+    private class Refresh extends AsyncTask<String, String, String> {
+        private Context context;
+
+        public Refresh(Activity activity) {
+            context = activity;
+        }
+
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0], params[1], params[2], params[3]);
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+
+        }
+
+        protected void onProgressUpdate(String... string) {
+        }
+
+        public void postData(String valueIWantToSend, String usr, String idr, String pId) {
+            // Create a new HttpClient and Post Header
+
+            Log.w("mae", valueIWantToSend);
+            try {
+                HttpParams httpParameters = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
+                HttpConnectionParams.setSoTimeout(httpParameters, 15000);
+                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpPost httppost = new HttpPost(valueIWantToSend);
+
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("username_room", usr));
+                nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", idr));
+
+                if (pId != null || !pId.equalsIgnoreCase("")) {
+                    String[] ff = pId.split("\\|");
+                    if (ff.length == 2) {
+                        nameValuePairs.add(new BasicNameValuePair("parent_id", ff[1]));
+                        nameValuePairs.add(new BasicNameValuePair("id_list_push", ff[0]));
+                    }
+                }
+
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                // Execute HTTP Post Request
+                HttpResponse response = httpclient.execute(httppost);
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200) {
+                    HttpEntity entity = response.getEntity();
+                    String data = EntityUtils.toString(entity);
+                    Log.w("bersama", data);
+
+                    try {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        Calendar cal = Calendar.getInstance();
+                        String time_str = dateFormat.format(cal.getTime());
+                        JSONObject jsonRootObject = new JSONObject(data);
+                        String username = jsonRootObject.getString("username_room");
+                        String id_rooms_tab = jsonRootObject.getString("id_rooms_tab");
+                        String attachment = jsonRootObject.getString("attachment");
+                        String content = jsonRootObject.getString("data");
+                        String include_assignto = jsonRootObject.getString("include_assignto");
+                        String include_status_task = "0";
+                        if (data.contains("include_status_task")) {
+                            include_status_task = jsonRootObject.getString("include_status_task");
+                        }
+
+
+                        String api_officers = jsonRootObject.getString("api_officers");
+
+                        BotListDB db = BotListDB.getInstance(context);
+                        db.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from);
+                        RoomsDetail orderModel = new RoomsDetail(pId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
+                        db.insertRoomsDetail(orderModel);
+
+
+                        Log.w("IK : ", content);
+
+                        String ccc = jsonDuaObjectW(content, attachment, api_officers, include_status_task);
+                        if (include_assignto.equalsIgnoreCase("0")) {
+                            ccc = jsonDuaObjectW(content, attachment, "", include_status_task);
+                        }
+
+
+                        RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
+                        db.insertRoomsDetail(orderModel2);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            } catch (ConnectTimeoutException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+            }
+        }
+    }
+
+    private String jsonDuaObjectW(String a, String b, String c, String d) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("aa", a);
+            obj.put("bb", b);
+            Log.w("adabdi1", c);
+
+            if (!c.equalsIgnoreCase("")) {
+                Log.w("adabdi2", c);
+                obj.put("cc", c);
+            }
+
+            if (!d.equalsIgnoreCase("")) {
+                Log.w("adabdi2", d);
+                obj.put("dd", d);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return obj.toString();
+    }
+
 
     static class Sortiran implements Comparator<ContentRoom> {
 

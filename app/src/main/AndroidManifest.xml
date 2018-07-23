@@ -7,7 +7,9 @@
         android:name="android.hardware.bluetooth"
         android:required="false" />
 
-    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
+    <uses-permission
+        android:name="android.permission.CLEAR_APP_CACHE"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -25,12 +27,16 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
+    <uses-permission
+        android:name="android.permission.MANAGE_DOCUMENTS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
-    <uses-permission android:name="android.permission.LOCATION_HARDWARE" />
+    <uses-permission
+        android:name="android.permission.LOCATION_HARDWARE"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
@@ -427,16 +433,6 @@
             android:name=".ImagePickerActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
-
         <activity
             android:name=".ConfirmationSendFileMultiple"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -491,6 +487,12 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".personalRoom.NoteCommentActivity"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".personalRoom.NoteCommentActivityNew"
             android:label="PersonalRoom"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"
@@ -556,19 +558,32 @@
         <activity android:name=".ReaderOcr" />
         <activity
             android:name=".smsSolders.HomeSMSSolders"
-            android:theme="@style/AppTheme.NoActionBar" ></activity>
-        <activity android:name=".smsSolders.RegisterSMSActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".smsSolders.RegisterSMSActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".smsSolders.WelcomeActivitySMS"
-            android:theme="@style/AppTheme.NoActionBar" >
-        <intent-filter>
-            <action android:name="android.intent.action.CREATE_SHORTCUT" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
+        <activity
+            android:name=".smsSolders.WelcomeActivitySMS"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".smsSolders.HistorySmsActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.byonchat.android"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
 
 </manifest>

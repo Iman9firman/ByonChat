@@ -24,12 +24,9 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Vibrator;
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -58,7 +55,6 @@ import android.widget.Toast;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.FragmentDirectory;
 import com.byonchat.android.FragmentDinamicRoom.FragmentRoomAPI;
-import com.byonchat.android.FragmentDinamicRoom.FragmentRoomAPIAPura;
 import com.byonchat.android.FragmentDinamicRoom.FragmentRoomAbout;
 import com.byonchat.android.FragmentDinamicRoom.FragmentRoomPOS;
 import com.byonchat.android.FragmentDinamicRoom.FragmentStreamingRadio;
@@ -69,10 +65,10 @@ import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.personalRoom.FragmentMyNews;
+import com.byonchat.android.personalRoom.FragmentMyNewsNew;
 import com.byonchat.android.personalRoom.FragmentMyNote;
 import com.byonchat.android.personalRoom.FragmentMyPicture;
 import com.byonchat.android.personalRoom.FragmentMyVideo;
-import com.byonchat.android.personalRoom.FragmentReadManual;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.ContentRoom;
@@ -83,13 +79,11 @@ import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.room.FragmentRoomMultipleTask;
 import com.byonchat.android.room.FragmentRoomTask;
 import com.byonchat.android.room.FragmentRoomTaskWater;
-import com.byonchat.android.smsSolders.HomeSMSSolders;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
 import com.byonchat.android.utils.BlurBuilder;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.LocationAssistant;
-import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
 import com.byonchat.android.utils.Utility;
@@ -375,6 +369,10 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                         map.put(i, null);
                         show = true;
                         aa = FragmentMyNote.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, false, ByonChatMainRoomActivity.this);
+                    } else if (category.equalsIgnoreCase("14")) {
+                        show = true;
+                        map.put(i, null);
+                        aa = FragmentMyNewsNew.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, ByonChatMainRoomActivity.this);
                     } else if (category.equalsIgnoreCase("6")) {
                         //news
                         show = true;
@@ -621,7 +619,13 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                     ii.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                     if (targetURL != null) {
                         ii.putExtra(ConversationActivity.KEY_TITLE, targetURL);
+                        Log.w("lahan", "1");
+
+                    } else {
+                        Log.w("lahan", "2");
+
                     }
+
                     ii.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(ii);
                 } else {
@@ -818,7 +822,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                     intent.putExtra("col", value.get(3).toString());
                     intent.putExtra("ll", value.get(4).toString());
                     intent.putExtra("from", value.get(5).toString());
-                    if(!statusBaru.equalsIgnoreCase("")){
+                    if (!statusBaru.equalsIgnoreCase("")) {
                         intent.putExtra("isReject", statusBaru);
                     }
 

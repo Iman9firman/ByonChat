@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.util.LogWriter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,6 +32,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 
 public class DownloadFileByonchat extends AppCompatActivity {
     private static final String SD_CARD_FOLDER = "ByonChatDoc";
@@ -55,7 +59,7 @@ public class DownloadFileByonchat extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Context... params) {
             try {
-                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+SD_CARD_FOLDER);
+                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
                 File dbDownloadPath = new File(oldFolder, NAME_FILE);
                 if (!oldFolder.exists()) {
                     oldFolder.mkdirs();
@@ -68,7 +72,9 @@ public class DownloadFileByonchat extends AppCompatActivity {
                 InputStream content = null;
                 try {
                     HttpResponse execute = client.execute(httpGet);
-                    if (execute.getStatusLine().getStatusCode() != 200) { return null; }
+                    if (execute.getStatusLine().getStatusCode() != 200) {
+                        return null;
+                    }
                     content = execute.getEntity().getContent();
                     long downloadSize = execute.getEntity().getContentLength();
                     FileOutputStream fos = new FileOutputStream(dbDownloadPath.getAbsolutePath());
@@ -78,24 +84,22 @@ public class DownloadFileByonchat extends AppCompatActivity {
                     while ((read = content.read(buffer)) != -1) {
                         fos.write(buffer, 0, read);
                         downloadedAlready += read;
-                        publishProgress((int) (downloadedAlready*100/downloadSize));
+                        publishProgress((int) (downloadedAlready * 100 / downloadSize));
                     }
                     fos.flush();
                     fos.close();
                     content.close();
                     return true;
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     if (content != null) {
                         try {
                             content.close();
+                        } catch (IOException e1) {
                         }
-                        catch (IOException e1) {}
                     }
                     return false;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -114,23 +118,37 @@ public class DownloadFileByonchat extends AppCompatActivity {
                 mProgressDialog.dismiss();
                 mProgressDialog = null;
             }
+
             if (result.equals(Boolean.TRUE)) {
                 finish();
-                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+SD_CARD_FOLDER);
+                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
                 File oldFile = new File(oldFolder, NAME_FILE);
-                MimeTypeMap map = MimeTypeMap.getSingleton();
-                String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-                String type = map.getMimeTypeFromExtension(ext);
-                if (type == null)
-                    type = "*/*";
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                Uri data = Uri.fromFile(oldFile);
-                intent.setDataAndType(data, type);
-                startActivity(intent);
 
-            }
-            else {
-                Toast.makeText(getApplicationContext(),"failed download, plese try again...", Toast.LENGTH_LONG).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    Uri uri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), oldFile);
+                    intent.setData(uri);
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(intent);
+
+                } else {
+
+                    MimeTypeMap map = MimeTypeMap.getSingleton();
+                    String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
+                    String type = map.getMimeTypeFromExtension(ext);
+                    if (type == null)
+                        type = "*/*";
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    Uri data = Uri.fromFile(oldFile);
+                    intent.setDataAndType(data, type);
+                    startActivity(intent);
+                }
+
+
+            } else {
+                Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
                 finish();
             }
         }
@@ -169,34 +187,97 @@ public class DownloadFileByonchat extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_pnumber);
-        LinearLayout linearLayoutContent = (LinearLayout)findViewById(R.id.linearLayoutContent);
+        LinearLayout linearLayoutContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
         linearLayoutContent.setVisibility(View.GONE);
 
         DOWNLOAD_PATH = getIntent().getStringExtra("path");
 
-        File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+SD_CARD_FOLDER);
+        File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
 
-        NAME_FILE = DOWNLOAD_PATH.toString().substring(DOWNLOAD_PATH.toString().lastIndexOf('/'),DOWNLOAD_PATH.toString().length());
+        NAME_FILE = DOWNLOAD_PATH.toString().substring(DOWNLOAD_PATH.toString().lastIndexOf('/'), DOWNLOAD_PATH.toString().length());
 
+        Log.w("dari", NAME_FILE);
         File oldFile = new File(oldFolder, NAME_FILE);
         if (oldFile.exists()) {
+            Log.w("masuk", "apa");
             finish();
-            MimeTypeMap map = MimeTypeMap.getSingleton();
-            String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-            String type = map.getMimeTypeFromExtension(ext);
-            if (type == null)
-                type = "*/*";
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            Uri data = Uri.fromFile(oldFile);
-            intent.setDataAndType(data, type);
-            startActivity(intent);
-        }else{
+
+            //  Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(oldFile.getAbsolutePath()));
+            //  startActivity(browserIntent);
+
+//            MimeTypeMap map = MimeTypeMap.getSingleton();
+//            String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
+//            String type = map.getMimeTypeFromExtension(ext);
+//            if (type == null)
+//                type = "*/*";
+//            Intent intent = new Intent(Intent.ACTION_VIEW);
+//            Uri data = Uri.fromFile(oldFile);
+//            intent.setDataAndType(data, type);
+//            startActivity(intent);
+
+
+            // So you have to use Provider
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+               /* Log.w("rurur", oldFile.getAbsolutePath());
+                intent.setAction(android.content.Intent.ACTION_VIEW);
+                MimeTypeMap mime = MimeTypeMap.getSingleton();
+                String ext = oldFile.getName().substring(oldFile.getName().indexOf(".") + 1);
+                String type = mime.getMimeTypeFromExtension(ext);
+
+                intent.setDataAndType(FileProvider.getUriForFile(getApplicationContext(),
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        oldFile), type);
+                startActivity(intent);
+
+                Log.w("hasbi1", "bubu");
+
+                // Add in case of if We get Uri from fileProvider.
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);*/
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                Uri uri = FileProvider.getUriForFile(this, getPackageName(), oldFile);
+                intent.setData(uri);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);
+
+
+            /*    String uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID, file);
+
+// I am opening a PDF file so I give it a valid MIME type
+                intent.setDataAndType(uri, "application/pdf");
+
+// validate that the device can open your File!
+                PackageManager pm = getActivity().getPackageManager();
+                if (intent.resolveActivity(pm) != null) {
+                    startActivity(intent);
+                }*/
+
+            } else {
+              /*  uri = Uri.fromFile(oldFile);
+                intent.setDataAndType(uri, "application/pdf");
+                startActivity(intent);*/
+
+                MimeTypeMap map = MimeTypeMap.getSingleton();
+                String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
+                String type = map.getMimeTypeFromExtension(ext);
+                if (type == null)
+                    type = "*/*";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Uri data = Uri.fromFile(oldFile);
+                intent.setDataAndType(data, type);
+                startActivity(intent);
+            }
+
+
+        } else {
             if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                Toast.makeText(getApplicationContext(), "Please insert memmory card", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
                 finish();
             }
-            DownloadFile  mDatabaseOpenTask = new DownloadFile();
-            mDatabaseOpenTask.execute(new Context[] { this });
+            DownloadFile mDatabaseOpenTask = new DownloadFile();
+            mDatabaseOpenTask.execute(new Context[]{this});
         }
     }
 }

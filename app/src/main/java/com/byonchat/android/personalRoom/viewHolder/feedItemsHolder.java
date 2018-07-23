@@ -21,9 +21,10 @@ public class feedItemsHolder extends RecyclerView.ViewHolder {
     public TextView mOverlayText;
     public TextView name,timestamp,statusMsg, mTotalLoves, mTotalComments, mHiddenComment, mLabelLoves;
     public NoteFeedImageView feedImageView;
-    public LinearLayout mLoves, mComments, mLinearHiddenComment, mLoading, mBtNix, mBtLoves;
+    public LinearLayout mLoves, mComments, mLinearHiddenComment, mLoading, mBtNix, mBtLoves,dotA,dotB;
     public Target profilePic;
     public ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener;
+
 
     public feedItemsHolder(View view) {
         super(view);
@@ -42,6 +43,8 @@ public class feedItemsHolder extends RecyclerView.ViewHolder {
         this.mLabelLoves = (TextView) view.findViewById(R.id.labelLoves);
         this.mBtNix = (LinearLayout) view.findViewById(R.id.btNix);
         this.mBtLoves = (LinearLayout) view.findViewById(R.id.btLoves);
+        this.dotA = (LinearLayout) view.findViewById(R.id.dotA);
+        this.dotB = (LinearLayout) view.findViewById(R.id.dotB);
 
         mExpandButton = (TextView) view.findViewById(R.id.expandButton);
 

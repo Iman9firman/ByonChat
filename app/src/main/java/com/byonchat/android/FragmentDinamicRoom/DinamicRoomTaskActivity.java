@@ -123,6 +123,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.tokenautocomplete.FilteredArrayAdapter;
 import com.tokenautocomplete.TokenCompleteTextView;
@@ -160,6 +161,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -185,8 +187,14 @@ import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 
 public class DinamicRoomTaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener {
 
+    public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
+    public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
+/*
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple.php";
+*/
+
+
     public static String PULLDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull.php";
 
     public static String GETTABDETAIL = "/bc_voucher_client/webservice/category_tab/list_task.php";
@@ -208,6 +216,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     private static final int OCR_REQUEST = 1211;
     private static final int QRCODE_REQUEST = 1212;
     private static final String MENU_GALLERY_TITLE = "Gallery";
+    Integer totalUpload = 0;
+    ArrayList<String> prosesUpload = new ArrayList<>();
     ProgressDialog progressDialog;
     private ArrayList<AttachmentAdapter.AttachmentMenuItem> curAttItems;
     String cameraFileOutput;
@@ -6696,50 +6706,51 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         } else {
                                             if (value.get(2).toString().equalsIgnoreCase("dropdown_form")) {
 
-                                                /*JSONObject jsonObject = null;
+                                                JSONObject jsonObject = null;
                                                 try {
                                                     jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                                                     Iterator<String> iter = jsonObject.keys();
+                                                    int mas = 0;
                                                     while (iter.hasNext()) {
+                                                        mas = mas + 1;
                                                         String keys = iter.next();
                                                         try {
                                                             JSONArray jsAdd = jsonObject.getJSONArray(keys);
+
                                                             for (int ic = 0; ic < jsAdd.length(); ic++) {
-                                                                Boolean laln = false;
+
                                                                 JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
 
                                                                 String val = oContent.getString("v");
-                                                                if (val.length() > 1) {
-                                                                    laln = true;
-                                                                    Log.w("suanyiVa", laln + "==" + ic);
-                                                                }
+                                                                if (val.length() == 1) {
+                                                                    if (val.equalsIgnoreCase("0")) {
+                                                                        String not = oContent.getString("n");
+                                                                        if (not.length() == 0) {
+                                                                            JSONArray aa = new JSONArray();
+                                                                            if (oContent.has("f")) {
+                                                                                aa = oContent.getJSONArray("f");
+                                                                            }
 
-                                                                String not = oContent.getString("n");
+                                                                            if (aa.length() == 0) {
+                                                                                //diisi 0 dan harus ada salah satu yang di isi
+                                                                                errorReq.add("Mohon isi Note Atau Foto pada Point " + mas + " - " + (ic + 1));
+                                                                                berhenti = true;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                } else {
+                                                                    String not = oContent.getString("n");
+                                                                    if (not.length() == 0) {
+                                                                        JSONArray aa = new JSONArray();
+                                                                        if (oContent.has("f")) {
+                                                                            aa = oContent.getJSONArray("f");
+                                                                        }
 
-                                                                if (not.length() > 1) {
-                                                                    laln = true;
-                                                                    Log.w("suanyiNot", laln + "==" + ic);
-                                                                }
-
-                                                                JSONArray aa = new JSONArray();
-                                                                if (oContent.has("f")) {
-                                                                    Log.w("ame", "5");
-                                                                    aa = oContent.getJSONArray("f");
-                                                                }
-
-                                                                if (aa.length() > 0) {
-                                                                    laln = true;
-                                                                    Log.w("suanyiAA", laln + "==" + ic);
-                                                                }
-
-                                                                Log.w("suanyi", laln + "==" + ic);
-
-
-                                                                if (!laln) {
-                                                                    Log.w("elek", "sss");
-
-                                                                    errorReq.add("Please Form Cheklist");
-                                                                    berhenti = true;
+                                                                        if (aa.length() == 0) {
+                                                                            errorReq.add("Harap Pilih Cheklist Pada Point " + mas + " - " + (ic + 1));
+                                                                            berhenti = true;
+                                                                        }
+                                                                    }
 
                                                                 }
                                                             }
@@ -6749,7 +6760,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     }
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
-                                                }*/
+                                                }
                                             }
                                         }
                                     } else {
@@ -6769,10 +6780,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             errorReq.add(value.get(4).toString());
                                         }
                                     }
-
-                                } else {
-                                    Log.w("kasdmpe", "asjdasd");
-
                                 }
                             }
                         }
@@ -6793,9 +6800,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     alertbox.show();
                                     return;
-                                } else {
-                                    Log.w("telo", "dadar");
-
                                 }
                             }
 
@@ -6823,12 +6827,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                         if (berhenti) {
-                            Log.w("berhenti", "sss");
                             b.setEnabled(true);
                             if (errorReq.size() > 0) {
-                                Log.w("stop", "sss");
                                 final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
-                                alertbox.setTitle("required");
+                                alertbox.setTitle("Required");
                                 String content = "";
                                 for (String ss : errorReq) {
                                     content += ss + "<br/>";
@@ -6841,8 +6843,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 });
 
                                 alertbox.show();
-                            } else {
-                                Log.w("lanjut", "sss");
                             }
                             return;
                         } else {
@@ -6910,7 +6910,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
                                         } catch (JSONException e) {
                                             e.printStackTrace();
-                                            Log.w("satu", "20");
                                         }
 
                                     }
@@ -6958,7 +6957,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 }
                             }
                         }
-                        showProgressDialogWithTitle("Please Wait...", "upload...");
+                        showProgressDialogWithTitle();
 
                         if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
                             long date = System.currentTimeMillis();
@@ -6974,55 +6973,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             Toast.makeText(context, "No Internet Akses", Toast.LENGTH_SHORT).show();
                             finish();
                         }
-
-                        //  uploadFileChild("pertama");
-
-                       /* JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("in", "pertama");
-                            jsonObject.put("idDetail", idDetail);
-                            jsonObject.put("username", username);
-                            jsonObject.put("idTab", idTab);
-                            jsonObject.put("fromList", fromList);
-                            jsonObject.put("customersId", customersId);
-                            jsonObject.put("includeStatus", includeStatus == false ? "" : "true");
-                            jsonObject.put("isReject", isReject);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        long date = System.currentTimeMillis();
-                        String dateString = hourFormat.format(date);
-                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "11", null, "parent");
-                        db.updateDetailRoomWithFlagContentParent(orderModel);
-
-*/
-                       /* if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-
-                            SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
-                            SubmitingModel submitingModel = new SubmitingModel();
-                            submitingModel.setStatus("0");
-                            submitingModel.setContent(jsonObject.toString());
-                            Message message = new Message();
-                            message.setMessage(jsonObject.toString());
-                            message.setId(submitingRoomDB.createContact(submitingModel));
-
-                            Intent intent = new Intent(getApplicationContext(), UploadService.class);
-                            intent.putExtra(UploadService.ACTION, "uploadTaskRoom");
-                            intent.putExtra(UploadService.KEY_MESSAGE, message);
-                            startService(intent);
-
-                        } else {
-                            SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
-                            SubmitingModel submitingModel = new SubmitingModel();
-                            submitingModel.setStatus("1");
-                            submitingModel.setContent(jsonObject.toString());
-                            submitingRoomDB.createContact(submitingModel);
-
-                        }
-
-                        finish();*/
-
                     }
                 });
             }
@@ -7077,7 +7027,95 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     private void uploadFileChild(String ainnu) {
         ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, username, idTab, "cild");
+        ArrayList<String> listUploadTotal = new ArrayList<>();
         ArrayList<String> listUpload = new ArrayList<>();
+
+        if (ainnu.equalsIgnoreCase("pertama")) {
+            for (int u = 0; u < list.size(); u++) {
+                JSONArray jsA = null;
+                String content = "";
+
+                String cc = list.get(u).getContent();
+
+                try {
+                    if (cc.startsWith("{")) {
+                        if (!cc.startsWith("[")) {
+                            cc = "[" + cc + "]";
+                        }
+                        jsA = new JSONArray(cc);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                if (jsA != null) {
+                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(list.get(u).getContent());
+                            Iterator<String> iter = jsonObject.keys();
+
+                            while (iter.hasNext()) {
+                                String key = iter.next();
+                                try {
+                                    JSONArray jsAdd = jsonObject.getJSONArray(key);
+                                    for (int ic = 0; ic < jsAdd.length(); ic++) {
+                                        JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
+
+                                        JSONArray aa = new JSONArray();
+                                        if (oContent.has("f")) {
+                                            aa = oContent.getJSONArray("f");
+                                        }
+
+                                        if (aa.length() > 0) {
+                                            for (int a = 0; a < aa.length(); a++) {
+                                                if (aa.getJSONObject(a).getString("u").equalsIgnoreCase("")) {
+                                                    listUploadTotal.add("1");
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                } catch (JSONException e) {
+                                    // Something went wrong!
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("form_child")) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(list.get(u).getContent());
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONArray jsnobject = new JSONArray(jsonArray.getJSONObject(i).getString("data"));
+                                for (int ii = 0; ii < jsnobject.length(); ii++) {
+                                    JSONObject c = jsnobject.getJSONObject(ii);
+                                    if (c.getString("type").equalsIgnoreCase("front_camera") || c.getString("type").equalsIgnoreCase("rear_camera")) {
+                                        String aa[] = c.getString("value").toString().split(";");
+                                        if (aa.length == 2) {
+                                            if (aa[0].length() == 0) {
+                                                listUploadTotal.add("1");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        totalUpload = totalUpload + listUploadTotal.size();
+
         for (int u = 0; u < list.size(); u++) {
             JSONArray jsA = null;
             String content = "";
@@ -7109,10 +7147,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 for (int ic = 0; ic < jsAdd.length(); ic++) {
                                     JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
 
-                                    String lastCusID = oContent.getString("iD");
-                                    String val = oContent.getString("v");
-                                    String not = oContent.getString("n");
-
                                     JSONArray aa = new JSONArray();
                                     if (oContent.has("f")) {
                                         aa = oContent.getJSONArray("f");
@@ -7122,7 +7156,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         for (int a = 0; a < aa.length(); a++) {
                                             if (aa.getJSONObject(a).getString("u").equalsIgnoreCase("")) {
                                                 listUpload.add("1");
-                                                Log.w("wewww", aa.getJSONObject(a).getString("r"));
                                                 new UploadFileToServerCild().execute(
                                                         new ValidationsKey().getInstance(context).getTargetUrl(username) + POST_FOTO,
                                                         username,
@@ -7181,7 +7214,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     }
                 }
 
-                /* nanti lagi
+               /*  nanti lagi
                 else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera")) {
                     if (!Message.isJSONValid(list.get(u).getContent())) {
                         listUpload.add("1");
@@ -7597,13 +7630,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     }
 
 
-    private void showProgressDialogWithTitle(String title, String message) {
+    private void showProgressDialogWithTitle() {
         progressDialog = new ProgressDialog(this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setTitle("In progress...");
+        progressDialog.setMessage("Uploading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMax(100);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle(title);
-        progressDialog.setMessage(message);
         progressDialog.show();
+
     }
 
 
@@ -8568,7 +8604,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(activity, 11);
         photo.setMediaAction(AnncaConfiguration.MEDIA_ACTION_PHOTO);
         photo.setMediaQuality(AnncaConfiguration.MEDIA_QUALITY_MEDIUM);
-        photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_FRONT);
+        photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_REAR);
         photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
         new Annca(photo.build()).launchCamera();
 
@@ -8739,9 +8775,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     }
 
 
-    private class posTask extends AsyncTask<String, String, String> {
+    private class posTask extends AsyncTask<String, Integer, String> {
 
         String error = "";
+        long totalSize = 0;
+        File gpxfile = null;
 
         @Override
         protected String doInBackground(String... params) {
@@ -8757,24 +8795,36 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             //dialog.dismiss();
         }
 
-        protected void onProgressUpdate(String... string) {
+        protected void onProgressUpdate(Integer... progress) {
+            if (progressDialog.isIndeterminate()) {
+                progressDialog.setIndeterminate(false);
+            }
+            progressDialog.setProgress(progress[0]);
+            progressDialog.setMessage("Upload Value ... " );
         }
 
         public void postData(String valueIWantToSend, final String usr, final String idr, final String idDetail) {
             // Create a new HttpClient and Post Header
+            prosesUpload.add("ada");
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(valueIWantToSend);
 
             try {
-                HttpParams httpParameters = new BasicHttpParams();
-                HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
-                HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
-                HttpPost httppost = new HttpPost(valueIWantToSend);
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
 
-                // Add your data
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                nameValuePairs.add(new BasicNameValuePair("username_room", usr));
-                nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", idr));
-                nameValuePairs.add(new BasicNameValuePair("id_detail_tab", idDetail));
+                            @Override
+                            public void transferred(long num) {
+                                Log.w("asslams", (int) ((num / (float) totalSize) * 100) + "");
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+
+                ContentType contentType = ContentType.create("multipart/form-data");
+                entity.addPart("username_room", new StringBody(usr));
+                entity.addPart("id_rooms_tab", new StringBody(idr));
+                entity.addPart("id_detail_tab", new StringBody(idDetail));
 
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
                 if (cEdit.getCount() > 0) {
@@ -8807,7 +8857,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     }
 
 
-                    nameValuePairs.add(new BasicNameValuePair("assign_to", has));
+                    entity.addPart("assign_to", new StringBody(has));
 
                 }
 
@@ -8822,14 +8872,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         } else if (cucuTvi.equalsIgnoreCase("Done")) {
                             resultti = "2";
                         }
-                        nameValuePairs.add(new BasicNameValuePair("status_task", resultti));
+                        entity.addPart("status_task", new StringBody(resultti));
                     }
                 }
 
 
                 if (!isReject.equalsIgnoreCase("")) {
-                    nameValuePairs.add(new BasicNameValuePair("is_reject", isReject));
-
+                    entity.addPart("is_reject", new StringBody(isReject));
                 }
 
 
@@ -8838,15 +8887,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                 if (cursorParent.getCount() > 0) {
                     if (!cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)).equalsIgnoreCase("")) {
-                        nameValuePairs.add(new BasicNameValuePair("latlong_before", jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a")));
-                        nameValuePairs.add(new BasicNameValuePair("latlong_after", jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "b")));
+                        entity.addPart("latlong_before", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a")));
+                        entity.addPart("latlong_after", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "b")));
                     } else {
-                        nameValuePairs.add(new BasicNameValuePair("latlong_before", "null"));
-                        nameValuePairs.add(new BasicNameValuePair("latlong_after", "null"));
+                        entity.addPart("latlong_before", new StringBody("null"));
+                        entity.addPart("latlong_after", new StringBody("null"));
                     }
                 } else {
-                    nameValuePairs.add(new BasicNameValuePair("latlong_before", "null"));
-                    nameValuePairs.add(new BasicNameValuePair("latlong_after", "null"));
+                    entity.addPart("latlong_before", new StringBody("null"));
+                    entity.addPart("latlong_after", new StringBody("null"));
                 }
 
                 if (fromList.equalsIgnoreCase("hide") || fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
@@ -8854,8 +8903,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
                         String[] ff = idDetail.split("\\|");
                         if (ff.length == 2) {
-                            nameValuePairs.add(new BasicNameValuePair("parent_id", ff[1]));
-                            nameValuePairs.add(new BasicNameValuePair("id_list_push", ff[0]));
+                            entity.addPart("parent_id", new StringBody(ff[1]));
+                            entity.addPart("id_list_push", new StringBody(ff[0]));
                         }
                     }
                 }
@@ -8866,11 +8915,14 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 }
 
                 Contact contact = messengerHelper.getMyContact();
-                nameValuePairs.add(new BasicNameValuePair("bc_user", contact.getJabberId()));
-
+                entity.addPart("bc_user", new StringBody(contact.getJabberId()));
 
                 ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, usr, idr, "cild");
 
+                JSONArray jsonArrayKey = new JSONArray();
+                JSONArray jsonArrayValue = new JSONArray();
+                JSONArray jsonArrayType = new JSONArray();
+                JSONArray jsonArrayDate = new JSONArray();
 
                 for (int u = 0; u < list.size(); u++) {
 
@@ -8906,17 +8958,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         if (oContent.has("f")) {
                                             aa = oContent.getJSONArray("f");
                                         }
-
-                                     /*   if (oContent.has("f")) {
-                                            JSONArray aada = oContent.getJSONArray("f");
-                                            for (int asin = 0; asin < aada.length(); asin++) {
-                                                if (aada.getJSONObject(asin).has("u")) {
-                                                    String asss = aada.getJSONObject(asin).getString("u");
-                                                    aa.put(asss);
-                                                }
-
-                                            }
-                                        }*/
 
 
                                         JSONObject jOdetail = new JSONObject();
@@ -8959,26 +9000,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                     if (jsA != null) {
-                        Log.w("sa1", "1");
                         if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
-                            Log.w("sa2", "1 :" + jsonResultType(list.get(u).getFlag_content(), "b"));
 
-                            nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
-                            nameValuePairs.add(new BasicNameValuePair("value[]", list.get(u).getContent()));
-                            nameValuePairs.add(new BasicNameValuePair("date[]", ""));
-                            nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
+                            jsonArrayKey.put(list.get(u).getFlag_tab());
+                            jsonArrayValue.put(list.get(u).getContent());
+                            jsonArrayDate.put("");
+                            jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
+
                         } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
-                            Log.w("disini", cc);
 
-                            nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
-                            nameValuePairs.add(new BasicNameValuePair("value[]", cc));
-                            nameValuePairs.add(new BasicNameValuePair("date[]", ""));
-                            nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
+                            jsonArrayKey.put(list.get(u).getFlag_tab());
+                            jsonArrayValue.put(cc);
+                            jsonArrayDate.put("");
+                            jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
+
                         } else {
-                            Log.w("sa3", "1 :" + jsonResultType(list.get(u).getFlag_content(), "b"));
                             if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("front_camera")) {
-
-                                Log.w("sa3", "mo :" + list.get(u).getContent());
 
                                 if (Message.isJSONValid(list.get(u).getContent())) {
                                     JSONObject jObject = null;
@@ -8992,22 +9029,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         try {
                                             String a = jObject.getString("a");
                                             String b = jObject.getString("b");
-//Y-m-d H:i:s
 
-                                            nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
-                                            nameValuePairs.add(new BasicNameValuePair("date[]", b));
-                                            nameValuePairs.add(new BasicNameValuePair("value[]", a));
-                                            nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
+                                            jsonArrayKey.put(list.get(u).getFlag_tab());
+                                            jsonArrayValue.put(a);
+                                            jsonArrayDate.put(b);
+                                            jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
                                     }
                                 } else {
-                                    nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
-                                    nameValuePairs.add(new BasicNameValuePair("value[]", list.get(u).getContent()));
-                                    nameValuePairs.add(new BasicNameValuePair("date[]", ""));
-                                    nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
+                                    jsonArrayKey.put(list.get(u).getFlag_tab());
+                                    jsonArrayValue.put(list.get(u).getContent());
+                                    jsonArrayDate.put("");
+                                    jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
+
                                 }
 
 
@@ -9020,33 +9057,71 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
-                                nameValuePairs.add(new BasicNameValuePair("value[]", content.substring(0, content.length() - 1)));
-                                nameValuePairs.add(new BasicNameValuePair("date[]", ""));
-                                nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
+
+                                jsonArrayKey.put(list.get(u).getFlag_tab());
+                                jsonArrayValue.put(content.substring(0, content.length() - 1));
+                                jsonArrayDate.put("");
+                                jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
+
                             }
 
 
                         }
                     } else {
-                        Log.w("sa4", "1 :" + jsonResultType(list.get(u).getFlag_content(), "b"));
-                        nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
-                        nameValuePairs.add(new BasicNameValuePair("value[]", list.get(u).getContent()));
-                        nameValuePairs.add(new BasicNameValuePair("date[]", ""));
-                        nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
+                        jsonArrayKey.put(list.get(u).getFlag_tab());
+                        jsonArrayValue.put(list.get(u).getContent());
+                        jsonArrayDate.put("");
+                        jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
                     }
                 }
 
-                Log.w("harlem", nameValuePairs.toString());
 
-                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                // Execute HTTP Post Request
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("key", jsonArrayKey);
+                    jsonObject.put("value", jsonArrayValue);
+                    jsonObject.put("type", jsonArrayType);
+                    jsonObject.put("date", jsonArrayDate);
+
+                    Log.w("harlem", jsonObject.toString());
+
+                    try {
+                        File root = new File(Environment.getExternalStorageDirectory(), "ByonChat_Upload");
+                        if (!root.exists()) {
+                            root.mkdirs();
+                        }
+                        gpxfile = new File(root, usr + idr + idDetail + ".json");
+                        FileWriter writer = new FileWriter(gpxfile);
+                        writer.append(jsonObject.toString());
+                        writer.flush();
+                        writer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                entity.addPart("file_json", new FileBody(gpxfile, contentType, gpxfile.getName()));
+
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
                 HttpResponse response = httpclient.execute(httppost);
-                int status = response.getStatusLine().getStatusCode();
-                Log.w("carmin", status + "");
-                if (status == 200) {
-                    HttpEntity entity = response.getEntity();
-                    final String data = EntityUtils.toString(entity);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                Log.w("kask", statusCode + "");
+                if (statusCode == 200) {
+                    Log.w("berhasil", "hore");
+                    if (gpxfile.exists()) {
+                        gpxfile.delete();
+                    }
+
+                    final String data = EntityUtils.toString(r_entity);
                     Log.w("harr", data);
 
                     if (data.equalsIgnoreCase("0")) {
@@ -9081,6 +9156,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         });
                     }
                 } else {
+                    Log.w("gagal", "hore");
+                    if (gpxfile.exists()) {
+                        gpxfile.delete();
+                    }
                     DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
                         public void run() {
                             Log.w("carmin2", "lala" + "");
@@ -9097,21 +9176,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     error = "Tolong periksa koneksi internet.";
                 }
 
-            } catch (ConnectTimeoutException e) {
-                e.printStackTrace();
-                DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        long date = System.currentTimeMillis();
-                        String dateString = hourFormat.format(date);
-
-                        RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
-                        db.updateDetailRoomWithFlagContentParent(orderModel);
-
-                        Toast.makeText(context, "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                finish();
             } catch (ClientProtocolException e) {
+                Log.w("gagal1", e.toString());
+                if (gpxfile.exists()) {
+                    gpxfile.delete();
+                }
                 DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
                         long date = System.currentTimeMillis();
@@ -9124,8 +9193,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     }
                 });
                 finish();
-                // TODO Auto-generated catch block
             } catch (IOException e) {
+                if (gpxfile.exists()) {
+                    gpxfile.delete();
+                }
                 DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
                         long date = System.currentTimeMillis();
@@ -9138,7 +9209,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     }
                 });
                 finish();
-                // TODO Auto-generated catch block
+                Log.w("gagal2", e.toString());
             }
         }
     }
@@ -9752,9 +9823,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         JSONObject jObjectFormula = null;
                         try {
-                            HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
-                            HashMap<String, List<JSONObject>> expandableListDetailJSONObject = new HashMap<String, List<JSONObject>>();
                             List<String> expandableListTitle = new ArrayList<String>();
+                            HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+
+                            HashMap<String, List<JSONObject>> expandableListDetailJSONObject = new HashMap<String, List<JSONObject>>();
                             List<String> expandableListTitleJSON = new ArrayList<String>();
 
                             jObjectFormula = new JSONObject(Formulamaster);
@@ -9810,7 +9882,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             obj.put("iD", String.valueOf(column0));
 
                                             objS.put("iD", String.valueOf(column0));
-                                            objS.put("v", "0");
+                                            objS.put("v", "");
                                             objS.put("n", "");
 
                                         } catch (JSONException e) {
@@ -10014,8 +10086,17 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], params[12]);
         }
 
+        protected void onProgressUpdate(Integer... progress) {
+            if (progressDialog.isIndeterminate()) {
+                progressDialog.setIndeterminate(false);
+            }
+            progressDialog.setProgress(progress[0]);
+            progressDialog.setMessage("Upload Image " + prosesUpload.size()+ "/" + totalUpload );
+        }
+
         @SuppressWarnings("deprecation")
         private String uploadFile(String URL, String username, String id_room, String id_list, String valueSS_, String valueS_, String getId_, String getParent_tab_, String getParent_room_, String _uri, String getFlag_content_, String getFlag_tab_, String getFlag_room_) {
+            prosesUpload.add("ada");
             String responseString = null;
             valueSS = valueSS_;
             valueS = valueS_;
@@ -10118,19 +10199,20 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         @Override
         protected String doInBackground(String... params) {
-            /*new ValidationsKey().getInstance(context).getTargetUrl(username) + POST_FOTO,
-                    username,
-                    idTab,
-                    idListTaskMasterForm,
-                    cc,
-                    "/storage/emulated/0/Pictures/com.byonchat.android" + aa.getString(a),
-                    jsAdd.get(ic).toString()*/
             return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11]);
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            if (progressDialog.isIndeterminate()) {
+                progressDialog.setIndeterminate(false);
+            }
+            progressDialog.setProgress(progress[0]);
+            progressDialog.setMessage("Upload Image " + prosesUpload.size()+ "/" + totalUpload );
         }
 
         @SuppressWarnings("deprecation")
         private String uploadFile(String URL, String username, String id_room, String id_list, String to, String i, String c, String poss, String ky, String gfc, String gft, String ps) {
-
+            prosesUpload.add("ada");
             String responseString = null;
             ii = "/storage/emulated/0/Pictures/com.byonchat.android" + i;
             ff = i;
@@ -10140,10 +10222,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             getFlag_content = gfc;
             getFlag_tab = gft;
             key = ky;
-
-            Log.w("sendiri0", ff);
-            Log.w("sendiri1", to);
-            Log.w("sendiri2", c);
 
             jsonDetail = c;
             jsonMaster = to;
@@ -10202,8 +10280,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         @Override
         protected void onPostExecute(String result) {
-            Log.w("chelsea", result);
-
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 String message = jsonObject.getString("message");
@@ -10442,28 +10518,34 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         for (int i = 0; i < listAdapter.getGroupCount(); i++) {
 
-            View groupItem = listAdapter.getGroupView(i, false, null, listView);
+            LayoutInflater layoutInflater2 = (LayoutInflater) this.context.
+                    getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View groupItem = layoutInflater2.inflate(R.layout.expandable_parent, null);
             groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
 
             totalHeight += groupItem.getMeasuredHeight();
+            Log.w("nyonaaa", totalHeight + "");
             if (((listView.isGroupExpanded(i)) && (i != group))
                     || ((!listView.isGroupExpanded(i)) && (i == group))) {
                 for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
-                    View listItem = listAdapter.getChildView(i, j, false, null,
-                            listView);
+                    LayoutInflater layoutInflater = (LayoutInflater) this.context
+                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View listItem = layoutInflater.inflate(R.layout.expandable_cild, null);
                     listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
                     totalHeight += listItem.getMeasuredHeight();
+                    Log.w("nyonqqq", listItem.getMeasuredHeight() + "");
                 }
             }
         }
 
         ViewGroup.LayoutParams params = listView.getLayoutParams();
-        int height = totalHeight + (listView.getDividerHeight() * (listAdapter.getGroupCount() - 1));
+        int height = 135 + totalHeight + (listView.getDividerHeight() * (listAdapter.getGroupCount() - 1));
         if (height < 10)
             height = 200;
         params.height = height + 50;
         listView.setLayoutParams(params);
         listView.requestLayout();
+
 
     }
 

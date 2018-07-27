@@ -151,6 +151,8 @@ public class FragmentRoomMultipleTask extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
+        Log.w("saya", "disini : " + title);
         if (dbhelper == null) {
             dbhelper = MessengerDatabaseHelper.getInstance(mContext.getApplicationContext());
         }
@@ -232,67 +234,6 @@ public class FragmentRoomMultipleTask extends Fragment {
         super.onResume();
         refreshList();
         requestKey();
-
-        /*SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
-        SubmitingModel submitingModel = new SubmitingModel();
-        submitingModel.setStatus("0");
-        submitingModel.setContent(jsonObject.toString());
-        Message message = new Message();
-        message.setMessage(jsonObject.toString());
-        message.setId(submitingRoomDB.createContact(submitingModel));
-
-        Intent intent = new Intent(getApplicationContext(), UploadService.class);
-        intent.putExtra(UploadService.ACTION, "uploadTaskRoom");
-        intent.putExtra(UploadService.KEY_MESSAGE, message);
-        startService(intent);
-        */
-
-       /* if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-            Log.w("disini", "2");
-            if (!roomsDetail.getId().equalsIgnoreCase("")) {
-                Log.w("disini", "3");
-                String[] ff = roomsDetail.getId().split("\\|");
-                if (ff.length == 2) {
-                    BotListDB db = BotListDB.getInstance(getContext());
-                    Cursor cursorValue = db.getSingleRoomDetailFormWithFlag(roomsDetail.getId(), username, idTab, "value");
-                    if (cursorValue.getCount() == 0) {
-
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("idDetail", roomsDetail.getId());
-                            jsonObject.put("username", username);
-                            jsonObject.put("idTab", idTab);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-                        SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(mContext);
-
-                        Cursor cc = submitingRoomDB.getSingleContactByContent(jsonObject.toString());
-
-                        if (cc.getCount() == 0) {
-
-                            SubmitingModel submitingModel = new SubmitingModel();
-                            submitingModel.setStatus("0");
-                            submitingModel.setContent(jsonObject.toString());
-
-                            Message message = new Message();
-                            message.setMessage(jsonObject.toString());
-                            message.setId(submitingRoomDB.createContact(submitingModel));
-
-                            Intent intent = new Intent(mContext, UploadService.class);
-                            intent.putExtra(UploadService.ACTION, "downloadValueForm");
-                            intent.putExtra(UploadService.KEY_MESSAGE, message);
-                            mContext.startService(intent);
-
-                        }
-                    }
-                }
-            }
-        }
-
-        */
     }
 
     private String JsonToStringKey(String title) {
@@ -311,7 +252,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
     public String abs(String ctn, String type) {
         String content = ctn;
-        if (type!=null){
+        if (type != null) {
             if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
                 Random random = new SecureRandom();
                 char[] result = new char[6];
@@ -591,6 +532,8 @@ public class FragmentRoomMultipleTask extends Fragment {
                         if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                             requestKey();
                         } else {
+                            Log.w("sekitar", "ur");
+
                             refreshList();
                             swipeRefreshLayout.setRefreshing(false);
                             Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -706,9 +649,20 @@ public class FragmentRoomMultipleTask extends Fragment {
     }
 
     public void refreshList() {
-        listItem.clear();
+        if (listItem != null) {
+            if (listItem.size() > 0) {
+                listItem.clear();
+            }
+        }
+
+
         listItem2 = botListDB.allRoomDetailFormWithFlag("", username, idTab, "parent");
+        Log.w("subasa : " + title, listItem2.size() + "");
+//coba disini hampir bisa
+        int b = 0;
+
         for (RoomsDetail aa : listItem2) {
+            b++;
             ArrayList<RoomsDetail> listItem3 = botListDB.allRoomDetailFormWithFlag(aa.getId(), username, idTab, "list");
             String title = "";
             String desc = "";
@@ -716,24 +670,76 @@ public class FragmentRoomMultipleTask extends Fragment {
             String status = "";
             String statusBaru = "";
 
-            for (RoomsDetail ii : listItem3) {
-                if (ii.getFlag_content().equalsIgnoreCase("1")) {
+            if (listItem3.size() == 1) {
+                RoomsDetail roomsDetail = listItem3.get(0);
+                JSONObject jO = null;
+                try {
+                    jO = new JSONObject(roomsDetail.getContent());
+                    String content = "";
+                    if (jO.has("aa")) {
+                        content = jO.getString("aa");
+                    }
 
+                    if (jO.has("bb")) {
+                        statusBaru = jO.getString("bb");
+                    }
+
+                    title = abs(content, roomsDetail.getFlag_tab());
+
+                } catch (JSONException e) {
+                    title = abs(roomsDetail.getContent(), roomsDetail.getFlag_tab());
+                    e.printStackTrace();
+                }
+
+
+            } else if (listItem3.size() == 2) {
+
+                RoomsDetail roomsDetail1 = listItem3.get(0);
+                RoomsDetail roomsDetail2 = listItem3.get(1);
+
+                if (roomsDetail1.getFlag_content().equalsIgnoreCase("1")) {
                     JSONObject jO = null;
                     try {
-                        jO = new JSONObject(ii.getContent());
-                        String content = jO.getString("aa");
-                        statusBaru = jO.getString("bb");
-                        title = abs(content, ii.getFlag_tab());
+                        jO = new JSONObject(roomsDetail1.getContent());
+                        String content = "";
+                        if (jO.has("aa")) {
+                            content = jO.getString("aa");
+                        }
+
+                        if (jO.has("bb")) {
+                            statusBaru = jO.getString("bb");
+                        }
+
+                        title = abs(content, roomsDetail1.getFlag_tab());
 
                     } catch (JSONException e) {
-                        title = abs(ii.getContent(), ii.getFlag_tab());
+                        title = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
                         e.printStackTrace();
                     }
 
+                    desc = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
 
                 } else {
-                    desc = abs(ii.getContent(), ii.getFlag_tab());
+                    JSONObject jO = null;
+                    try {
+                        jO = new JSONObject(roomsDetail2.getContent());
+                        String content = "";
+                        if (jO.has("aa")) {
+                            content = jO.getString("aa");
+                        }
+
+                        if (jO.has("bb")) {
+                            statusBaru = jO.getString("bb");
+                        }
+
+                        title = abs(content, roomsDetail2.getFlag_tab());
+
+                    } catch (JSONException e) {
+                        title = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
+                        e.printStackTrace();
+                    }
+
+                    desc = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
                 }
             }
 
@@ -755,14 +761,34 @@ public class FragmentRoomMultipleTask extends Fragment {
 
             ContentRoom contentRoom = new ContentRoom(aa.getId(), titLes, date, desc, "", status, "");
 
-
-
             if (aa.getId().contains("|")) {
+                //Log.w("hbis", aa.getId());
+
                 Cursor cursorValue = BotListDB.getInstance(getContext()).getSingleRoomDetailFormWithFlag(aa.getId(), username, idTab, "value");
                 if (cursorValue.getCount() == 0) {
                     if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
                         if (username != null) {
-                            new Refresh(getActivity()).execute(new ValidationsKey().getInstance(getContext()).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, aa.getId());
+
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("idDetail", aa.getId());
+                                jsonObject.put("username", username);
+                                jsonObject.put("idTab", idTab);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            Message message = new Message();
+                            message.setMessage(jsonObject.toString());
+                            message.setId(Integer.valueOf(idTab + b));
+
+                            Intent intent = new Intent(mContext, UploadService.class);
+                            intent.putExtra(UploadService.ACTION, "downloadValueForm");
+                            intent.putExtra(UploadService.KEY_MESSAGE, message);
+                            mContext.startService(intent);
+
+
+                            // new Refresh(getActivity()).execute(new ValidationsKey().getInstance(getContext()).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, aa.getId());
                         }
                     }
                 }
@@ -773,12 +799,11 @@ public class FragmentRoomMultipleTask extends Fragment {
                     listItem.add(contentRoom);
                 }
             }
+
+
         }
 
-
         Collections.sort(listItem, new Sortiran());
-
-
         myadapter.notifyDataSetChanged();
     }
 
@@ -875,6 +900,13 @@ public class FragmentRoomMultipleTask extends Fragment {
 
                         RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
                         db.insertRoomsDetail(orderModel2);
+
+
+                        mContext.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(mContext, "Success Download Value", Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
 
                     } catch (JSONException e) {

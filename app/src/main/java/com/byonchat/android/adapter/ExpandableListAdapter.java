@@ -7,8 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,10 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
@@ -25,6 +27,7 @@ import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.model.AddChildFotoExModel;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.utils.DialogUtil;
 import com.google.gson.JsonArray;
 import com.squareup.picasso.Picasso;
 
@@ -46,9 +49,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> ParentItem;
     private HashMap<String, List<String>> ChildItem;
     private Activity activity;
-
     String idDetail, username, idTab, types, JsonType, name;
     //idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI21))
+    String groupActive = "";
     BotListDB db;
 
     public ExpandableListAdapter(Activity activity, Context context, List<String> ParentItem,
@@ -67,7 +70,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         if (db == null) {
             db = BotListDB.getInstance(context);
         }
-
     }
 
 
@@ -83,20 +85,24 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(final int listPosition, final int expandedListPosition,
+    public View getChildView(int listPos, int expandedListPos,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String expandedListText = (String) getChild(listPosition, expandedListPosition);
 
+        final String expandedListText = (String) getChild(listPos, expandedListPos);
+        final int listPosition = listPos;
+        final int expandedListPosition = expandedListPos;
 
-        if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) this.context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.expandable_cild, null);
-        }
+        LayoutInflater layoutInflater = (LayoutInflater) this.context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = layoutInflater.inflate(R.layout.expandable_cild, null);
 
         final TextView txtCheckBox = (TextView) convertView.findViewById(R.id.txt_check_box);
-        final CheckBox text1 = (CheckBox) convertView.findViewById(R.id.checkbox);
+
+        final RadioGroup pilihan = (RadioGroup) convertView.findViewById(R.id.pilihan);
+        final RadioButton okeP = (RadioButton) convertView.findViewById(R.id.radiOK);
+        final RadioButton notP = (RadioButton) convertView.findViewById(R.id.radiNOK);
+
         final TextView editText = (TextView) convertView.findViewById(R.id.editText);
         final TextView txtNumb = (TextView) convertView.findViewById(R.id.txt_numb);
         final ImageView imageA = (ImageView) convertView.findViewById(R.id.imageA);
@@ -104,35 +110,26 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         final ImageView imageC = (ImageView) convertView.findViewById(R.id.imageC);
         final ImageView imageD = (ImageView) convertView.findViewById(R.id.imageD);
 
-
-        /*LinearLayoutManager horizonal = new LinearLayoutManager(convertView.getContext(), LinearLayoutManager.HORIZONTAL, false);
-
-        RecyclerView RvUserList = (RecyclerView) convertView.findViewById(R.id.RvUserList);
-
-        List<AddChildFotoExModel> added_userList = new ArrayList<AddChildFotoExModel>();*/
-
-      /*  if (!as) {
-            editText.getText().clear();
-        }*/
-
-
         try {
             JSONObject jsonObject = new JSONObject(expandedListText);
-
-            txtCheckBox.setText(jsonObject.getString("t"));
             txtNumb.setText((expandedListPosition + 1) + ".");
+            txtCheckBox.setText(jsonObject.getString("t"));
+
 
             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", types);
             if (cEdit.getCount() > 0) {
+
                 String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
                 JSONObject lala = new JSONObject(text);
                 JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
                 JSONObject oContent = jj.getJSONObject(expandedListPosition);
-
                 if (oContent.getString("v").equalsIgnoreCase("1")) {
-                    text1.setChecked(true);
+                    okeP.setChecked(true);
+                } else if (oContent.getString("v").equalsIgnoreCase("0")) {
+                    notP.setChecked(true);
                 } else {
-                    text1.setChecked(false);
+                    okeP.setChecked(false);
+                    notP.setChecked(false);
                 }
 
                 editText.setText(oContent.getString("n"));
@@ -201,13 +198,25 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                                                 JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
 
                                                                 if (oContent.has("f")) {
-                                                                    oContent.put("f", "e");
-                                                                } else {
-                                                                    oContent.put("f", "q");
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(0);
+                                                                    }
                                                                 }
-                                                                Log.w("has", lala.toString());
-//                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
-//                                                                db.updateDetailRoomWithFlagContent(orderModel);
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+
+                                                                if (jsonArray.length() == 4) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                } else if (jsonArray.length() == 3) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                } else if (jsonArray.length() == 2) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageB);
+                                                                } else if (jsonArray.length() == 1) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                                                                }
 
                                                             } catch (JSONException e) {
                                                                 e.printStackTrace();
@@ -270,6 +279,120 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                             }
                         });
 
+                        imageA.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(activity)
+                                        .setTitle("Delete")
+                                        .setPositiveButton("Yes",
+                                                new DialogInterface.OnClickListener() {
+                                                    @TargetApi(11)
+                                                    public void onClick(
+                                                            DialogInterface dialog, int id) {
+                                                        AddChildFotoExModel valueIdValue = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                                                        if (cEdit.getCount() > 0) {
+                                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                                                            JSONObject lala = null;
+                                                            try {
+                                                                lala = new JSONObject(text);
+                                                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                                                if (oContent.has("f")) {
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(0);
+                                                                    }
+                                                                }
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+
+                                                                if (jsonArray.length() == 4) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                } else if (jsonArray.length() == 3) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                } else if (jsonArray.length() == 2) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageB);
+                                                                } else if (jsonArray.length() == 1) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                                                                }
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+                                return false;
+                            }
+                        });
+
+                        imageB.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(activity)
+                                        .setTitle("Delete")
+                                        .setPositiveButton("Yes",
+                                                new DialogInterface.OnClickListener() {
+                                                    @TargetApi(11)
+                                                    public void onClick(
+                                                            DialogInterface dialog, int id) {
+                                                        AddChildFotoExModel valueIdValue = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                                                        if (cEdit.getCount() > 0) {
+                                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                                                            JSONObject lala = null;
+                                                            try {
+                                                                lala = new JSONObject(text);
+                                                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                                                if (oContent.has("f")) {
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(1);
+                                                                    }
+                                                                }
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+
+                                                                if (jsonArray.length() == 4) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                } else if (jsonArray.length() == 3) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                } else if (jsonArray.length() == 2) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageB);
+                                                                } else if (jsonArray.length() == 1) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                                                                }
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+                                return false;
+                            }
+                        });
+
                         Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(0).getString("r")).into(imageA);
                         Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(1).getString("r")).into(imageB);
                     } else if (jsonArray.length() == 3) {
@@ -325,6 +448,178 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 }
                                 context.startActivity(intent);
 
+                            }
+                        });
+
+                        imageA.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(activity)
+                                        .setTitle("Delete")
+                                        .setPositiveButton("Yes",
+                                                new DialogInterface.OnClickListener() {
+                                                    @TargetApi(11)
+                                                    public void onClick(
+                                                            DialogInterface dialog, int id) {
+                                                        AddChildFotoExModel valueIdValue = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                                                        if (cEdit.getCount() > 0) {
+                                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                                                            JSONObject lala = null;
+                                                            try {
+                                                                lala = new JSONObject(text);
+                                                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                                                if (oContent.has("f")) {
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(0);
+                                                                    }
+                                                                }
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+
+                                                                if (jsonArray.length() == 4) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                } else if (jsonArray.length() == 3) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                } else if (jsonArray.length() == 2) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageB);
+                                                                } else if (jsonArray.length() == 1) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                                                                }
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+                                return false;
+                            }
+                        });
+
+                        imageB.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(activity)
+                                        .setTitle("Delete")
+                                        .setPositiveButton("Yes",
+                                                new DialogInterface.OnClickListener() {
+                                                    @TargetApi(11)
+                                                    public void onClick(
+                                                            DialogInterface dialog, int id) {
+                                                        AddChildFotoExModel valueIdValue = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                                                        if (cEdit.getCount() > 0) {
+                                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                                                            JSONObject lala = null;
+                                                            try {
+                                                                lala = new JSONObject(text);
+                                                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                                                if (oContent.has("f")) {
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(1);
+                                                                    }
+                                                                }
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+
+                                                                if (jsonArray.length() == 4) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                } else if (jsonArray.length() == 3) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                } else if (jsonArray.length() == 2) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageB);
+                                                                } else if (jsonArray.length() == 1) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                                                                }
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+                                return false;
+                            }
+                        });
+
+                        imageC.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(activity)
+                                        .setTitle("Delete")
+                                        .setPositiveButton("Yes",
+                                                new DialogInterface.OnClickListener() {
+                                                    @TargetApi(11)
+                                                    public void onClick(
+                                                            DialogInterface dialog, int id) {
+                                                        AddChildFotoExModel valueIdValue = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                                                        if (cEdit.getCount() > 0) {
+                                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                                                            JSONObject lala = null;
+                                                            try {
+                                                                lala = new JSONObject(text);
+                                                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                                                if (oContent.has("f")) {
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(2);
+                                                                    }
+                                                                }
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+                                                                Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+
+                                                                if (jsonArray.length() == 4) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                } else if (jsonArray.length() == 3) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                } else if (jsonArray.length() == 2) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageB);
+                                                                } else if (jsonArray.length() == 1) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                                                                }
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+                                return false;
                             }
                         });
 
@@ -394,6 +689,225 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                             }
                         });
 
+                        imageA.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(activity)
+                                        .setTitle("Delete")
+                                        .setPositiveButton("Yes",
+                                                new DialogInterface.OnClickListener() {
+                                                    @TargetApi(11)
+                                                    public void onClick(
+                                                            DialogInterface dialog, int id) {
+                                                        AddChildFotoExModel valueIdValue = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                                                        if (cEdit.getCount() > 0) {
+                                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                                                            JSONObject lala = null;
+                                                            try {
+                                                                lala = new JSONObject(text);
+                                                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                                                if (oContent.has("f")) {
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(0);
+                                                                    }
+                                                                }
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+
+                                                                if (jsonArray.length() == 4) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                } else if (jsonArray.length() == 3) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                } else if (jsonArray.length() == 2) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageB);
+                                                                } else if (jsonArray.length() == 1) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                                                                }
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+                                return false;
+                            }
+                        });
+
+                        imageB.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(activity)
+                                        .setTitle("Delete")
+                                        .setPositiveButton("Yes",
+                                                new DialogInterface.OnClickListener() {
+                                                    @TargetApi(11)
+                                                    public void onClick(
+                                                            DialogInterface dialog, int id) {
+                                                        AddChildFotoExModel valueIdValue = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                                                        if (cEdit.getCount() > 0) {
+                                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                                                            JSONObject lala = null;
+                                                            try {
+                                                                lala = new JSONObject(text);
+                                                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                                                if (oContent.has("f")) {
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(1);
+                                                                    }
+                                                                }
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+
+                                                                if (jsonArray.length() == 4) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                } else if (jsonArray.length() == 3) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                } else if (jsonArray.length() == 2) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageB);
+                                                                } else if (jsonArray.length() == 1) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                                                                }
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+                                return false;
+                            }
+                        });
+
+                        imageC.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(activity)
+                                        .setTitle("Delete")
+                                        .setPositiveButton("Yes",
+                                                new DialogInterface.OnClickListener() {
+                                                    @TargetApi(11)
+                                                    public void onClick(
+                                                            DialogInterface dialog, int id) {
+                                                        AddChildFotoExModel valueIdValue = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                                                        if (cEdit.getCount() > 0) {
+                                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                                                            JSONObject lala = null;
+                                                            try {
+                                                                lala = new JSONObject(text);
+                                                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                                                if (oContent.has("f")) {
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(2);
+                                                                    }
+                                                                }
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+                                                                Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+
+                                                                if (jsonArray.length() == 4) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                } else if (jsonArray.length() == 3) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                } else if (jsonArray.length() == 2) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageB);
+                                                                } else if (jsonArray.length() == 1) {
+                                                                    Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                                                                }
+
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+                                return false;
+                            }
+                        });
+
+                        imageD.setOnLongClickListener(new View.OnLongClickListener() {
+                            @Override
+                            public boolean onLongClick(View v) {
+                                new AlertDialog.Builder(activity)
+                                        .setTitle("Delete")
+                                        .setPositiveButton("Yes",
+                                                new DialogInterface.OnClickListener() {
+                                                    @TargetApi(11)
+                                                    public void onClick(
+                                                            DialogInterface dialog, int id) {
+                                                        AddChildFotoExModel valueIdValue = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                                                        if (cEdit.getCount() > 0) {
+                                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                                                            JSONObject lala = null;
+                                                            try {
+                                                                lala = new JSONObject(text);
+                                                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                                                if (oContent.has("f")) {
+                                                                    JSONArray jsonArray1 = oContent.getJSONArray("f");
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                                        jsonArray1.remove(3);
+                                                                    }
+                                                                }
+
+                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                                                notifyDataSetChanged();
+                                                                Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                        }
+
+                                                        dialog.cancel();
+                                                    }
+                                                })
+                                        .show();
+                                return false;
+                            }
+                        });
+
                         Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(0).getString("r")).into(imageA);
                         Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(1).getString("r")).into(imageB);
                         Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(2).getString("r")).into(imageC);
@@ -401,6 +915,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     }
                 } else {
                     imageA.setVisibility(View.VISIBLE);
+                    imageB.setVisibility(View.GONE);
+                    imageC.setVisibility(View.GONE);
+                    imageD.setVisibility(View.GONE);
                     imageA.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -414,7 +931,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 }
 
             } else {
+                okeP.setChecked(false);
+                notP.setChecked(false);
+                editText.setText("");
+                Log.w("salamAN2", "dua");
+                Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
                 imageA.setVisibility(View.VISIBLE);
+                imageB.setVisibility(View.GONE);
+                imageC.setVisibility(View.GONE);
+                imageD.setVisibility(View.GONE);
                 imageA.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -430,10 +955,32 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         } catch (JSONException e) {
             e.printStackTrace();
+            okeP.setChecked(false);
+            notP.setChecked(false);
+            editText.setText("");
+            Log.w("salamAN1", "dua");
+            Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+            imageA.setVisibility(View.VISIBLE);
+            imageB.setVisibility(View.GONE);
+            imageC.setVisibility(View.GONE);
+            imageD.setVisibility(View.GONE);
+            imageA.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (activity instanceof DinamicRoomTaskActivity) {
+                        AddChildFotoExModel aaa = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, 0, "add", name);
+                        ((DinamicRoomTaskActivity) activity).yourActivityMethod(aaa);
+                    }
+
+                }
+            });
         }
 
         if (imageA.getVisibility() != View.VISIBLE) {
             imageA.setVisibility(View.VISIBLE);
+            imageB.setVisibility(View.GONE);
+            imageC.setVisibility(View.GONE);
+            imageD.setVisibility(View.GONE);
             imageA.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -444,10 +991,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 }
             });
         }
-        /*if (added_userList.size() < 4) {
-            AddChildFotoExModel aaa = new AddChildFotoExModel(idDetail, username, idTab, "cild", types, expandedListPosition, expandedListText, added_userList.size(), "add");
-            added_userList.add(aaa);
-        }*/
+
+        txtCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = DialogUtil.generateAlertDialog(activity,
+                        "", txtNumb.getText().toString() + " " + txtCheckBox.getText().toString());
+                builder.setPositiveButton("Close", null);
+                builder.show();
+            }
+        });
 
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -527,107 +1080,48 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             }
         });
 
-        /*editText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+        pilihan.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton checkedRadioButton = (RadioButton) group.findViewById(checkedId);
+                boolean isChecked = checkedRadioButton.isChecked();
+                if (isChecked) {
+                    Log.w("har", checkedRadioButton.getText().toString());
+                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", types);
+                    if (cEdit.getCount() > 0) {
+                        String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
 
-                Log.w("masudk", "sism");
+                        JSONObject lala = null;
+                        try {
+                            lala = new JSONObject(text);
+                            JSONObject jsonObject = new JSONObject(expandedListText);
+                            JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
 
-                final int DRAWABLE_RIGHT = 2;
+                            JSONObject oContent = jj.getJSONObject(expandedListPosition);
 
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-
-                    if (event.getRawX() >= (editText.getRight() - editText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        editText.setText("");
-
-                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", types);
-                        if (cEdit.getCount() > 0) {
-                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-
-                            JSONObject lala = null;
-                            try {
-                                lala = new JSONObject(text);
-                                JSONObject jsonObject = new JSONObject(expandedListText);
-                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
-
-                                JSONObject oContent = jj.getJSONObject(expandedListPosition);
-                                oContent.put("n", "");
-
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), types, name, "cild");
-                                db.updateDetailRoomWithFlagContent(orderModel);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            if (checkedRadioButton.getText().toString().equalsIgnoreCase("OK")) {
+                                Log.w("sadis", "satu");
+                                oContent.put("v", "1");
+                            } else {
+                                oContent.put("v", "0");
+                                Log.w("sadis", "kosong");
                             }
 
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), types, name, "cild");
+                            db.updateDetailRoomWithFlagContent(orderModel);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        return true;
                     } else {
-
-                        return true;
+                        Log.w("ksoog", "lalalR");
                     }
-
                 }
-                return false;
             }
-        });*/
+        });
 
 
-       /* AddFotoChildAdapter addedUsersAdapter = new AddFotoChildAdapter(activity, convertView.getContext(), added_userList);
-        addedUsersAdapter.notifyDataSetChanged();
-        RvUserList.setLayoutManager(horizonal);
-        RvUserList.setAdapter(addedUsersAdapter);*/
 
-        /*editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(final Editable s) {
-
-                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", types);
-                if (cEdit.getCount() > 0) {
-                    String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-                    JSONObject lala = null;
-                    try {
-                        lala = new JSONObject(text);
-                        JSONObject jsonObject = new JSONObject(expandedListText);
-                        JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
-
-                        JSONObject oContent = jj.getJSONObject(expandedListPosition);
-                        oContent.put("n", s.toString());
-
-                        Log.w("kasi", lala.toString());
-                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), types, name, "cild");
-                        db.updateDetailRoomWithFlagContent(orderModel);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-              *//*  Log.w("sebelum", idDetail + "::" + username + "::" + idTab + "::" + "cild" + "::" + types + "::" + s.toString());
-
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Log.w("sesudah", idDetail + "::" + username + "::" + idTab + "::" + "cild" + "::" + types + "::" + s.toString());
-
-                    }
-                }, 5);*//*
-            }
-        });*/
-
-        text1.setOnClickListener(new View.OnClickListener() {
+        /*text1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
@@ -681,8 +1175,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 }
 
             }
-        });
-
+        });*/
 
         return convertView;
     }
@@ -722,6 +1215,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         //listTitleTextView.setTypeface(null, Typeface.BOLD);
         listTitleTextView.setText((listPosition + 1) + ". " + listTitle);
 
+
         if (!isExpanded) {
             listTitleTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ico_arrow_down, 0);
         } else {
@@ -740,6 +1234,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int listPosition, int expandedListPosition) {
         return true;
     }
+
 
     private String jsonCheckBox(String idT, String idS, String val, String note) {
         JSONObject obj = new JSONObject();
@@ -779,4 +1274,5 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
         return result;
     }
+
 }

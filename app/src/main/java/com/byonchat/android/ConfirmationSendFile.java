@@ -20,6 +20,7 @@ import android.provider.MediaStore;
 import android.support.v4.util.LruCache;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,9 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.personalRoom.NoteFollowUpActivity;
+import com.byonchat.android.personalRoom.model.NotesPhoto;
+import com.byonchat.android.personalRoom.model.PictureModel;
 import com.byonchat.android.provider.Files;
 import com.byonchat.android.provider.FilesDatabaseHelper;
 import com.byonchat.android.provider.FilesURL;
@@ -38,11 +42,13 @@ import com.byonchat.android.provider.FilesURLDatabaseHelper;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.utils.ImageLoadingUtils;
+import com.byonchat.android.utils.ImageUtil;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.TouchImageView;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.widget.VideoSlaceSeekBar;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,9 +60,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
+
+import static com.byonchat.android.ConfirmationSendFileMultiple.EXTRA_PHOTOS;
 
 /*import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
@@ -87,10 +97,15 @@ public class ConfirmationSendFile extends AppCompatActivity {
     private ImageLoadingUtils utils;
     LruCache<String, Bitmap> memoryCache;
     String iname;
+    boolean isFrom = false;
     private long numberOfImages = 0;
     private String Image_path = null;
     public static final String CLOSEMEMEACTIVITY = "byonchat.meme.close.activity";
-
+    private List<NotesPhoto> photos;
+    File compressedFile;
+    public static final String EXTRA_PHOTOS = "photos";
+    public static final String EXTRA_CAPTIONS = "captions";
+    public ArrayList<NotesPhoto> notesPhotos;
 
     // FFmpeg ffmpeg;
     private static final String TAG = ConfirmationSendFile.class.getSimpleName();
@@ -105,6 +120,10 @@ public class ConfirmationSendFile extends AppCompatActivity {
         uriImage = getIntent().getStringExtra("file");
         name = getIntent().getStringExtra("name");
 
+        ConfirmationSendFileMultiple.message.clear();
+        if (getIntent().getExtras().containsKey("isFrom")) {
+            isFrom = true;
+        }
         type = getIntent().getStringExtra("type");
         from = getIntent().getStringExtra("from");
         title = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
@@ -162,9 +181,20 @@ public class ConfirmationSendFile extends AppCompatActivity {
             });
 
         } else {
-            utils = new ImageLoadingUtils(this);
-            imagePlay.setVisibility(View.GONE);
-            new NystromImageCompression(true).execute(uriImage);
+            if (!isFrom) {
+                utils = new ImageLoadingUtils(this);
+                imagePlay.setVisibility(View.GONE);
+                new NystromImageCompression(true).execute(uriImage);
+            } else {
+                imagePlay.setVisibility(View.GONE);
+                photos = getIntent().getParcelableArrayListExtra("photos");
+                if (photos != null) {
+                    initPhotos();
+                } else {
+                    finish();
+                    return;
+                }
+            }
         }
 
 
@@ -219,13 +249,30 @@ public class ConfirmationSendFile extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getText(R.string.file_too_large), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    String textCaption = textMessage.getText().toString() != null ? textMessage.getText().toString() : "";
-                    MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+                    if (!isFrom) {
+                        String textCaption = textMessage.getText().toString() != null ? textMessage.getText().toString() : "";
+                        MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
 
-                    Message msg = createNewMessage(jsonMessage(uriImage, uriImage, "", "", "", textCaption), messengerHelper.getMyContact().getJabberId(), name, typeChat, type);
-                    sendFile(msg);
-                    DoDone();
+                        Message msg = createNewMessage(jsonMessage(uriImage, uriImage, "", "", "", textCaption), messengerHelper.getMyContact().getJabberId(), name, typeChat, type);
+                        sendFile(msg);
+                        DoDone();
 //                    saveImage(utils.decodeBitmapFromPath(uriDecoded));
+                    } else {
+                        if (TextUtils.isEmpty(textMessage.getText().toString().trim())) {
+                            textMessage.setError("Content is required!");
+                        } else {
+                            notesPhotos = new ArrayList<>();
+                            NotesPhoto nphoto = new NotesPhoto(compressedFile, textMessage.getText().toString().trim());
+                            notesPhotos.add(nphoto);
+
+                            Intent data = new Intent();
+                            data.putExtra(EXTRA_PHOTOS, compressedFile.getPath());
+                            data.putExtra(EXTRA_CAPTIONS, textMessage.getText().toString().trim());
+                            data.putParcelableArrayListExtra(EXTRA_PHOTOS, (ArrayList<NotesPhoto>) notesPhotos);
+                            setResult(RESULT_OK, data);
+                            finish();
+                        }
+                    }
                 }
             }
         });
@@ -237,6 +284,29 @@ public class ConfirmationSendFile extends AppCompatActivity {
             }
         });
 
+    }
+
+    void initPhotos() {
+        NotesPhoto photo = photos.get(0);
+        CompressFile(photo.getPhotoFile());
+    }
+
+    void CompressFile(File file) {
+        compressedFile = file;
+        if (ImageUtil.isImage(file)) {
+            try {
+                compressedFile = ImageUtil.compressImage(file);
+            } catch (NullPointerException e) {
+                showError(getString(R.string.corrupted_file));
+                return;
+            }
+        }
+
+        if (!file.exists()) { //File have been removed, so we can not upload it anymore
+            showError(getString(R.string.corrupted_file));
+            return;
+        }
+        Picasso.with(getApplicationContext()).load(compressedFile).into(imageView);
     }
 
     public void DoDone() {
@@ -705,6 +775,10 @@ public class ConfirmationSendFile extends AppCompatActivity {
             imageView.setImageBitmap(utils.decodeBitmapFromPath(result));
         }
 
+    }
+
+    public void showError(String errorMessage) {
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     private void saveImage(Bitmap finalBitmap) {

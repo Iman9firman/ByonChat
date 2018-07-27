@@ -483,5 +483,14 @@
     <string name="slide_4_title">SMS SOLDIER</string>
     <string name="slide_4_desc">SMS SOLDIER bersifat global Ulasan terbesar penyedia teknologi keuangan dunia yang didedikasikan untuk solusi. SMS Soldier memberdayakan Dunia Keuangan dengan perangkat lunak, layanan, konsultasi dan outsourcing solusi fokus pada ritel dan institusional perbankan, pembayaran, aset dan kekayaan manajemen, risiko dan kepatuhan, pemberdayaan perdagangan, proses transaksi dan pencatatan.</string>
 
+    <string-array name="attach_file">
+        <item name="capture">Take a photo</item>
+        <item name="gallery">Choose from Gallery</item>
+    </string-array>
 
+    <string name="comment_error_failed_write">Failed to write temporary picture!</string>
+    <string name="permission_request_title">Please grant permissions to make apps working properly!</string>
+    <string name="comment_error_failed_read_picture">Failed to read picture data!</string>
+    <string name="comment_error_failed_open_picture">Failed to open picture!</string>
+    <string name="corrupted_file">Can not read file, please make sure that is not corrupted file!</string>
 </resources>

@@ -24,6 +24,7 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 
+import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.Contact;
 
 import org.apache.http.HttpResponse;
@@ -47,6 +48,7 @@ public class MediaProcessingUtil {
             "yyyyMMdd-HHmmss", Locale.getDefault());
     public static final String PROFILEPIC_FILE_NAME = "profile-pic";
     public static final String ALBUM_NAME = "ByonChat";
+    public static final String FILES_PATH = Byonchat.getAppsName() + File.separator + "Files";
     public static final int PIC_HEIGHT = 480;
     public static final int PIC_WIDTH = 640;
 
@@ -61,10 +63,10 @@ public class MediaProcessingUtil {
         return "bc" + name + dateFormat.format(new Date()) + "." + ext;
     }
 
-    public static String createFileNameAll(Context context,String ext) {
+    public static String createFileNameAll(Context context, String ext) {
         if (ext == null)
             ext = "jpeg";
-        if(ext.contains(".")){
+        if (ext.contains(".")) {
             ext = ext.substring(ext.lastIndexOf("."));
         }
         String count = "0";
@@ -72,35 +74,85 @@ public class MediaProcessingUtil {
         String date = dateFormat.format(new Date());
         int idSelect = 22;
         String type = "VID";
-        if (ext.equalsIgnoreCase(".jpg")||ext.equalsIgnoreCase(".jpeg")){
+        if (ext.equalsIgnoreCase(".jpg") || ext.equalsIgnoreCase(".jpeg")) {
             idSelect = 21;
             type = "IMG";
         }
         squence = new Validations().getInstance(context).getContentValidation(idSelect);
 
-        if (squence.equalsIgnoreCase("")){
+        if (squence.equalsIgnoreCase("")) {
             count = "0";
-            new Validations().getInstance(context).setContentValidation(idSelect,count+";"+date);
-        }else{
+            new Validations().getInstance(context).setContentValidation(idSelect, count + ";" + date);
+        } else {
             String nn[] = squence.split(";");
-            if(nn.length==2){
-                if(nn[1].split("-")[0].equalsIgnoreCase(date.split("-")[0])){
+            if (nn.length == 2) {
+                if (nn[1].split("-")[0].equalsIgnoreCase(date.split("-")[0])) {
                     String nilai = "0";
-                    if(!nn[0].equalsIgnoreCase("")){
+                    if (!nn[0].equalsIgnoreCase("")) {
                         nilai = nn[0];
                     }
-                    count =  String.valueOf(Integer.valueOf(nilai)+1);
-                    new Validations().getInstance(context).setContentValidation(idSelect,count+";"+date);
-                }else{
-                    count =  String.valueOf(0);
-                    new Validations().getInstance(context).setContentValidation(idSelect,count+";"+date);
+                    count = String.valueOf(Integer.valueOf(nilai) + 1);
+                    new Validations().getInstance(context).setContentValidation(idSelect, count + ";" + date);
+                } else {
+                    count = String.valueOf(0);
+                    new Validations().getInstance(context).setContentValidation(idSelect, count + ";" + date);
                 }
-            }else{
-                count =  String.valueOf(Integer.valueOf(count)+1);
-                new Validations().getInstance(context).setContentValidation(idSelect,count+";"+date);
+            } else {
+                count = String.valueOf(Integer.valueOf(count) + 1);
+                new Validations().getInstance(context).setContentValidation(idSelect, count + ";" + date);
             }
         }
-        return "BC-"+ type + "-" + date + "-" + count + ext;
+        return "BC-" + type + "-" + date + "-" + count + ext;
+    }
+
+    public static String generateFilePath(String fileName, String extension) {
+        File file = new File(Environment.getExternalStorageDirectory().getPath(),
+                ImageUtil.isImage(fileName) ? ImageUtil.IMAGE_PATH : FILES_PATH);
+
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        int index = 0;
+        String directory = file.getAbsolutePath() + File.separator;
+        String[] fileNameSplit = splitFileName(fileName);
+        while (true) {
+            File newFile;
+            if (index == 0) {
+                newFile = new File(directory + fileNameSplit[0] + extension);
+            } else {
+                newFile = new File(directory + fileNameSplit[0] + "-" + index + extension);
+            }
+            if (!newFile.exists()) {
+                return newFile.getAbsolutePath();
+            }
+            index++;
+        }
+    }
+
+    public static String[] splitFileName(String fileName) {
+        String name = fileName;
+        String extension = "";
+        int i = fileName.lastIndexOf('.');
+        if (i != -1) {
+            name = fileName.substring(0, i);
+            extension = fileName.substring(i);
+        }
+
+        return new String[]{name, extension};
+    }
+
+    public static void notifySystem(File file) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        mediaScanIntent.setData(Uri.fromFile(file));
+        Byonchat.getApps().sendBroadcast(mediaScanIntent);
+    }
+
+    public static String getExtension(String fileName) {
+        int lastDotPosition = fileName.lastIndexOf('.');
+        String ext = fileName.substring(lastDotPosition + 1);
+        ext = ext.replace("_", "");
+        return ext.trim().toLowerCase();
     }
 
     public static File getDirectory() {
@@ -117,10 +169,12 @@ public class MediaProcessingUtil {
         return MediaProcessingUtil.PROFILEPIC_FILE_NAME + "-"
                 + contact.getJabberId() + ".jpg";
     }
+
     public static String getProfilePicName(String jabberId) {
         return MediaProcessingUtil.PROFILEPIC_FILE_NAME + "-"
                 + jabberId + ".jpg";
     }
+
     public static String getProfilePicNameSmall(Contact contact) {
         return MediaProcessingUtil.PROFILEPIC_FILE_NAME + "-"
                 + contact.getJabberId() + "_small.jpg";
@@ -130,13 +184,14 @@ public class MediaProcessingUtil {
         return MediaProcessingUtil.PROFILEPIC_FILE_NAME + "-"
                 + contact + ".jpg";
     }
+
     public static File getOutputFile(String ext, String name) {
         File dir = getDirectory();
 
         return new File(dir, createFileName(ext, name));
     }
 
-    public static void saveProfilePic(Context context,String JabberId,Bitmap resource) {
+    public static void saveProfilePic(Context context, String JabberId, Bitmap resource) {
         String fname = MediaProcessingUtil.getProfilePicName(JabberId);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         resource.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -161,7 +216,6 @@ public class MediaProcessingUtil {
     }
 
 
-
     public static File getOutputFile(String ext) {
         return getOutputFile(ext, null);
     }
@@ -178,11 +232,24 @@ public class MediaProcessingUtil {
         return extension;
     }
 
+    public static String getRealPathFromURI(Uri contentUri) {
+        Cursor cursor = Byonchat.getApps().getContentResolver().query(contentUri, null, null, null, null);
+        if (cursor == null) {
+            return contentUri.getPath();
+        } else {
+            cursor.moveToFirst();
+            int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            String realPath = cursor.getString(index);
+            cursor.close();
+            return realPath;
+        }
+    }
+
     public static String getRealPathFromURI(ContentResolver resolver,
-            Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
+                                            Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = resolver.query(contentUri, proj, // Which columns to
-                                                         // return
+                // return
                 null, // WHERE clause; which rows to return (all rows)
                 null, // WHERE clause selection arguments (none)
                 null); // Order-by clause (ascending by name)
@@ -194,7 +261,7 @@ public class MediaProcessingUtil {
     }
 
     public static File getResizedImage(File src, String destName, int width,
-            int height) {
+                                       int height) {
         FileOutputStream out = null;
         File f = new File(destName);
         try {
@@ -236,6 +303,7 @@ public class MediaProcessingUtil {
         i.putExtra("scaleUpIfNeeded", true);
 
     }
+
     public static void addCropExtraFree(Intent i) {
         i.putExtra("crop", "true");
         i.putExtra("scale", true);
@@ -293,7 +361,7 @@ public class MediaProcessingUtil {
     }
 
     public static String getFileFromUrl(Activity activity, String url,
-            String name, String ext) throws Exception {
+                                        String name, String ext) throws Exception {
 
         String fname = createFileName(ext, name);
         InputStream in = null;
@@ -369,12 +437,12 @@ public class MediaProcessingUtil {
 
     public static Bitmap getRoundedCornerBitmap(Bitmap src, float round) {
         Bitmap result = null;
-        if (src!=null) {
+        if (src != null) {
             // Source image size
             int width = src.getWidth();
             int height = src.getHeight();
             // create result bitmap output
-             result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             // set canvas for painting
             Canvas canvas = new Canvas(result);
             canvas.drawARGB(0, 0, 0, 0);
@@ -402,7 +470,7 @@ public class MediaProcessingUtil {
 
     public static Bitmap getRoundedCornerBitmapBorder(Bitmap src, float round) {
         Bitmap result = null;
-        if (src!=null) {
+        if (src != null) {
             // Source image size
             int width = src.getWidth();
             int height = src.getHeight();
@@ -436,7 +504,7 @@ public class MediaProcessingUtil {
 
 
     public static String getFileFromUrlMessage(Activity activity, String url,
-                                        String name, String ext) throws Exception {
+                                               String name, String ext) throws Exception {
 
         String fname = createFileName(ext, name);
         InputStream in = null;
@@ -447,7 +515,7 @@ public class MediaProcessingUtil {
             HttpGet get = new HttpGet(url);
             HttpResponse response = httpClient.execute(get);
             in = response.getEntity().getContent();
-            out = new FileOutputStream(new File(getDirectory(), "/"+fname));
+            out = new FileOutputStream(new File(getDirectory(), "/" + fname));
 
             byte[] buffer = new byte[1024];
             int len;
@@ -470,10 +538,10 @@ public class MediaProcessingUtil {
             ;
         }
 
-        return getDirectory().getAbsolutePath()+  "/"+fname;
+        return getDirectory().getAbsolutePath() + "/" + fname;
     }
 
-    public static Bitmap decodeFileListConversation(File f){
+    public static Bitmap decodeFileListConversation(File f) {
         try {
             //Decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -481,16 +549,16 @@ public class MediaProcessingUtil {
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
 
             //The new size we want to scale to
-            final int REQUIRED_SIZE=50;
+            final int REQUIRED_SIZE = 50;
 
             //Find the correct scale value. It should be the power of 2.
-            int scale=1;
-            while(o.outWidth/scale/2>=REQUIRED_SIZE && o.outHeight/scale/2>=REQUIRED_SIZE)
+            int scale = 1;
+            while (o.outWidth / scale / 2 >= REQUIRED_SIZE && o.outHeight / scale / 2 >= REQUIRED_SIZE)
                 scale++;
 
             //Decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize=scale;
+            o2.inSampleSize = scale;
             o2.inScaled = false;
             o2.inDither = false;
             o2.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -501,7 +569,7 @@ public class MediaProcessingUtil {
         return null;
     }
 
-    public static Bitmap decodeFileSend(File f){
+    public static Bitmap decodeFileSend(File f) {
         int MAX_IMAGE_SIZE = 200 * 1024; // max final file size
         Bitmap bmpPic = BitmapFactory.decodeFile(f.getPath());
         if ((bmpPic.getWidth() >= 150) && (bmpPic.getHeight() >= 150)) {
@@ -776,10 +844,10 @@ public class MediaProcessingUtil {
             options.inJustDecodeBounds = false;
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 
-        /*    int[] pids = { android.os.Process.myPid() };
-           *//* MemoryInfo myMemInfo = mAM.getProcessMemoryInfo(pids)[0];
+            /*    int[] pids = { android.os.Process.myPid() };
+             *//* MemoryInfo myMemInfo = mAM.getProcessMemoryInfo(pids)[0];
             Log.e(TAG, "dalvikPss (decoding) = " + myMemInfo.dalvikPss);*//*
-*/
+             */
             return BitmapFactory.decodeByteArray(byteArr, 0, count, options);
 
         } catch (Exception e) {
@@ -788,6 +856,7 @@ public class MediaProcessingUtil {
             return null;
         }
     }
+
     private static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image

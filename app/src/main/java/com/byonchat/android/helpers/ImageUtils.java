@@ -3,10 +3,13 @@ package com.byonchat.android.helpers;
 import android.os.Environment;
 import android.util.Log;
 
+import com.byonchat.android.local.CacheManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by byonc on 4/18/2017.
@@ -40,5 +43,14 @@ public class ImageUtils {
             Log.d(TAG, "Oops! Failed create " + imageFileName + " file");
         }
         return imageFile;
+    }
+
+    public static File createImageFileManhera() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date());
+        String imageFileName = "JPEG-" + timeStamp + "-";
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        CacheManager.getInstance().cacheLastImagePath("file:" + image.getAbsolutePath());
+        return image;
     }
 }

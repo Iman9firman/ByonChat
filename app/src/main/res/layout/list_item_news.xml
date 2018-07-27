@@ -66,15 +66,31 @@
             android:orientation="vertical"
             android:paddingLeft="@dimen/profile_margin_profile_to_text">
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="fill_parent"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="YS MONOSHOCK - PIGGY BANK"
-                android:textColor="@color/judul"
-                android:textSize="@dimen/oto_feed_item_profile_name"
-                android:textStyle="bold" />
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:text="YS MONOSHOCK - PIGGY BANK"
+                    android:textColor="@color/judul"
+                    android:textSize="@dimen/oto_feed_item_profile_name"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/btn.followup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin5"
+                    android:padding="@dimen/margin5"
+                    android:src="@drawable/ic_follow_black" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/timestamp"

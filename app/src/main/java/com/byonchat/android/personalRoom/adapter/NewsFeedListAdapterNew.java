@@ -30,6 +30,7 @@ import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.personalRoom.NoteCommentActivity;
 import com.byonchat.android.personalRoom.NoteCommentActivityNew;
+import com.byonchat.android.personalRoom.NoteFollowUpActivity;
 import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.byonchat.android.personalRoom.model.NewsFeedItem;
 import com.byonchat.android.provider.BotListDB;
@@ -173,6 +174,20 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
             });
 
 
+            ((FeedItemsHolderNews) holder).vBtnFollowup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, NoteFollowUpActivity.class);
+                    intent.putExtra("userid", item.getUserid());
+                    intent.putExtra("id_note", item.getId());
+                    intent.putExtra("bc_user", item.getMyuserid());
+                    intent.putExtra("id_room_tab", item.getIdRoomTab());
+                    intent.putExtra("color", item.getColorHeader());
+                    mContext.startActivity(intent);
+                }
+            });
+
+
             if (item.getImage() != null) {
                 if (item.getImage().contains("http")) {
                     Picasso.with(mContext).load(item.getImage()).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((FeedItemsHolderNews) holder).iconView);
@@ -191,8 +206,8 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
             ((FeedItemsHolderNews) holder).main_content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   /* if (item.getImage().contains("http")) {
-                       *//* Intent intent = new Intent(mContext, NewsDetailActivity.class);
+                    /* if (item.getImage().contains("http")) {
+                     *//* Intent intent = new Intent(mContext, NewsDetailActivity.class);
                         intent.putExtra("title", item.getTitle());
                         intent.putExtra("time", item.getTimeStamp());
                         intent.putExtra("content", item.getStatus());
@@ -278,6 +293,7 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
         public TextView name, timestamp, txtStatusMsg, totalComments, totalLoves, text;
         public Target iconView;
         public View viee;
+        public ImageView vBtnFollowup;
         /*public TextView tvName;
         public TextView tvEmailId;*/
 
@@ -299,6 +315,7 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
             this.dotB = (LinearLayout) view.findViewById(R.id.dotB);
             this.text = (TextView) view.findViewById(R.id.text);
             this.viee = (View) view.findViewById(R.id.viee);
+            this.vBtnFollowup = (ImageView) view.findViewById(R.id.btn_followup);
             /*tvName = (TextView) view.findViewById(R.id.tvName);
             tvEmailId = (TextView) view.findViewById(R.id.tvEmailId);*/
         }

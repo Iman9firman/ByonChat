@@ -21,7 +21,7 @@ import com.byonchat.android.personalRoom.model.PictureModel;
  * Created by byonc on 4/25/2017.
  */
 
-public class PictureFragment extends Fragment {
+public class FollowupFragment extends Fragment {
 
     String ptitle, ptimestamp, purl, purlthumb, pdesc, pmyuserid, puserid, pid, pflag, pColor;
     int pos;
@@ -53,8 +53,8 @@ public class PictureFragment extends Fragment {
         this.pColor = args.getString(ARG_COLOR);
     }
 
-    public static PictureFragment newInstance(int sectionNumber, String purl, String purlthumb, String ptitle, String ptimestamp, String pdesc, String pmyuserid, String puserid, String pid, String pflag, String pColor) {
-        PictureFragment fragment = new PictureFragment();
+    public static FollowupFragment newInstance(int sectionNumber, String purl, String purlthumb, String ptitle, String ptimestamp, String pdesc, String pmyuserid, String puserid, String pid, String pflag, String pColor) {
+        FollowupFragment fragment = new FollowupFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString(ARG_IMG_URL, purl);
@@ -88,35 +88,14 @@ public class PictureFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_detail_picture, container, false);
+        view = inflater.inflate(R.layout.fragment_follow_picture_multiple, container, false);
 
         mImageView = (ImageView) view.findViewById(R.id.detail_image);
         mtextMessage = (EditText) view.findViewById(R.id.textMessage);
         mPlay = (ImageView) view.findViewById(R.id.btn_play);
 
         Glide.with(getActivity()).load(purl).thumbnail(0.1f).into(mImageView);
-
-        if (ConfirmationSendFileMultiple.message.size() > 0) {
-            if (ConfirmationSendFileMultiple.message.get(ConfirmationSendFileMultiple.KEY_CONTENT).equalsIgnoreCase("")) {
-                mtextMessage.setText(ConfirmationSendFileMultiple.message.get(ConfirmationSendFileMultiple.KEY_CONTENT));
-            }
-        }
-
-        mtextMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ((ConfirmationSendFileMultiple) getActivity()).onTextChanged(s + "", pid);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
+        mtextMessage.setVisibility(View.GONE);
 
         return view;
     }

@@ -82,7 +82,7 @@
         android:label="A label for your permission" />
 
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".application.Application"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -223,6 +223,11 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".ConfirmationSendFile"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_confirmation_send_file"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ConfirmationSendFileFolllowup"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_confirmation_send_file"
             android:windowSoftInputMode="adjustResize|stateHidden" />
@@ -493,6 +498,12 @@
             tools:ignore="NewApi" />
         <activity
             android:name=".personalRoom.NoteCommentActivityNew"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".personalRoom.NoteFollowUpActivity"
             android:label="PersonalRoom"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"

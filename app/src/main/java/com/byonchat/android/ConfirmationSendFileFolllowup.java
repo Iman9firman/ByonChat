@@ -93,7 +93,7 @@ import java.util.regex.Pattern;
  * Created by byonc on 4/20/2017.
  */
 
-public class ConfirmationSendFileMultiple extends AppCompatActivity implements PictureFragment.OnFragmentInteractionListener {
+public class ConfirmationSendFileFolllowup extends AppCompatActivity implements FollowupFragment.OnFragmentInteractionListener {
     TouchImageView bigImageView;
     ImageView buttonAddImage;
     Button btnCancel;
@@ -139,6 +139,7 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
     public static final String EXTRA_CAPTIONS = "captions";
     public final static HashMap<String, String> message = new HashMap<>();
     public static final String KEY_CONTENT = "key_content";
+    private String key_content;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -152,6 +153,7 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header(getWindow()));
 
+        ConfirmationSendFileMultiple.message.clear();
         if (getIntent().getExtras().containsKey("isFrom")) {
             isFrom = true;
         }
@@ -170,12 +172,10 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
         btnCancel = (Button) findViewById(R.id.btnCancel);
         btnSend = (Button) findViewById(R.id.btnSend);
 
-        if (isFrom) {
-            textMessage.setVisibility(View.VISIBLE);
-        }
+        textMessage.setVisibility(View.VISIBLE);
         recyclerView.setHasFixedSize(true);
         recyclerView
-                .setLayoutManager(new LinearLayoutManager(ConfirmationSendFileMultiple.this, LinearLayoutManager.HORIZONTAL, false));
+                .setLayoutManager(new LinearLayoutManager(ConfirmationSendFileFolllowup.this, LinearLayoutManager.HORIZONTAL, false));
 
         buttonAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,9 +223,6 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                /*Collections.swap(pictureModel, viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                // and notify the adapter that its dataset has changed
-                horizontalAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());*/
 
                 return false;
             }
@@ -345,20 +342,17 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
                 if (!isFrom) {
                     new sendMultiple(pictureModel).execute();
                 } else {
-                    if (TextUtils.isEmpty(textMessage.getText().toString().trim())) {
-                        textMessage.setError("Content is required!");
-                    } else {
-                        notesPhotos = new ArrayList<>();
-                        for (PictureModel photo : pictureModel) {
-                            File imageFile = new File(photo.getUrl());
-                            NotesPhoto nphoto = new NotesPhoto(imageFile, textMessage.getText().toString());
-                            notesPhotos.add(nphoto);
-                        }
-                        Intent data = new Intent();
-                        data.putParcelableArrayListExtra(EXTRA_PHOTOS, (ArrayList<NotesPhoto>) notesPhotos);
-                        setResult(RESULT_OK, data);
-                        finish();
+                    notesPhotos = new ArrayList<>();
+                    for (PictureModel photo : pictureModel) {
+                        File imageFile = new File(photo.getUrl());
+                        NotesPhoto nphoto = new NotesPhoto(imageFile, textMessage.getText().toString());
+                        notesPhotos.add(nphoto);
                     }
+                    Intent data = new Intent();
+                    data.putParcelableArrayListExtra(EXTRA_PHOTOS, (ArrayList<NotesPhoto>) notesPhotos);
+                    data.putExtra(EXTRA_CAPTIONS, textMessage.getText().toString().trim());
+                    setResult(RESULT_OK, data);
+                    finish();
                 }
 //                imageCompressed.clear();
             }
@@ -371,16 +365,6 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
             }
         });
 
-    }
-
-    void onTextChanged(String text, String position) {
-        this.text = text;
-        this.pos = position;
-        pictureModel.get(Integer.valueOf(position)).setTitle(text);
-        message.clear();
-        if (isFrom) {
-            message.put("content", text);
-        }
     }
 
     class sendMultiple extends AsyncTask<String, Void, String> {
@@ -398,7 +382,7 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
         protected void onPreExecute() {
             super.onPreExecute();
             if (progressDialog == null) {
-                progressDialog = UtilsPD.createProgressDialog(ConfirmationSendFileMultiple.this);
+                progressDialog = UtilsPD.createProgressDialog(ConfirmationSendFileFolllowup.this);
                 progressDialog.show();
             }
         }
@@ -484,7 +468,7 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
         @Override
         public Fragment getItem(int position) {
 //        Log.w("sobami",data.get(position).getColor());
-            return PictureFragment.newInstance(position, data.get(position).getUrl(), data.get(position).getUrl_thumb(), data.get(position).getTitle(), data.get(position).getTgl_upload(), data.get(position).getDescription(), data.get(position).getMyuserid(), data.get(position).getUserid(), data.get(position).getId_photo(), data.get(position).getFlag(), data.get(position).getColor());
+            return FollowupFragment.newInstance(position, data.get(position).getUrl(), data.get(position).getUrl_thumb(), data.get(position).getTitle(), data.get(position).getTgl_upload(), data.get(position).getDescription(), data.get(position).getMyuserid(), data.get(position).getUserid(), data.get(position).getId_photo(), data.get(position).getFlag(), data.get(position).getColor());
         }
 
         public void deletePage(int position) {

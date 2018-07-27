@@ -7,6 +7,7 @@ public class CommentModel {
     private String idRoomTab,id_note,headerColor, id_comment, myuserid, userid, profileName, profile_photo, jumlahLove, jumlahNix, jumlahComment, content_comment, timeStamp, parent_id, userLike, userDislike, name2, comment2;
     private int level;
     private Boolean flag;
+    private String photos;
 
     public CommentModel() {
     }
@@ -32,6 +33,14 @@ public class CommentModel {
         this.idRoomTab = idRoomTab;
         this.headerColor = headerColor;
         this.flag = flag;
+    }
+
+    public String getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(String photos) {
+        this.photos = photos;
     }
 
     public String getHeaderColor() {

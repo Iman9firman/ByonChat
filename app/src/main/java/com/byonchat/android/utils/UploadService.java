@@ -182,6 +182,8 @@ public class UploadService extends IntentService {
             t = new Thread(new BackgroundThreadUploadTaskRoom(this, vo));
         } else if (action.equalsIgnoreCase("downloadValueForm")) {
             t = new Thread(new BackgroundThreadDownloadValueForm(this, vo));
+        } else if (action.equalsIgnoreCase("downloadListForm")) {
+            t = new Thread(new BackgroundThreadDownloadValueForm(this, vo));
         } else if (action.equalsIgnoreCase("download")) {
             t = new Thread(new BackgroundThreadDownload(this, vo));
         } else if (action.equalsIgnoreCase("downloadLocation")) {
@@ -1015,6 +1017,7 @@ public class UploadService extends IntentService {
 
         public BackgroundThreadDownloadValueForm(Context ctx, Message message) {
 
+
             JSONObject jObject = null;
             try {
                 jObject = new JSONObject(message.getMessage());
@@ -1027,7 +1030,43 @@ public class UploadService extends IntentService {
             }
 
             idNotif = String.valueOf(message.getId());
+            context = ctx;
+        }
 
+        @Override
+        public void run() {
+            Log.w("kambing33", "wow");
+            if (!idDetail.equalsIgnoreCase("")) {
+                Log.w("kambing44", "wow");
+                String[] ff = idDetail.split("\\|");
+                if (ff.length == 2) {
+                    Log.w("kambing55", "wow");
+                    new downloadValueForm().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail, idNotif);
+                }
+            }
+        }
+    }
+
+    private class BackgroundThreadDownloadListForm implements Runnable {
+
+        Context context;
+        String idDetail, username, idTab, idNotif;
+
+        public BackgroundThreadDownloadListForm(Context ctx, Message message) {
+
+
+            JSONObject jObject = null;
+            try {
+                jObject = new JSONObject(message.getMessage());
+                idDetail = jObject.getString("idDetail");
+                username = jObject.getString("username");
+                idTab = jObject.getString("idTab");
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            idNotif = String.valueOf(message.getId());
             context = ctx;
         }
 
@@ -1036,7 +1075,7 @@ public class UploadService extends IntentService {
             if (!idDetail.equalsIgnoreCase("")) {
                 String[] ff = idDetail.split("\\|");
                 if (ff.length == 2) {
-                    new downloadValueForm().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail, idNotif);
+                    new downloadListForm().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail, idNotif);
                 }
             }
         }
@@ -2625,7 +2664,146 @@ public class UploadService extends IntentService {
 
         @SuppressWarnings("deprecation")
         private String downloadForm(String URL, final String user, String id_room, String pId_, final String id_notif) {
+            String responseString = null;
+            pId = pId_;
+            username = user;
+            idNotif = id_notif;
 
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(URL);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+
+                                NotificationManager manager =
+                                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                                builder.setContentTitle("Download value");
+                                builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(user));
+                                builder.setSmallIcon(R.drawable.ic_notif);
+                                builder.setProgress(100, (int) ((num / (float) totalSize) * 100), true);
+                                manager.notify(Integer.parseInt(idNotif), builder.build());
+                            }
+                        });
+
+                entity.addPart("username_room", new StringBody(user));
+                entity.addPart("id_rooms_tab", new StringBody(id_room));
+
+                if (pId != null || !pId.equalsIgnoreCase("")) {
+                    String[] ff = pId.split("\\|");
+                    if (ff.length == 2) {
+                        entity.addPart("parent_id", new StringBody(ff[1]));
+                        entity.addPart("id_list_push", new StringBody(ff[0]));
+                    }
+                }
+
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+
+
+                if (statusCode == 200) {
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                Calendar cal = Calendar.getInstance();
+                String time_str = dateFormat.format(cal.getTime());
+                JSONObject jsonRootObject = new JSONObject(result);
+                String username = jsonRootObject.getString("username_room");
+                String id_rooms_tab = jsonRootObject.getString("id_rooms_tab");
+
+                BotListDB botListDB = BotListDB.getInstance(getApplicationContext());
+
+                RoomsDetail orderModel = new RoomsDetail(pId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
+                botListDB.insertRoomsDetail(orderModel);
+
+                NotificationManager manager =
+                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                builder.setContentTitle("Download value");
+                builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(username));
+                builder.setSmallIcon(R.drawable.ic_notif);
+                builder.setContentText("complete")
+                        .setProgress(0, 0, false);
+                manager.notify(Integer.parseInt(idNotif), builder.build());
+
+                SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
+                submitingRoomDB.deleteContact(Long.parseLong(idNotif));
+
+
+            } catch (JSONException e) {
+                NotificationManager manager =
+                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                builder.setContentTitle("Download value");
+                builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(username));
+                builder.setSmallIcon(R.drawable.ic_notif);
+                builder.setContentText("failed")
+                        .setProgress(0, 0, false);
+                manager.notify(Integer.parseInt(idNotif), builder.build());
+
+                SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
+                submitingRoomDB.deleteContact(Long.parseLong(idNotif));
+
+
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private class downloadListForm extends AsyncTask<String, Integer, String> {
+        long totalSize = 0;
+        String pId = "";
+        String idNotif = "";
+        String username = "";
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            return downloadForm(params[0], params[1], params[2], params[3], params[4]);
+        }
+
+        @SuppressWarnings("deprecation")
+        private String downloadForm(String URL, final String user, String id_room, String pId_, final String id_notif) {
             String responseString = null;
             pId = pId_;
             username = user;

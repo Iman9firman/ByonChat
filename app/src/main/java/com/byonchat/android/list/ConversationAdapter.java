@@ -963,7 +963,7 @@ public class ConversationAdapter extends BaseAdapter {
                             Intent intent = new Intent(activity, ByonChatMainRoomActivity.class);
                             intent.putExtra(ConversationActivity.KEY_JABBER_ID, room[1]);
 
-                            if (room.length == 3) {
+                            if (room.length == 3 || room.length == 4) {
                                 intent.putExtra("firstTab", room[2]);
                             } else {
                                 intent.putExtra("firstTab", "");

@@ -1,9 +1,7 @@
 package com.byonchat.android.communication;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,34 +17,23 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
 import android.text.Html;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
-import com.byonchat.android.ByonChatMainRoomActivity;
-import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.ConversationGroupActivity;
-import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
-import com.byonchat.android.MainActivity;
 import com.byonchat.android.R;
-import com.byonchat.android.WebViewByonActivity;
 import com.byonchat.android.list.ItemListMemberCard;
 import com.byonchat.android.provider.BlockListDB;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseDropDown;
-import com.byonchat.android.provider.Files;
-import com.byonchat.android.provider.FilesDatabaseHelper;
 import com.byonchat.android.provider.FilesURL;
 import com.byonchat.android.provider.FilesURLDatabaseHelper;
 import com.byonchat.android.provider.Group;
@@ -60,8 +47,6 @@ import com.byonchat.android.provider.OffersModel;
 import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.provider.Skin;
-import com.byonchat.android.provider.SubmitingModel;
-import com.byonchat.android.provider.SubmitingRoomDB;
 import com.byonchat.android.provider.TimeLine;
 import com.byonchat.android.provider.TimeLineDB;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
@@ -189,6 +174,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -203,7 +189,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Pattern;
 
 import static com.byonchat.android.utils.PicassoOwnCache.cacheDir;
 
@@ -1735,7 +1720,7 @@ public class MessengerConnectionService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        appendLog("lah ko bisa Diskonek " + new Date().toString());
+        appendLog("lah ko Fisa Diskonek " + new Date().toString());
         presenceListener = null;
         disconnect();
         xmppConnection = null;
@@ -1834,6 +1819,8 @@ public class MessengerConnectionService extends Service {
     }
 
     public void onMessageReceived(final Message vo/*,String aaa*/) {
+        Log.w("supaya", "satu");
+
         ArrayList<String> listblock = new ArrayList<String>();
 
         blockListDB = new BlockListDB(this);
@@ -1869,14 +1856,17 @@ public class MessengerConnectionService extends Service {
 
 
         if (!"".equals(name)) {
+            Log.w("supaya1", "satu");
             Contact contact = databaseHelper.getContact(name);
             String regex = "[0-9]+";
             if (!name.matches(regex)) {
+                Log.w("supaya2", "satu");
                 name = Utility.roomName(getApplicationContext(), name, true);
                 if (Utility.roomType(vo.getSource()).equalsIgnoreCase("X") && Utility.roomName(getApplicationContext(), vo.getSource(), false).equalsIgnoreCase("BYONCHATBACKGROUND")) {
+                    Log.w("supaya3", "satu");
                     send = false;
                     if (isJSONValid(vo.getMessage())) {
-
+                        Log.w("supaya4", "satu");
                         JSONObject jObject = null;
                         try {
                             jObject = new JSONObject(vo.getMessage());
@@ -1961,8 +1951,10 @@ public class MessengerConnectionService extends Service {
                             }
                         }
                     } else {
+                        Log.w("supaya10", "satu");
                         String pesan[] = vo.getMessage().split(";");
                         if (pesan.length == 2) {
+                            Log.w("supaya20", pesan[0]);
                             if (pesan[0].equalsIgnoreCase("hapus")) {
                                 new GetRealNameRoom().getInstance(getApplicationContext()).deleteRoomName(pesan[1]);
                                 Cursor cur = botListDB.getSingle(pesan[1]);
@@ -1986,6 +1978,7 @@ public class MessengerConnectionService extends Service {
                                 sendOrderedBroadcast(intent, null);
                             }
                         } else if (pesan.length == 3) {
+                            Log.w("supaya30", "susus");
                             if (pesan[0].equalsIgnoreCase("give_me_location")) {
                                 Intent intent = new Intent(ACTION_REQGPS);
                                 intent.putExtra(KEY_LOC_REQ, vo.getMessage());
@@ -2042,6 +2035,7 @@ public class MessengerConnectionService extends Service {
 
                             }
                         } else {
+                            Log.w("supaya40", "quick");
                             if (vo.getMessage().equalsIgnoreCase("refresh_membership")) {
                                 String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
                                 if (key.equalsIgnoreCase("null")) {
@@ -2060,11 +2054,15 @@ public class MessengerConnectionService extends Service {
                 }
                 if (vo.getMessage().equalsIgnoreCase("") || vo.getMessage() == null || vo.getMessage().equalsIgnoreCase("<br />") || vo.getMessage().equalsIgnoreCase("<br/>")) {
                     send = false;
+                    Log.w("supaya50", "quick");
                 } else {
+                    Log.w("supaya60", "quick");
                     String pesanDariBot[] = vo.getMessage().split("8==D");
 
                     if (pesanDariBot.length == 2) {
+                        Log.w("supaya70", "quick");
                         if (isJSONValid(pesanDariBot[0])) {
+                            Log.w("supaya80", "quick");
                             JSONObject jObject = null;
                             try {
                                 jObject = new JSONObject(pesanDariBot[0]);
@@ -2095,9 +2093,11 @@ public class MessengerConnectionService extends Service {
                             }
                         }
                     } else {
+                        Log.w("supaya80", "quick");
                     }
                 }
             } else {
+                Log.w("supaya90", "quick");
                 name = Utility.roomName(getApplicationContext(), name, true);
             }
             if (contact != null) {
@@ -2109,6 +2109,61 @@ public class MessengerConnectionService extends Service {
             if (vo.getType().equalsIgnoreCase(Message.TYPE_TEXT) && vo.getMessage().startsWith("bc://")) {
                 String regex = "[0-9]+";
                 if (!name.matches(regex)) {
+                    String room[] = vo.getMessage().split("//");
+                    if (room.length == 4) {
+                        try {
+                            JSONArray jsonArrays = new JSONArray(room[3]);
+                            if (jsonArrays.length() == 2) {
+                                JSONObject jsonObject = jsonArrays.getJSONObject(0);
+                                String id = jsonObject.getString("id");
+                                String parent_id = jsonObject.getString("parent_id");
+                                String add_date = jsonObject.getString("add_date");
+
+                                JSONObject jsonObjectA = jsonArrays.getJSONObject(1);
+                                JSONObject caca = jsonObjectA.getJSONObject("value_detail");
+
+                                String type = caca.getString("type");
+                                String values = caca.getString("value");
+
+                                Cursor cursorParent = botListDB.getSingleRoomDetailFormWithFlag(id + "|" + parent_id, room[1], room[2], "parent");
+
+                                if (cursorParent.getCount() == 0) {
+                                    RoomsDetail orderModel = new RoomsDetail(id + "|" + parent_id, room[2], room[1], add_date, "4", "", "parent");
+                                    botListDB.insertRoomsDetail(orderModel);
+
+                                    RoomsDetail orderModelTitle211 = new RoomsDetail(id + "|" + parent_id, room[2], room[1], values, "1", type, "list");
+                                    RoomsDetail orderModelTitle2 = new RoomsDetail(id + "|" + parent_id, room[2], room[1], jsonDuaObject(va(orderModelTitle211), ""), "1", type, "list");
+                                    botListDB.insertRoomsDetail(orderModelTitle2);
+
+                                    JSONObject jsonObjectI = new JSONObject();
+                                    try {
+                                        jsonObjectI.put("idDetail", id + "|" + parent_id);
+                                        jsonObjectI.put("username", room[1]);
+                                        jsonObjectI.put("idTab", room[2]);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    Message message = new Message();
+                                    message.setMessage(jsonObjectI.toString());
+                                    message.setId(Integer.valueOf(room[2]));
+
+                                    Intent intent = new Intent(getApplicationContext(), UploadService.class);
+                                    intent.putExtra(UploadService.ACTION, "downloadValueForm");
+                                    intent.putExtra(UploadService.KEY_MESSAGE, message);
+                                    startService(intent);
+
+                                }
+
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
 
                     String SQL_UPDATE_MESSAGES = "Delete from " + Message.TABLE_NAME + " WHERE " + Message.MESSAGE + " = ?;";
                     String SQL_SELECT_MESSAGES = "SELECT *  FROM "
@@ -2325,7 +2380,97 @@ public class MessengerConnectionService extends Service {
 
             }
 
+        } else {
+            Log.w("supaya100", "quick");
         }
+    }
+
+    private String jsonDuaObject(String a, String b) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("aa", a);
+            obj.put("bb", b);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return obj.toString();
+    }
+
+
+    public String va(RoomsDetail roomsDetail) {
+        String content = roomsDetail.getContent();
+
+        if (roomsDetail.getFlag_tab().equalsIgnoreCase("rear_camera") || roomsDetail.getFlag_tab().equalsIgnoreCase("front_camera")) {
+            Random random = new SecureRandom();
+            char[] result = new char[6];
+            char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+            for (int i = 0; i < result.length; i++) {
+                int randomCharIndex = random.nextInt(CHARSET_AZ_09.length);
+                result[i] = CHARSET_AZ_09[randomCharIndex];
+            }
+            content = "IMG_" + new String(result);
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("map")) {
+            String[] latlong = content.split(
+                    Message.LOCATION_DELIMITER);
+            if (latlong.length > 4) {
+                String text = "<u><b>" + (String) latlong[2] + "</b></u><br/>";
+                content = text + latlong[3];
+            }
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("input_kodepos")) {
+            content = jsonResultType(content, "a");
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("dropdown_wilayah")) {
+            content = jsonResultType(content, "b") + " , " + jsonResultType(content, "c") + " , " + jsonResultType(content, "d") + " , " + jsonResultType(content, "e") + " , " + jsonResultType(content, "a");
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("checkbox")) {
+            if (!content.startsWith("[")) {
+                content = "[" + content + "]";
+            }
+            JSONArray jsA = null;
+            try {
+                jsA = new JSONArray(content);
+                if (jsA.length() > 0) {
+                    content = jsA.getJSONObject(0).getString("c").toString();
+                }
+            } catch (JSONException e) {
+                content = "";
+                e.printStackTrace();
+            }
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("image_load")) {
+            content = "image load";
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("ocr")) {
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = new JSONObject(content);
+                Iterator<String> keys = jsonObject.keys();
+                String aa = jsonObject.get(keys.next()).toString();
+                content = aa;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                content = "ocr";
+            }
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("dropdown_dinamis") || jsonResultType(roomsDetail.getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis")) {
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = new JSONObject(content);
+                Iterator<String> keys = jsonObject.keys();
+                String aa = jsonObject.get(keys.next()).toString();
+                content = aa;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                content = "";
+            }
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("upload_document")) {
+            content = jsonResultType(content, "a");
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("signature")) {
+            content = "signature";
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("distance_estimation")) {
+            content = jsonResultType(content, "d");
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("rate")) {
+
+        }
+
+
+        return content;
     }
 
 
@@ -2509,7 +2654,7 @@ public class MessengerConnectionService extends Service {
                 HttpConnectionParams.setSoTimeout(httpParameters, 20000);
                 HttpClient httpclient = new DefaultHttpClient(httpParameters);
 
-                String uri = new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl(key[0]) ;
+                String uri = new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl(key[0]);
 
                 if (key[1].equalsIgnoreCase("null") || key[1] == null) {
                     Cursor cur = botListDB.getSingleRoom(key[0]);
@@ -2520,7 +2665,7 @@ public class MessengerConnectionService extends Service {
                     uri = key[1];
                 }
 
-                HttpPost httppost = new HttpPost(uri+ "/bc_voucher_client/webservice/get_tab_rooms.php");
+                HttpPost httppost = new HttpPost(uri + "/bc_voucher_client/webservice/get_tab_rooms.php");
 
                 // Add your data
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -2567,11 +2712,11 @@ public class MessengerConnectionService extends Service {
                             lu = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_LASTUPDATE));
                             if (!lu.equalsIgnoreCase(lastUpdate)) {
                                 botListDB.deleteRoomsbyTAB(username);
-                                Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer,uri), backdrop, lastUpdate, icon, firstTab, time_str);
+                                Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, uri), backdrop, lastUpdate, icon, firstTab, time_str);
                                 botListDB.insertRooms(rooms);
                             }
                         } else {
-                            Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer,uri), backdrop, lastUpdate, icon, firstTab, time_str);
+                            Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, uri), backdrop, lastUpdate, icon, firstTab, time_str);
                             botListDB.insertRooms(rooms);
                         }
                         cursor.close();
@@ -2708,7 +2853,7 @@ public class MessengerConnectionService extends Service {
         }
     }
 
-    private String jsonCreateType(String idContent, String type, String desc, String of,String tatge) {
+    private String jsonCreateType(String idContent, String type, String desc, String of, String tatge) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("a", idContent);

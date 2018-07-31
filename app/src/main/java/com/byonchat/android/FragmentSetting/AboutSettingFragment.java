@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,10 +22,12 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.utils.HttpHelper;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -40,6 +43,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -97,10 +101,10 @@ public class AboutSettingFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(task!=null){
+        if (task != null) {
             task.cancel(true);
         }
-        if (taskDownload!=null){
+        if (taskDownload != null) {
             taskDownload.cancel(true);
         }
 
@@ -211,7 +215,7 @@ public class AboutSettingFragment extends Fragment {
                     oldFolder.mkdirs();
                 }
 
-                if (dbDownloadPath.exists()){
+                if (dbDownloadPath.exists()) {
                     dbDownloadPath.delete();
                 }
 
@@ -235,7 +239,7 @@ public class AboutSettingFragment extends Fragment {
                     while ((read = content.read(buffer)) != -1) {
                         fos.write(buffer, 0, read);
                         downloadedAlready += read;
-                        publishProgress((int) (downloadedAlready*100/downloadSize));
+                        publishProgress((int) (downloadedAlready * 100 / downloadSize));
                     }
                     fos.flush();
                     fos.close();
@@ -268,14 +272,26 @@ public class AboutSettingFragment extends Fragment {
             btnCekUpdate.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
             if (result.equals(Boolean.TRUE)) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/ByonChat.apk")),
-                        "application/vnd.android.package-archive");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-            else {
-                Toast.makeText(getContext(),"failed download, plese try again...", Toast.LENGTH_LONG).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    Uri uri = FileProvider.getUriForFile(getContext(), getContext().getPackageName(), new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/ByonChat.apk"));
+                    intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(intent);
+
+                } else {
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/ByonChat.apk")),
+                            "application/vnd.android.package-archive");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+            } else {
+                Toast.makeText(getContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
             }
         }
     }

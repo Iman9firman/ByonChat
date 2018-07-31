@@ -2,6 +2,7 @@ package com.byonchat.android.FragmentDinamicRoom;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -226,6 +227,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     double latitude, longitude;
     Bitmap result = null;
+    Button b;
     ImageView imageView[];
     LinearLayout linearEstimasi[];
     ExpandableListView expandableListView[];
@@ -6667,7 +6669,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             if (showButton) {
 
                 LinearLayout btnRel = (LinearLayout) getLayoutInflater().inflate(R.layout.button_submit_form, null);
-                final Button b = (Button) btnRel.findViewById(R.id.btn_submit);
+                b = (Button) btnRel.findViewById(R.id.btn_submit);
                 final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.setMargins(5, 15, 0, 0);
                 btnRel.setLayoutParams(params);
@@ -8788,6 +8790,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             return null;
         }
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (progressDialog.isIndeterminate()) {
+                progressDialog.setIndeterminate(false);
+            }
+            progressDialog.setProgress(0);
+        }
+
         protected void onPostExecute(String result) {
             if (error.length() > 0) {
                 Toast.makeText(context, error, Toast.LENGTH_LONG).show();
@@ -8800,7 +8811,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 progressDialog.setIndeterminate(false);
             }
             progressDialog.setProgress(progress[0]);
-            progressDialog.setMessage("Upload Value ... " );
+            progressDialog.setMessage("Upload Value ... ");
         }
 
         public void postData(String valueIWantToSend, final String usr, final String idr, final String idDetail) {
@@ -9150,8 +9161,18 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 progressDialog.dismiss();
                                 AlertDialog.Builder builder = DialogUtil.generateAlertDialog(DinamicRoomTaskActivity.this,
                                         "Warning", data);
-                                builder.setPositiveButton("OK", null);
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @TargetApi(11)
+                                            public void onClick(
+                                                    DialogInterface dialog, int id) {
+                                                b.setEnabled(true);
+                                                dialog.cancel();
+                                            }
+                                        }
+                                );
                                 builder.show();
+
+
                             }
                         });
                     }
@@ -10079,6 +10100,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if (progressDialog.isIndeterminate()) {
+                progressDialog.setIndeterminate(false);
+            }
+            progressDialog.setProgress(0);
         }
 
         @Override
@@ -10091,7 +10116,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 progressDialog.setIndeterminate(false);
             }
             progressDialog.setProgress(progress[0]);
-            progressDialog.setMessage("Upload Image " + prosesUpload.size()+ "/" + totalUpload );
+            progressDialog.setMessage("Upload Image " + prosesUpload.size() + "/" + totalUpload);
         }
 
         @SuppressWarnings("deprecation")
@@ -10195,6 +10220,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if (progressDialog.isIndeterminate()) {
+                progressDialog.setIndeterminate(false);
+            }
+            progressDialog.setProgress(0);
         }
 
         @Override
@@ -10207,7 +10236,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 progressDialog.setIndeterminate(false);
             }
             progressDialog.setProgress(progress[0]);
-            progressDialog.setMessage("Upload Image " + prosesUpload.size()+ "/" + totalUpload );
+            progressDialog.setMessage("Upload Image " + prosesUpload.size() + "/" + totalUpload);
         }
 
         @SuppressWarnings("deprecation")

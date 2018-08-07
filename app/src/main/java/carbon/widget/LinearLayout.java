@@ -48,7 +48,7 @@ import carbon.shadow.ShadowView;
 
 /**
  * Created by Marcin on 2014-11-20.
- *
+ * <p>
  * A LinearLayout implementation with support for material features including shadows, ripples, rounded
  * corners, insets, custom drawing order, touch margins, state animators and others.
  */
@@ -596,7 +596,7 @@ public class LinearLayout extends android.widget.LinearLayout implements ShadowV
         }
     }
 
-    public void setVisibilityImmediate(final int visibility){
+    public void setVisibilityImmediate(final int visibility) {
         super.setVisibility(visibility);
     }
 

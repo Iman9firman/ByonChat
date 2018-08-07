@@ -6,11 +6,18 @@ package com.byonchat.android.personalRoom.model;
 
 public class NewsFeedItem {
     private int level;
-    private String myuserid, userid,idRoomTab,colorHeader;
-    private String id, parentID,title,name, status, image, profilePic, timeStamp, url, jumlahLove, jumlahNix, jumlahComment, userLike, userDislike, name2, comment2;
-
+    private String myuserid, userid, idRoomTab, colorHeader, taskid;
+    private String id, parentID, title, name, status, image, profilePic, timeStamp, url, jumlahLove, jumlahNix, jumlahComment, userLike, userDislike, name2, comment2;
 
     public NewsFeedItem() {
+    }
+
+    public String getTaskid() {
+        return taskid;
+    }
+
+    public void setTaskid(String taskid) {
+        this.taskid = taskid;
     }
 
     public String getTitle() {

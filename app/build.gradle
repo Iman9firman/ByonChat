@@ -17,6 +17,7 @@ android {
         multiDexEnabled true
         renderscriptTargetApi 20
         renderscriptSupportModeEnabled true
+        vectorDrawables.useSupportLibrary true
 
 //        jackOptions {
 //            enabled true
@@ -137,9 +138,6 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile "com.squareup.okhttp3:logging-interceptor:3.9.1"
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
-    compile "com.squareup.retrofit2:retrofit:2.3.0"
-    compile "com.squareup.retrofit2:converter-gson:2.3.0"
-    compile "com.squareup.retrofit2:adapter-rxjava:2.3.0"
     /*compile('com.paypal.sdk:paypal-android-sdk:2.13.1') {
         exclude group: 'io.card'
     }*//*

@@ -154,6 +154,7 @@ public class FragmentMyNewsNew extends Fragment {
         } else {
             if (NetworkInternetConnectionStatus.getInstance(mContext.getApplicationContext()).isOnline(mContext)) {
                 if (adapter.getItemCount() == 0) {
+                    Log.w("urltembak", urlTembak);
                     new getNote(pageNumber).execute(urlTembak, myContact, username, idRoomTab);
                     refresh = false;
                 }
@@ -163,6 +164,7 @@ public class FragmentMyNewsNew extends Fragment {
         }
         if (refresh) {
             if (NetworkInternetConnectionStatus.getInstance(mContext.getApplicationContext()).isOnline(mContext.getApplicationContext())) {
+                Log.w("urltembak", urlTembak);
                 new getNote(pageNumber).execute(urlTembak, myContact, username, idRoomTab);
             }
         }
@@ -174,6 +176,7 @@ public class FragmentMyNewsNew extends Fragment {
 
     void refreshItems() {
         if (NetworkInternetConnectionStatus.getInstance(mContext.getApplicationContext()).isOnline(mContext.getApplicationContext())) {
+            Log.w("urltembak", urlTembak);
             new getNote(pageNumber).execute(urlTembak, myContact, username, idRoomTab);
         } else {
             Toast.makeText(mContext.getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
@@ -183,6 +186,7 @@ public class FragmentMyNewsNew extends Fragment {
                 onItemsLoadComplete();
             } else {
                 if (NetworkInternetConnectionStatus.getInstance(mContext.getApplicationContext()).isOnline(mContext.getApplicationContext())) {
+                    Log.w("urltembak", urlTembak);
                     new getNote(pageNumber).execute(urlTembak, myContact, username, idRoomTab);
                 } else {
                     Toast.makeText(mContext.getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
@@ -224,6 +228,7 @@ public class FragmentMyNewsNew extends Fragment {
         }
 
         protected void onPostExecute(String s) {
+            Log.w("disinikayanya", s.toString());
             onItemsLoadComplete();
             if (s.equals(null)) {
                 Toast.makeText(mContext, "Internet Problem.", Toast.LENGTH_SHORT).show();
@@ -267,10 +272,12 @@ public class FragmentMyNewsNew extends Fragment {
             JSONArray commentNoteJsonArr = null;
 
             for (RoomsDetail ss : s) {
+                Log.w("disinikayanya", ss.getContent().toString());
 
                 JSONObject c = new JSONObject(ss.getContent());
                 String titlr = c.getString("title");
                 String id_note = c.getString("attachment_id");
+                String task_id = c.getString("task_id");
                 String content_note = c.getString("content");
                 String photo_file = c.getString("photo_file");
                 String attachment = c.getString("attachment");
@@ -282,6 +289,7 @@ public class FragmentMyNewsNew extends Fragment {
                 item.setUserid(username);
                 item.setTitle(titlr);
                 item.setId(id_note);
+                item.setTaskid(task_id);
                 item.setIdRoomTab(idRoomTab);
                 item.setProfilePic(photo_file);
 
@@ -355,6 +363,7 @@ public class FragmentMyNewsNew extends Fragment {
         }
 
         protected void onPostExecute(String s) {
+            Log.w("disinikayanya", s);
             if (s.equals(null)) {
                 Toast.makeText(mContext, "Internet Problem.", Toast.LENGTH_SHORT).show();
             } else {
@@ -381,6 +390,10 @@ public class FragmentMyNewsNew extends Fragment {
                             db.insertRoomsDetail(orderModel);
                             String titlr = c.getString("title");
                             String id_note = c.getString("id_note");
+                            String task_id = "";
+                            if (c.has("task_id")) {
+                                task_id = c.getString("task_id");
+                            }
                             String content_note = c.getString("content_note");
                             String photo_file = c.getString("photo_file");
                             int amount_of_like = c.getInt("amount_of_like");
@@ -395,6 +408,7 @@ public class FragmentMyNewsNew extends Fragment {
                             item.setUserid(username);
                             item.setTitle(titlr);
                             item.setId(id_note);
+                            item.setTaskid(task_id);
                             item.setIdRoomTab(idRoomTab);
                             item.setProfilePic(photo_file);
 

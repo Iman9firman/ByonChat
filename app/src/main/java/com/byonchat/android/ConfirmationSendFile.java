@@ -32,7 +32,6 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.byonchat.android.communication.MessengerConnectionService;
-import com.byonchat.android.personalRoom.NoteFollowUpActivity;
 import com.byonchat.android.personalRoom.model.NotesPhoto;
 import com.byonchat.android.personalRoom.model.PictureModel;
 import com.byonchat.android.provider.Files;
@@ -266,7 +265,6 @@ public class ConfirmationSendFile extends AppCompatActivity {
                             notesPhotos.add(nphoto);
 
                             Intent data = new Intent();
-                            data.putExtra(EXTRA_PHOTOS, compressedFile.getPath());
                             data.putExtra(EXTRA_CAPTIONS, textMessage.getText().toString().trim());
                             data.putParcelableArrayListExtra(EXTRA_PHOTOS, (ArrayList<NotesPhoto>) notesPhotos);
                             setResult(RESULT_OK, data);

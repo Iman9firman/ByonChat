@@ -35,6 +35,15 @@
             android:visibility="gone"
             app:qcircle_finished_color="@color/colorPrimary"
             app:qcircle_text_size="12sp" />
+
+        <ImageView
+            android:id="@+id/button.gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:tint="@android:color/white"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_gallery_black_24dp" />
     </LinearLayout>
 
 </android.support.v7.widget.Toolbar>

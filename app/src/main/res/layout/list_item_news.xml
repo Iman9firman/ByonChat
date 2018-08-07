@@ -83,13 +83,6 @@
                     android:textSize="@dimen/oto_feed_item_profile_name"
                     android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/btn.followup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/margin5"
-                    android:padding="@dimen/margin5"
-                    android:src="@drawable/ic_follow_black" />
             </LinearLayout>
 
             <TextView
@@ -219,10 +212,12 @@
                     android:id="@+id/btComment"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/margin25"
+                    android:layout_marginLeft="@dimen/margin5"
                     android:background="@drawable/button_timeline_background"
                     android:gravity="center_vertical|center_horizontal"><!-- 5 -->
 
                     <TextView
+                        android:id="@+id/text.btn.comment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/margin7"

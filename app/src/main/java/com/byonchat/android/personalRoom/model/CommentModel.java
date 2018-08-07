@@ -1,18 +1,28 @@
 package com.byonchat.android.personalRoom.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Lukmanpryg on 5/12/2016.
  */
-public class CommentModel {
-    private String idRoomTab,id_note,headerColor, id_comment, myuserid, userid, profileName, profile_photo, jumlahLove, jumlahNix, jumlahComment, content_comment, timeStamp, parent_id, userLike, userDislike, name2, comment2;
+public class CommentModel implements Parcelable {
+    public static final int TYPE_TEXT = 1;
+    public static final int TYPE_ATT_SINGLE = 2;
+    public static final int TYPE_ATT_MULTIPLE = 3;
+    public static final int TYPE_ATT_BEFORE_AFTER = 4;
+    public static final int TYPE_HEADER = 5;
+
+    private String idRoomTab, id_note, headerColor, id_comment, myuserid, userid, profileName, profile_photo, jumlahLove, jumlahNix, jumlahComment, content_comment, timeStamp, parent_id, userLike, userDislike, name2, comment2;
     private int level;
     private Boolean flag;
-    private String photos;
+    private String photos, photoBefore, photoAfter;
+    private int type;
 
     public CommentModel() {
     }
 
-    public CommentModel(String id_note, String id_comment, String myuserid, String userid, String profileName, String profile_photo, String jumlahLove, String jumlahNix, String jumlahComment, String content_comment, String timeStamp, String parent_id, String userLike, String userDislike , String name2, String comment2, int level,String idRoomTab,String headerColor,Boolean flag) {
+    public CommentModel(String id_note, String id_comment, String myuserid, String userid, String profileName, String profile_photo, String jumlahLove, String jumlahNix, String jumlahComment, String content_comment, String timeStamp, String parent_id, String userLike, String userDislike, String name2, String comment2, int level, String idRoomTab, String headerColor, Boolean flag) {
         super();
         this.id_note = id_note;
         this.id_comment = id_comment;
@@ -27,12 +37,41 @@ public class CommentModel {
         this.timeStamp = timeStamp;
         this.parent_id = parent_id;
         this.userLike =
-        this.name2 = name2;
+                this.name2 = name2;
         this.comment2 = comment2;
         this.level = level;
         this.idRoomTab = idRoomTab;
         this.headerColor = headerColor;
         this.flag = flag;
+    }
+
+    public boolean areContentsTheSame(CommentModel commentModel) {
+        return idRoomTab.equals(commentModel.idRoomTab)
+                && headerColor.equals(commentModel.headerColor)
+                && id_note.equals(commentModel.id_note)
+                && id_comment.equals(commentModel.id_comment)
+                && myuserid.equals(commentModel.myuserid)
+                && userid.equals(commentModel.userid)
+                && profileName.equals(commentModel.profileName)
+                && photos.equals(commentModel.photos)
+                && photoBefore.equals(commentModel.photoBefore)
+                && photoAfter.equals(commentModel.photoAfter)
+                && profile_photo.equals(commentModel.profile_photo)
+                && jumlahLove.equals(commentModel.jumlahLove)
+                && jumlahNix.equals(commentModel.jumlahNix)
+                && jumlahComment.equals(commentModel.jumlahComment)
+                && content_comment.equals(commentModel.content_comment)
+                && timeStamp.equals(commentModel.timeStamp)
+                && name2.equals(commentModel.name2)
+                && comment2.equals(commentModel.comment2);
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getPhotos() {
@@ -41,6 +80,22 @@ public class CommentModel {
 
     public void setPhotos(String photos) {
         this.photos = photos;
+    }
+
+    public String getPhotoBefore() {
+        return photoBefore;
+    }
+
+    public String getPhotoAfter() {
+        return photoAfter;
+    }
+
+    public void setPhotoBefore(String photoBefore) {
+        this.photoBefore = photoBefore;
+    }
+
+    public void setPhotoAfter(String photoAfter) {
+        this.photoAfter = photoAfter;
     }
 
     public String getHeaderColor() {
@@ -195,11 +250,79 @@ public class CommentModel {
         this.level = level;
     }
 
-    public Boolean getFlag(){
+    public Boolean getFlag() {
         return flag;
     }
 
-    public void setFlag(Boolean flag){
+    public void setFlag(Boolean flag) {
         this.flag = flag;
+    }
+
+    protected CommentModel(Parcel in) {
+        idRoomTab = in.readString();
+        id_note = in.readString();
+        headerColor = in.readString();
+        id_comment = in.readString();
+        myuserid = in.readString();
+        userid = in.readString();
+        profileName = in.readString();
+        profile_photo = in.readString();
+        jumlahLove = in.readString();
+        jumlahNix = in.readString();
+        jumlahComment = in.readString();
+        content_comment = in.readString();
+        timeStamp = in.readString();
+        parent_id = in.readString();
+        userLike = in.readString();
+        userDislike = in.readString();
+        name2 = in.readString();
+        comment2 = in.readString();
+        photos = in.readString();
+        photoBefore = in.readString();
+        photoAfter = in.readString();
+        type = in.readInt();
+    }
+
+    public static final Creator<CommentModel> CREATOR = new Creator<CommentModel>() {
+        @Override
+        public CommentModel createFromParcel(Parcel in) {
+            return new CommentModel(in);
+        }
+
+        @Override
+        public CommentModel[] newArray(int size) {
+            return new CommentModel[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return hashCode();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(idRoomTab);
+        dest.writeString(id_note);
+        dest.writeString(headerColor);
+        dest.writeString(id_comment);
+        dest.writeString(myuserid);
+        dest.writeString(userid);
+        dest.writeString(profileName);
+        dest.writeString(profile_photo);
+        dest.writeString(jumlahLove);
+        dest.writeString(jumlahNix);
+        dest.writeString(jumlahComment);
+        dest.writeString(content_comment);
+        dest.writeString(timeStamp);
+        dest.writeString(parent_id);
+        dest.writeString(userLike);
+        dest.writeString(userDislike);
+        dest.writeString(name2);
+        dest.writeString(comment2);
+        dest.writeString(photos);
+        dest.writeString(photoBefore);
+        dest.writeString(photoAfter);
+        dest.writeInt(type);
     }
 }

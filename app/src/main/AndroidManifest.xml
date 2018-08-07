@@ -227,10 +227,21 @@
             android:label="@string/title_activity_confirmation_send_file"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
+            android:name=".ConfirmationSendFileV2"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_confirmation_send_file"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
             android:name=".ConfirmationSendFileFolllowup"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_confirmation_send_file"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".GalleryTaskActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            tools:ignore="NewApi" />
         <activity
             android:name=".UpdateProfileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -503,7 +514,13 @@
             android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"
             tools:ignore="NewApi" />
         <activity
-            android:name=".personalRoom.NoteFollowUpActivity"
+            android:name=".NoteCommentActivityV2"
+            android:label="PersonalRoom"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"
+            tools:ignore="NewApi" />
+        <activity
+            android:name=".GalleryBeforeAfterActivity"
             android:label="PersonalRoom"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan|adjustResize|stateHidden"
@@ -587,7 +604,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.byonchat.android"
+            android:authorities="com.byonchat.android.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

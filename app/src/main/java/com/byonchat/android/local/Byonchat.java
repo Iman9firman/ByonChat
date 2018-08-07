@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Handler;
 
+import com.byonchat.android.Manhera.Manhera;
+
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
@@ -33,6 +35,8 @@ public class Byonchat {
         taskExecutor = new ScheduledThreadPoolExecutor(5);
         appInstance.registerActivityLifecycleCallbacks(ActivityCallback.INSTANCE);
         authorities = appInstance.getPackageName();
+
+        Manhera.init(application);
     }
 
     public static Application getApps() {
@@ -58,9 +62,11 @@ public class Byonchat {
     public static String getAppsName() {
         return appInstance.getApplicationInfo().loadLabel(appInstance.getPackageManager()).toString();
     }
+
     public static void setEnableLog(boolean enableLog) {
         Byonchat.enableLog = enableLog;
     }
+
     public static boolean isEnableLog() {
         return Byonchat.enableLog;
     }

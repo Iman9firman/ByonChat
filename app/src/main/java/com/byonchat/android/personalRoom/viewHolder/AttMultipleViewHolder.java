@@ -1,24 +1,23 @@
 package com.byonchat.android.personalRoom.viewHolder;
 
-
+import android.content.Context;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.Touch;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.byonchat.android.R;
 import com.byonchat.android.personalRoom.NoteFeedImageView;
+import com.byonchat.android.personalRoom.adapter.NoteCommentFollowUpListAdapter;
 import com.byonchat.android.utils.TouchImageView;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.squareup.picasso.Target;
 
-/**
- * Created by lukma on 3/28/2016.
- */
-public class FollowItemsHolder extends RecyclerView.ViewHolder {
+public class AttMultipleViewHolder extends RecyclerView.ViewHolder {
     public TextView mExpandButton;
     public ExpandableRelativeLayout mExpandLayout;
     public TextView mOverlayText;
@@ -30,8 +29,7 @@ public class FollowItemsHolder extends RecyclerView.ViewHolder {
     public TouchImageView vImgPreview;
     public ViewTreeObserver.OnGlobalLayoutListener mGlobalLayoutListener;
 
-
-    public FollowItemsHolder(View view) {
+    public AttMultipleViewHolder(View view) {
         super(view);
         this.name = (TextView) view.findViewById(R.id.name);
         this.timestamp = (TextView) view.findViewById(R.id.timestamp);
@@ -68,6 +66,28 @@ public class FollowItemsHolder extends RecyclerView.ViewHolder {
                 }
             }
         };
+    }
+
+    public void bind(Context context, final int position,
+                     @Nullable final NoteCommentFollowUpListAdapter.OnButtonClick clickListener) {
+
+        if (clickListener != null) {
+            mComments.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onButtonClick(position);
+                }
+            });
+        }
+
+        if (clickListener != null) {
+            mHiddenComment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onButtonClick(position);
+                }
+            });
+        }
     }
 }
 

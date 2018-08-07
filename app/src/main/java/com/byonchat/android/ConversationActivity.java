@@ -41,6 +41,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Intents.Insert;
@@ -49,6 +50,7 @@ import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -1373,7 +1375,7 @@ public class ConversationActivity extends AppCompatActivity implements
 
     private void sendMessageMenu(String message) {
         Message vo = createNewMessage(message, Message.TYPE_TEXT);
-       /* new MessageSender().execute(vo);*/
+        /* new MessageSender().execute(vo);*/
         Intent intent = new Intent(this, UploadService.class);
         intent.putExtra(UploadService.ACTION, "sendText");
         intent.putExtra(UploadService.KEY_MESSAGE, vo);
@@ -1706,7 +1708,7 @@ public class ConversationActivity extends AppCompatActivity implements
         }
 
         if (o instanceof Message) {
-            Log.w("masuk","kesiniGa");
+            Log.w("masuk", "kesiniGa");
             final Dialog dialog;
             dialog = DialogUtil.customDialogConversation(this);
             dialog.show();
@@ -2396,10 +2398,20 @@ public class ConversationActivity extends AppCompatActivity implements
                         File f = MediaProcessingUtil
                                 .getOutputFile("jpeg");
                         cameraFileOutput = f.getAbsolutePath();
-                        i.putExtra(MediaStore.EXTRA_OUTPUT,
-                                Uri.fromFile(f));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            i.putExtra(MediaStore.EXTRA_OUTPUT,
+                                    FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", f));
+                            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        } else {
+                            i.putExtra(MediaStore.EXTRA_OUTPUT,
+                                    Uri.fromFile(f));
+                        }
                         req = REQ_MEME;
                         i.setAction(action);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                            StrictMode.setVmPolicy(builder.build());
+                        }
                         startActivityForResult(i, req);
                         dialog.dismiss();
                         attCurReq = 0;
@@ -2426,10 +2438,20 @@ public class ConversationActivity extends AppCompatActivity implements
                         File f = MediaProcessingUtil
                                 .getOutputFile("jpeg");
                         cameraFileOutput = f.getAbsolutePath();
-                        i.putExtra(MediaStore.EXTRA_OUTPUT,
-                                Uri.fromFile(f));
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            i.putExtra(MediaStore.EXTRA_OUTPUT,
+                                    FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", f));
+                            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        } else {
+                            i.putExtra(MediaStore.EXTRA_OUTPUT,
+                                    Uri.fromFile(f));
+                        }
                         req = REQ_CAMERA;
                         i.setAction(action);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                            StrictMode.setVmPolicy(builder.build());
+                        }
                         startActivityForResult(i, req);
                         dialog.dismiss();
                         attCurReq = 0;
@@ -2533,7 +2555,7 @@ public class ConversationActivity extends AppCompatActivity implements
                 Editable msg = textMessage.getText();
                 if (msg.length() > 0) {
                     if (!msg.equals("")) {
-                        if(msg.toString().trim().length() > 0){
+                        if (msg.toString().trim().length() > 0) {
                             if (textMessage.getText().toString().contains("\n") == true) {
                                 String emsg = Html.toHtml(msg);
                                 sendMessage(emsg);

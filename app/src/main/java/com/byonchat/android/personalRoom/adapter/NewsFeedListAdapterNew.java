@@ -26,11 +26,10 @@ import com.byonchat.android.DownloadFileByonchat;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.MediaPlayCatalogActivity;
 import com.byonchat.android.NewsDetailActivity;
+import com.byonchat.android.NoteCommentActivityV2;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.personalRoom.NoteCommentActivity;
-import com.byonchat.android.personalRoom.NoteCommentActivityNew;
-import com.byonchat.android.personalRoom.NoteFollowUpActivity;
 import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.byonchat.android.personalRoom.model.NewsFeedItem;
 import com.byonchat.android.provider.BotListDB;
@@ -149,12 +148,14 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
             ((FeedItemsHolderNews) holder).dotB.setVisibility(View.GONE);
             ((FeedItemsHolderNews) holder).text.setText("Open File");
 
+            ((FeedItemsHolderNews) holder).vTextBtnComment.setText("Follow Up");
             ((FeedItemsHolderNews) holder).btComment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, NoteCommentActivityNew.class);
+                    Intent intent = new Intent(mContext, NoteCommentActivityV2.class);
                     intent.putExtra("userid", item.getUserid());
                     intent.putExtra("id_note", item.getId());
+                    intent.putExtra("id_task", item.getTaskid());
                     intent.putExtra("bc_user", item.getMyuserid());
                     intent.putExtra("id_room_tab", item.getIdRoomTab());
                     intent.putExtra("color", item.getColorHeader());
@@ -172,21 +173,6 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
 
                 }
             });
-
-
-            ((FeedItemsHolderNews) holder).vBtnFollowup.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(mContext, NoteFollowUpActivity.class);
-                    intent.putExtra("userid", item.getUserid());
-                    intent.putExtra("id_note", item.getId());
-                    intent.putExtra("bc_user", item.getMyuserid());
-                    intent.putExtra("id_room_tab", item.getIdRoomTab());
-                    intent.putExtra("color", item.getColorHeader());
-                    mContext.startActivity(intent);
-                }
-            });
-
 
             if (item.getImage() != null) {
                 if (item.getImage().contains("http")) {
@@ -290,10 +276,9 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
 
     public class FeedItemsHolderNews extends RecyclerView.ViewHolder {
         public LinearLayout main_content, layoutComment, btLoves, btComment, btNix, dotA, dotB;
-        public TextView name, timestamp, txtStatusMsg, totalComments, totalLoves, text;
+        public TextView name, timestamp, txtStatusMsg, totalComments, totalLoves, text, vTextBtnComment;
         public Target iconView;
         public View viee;
-        public ImageView vBtnFollowup;
         /*public TextView tvName;
         public TextView tvEmailId;*/
 
@@ -307,6 +292,7 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
             this.main_content = (LinearLayout) view.findViewById(R.id.main_content);
             this.layoutComment = (LinearLayout) view.findViewById(R.id.layoutComment);
             this.btLoves = (LinearLayout) view.findViewById(R.id.btLoves);
+            this.vTextBtnComment = (TextView) view.findViewById(R.id.text_btn_comment);
             this.btComment = (LinearLayout) view.findViewById(R.id.btComment);
             this.totalComments = (TextView) view.findViewById(R.id.totalComments);
             this.totalLoves = (TextView) view.findViewById(R.id.totalLoves);
@@ -315,7 +301,6 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
             this.dotB = (LinearLayout) view.findViewById(R.id.dotB);
             this.text = (TextView) view.findViewById(R.id.text);
             this.viee = (View) view.findViewById(R.id.viee);
-            this.vBtnFollowup = (ImageView) view.findViewById(R.id.btn_followup);
             /*tvName = (TextView) view.findViewById(R.id.tvName);
             tvEmailId = (TextView) view.findViewById(R.id.tvEmailId);*/
         }

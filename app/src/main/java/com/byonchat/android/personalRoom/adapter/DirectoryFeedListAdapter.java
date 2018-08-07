@@ -34,6 +34,10 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -46,15 +50,15 @@ public class DirectoryFeedListAdapter extends RecyclerView.Adapter<DirectoryFeed
     /*NEW*/
     private List<NewsFeedItem> feedItems;
     private DirectoryFeedListAdapter adapter;
-    ImageLoader imageLoader ;
+    ImageLoader imageLoader;
     /*NEW*/
     Context mContext;
     private static final String TAG = DirectoryFeedListAdapter.class.getSimpleName();
 
-   public DirectoryFeedListAdapter(Activity context) {
-       feedItems = new ArrayList<>();
-       mContext = context;
-   }
+    public DirectoryFeedListAdapter(Activity context) {
+        feedItems = new ArrayList<>();
+        mContext = context;
+    }
 
     public void setData(List<NewsFeedItem> photoList) {
         feedItems.clear();
@@ -76,7 +80,7 @@ public class DirectoryFeedListAdapter extends RecyclerView.Adapter<DirectoryFeed
         fItemsHolder.txtName.setText(item.getTitle());
 
         String text = Html.fromHtml(item.getStatus()).toString();
-        if(text.contains("<")) {
+        if (text.contains("<")) {
             text = Html.fromHtml(Html.fromHtml(text).toString()).toString();
         }
         fItemsHolder.txtInfo.setText(text);
@@ -86,16 +90,48 @@ public class DirectoryFeedListAdapter extends RecyclerView.Adapter<DirectoryFeed
         fItemsHolder.relativeLayout5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (item.getLevel()==1) {
-                    Intent intent = new Intent(mContext,  ConversationActivity.class);
+                if (item.getLevel() == 1) {
+                    Intent intent = new Intent(mContext, ConversationActivity.class);
                     intent.putExtra(ConversationActivity.KEY_JABBER_ID, item.getUrl());
                     mContext.startActivity(intent);
-                }else if (item.getLevel()==2) {
-                    Intent intent2 = new Intent(mContext, ByonChatMainRoomActivity.class);
-                    intent2.putExtra(ConversationActivity.KEY_JABBER_ID, item.getUrl());
-                    intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mContext.startActivity(intent2);
-                }else if (item.getLevel()==3) {
+                } else if (item.getLevel() == 2) {
+                    JSONObject jObject = null;
+                    try {
+                        jObject = new JSONObject(item.getUrl());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (jObject != null) {
+                        try {
+                            if (jObject.has("u")) {
+
+                                String username = jObject.getString("u");
+                                String targetUrl = jObject.getString("p");
+
+                                Intent intent = new Intent(mContext, ByonChatMainRoomActivity.class);
+                                intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                                intent.putExtra(ConversationActivity.KEY_TITLE, targetUrl);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mContext.startActivity(intent);
+
+                            } else {
+
+                                Toast.makeText(mContext, "Cannot Open!", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            Toast.makeText(mContext, "Cannot Open!!", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Intent intent2 = new Intent(mContext, ByonChatMainRoomActivity.class);
+                        intent2.putExtra(ConversationActivity.KEY_JABBER_ID, item.getUrl());
+                        intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent2);
+                    }
+
+                } else if (item.getLevel() == 3) {
                     if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                         Intent intent = new Intent(mContext, WebViewByonActivity.class);
                         intent.putExtra(WebViewByonActivity.KEY_LINK_LOAD, item.getUrl());

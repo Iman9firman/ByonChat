@@ -1035,12 +1035,9 @@ public class UploadService extends IntentService {
 
         @Override
         public void run() {
-            Log.w("kambing33", "wow");
             if (!idDetail.equalsIgnoreCase("")) {
-                Log.w("kambing44", "wow");
                 String[] ff = idDetail.split("\\|");
                 if (ff.length == 2) {
-                    Log.w("kambing55", "wow");
                     new downloadValueForm().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail, idNotif);
                 }
             }
@@ -1075,7 +1072,7 @@ public class UploadService extends IntentService {
             if (!idDetail.equalsIgnoreCase("")) {
                 String[] ff = idDetail.split("\\|");
                 if (ff.length == 2) {
-                    new downloadListForm().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail, idNotif);
+                    //  new downloadListForm().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail, idNotif);
                 }
             }
         }
@@ -1112,7 +1109,7 @@ public class UploadService extends IntentService {
 
         @Override
         public void run() {
-            uploadFileChild(context, ainnu, idDetail, username, idTab, fromList, customersId, includeStatus, isReject, idNotif);
+            // uploadFileChild(context, ainnu, idDetail, username, idTab, fromList, customersId, includeStatus, isReject, idNotif);
 
         }
 
@@ -2673,46 +2670,26 @@ public class UploadService extends IntentService {
             HttpPost httppost = new HttpPost(URL);
 
             try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-
-                                NotificationManager manager =
-                                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-                                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-
-                                builder.setContentTitle("Download value");
-                                builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(user));
-                                builder.setSmallIcon(R.drawable.ic_notif);
-                                builder.setProgress(100, (int) ((num / (float) totalSize) * 100), true);
-                                manager.notify(Integer.parseInt(idNotif), builder.build());
-                            }
-                        });
-
-                entity.addPart("username_room", new StringBody(user));
-                entity.addPart("id_rooms_tab", new StringBody(id_room));
+                ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("username_room", user));
+                params.add(new BasicNameValuePair("id_rooms_tab", id_room));
 
                 if (pId != null || !pId.equalsIgnoreCase("")) {
                     String[] ff = pId.split("\\|");
                     if (ff.length == 2) {
-                        entity.addPart("parent_id", new StringBody(ff[1]));
-                        entity.addPart("id_list_push", new StringBody(ff[0]));
+                        params.add(new BasicNameValuePair("parent_id", ff[1]));
+                        params.add(new BasicNameValuePair("id_list_push", ff[0]));
                     }
                 }
 
+                // totalSize = entity.getContentLength();
 
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
+                httppost.setEntity(new UrlEncodedFormEntity(params));
 
                 HttpResponse response = httpclient.execute(httppost);
                 HttpEntity r_entity = response.getEntity();
 
                 int statusCode = response.getStatusLine().getStatusCode();
-
 
                 if (statusCode == 200) {
                     responseString = EntityUtils.toString(r_entity);

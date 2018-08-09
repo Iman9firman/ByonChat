@@ -177,6 +177,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     private TextView vTextTotalPage;
     private ImageView vButtonFirstPage, vButtonPreviousPage, vButtonLastPage, vButtonNextPage;
     private int total_page = 1;
+    private int total_komen = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1192,7 +1193,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
 
     void goToLastPage(boolean isComment) {
         if (isComment) {
-            if (Integer.valueOf(getIntent().getStringExtra("this_page")) > 1) {
+            if (Integer.valueOf(getIntent().getStringExtra("this_page")) != total_page) {
                 finish();
                 Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
                 intent.putExtra("userid", getIntent().getStringExtra("userid"));
@@ -1208,7 +1209,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 }
                 if (Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) % 20 == 0) {
                     int page = total_page + 1;
-                    intent.putExtra("this_page", page);
+                    intent.putExtra("this_page", String.valueOf(page));
                 } else {
                     intent.putExtra("this_page", String.valueOf(total_page));
                 }
@@ -1219,14 +1220,52 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     id_room_tab = getIntent().getStringExtra("id_room_tab");
                 }
                 if (total_page > 1) {
-                    if (Integer.valueOf(getIntent().getStringExtra("this_page")) == total_page) {
+                    if (feedItems.size() == 20) {
+                        finish();
+                        Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                        intent.putExtra("userid", getIntent().getStringExtra("userid"));
+                        intent.putExtra("id_note", getIntent().getStringExtra("id_note"));
+                        intent.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                        intent.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                        intent.putExtra("id_comment", getIntent().getStringExtra("id_comment"));
+                        intent.putExtra("scroll_to_bottom", "true");
+                        intent.putExtra("color", getIntent().getStringExtra("color"));
+                        int jumlahcomment = Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) + total_komen + 1;
+                        intent.putExtra("jumlah_comment", String.valueOf(jumlahcomment));
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                        }
+                        int page = total_page + 1;
+                        intent.putExtra("this_page", String.valueOf(page));
+                        startActivity(intent);
+                    } else {
                         int total_items = (Integer.valueOf(getIntent().getStringExtra("this_page")) - 1) * 20;
                         getListCommentinCommentSubmitMore(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
                                 getIntent().getStringExtra("id_comment"), getIntent().getStringExtra("bc_user"), id_room_tab, String.valueOf(total_items));
                     }
                 } else {
-                    getListCommentinCommentSubmit(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
-                            getIntent().getStringExtra("id_comment"), getIntent().getStringExtra("bc_user"), id_room_tab);
+                    if (feedItems.size() == 20) {
+                        finish();
+                        Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                        intent.putExtra("userid", getIntent().getStringExtra("userid"));
+                        intent.putExtra("id_note", getIntent().getStringExtra("id_note"));
+                        intent.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                        intent.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                        intent.putExtra("id_comment", getIntent().getStringExtra("id_comment"));
+                        intent.putExtra("scroll_to_bottom", "true");
+                        intent.putExtra("color", getIntent().getStringExtra("color"));
+                        int jumlahcomment = Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) + total_komen + 1;
+                        intent.putExtra("jumlah_comment", String.valueOf(jumlahcomment));
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                        }
+                        int page = total_page + 1;
+                        intent.putExtra("this_page", String.valueOf(page));
+                        startActivity(intent);
+                    } else {
+                        getListCommentinCommentSubmit(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
+                                getIntent().getStringExtra("id_comment"), getIntent().getStringExtra("bc_user"), id_room_tab);
+                    }
                 }
             }
         } else {
@@ -1245,7 +1284,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 }
                 if (Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) % 20 == 0) {
                     int page = total_page + 1;
-                    intent.putExtra("this_page", page);
+                    intent.putExtra("this_page", String.valueOf(page));
                 } else {
                     intent.putExtra("this_page", String.valueOf(total_page));
                 }
@@ -1256,14 +1295,52 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     id_room_tab = getIntent().getStringExtra("id_room_tab");
                 }
                 if (total_page > 1) {
-                    if (Integer.valueOf(getIntent().getStringExtra("this_page")) == total_page) {
+                    if (feedItems.size() == 20) {
+                        finish();
+                        Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                        intent.putExtra("userid", getIntent().getStringExtra("userid"));
+                        intent.putExtra("id_note", getIntent().getStringExtra("id_note"));
+                        intent.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                        intent.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                        intent.putExtra("scroll_to_bottom", "true");
+                        intent.putExtra("color", getIntent().getStringExtra("color"));
+                        int jumlahcomment = Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) + total_komen + 1;
+                        intent.putExtra("jumlah_comment", String.valueOf(jumlahcomment));
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                        }
+                        int page = total_page + 1;
+                        intent.putExtra("this_page", String.valueOf(page));
+                        startActivity(intent);
+                    } else {
                         int total_items = (Integer.valueOf(getIntent().getStringExtra("this_page")) - 1) * 20;
                         getListCommentSubmitMore(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
                                 getIntent().getStringExtra("bc_user"), id_room_tab, String.valueOf(total_items));
+                        total_komen = total_komen + 1;
                     }
                 } else {
-                    getListCommentSubmit(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
-                            getIntent().getStringExtra("bc_user"), id_room_tab);
+                    if (feedItems.size() == 20) {
+                        finish();
+                        Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                        intent.putExtra("userid", getIntent().getStringExtra("userid"));
+                        intent.putExtra("id_note", getIntent().getStringExtra("id_note"));
+                        intent.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                        intent.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                        intent.putExtra("scroll_to_bottom", "true");
+                        intent.putExtra("color", getIntent().getStringExtra("color"));
+                        int jumlahcomment = Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) + total_komen + 1;
+                        intent.putExtra("jumlah_comment", String.valueOf(jumlahcomment));
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                        }
+                        int page = total_page + 1;
+                        intent.putExtra("this_page", String.valueOf(page));
+                        startActivity(intent);
+                    } else {
+                        getListCommentSubmit(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
+                                getIntent().getStringExtra("bc_user"), id_room_tab);
+                        total_komen = total_komen + 1;
+                    }
                 }
             }
         }

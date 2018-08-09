@@ -18,12 +18,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.SpannableString;
@@ -36,10 +39,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -83,9 +90,11 @@ import com.byonchat.android.utils.UtilsPD;
 import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.videotrimmer.utils.FileUtils;
 import com.byonchat.android.view.CircleProgressBar;
+import com.byonchat.android.view.HidingScrollListener;
 import com.byonchat.android.volley.VolleyMultipartRequest;
 import com.byonchat.android.volley.VolleySingleton;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
+import com.googlecode.mp4parser.authoring.Edit;
 import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
@@ -133,7 +142,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     SwipeRefreshLayout mswipeRefreshLayout;
     String color;
     Boolean personal;
-    private LinearLayout emojicons, contentRoot;
+    private LinearLayout emojicons;
+    private RelativeLayout contentRoot;
     private ImageButton btnMic, btn_add_emoticon, btn_attach_file;
     private ArrayList<Image> images = new ArrayList<>();
     String cameraFileOutput;
@@ -162,6 +172,11 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     private String contentComment;
     public final static HashMap<String, String> scrolltobottom = new HashMap<>();
     public final static String EXTRA_SCROLL = "scroll_to_bottom";
+    private RelativeLayout vFramePage;
+    private EditText vTextThisPage;
+    private TextView vTextTotalPage;
+    private ImageView vButtonFirstPage, vButtonPreviousPage, vButtonLastPage, vButtonNextPage;
+    private int total_page = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,13 +200,20 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         toolbar.setTitleTextColor(Color.WHITE);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
-        contentRoot = (LinearLayout) findViewById(R.id.contentRoot);
+        contentRoot = (RelativeLayout) findViewById(R.id.contentRoot);
         mWriteComment = (EmojiconEditText) findViewById(R.id.writeComment);
         mButtonSend = (Button) findViewById(R.id.btnSend);
         mswipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         vCircleProgress = (CircleProgressBar) findViewById(R.id.progress);
         vFrameHighlight = (RelativeLayout) findViewById(R.id.frame_highlight);
         vButtonGallery = (ImageView) findViewById(R.id.button_gallery);
+        vFramePage = (RelativeLayout) findViewById(R.id.frame_page);
+        vTextThisPage = (EditText) findViewById(R.id.text_thispage);
+        vTextTotalPage = (TextView) findViewById(R.id.text_totalpage);
+        vButtonFirstPage = (ImageView) findViewById(R.id.button_first_page);
+        vButtonPreviousPage = (ImageView) findViewById(R.id.button_previous);
+        vButtonNextPage = (ImageView) findViewById(R.id.button_next_page);
+        vButtonLastPage = (ImageView) findViewById(R.id.button_last_page);
 
         vButtonGallery.setVisibility(View.VISIBLE);
         vButtonGallery.setOnClickListener(new View.OnClickListener() {
@@ -265,37 +287,19 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
 
-        adapter.setOnButtonClickListener(new NoteCommentFollowUpListAdapter.OnButtonClick() {
+        mRecyclerView.addOnScrollListener(new HidingScrollListener() {
             @Override
-            public void onButtonClick(int position) {
-                CommentModel item = feedItems.get(position);
-                if (item.getFlag()) {
-                    Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
-                    intent.putExtra("userid", item.getUserid());
-                    intent.putExtra("id_note", item.getId_note());
-                    intent.putExtra("id_comment", item.getId_comment());
-                    intent.putExtra("bc_user", item.getMyuserid());
-                    intent.putExtra("flag", item.getFlag());
-                    intent.putExtra("position", position + "");
-                    startActivityForResult(intent, COMMENT_TREE);
-                } else {
-                    Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
-                    intent.putExtra("userid", item.getUserid());
-                    intent.putExtra("id_note", item.getId_note());
-                    intent.putExtra("id_comment", item.getId_comment());
-                    intent.putExtra("id_task", getIntent().getStringExtra("id_task"));
-                    intent.putExtra("bc_user", item.getMyuserid());
-                    intent.putExtra("id_room_tab", item.getIdRoomTab());
-                    intent.putExtra("color", item.getHeaderColor());
-                    intent.putExtra("flag", item.getFlag());
-                    intent.putExtra("position", position + "");
-//                    intent.putParcelableArrayListExtra(EXTRA_PARENT, parentItems);
-                    startActivityForResult(intent, COMMENT_TREE);
-                }
+            public void onHide() {
+                hideViews();
+            }
+
+            @Override
+            public void onShow() {
+                showViews();
             }
         });
 
-        refreshItems(false);
+        refreshItems();
 
         mButtonSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -315,8 +319,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         mswipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                feedItems = new ArrayList<>();
-                refreshItems(false);
+//                feedItems = new ArrayList<>();
+                refreshItems();
             }
         });
 
@@ -385,46 +389,22 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
 
     }
 
+    private void hideViews() {
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) vFramePage.getLayoutParams();
+        int layBottomMargin = lp.bottomMargin;
+        vFramePage.animate().translationY(vFramePage.getHeight() + layBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+    }
+
+    private void showViews() {
+        vFramePage.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+    }
+
     private boolean validateComment() {
         if (TextUtils.isEmpty(mWriteComment.getText())) {
             mButtonSend.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake_error));
             return false;
         }
         return true;
-    }
-
-
-    private void loadMoreData(boolean isScroll) {
-
-        adapter.showLoading(true);
-        adapter.notifyDataSetChanged();
-
-        if (getIntent().getExtras().containsKey("id_comment")) {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String id_comment = getIntent().getStringExtra("id_comment");
-            String id_task = getIntent().getStringExtra("id_task");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
-            }
-
-            Log.w("loadmoretree", feedItems.size() + "");
-            getListCommentinCommentMore(userid, id_note, id_comment, bc_user, idRoomTab, isScroll);
-        } else {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String id_task = getIntent().getStringExtra("id_task");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
-            }
-
-            Log.w("loadmore", feedItems.size() + "");
-            getListCommentMore(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, isScroll);
-        }
     }
 
     @Override
@@ -441,241 +421,6 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
 
     public void showError(String errorMessage) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
-    }
-
-    void setupHighlight() {
-        parentItem = new ArrayList<>();
-        parentItem = getIntent().getParcelableArrayListExtra(EXTRA_PARENT);
-
-        final CommentModel intentData = parentItem.get(0);
-
-        CommentModel item = new CommentModel();
-        item.setIdRoomTab(intentData.getIdRoomTab());
-        item.setHeaderColor(intentData.getHeaderColor());
-        item.setId_note(intentData.getId_note());
-        item.setId_comment(intentData.getId_comment());
-        item.setMyuserid(intentData.getMyuserid());
-        item.setUserid(intentData.getUserid());
-        item.setProfileName(intentData.getProfileName());
-        item.setPhotos(intentData.getPhotos());
-        item.setPhotoBefore(intentData.getPhotoBefore());
-        item.setPhotoAfter(intentData.getPhotoAfter());
-
-        item.setType(CommentModel.TYPE_HEADER);
-
-        item.setProfile_photo(intentData.getProfile_photo());
-        item.setJumlahLove("");
-        item.setJumlahNix("");
-        item.setJumlahComment(intentData.getJumlahComment());
-        item.setContent_comment(intentData.getContent_comment());
-        item.setTimeStamp(intentData.getTimeStamp());
-        item.setParent_id(intentData.getParent_id());
-        item.setUserLike("");
-        item.setUserDislike("");
-        item.setFlag(false);
-        feedItems.add(item);
-        adapter.notifyDataSetChanged();
-
-        /*vFrameHighlight.setVisibility(View.VISIBLE);
-
-        timestamp = (TextView) findViewById(R.id.timestamp);
-        statusMsg = (TextView) findViewById(R.id.txtStatusMsg);
-        profilePic = (Target) findViewById(R.id.profilePic);
-        mTotalLoves = (TextView) findViewById(R.id.totalLoves);
-        mTotalComments = (TextView) findViewById(R.id.totalComments);
-        mHiddenComment = (TextView) findViewById(R.id.hiddenComment);
-        feedImageView = (NoteFeedImageView) findViewById(R.id.feedImage1);
-        mLoves = (LinearLayout) findViewById(R.id.btLoves);
-        mComments = (LinearLayout) findViewById(R.id.btComment);
-        mLinearHiddenComment = (LinearLayout) findViewById(R.id.LinearHiddenComment);
-        mLoading = (LinearLayout) findViewById(R.id.LinearLoading);
-        mLabelLoves = (TextView) findViewById(R.id.labelLoves);
-        vBtNix = (LinearLayout) findViewById(R.id.btNix);
-        vBtLoves = (LinearLayout) findViewById(R.id.btLoves);
-        dotA = (LinearLayout) findViewById(R.id.dotA);
-        dotB = (LinearLayout) findViewById(R.id.dotB);
-        name = (TextView) findViewById(R.id.name);
-        vRvPhotos = (RecyclerView) findViewById(R.id.rv_photos);
-        vImgPreview = (TouchImageView) findViewById(R.id.img_preview);
-        mExpandButton = (TextView) findViewById(R.id.expandButton);
-        mExpandLayout = (ExpandableRelativeLayout) findViewById(R.id.expandableLayout);
-        mOverlayText = (TextView) findViewById(R.id.overlayText);
-        vFrameBeforeAfter = (LinearLayout) findViewById(R.id.frame_BeforeAfter);
-        vPhotoBefore = (ImageView) findViewById(R.id.photo_before);
-        vPhotoAfter = (ImageView) findViewById(R.id.photo_after);
-
-        mGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                mExpandLayout.move(mOverlayText.getHeight(), 0, null);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    mOverlayText.getViewTreeObserver().removeGlobalOnLayoutListener(mGlobalLayoutListener);
-                } else {
-                    mOverlayText.getViewTreeObserver().removeOnGlobalLayoutListener(mGlobalLayoutListener);
-                }
-            }
-        };
-
-        vBtNix.setVisibility(View.GONE);
-        vBtLoves.setVisibility(View.GONE);
-        dotA.setVisibility(View.GONE);
-        dotB.setVisibility(View.GONE);
-
-        if (parentItem.size() > 0) {
-            final CommentModel item = parentItem.get(0);
-
-            if (!item.getPhotoBefore().equalsIgnoreCase("null")) {
-                vFrameBeforeAfter.setVisibility(View.VISIBLE);
-
-                Manhera.getInstance().get()
-                        .load(item.getPhotoBefore())
-                        .dontAnimate()
-                        .into(vPhotoBefore);
-
-                Manhera.getInstance().get()
-                        .load(item.getPhotoAfter())
-                        .dontAnimate()
-                        .into(vPhotoAfter);
-
-
-                vPhotoBefore.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!item.getPhotoBefore().equalsIgnoreCase("")) {
-                            Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
-                            intent.putExtra(ZoomImageViewActivity.KEY_FILE, item.getPhotoBefore());
-                            getApplicationContext().startActivity(intent);
-                        }
-                    }
-                });
-
-                vPhotoAfter.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!item.getPhotoAfter().equalsIgnoreCase("")) {
-                            Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
-                            intent.putExtra(ZoomImageViewActivity.KEY_FILE, item.getPhotoAfter());
-                            getApplicationContext().startActivity(intent);
-                        }
-                    }
-                });
-
-            } else if (!item.getPhotos().equalsIgnoreCase("[]")) {
-                try {
-                    JSONArray jPhotos = new JSONArray(item.getPhotos());
-                    if (jPhotos.length() == 1) {
-                        try {
-                            JSONArray json = new JSONArray(item.getPhotos());
-                            if (json.length() == 1) {
-                                vImgPreview.setVisibility(View.VISIBLE);
-                                JSONObject jData = json.getJSONObject(0);
-                                Picasso.with(getApplicationContext()).load(jData.getString("photo")).into(vImgPreview);
-                            } else {
-                                vImgPreview.setVisibility(View.GONE);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } else if (jPhotos.length() > 1) {
-                        vImgPreview.setVisibility(View.GONE);
-                        notesPhotos = new ArrayList<>();
-                        mLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
-                        vRvPhotos.setLayoutManager(mLayoutManager);
-                        vRvPhotos.setItemAnimator(new DefaultItemAnimator());
-
-                        try {
-                            JSONArray json = new JSONArray(item.getPhotos());
-                            if (json.length() > 1) {
-
-                                for (int j = 0; j < json.length(); j++) {
-                                    JSONObject jData = json.getJSONObject(j);
-                                    File file = new File(jData.getString("photo"));
-                                    NotesPhoto phot = new NotesPhoto(file, "", jData.getString("photo"));
-                                    notesPhotos.add(phot);
-                                }
-
-                                photosAdapter = new PhotosAdapter(getApplicationContext(), notesPhotos);
-                                vRvPhotos.setAdapter(photosAdapter);
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } else if (jPhotos.length() == 0) {
-                        item.setType(CommentModel.TYPE_TEXT);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                vFrameBeforeAfter.setVisibility(View.GONE);
-            }
-
-            mLinearHiddenComment.setVisibility(View.GONE);
-
-            mTotalLoves.setText(item.getJumlahLove());
-            mTotalComments.setText(item.getJumlahComment());
-
-            Drawable dIcon = getApplicationContext().getResources().getDrawable(R.drawable.news_top_left);
-            leftMargin = dIcon.getIntrinsicWidth();
-
-            String nama;
-            if (item.getProfileName().equalsIgnoreCase(null) || item.getProfileName().equalsIgnoreCase("")) {
-                nama = item.getUserid();
-            } else {
-                nama = item.getProfileName();
-            }
-            SpannableString titleHeader = new SpannableString(Html.fromHtml("<b>" + nama + "</b>"));
-            titleHeader.setSpan(new MyLeadingMarginSpan2(1, leftMargin), 0, titleHeader.length(), 0);
-            name.setText(titleHeader);
-
-            SpannableString update = new SpannableString(Html.fromHtml("Updates on: " + item.getTimeStamp()));
-            update.setSpan(new MyLeadingMarginSpan2(1, leftMargin), 0, update.length(), 0);
-            timestamp.setText(update);
-
-            SpannableString pesan = new SpannableString(Html.fromHtml(item.getContent_comment()));
-            pesan.setSpan(new MyLeadingMarginSpan2(1, leftMargin), 0, pesan.length(), 0);
-            statusMsg.setText(pesan);
-            mOverlayText.setText(pesan);
-
-            mOverlayText.getViewTreeObserver().addOnGlobalLayoutListener(mGlobalLayoutListener);
-
-            mExpandButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    statusMsg.setVisibility(View.VISIBLE);
-                    mExpandLayout.expand();
-                    mExpandButton.setVisibility(View.GONE);
-                    mOverlayText.setVisibility(View.GONE);
-                }
-            });
-
-            mExpandButton.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (statusMsg.getLineCount() > 3) {
-                        mExpandLayout.setVisibility(View.VISIBLE);
-                        mExpandButton.setVisibility(View.VISIBLE);
-                    } else {
-                        mExpandLayout.setVisibility(View.GONE);
-                        mExpandButton.setVisibility(View.GONE);
-                    }
-                }
-            });
-
-            if (item.getProfile_photo() != null) {
-                Picasso.with(getApplicationContext()).load(item.getProfile_photo())
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(profilePic);
-            } else {
-                Picasso.with(getApplicationContext()).load(R.drawable.ic_no_photo)
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(profilePic);
-            }
-
-            feedImageView.setVisibility(View.GONE);
-        }*/
     }
 
     protected void takeImage() {
@@ -701,38 +446,6 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
             StrictMode.setVmPolicy(builder.build());
         }
         startActivityForResult(i, req);
-
-        /*if (PermissionsUtil.hasPermissions(this, CAMERA_PERMISSION)) {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (intent.resolveActivity(this.getPackageManager()) != null) {
-                File photoFile = null;
-                try {
-                    photoFile = ImageUtils.createImageFileManhera();
-                } catch (IOException ex) {
-                    showError(getString(R.string.comment_error_failed_write));
-                }
-
-                if (photoFile != null) {
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", photoFile));
-                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    } else {
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                FileProvider.getUriForFile(this, Byonchat.getProviderAuthorities(), photoFile));
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                        StrictMode.setVmPolicy(builder.build());
-                    }
-                    startActivityForResult(intent, REQ_CAMERA);
-                }
-            }
-        } else {
-            requestCameraPermission();
-        }*/
     }
 
     protected void requestCameraPermission() {
@@ -822,32 +535,12 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQ_CAMERA && resultCode == Activity.RESULT_OK) {
-            /*try {
-                File imageFile = FileUtils.from(Uri.parse(CacheManager.getInstance().getLastImagePath()));
-                List<NotesPhoto> photos = new ArrayList<>();
-                photos.add(new NotesPhoto(imageFile));
-
-                String jabberId = getIntent().getStringExtra("userid");
-
-                startActivityForResult(ConfirmationSendFileV2.generateIntent(this,
-                        jabberId, photos, Message.TYPE_IMAGE),
-                        SEND_PICTURE_SINGLE_CONFIRMATION_REQUEST);
-            } catch (Exception e) {
-                showError(getString(R.string.comment_error_failed_read_picture));
-                e.printStackTrace();
-            }*/
             if (decodeFile(cameraFileOutput)) {
                 final File f = new File(cameraFileOutput);
                 if (f.exists()) {
                     List<NotesPhoto> photos = new ArrayList<>();
                     photos.add(new NotesPhoto(f));
                     String jabberId = getIntent().getStringExtra("userid");
-//                        Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
-//                        intent.putParcelableArrayListExtra("photos", (ArrayList<NotesPhoto>) photos);
-//                        intent.putExtra("name", jabberId);
-//                        intent.putExtra("type", Message.TYPE_IMAGE);
-//                        intent.putExtra("isFrom", "comment");
-//                        startActivityForResult(intent, SEND_PICTURE_SINGLE_CONFIRMATION_REQUEST);
                     startActivityForResult(ConfirmationSendFileV2.generateIntent(this,
                             jabberId, photos, Message.TYPE_IMAGE),
                             SEND_PICTURE_SINGLE_CONFIRMATION_REQUEST);
@@ -882,14 +575,6 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     data.getSerializableExtra(ConfirmationSendFileV2.EXTRA_CAPTIONS);
             List<NotesPhoto> photos = data.getParcelableArrayListExtra(ConfirmationSendFileFolllowup.EXTRA_PHOTOS);
             postComment(captions, photos);
-            /*if (photos != null) {
-                for (NotesPhoto photo : photos) {
-//                    Log.w("uploadMultiple", photo.getPhotoFile() + " -- " + photo.getContent() + " -- " +);
-                }
-                Log.w("uploadMultiple", photos.size() + " -- " + captions.get(EXTRA_TEXT_CAPTIONS));
-            } else {
-                showError(getString(R.string.comment_error_failed_read_picture));
-            }*/
         } else if (requestCode == SEND_PICTURE_SINGLE_CONFIRMATION_REQUEST && resultCode == Activity.RESULT_OK) {
             Utility.hideKeyboard(getApplicationContext(), mWriteComment);
             if (data == null) {
@@ -901,46 +586,15 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     data.getSerializableExtra(ConfirmationSendFileV2.EXTRA_CAPTIONS);
             List<NotesPhoto> photos = data.getParcelableArrayListExtra(ConfirmationSendFileMultiple.EXTRA_PHOTOS);
             postComment(captions, photos);
-            /*if (photos != null) {
-                for (NotesPhoto photo : photos) {
-                    Log.w("uploadSingle", photos.size() + " --" + captions.get(photo.getPhotoFile().getAbsolutePath()));
-                }
-            } else {
-                showError(getString(R.string.comment_error_failed_read_picture));
-            }*/
         } else if (requestCode == POST_BEFORE_AFTER && resultCode == Activity.RESULT_OK) {
             Utility.hideKeyboard(getApplicationContext(), mWriteComment);
-            refreshItems(false);
-
-//            if (data.getExtras().containsKey("id_comment")) {
-//                String userid = data.getStringExtra("userid");
-//                String id_note = data.getStringExtra("id_note");
-//                String id_comment = data.getStringExtra("id_comment");
-//                String id_task = data.getStringExtra("id_task");
-//                String bc_user = data.getStringExtra("bc_user");
-//                String idRoomTab = "";
-//                if (data.getExtras().containsKey("id_room_tab")) {
-//                    idRoomTab = data.getStringExtra("id_room_tab");
-//                }
-//                getListCommentinComment(userid, id_note, id_comment, bc_user, idRoomTab, false);
-//
-//            } else {
-//                String userid = data.getStringExtra("userid");
-//                String id_note = data.getStringExtra("id_note");
-//                String bc_user = data.getStringExtra("bc_user");
-//                String id_task = data.getStringExtra("id_task");
-//                String idRoomTab = "";
-//                if (data.getExtras().containsKey("id_room_tab")) {
-//                    idRoomTab = data.getStringExtra("id_room_tab");
-//                }
-//                getListComment(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, false);
-//
-//            }
+            if (data.getExtras().containsKey("id_comment")) {
+                goToLastPage(true);
+            } else {
+                goToLastPage(false);
+            }
         } else if (requestCode == COMMENT_TREE && resultCode == Activity.RESULT_OK) {
             Utility.hideKeyboard(getApplicationContext(), mWriteComment);
-//            CommentModel model = feedItems.get(Integer.valueOf(position));
-//            model.setJumlahComment(jumlahcomment);
-//            adapter.update(model);
 
             int position = Integer.valueOf(data.getStringExtra("position"));
             String jumlahcomment = data.getStringExtra(EXTRA_TEXT_JUMLAH_COMMENT);
@@ -952,33 +606,6 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
             feedItems.set(position, item);
 
             adapter.notifyDataSetChanged();
-
-//            refreshItems(false);
-
-            /*Log.w("balikkomen", "jalan");
-            if (data.getExtras().containsKey("id_comment")) {
-                String userid = data.getStringExtra("userid");
-                String id_note = data.getStringExtra("id_note");
-                String id_comment = data.getStringExtra("id_comment");
-                String id_task = data.getStringExtra("id_task");
-                String bc_user = data.getStringExtra("bc_user");
-                String idRoomTab = "";
-                if (data.getExtras().containsKey("id_room_tab")) {
-                    idRoomTab = data.getStringExtra("id_room_tab");
-                }
-                getListCommentinComment(userid, id_note, id_comment, bc_user, idRoomTab, true);
-
-            } else {
-                String userid = data.getStringExtra("userid");
-                String id_note = data.getStringExtra("id_note");
-                String bc_user = data.getStringExtra("bc_user");
-                String id_task = data.getStringExtra("id_task");
-                String idRoomTab = "";
-                if (data.getExtras().containsKey("id_room_tab")) {
-                    idRoomTab = data.getStringExtra("id_room_tab");
-                }
-                getListComment(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, true);
-            }*/
         } else if (resultCode == Activity.RESULT_CANCELED) {
 
         }
@@ -1116,7 +743,6 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 if (isPostComment) {
                     Intent data = new Intent();
                     if (getIntent().getExtras().containsKey("id_comment")) {
-//                        isJumlahComment.put(EXTRA_JUMLAH_COMMENT, String.valueOf(feedItems.size()));
                         data.putExtra("userid", getIntent().getStringExtra("userid"));
                         data.putExtra("id_note", getIntent().getStringExtra("id_note"));
                         data.putExtra("id_task", getIntent().getStringExtra("id_task"));
@@ -1132,21 +758,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                         data.putExtra(EXTRA_TEXT_JUMLAH_COMMENT, feedItems.size() + "");
                         data.putExtra(EXTRA_TEXT_CONTENT_COMMENT, contentComment);
                         setResult(RESULT_OK, data);
-                    }/* else {
-                        data.putExtra("userid", getIntent().getStringExtra("userid"));
-                        data.putExtra("id_note", getIntent().getStringExtra("id_note"));
-                        data.putExtra("id_task", getIntent().getStringExtra("id_task"));
-                        data.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
-                        if (getIntent().getExtras().containsKey("id_room_tab")) {
-                            data.putExtra("id_room_tab", getIntent().getExtras().containsKey("id_room_tab"));
-                        }
-                        if (getIntent().getExtras().containsKey("position")) {
-                            data.putExtra("position", getIntent().getExtras().containsKey("position"));
-                        }
-                        data.putExtra("jumlahComment", feedItems.size());
-                        if (isPostComment)
-                            setResult(RESULT_OK, data);
-                    }*/
+                    }
                     finish();
                 } else {
                     onBackPressed();
@@ -1157,18 +769,21 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         }
     }
 
-    void refreshItems(boolean isScroll) {
+    void refreshItems() {
         if (adapter.getItemCount() > 0) {
             feedItems.clear();
             adapter.notifyDataSetChanged();
         }
         if (!personal) {
+
             if (getIntent().getExtras().containsKey("id_comment")) {
-                String userid = getIntent().getStringExtra("userid");
-                String id_note = getIntent().getStringExtra("id_note");
-                String id_comment = getIntent().getStringExtra("id_comment");
-                String id_task = getIntent().getStringExtra("id_task");
-                String bc_user = getIntent().getStringExtra("bc_user");
+                final String userid = getIntent().getStringExtra("userid");
+                final String id_note = getIntent().getStringExtra("id_note");
+                final String id_comment = getIntent().getStringExtra("id_comment");
+                final String id_task = getIntent().getStringExtra("id_task");
+                final String bc_user = getIntent().getStringExtra("bc_user");
+                final String jumlah_comment = getIntent().getStringExtra("jumlah_comment");
+                final String this_page = getIntent().getStringExtra("this_page");
                 String idRoomTab = "", position = "";
                 if (getIntent().getExtras().containsKey("id_room_tab")) {
                     idRoomTab = getIntent().getStringExtra("id_room_tab");
@@ -1177,14 +792,199 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     position = getIntent().getStringExtra("position");
                 }
 
-//                setupHighlight();
+                total_page = 1;
+                if (Integer.valueOf(jumlah_comment) > 20) {
+                    if (Integer.valueOf(jumlah_comment) % 20 > 0) {
+                        int hasil_bagi = Integer.valueOf(jumlah_comment) - (Integer.valueOf(jumlah_comment) % 20);
+                        total_page = hasil_bagi / 20 + 1;
+                    } else {
+                        int hasil_bagi = Integer.valueOf(jumlah_comment) - (Integer.valueOf(jumlah_comment) % 20);
+                        total_page = hasil_bagi / 20;
+                    }
+                }
 
-                getListCommentinComment(userid, id_note, id_comment, bc_user, idRoomTab, isScroll);
+                if (total_page > 1) {
+                    if (Integer.valueOf(this_page) == 1) {
+                        vButtonNextPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonLastPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                    } else if (Integer.valueOf(this_page) == total_page) {
+                        vButtonFirstPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonPreviousPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                    } else if (Integer.valueOf(this_page) > 1 && Integer.valueOf(this_page) < total_page) {
+                        vButtonNextPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonLastPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonFirstPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonPreviousPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                    }
+                }
+
+                vTextThisPage.setHint(this_page);
+                vTextTotalPage.setText("/  " + total_page);
+
+                if (Integer.valueOf(this_page) == 1) {
+                    getListCommentinComment(userid, id_note, id_comment, bc_user, idRoomTab);
+                } else if (Integer.valueOf(this_page) > 1) {
+                    int total_items = (Integer.valueOf(this_page) - 1) * 20;
+                    getListCommentinCommentMore(userid, id_note, id_comment, bc_user, idRoomTab, total_items + "");
+                }
+
+                vTextThisPage.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_GO) {
+                            if (Integer.valueOf(vTextThisPage.getText().toString().trim()) >= 1
+                                    && Integer.valueOf(vTextThisPage.getText().toString().trim()) <= total_page) {
+                                finish();
+                                Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                                intent.putExtra("userid", userid);
+                                intent.putExtra("id_note", id_note);
+                                intent.putExtra("id_task", id_task);
+                                intent.putExtra("id_comment", id_comment);
+                                intent.putExtra("bc_user", bc_user);
+                                intent.putExtra("color", getIntent().getStringExtra("color"));
+                                intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                                intent.putExtra("this_page", vTextThisPage.getText().toString().trim());
+                                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                    intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                                }
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(NoteCommentActivityV2.this, "Please enter a valid page (" + 1 + " - " + total_page + ")", Toast.LENGTH_SHORT).show();
+                            }
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                vButtonFirstPage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Integer.valueOf(this_page) > 1) {
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("id_note", id_note);
+                            intent.putExtra("id_task", id_task);
+                            intent.putExtra("id_comment", id_comment);
+                            intent.putExtra("bc_user", bc_user);
+                            intent.putExtra("color", getIntent().getStringExtra("color"));
+                            intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                            intent.putExtra("this_page", "1");
+                            if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                            }
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                vButtonPreviousPage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Integer.valueOf(this_page) > 1) {
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("id_note", id_note);
+                            intent.putExtra("id_task", id_task);
+                            intent.putExtra("id_comment", id_comment);
+                            intent.putExtra("bc_user", bc_user);
+                            intent.putExtra("color", getIntent().getStringExtra("color"));
+                            intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                            intent.putExtra("this_page", String.valueOf(Integer.valueOf(this_page) - 1));
+                            if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                            }
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                vButtonNextPage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Integer.valueOf(this_page) < total_page) {
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("id_note", id_note);
+                            intent.putExtra("id_task", id_task);
+                            intent.putExtra("id_comment", id_comment);
+                            intent.putExtra("bc_user", bc_user);
+                            intent.putExtra("color", getIntent().getStringExtra("color"));
+                            intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                            intent.putExtra("this_page", String.valueOf(Integer.valueOf(this_page) + 1));
+                            if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                            }
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                vButtonLastPage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Integer.valueOf(this_page) < total_page) {
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("id_note", id_note);
+                            intent.putExtra("id_task", id_task);
+                            intent.putExtra("id_comment", id_comment);
+                            intent.putExtra("bc_user", bc_user);
+                            intent.putExtra("color", getIntent().getStringExtra("color"));
+                            intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                            intent.putExtra("this_page", String.valueOf(total_page));
+                            if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                            }
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                adapter.setOnButtonClickListener(new NoteCommentFollowUpListAdapter.OnButtonClick() {
+                    @Override
+                    public void onButtonClick(int position) {
+                        CommentModel item = feedItems.get(position);
+                        if (item.getFlag()) {
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", item.getUserid());
+                            intent.putExtra("id_note", item.getId_note());
+                            intent.putExtra("id_comment", item.getId_comment());
+                            intent.putExtra("bc_user", item.getMyuserid());
+                            intent.putExtra("flag", item.getFlag());
+                            intent.putExtra("position", position + "");
+                            intent.putExtra("jumlah_comment", item.getJumlahComment());
+                            intent.putExtra("this_page", "1");
+                            startActivityForResult(intent, COMMENT_TREE);
+                        } else {
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", item.getUserid());
+                            intent.putExtra("id_note", item.getId_note());
+                            intent.putExtra("id_comment", item.getId_comment());
+                            intent.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                            intent.putExtra("bc_user", item.getMyuserid());
+                            intent.putExtra("id_room_tab", item.getIdRoomTab());
+                            intent.putExtra("color", item.getHeaderColor());
+                            intent.putExtra("flag", item.getFlag());
+                            intent.putExtra("position", position + "");
+                            intent.putExtra("jumlah_comment", item.getJumlahComment());
+                            intent.putExtra("this_page", "1");
+//                    intent.putParcelableArrayListExtra(EXTRA_PARENT, parentItems);
+                            startActivityForResult(intent, COMMENT_TREE);
+                        }
+                    }
+                });
             } else {
-                String userid = getIntent().getStringExtra("userid");
-                String id_note = getIntent().getStringExtra("id_note");
-                String bc_user = getIntent().getStringExtra("bc_user");
-                String id_task = getIntent().getStringExtra("id_task");
+                final String userid = getIntent().getStringExtra("userid");
+                final String id_note = getIntent().getStringExtra("id_note");
+                final String bc_user = getIntent().getStringExtra("bc_user");
+                final String id_task = getIntent().getStringExtra("id_task");
+                final String jumlah_comment = getIntent().getStringExtra("jumlah_comment");
+                final String this_page = getIntent().getStringExtra("this_page");
                 String idRoomTab = "", position = "";
                 if (getIntent().getExtras().containsKey("id_room_tab")) {
                     idRoomTab = getIntent().getStringExtra("id_room_tab");
@@ -1193,7 +993,186 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     position = getIntent().getStringExtra("position");
                 }
 
-                getListComment(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, isScroll);
+                total_page = 1;
+                if (Integer.valueOf(jumlah_comment) > 20) {
+                    if (Integer.valueOf(jumlah_comment) % 20 > 0) {
+                        int hasil_bagi = Integer.valueOf(jumlah_comment) - (Integer.valueOf(jumlah_comment) % 20);
+                        total_page = hasil_bagi / 20 + 1;
+                    } else {
+                        int hasil_bagi = Integer.valueOf(jumlah_comment) - (Integer.valueOf(jumlah_comment) % 20);
+                        total_page = hasil_bagi / 20;
+                    }
+                }
+
+                vTextThisPage.setHint(this_page);
+                vTextTotalPage.setText("/  " + total_page);
+
+                if (total_page > 1) {
+                    if (Integer.valueOf(this_page) == 1) {
+                        vButtonNextPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonLastPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                    } else if (Integer.valueOf(this_page) == total_page) {
+                        vButtonFirstPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonPreviousPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                    } else if (Integer.valueOf(this_page) > 1 && Integer.valueOf(this_page) < total_page) {
+                        vButtonNextPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonLastPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonFirstPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                        vButtonPreviousPage.setColorFilter(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                    }
+                }
+
+                if (Integer.valueOf(this_page) == 1) {
+                    getListComment(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT);
+                } else if (Integer.valueOf(this_page) > 1) {
+                    int total_items = (Integer.valueOf(this_page) - 1) * 20;
+                    getListCommentMore(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, total_items + "");
+                }
+
+                vTextThisPage.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_GO) {
+                            if (Integer.valueOf(vTextThisPage.getText().toString().trim()) >= 1
+                                    && Integer.valueOf(vTextThisPage.getText().toString().trim()) <= total_page) {
+                                finish();
+                                Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                                intent.putExtra("userid", userid);
+                                intent.putExtra("id_note", id_note);
+                                intent.putExtra("id_task", id_task);
+                                intent.putExtra("bc_user", bc_user);
+                                intent.putExtra("color", getIntent().getStringExtra("color"));
+                                intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                                intent.putExtra("this_page", vTextThisPage.getText().toString().trim());
+                                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                    intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                                }
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(NoteCommentActivityV2.this, "Please enter a valid page (" + 1 + " - " + total_page + ")", Toast.LENGTH_SHORT).show();
+                            }
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                vButtonFirstPage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Integer.valueOf(this_page) > 1) {
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("id_note", id_note);
+                            intent.putExtra("id_task", id_task);
+                            intent.putExtra("bc_user", bc_user);
+                            intent.putExtra("color", getIntent().getStringExtra("color"));
+                            intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                            intent.putExtra("this_page", "1");
+                            if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                            }
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                vButtonPreviousPage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Integer.valueOf(this_page) > 1) {
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("id_note", id_note);
+                            intent.putExtra("id_task", id_task);
+                            intent.putExtra("bc_user", bc_user);
+                            intent.putExtra("color", getIntent().getStringExtra("color"));
+                            intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                            intent.putExtra("this_page", String.valueOf(Integer.valueOf(this_page) - 1));
+                            if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                            }
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                vButtonNextPage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Integer.valueOf(this_page) < total_page) {
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("id_note", id_note);
+                            intent.putExtra("id_task", id_task);
+                            intent.putExtra("bc_user", bc_user);
+                            intent.putExtra("color", getIntent().getStringExtra("color"));
+                            intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                            intent.putExtra("this_page", String.valueOf(Integer.valueOf(this_page) + 1));
+                            if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                            }
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                vButtonLastPage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Integer.valueOf(this_page) < total_page) {
+                            finish();
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("id_note", id_note);
+                            intent.putExtra("id_task", id_task);
+                            intent.putExtra("bc_user", bc_user);
+                            intent.putExtra("color", getIntent().getStringExtra("color"));
+                            intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                            intent.putExtra("this_page", String.valueOf(total_page));
+                            if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                            }
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                adapter.setOnButtonClickListener(new NoteCommentFollowUpListAdapter.OnButtonClick() {
+                    @Override
+                    public void onButtonClick(int position) {
+                        CommentModel item = feedItems.get(position);
+                        if (item.getFlag()) {
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", item.getUserid());
+                            intent.putExtra("id_note", item.getId_note());
+                            intent.putExtra("id_comment", item.getId_comment());
+                            intent.putExtra("bc_user", item.getMyuserid());
+                            intent.putExtra("flag", item.getFlag());
+                            intent.putExtra("position", position + "");
+                            intent.putExtra("jumlah_comment", item.getJumlahComment());
+                            intent.putExtra("this_page", "1");
+                            startActivityForResult(intent, COMMENT_TREE);
+                        } else {
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                            intent.putExtra("userid", item.getUserid());
+                            intent.putExtra("id_note", item.getId_note());
+                            intent.putExtra("id_comment", item.getId_comment());
+                            intent.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                            intent.putExtra("bc_user", item.getMyuserid());
+                            intent.putExtra("id_room_tab", item.getIdRoomTab());
+                            intent.putExtra("color", item.getHeaderColor());
+                            intent.putExtra("flag", item.getFlag());
+                            intent.putExtra("position", position + "");
+                            intent.putExtra("jumlah_comment", item.getJumlahComment());
+                            intent.putExtra("this_page", "1");
+                            startActivityForResult(intent, COMMENT_TREE);
+                        }
+                    }
+                });
             }
         } else {
             if (getIntent().getExtras().containsKey("id_comment")) {
@@ -1207,6 +1186,85 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 String id_note = getIntent().getStringExtra("id_note");
                 String bc_user = getIntent().getStringExtra("bc_user");
 //                getListNotesCommentPersonal(userid, id_note, bc_user);
+            }
+        }
+    }
+
+    void goToLastPage(boolean isComment) {
+        if (isComment) {
+            if (Integer.valueOf(getIntent().getStringExtra("this_page")) > 1) {
+                finish();
+                Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                intent.putExtra("userid", getIntent().getStringExtra("userid"));
+                intent.putExtra("id_note", getIntent().getStringExtra("id_note"));
+                intent.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                intent.putExtra("id_comment", getIntent().getStringExtra("id_comment"));
+                intent.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                intent.putExtra("scroll_to_bottom", "true");
+                intent.putExtra("color", getIntent().getStringExtra("color"));
+                intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                }
+                if (Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) % 20 == 0) {
+                    int page = total_page + 1;
+                    intent.putExtra("this_page", page);
+                } else {
+                    intent.putExtra("this_page", String.valueOf(total_page));
+                }
+                startActivity(intent);
+            } else {
+                String id_room_tab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    id_room_tab = getIntent().getStringExtra("id_room_tab");
+                }
+                if (total_page > 1) {
+                    if (Integer.valueOf(getIntent().getStringExtra("this_page")) == total_page) {
+                        int total_items = (Integer.valueOf(getIntent().getStringExtra("this_page")) - 1) * 20;
+                        getListCommentinCommentSubmitMore(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
+                                getIntent().getStringExtra("id_comment"), getIntent().getStringExtra("bc_user"), id_room_tab, String.valueOf(total_items));
+                    }
+                } else {
+                    getListCommentinCommentSubmit(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
+                            getIntent().getStringExtra("id_comment"), getIntent().getStringExtra("bc_user"), id_room_tab);
+                }
+            }
+        } else {
+            if (Integer.valueOf(getIntent().getStringExtra("this_page")) != total_page) {
+                finish();
+                Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
+                intent.putExtra("userid", getIntent().getStringExtra("userid"));
+                intent.putExtra("id_note", getIntent().getStringExtra("id_note"));
+                intent.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                intent.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                intent.putExtra("scroll_to_bottom", "true");
+                intent.putExtra("color", getIntent().getStringExtra("color"));
+                intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                }
+                if (Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) % 20 == 0) {
+                    int page = total_page + 1;
+                    intent.putExtra("this_page", page);
+                } else {
+                    intent.putExtra("this_page", String.valueOf(total_page));
+                }
+                startActivity(intent);
+            } else {
+                String id_room_tab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    id_room_tab = getIntent().getStringExtra("id_room_tab");
+                }
+                if (total_page > 1) {
+                    if (Integer.valueOf(getIntent().getStringExtra("this_page")) == total_page) {
+                        int total_items = (Integer.valueOf(getIntent().getStringExtra("this_page")) - 1) * 20;
+                        getListCommentSubmitMore(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
+                                getIntent().getStringExtra("bc_user"), id_room_tab, String.valueOf(total_items));
+                    }
+                } else {
+                    getListCommentSubmit(getIntent().getStringExtra("userid"), getIntent().getStringExtra("id_note"),
+                            getIntent().getStringExtra("bc_user"), id_room_tab);
+                }
             }
         }
     }
@@ -1251,7 +1309,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
 
     }
 
-    private void sendCommentSubmit(final String userid, final String textComment, final String id_note, final String bc_user, final String idRoomTab) {
+    private void sendCommentSubmit(final String userid, final String textComment,
+                                   final String id_note, final String bc_user, final String idRoomTab) {
         class ambilGambar extends AsyncTask<String, Void, String> {
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
             String result = "";
@@ -1279,12 +1338,11 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
 
             protected void onPostExecute(String s) {
                 Utility.hideKeyboard(getApplicationContext(), mWriteComment);
-                getListCommentSubmit(userid, id_note, bc_user, idRoomTab);
                 progressDialog.dismiss();
                 if (!s.equals("1")) {
                     Toast.makeText(NoteCommentActivityV2.this, "Check your internet problem.", Toast.LENGTH_LONG).show();
                 } else {
-                    scrolltobottom.put(EXTRA_SCROLL, "scroll");
+                    goToLastPage(false);
                 }
                 super.onPostExecute(s);
             }
@@ -1293,7 +1351,9 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         ru.execute(userid, idRoomTab, id_note, bc_user, textComment);
     }
 
-    private void sendCommentinComment(final String userid, final String textComment, final String id_note, final String id_comment, final String bc_user, final String id_room_tab) {
+    private void sendCommentinComment(final String userid, final String textComment,
+                                      final String id_note, final String id_comment, final String bc_user,
+                                      final String id_room_tab) {
         class ambilGambar extends AsyncTask<String, Void, String> {
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
             String result = "";
@@ -1321,12 +1381,13 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
 
             protected void onPostExecute(String s) {
                 Utility.hideKeyboard(getApplicationContext(), mWriteComment);
-                getListCommentinCommentSubmit(userid, id_note, id_comment, bc_user, id_room_tab);
+//                getListCommentinCommentSubmit(userid, id_note, id_comment, bc_user, id_room_tab);
                 progressDialog.dismiss();
                 if (!s.equals("1")) {
                     Toast.makeText(NoteCommentActivityV2.this, "Check your internet problem.", Toast.LENGTH_LONG).show();
                 } else {
-                    scrolltobottom.put(EXTRA_SCROLL, "scroll");
+//                    scrolltobottom.put(EXTRA_SCROLL, "scroll");
+                    goToLastPage(true);
                 }
                 super.onPostExecute(s);
             }
@@ -1335,7 +1396,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         ru.execute(userid, id_room_tab, id_note, bc_user, id_comment, textComment);
     }
 
-    private void getListCommentSubmit(String userid, String id_note, final String bc_user, final String idRoomTab) {
+    private void getListCommentSubmit(String userid, String id_note, final String bc_user,
+                                      final String idRoomTab) {
         class ambilGambar extends AsyncTask<String, Void, String> {
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
             String result = "";
@@ -1442,25 +1504,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             feedItems.add(item);
                         }
                         adapter.notifyDataSetChanged();
-                        if (feedItems.size() <= 20)
-                            mRecyclerView.smoothScrollToPosition(feedItems.size());
-
-                        mRecyclerView.addOnScrollListener(new RecyclerViewScrollListener() {
-                            @Override
-                            public void onScrollUp() {
-
-                            }
-
-                            @Override
-                            public void onScrollDown() {
-
-                            }
-
-                            @Override
-                            public void onLoadMore() {
-                                loadMoreData(true);
-                            }
-                        });
+                        mRecyclerView.scrollToPosition(feedItems.size());
 
                         JSONArray ja = new JSONArray();
                         JSONObject last = dataJsonArr.getJSONObject(dataJsonArr.length() - 1);
@@ -1476,7 +1520,133 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         ru.execute(userid, idRoomTab, id_note, bc_user);
     }
 
-    private void getListCommentinCommentSubmit(String userid, String id_note, String id_comment, final String bc_user, final String tab_id) {
+    private void getListCommentSubmitMore(String userid, String id_note, final String bc_user,
+                                          final String idRoomTab, final String total_item) {
+        class ambilGambar extends AsyncTask<String, Void, String> {
+            ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
+            String result = "";
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                Log.w("jalancommentsubmit", "jalan");
+                HashMap<String, String> data = new HashMap<String, String>();
+                data.put("username_room", params[0]);
+                data.put("id_rooms_tab", params[1]);
+                data.put("attachment_id", params[2]);
+                data.put("bc_user", params[3]);
+                data.put("last_page", params[4]);
+                String result = profileSaveDescription.sendPostRequest(URL_LIST_NOTE_COMMENT, data);
+                return result;
+            }
+
+            protected void onPostExecute(String s) {
+                onItemsLoadComplete();
+                JSONArray dataJsonArr = null;
+                String data = "";
+
+                if (s.equals(null)) {
+                    Toast.makeText(NoteCommentActivityV2.this, "Internet Problem.", Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        feedItems.clear();
+                        JSONObject json = new JSONObject(s);
+                        String id_note = json.getString("attachment_id");
+
+                        dataJsonArr = json.getJSONArray("data");
+                        for (int i = 0; i < dataJsonArr.length(); i++) {
+
+                            JSONObject c = dataJsonArr.getJSONObject(i);
+
+                            String id_comment = c.getString("id_comment");
+                            String uid = c.getString("userid");
+                            String profile_name = c.getString("profile_name");
+                            String profile_photo = c.getString("profile_photo");
+                            String amount_of_comment = c.getString("amount_of_comment");
+                            String content_comment = c.getString("content_comment");
+                            String tgl_comment = c.getString("tgl_comment");
+                            String parent_id = c.getString("parent_id");
+                            String photo_before = "", photo_after = "", photos = "";
+                            if (c.has("photo_before")) {
+                                photo_before = c.getString("photo_before");
+                            }
+                            if (c.has("photo_after")) {
+                                photo_after = c.getString("photo_after");
+                            }
+                            if (c.has("photos")) {
+                                photos = c.getString("photos");
+                            }
+                            CommentModel item = new CommentModel();
+                            item.setIdRoomTab(idRoomTab);
+                            item.setHeaderColor(color);
+
+                            item.setId_note(id_note);
+                            item.setId_comment(id_comment);
+                            item.setMyuserid(bc_user);
+                            item.setIdRoomTab(idRoomTab);
+                            item.setUserid(uid);
+                            item.setProfileName(profile_name);
+                            item.setPhotos(photos);
+                            item.setPhotoBefore(photo_before);
+                            item.setPhotoAfter(photo_after);
+                            Log.w("tipeget", photo_before + " -- " + photos);
+
+                            if (!photo_before.equalsIgnoreCase("null")) {
+                                item.setType(CommentModel.TYPE_ATT_BEFORE_AFTER);
+                            } else if (!photos.equalsIgnoreCase("[]")) {
+                                try {
+                                    JSONArray jPhotos = new JSONArray(c.getString("photos"));
+                                    if (jPhotos.length() == 1) {
+                                        item.setType(CommentModel.TYPE_ATT_SINGLE);
+                                    } else if (jPhotos.length() > 1) {
+                                        item.setType(CommentModel.TYPE_ATT_MULTIPLE);
+                                    } else if (jPhotos.length() == 0) {
+                                        item.setType(CommentModel.TYPE_TEXT);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                item.setType(CommentModel.TYPE_TEXT);
+                            }
+
+                            String pPhoto = c.isNull("profile_photo") ? null : c.getString("profile_photo");
+                            item.setProfile_photo(pPhoto);
+                            item.setJumlahLove("");
+                            item.setJumlahNix("");
+                            item.setJumlahComment(amount_of_comment);
+                            item.setContent_comment(content_comment);
+                            item.setTimeStamp(tgl_comment);
+                            item.setParent_id(parent_id);
+                            item.setUserLike("");
+                            item.setUserDislike("");
+                            item.setFlag(false);
+
+                            feedItems.add(item);
+                        }
+                        adapter.notifyDataSetChanged();
+                        mRecyclerView.scrollToPosition(feedItems.size());
+
+                        JSONArray ja = new JSONArray();
+                        JSONObject last = dataJsonArr.getJSONObject(dataJsonArr.length() - 1);
+                        ja.put(last);
+                        updateData(feedItems.size() + "", ja);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        ambilGambar ru = new ambilGambar();
+        ru.execute(userid, idRoomTab, id_note, bc_user, total_item);
+    }
+
+    private void getListCommentinCommentSubmit(String userid, String id_note, String id_comment,
+                                               final String bc_user, final String tab_id) {
         class ambilGambar extends AsyncTask<String, Void, String> {
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
             String result = "";
@@ -1603,25 +1773,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             feedItems.add(item);
                         }
                         adapter.notifyDataSetChanged();
-                        if (feedItems.size() <= 20)
-                            mRecyclerView.smoothScrollToPosition(feedItems.size());
-
-                        mRecyclerView.addOnScrollListener(new RecyclerViewScrollListener() {
-                            @Override
-                            public void onScrollUp() {
-
-                            }
-
-                            @Override
-                            public void onScrollDown() {
-
-                            }
-
-                            @Override
-                            public void onLoadMore() {
-                                loadMoreData(true);
-                            }
-                        });
+                        mRecyclerView.scrollToPosition(feedItems.size());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -1630,6 +1782,147 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         }
         ambilGambar ru = new ambilGambar();
         ru.execute(userid, tab_id, id_note, bc_user, id_comment);
+    }
+
+
+    private void getListCommentinCommentSubmitMore(String userid, String id_note, String id_comment,
+                                                   final String bc_user, final String tab_id, final String total_item) {
+        class ambilGambar extends AsyncTask<String, Void, String> {
+            ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
+            String result = "";
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+                HashMap<String, String> data = new HashMap<String, String>();
+                data.put("username_room", params[0]);
+                data.put("attachment_id", params[2]);
+                data.put("parent_id", params[4]);
+                data.put("bc_user", params[3]);
+                data.put("last_page", params[5]);
+
+                String result = profileSaveDescription.sendPostRequest(URL_LIST_NOTE_COMMENT_BRANCH, data);
+                return result;
+            }
+
+            protected void onPostExecute(String s) {
+                onItemsLoadComplete();
+                JSONArray dataJsonArr = null;
+                JSONArray commentBranchJsonArr = null;
+                String data = "";
+                if (s.equals(null)) {
+                    Toast.makeText(NoteCommentActivityV2.this, "Internet Problem.", Toast.LENGTH_SHORT).show();
+                } else {
+                    isPostComment = true;
+                    try {
+                        feedItems.clear();
+                        JSONObject json = new JSONObject(s);
+                        String id_note = json.getString("attachment_id");
+
+                        dataJsonArr = json.getJSONArray("data");
+                        for (int i = 0; i < dataJsonArr.length(); i++) {
+
+                            JSONObject c = dataJsonArr.getJSONObject(i);
+                            String id_comment = c.getString("id_comment");
+                            String uid = c.getString("userid");
+                            String profile_name = c.getString("profile_name");
+                            String profile_photo = c.getString("profile_photo");
+                            String amount_of_like = "", amount_of_dislike = "", amount_of_comment = "", userLike = "", userDislike = "";
+                            if (c.has("amount_of_like"))
+                                amount_of_like = c.getString("amount_of_like");
+                            if (c.has("amount_of_dislike"))
+                                amount_of_dislike = c.getString("amount_of_dislike");
+                            if (c.has("amount_of_comment"))
+                                amount_of_comment = c.getString("amount_of_comment");
+                            String content_comment = c.getString("content_comment");
+                            String tgl_comment = c.getString("tgl_comment");
+                            String parent_id = c.getString("parent_id");
+                            if (c.has("user_like"))
+                                userLike = c.getString("user_like");
+                            if (c.has("user_dislike"))
+                                userDislike = c.getString("user_dislike");
+                            String photo_before = "", photo_after = "", photos = "";
+                            if (c.has("photo_before")) {
+                                photo_before = c.getString("photo_before");
+                            }
+                            if (c.has("photo_after")) {
+                                photo_after = c.getString("photo_after");
+                            }
+                            if (c.has("photos")) {
+                                photos = c.getString("photos");
+                            }
+                            CommentModel item = new CommentModel();
+                            item.setIdRoomTab(tab_id);
+                            item.setHeaderColor(color);
+                            item.setId_note(id_note);
+                            item.setId_comment(id_comment);
+                            item.setMyuserid(bc_user);
+                            item.setUserid(uid);
+                            item.setProfileName(profile_name);
+                            item.setPhotos(photos);
+                            item.setPhotoBefore(photo_before);
+                            item.setPhotoAfter(photo_after);
+
+                            if (!photo_before.equalsIgnoreCase("null")) {
+                                item.setType(CommentModel.TYPE_ATT_BEFORE_AFTER);
+                            } else if (!photos.equalsIgnoreCase("[]")) {
+                                try {
+                                    JSONArray jPhotos = new JSONArray(c.getString("photos"));
+                                    if (jPhotos.length() == 1) {
+                                        item.setType(CommentModel.TYPE_ATT_SINGLE);
+                                    } else if (jPhotos.length() > 1) {
+                                        item.setType(CommentModel.TYPE_ATT_MULTIPLE);
+                                    } else if (jPhotos.length() == 0) {
+                                        item.setType(CommentModel.TYPE_TEXT);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                item.setType(CommentModel.TYPE_TEXT);
+                            }
+                            String pPhoto = c.isNull("profile_photo") ? null : c.getString("profile_photo");
+                            item.setProfile_photo(pPhoto);
+                            item.setJumlahLove(amount_of_like);
+                            item.setJumlahNix(amount_of_dislike);
+                            item.setJumlahComment(amount_of_comment);
+                            item.setContent_comment(content_comment);
+                            item.setTimeStamp(tgl_comment);
+                            item.setParent_id(parent_id);
+                            item.setUserLike(userLike);
+                            item.setUserDislike(userDislike);
+                            item.setFlag(false);
+
+
+                            int jKomen = c.getJSONArray("comment_branch").length();
+                            if (c.getJSONArray("comment_branch").length() > 0) {
+                                commentBranchJsonArr = c.getJSONArray("comment_branch");
+                                for (int j = 0; j < commentBranchJsonArr.length(); j++) {
+                                    JSONObject d = commentBranchJsonArr.getJSONObject(j);
+
+                                    String pName2 = d.isNull("profile_name") ? null : d.getString("profile_name");
+                                    item.setName2(pName2);
+                                    String pComment2 = d.isNull("content_comment") ? null : d.getString("content_comment");
+                                    item.setComment2(pComment2);
+                                }
+                            }
+                            contentComment = content_comment;
+                            feedItems.add(item);
+                        }
+                        adapter.notifyDataSetChanged();
+                        mRecyclerView.scrollToPosition(feedItems.size());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        ambilGambar ru = new ambilGambar();
+        ru.execute(userid, tab_id, id_note, bc_user, id_comment, total_item);
     }
 
     public void updateData(String jumlah, JSONArray lastComment) {
@@ -1670,7 +1963,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         }
     }
 
-    public void getListComment(String username_room, String id_rooms_tab, String id_note, final String bc_user, String url, final boolean isScroll) {
+    public void getListComment(String username_room, String id_rooms_tab, String id_note,
+                               final String bc_user, String url) {
         class ambilGambarSatu extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
@@ -1792,26 +2086,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             feedItems.add(item);
                         }
                         adapter.notifyDataSetChanged();
-                        if (isScroll) {
+                        if (getIntent().getExtras().containsKey("scroll_to_bottom"))
                             mRecyclerView.scrollToPosition(feedItems.size());
-                        }
-
-                        mRecyclerView.addOnScrollListener(new RecyclerViewScrollListener() {
-                            @Override
-                            public void onScrollUp() {
-
-                            }
-
-                            @Override
-                            public void onScrollDown() {
-
-                            }
-
-                            @Override
-                            public void onLoadMore() {
-                                loadMoreData(isScroll);
-                            }
-                        });
 
                         JSONArray ja = new JSONArray();
                         JSONObject last = dataJsonArr.getJSONObject(dataJsonArr.length() - 1);
@@ -1829,8 +2105,9 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         ru.execute(username_room, id_rooms_tab, id_note, bc_user, url);
     }
 
-    public void getListCommentinComment(String userid, String id_note, String id_comment, final String bc_user,
-                                        final String idRoomTab, final boolean isScroll) {
+    public void getListCommentinComment(String userid, String id_note, String id_comment,
+                                        final String bc_user,
+                                        final String idRoomTab) {
         class ambilGambar extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
@@ -1954,26 +2231,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                         }
                         adapter.notifyDataSetChanged();
 
-                        if (isScroll) {
+                        if (getIntent().getExtras().containsKey("scroll_to_bottom"))
                             mRecyclerView.scrollToPosition(feedItems.size());
-                        }
-
-                        mRecyclerView.addOnScrollListener(new RecyclerViewScrollListener() {
-                            @Override
-                            public void onScrollUp() {
-
-                            }
-
-                            @Override
-                            public void onScrollDown() {
-
-                            }
-
-                            @Override
-                            public void onLoadMore() {
-                                loadMoreData(isScroll);
-                            }
-                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -1984,21 +2243,27 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         ru.execute(userid, id_note, id_comment, bc_user, idRoomTab);
     }
 
-    void postComment(final String userid, final Map<String, String> captions, final String id_note,
-                     final String bc_user, final String idRoomTab, final String parent_id, final List<NotesPhoto> photos) {
+    void postComment(final String userid, final Map<String, String> captions,
+                     final String id_note,
+                     final String bc_user, final String idRoomTab, final String parent_id,
+                     final List<NotesPhoto> photos) {
 
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, URL_SEND_COMMENT, new Response.Listener<NetworkResponse>() {
             @Override
             public void onResponse(NetworkResponse response) {
-                if (!parent_id.equalsIgnoreCase(""))
-                    getListCommentinCommentSubmit(userid, id_note, parent_id, bc_user, idRoomTab);
-                else
-                    getListCommentSubmit(userid, id_note, bc_user, idRoomTab);
+                Log.w("berapakali", captions.get(EXTRA_TEXT_CAPTIONS));
                 progressDialog.dismiss();
                 String resultResponse = new String(response.data);
                 Log.w("resultSuccess", resultResponse);
-                if (!resultResponse.equals("1"))
+                if (!resultResponse.equals("1")) {
                     Toast.makeText(getApplicationContext(), "Check your internet connection.", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (!parent_id.equalsIgnoreCase("")) {
+                        goToLastPage(true);
+                    } else {
+                        goToLastPage(false);
+                    }
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -2111,7 +2376,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         VolleySingleton.getInstance(getBaseContext()).addToRequestQueue(multipartRequest);
     }
 
-    public void getListCommentMore(String username_room, String id_rooms_tab, String id_note, final String bc_user, String url, final boolean isScroll) {
+    public void getListCommentMore(String username_room, String id_rooms_tab, String id_note,
+                                   final String bc_user, String url, String total_item) {
         class ambilGambarSatu extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
@@ -2133,12 +2399,13 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("id_rooms_tab", params[1]);
                 data.put("attachment_id", params[2]);
                 data.put("bc_user", params[3]);
-                data.put("last_page", feedItems.size() + "");
+                data.put("last_page", params[5]);
                 String result = profileSaveDescription.sendPostRequest(params[4], data);
                 return result;
             }
 
             protected void onPostExecute(String s) {
+                onItemsLoadComplete();
                 Log.w("resultComment", s);
                 JSONArray dataJsonArr = null;
                 JSONArray commentBranchJsonArr = null;
@@ -2260,33 +2527,17 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     }
                 });
 
-                if (isScroll) {
+                if (getIntent().getExtras().containsKey("scroll_to_bottom"))
                     mRecyclerView.scrollToPosition(feedItems.size());
-                }
-                mRecyclerView.addOnScrollListener(new RecyclerViewScrollListener() {
-                    @Override
-                    public void onScrollUp() {
-
-                    }
-
-                    @Override
-                    public void onScrollDown() {
-
-                    }
-
-                    @Override
-                    public void onLoadMore() {
-                        loadMoreData(isScroll);
-                    }
-                });
             }
         }
         ambilGambarSatu ru = new ambilGambarSatu();
-        ru.execute(username_room, id_rooms_tab, id_note, bc_user, url);
+        ru.execute(username_room, id_rooms_tab, id_note, bc_user, url, total_item);
     }
 
-    public void getListCommentinCommentMore(String userid, String id_note, String id_comment, final String bc_user,
-                                            final String idRoomTab, final boolean isScroll) {
+    public void getListCommentinCommentMore(String userid, String id_note, String id_comment,
+                                            final String bc_user,
+                                            final String idRoomTab, final String total_item) {
         class ambilGambar extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
@@ -2306,13 +2557,13 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("parent_id", params[2]);
                 data.put("bc_user", params[3]);
                 data.put("id_rooms_tab", params[4]);
-                data.put("last_page", feedItems.size() + "");
+                data.put("last_page", params[5]);
                 String result = profileSaveDescription.sendPostRequest(URL_LIST_NOTE_COMMENT_BRANCH, data);
                 return result;
             }
 
             protected void onPostExecute(String s) {
-                adapter.showLoading(false);
+                onItemsLoadComplete();
                 Log.w("resultCommentBranch", s);
                 JSONArray dataJsonArr = null;
                 JSONArray commentBranchJsonArr = null;
@@ -2417,7 +2668,6 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             adapter.showLoading(false);
                         }
 
-//                        mRecyclerView.smoothScrollToPosition(feedItems.size());
                     } catch (JSONException e) {
                         adapter.showLoading(false);
                         e.printStackTrace();
@@ -2429,29 +2679,11 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     }
                 });
 
-                if (isScroll) {
+                if (getIntent().getExtras().containsKey("scroll_to_bottom"))
                     mRecyclerView.scrollToPosition(feedItems.size());
-                }
-
-                mRecyclerView.addOnScrollListener(new RecyclerViewScrollListener() {
-                    @Override
-                    public void onScrollUp() {
-
-                    }
-
-                    @Override
-                    public void onScrollDown() {
-
-                    }
-
-                    @Override
-                    public void onLoadMore() {
-                        loadMoreData(isScroll);
-                    }
-                });
             }
         }
         ambilGambar ru = new ambilGambar();
-        ru.execute(userid, id_note, id_comment, bc_user, idRoomTab);
+        ru.execute(userid, id_note, id_comment, bc_user, idRoomTab, total_item);
     }
 }

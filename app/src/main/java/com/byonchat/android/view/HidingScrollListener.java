@@ -19,7 +19,7 @@ public abstract class HidingScrollListener extends RecyclerView.OnScrollListener
         int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
 
         if (firstVisibleItem == 0) {
-            if(!mControlsVisible) {
+            if (!mControlsVisible) {
                 onShow();
                 mControlsVisible = true;
             }
@@ -34,12 +34,13 @@ public abstract class HidingScrollListener extends RecyclerView.OnScrollListener
                 mScrolledDistance = 0;
             }
         }
-        if((mControlsVisible && dy>0) || (!mControlsVisible && dy<0)) {
+        if ((mControlsVisible && dy > 0) || (!mControlsVisible && dy < 0)) {
             mScrolledDistance += dy;
         }
     }
 
     public abstract void onHide();
+
     public abstract void onShow();
 }
 

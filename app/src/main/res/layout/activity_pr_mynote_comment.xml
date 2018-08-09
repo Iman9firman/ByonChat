@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/contentRoot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,8 +35,9 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/llAddComment"
+            android:layout_below="@+id/frame.highlight"
             android:background="#f1f1f1">
 
             <android.support.v4.widget.SwipeRefreshLayout
@@ -61,10 +63,130 @@
                 android:background="@drawable/shadow_top" />
         </FrameLayout>
 
+        <RelativeLayout
+            android:id="@+id/frame.page"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_above="@+id/llAddComment"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:background="@android:color/white"
+                android:gravity="left"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="@dimen/margin10"
+                    android:layout_weight="1"
+                    android:gravity="left|center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/button.first.page"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:tint="@color/button_border_focus"
+                        app:srcCompat="@drawable/ic_first_page_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/button.previous"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="@dimen/margin10"
+                        android:tint="@color/button_border_focus"
+                        app:srcCompat="@drawable/ic_chevron_left_black_24dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/text.thispage"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:imeOptions="actionGo"
+                        android:inputType="number"
+                        android:textColorHint="@android:color/darker_gray" />
+                    <!--<LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text.thispage"
+                            style="@style/Base.TextAppearance.AppCompat.Medium"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:text="1" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorPrimary" />
+                    </LinearLayout>-->
+
+                    <TextView
+                        android:id="@+id/text.totalpage"
+                        style="@style/Base.TextAppearance.AppCompat.Medium"
+                        android:layout_width="0dp"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:text="/  1" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginRight="@dimen/margin10"
+                    android:layout_weight="1"
+                    android:gravity="right|center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/button.next.page"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:tint="@color/button_border_focus"
+                        app:srcCompat="@drawable/ic_chevron_right_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/button.last.page"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="@dimen/margin10"
+                        android:tint="@color/button_border_focus"
+                        app:srcCompat="@drawable/ic_last_page_black_24dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0.5dp"-->
+            <!--android:layout_marginTop="@dimen/margin5"-->
+            <!--android:background="@android:color/darker_gray" />-->
+        </RelativeLayout>
+
         <LinearLayout
             android:id="@+id/llAddComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:background="@color/bg_comments"
             android:elevation="2dp"
             android:gravity="center_vertical"
@@ -168,5 +290,5 @@
                     android:layout_height="220dp" />
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

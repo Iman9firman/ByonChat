@@ -159,6 +159,8 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
                     intent.putExtra("bc_user", item.getMyuserid());
                     intent.putExtra("id_room_tab", item.getIdRoomTab());
                     intent.putExtra("color", item.getColorHeader());
+                    intent.putExtra("jumlah_comment", item.getJumlahComment());
+                    intent.putExtra("this_page", "1");
                     mContext.startActivity(intent);
                 }
             });

@@ -340,7 +340,6 @@ public class NoteCommentFollowUpListAdapter extends RecyclerView.Adapter<Recycle
             ((AttBeforeAfterViewHolder) viewHolder).dotA.setVisibility(View.GONE);
             ((AttBeforeAfterViewHolder) viewHolder).dotB.setVisibility(View.GONE);
 
-            ((AttBeforeAfterViewHolder) viewHolder).mHiddenComment.setVisibility(View.GONE);
             if (item.getName2() != null) {
                 ((AttBeforeAfterViewHolder) viewHolder).mHiddenComment.setText(item.getName2() + " : " + item.getComment2());
                 int jComment = Integer.parseInt(item.getJumlahComment().toString());

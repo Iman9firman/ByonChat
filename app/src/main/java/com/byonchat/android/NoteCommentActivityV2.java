@@ -300,7 +300,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
             }
         });
 
-        refreshItems();
+        refreshItems(true);
 
         mButtonSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -321,7 +321,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
             @Override
             public void onRefresh() {
 //                feedItems = new ArrayList<>();
-                refreshItems();
+                refreshItems(true);
             }
         });
 
@@ -370,6 +370,33 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 mWriteComment.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(mWriteComment, InputMethodManager.SHOW_IMPLICIT);
+                if (emojicons.getVisibility() == View.VISIBLE) {
+                    emojicons.setVisibility(View.GONE);
+                }
+
+                return false;
+            }
+        });
+
+        vTextThisPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                vTextThisPage.setFocusableInTouchMode(true);
+                vTextThisPage.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(vTextThisPage, InputMethodManager.SHOW_IMPLICIT);
+                emojicons.setVisibility(View.GONE);
+            }
+        });
+
+        vTextThisPage.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                vTextThisPage.setFocusableInTouchMode(true);
+                vTextThisPage.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(vTextThisPage, InputMethodManager.SHOW_IMPLICIT);
                 if (emojicons.getVisibility() == View.VISIBLE) {
                     emojicons.setVisibility(View.GONE);
                 }
@@ -723,6 +750,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     @Override
     protected void onResume() {
         super.onResume();
+//        refreshItems(false);
     }
 
     void onItemsLoadComplete() {
@@ -770,10 +798,12 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
         }
     }
 
-    void refreshItems() {
-        if (adapter.getItemCount() > 0) {
-            feedItems.clear();
-            adapter.notifyDataSetChanged();
+    void refreshItems(boolean isRefresh) {
+        if (isRefresh) {
+            if (adapter.getItemCount() > 0) {
+                feedItems.clear();
+                adapter.notifyDataSetChanged();
+            }
         }
         if (!personal) {
 
@@ -823,10 +853,10 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 vTextTotalPage.setText("/  " + total_page);
 
                 if (Integer.valueOf(this_page) == 1) {
-                    getListCommentinComment(userid, id_note, id_comment, bc_user, idRoomTab);
+                    getListCommentinComment(userid, id_note, id_comment, bc_user, idRoomTab, isRefresh);
                 } else if (Integer.valueOf(this_page) > 1) {
                     int total_items = (Integer.valueOf(this_page) - 1) * 20;
-                    getListCommentinCommentMore(userid, id_note, id_comment, bc_user, idRoomTab, total_items + "");
+                    getListCommentinCommentMore(userid, id_note, id_comment, bc_user, idRoomTab, total_items + "", isRefresh);
                 }
 
                 vTextThisPage.setOnEditorActionListener(new EditText.OnEditorActionListener() {
@@ -1024,10 +1054,10 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 }
 
                 if (Integer.valueOf(this_page) == 1) {
-                    getListComment(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT);
+                    getListComment(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, isRefresh);
                 } else if (Integer.valueOf(this_page) > 1) {
                     int total_items = (Integer.valueOf(this_page) - 1) * 20;
-                    getListCommentMore(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, total_items + "");
+                    getListCommentMore(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, total_items + "", isRefresh);
                 }
 
                 vTextThisPage.setOnEditorActionListener(new EditText.OnEditorActionListener() {
@@ -2041,7 +2071,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     }
 
     public void getListComment(String username_room, String id_rooms_tab, String id_note,
-                               final String bc_user, String url) {
+                               final String bc_user, String url, final boolean isRefresh) {
         class ambilGambarSatu extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
@@ -2077,7 +2107,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     Toast.makeText(NoteCommentActivityV2.this, "Internet Problem.", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
-                        feedItems.clear();
+                        if (isRefresh)
+                            feedItems.clear();
                         JSONObject json = new JSONObject(s);
                         String id_note = json.getString("attachment_id");
 
@@ -2160,9 +2191,13 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                                     item.setComment2(pComment2);
                                 }
                             }
-                            feedItems.add(item);
+                            if (isRefresh)
+                                feedItems.add(item);
+                            else
+                                adapter.update(item);
                         }
-                        adapter.notifyDataSetChanged();
+                        if (isRefresh)
+                            adapter.notifyDataSetChanged();
                         if (getIntent().getExtras().containsKey("scroll_to_bottom"))
                             mRecyclerView.scrollToPosition(feedItems.size());
 
@@ -2184,7 +2219,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
 
     public void getListCommentinComment(String userid, String id_note, String id_comment,
                                         final String bc_user,
-                                        final String idRoomTab) {
+                                        final String idRoomTab, final boolean isRefresh) {
         class ambilGambar extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
@@ -2219,7 +2254,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     Toast.makeText(NoteCommentActivityV2.this, "Internet Problem.", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
-                        feedItems.clear();
+                        if (isRefresh)
+                            feedItems.clear();
                         JSONObject json = new JSONObject(s);
                         String id_note = json.getString("attachment_id");
 
@@ -2304,9 +2340,13 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                                     item.setComment2(pComment2);
                                 }
                             }
-                            feedItems.add(item);
+                            if (isRefresh)
+                                feedItems.add(item);
+                            else
+                                adapter.update(item);
                         }
-                        adapter.notifyDataSetChanged();
+                        if (isRefresh)
+                            adapter.notifyDataSetChanged();
 
                         if (getIntent().getExtras().containsKey("scroll_to_bottom"))
                             mRecyclerView.scrollToPosition(feedItems.size());
@@ -2454,7 +2494,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     }
 
     public void getListCommentMore(String username_room, String id_rooms_tab, String id_note,
-                                   final String bc_user, String url, String total_item) {
+                                   final String bc_user, String url, String total_item, final boolean isRefresh) {
         class ambilGambarSatu extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
@@ -2492,7 +2532,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     Toast.makeText(NoteCommentActivityV2.this, "Internet Problem.", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
-//                        feedItems.clear();
+                        if (isRefresh)
+                            feedItems.clear();
                         JSONObject json = new JSONObject(s);
                         String id_note = json.getString("attachment_id");
 
@@ -2577,11 +2618,16 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                                         item.setComment2(pComment2);
                                     }
                                 }
-                                items.add(item);
+                                if (isRefresh)
+                                    items.add(item);
+                                else
+                                    adapter.update(item);
                             }
-                            feedItems.addAll(items);
-                            adapter.setItems(feedItems);
-                            adapter.showLoading(false);
+                            if (isRefresh) {
+                                feedItems.addAll(items);
+                                adapter.setItems(feedItems);
+                                adapter.showLoading(false);
+                            }
                         } else {
                             adapter.showLoading(false);
                         }
@@ -2598,11 +2644,13 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     }
                 }
 
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+                if (isRefresh) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
 
                 if (getIntent().getExtras().containsKey("scroll_to_bottom"))
                     mRecyclerView.scrollToPosition(feedItems.size());
@@ -2614,7 +2662,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
 
     public void getListCommentinCommentMore(String userid, String id_note, String id_comment,
                                             final String bc_user,
-                                            final String idRoomTab, final String total_item) {
+                                            final String idRoomTab, final String total_item, final boolean isRefresh) {
         class ambilGambar extends AsyncTask<String, Void, String> {
             ProgressDialog loading;
             ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
@@ -2650,7 +2698,8 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     Toast.makeText(NoteCommentActivityV2.this, "Internet Problem.", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
-//                        feedItems.clear();
+                        if (isRefresh)
+                            feedItems.clear();
                         JSONObject json = new JSONObject(s);
                         String id_note = json.getString("attachment_id");
 
@@ -2736,11 +2785,16 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                                         item.setComment2(pComment2);
                                     }
                                 }
-                                items.add(item);
+                                if (isRefresh)
+                                    items.add(item);
+                                else
+                                    adapter.update(item);
                             }
-                            feedItems.addAll(items);
-                            adapter.setItems(feedItems);
-                            adapter.showLoading(false);
+                            if (isRefresh) {
+                                feedItems.addAll(items);
+                                adapter.setItems(feedItems);
+                                adapter.showLoading(false);
+                            }
                         } else {
                             adapter.showLoading(false);
                         }
@@ -2750,11 +2804,14 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                         e.printStackTrace();
                     }
                 }
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+
+                if (isRefresh) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+                }
 
                 if (getIntent().getExtras().containsKey("scroll_to_bottom"))
                     mRecyclerView.scrollToPosition(feedItems.size());

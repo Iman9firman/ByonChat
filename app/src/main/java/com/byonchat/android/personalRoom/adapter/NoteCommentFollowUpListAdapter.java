@@ -1354,9 +1354,9 @@ public class NoteCommentFollowUpListAdapter extends RecyclerView.Adapter<Recycle
         int i = findPosition(e);
         if (i >= 0) {
             if (!e.areContentsTheSame(feedItems.get(i))) {
-                e.setJumlahComment(feedItems.get(i).getJumlahComment());
-                e.setName2(feedItems.get(i).getName2());
-                e.setComment2(feedItems.get(i).getComment2());
+//                e.setJumlahComment(feedItems.get(i).getJumlahComment());
+//                e.setName2(feedItems.get(i).getName2());
+//                e.setComment2(feedItems.get(i).getComment2());
                 feedItems.set(i, e);
             }
         }

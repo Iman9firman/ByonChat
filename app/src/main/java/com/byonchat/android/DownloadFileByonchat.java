@@ -127,8 +127,7 @@ public class DownloadFileByonchat extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    Uri uri = FileProvider.getUriForFile(getApplicationContext(), getPackageName(), oldFile);
+                    Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
                     intent.setData(uri);
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     startActivity(intent);
@@ -196,68 +195,19 @@ public class DownloadFileByonchat extends AppCompatActivity {
 
         NAME_FILE = DOWNLOAD_PATH.toString().substring(DOWNLOAD_PATH.toString().lastIndexOf('/'), DOWNLOAD_PATH.toString().length());
 
-        Log.w("dari", NAME_FILE);
         File oldFile = new File(oldFolder, NAME_FILE);
         if (oldFile.exists()) {
-            Log.w("masuk", "apa");
             finish();
-
-            //  Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(oldFile.getAbsolutePath()));
-            //  startActivity(browserIntent);
-
-//            MimeTypeMap map = MimeTypeMap.getSingleton();
-//            String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-//            String type = map.getMimeTypeFromExtension(ext);
-//            if (type == null)
-//                type = "*/*";
-//            Intent intent = new Intent(Intent.ACTION_VIEW);
-//            Uri data = Uri.fromFile(oldFile);
-//            intent.setDataAndType(data, type);
-//            startActivity(intent);
-
-
-            // So you have to use Provider
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-               /* Log.w("rurur", oldFile.getAbsolutePath());
-                intent.setAction(android.content.Intent.ACTION_VIEW);
-                MimeTypeMap mime = MimeTypeMap.getSingleton();
-                String ext = oldFile.getName().substring(oldFile.getName().indexOf(".") + 1);
-                String type = mime.getMimeTypeFromExtension(ext);
-
-                intent.setDataAndType(FileProvider.getUriForFile(getApplicationContext(),
-                        BuildConfig.APPLICATION_ID + ".provider",
-                        oldFile), type);
-                startActivity(intent);
-
-                Log.w("hasbi1", "bubu");
-
-                // Add in case of if We get Uri from fileProvider.
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.addFlags(FLAG_GRANT_READ_URI_PERMISSION);*/
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                Uri uri = FileProvider.getUriForFile(this, getPackageName(), oldFile);
+                Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
                 intent.setData(uri);
                 intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 startActivity(intent);
 
-
-            /*    String uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID, file);
-
-// I am opening a PDF file so I give it a valid MIME type
-                intent.setDataAndType(uri, "application/pdf");
-
-// validate that the device can open your File!
-                PackageManager pm = getActivity().getPackageManager();
-                if (intent.resolveActivity(pm) != null) {
-                    startActivity(intent);
-                }*/
-
             } else {
-              /*  uri = Uri.fromFile(oldFile);
-                intent.setDataAndType(uri, "application/pdf");
-                startActivity(intent);*/
 
                 MimeTypeMap map = MimeTypeMap.getSingleton();
                 String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());

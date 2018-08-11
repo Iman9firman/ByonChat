@@ -1038,7 +1038,7 @@ public class UploadService extends IntentService {
             if (!idDetail.equalsIgnoreCase("")) {
                 String[] ff = idDetail.split("\\|");
                 if (ff.length == 2) {
-                    new downloadValueForm().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail, idNotif);
+                    // new downloadValueForm().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail, idNotif);
                 }
             }
         }

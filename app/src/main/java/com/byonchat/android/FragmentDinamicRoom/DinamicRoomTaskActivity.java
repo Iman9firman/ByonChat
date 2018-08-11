@@ -6865,7 +6865,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 Date c = Calendar.getInstance().getTime();
                                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 String formattedDate = df.format(c);
-                                valueFile.setText(valueFile.getText().toString() + "?outlet_code=" + customersId + "&bc_user=" + contact.getJabberId() + "&date=" + formattedDate.replace(" ","%20") + "&id_task=" + idDetail);
+                                valueFile.setText(valueFile.getText().toString() + "?outlet_code=" + customersId + "&bc_user=" + contact.getJabberId() + "&date=" + formattedDate.replace(" ", "%20") + "&id_task=" + idDetail);
 
                                 for (int j = 0; j < innerList.size(); j++) {
                                     if (j == 0) {
@@ -9601,7 +9601,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         @Override
         protected MyTaskParams doInBackground(MyTaskParams... urls) {
             MyTaskParams aaa = new MyTaskParams(urls[0].getTextView(), urls[0].getProgress(), urls[0].getUrl());
-            aa = GET(aaa.getUrl());
+            Log.w("disini", aaa.getUrl());
+
+            if (aaa.getUrl().startsWith("http")) {
+                aa = GET(aaa.getUrl());
+            } else {
+                aa = aaa.getUrl();
+            }
+
+
             return aaa;
         }
 

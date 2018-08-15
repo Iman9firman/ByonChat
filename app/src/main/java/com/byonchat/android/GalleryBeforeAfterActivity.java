@@ -472,6 +472,7 @@ public class GalleryBeforeAfterActivity extends Constants implements EmojiconGri
                         idRoomTab = getIntent().getStringExtra("id_room_tab");
                         data.putExtra("id_room_tab", getIntent().getExtras().containsKey("id_room_tab"));
                     }
+                    data.putExtra("api_url", getIntent().getStringExtra("api_url"));
                 } else {
                     data.putExtra("userid", getIntent().getStringExtra("userid"));
                     data.putExtra("id_note", getIntent().getStringExtra("id_note"));
@@ -482,6 +483,7 @@ public class GalleryBeforeAfterActivity extends Constants implements EmojiconGri
                         idRoomTab = getIntent().getStringExtra("id_room_tab");
                         data.putExtra("id_room_tab", getIntent().getExtras().containsKey("id_room_tab"));
                     }
+                    data.putExtra("api_url", getIntent().getStringExtra("api_url"));
                 }
 
                 setResult(RESULT_OK, data);

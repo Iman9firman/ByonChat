@@ -8,8 +8,17 @@ public class NewsFeedItem {
     private int level;
     private String myuserid, userid, idRoomTab, colorHeader, taskid;
     private String id, parentID, title, name, status, image, profilePic, timeStamp, url, jumlahLove, jumlahNix, jumlahComment, userLike, userDislike, name2, comment2;
+    private String api_url;
 
     public NewsFeedItem() {
+    }
+
+    public String getApi_url() {
+        return api_url;
+    }
+
+    public void setApi_url(String api_url) {
+        this.api_url = api_url;
     }
 
     public String getTaskid() {

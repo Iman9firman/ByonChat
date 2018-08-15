@@ -146,6 +146,7 @@ public class GalleryTaskActivity extends AppCompatActivity {
                     intent.putExtra("id_room_tab", idRoomTab);
                     intent.putExtra("color", getIntent().getStringExtra("color"));
                     intent.putExtra("url_before", item.getUrl());
+                    intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                     startActivityForResult(intent, BeforeAfter);
                 } else {
                     String userid = getIntent().getStringExtra("userid");
@@ -165,6 +166,7 @@ public class GalleryTaskActivity extends AppCompatActivity {
                     intent.putExtra("id_room_tab", idRoomTab);
                     intent.putExtra("color", getIntent().getStringExtra("color"));
                     intent.putExtra("url_before", item.getUrl());
+                    intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                     startActivityForResult(intent, BeforeAfter);
                 }
             }
@@ -257,7 +259,7 @@ public class GalleryTaskActivity extends AppCompatActivity {
                 idRoomTab = getIntent().getStringExtra("id_room_tab");
             }
             Log.w("intentIDTASKCOMMENT", id_task);
-            new HATPost().execute("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/get_audit_rutin_galleries.php", id_task);
+            new HATPost().execute(getIntent().getStringExtra("api_url"), id_task);
 
         } else {
             String userid = getIntent().getStringExtra("userid");
@@ -270,7 +272,7 @@ public class GalleryTaskActivity extends AppCompatActivity {
             }
             Log.w("intentIDTASK", id_task);
 
-            new HATPost().execute("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/get_audit_rutin_galleries.php", id_task);
+            new HATPost().execute(getIntent().getStringExtra("api_url"), id_task);
         }
     }
 
@@ -288,6 +290,7 @@ public class GalleryTaskActivity extends AppCompatActivity {
                 if (data.getExtras().containsKey("id_room_tab")) {
                     intent.putExtra("id_room_tab", data.getExtras().containsKey("id_room_tab"));
                 }
+                intent.putExtra("api_url", data.getStringExtra("api_url"));
 
                 /*String userid = data.getStringExtra("userid");
                 String id_note = data.getStringExtra("id_note");
@@ -309,6 +312,7 @@ public class GalleryTaskActivity extends AppCompatActivity {
                 if (data.getExtras().containsKey("id_room_tab")) {
                     intent.putExtra("id_room_tab", data.getExtras().containsKey("id_room_tab"));
                 }
+                intent.putExtra("api_url", data.getStringExtra("api_url"));
                 /*String userid = data.getStringExtra("userid");
                 String id_note = data.getStringExtra("id_note");
                 String bc_user = data.getStringExtra("bc_user");

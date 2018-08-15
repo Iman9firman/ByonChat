@@ -283,6 +283,7 @@ public class FragmentMyNewsNew extends Fragment {
                 String attachment = c.getString("attachment");
                 int amount_of_comment = c.getInt("amount_of_comment");
                 String tgl_post = c.getString("tgl_post");
+                String api_url = c.getString("api_url");
 
                 NewsFeedItem item = new NewsFeedItem();
                 item.setMyuserid(myContact);
@@ -292,6 +293,7 @@ public class FragmentMyNewsNew extends Fragment {
                 item.setTaskid(task_id);
                 item.setIdRoomTab(idRoomTab);
                 item.setProfilePic(photo_file);
+                item.setApi_url(api_url);
 
                 String image = c.isNull("photo_file") ? null : c.getString("photo_file");
                 item.setImge(image);
@@ -402,6 +404,7 @@ public class FragmentMyNewsNew extends Fragment {
                             String tgl_post = c.getString("tgl_post");
                             String userLike = c.getString("user_like");
                             String userDislike = c.getString("user_dislike");
+                            String api_url = c.getString("api_url");
 
                             NewsFeedItem item = new NewsFeedItem();
                             item.setMyuserid(myContact);
@@ -411,6 +414,7 @@ public class FragmentMyNewsNew extends Fragment {
                             item.setTaskid(task_id);
                             item.setIdRoomTab(idRoomTab);
                             item.setProfilePic(photo_file);
+                            item.setApi_url(api_url);
 
                             String image = c.isNull("photo_file") ? null : c.getString("photo_file");
                             item.setImge(image);

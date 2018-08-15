@@ -18,6 +18,7 @@ public class CommentModel implements Parcelable {
     private Boolean flag;
     private String photos, photoBefore, photoAfter;
     private int type;
+    private String api_url;
 
     public CommentModel() {
     }
@@ -63,7 +64,16 @@ public class CommentModel implements Parcelable {
                 && content_comment.equals(commentModel.content_comment)
                 && timeStamp.equals(commentModel.timeStamp)
                 && name2.equals(commentModel.name2)
-                && comment2.equals(commentModel.comment2);
+                && comment2.equals(commentModel.comment2)
+                && api_url.equals(commentModel.api_url);
+    }
+
+    public String getApi_url() {
+        return api_url;
+    }
+
+    public void setApi_url(String api_url) {
+        this.api_url = api_url;
     }
 
     public int getType() {
@@ -281,6 +291,7 @@ public class CommentModel implements Parcelable {
         photoBefore = in.readString();
         photoAfter = in.readString();
         type = in.readInt();
+        api_url = in.readString();
     }
 
     public static final Creator<CommentModel> CREATOR = new Creator<CommentModel>() {
@@ -324,5 +335,6 @@ public class CommentModel implements Parcelable {
         dest.writeString(photoBefore);
         dest.writeString(photoAfter);
         dest.writeInt(type);
+        dest.writeString(api_url);
     }
 }

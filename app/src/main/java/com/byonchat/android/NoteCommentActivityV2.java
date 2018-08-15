@@ -242,6 +242,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     intent.putExtra("bc_user", bc_user);
                     intent.putExtra("id_room_tab", idRoomTab);
                     intent.putExtra("color", getIntent().getStringExtra("color"));
+                    intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                     startActivityForResult(intent, POST_BEFORE_AFTER);
                 } else {
                     String userid = getIntent().getStringExtra("userid");
@@ -260,6 +261,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                     intent.putExtra("bc_user", bc_user);
                     intent.putExtra("id_room_tab", idRoomTab);
                     intent.putExtra("color", getIntent().getStringExtra("color"));
+                    intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                     startActivityForResult(intent, POST_BEFORE_AFTER);
                 }
             }
@@ -817,6 +819,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 final String bc_user = getIntent().getStringExtra("bc_user");
                 final String jumlah_comment = getIntent().getStringExtra("jumlah_comment");
                 final String this_page = getIntent().getStringExtra("this_page");
+                final String api_url = getIntent().getStringExtra("api_url");
                 String idRoomTab = "", position = "";
                 if (getIntent().getExtras().containsKey("id_room_tab")) {
                     idRoomTab = getIntent().getStringExtra("id_room_tab");
@@ -877,6 +880,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                                 intent.putExtra("color", getIntent().getStringExtra("color"));
                                 intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                                 intent.putExtra("this_page", vTextThisPage.getText().toString().trim());
+                                intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                                 if (getIntent().getExtras().containsKey("id_room_tab")) {
                                     intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                                 }
@@ -904,6 +908,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("color", getIntent().getStringExtra("color"));
                             intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                             intent.putExtra("this_page", "1");
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             if (getIntent().getExtras().containsKey("id_room_tab")) {
                                 intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                             }
@@ -926,6 +931,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("color", getIntent().getStringExtra("color"));
                             intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                             intent.putExtra("this_page", String.valueOf(Integer.valueOf(this_page) - 1));
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             if (getIntent().getExtras().containsKey("id_room_tab")) {
                                 intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                             }
@@ -948,6 +954,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("color", getIntent().getStringExtra("color"));
                             intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                             intent.putExtra("this_page", String.valueOf(Integer.valueOf(this_page) + 1));
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             if (getIntent().getExtras().containsKey("id_room_tab")) {
                                 intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                             }
@@ -970,6 +977,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("color", getIntent().getStringExtra("color"));
                             intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                             intent.putExtra("this_page", String.valueOf(total_page));
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             if (getIntent().getExtras().containsKey("id_room_tab")) {
                                 intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                             }
@@ -992,6 +1000,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("position", position + "");
                             intent.putExtra("jumlah_comment", item.getJumlahComment());
                             intent.putExtra("this_page", "1");
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             startActivityForResult(intent, COMMENT_TREE);
                         } else {
                             Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
@@ -1006,6 +1015,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("position", position + "");
                             intent.putExtra("jumlah_comment", item.getJumlahComment());
                             intent.putExtra("this_page", "1");
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
 //                    intent.putParcelableArrayListExtra(EXTRA_PARENT, parentItems);
                             startActivityForResult(intent, COMMENT_TREE);
                         }
@@ -1018,6 +1028,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 final String id_task = getIntent().getStringExtra("id_task");
                 final String jumlah_comment = getIntent().getStringExtra("jumlah_comment");
                 final String this_page = getIntent().getStringExtra("this_page");
+                final String api_url = getIntent().getStringExtra("api_url");
                 String idRoomTab = "", position = "";
                 if (getIntent().getExtras().containsKey("id_room_tab")) {
                     idRoomTab = getIntent().getStringExtra("id_room_tab");
@@ -1077,6 +1088,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                                 intent.putExtra("color", getIntent().getStringExtra("color"));
                                 intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                                 intent.putExtra("this_page", vTextThisPage.getText().toString().trim());
+                                intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                                 if (getIntent().getExtras().containsKey("id_room_tab")) {
                                     intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                                 }
@@ -1103,6 +1115,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("color", getIntent().getStringExtra("color"));
                             intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                             intent.putExtra("this_page", "1");
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             if (getIntent().getExtras().containsKey("id_room_tab")) {
                                 intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                             }
@@ -1124,6 +1137,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("color", getIntent().getStringExtra("color"));
                             intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                             intent.putExtra("this_page", String.valueOf(Integer.valueOf(this_page) - 1));
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             if (getIntent().getExtras().containsKey("id_room_tab")) {
                                 intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                             }
@@ -1145,6 +1159,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("color", getIntent().getStringExtra("color"));
                             intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                             intent.putExtra("this_page", String.valueOf(Integer.valueOf(this_page) + 1));
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             if (getIntent().getExtras().containsKey("id_room_tab")) {
                                 intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                             }
@@ -1166,6 +1181,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("color", getIntent().getStringExtra("color"));
                             intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
                             intent.putExtra("this_page", String.valueOf(total_page));
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             if (getIntent().getExtras().containsKey("id_room_tab")) {
                                 intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                             }
@@ -1188,6 +1204,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("position", position + "");
                             intent.putExtra("jumlah_comment", item.getJumlahComment());
                             intent.putExtra("this_page", "1");
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             startActivityForResult(intent, COMMENT_TREE);
                         } else {
                             Intent intent = new Intent(getApplicationContext(), NoteCommentActivityV2.class);
@@ -1202,6 +1219,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             intent.putExtra("position", position + "");
                             intent.putExtra("jumlah_comment", item.getJumlahComment());
                             intent.putExtra("this_page", "1");
+                            intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                             startActivityForResult(intent, COMMENT_TREE);
                         }
                     }
@@ -1236,6 +1254,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 intent.putExtra("scroll_to_bottom", "true");
                 intent.putExtra("color", getIntent().getStringExtra("color"));
                 intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                 if (getIntent().getExtras().containsKey("id_room_tab")) {
                     intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                 }
@@ -1262,6 +1281,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                         intent.putExtra("id_comment", getIntent().getStringExtra("id_comment"));
                         intent.putExtra("scroll_to_bottom", "true");
                         intent.putExtra("color", getIntent().getStringExtra("color"));
+                        intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                         int jumlahcomment = Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) + total_komen + 1;
                         intent.putExtra("jumlah_comment", String.valueOf(jumlahcomment));
                         if (getIntent().getExtras().containsKey("id_room_tab")) {
@@ -1286,6 +1306,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                         intent.putExtra("id_comment", getIntent().getStringExtra("id_comment"));
                         intent.putExtra("scroll_to_bottom", "true");
                         intent.putExtra("color", getIntent().getStringExtra("color"));
+                        intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                         int jumlahcomment = Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) + total_komen + 1;
                         intent.putExtra("jumlah_comment", String.valueOf(jumlahcomment));
                         if (getIntent().getExtras().containsKey("id_room_tab")) {
@@ -1311,6 +1332,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 intent.putExtra("scroll_to_bottom", "true");
                 intent.putExtra("color", getIntent().getStringExtra("color"));
                 intent.putExtra("jumlah_comment", getIntent().getStringExtra("jumlah_comment"));
+                intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                 if (getIntent().getExtras().containsKey("id_room_tab")) {
                     intent.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
                 }
@@ -1336,6 +1358,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                         intent.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
                         intent.putExtra("scroll_to_bottom", "true");
                         intent.putExtra("color", getIntent().getStringExtra("color"));
+                        intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                         int jumlahcomment = Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) + total_komen + 1;
                         intent.putExtra("jumlah_comment", String.valueOf(jumlahcomment));
                         if (getIntent().getExtras().containsKey("id_room_tab")) {
@@ -1360,6 +1383,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                         intent.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
                         intent.putExtra("scroll_to_bottom", "true");
                         intent.putExtra("color", getIntent().getStringExtra("color"));
+                        intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
                         int jumlahcomment = Integer.valueOf(getIntent().getStringExtra("jumlah_comment")) + total_komen + 1;
                         intent.putExtra("jumlah_comment", String.valueOf(jumlahcomment));
                         if (getIntent().getExtras().containsKey("id_room_tab")) {
@@ -1567,6 +1591,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             CommentModel item = new CommentModel();
                             item.setIdRoomTab(idRoomTab);
                             item.setHeaderColor(color);
+                            item.setApi_url(getIntent().getStringExtra("api_url"));
 
                             item.setId_note(id_note);
                             item.setId_comment(id_comment);
@@ -1692,6 +1717,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             CommentModel item = new CommentModel();
                             item.setIdRoomTab(idRoomTab);
                             item.setHeaderColor(color);
+                            item.setApi_url(getIntent().getStringExtra("api_url"));
 
                             item.setId_note(id_note);
                             item.setId_comment(id_comment);
@@ -1826,6 +1852,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             CommentModel item = new CommentModel();
                             item.setIdRoomTab(tab_id);
                             item.setHeaderColor(color);
+                            item.setApi_url(getIntent().getStringExtra("api_url"));
                             item.setId_note(id_note);
                             item.setId_comment(id_comment);
                             item.setMyuserid(bc_user);
@@ -1967,6 +1994,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             CommentModel item = new CommentModel();
                             item.setIdRoomTab(tab_id);
                             item.setHeaderColor(color);
+                            item.setApi_url(getIntent().getStringExtra("api_url"));
                             item.setId_note(id_note);
                             item.setId_comment(id_comment);
                             item.setMyuserid(bc_user);
@@ -2141,6 +2169,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             CommentModel item = new CommentModel();
                             item.setIdRoomTab(idRoomTab);
                             item.setHeaderColor(color);
+                            item.setApi_url(getIntent().getStringExtra("api_url"));
                             item.setId_note(id_note);
                             item.setId_comment(id_comment);
                             item.setMyuserid(bc_user);
@@ -2288,6 +2317,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                             CommentModel item = new CommentModel();
                             item.setIdRoomTab(idRoomTab);
                             item.setHeaderColor(color);
+                            item.setApi_url(getIntent().getStringExtra("api_url"));
                             item.setId_note(id_note);
                             item.setId_comment(id_comment);
                             item.setMyuserid(bc_user);
@@ -2430,6 +2460,15 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
+                if (bc_user.equalsIgnoreCase("")) {
+                    Log.w("noname", "stringkosong");
+                } else if (bc_user.equalsIgnoreCase("null")) {
+                    Log.w("noname", "stringnull");
+                } else if (bc_user.equalsIgnoreCase(null)) {
+                    Log.w("noname", "null");
+                } else {
+                    Log.w("noname", "else");
+                }
 
                 params.put("attachment_id", id_note);
                 params.put("bc_user", bc_user);
@@ -2569,6 +2608,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                                 CommentModel item = new CommentModel();
                                 item.setIdRoomTab(idRoomTab);
                                 item.setHeaderColor(color);
+                                item.setApi_url(getIntent().getStringExtra("api_url"));
                                 item.setId_note(id_note);
                                 item.setId_comment(id_comment);
                                 item.setMyuserid(bc_user);
@@ -2735,6 +2775,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                                 CommentModel item = new CommentModel();
                                 item.setIdRoomTab(idRoomTab);
                                 item.setHeaderColor(color);
+                                item.setApi_url(getIntent().getStringExtra("api_url"));
                                 item.setId_note(id_note);
                                 item.setId_comment(id_comment);
                                 item.setMyuserid(bc_user);

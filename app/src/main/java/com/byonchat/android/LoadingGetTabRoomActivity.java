@@ -59,10 +59,10 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
 
         if (targetUrl != null) {
             GETTAB = targetUrl + finalPath;
-            Log.w("papa1",targetUrl);
+            Log.w("papa1", targetUrl);
         } else {
             targetUrl = linkPath;
-            Log.w("papa2",targetUrl);
+            Log.w("papa2", targetUrl);
         }
 
         new Refresh().execute(GETTAB, room_name);
@@ -133,6 +133,11 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         String textColor = jsonRootObject.getString("color_text");
                         String description = jsonRootObject.getString("description");
                         String officer = jsonRootObject.getString("officer");
+                        String protect = "0";
+                        if (jsonRootObject.has("password_protected")) {
+                            protect = jsonRootObject.getString("password_protected");
+                        }
+
 
                         //ini untuk delete
                         botListDB.deleteRoomsbyTAB(username);
@@ -146,16 +151,16 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                             lu = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_LASTUPDATE));
                             if (!lu.equalsIgnoreCase(lastUpdate)) {
                                 botListDB.deleteRoomsbyTAB(username);
-                                Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, targetUrl), backdrop, lastUpdate, icon, firstTab, time_str);
+                                Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, targetUrl, protect), backdrop, lastUpdate, icon, firstTab, time_str);
                                 botListDB.insertRooms(rooms);
                             }
                         } else {
-                            Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, targetUrl), backdrop, lastUpdate, icon, firstTab, time_str);
+                            Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, targetUrl, protect), backdrop, lastUpdate, icon, firstTab, time_str);
                             botListDB.insertRooms(rooms);
                         }
                         cursor.close();
 
-                        Log.w("gg",jsonCreateType(color, textColor, description, officer, targetUrl));
+                        Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
 
                         Intent intent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
                         intent.putExtra(ConversationActivity.KEY_JABBER_ID, usr);
@@ -212,15 +217,15 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
 
     }
 
-    private String jsonCreateType(String idContent, String type, String desc, String of, String ss) {
+    private String jsonCreateType(String idContent, String type, String desc, String of, String ss, String pro) {
         JSONObject obj = new JSONObject();
         try {
-            Log.w("mausk1", ss);
             obj.put("a", idContent);
             obj.put("b", type);
             obj.put("c", desc);
             obj.put("d", of);
             obj.put("e", ss);
+            obj.put("p", pro);
         } catch (JSONException e) {
             e.printStackTrace();
         }

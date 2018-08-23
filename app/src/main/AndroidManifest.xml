@@ -476,7 +476,8 @@
         <activity android:name=".FragmentDinamicRoom.RoomPOSdetail" />
         <activity
             android:name=".FragmentDinamicRoom.LoginRoomActivity"
-            android:label="@string/title_activity_login_room" />
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".FragmentDinamicRoom.DinamicRoomTaskActivity" />
         <activity android:name=".LoadingGetTabRoomActivity" />
 
@@ -561,6 +562,10 @@
             android:label="@string/title_activity_download_utils"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".LoginDinamicRoomActivity"
+            android:label="@string/title_login"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".DownloadSqliteDinamicActivity"
             android:label="@string/title_activity_download_utils"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -610,7 +615,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"
-                tools:replace="android:resource"/>
+                tools:replace="android:resource" />
         </provider>
 
     </application>

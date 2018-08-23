@@ -300,6 +300,8 @@ public class BotListDB extends SQLiteOpenHelper {
 
         String where = ROOM_DETAIL_ID + " = ? AND " + ROOM_DETAIL_FLAG_CONTENT + " = ? AND " + ROOM_DETAIL_ID_TAB + " = ? AND " + ROOM_DETAIL_ID_ROOM + " = ? ";
         String[] whereArgs = {roomsDetail.getId(), roomsDetail.getFlag_content(), roomsDetail.getParent_tab(), roomsDetail.getParent_room()};
+
+
         boolean updateSuccessful = getDatabase().update(ROOM_DETAIl_TABLE, cv, where, whereArgs) > 0;
 
         if (roomsDetail.getFlag_room().equalsIgnoreCase("cild") && roomsDetail.getId().split("\\|").length < 2) {

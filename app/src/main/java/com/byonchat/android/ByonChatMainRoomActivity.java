@@ -253,6 +253,22 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
             description = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "c");
             targetURL = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "e");
 
+
+            String protect = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "p");
+
+            if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("1")) {
+                if (intent.getStringExtra("success") == null) {
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), LoginDinamicRoomActivity.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                    startActivity(a);
+                }
+            }
+
+            Log.w("jasdi;", protect);
+
+
             content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
             icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
             bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));

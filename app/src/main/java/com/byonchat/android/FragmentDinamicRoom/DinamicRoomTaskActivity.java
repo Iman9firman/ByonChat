@@ -2666,20 +2666,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "", imageForm);
                                     lv.setAdapter(adapter);
 
-                                    Log.w("end2", jsonArrayMaster.toString());
-
                                     if (jsonArrayMaster.length() > 0) {
                                         Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                                         if (cEdit.getCount() > 0) {
 
                                             String contentValue = jsonArrayMaster.toString();
-                                            Log.w("end3", contentValue);
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                             db.updateDetailRoomWithFlagContent(orderModel);
                                         } else {
 
                                             String contentValue = jsonArrayMaster.toString();
-                                            Log.w("end4", contentValue);
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         }
@@ -2712,12 +2708,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
 
                                             if (ada.size() == 0) {
-                                                Log.w("pepe2", "satu");
                                                 DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
                                                 testDialog.setRetainInstance(true);
                                                 testDialog.show(fm, "Dialog");
                                             } else {
-                                                Log.w("pepe2", "dua");
                                                 DialogFormChildMainNcal testDialog = DialogFormChildMainNcal.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
                                                 testDialog.setRetainInstance(true);
                                                 testDialog.show(fm, "Dialog");
@@ -4270,7 +4264,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             count++;
                         }
 
-                        Log.w("karmne", idListTask);
+                        idListTaskMasterForm = idListTask;
 
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
@@ -4480,7 +4474,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                                     final Cursor c = mDB.getWritableDatabase().query(true, q, aass, qw, new String[]{customersId}, null, null, null, null);
-
 
                                     Log.w("Seo", aass.length + "");
 
@@ -7165,7 +7158,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         idListTaskMasterForm,
                                                         list.get(u).getContent(),
                                                         aa.getJSONObject(a).getString("r"),
-                                                        jsAdd.get(ic).toString(), a + "", key, list.get(u).getFlag_content(), list.get(u).getFlag_tab(), ic + "");
+                                                        jsAdd.get(ic).toString(),
+                                                        a + "",
+                                                        key,
+                                                        list.get(u).getFlag_content(),
+                                                        list.get(u).getFlag_tab(),
+                                                        ic + "");
                                                 return;
                                             }
                                         }
@@ -10284,6 +10282,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     return "File not exists";
                 }
 
+                Log.w("kasmi1", username);
+                Log.w("kasmi2", id_room);
+                Log.w("kasmi3", id_list);
+
                 ContentType contentType = ContentType.create("image/jpeg");
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("id_rooms_tab", new StringBody(id_room));
@@ -10300,7 +10302,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 int statusCode = response.getStatusLine().getStatusCode();
                 Log.w("ilona", statusCode + "");
                 if (statusCode == 200) {
+                    Log.w("sampi1", r_entity.toString());
+                    Log.w("sampi2", r_entity.getContent().toString());
                     responseString = EntityUtils.toString(r_entity);
+
+                    Log.w("habitant", responseString);
                 } else {
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
@@ -10317,6 +10323,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         @Override
         protected void onPostExecute(String result) {
+            Log.w("adaMampuj", result);
+
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 String message = jsonObject.getString("message");

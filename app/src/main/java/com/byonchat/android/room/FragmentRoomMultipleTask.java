@@ -642,6 +642,8 @@ public class FragmentRoomMultipleTask extends Fragment {
             content = jsonResultType(content, "d");
         } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("rate")) {
 
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("dropdown_form")) {
+            content = "";
         }
 
 

@@ -17,6 +17,7 @@
     <dimen name="topHeaderGroup">30dp</dimen>
     <dimen name="editTextGroup">40dp</dimen>
     <dimen name="margin230">230dp</dimen>
+    <dimen name="margin160">160dp</dimen>
     <dimen name="margin140">120dp</dimen>
     <dimen name="margin100">100dp</dimen>
     <dimen name="margin80">80dp</dimen>

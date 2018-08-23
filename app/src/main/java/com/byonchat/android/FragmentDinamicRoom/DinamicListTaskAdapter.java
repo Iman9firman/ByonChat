@@ -23,6 +23,9 @@ import com.byonchat.android.provider.ContentRoom;
 import com.byonchat.android.utils.OnLoadMoreListener;
 import com.byonchat.android.utils.Utility;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -131,23 +134,23 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             final int backgroundColorToUse = PHOTO_TEXT_BACKGROUND_COLORS[position
                     % PHOTO_TEXT_BACKGROUND_COLORS.length];
             if (TextUtils.isEmpty(displayName))
-                ((DataObjectHolder)holder).imageText.setTextAndBackgroundColor(" ", backgroundColorToUse);
+                ((DataObjectHolder) holder).imageText.setTextAndBackgroundColor(" ", backgroundColorToUse);
             else {
                 final String characterToShow = TextUtils.isEmpty(displayName) ? "" : displayName.substring(0, 1).toUpperCase(Locale.getDefault());
-                ((DataObjectHolder)holder).imageText.setTextAndBackgroundColor(characterToShow, backgroundColorToUse);
+                ((DataObjectHolder) holder).imageText.setTextAndBackgroundColor(characterToShow, backgroundColorToUse);
             }
 
 
             if (String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("") || String.valueOf(mDataset.get(position).getStatus()) == null) {
-                ((DataObjectHolder)holder).status.setVisibility(View.INVISIBLE);
+                ((DataObjectHolder) holder).status.setVisibility(View.INVISIBLE);
             } else {
                 String sts = String.valueOf(mDataset.get(position).getStatus());
 
                 if (sts.equalsIgnoreCase("")) {
-                    ((DataObjectHolder)holder).status.setVisibility(View.GONE);
+                    ((DataObjectHolder) holder).status.setVisibility(View.GONE);
                     return;
                 } else {
-                    ((DataObjectHolder)holder).status.setVisibility(View.VISIBLE);
+                    ((DataObjectHolder) holder).status.setVisibility(View.VISIBLE);
                     if (sts.equalsIgnoreCase("0")) {
                         sts = "draft";
                     } else if (sts.equalsIgnoreCase("1")) {
@@ -160,7 +163,7 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         sts = "new";
                     }
 
-                    ((DataObjectHolder)holder).status.setText(sts);
+                    ((DataObjectHolder) holder).status.setText(sts);
 
                     Drawable mDrawableLetf = context.getResources().getDrawable(R.drawable.status_work);
 
@@ -180,28 +183,42 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     }
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        ((DataObjectHolder)holder).status.setBackground(mDrawableLetf);
+                        ((DataObjectHolder) holder).status.setBackground(mDrawableLetf);
                     }
 
                 }
             }
 
             if (String.valueOf(mDataset.get(position).getTime()).equalsIgnoreCase("") || String.valueOf(mDataset.get(position).getTime()) == null) {
-                ((DataObjectHolder)holder).dateInfo.setVisibility(View.INVISIBLE);
+                ((DataObjectHolder) holder).dateInfo.setVisibility(View.INVISIBLE);
             } else {
-                ((DataObjectHolder)holder).dateInfo.setText(Utility.parseDateToddMMyyyy(String.valueOf(mDataset.get(position).getTime())));
+                ((DataObjectHolder) holder).dateInfo.setText(Utility.parseDateToddMMyyyy(String.valueOf(mDataset.get(position).getTime())));
             }
 
             if (String.valueOf(mDataset.get(position).getContent()).equalsIgnoreCase("") || String.valueOf(mDataset.get(position).getContent()) == null) {
-                ((DataObjectHolder)holder).label.setVisibility(View.INVISIBLE);
-                ((DataObjectHolder)holder).textInfo.setVisibility(View.INVISIBLE);
-                ((DataObjectHolder)holder).titleCenter.setVisibility(View.VISIBLE);
-                ((DataObjectHolder)holder).titleCenter.setText(displayName);
+                ((DataObjectHolder) holder).label.setVisibility(View.INVISIBLE);
+                ((DataObjectHolder) holder).textInfo.setVisibility(View.INVISIBLE);
+                ((DataObjectHolder) holder).titleCenter.setVisibility(View.VISIBLE);
+                ((DataObjectHolder) holder).titleCenter.setText(displayName);
             } else {
-                ((DataObjectHolder)holder).label.setVisibility(View.VISIBLE);
-                ((DataObjectHolder)holder).titleCenter.setVisibility(View.INVISIBLE);
-                ((DataObjectHolder)holder).label.setText(displayName);
-                ((DataObjectHolder)holder).textInfo.setText(mDataset.get(position).getContent());
+
+                Log.w("kasini", mDataset.get(position).getContent());
+                JSONObject jObject = null;
+                try {
+                    jObject = new JSONObject(String.valueOf(mDataset.get(position).getContent()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (jObject != null) {
+                    Log.w("kasini1", "1");
+                    ((DataObjectHolder) holder).label.setVisibility(View.VISIBLE);
+                    ((DataObjectHolder) holder).titleCenter.setVisibility(View.INVISIBLE);
+                    ((DataObjectHolder) holder).label.setText(displayName);
+                    ((DataObjectHolder) holder).textInfo.setText(mDataset.get(position).getContent());
+                } else {
+                    Log.w("kasini2", "1");
+                }
             }
         } else {
 

@@ -158,7 +158,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         imageC.setVisibility(View.GONE);
                         imageD.setVisibility(View.GONE);
 
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(0).getString("r")).into(imageA);
+                        //Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(0).getString("r")).into(imageA);
 
                         imageA.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -237,6 +237,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 ((DinamicRoomTaskActivity) activity).yourActivityMethod(aaa);
                             }
                         });
+
+                        imageA.setImageResource(R.drawable.ic_att_photo);
 
                     } else if (jsonArray.length() == 2) {
                         imageA.setVisibility(View.VISIBLE);
@@ -393,8 +395,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                             }
                         });
 
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(0).getString("r")).into(imageA);
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(1).getString("r")).into(imageB);
+                        imageA.setImageResource(R.drawable.ic_att_photo);
+                        imageB.setImageResource(R.drawable.ic_att_photo);
                     } else if (jsonArray.length() == 3) {
                         imageA.setVisibility(View.VISIBLE);
                         imageB.setVisibility(View.VISIBLE);
@@ -598,7 +600,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
                                                                 db.updateDetailRoomWithFlagContent(orderModel);
                                                                 notifyDataSetChanged();
-                                                                Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                // Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
 
                                                                 if (jsonArray.length() == 4) {
                                                                     Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
@@ -624,9 +626,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         });
 
 
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(0).getString("r")).into(imageA);
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(1).getString("r")).into(imageB);
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(2).getString("r")).into(imageC);
+                        imageA.setImageResource(R.drawable.ic_att_photo);
+                        imageB.setImageResource(R.drawable.ic_att_photo);
+                        imageC.setImageResource(R.drawable.ic_att_photo);
+
                     } else if (jsonArray.length() == 4) {
                         imageA.setVisibility(View.VISIBLE);
                         imageB.setVisibility(View.VISIBLE);
@@ -836,7 +839,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
                                                                 db.updateDetailRoomWithFlagContent(orderModel);
                                                                 notifyDataSetChanged();
-                                                                Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
+                                                                // Picasso.with(context).load(R.drawable.ic_att_photo).into(imageC);
 
                                                                 if (jsonArray.length() == 4) {
                                                                     Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
@@ -894,7 +897,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
                                                                 db.updateDetailRoomWithFlagContent(orderModel);
                                                                 notifyDataSetChanged();
-                                                                Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
+                                                                // Picasso.with(context).load(R.drawable.ic_att_photo).into(imageD);
                                                             } catch (JSONException e) {
                                                                 e.printStackTrace();
                                                             }
@@ -907,11 +910,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 return false;
                             }
                         });
+                        imageA.setImageResource(R.drawable.ic_att_photo);
+                        imageB.setImageResource(R.drawable.ic_att_photo);
+                        imageC.setImageResource(R.drawable.ic_att_photo);
+                        imageD.setImageResource(R.drawable.ic_att_photo);
 
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(0).getString("r")).into(imageA);
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(1).getString("r")).into(imageB);
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(2).getString("r")).into(imageC);
-                        Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(3).getString("r")).into(imageD);
+
                     }
                 } else {
                     imageA.setVisibility(View.VISIBLE);
@@ -935,7 +939,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 notP.setChecked(false);
                 editText.setText("");
                 Log.w("salamAN2", "dua");
-                Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+                // Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
                 imageA.setVisibility(View.VISIBLE);
                 imageB.setVisibility(View.GONE);
                 imageC.setVisibility(View.GONE);
@@ -959,7 +963,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             notP.setChecked(false);
             editText.setText("");
             Log.w("salamAN1", "dua");
-            Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
+            // Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
             imageA.setVisibility(View.VISIBLE);
             imageB.setVisibility(View.GONE);
             imageC.setVisibility(View.GONE);

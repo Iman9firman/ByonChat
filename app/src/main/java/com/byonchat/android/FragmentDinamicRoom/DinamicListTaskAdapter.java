@@ -202,7 +202,8 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 ((DataObjectHolder) holder).titleCenter.setText(displayName);
             } else {
 
-                Log.w("kasini", mDataset.get(position).getContent());
+                ((DataObjectHolder) holder).label.setText(displayName);
+
                 JSONObject jObject = null;
                 try {
                     jObject = new JSONObject(String.valueOf(mDataset.get(position).getContent()));
@@ -211,13 +212,11 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 }
 
                 if (jObject != null) {
-                    Log.w("kasini1", "1");
                     ((DataObjectHolder) holder).label.setVisibility(View.VISIBLE);
                     ((DataObjectHolder) holder).titleCenter.setVisibility(View.INVISIBLE);
-                    ((DataObjectHolder) holder).label.setText(displayName);
                     ((DataObjectHolder) holder).textInfo.setText(mDataset.get(position).getContent());
                 } else {
-                    Log.w("kasini2", "1");
+
                 }
             }
         } else {

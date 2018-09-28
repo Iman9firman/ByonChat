@@ -89,7 +89,7 @@
                                 android:layout_height="@dimen/margin50"
                                 android:layout_marginRight="@dimen/margin5"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/ic_att_photo" />
+                                android:src="@drawable/ic_add_foto" />
 
                             <ImageView
                                 android:id="@+id/imageB"
@@ -97,7 +97,7 @@
                                 android:layout_height="@dimen/margin50"
                                 android:layout_marginRight="@dimen/margin5"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/ic_att_photo" />
+                                android:src="@drawable/ic_add_foto" />
 
                             <ImageView
                                 android:id="@+id/imageC"
@@ -105,7 +105,7 @@
                                 android:layout_height="@dimen/margin50"
                                 android:layout_marginRight="@dimen/margin5"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/ic_att_photo" />
+                                android:src="@drawable/ic_add_foto" />
 
                             <ImageView
                                 android:id="@+id/imageD"
@@ -113,7 +113,7 @@
                                 android:layout_height="@dimen/margin50"
                                 android:layout_marginRight="@dimen/margin5"
                                 android:scaleType="centerCrop"
-                                android:src="@drawable/ic_att_photo" />
+                                android:src="@drawable/ic_add_foto" />
                         </LinearLayout>
                     </LinearLayout>
 

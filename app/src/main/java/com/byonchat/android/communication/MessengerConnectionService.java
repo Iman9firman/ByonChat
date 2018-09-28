@@ -228,6 +228,8 @@ public class MessengerConnectionService extends Service {
             .getName() + ".refreshRoom";
     public static final String ACTION_REQGPS = MessengerConnectionService.class
             .getName() + ".reqGps";
+    public static final String ACTION_CHAT_OFF = MessengerConnectionService.class
+            .getName() + ".chatOff";
     public static final String ACTION_REFRESH_CHAT_HISTORY = MessengerConnectionService.class
             .getName() + ".refreshChatHistory";
     public static final String ACTION_MESSAGE_SENT = MessengerConnectionService.class
@@ -1979,7 +1981,32 @@ public class MessengerConnectionService extends Service {
                             }
                         } else if (pesan.length == 3) {
                             Log.w("supaya30", "susus");
-                            if (pesan[0].equalsIgnoreCase("give_me_location")) {
+                            if (pesan[0].equalsIgnoreCase("chat_off")) {
+                                Log.w("supaya30", "off");
+                                IntervalDB db = new IntervalDB(getApplicationContext());
+                                db.open();
+                                Cursor cursorSelect = db.getSingleContact(24);
+                                if (cursorSelect.getCount() > 0) {
+
+                                } else {
+                                    Interval interval = new Interval();
+                                    interval.setId(24);
+                                    interval.setTime("off");
+                                    db.createContact(interval);
+                                }
+                                Intent intent = new Intent(ACTION_CHAT_OFF);
+                                sendOrderedBroadcast(intent, null);
+                            } else if (pesan[0].equalsIgnoreCase("chat_on")) {
+                                Log.w("supaya30", "on");
+                                IntervalDB db = new IntervalDB(getApplicationContext());
+                                db.open();
+                                Cursor cursorSelect = db.getSingleContact(24);
+                                if (cursorSelect.getCount() > 0) {
+                                    db.deleteContact(24);
+                                }
+                                Intent intent = new Intent(ACTION_CHAT_OFF);
+                                sendOrderedBroadcast(intent, null);
+                            } else if (pesan[0].equalsIgnoreCase("give_me_location")) {
                                 Intent intent = new Intent(ACTION_REQGPS);
                                 intent.putExtra(KEY_LOC_REQ, vo.getMessage());
                                 sendOrderedBroadcast(intent, null);

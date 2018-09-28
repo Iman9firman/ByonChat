@@ -1,6 +1,7 @@
 package com.byonchat.android;
 
 import android.*;
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,6 +22,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -39,6 +41,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -49,6 +52,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
+import com.byonchat.android.list.AttachmentAdapter;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.Message;
@@ -84,6 +88,8 @@ import java.util.Map;
 
 import io.github.memfis19.annca.Annca;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
+import zharfan.com.cameralibrary.Camera;
+import zharfan.com.cameralibrary.CameraActivity;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -125,7 +131,21 @@ public class DialogFormChildMainNcal extends DialogFragment {
     private BroadcastReceiver localBroadcastReceiver;
     Button mProceed, mCancel;
     Activity mContext;
+    private static final String MENU_GALLERY_TITLE = "Gallery";
+    private int attCurReq = 0;
 
+    private ArrayList<AttachmentAdapter.AttachmentMenuItem> curAttItems;
+    private static final ArrayList<AttachmentAdapter.AttachmentMenuItem> attCameraItems;
+
+    static {
+        attCameraItems = new ArrayList<AttachmentAdapter.AttachmentMenuItem>();
+        attCameraItems.add(new AttachmentAdapter.AttachmentMenuItem(R.drawable.ic_att_photo,
+                "Camera"));
+        attCameraItems.add(new AttachmentAdapter.AttachmentMenuItem(R.drawable.ic_att_gallery,
+                MENU_GALLERY_TITLE));
+
+
+    }
 
     public static DialogFormChildMainNcal newInstance(String content, String title, String dbMaster, String idDetail, String username, String idTab, String idListTaskMaster, String idChildDetail, String customersId, Activity activity) {
         DialogFormChildMainNcal f = new DialogFormChildMainNcal(activity);
@@ -182,6 +202,8 @@ public class DialogFormChildMainNcal extends DialogFragment {
 
     public void captureGalery(String idDetail, String username, String idTab, String idListTask, String type, String name, String flag, int facing, String idii) {
 
+        Log.w("wow", flag);
+
         if (localBroadcastReceiver == null) {
             localBroadcastReceiver = new LocalBroadcastReceiver();
             LocalBroadcastManager.getInstance(mContext).registerReceiver(
@@ -203,28 +225,98 @@ public class DialogFormChildMainNcal extends DialogFragment {
                 if (ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-                AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(mContext, REQ_CAMERA);
-                photo.setMediaAction(AnncaConfiguration.MEDIA_ACTION_PHOTO);
-                photo.setMediaQuality(AnncaConfiguration.MEDIA_QUALITY_MEDIUM);
-                photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_FRONT);
-                photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
-                new Annca(photo.build()).launchCamera();
+                CameraActivity.Builder start = new CameraActivity.Builder(mContext, REQ_CAMERA);
+                start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                start.setCameraFace(CameraActivity.CAMERA_FRONT);
+                start.setFlashMode(CameraActivity.FLASH_OFF);
+                start.setQuality(CameraActivity.MEDIUM);
+                start.setRatio(CameraActivity.RATIO_4_3);
+                start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                new Camera(start.build()).lauchCamera();
+
             } else if (facing == 0) {
                 if (ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-                AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(mContext, REQ_CAMERA);
-                photo.setMediaAction(AnncaConfiguration.MEDIA_ACTION_PHOTO);
-                photo.setMediaQuality(AnncaConfiguration.MEDIA_QUALITY_MEDIUM);
-                photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_REAR);
-                photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
-
-                new Annca(photo.build()).launchCamera();
+                CameraActivity.Builder start = new CameraActivity.Builder(mContext, REQ_CAMERA);
+                start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                start.setCameraFace(CameraActivity.CAMERA_REAR);
+                start.setFlashMode(CameraActivity.FLASH_OFF);
+                start.setQuality(CameraActivity.MEDIUM);
+                start.setRatio(CameraActivity.RATIO_4_3);
+                start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                new Camera(start.build()).lauchCamera();
             }
+        } else if (flag.equalsIgnoreCase("gallery_camera")) {
+            showAttachmentDialog(REQ_CAMERA);
+        } else if (flag.equalsIgnoreCase("gallery")) {
+            showAttachmentDialog(REQ_CAMERA);
         }
-        if (flag.equalsIgnoreCase("gallery")) {
-            //   showAttachmentDialog(REQ_CAMERA);
+    }
+
+    private void showAttachmentDialog(int req) {
+        if (req == REQ_CAMERA) {
+            curAttItems = attCameraItems;
         }
+        attCurReq = req;
+
+        AttachmentAdapter adapter = new AttachmentAdapter(mContext,
+                R.layout.menu_item, R.id.textMenu, curAttItems);
+
+        final Dialog dialog = new Dialog(mContext);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.attachment_gridview);
+        GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
+        gridview.setAdapter(adapter);
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                String iTitle = curAttItems.get(pos).getTitle();
+                String action = Intent.ACTION_GET_CONTENT;
+                int req;
+                Intent i;
+                if (R.drawable.ic_att_video == curAttItems.get(0)
+                        .getResourceIcon()) {
+
+                } else {
+                    i = new Intent();
+                    if (MENU_GALLERY_TITLE.equals(iTitle)) {
+                        Log.w("hallo", "33");
+                        if (Build.VERSION.SDK_INT < 19) {
+                            i = new Intent();
+                            i.setAction(Intent.ACTION_GET_CONTENT);
+                            i.setType("image/*");
+                        } else {
+                            i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                            i.addCategory(Intent.CATEGORY_OPENABLE);
+                            i.setType("image/*");
+                        }
+                        req = REQ_GALLERY;
+                        Log.w("hallo", REQ_GALLERY + "--");
+                        i.setAction(action);
+                        startActivityForResult(i, 12022);
+
+                        attCurReq = 0;
+                    } else {
+                        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        CameraActivity.Builder start = new CameraActivity.Builder(mContext, REQ_CAMERA);
+                        start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                        start.setCameraFace(CameraActivity.CAMERA_REAR);
+                        start.setFlashMode(CameraActivity.FLASH_OFF);
+                        start.setQuality(CameraActivity.MEDIUM);
+                        start.setRatio(CameraActivity.RATIO_4_3);
+                        start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                        new Camera(start.build()).lauchCamera();
+
+                    }
+                }
+                dialog.dismiss();
+
+            }
+        });
+        dialog.show();
     }
 
     @Override
@@ -274,7 +366,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                         }
                     }
                 } else {
-                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number")||jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
+                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
                         decsUntuk = list.get(u).getContent();
                     } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("formula")) {
                         priceUntuk = list.get(u).getContent();
@@ -470,7 +562,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                         Log.w("ll", list.get(u).getContent() + "::" + jsonResultType(list.get(u).getFlag_content(), "b"));
                         if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera") || (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("front_camera"))) {
                             titleUntuk = list.get(u).getContent();
-                        } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("textarea") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number")|| jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
+                        } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("textarea") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
                             decsUntuk = list.get(u).getContent();
                         } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown")) {
                             titleUntuk = list.get(u).getContent();
@@ -485,7 +577,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                     builder.show();
                     next = false;
                 } else if (decsUntuk.equalsIgnoreCase("")) {
-               /*     Log.w("soso", et.length + "");*/
+                    /*     Log.w("soso", et.length + "");*/
 
                    /* if (et.length > 1) {
                         et[1].setError("required");
@@ -989,7 +1081,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                     linearLayout.addView(et[count], params2);
 
                 } else if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
-                    Log.w("masuk", "sini" + "::" + type);
+                    Log.w("masuk", "siniWow" + "::" + type);
                     TextView textView = new TextView(mContext);
                     if (required.equalsIgnoreCase("1")) {
                         label += "<font size=\"3\" color=\"red\">*</font>";
@@ -1587,7 +1679,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                     spinner.setVisibility(View.VISIBLE);
                 } else {
 
-                    if (spinnerArray.get(0).startsWith("http") && spinnerArray.get(0).endsWith(".jpg")){
+                    if (spinnerArray.get(0).startsWith("http") && spinnerArray.get(0).endsWith(".jpg")) {
                         final RelativeLayout relative = (RelativeLayout) spinerTitle.findViewById(R.id.lastImage);
                         final ImageView imageView = (ImageView) spinerTitle.findViewById(R.id.value);
                         final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) spinerTitle.findViewById(R.id.loader_progress);
@@ -1609,7 +1701,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                         spinner.setVisibility(View.GONE);
                         textView.setText(spinnerArray.get(0));
 
-                    }else{
+                    } else {
 
                         textView.setVisibility(View.VISIBLE);
                         spinner.setVisibility(View.GONE);
@@ -1634,6 +1726,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
             }
 
             if (intent.getAction().equals("SOME_ACTION")) {
+                Log.w("ada nih", intent.getStringExtra("data"));
                 List value = (List) hashMap.get(dummyIdDate);
                 if (value != null) {
                     if (value.size() > 0) {
@@ -1650,7 +1743,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                             Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                             if (cEdit.getCount() > 0) {
 
-                                if(decodeFile(intent.getStringExtra("data"))){
+                                if (decodeFile(intent.getStringExtra("data"))) {
                                     RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), ";" + intent.getStringExtra("data"), jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "child_detail");
                                     botListDB.updateDetailRoomWithFlagContent(orderModel);
                                     onResume();

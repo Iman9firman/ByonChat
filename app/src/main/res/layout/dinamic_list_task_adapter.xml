@@ -26,14 +26,12 @@
         android:layout_toLeftOf="@+id/dateInfo"
         android:layout_toRightOf="@id/imageText"
         android:singleLine="true"
-        android:text="Medium Text"
         style="@style/TextMediumBlack" />
 
     <com.rockerhieu.emojicon.EmojiconTextView
         android:id="@+id/textInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
         style="@style/TextLightGray"
         android:singleLine="true"
         android:gravity="center_vertical"

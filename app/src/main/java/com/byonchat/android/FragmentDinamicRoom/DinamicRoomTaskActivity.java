@@ -31,12 +31,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -118,7 +120,6 @@ import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.ContactsCompletionView;
-import com.example.syahrulzanuarr.aarmylibrary.VideoActivity;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
@@ -166,6 +167,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -185,6 +187,9 @@ import java.util.regex.Pattern;
 
 import io.github.memfis19.annca.Annca;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
+import io.github.memfis19.annca.internal.ui.camera.Camera1Activity;
+import zharfan.com.cameralibrary.Camera;
+import zharfan.com.cameralibrary.CameraActivity;
 
 public class DinamicRoomTaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener {
 
@@ -343,6 +348,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinamic_room_task);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         activity = this;
         assistant = new LocationAssistant(this, this, LocationAssistant.Accuracy.HIGH, 5000, false);
         assistant.setVerbose(true);
@@ -459,7 +465,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         jsonArray = new JSONArray(contentValue);
                         for (int ii = (jsonArray.length() - 1); ii >= 0; ii--) {
 
-                            Log.w("hus-" + ii, jsonArray.getJSONArray(ii).toString());
                             JSONArray magic = new JSONArray(jsonArray.getJSONArray(ii).toString());
 
                             JSONObject oContent = new JSONObject(magic.get(0).toString());
@@ -1527,7 +1532,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     final String type = jsonArray.getJSONObject(i).getString("type").toString();
                     final String flag = jsonArray.getJSONObject(i).getString("flag").toString();
 
-                    Log.w("asd", type);
+                    Log.w("asd:" + count, label + "--" + type);
 
                     if (type.equalsIgnoreCase("attach_api")) {
                         if (count == null) {
@@ -2790,6 +2795,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
 
+
+                        Log.w("inaft", count + "--" + label);
 
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
@@ -4208,12 +4215,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         db.insertRoomsDetail(orderModel);
                                                     }
                                                     String action = Intent.ACTION_GET_CONTENT;
+                                                    /*videoblm ada
                                                     Intent cf = new Intent(getApplicationContext(), VideoActivity.class);
                                                     cf.putExtra("res", "Medium");
                                                     File f = MediaProcessingUtil.getOutputFile(".mp4");
                                                     cf.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
                                                     cf.setAction(action);
-                                                    startActivityForResult(cf, REQ_VIDEO);
+                                                    startActivityForResult(cf, REQ_VIDEO);*/
                                                 } else if (listName.equalsIgnoreCase("Delete")) {
 
                                                     RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI5)), name, "cild");
@@ -6355,7 +6363,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             linearLayout.addView(cb);
                         }
                     } else if (type.equalsIgnoreCase("radio")) {
-
+//sendiri
+                        // TODO: 07/09/18 lakukan penambahan edit text di other disamakan dengan dropdown 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
                             label += "<font size=\"3\" color=\"red\">*</font>";
@@ -6376,7 +6385,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(String.valueOf(i));
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
+
                         String isis = jsonArray.getJSONObject(i).getString("radio").toString();
+                        Log.w("karung", isis);
+
                         JSONArray jsonArrayCeks = new JSONArray(isis);
                         final RadioButton[] rb = new RadioButton[jsonArrayCeks.length()];
                         LinearLayout.LayoutParams params2b = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -6384,9 +6396,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         RadioGroup rg = new RadioGroup(this); //create the RadioGroup
                         rg.setOrientation(RadioGroup.VERTICAL);//or RadioGroup.VERTICAL
                         rg.setLayoutParams(params2b);
+
+                        final EditText et = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+
+                        final ArrayList<String> spinnerArrayFlag = new ArrayList<String>();
+                        Boolean manul = true;
                         for (int iaa = 0; iaa < jsonArrayCeks.length(); iaa++) {
+                            Log.w("gasa2", "siapa");
                             String l = jsonArrayCeks.getJSONObject(iaa).getString("label_radio").toString();
                             String cek = jsonArrayCeks.getJSONObject(iaa).getString("is_checked").toString();
+
+
+                            if (jsonArrayCeks.getJSONObject(iaa).has("flag")) {
+                                String flagDrop = jsonArrayCeks.getJSONObject(iaa).getString("flag").toString();
+                                spinnerArrayFlag.add(iaa, flagDrop);
+                            }
+
                             rb[iaa] = new RadioButton(this);
                             rb[iaa].setText(l);
                             rb[iaa].setId(iaa);
@@ -6399,7 +6424,21 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             if (cursorCild.getCount() > 0) {
                                 if (rb[iaa].getText().toString().equalsIgnoreCase(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)))) {
                                     rb[iaa].setChecked(true);
+                                    manul = false;
+                                    et.setVisibility(View.GONE);
+                                    et.setText("");
+
+                                } else {
+                                    if (jsonArrayCeks.getJSONObject(iaa).has("flag")) {
+                                        String flagDrop = jsonArrayCeks.getJSONObject(iaa).getString("flag").toString();
+                                        if (manul && flagDrop.equalsIgnoreCase("manual_input")) {
+                                            rb[jsonArrayCeks.length() - 1].setChecked(true);
+                                            et.setVisibility(View.VISIBLE);
+                                            et.setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                                        }
+                                    }
                                 }
+
                             } else {
                                 if (cek.equalsIgnoreCase("1")) {
                                     rb[iaa].setChecked(true);
@@ -6413,6 +6452,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             rg.addView(rb[iaa]);
                         }
 
+
+                        //et.setVisibility(View.GONE);
+
+
                         if ((!showButton)) {
                             rg.setEnabled(false);
                         } else {
@@ -6420,17 +6463,56 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(RadioGroup group, int checkedId) {
-                                    RadioButton rb = (RadioButton) group.findViewById(checkedId);
-                                    if (null != rb && checkedId > -1) {
 
-                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI23)));
-                                        if (cEdit.getCount() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rb.getText().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
-                                            db.updateDetailRoomWithFlagContent(orderModel);
+
+                                    RadioButton rbs = (RadioButton) group.findViewById(checkedId);
+                                    if (null != rbs && checkedId > -1) {
+
+                                        if (spinnerArrayFlag.size() == rb.length && spinnerArrayFlag.get(checkedId).equalsIgnoreCase("manual_input")) {
+                                            et.setVisibility(View.VISIBLE);
+                                            et.addTextChangedListener(new TextWatcher() {
+                                                @Override
+                                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                                }
+
+                                                @Override
+                                                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                                }
+
+                                                @Override
+                                                public void afterTextChanged(Editable s) {
+                                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI23)));
+                                                    if (cEdit.getCount() > 0) {
+                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                                    } else {
+                                                        if (String.valueOf(s).length() > 0) {
+                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                            db.insertRoomsDetail(orderModel);
+                                                        } else {
+                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                                        }
+                                                    }
+                                                }
+                                            });
                                         } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rb.getText().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
-                                            db.insertRoomsDetail(orderModel);
+                                            et.setVisibility(View.GONE);
+                                            et.setText("");
+
+                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI23)));
+                                            if (cEdit.getCount() > 0) {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rbs.getText().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                            } else {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rbs.getText().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                db.insertRoomsDetail(orderModel);
+                                            }
+
                                         }
+
 
                                         Intent newIntent = new Intent("bLFormulas");
                                         sendBroadcast(newIntent);
@@ -6438,7 +6520,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 }
                             });
                         }
+
+                        LinearLayout.LayoutParams params12 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params12.setMargins(50, 10, 30, 0);
+
+                        LinearLayout.LayoutParams params12a = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params12a.setMargins(50, 10, 30, 40);
+
                         linearLayout.addView(rg);
+                        linearLayout.addView(et, params12);
+                        View view = new View(this);
+                        view.setVisibility(View.INVISIBLE);
+                        linearLayout.addView(view, params12a);
+
                     } else if (type.equalsIgnoreCase("image_load")) {
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -6686,9 +6780,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             if (value.get(2).toString().equalsIgnoreCase("text") ||
                                                     value.get(2).toString().equalsIgnoreCase("textarea") ||
                                                     value.get(2).toString().equalsIgnoreCase("number") ||
-                                                    value.get(2).toString().equalsIgnoreCase("currency") ||
-                                                    value.get(2).toString().equalsIgnoreCase("date") ||
-                                                    value.get(2).toString().equalsIgnoreCase("time")) {
+                                                    value.get(2).toString().equalsIgnoreCase("currency")) {
                                                 String aa = value.get(0).toString();
                                                 et[Integer.valueOf(aa)].setError("required");
                                                 berhenti = true;
@@ -6762,10 +6854,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         if (value.get(2).toString().equalsIgnoreCase("text") ||
                                                 value.get(2).toString().equalsIgnoreCase("textarea") ||
                                                 value.get(2).toString().equalsIgnoreCase("number") ||
-                                                value.get(2).toString().equalsIgnoreCase("currency") ||
-                                                value.get(2).toString().equalsIgnoreCase("date") ||
-                                                value.get(2).toString().equalsIgnoreCase("time")) {
+                                                value.get(2).toString().equalsIgnoreCase("currency")) {
                                             String aa = value.get(0).toString();
+                                            Log.w("Hii", et.length + "--" + Integer.valueOf(aa));
                                             et[Integer.valueOf(aa)].setError("required");
                                             berhenti = true;
                                         } else if (value.get(2).toString().equalsIgnoreCase("attach_api")) {
@@ -7574,52 +7665,36 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-                AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(activity, REQ_CAMERA);
-                photo.setMediaAction(AnncaConfiguration.MEDIA_ACTION_PHOTO);
-                photo.setMediaQuality(AnncaConfiguration.MEDIA_QUALITY_MEDIUM);
-                photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_FRONT);
-                photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
-                new Annca(photo.build()).launchCamera();
-             /*   new Annca(photo.build()).launchCamera();
-                String action = Intent.ACTION_GET_CONTENT;
-                Intent cf= new Intent(context, CameraActivity.class);
-                cf.putExtra("face","No");
-                cf.putExtra("res","Medium");
-                cf.putExtra("front","Yes");
-                cf.putExtra("hide","No");
-                cf.putExtra("type","16 x 9");
-                File f = MediaProcessingUtil.getOutputFile("jpeg");
-                cf.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-                cf.setAction(action);
-                startActivityForResult(cf, REQ_CAMERA);*/
+                CameraActivity.Builder start = new CameraActivity.Builder(activity, REQ_CAMERA);
+                start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                start.setCameraFace(CameraActivity.CAMERA_FRONT);
+                start.setFlashMode(CameraActivity.FLASH_OFF);
+                start.setQuality(CameraActivity.MEDIUM);
+                start.setRatio(CameraActivity.RATIO_4_3);
+                start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                new Camera(start.build()).lauchCamera();
+
             } else if (facing == 0) {
                 if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
-                AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(activity, REQ_CAMERA);
-                photo.setMediaAction(AnncaConfiguration.MEDIA_ACTION_PHOTO);
-                photo.setMediaQuality(AnncaConfiguration.MEDIA_QUALITY_MEDIUM);
-                photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_REAR);
-                photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
-
-                new Annca(photo.build()).launchCamera();
-
-                   /* String action = Intent.ACTION_GET_CONTENT;
-                    Intent cf= new Intent(context, CameraActivity.class);
-                    cf.putExtra("face","No");
-                    cf.putExtra("res","Medium");
-                    cf.putExtra("front","No");
-                    cf.putExtra("hide","No");
-                    cf.putExtra("type","16 x 9");
-                    File f = MediaProcessingUtil.getOutputFile("jpeg");
-                    cf.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-                    cf.setAction(action);
-                    startActivityForResult(cf, REQ_CAMERA);*/
+                CameraActivity.Builder start = new CameraActivity.Builder(activity, REQ_CAMERA);
+                start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                start.setCameraFace(CameraActivity.CAMERA_REAR);
+                start.setFlashMode(CameraActivity.FLASH_OFF);
+                start.setQuality(CameraActivity.MEDIUM);
+                start.setRatio(CameraActivity.RATIO_4_3);
+                start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                new Camera(start.build()).lauchCamera();
             }
-        }
-        if (flag.equalsIgnoreCase("gallery")) {
+        } else if (flag.equalsIgnoreCase("gallery")) {
             showAttachmentDialog(REQ_CAMERA);
         }
+        /*else if (flag.equalsIgnoreCase("gallery_camera")) {
+            Log.w("luMasihk", "sini");
+
+            showAttachmentDialog(REQ_CAMERA);
+        }*/
     }
 
 
@@ -7938,9 +8013,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.w("hall2o", requestCode + " == " + resultCode);
         if (requestCode == 11) {
             if (resultCode == RESULT_OK) {
-                String returnString = data.getStringExtra(AnncaConfiguration.Arguments.FILE_PATH);
+                String returnString = data.getStringExtra("PICTURE");
                 if (decodeFile(returnString)) {
                     final File f = new File(returnString);
                     if (f.exists()) {
@@ -8008,10 +8084,107 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
             }
 
+        } else if (requestCode == 12) {
+            if (resultCode == RESULT_OK) {
+                Uri selectedUri = data.getData();
+                String selectedImagePath = ImageFilePath.getPath(getApplicationContext(), selectedUri);
+                Log.w("data", selectedImagePath);
+
+                if (decodeFile(selectedImagePath)) {
+                    final File f = new File(selectedImagePath);
+
+                    InputStream in = null;
+                    OutputStream out = null;
+                    try {
+
+                        //create output directory if it doesn't exist
+                        File dir = new File("storage/emulated/0/Pictures/com.byonchat.android");
+                        if (!dir.exists()) {
+                            dir.mkdirs();
+                        }
+
+
+                        in = new FileInputStream(selectedImagePath);
+                        out = new FileOutputStream("storage/emulated/0/Pictures/com.byonchat.android/" + selectedImagePath.substring(selectedImagePath.toString().lastIndexOf('/'), selectedImagePath.toString().length()));
+
+                        byte[] buffer = new byte[1024];
+                        int read;
+                        while ((read = in.read(buffer)) != -1) {
+                            out.write(buffer, 0, read);
+                        }
+                        in.close();
+                        in = null;
+
+                        // write the output file (You have now copied the file)
+                        out.flush();
+                        out.close();
+                        out = null;
+
+                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
+                        if (cEdit.getCount() > 0) {
+                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+
+                            JSONObject lala = null;
+                            try {
+                                lala = new JSONObject(text);
+                                JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
+                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
+
+                                JSONObject oContent = jj.getJSONObject(valueIdValue.getExpandedListPosition());
+
+                                if (oContent.has("f")) {
+                                    JSONArray jsonArray = oContent.getJSONArray("f");
+                                    JSONObject jjl = new JSONObject();
+                                    jjl.put("r", selectedImagePath.substring(selectedImagePath.toString().lastIndexOf('/'), selectedImagePath.toString().length()));
+                                    jjl.put("u", "");
+                                    jsonArray.put(jjl);
+                                    oContent.put("f", jsonArray);
+                                } else {
+                                    JSONArray jsonArray = new JSONArray();
+                                    JSONObject jjl = new JSONObject();
+                                    jjl.put("r", selectedImagePath.substring(selectedImagePath.toString().lastIndexOf('/'), selectedImagePath.toString().length()));
+                                    jjl.put("u", "");
+                                    jsonArray.put(jjl);
+                                    oContent.put("f", jsonArray);
+                                }
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), valueIdValue.getTypes(), valueIdValue.getName(), "cild");
+                                db.updateDetailRoomWithFlagContent(orderModel);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    } catch (FileNotFoundException fnfe1) {
+                        Log.e("tag", fnfe1.getMessage());
+                    } catch (Exception e) {
+                        Log.e("tag", e.getMessage());
+                    }
+
+                    ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[1].getExpandableListAdapter();
+                    ancur.notifyDataSetChanged();
+
+                } else {
+                    Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
+                }
+
+            } else if (resultCode == RESULT_CANCELED) {
+                if (result == null) {
+                    //     btnPhoto.setVisibility(View.VISIBLE);
+                }
+                Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
+            } else {
+                if (result == null) {
+                    // btnPhoto.setVisibility(View.VISIBLE);
+                }
+
+                Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
+            }
+
         } else if (requestCode == REQ_CAMERA) {
             List value = (List) hashMap.get(dummyIdDate);
             if (resultCode == RESULT_OK) {
-                String returnString = data.getStringExtra(AnncaConfiguration.Arguments.FILE_PATH);
+                String returnString = data.getStringExtra("PICTURE");
                 if (decodeFile(returnString)) {
                     final File f = new File(returnString);
                     if (f.exists()) {
@@ -8305,10 +8478,64 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         } else if (requestCode == 12011) {
             Intent p = new Intent("SOME_ACTION");
+            Log.w("hallo", "11");
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    String returnString = data.getStringExtra(AnncaConfiguration.Arguments.FILE_PATH);
-                    p.putExtra("data", returnString);
+                    String returnString = data.getStringExtra("PICTURE");
+
+                    final File f = new File(returnString);
+
+                    InputStream in = null;
+                    OutputStream out = null;
+                    try {
+
+                        //create output directory if it doesn't exist
+                        File dir = new File("storage/emulated/0/Pictures/com.byonchat.android");
+                        if (!dir.exists()) {
+                            dir.mkdirs();
+                        }
+
+
+                        in = new FileInputStream(returnString);
+                        out = new FileOutputStream("storage/emulated/0/Pictures/com.byonchat.android/" + returnString.substring(returnString.toString().lastIndexOf('/'), returnString.toString().length()));
+
+                        byte[] buffer = new byte[1024];
+                        int read;
+                        while ((read = in.read(buffer)) != -1) {
+                            out.write(buffer, 0, read);
+                        }
+                        in.close();
+                        in = null;
+
+                        // write the output file (You have now copied the file)
+                        out.flush();
+                        out.close();
+                        out = null;
+                        p.putExtra("data", dir + "/" + returnString.substring(returnString.toString().lastIndexOf('/'), returnString.toString().length()));
+
+                    } catch (FileNotFoundException fnfe1) {
+                        Log.e("tag", fnfe1.getMessage());
+                    } catch (Exception e) {
+                        Log.e("tag", e.getMessage());
+                    }
+
+
+                }
+            } else {
+                p.putExtra("data", "");
+            }
+            LocalBroadcastManager.getInstance(context).sendBroadcast(p);
+
+//Intent intent = new Intent(DinamicRoomTaskActivity.this,CameraActivity.class);
+        } else if (requestCode == 77558 || requestCode == 12022) {
+            Intent p = new Intent("SOME_ACTION");
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    Uri selectedUri = data.getData();
+                    String selectedImagePath = ImageFilePath.getPath(getApplicationContext(), selectedUri);
+                    p.putExtra("data", selectedImagePath);
+
+
                 }
             } else {
                 p.putExtra("data", "");
@@ -8595,19 +8822,21 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     public void yourActivityMethod(AddChildFotoExModel ahla) {
         Log.w("masd", "ada");
+        //mainan disini
         valueIdValue = ahla;
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(activity, 11);
+       /* AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(activity, 11);
         photo.setMediaAction(AnncaConfiguration.MEDIA_ACTION_PHOTO);
         photo.setMediaQuality(AnncaConfiguration.MEDIA_QUALITY_MEDIUM);
         photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_REAR);
         photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
-        new Annca(photo.build()).launchCamera();
+        new Annca(photo.build()).launchCamera();*/
 
+        showAttachmentDialogNew(11);
     }
 
 
@@ -9259,6 +9488,79 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     }
 
 
+    private void showAttachmentDialogNew(int req) {
+        if (req == 11) {
+            curAttItems = attCameraItems;
+        } else if (req == REQ_VIDEO) {
+            curAttItems = attVideoItems;
+        }
+        attCurReq = req;
+
+        AttachmentAdapter adapter = new AttachmentAdapter(this,
+                R.layout.menu_item, R.id.textMenu, curAttItems);
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.attachment_gridview);
+        GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
+        gridview.setAdapter(adapter);
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                String iTitle = curAttItems.get(pos).getTitle();
+                String action = Intent.ACTION_GET_CONTENT;
+                int req;
+                Intent i;
+                if (R.drawable.ic_att_video == curAttItems.get(0)
+                        .getResourceIcon()) {
+                    i = new Intent();
+                    if (MENU_GALLERY_TITLE.equals(iTitle)) {
+                        req = REQ_GALLERY_VIDEO;
+                        i.setType("video/*");
+                    } else {
+                        action = MediaStore.ACTION_VIDEO_CAPTURE;
+                        req = REQ_VIDEO;
+                    }
+                } else {
+                    i = new Intent();
+                    if (MENU_GALLERY_TITLE.equals(iTitle)) {
+                        if (Build.VERSION.SDK_INT < 19) {
+                            i = new Intent();
+                            i.setAction(Intent.ACTION_GET_CONTENT);
+                            i.setType("image/*");
+                        } else {
+                            i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                            i.addCategory(Intent.CATEGORY_OPENABLE);
+                            i.setType("image/*");
+                        }
+                        req = 12;
+                        i.setAction(action);
+                        startActivityForResult(i, req);
+
+                        attCurReq = 0;
+                    } else {
+                        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+
+                        CameraActivity.Builder start = new CameraActivity.Builder(activity, 11);
+                        start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                        start.setCameraFace(CameraActivity.CAMERA_REAR);
+                        start.setFlashMode(CameraActivity.FLASH_OFF);
+                        start.setQuality(CameraActivity.MEDIUM);
+                        start.setRatio(CameraActivity.RATIO_4_3);
+                        start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                        new Camera(start.build()).lauchCamera();
+                    }
+                }
+                dialog.dismiss();
+
+            }
+        });
+        dialog.show();
+    }
+
+
     private void showAttachmentDialog(int req) {
         if (req == REQ_CAMERA) {
             curAttItems = attCameraItems;
@@ -9305,20 +9607,27 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             i.setType("image/*");
                         }
                         req = REQ_GALLERY;
+                        i.setAction(action);
+                        startActivityForResult(i, req);
+
+                        attCurReq = 0;
                     } else {
-                        action = MediaStore.ACTION_IMAGE_CAPTURE;
-                        File f = MediaProcessingUtil
-                                .getOutputFile("jpeg");
-                        cameraFileOutput = f.getAbsolutePath();
-                        i.putExtra(MediaStore.EXTRA_OUTPUT,
-                                Uri.fromFile(f));
-                        req = REQ_CAMERA;
+                        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+
+                        CameraActivity.Builder start = new CameraActivity.Builder(activity, REQ_CAMERA);
+                        start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                        start.setCameraFace(CameraActivity.CAMERA_REAR);
+                        start.setFlashMode(CameraActivity.FLASH_OFF);
+                        start.setQuality(CameraActivity.MEDIUM);
+                        start.setRatio(CameraActivity.RATIO_4_3);
+                        start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                        new Camera(start.build()).lauchCamera();
+
                     }
                 }
-                i.setAction(action);
-                startActivityForResult(i, req);
                 dialog.dismiss();
-                attCurReq = 0;
 
             }
         });

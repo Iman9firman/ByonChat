@@ -110,6 +110,7 @@ import com.byonchat.android.provider.ChatParty;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Group;
+import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
@@ -1051,7 +1052,18 @@ public class ConversationActivity extends AppCompatActivity implements
             // }
 
             // Comment the following 1 line for SMS bridge feature:
-            menu.getItem(0).setVisible(true);
+            IntervalDB db = new IntervalDB(getApplicationContext());
+            db.open();
+
+            Cursor cursorSelect = db.getSingleContact(24);
+            if (cursorSelect.getCount() > 0) {
+                menu.getItem(0).setVisible(false);
+            } else {
+                menu.getItem(0).setVisible(true);
+            }
+
+            db.close();
+
             String regex = "[0-9]+";
             if (!c.getJabberId().matches(regex)) {
                 if (Utility.roomType(c.getJabberId()).equalsIgnoreCase("V")) {
@@ -1070,13 +1082,25 @@ public class ConversationActivity extends AppCompatActivity implements
                 menu.getItem(5).setVisible(false);
             }
         } else {
-            menu.getItem(0).setVisible(true);
+            IntervalDB db = new IntervalDB(getApplicationContext());
+            db.open();
+
+            Cursor cursorSelect = db.getSingleContact(24);
+            if (cursorSelect.getCount() > 0) {
+                menu.getItem(0).setVisible(false);
+            } else {
+                menu.getItem(0).setVisible(true);
+            }
+
+            db.close();
             menu.getItem(1).setVisible(false);
             menu.getItem(2).setVisible(false);
             menu.getItem(3).setVisible(false);
             menu.getItem(4).setVisible(false);
             menu.getItem(5).setVisible(false);
         }
+
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1647,6 +1671,7 @@ public class ConversationActivity extends AppCompatActivity implements
         filter.addAction(MessengerConnectionService.ACTION_CONNECTED);
         filter.addAction(MessengerConnectionService.ACTION_DISCONNECTED);
         filter.addAction(MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY);
+        filter.addAction(MessengerConnectionService.ACTION_CHAT_OFF);
         filter.addAction(UploadService.KEY_UPDATE_BAR);
         filter.addAction(UploadService.KEY_UPDATE_UPLOAD_BAR);
         filter.setPriority(1);
@@ -2673,6 +2698,12 @@ public class ConversationActivity extends AppCompatActivity implements
                     }
                 }
 
+            } else if (MessengerConnectionService.ACTION_CHAT_OFF
+                    .equals(intent.getAction())) {
+                Log.w("berjalan", "siap");
+
+                startActivity(getIntent());
+                finish();
             } else if (MessengerConnectionService.ACTION_MESSAGE_SENT
                     .equals(intent.getAction())) {
                 Message vo = intent

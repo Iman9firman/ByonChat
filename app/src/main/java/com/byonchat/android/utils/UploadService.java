@@ -46,7 +46,6 @@ import com.byonchat.android.provider.SubmitingRoomDB;
 import com.byonchat.android.videotrimmer.interfaces.ConvertTaskCompleted;
 import com.byonchat.android.videotrimmer.utils.RequestConvertTask;
 import com.byonchat.android.videotrimmer.videocompressor.MediaController;
-import com.newrelic.agent.android.NewRelic;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -1953,10 +1952,6 @@ public class UploadService extends IntentService {
                 if (!MessengerConnectionService.started) {
                     MessengerConnectionService.startService(context);
                 }
-                NewRelic.withApplicationToken(
-                        "AAeabfc395cb85236d848ad0e94806b040b06f0f98"
-                ).start(getApplication());
-
             } catch (Exception e) {
 
             }

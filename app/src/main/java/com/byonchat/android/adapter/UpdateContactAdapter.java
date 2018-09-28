@@ -206,7 +206,7 @@ public class UpdateContactAdapter extends RecyclerView.Adapter<UpdateContactAdap
             viewHolder.contentImage.setImageDrawable(d);
         }
 
-        if (nature.getJid().equalsIgnoreCase(dbhelper.getMyContact().getJabberId())){
+        if (nature.getJid().equalsIgnoreCase(dbhelper.getMyContact().getJabberId())) {
 
             Glide.with(context).load(photoFile)
                     .asBitmap().centerCrop()
@@ -231,9 +231,9 @@ public class UpdateContactAdapter extends RecyclerView.Adapter<UpdateContactAdap
                         });
             }
 
-        }else {
+        } else {
 
-            String signature =  new Validations().getInstance(context).getSignatureProfilePicture(nature.getJid(),dbhelper);
+            String signature = new Validations().getInstance(context).getSignatureProfilePicture(nature.getJid(), dbhelper);
             Glide.with(context).load("https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + nature.getJid() + ".jpg").asBitmap()
                     .centerCrop()
                     .signature(new StringSignature(signature))
@@ -247,32 +247,43 @@ public class UpdateContactAdapter extends RecyclerView.Adapter<UpdateContactAdap
                         }
                     });
 
-            if (!nature.getAction().equalsIgnoreCase("status")) {
-                Glide.with(context).load("https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + nature.getJid() + ".jpg").asBitmap()
-                        .centerCrop()
-                        .signature(new StringSignature(signature))
-                        .placeholder(d)
-                        .animate(R.anim.fade_in_sort)
-                        .into(new BitmapImageViewTarget(viewHolder.contentImage) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                viewHolder.contentImage.setImageBitmap(resource);
+            if (nature.getAction() != null) {
+                if (!nature.getAction().equalsIgnoreCase("status")) {
+                    Glide.with(context).load("https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + nature.getJid() + ".jpg").asBitmap()
+                            .centerCrop()
+                            .signature(new StringSignature(signature))
+                            .placeholder(d)
+                            .animate(R.anim.fade_in_sort)
+                            .into(new BitmapImageViewTarget(viewHolder.contentImage) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    viewHolder.contentImage.setImageBitmap(resource);
 
-                            }
-                        });
+                                }
+                            });
+                }
             }
-
         }
 
 
-        if (nature.getAction().equalsIgnoreCase("status")) {
-            viewHolder.contentImage.setVisibility(View.GONE);
-            viewHolder.contentStatus.setVisibility(View.VISIBLE);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.setMargins(30, 20, 30, 0);
-            viewHolder.cardView.setLayoutParams(layoutParams);
-            viewHolder.contentStatus.setText(nature.getContentStatus());
+        if (nature.getAction() != null) {
+            if (nature.getAction().equalsIgnoreCase("status")) {
+                viewHolder.contentImage.setVisibility(View.GONE);
+                viewHolder.contentStatus.setVisibility(View.VISIBLE);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(30, 20, 30, 0);
+                viewHolder.cardView.setLayoutParams(layoutParams);
+                viewHolder.contentStatus.setText(nature.getContentStatus());
+            } else {
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.setMargins(30, 20, 30, 0);
+                viewHolder.cardView.setLayoutParams(layoutParams);
+                viewHolder.contentImage.setVisibility(View.VISIBLE);
+                viewHolder.contentStatus.setVisibility(View.GONE);
+
+            }
         } else {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -282,6 +293,7 @@ public class UpdateContactAdapter extends RecyclerView.Adapter<UpdateContactAdap
             viewHolder.contentStatus.setVisibility(View.GONE);
 
         }
+
 
         timelineDB.updateUserFlag(nature.getJid(), "0");
     }

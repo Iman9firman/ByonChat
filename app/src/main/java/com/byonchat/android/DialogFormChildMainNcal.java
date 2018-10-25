@@ -231,7 +231,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                 start.setFlashMode(CameraActivity.FLASH_OFF);
                 start.setQuality(CameraActivity.MEDIUM);
                 start.setRatio(CameraActivity.RATIO_4_3);
-                start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
                 new Camera(start.build()).lauchCamera();
 
             } else if (facing == 0) {
@@ -244,7 +244,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                 start.setFlashMode(CameraActivity.FLASH_OFF);
                 start.setQuality(CameraActivity.MEDIUM);
                 start.setRatio(CameraActivity.RATIO_4_3);
-                start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
                 new Camera(start.build()).lauchCamera();
             }
         } else if (flag.equalsIgnoreCase("gallery_camera")) {
@@ -307,7 +307,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                         start.setFlashMode(CameraActivity.FLASH_OFF);
                         start.setQuality(CameraActivity.MEDIUM);
                         start.setRatio(CameraActivity.RATIO_4_3);
-                        start.setFileName(new MediaProcessingUtil().createFileName("jpeg","ROOM"));
+                        start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
                         new Camera(start.build()).lauchCamera();
 
                     }

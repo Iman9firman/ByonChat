@@ -77,8 +77,6 @@ import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
-import com.byonchat.android.shortcutBadger.ShortcutBadgeException;
-import com.byonchat.android.shortcutBadger.ShortcutBadger;
 import com.byonchat.android.utils.DynamicAlertDialogVoting;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.ImageFilePath;
@@ -122,6 +120,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class ConversationGroupActivity extends AppCompatActivity implements EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
 
@@ -149,20 +148,20 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
             + Message.SOURCE + "=? ";
     private static final String SQL_SELECT_MESSAGES = "SELECT * FROM "
             + Message.TABLE_NAME + " WHERE (" + Message.DESTINATION + "=? OR "
-            + Message.SOURCE + "=? ) AND "+ Message.TYPE +" != '"+ Message.TYPE_READSTATUS + "' ORDER BY " + Message.ID + " desc, " + Message.SEND_DATE
+            + Message.SOURCE + "=? ) AND " + Message.TYPE + " != '" + Message.TYPE_READSTATUS + "' ORDER BY " + Message.ID + " desc, " + Message.SEND_DATE
             + " LIMIT ? OFFSET ?;";
     private static final String SQL_UPDATE_MESSAGES = "UPDATE "
-            + Message.TABLE_NAME +" SET status = "+ Message.STATUS_DELIVERED + " WHERE " + Message.ID +" =?;";
+            + Message.TABLE_NAME + " SET status = " + Message.STATUS_DELIVERED + " WHERE " + Message.ID + " =?;";
     private static String SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL = "SELECT count(*) total FROM "
             + Message.TABLE_NAME
             + " WHERE status = ?";
     private static String SQL_SELECT_TOTAL_MESSAGES_UNREAD = "SELECT * FROM "
             + Message.TABLE_NAME
-            + " WHERE status = ? AND " + Message.SOURCE + "=?;" ;
+            + " WHERE status = ? AND " + Message.SOURCE + "=?;";
 
     private BroadcastHandler broadcastHandler = new BroadcastHandler();
-    private static final ArrayList<AttachmentMenuItem> attCameraItems ;
-    private static final ArrayList<AttachmentMenuItem> attVideoItems ;
+    private static final ArrayList<AttachmentMenuItem> attCameraItems;
+    private static final ArrayList<AttachmentMenuItem> attVideoItems;
     private static final ArrayList<AttachmentMenuItem> attMemeItems;
     private ConversationAdapter adapter;
     public FileCache fileCache;
@@ -175,7 +174,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
     private Button btnAttachmentMeme;
     private LinearLayout emojicons;
     private String colorAttachment = "#005982";
-    private ImageButton btnMic,btn_add_emoticon;
+    private ImageButton btnMic, btn_add_emoticon;
     private String lastDate = "";
     private AdapterView.AdapterContextMenuInfo itemContextSelected;
     private int loadOffset = 0;
@@ -232,7 +231,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
     private EditText inputMsg;
     private View footerView;
 
-    ListViewNoteAdapter adapterNotes,adapterVoting;
+    ListViewNoteAdapter adapterNotes, adapterVoting;
 
     // private WebSocketClient client;
 
@@ -303,14 +302,14 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         newPerson = i.getStringExtra(EXTRA_KEY_NEW_PERSON);
         sticky = i.getStringExtra(EXTRA_KEY_STICKY); // stiki 1/0 untuk menandakan yang stiki mana
 
-        if (messengerHelper==null){
+        if (messengerHelper == null) {
             messengerHelper = MessengerDatabaseHelper.getInstance(this);
         }
 
-        if(title==null){
+        if (title == null) {
             title = messengerHelper.getGroup(groupId).getName();
         }
-        if(name==null){
+        if (name == null) {
             name = messengerHelper.getMyContact().getJabberId();
         }
 
@@ -331,11 +330,11 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         btn_add_emoticon = (ImageButton) findViewById(R.id.btn_add_emoticon);
         btn_add_emoticon.setOnClickListener(btnClickListener);
 
-        toolbar = (Toolbar)findViewById(R.id.abMain);
+        toolbar = (Toolbar) findViewById(R.id.abMain);
         setSupportActionBar(toolbar);
-        logoToolbar = (ImageView)findViewById(R.id.logo_toolbar);
+        logoToolbar = (ImageView) findViewById(R.id.logo_toolbar);
         View view = findViewById(R.id.layout_back_button);
-        titleToolbar = (TextView)findViewById(R.id.title_toolbar);
+        titleToolbar = (TextView) findViewById(R.id.title_toolbar);
         mRevealView = (LinearLayout) findViewById(R.id.reveal_items);
         mRevealView.setVisibility(View.INVISIBLE);
         listConversation = (ListView) findViewById(R.id.listConversation);
@@ -354,17 +353,17 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         ObjectItemData[5] = new ObjectItem(6, "SManaa msdmasdjknasd aksdmasodmasd asd");
         ObjectItemData[6] = new ObjectItem(7, "SM asdasd asdiasdkasdaldslalsd ");
         ObjectItemData[7] = new ObjectItem(8, "SMaaa asdasdkaokdsadsokasd asdkaosdkoasdkasd");
-        adapterNotes = new ListViewNoteAdapter(this, R.layout.row_list_note, ObjectItemData,"NOTE");
-        adapterVoting = new ListViewNoteAdapter(this, R.layout.row_list_voting, ObjectItemData,"VOTING");
+        adapterNotes = new ListViewNoteAdapter(this, R.layout.row_list_note, ObjectItemData, "NOTE");
+        adapterVoting = new ListViewNoteAdapter(this, R.layout.row_list_voting, ObjectItemData, "VOTING");
 
         footerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.footer_button_up, null, false);
         listViewNote.addFooterView(footerView);
         listViewNote.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(hiddenNote){
+                if (hiddenNote) {
                     Intent intentOpen = new Intent(getApplicationContext(), DetailGroupNote.class);
                     startActivity(intentOpen);
-                }else{
+                } else {
                     Intent intentOpen = new Intent(getApplicationContext(), DetailGroupVoting.class);
                     startActivity(intentOpen);
                 }
@@ -376,7 +375,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         btnSend.setOnClickListener(btnClickListener);
         headerButtonVoting.setOnClickListener(btnClickListener);
         headerButtonNote.setOnClickListener(btnClickListener);
-        btnMic =  (ImageButton) findViewById(R.id.btnMic);
+        btnMic = (ImageButton) findViewById(R.id.btnMic);
         btnMic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -393,12 +392,12 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         linearBanner = (LinearLayout) findViewById(R.id.linearBanner);
         mainVdovia = (RelativeLayout) findViewById(R.id.mainVdovia);
         mainStreaming = (RelativeLayout) findViewById(R.id.mainStreaming);
-        nameRadio = (TextView)findViewById(R.id.nameRadio);
-        infoRadio = (TextView)findViewById(R.id.infoRadio);
-        buttonPlay = (Button)findViewById(R.id.buttonPlay);
+        nameRadio = (TextView) findViewById(R.id.nameRadio);
+        infoRadio = (TextView) findViewById(R.id.infoRadio);
+        buttonPlay = (Button) findViewById(R.id.buttonPlay);
         progressRadio = (ProgressBar) findViewById(R.id.progressRadio);
-        buttonNext = (Button)findViewById(R.id.buttonNext);
-        progresVdopia = (ProgressBar)findViewById(R.id.progresVdopia);
+        buttonNext = (Button) findViewById(R.id.buttonNext);
+        progresVdopia = (ProgressBar) findViewById(R.id.progresVdopia);
 
         initText();
         if (attCurReq > 0) {
@@ -416,12 +415,12 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         IntervalDB db = new IntervalDB(this);
         db.open();
         Cursor cursorSelect = db.getSingleContact(4);
-        if(cursorSelect.getCount()>0){
+        if (cursorSelect.getCount() > 0) {
             String skin = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
             Skin skins = null;
-            Cursor c =  db.getCountSkin();
-            if(c.getCount()>0) {
-                skins =  db.retriveSkinDetails(skin);
+            Cursor c = db.getCountSkin();
+            if (c.getCount() > 0) {
+                skins = db.retriveSkinDetails(skin);
                 colorAttachment = skins.getColor();
                 BitmapDrawable bitmapDrawable = new BitmapDrawable(skins.getBackground());
                 bitmapDrawable.setTileModeXY(android.graphics.Shader.TileMode.REPEAT, android.graphics.Shader.TileMode.REPEAT);
@@ -453,13 +452,13 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     // if(conversations.get(conversations.size()-1))
                     //  new ConversationLoadEarlier().execute();
 
-                    if(listConversation.getHeaderViewsCount()==1){
+                    if (listConversation.getHeaderViewsCount() == 1) {
                         Object obj = listConversation.getAdapter().getItem(2);
                         String value = obj.toString();
-                        if (isValidDate(value)){
+                        if (isValidDate(value)) {
                             conversations.remove(0);
                         }
-                    }else{
+                    } else {
                         Object obj = listConversation.getAdapter().getItem(1);
                         String value = obj.toString();
                         if (isValidDate(value)) {
@@ -517,7 +516,6 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 inputMsg.setText("");
             }
         });*/
-
 
 
         /**
@@ -594,14 +592,14 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 */
     }
 
-    public void updateMessageUnread(){
+    public void updateMessageUnread() {
 
         Cursor countMessageUnread = messengerHelper.query(
                 SQL_SELECT_TOTAL_MESSAGES_UNREAD,
-                new String[] {String.valueOf(Message.STATUS_UNREAD),groupId});
+                new String[]{String.valueOf(Message.STATUS_UNREAD), groupId});
 
         while (countMessageUnread.moveToNext()) {
-            messengerHelper.execSql(SQL_UPDATE_MESSAGES,new String[] { countMessageUnread.getString(countMessageUnread.getColumnIndex("_id"))});
+            messengerHelper.execSql(SQL_UPDATE_MESSAGES, new String[]{countMessageUnread.getString(countMessageUnread.getColumnIndex("_id"))});
             /*String regex = "[0-9]+";
             if (destination.getJabberId().matches(regex)) {
                 if(!countMessageUnread.getString(countMessageUnread.getColumnIndex(Message.TYPE)).equalsIgnoreCase(Message.TYPE_READSTATUS)){
@@ -612,20 +610,17 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         }
         countMessageUnread.close();
 
-        try {
-            int badgeCount = 0;
-            Cursor cursor = messengerHelper.query(
-                    SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
-                    new String[] {String.valueOf(Message.STATUS_UNREAD)});
-            int indexTotal = cursor.getColumnIndex("total");
-            while (cursor.moveToNext()) {
-                badgeCount = cursor.getInt(indexTotal);
-            }
-            cursor.close();
-
-            ShortcutBadger.setBadge(getApplicationContext(), badgeCount);
-        } catch (ShortcutBadgeException e) {
+        int badgeCount = 0;
+        Cursor cursor = messengerHelper.query(
+                SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
+                new String[]{String.valueOf(Message.STATUS_UNREAD)});
+        int indexTotal = cursor.getColumnIndex("total");
+        while (cursor.moveToNext()) {
+            badgeCount = cursor.getInt(indexTotal);
         }
+        cursor.close();
+
+        ShortcutBadger.applyCount(getApplicationContext(), badgeCount);
 
         gridArray = new ArrayList<ItemCreateNoteGroup>();
 
@@ -660,7 +655,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 
 
     private void setBarTitle() {
-        if(title.length()>0){
+        if (title.length() > 0) {
             titleToolbar.setText(title);
         }
         Bitmap icon2 = BitmapFactory.decodeResource(getApplicationContext().getResources(),
@@ -681,14 +676,14 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         });
     }
 
-    private String constructUri(String[] params){
+    private String constructUri(String[] params) {
 
         String s = WsConfig.URL_WEBSOCKET;
         String[] p = s.split("\\|");
         s = p[0];
-        for(int i=0; i<params.length; i++){
-            p[i+1] = p[i+1]+"="+params[i];
-            s = s+p[i+1];
+        for (int i = 0; i < params.length; i++) {
+            p[i + 1] = p[i + 1] + "=" + params[i];
+            s = s + p[i + 1];
         }
         Log.i(TAG, "CONSTRUCT URI : " + s);
         return s;
@@ -696,14 +691,14 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 
     /**
      * Method to send message to web socket server
-     * */
+     */
     private void sendMessageToServer(String messageToServer,
                                      String msg, String type,
                                      int sticky, int order_sticky,
                                      String groupId,
                                      int status, String messageid, String useropenmessage,
                                      String name) {
-        Date date= new Date();
+        Date date = new Date();
         /*if (client != null && client.isConnected()) {
             client.send(messageToServer);
             Message vo = new Message(name, groupId,msg);
@@ -715,14 +710,16 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
             addConversation(vo);
         }*/
     }
+
     private synchronized void addConversation(Message vo) {
         addConversation(vo, true, false);
     }
+
     private synchronized void updateConversationProgressBar(Message vo) {
         updateMessageUnread();
         Object obj = vo;
         int index = conversations.indexOf(vo);
-        if(vo.getType().equals(Message.TYPE_IMAGE) || vo.getType().equals(Message.TYPE_VIDEO)){
+        if (vo.getType().equals(Message.TYPE_IMAGE) || vo.getType().equals(Message.TYPE_VIDEO)) {
             groupMessages = new ArrayList<Object>();
             groupMessages.add("");
             groupMessages.add(vo);
@@ -738,7 +735,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         }
     }
 
-    private synchronized void  updateConversation(Message vo) {
+    private synchronized void updateConversation(Message vo) {
         //blm ada updateMessageUnread();
         int index = conversations.indexOf(vo);
         if (index != -1) {
@@ -756,7 +753,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
      * person. flag = new, a new person joined the conversation. flag = message,
      * a new message received from server. flag = exit, somebody left the
      * conversation.
-     * */
+     */
     private void parseMessage(final String msg) {
 
         try {
@@ -810,12 +807,11 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     fromName = jObj.getString("name");
                     isSelf = false;
                 }
-                Date date= new Date();
+                Date date = new Date();
                 String sId = jObj.getString("sid");
 
                 //  addList(name,message,messageid,dateTimestamp);
-            }
-            else if (flag.equalsIgnoreCase(TAG_EXIT)) {
+            } else if (flag.equalsIgnoreCase(TAG_EXIT)) {
                 // If the flag is 'exit', somebody left the conversation
                 groupid = jObj.getString("groupId");
                 boolean isSelf = true;
@@ -841,7 +837,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 
     }
 
-    private void addList(final String fromName,final String message,final String msgId,final String msgDate) {
+    private void addList(final String fromName, final String message, final String msgId, final String msgDate) {
 
         runOnUiThread(new Runnable() {
 
@@ -875,12 +871,13 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String text = result.get(0);
-                    if(textMessage.getText().length()>0) text= textMessage.getText().toString()+ " "+ result.get(0);
+                    if (textMessage.getText().length() > 0)
+                        text = textMessage.getText().toString() + " " + result.get(0);
                     textMessage.setText(text);
                     textMessage.setSelection(textMessage.getText().length());
                 }
-            }else if (requestCode == REQ_CAMERA) {
-                if(decodeFile(cameraFileOutput)){
+            } else if (requestCode == REQ_CAMERA) {
+                if (decodeFile(cameraFileOutput)) {
                     Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
                     intent.putExtra("file", cameraFileOutput);
                     intent.putExtra("name", groupId);
@@ -890,12 +887,12 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 
                 }
 
-            }else if
+            } else if
                     (requestCode == REQ_MEME) {
-                if(decodeFile(cameraFileOutput)){
+                if (decodeFile(cameraFileOutput)) {
                     Intent intent = new Intent(getApplicationContext(), PhotoSortrActivity.class);
-                    intent.putExtra("file",cameraFileOutput);
-                    intent.putExtra("name",groupId);
+                    intent.putExtra("file", cameraFileOutput);
+                    intent.putExtra("name", groupId);
                     intent.putExtra("type", Message.TYPE_IMAGE);
                     startActivity(intent);
                 }
@@ -916,19 +913,19 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 
                     }
                 }.start();*/
-            }else{
+            } else {
                 Uri selectedUri = data.getData();
                 String selectedImagePath = ImageFilePath.getPath(getApplicationContext(), selectedUri);
                 File fileOutput = new File(selectedImagePath);
                 if (requestCode == REQ_VIDEO) {
                     Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
-                    intent.putExtra("file",fileOutput.getAbsolutePath());
-                    intent.putExtra("name",groupId);
+                    intent.putExtra("file", fileOutput.getAbsolutePath());
+                    intent.putExtra("name", groupId);
                     intent.putExtra("type", Message.TYPE_VIDEO);
                     startActivity(intent);
 
                 } else if (requestCode == REQ_GALLERY
-                        || requestCode == REQ_GALLERY_VIDEO||requestCode == REQ_GALLERY_MEME) {
+                        || requestCode == REQ_GALLERY_VIDEO || requestCode == REQ_GALLERY_MEME) {
                     Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
 
                     String type = Message.TYPE_VIDEO;
@@ -938,19 +935,19 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                           /*  File f = resizeImage(fileOutput, true);
                             fileOutput = f;*/
                         }
-                    }else if (requestCode == REQ_GALLERY_MEME){
+                    } else if (requestCode == REQ_GALLERY_MEME) {
                         intent = new Intent(getApplicationContext(), PhotoSortrActivity.class);
                         type = Message.TYPE_IMAGE;
                     }
-                    intent.putExtra("file",fileOutput.getAbsolutePath());
-                    intent.putExtra("name",groupId);
-                    intent.putExtra("type",type);
+                    intent.putExtra("file", fileOutput.getAbsolutePath());
+                    intent.putExtra("name", groupId);
+                    intent.putExtra("type", type);
                     intent.putExtra("from", "group");
                     startActivity(intent);
                 }
             }
 
-        }else if(resultCode==RESULT_CANCELED) {
+        } else if (resultCode == RESULT_CANCELED) {
 
         }
     }
@@ -967,7 +964,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 
     }
 
-    public  boolean decodeFile(String path) {
+    public boolean decodeFile(String path) {
         int orientation;
         try {
             if (path == null) {
@@ -985,7 +982,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
                         bm.getHeight(), m, true);
                 final File f = new File(path);
-                if (f.exists ()) f.delete ();
+                if (f.exists()) f.delete();
                 try {
                     FileOutputStream out = new FileOutputStream(f);
                     bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -1001,7 +998,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
                         bm.getHeight(), m, true);
                 final File f = new File(path);
-                if (f.exists ()) f.delete ();
+                if (f.exists()) f.delete();
                 try {
                     FileOutputStream out = new FileOutputStream(f);
                     bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -1012,13 +1009,12 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     e.printStackTrace();
                 }
                 return true;
-            }
-            else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                 m.postRotate(270);
                 bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
                         bm.getHeight(), m, true);
                 final File f = new File(path);
-                if (f.exists ()) f.delete ();
+                if (f.exists()) f.delete();
                 try {
                     FileOutputStream out = new FileOutputStream(f);
                     bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -1031,7 +1027,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 return true;
             }
             final File f = new File(path);
-            if (f.exists ()) f.delete ();
+            if (f.exists()) f.delete();
             try {
                 FileOutputStream out = new FileOutputStream(f);
                 bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -1086,7 +1082,6 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
     }
 
 
-
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static String bytesToHex(byte[] bytes) {
@@ -1099,7 +1094,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         return new String(hexChars);
     }
 
-    private String getRandomString(){
+    private String getRandomString() {
         long currentTimeMillis = System.currentTimeMillis();
         SecureRandom random = new SecureRandom();
 
@@ -1110,7 +1105,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
             result[i] = CHARSET_AZ_09[randomCharIndex];
         }
 
-        String resRandom = String.valueOf(currentTimeMillis)+ new String(result);
+        String resRandom = String.valueOf(currentTimeMillis) + new String(result);
 
         return resRandom;
     }
@@ -1124,9 +1119,9 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
     private void showAttachmentDialog(int req) {
         if (req == REQ_CAMERA) {
             curAttItems = attCameraItems;
-        } else if(req == REQ_VIDEO){
+        } else if (req == REQ_VIDEO) {
             curAttItems = attVideoItems;
-        }else{
+        } else {
             curAttItems = attMemeItems;
         }
         attCurReq = req;
@@ -1137,7 +1132,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.attachment_gridview);
-        GridView gridview = (GridView)dialog.findViewById(R.id.gridview);
+        GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
         gridview.setAdapter(adapter);
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -1145,7 +1140,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 String iTitle = curAttItems.get(pos).getTitle();
                 String action = Intent.ACTION_GET_CONTENT;
                 int req;
-                Intent i ;
+                Intent i;
                 if (R.drawable.ic_att_video == curAttItems.get(0)
                         .getResourceIcon()) {
                     i = new Intent();
@@ -1156,7 +1151,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                         action = MediaStore.ACTION_VIDEO_CAPTURE;
                         req = REQ_VIDEO;
                     }
-                } else if(curAttItems.get(0).getTitle()=="Camera Meme") {
+                } else if (curAttItems.get(0).getTitle() == "Camera Meme") {
                     i = new Intent();
                     if (MENU_GALLERY_TITLE.equals(iTitle)) {
                         req = REQ_GALLERY_MEME;
@@ -1174,7 +1169,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 } else {
                     i = new Intent();
                     if (MENU_GALLERY_TITLE.equals(iTitle)) {
-                        if (Build.VERSION.SDK_INT < 19){
+                        if (Build.VERSION.SDK_INT < 19) {
                             i = new Intent();
                             i.setAction(Intent.ACTION_GET_CONTENT);
                             i.setType("image/*");
@@ -1212,8 +1207,8 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         showAttc(false);
 
         Contact contact = messengerHelper.getMyContact();
-        String language =  String.valueOf(Locale.getDefault());
-        if(contact.getJabberId().substring(0,2).equalsIgnoreCase("62")) language =  "id";
+        String language = String.valueOf(Locale.getDefault());
+        if (contact.getJabberId().substring(0, 2).equalsIgnoreCase("62")) language = "id";
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, language);
@@ -1227,9 +1222,10 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     Toast.LENGTH_SHORT).show();
         }
     }
+
     public static WebSocketClient client;
 
-    private void sendMessage(String message,boolean sendTextGroupSticky) {
+    private void sendMessage(String message, boolean sendTextGroupSticky) {
         int status = 0;
         String messageid = getRandomString();
         checkMessageid = messageid;
@@ -1246,12 +1242,12 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 name);
 */
 
-        Message vo = new Message( messengerHelper.getMyContact().getJabberId(),groupId, message);
+        Message vo = new Message(messengerHelper.getMyContact().getJabberId(), groupId, message);
         vo.setSourceInfo(messengerHelper.getMyContact().getJabberId());
         vo.setPacketId(messageid);
-        if(sendTextGroupSticky){
+        if (sendTextGroupSticky) {
             vo.setType(Message.TYPE_STICKY);
-        }else {
+        } else {
             vo.setType(Message.TYPE_TEXT);
         }
 
@@ -1278,6 +1274,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         startService(intent);*/
 
     }
+
     private void initText() {
         textMessage = (EditText) findViewById(R.id.textMessage);
         textMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -1325,14 +1322,14 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
     }
 
     private void scrollListConversationToBottom(boolean scroll) {
-        if(scroll){
+        if (scroll) {
             listConversation.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     listConversation.setSelection(adapter.getCount() - 1);
                 }
             }, 300);
-        }else{
+        } else {
             listConversation.setSelection(adapter.getCount());
         }
     }
@@ -1357,9 +1354,9 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 intent.putExtra("from","2" );
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);*/
-                if(gridView.getVisibility()==View.VISIBLE){
+                if (gridView.getVisibility() == View.VISIBLE) {
                     gridView.setVisibility(View.GONE);
-                }else{
+                } else {
                     finish();
                 }
 
@@ -1389,10 +1386,10 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 apalah.show(this.getSupportFragmentManager(),"balala");*/
 
                 //{"voting" : "yuhu","name" : "628158888248","groupid" : "1456303104388UZ4E3MHWTOYA03W","dateTime" : "2016-02-26 16:02:49.428","messageid" : "","voting_id" : "111222333","choice_answers" : "qqqq|wwww","total_choice_answer" : "2","sifat_voting" : "0","voting_timer" : "0"}
-                String aa = (groupId+"_#_"+name+"_#_"+/*voting_id*/"111222333"+"_#_"+/*choice_answers*/"qqqq|wwww"+"_#_"+2+"_#_"+/*datetime*/"2016-02-26 16:02:49.428"+"_#_"+/*sifat_voting*/"0"+"_#_"+/*voting_timer*/"0");
+                String aa = (groupId + "_#_" + name + "_#_" +/*voting_id*/"111222333" + "_#_" +/*choice_answers*/"qqqq|wwww" + "_#_" + 2 + "_#_" +/*datetime*/"2016-02-26 16:02:49.428" + "_#_" +/*sifat_voting*/"0" + "_#_" +/*voting_timer*/"0");
 
-                DynamicAlertDialogVoting apalah = DynamicAlertDialogVoting.newInstance(this,"pertanyaan" ,R.drawable.ic_notif ,"yuhu", true, true,aa);
-                apalah.show(this.getSupportFragmentManager(),"balala");
+                DynamicAlertDialogVoting apalah = DynamicAlertDialogVoting.newInstance(this, "pertanyaan", R.drawable.ic_notif, "yuhu", true, true, aa);
+                apalah.show(this.getSupportFragmentManager(), "balala");
                 return true;
             case R.id.menu_exit:
                 SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
@@ -1448,7 +1445,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
                 String value = input.getText().toString();
-                sendMessage(value,true);
+                sendMessage(value, true);
                 return;
             }
         });
@@ -1468,13 +1465,13 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         gps = new GPSTracker(ConversationGroupActivity.this);
 
         LocationManager locManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        if(locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             if (gps.canGetLocation()) {
                 // final Message vo = createNewMessage("", Message.TYPE_LOC);
                 //addConversation(vo);
                 double latitude = gps.getLatitude();
                 double longitude = gps.getLongitude();
-                if (latitude == 0 && longitude == 0){
+                if (latitude == 0 && longitude == 0) {
                     //  showToast("Location not available");
                 } else {
                     // vo.setMessage(latitude + ";" + longitude);
@@ -1496,15 +1493,15 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     }*/
                 }
 
-            }else{
+            } else {
                 gps.showSettingsAlert();
             }
-        }else{
+        } else {
             gps.showSettingsAlert();
         }
     }
 
-    public void showAttc(boolean att){
+    public void showAttc(boolean att) {
         int cx = (mRevealView.getLeft() + mRevealView.getRight());
         int cy = mRevealView.getTop();
         int radius = Math.max(mRevealView.getWidth(), mRevealView.getHeight());
@@ -1569,7 +1566,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 
                 }
             }
-        }else{
+        } else {
             if (!hidden) {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     SupportAnimator animator =
@@ -1633,12 +1630,12 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 } else {
                     showAttachmentDialog(REQ_VIDEO);
                 }
-            }else  if(v.equals(btnAttachmentMeme)){
+            } else if (v.equals(btnAttachmentMeme)) {
                 showAttachmentDialog(REQ_MEME);
-            }else if (v.equals(btn_add_emoticon)) {
-                if(emojicons.getVisibility()== View.GONE){
+            } else if (v.equals(btn_add_emoticon)) {
+                if (emojicons.getVisibility() == View.GONE) {
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                     Animation animFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_bottom);
@@ -1646,60 +1643,61 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     emojicons.startAnimation(animFade);
 
                     textMessage.setFocusable(false);
-                }else {
+                } else {
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                     textMessage.setFocusableInTouchMode(true);
                     textMessage.requestFocus();
-                    InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(textMessage, InputMethodManager.SHOW_IMPLICIT);
                     emojicons.setVisibility(View.GONE);
                 }
             } else if (v.equals(btnSend)) {
                 String msg = textMessage.getText().toString();
                 if (!msg.equals("")) {
-                    sendMessage(msg.toString(),false);
+                    sendMessage(msg.toString(), false);
                     textMessage.setText("");
                 }
-            }else if (v.equals(headerButtonNote)) {
-                if(hiddenNote){
+            } else if (v.equals(headerButtonNote)) {
+                if (hiddenNote) {
                     listViewNote.setAdapter(null);
                     listViewNote.setVisibility(View.GONE);
-                    hiddenNote=false;
-                    hiddenVoting=false;
+                    hiddenNote = false;
+                    hiddenVoting = false;
                     return;
-                }else{
+                } else {
                     listViewNote.setAdapter(null);
                     listViewNote.setAdapter(adapterNotes);
                     listViewNote.setVisibility(View.VISIBLE);
-                    hiddenNote=true;
-                    hiddenVoting=false;
+                    hiddenNote = true;
+                    hiddenVoting = false;
                     return;
                 }
-            }else if (v.equals(footerView)) {
+            } else if (v.equals(footerView)) {
                 listViewNote.setAdapter(null);
                 listViewNote.setVisibility(View.GONE);
-                hiddenNote=false;
-                hiddenVoting=false;
+                hiddenNote = false;
+                hiddenVoting = false;
                 return;
-            }else if (v.equals(headerButtonVoting)) {
-                if(hiddenVoting){
+            } else if (v.equals(headerButtonVoting)) {
+                if (hiddenVoting) {
                     listViewNote.setAdapter(null);
                     listViewNote.setVisibility(View.GONE);
-                    hiddenVoting=false;
-                    hiddenNote=false;
+                    hiddenVoting = false;
+                    hiddenNote = false;
                     return;
-                }else{
+                } else {
                     listViewNote.setAdapter(null);
                     listViewNote.setAdapter(adapterVoting);
                     listViewNote.setVisibility(View.VISIBLE);
-                    hiddenVoting=true;
-                    hiddenNote=false;
+                    hiddenVoting = true;
+                    hiddenNote = false;
                     return;
                 }
             }
         }
 
     }
+
     public static boolean isValidDate(String inDate) {
         dateFormat.setLenient(false);
         try {
@@ -1734,17 +1732,17 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
             long lastTotalMessage = totalMessages;
             cursor = messengerHelper.query(
                     SQL_SELECT_TOTAL_MESSAGES,
-                    new String[] { groupId,
-                            groupId });
+                    new String[]{groupId,
+                            groupId});
             int indexTotal = cursor.getColumnIndex("total");
             while (cursor.moveToNext()) {
                 totalMessages = cursor.getLong(indexTotal);
             }
             cursor.close();
 
-            if (lastTotalMessage < totalMessages){
+            if (lastTotalMessage < totalMessages) {
                 clearConversations();
-                cursor = messengerHelper.query(SQL_SELECT_MESSAGES, new String[] {
+                cursor = messengerHelper.query(SQL_SELECT_MESSAGES, new String[]{
                         groupId, groupId,
                         String.valueOf(loadLimit), String.valueOf(0)});
 
@@ -1755,7 +1753,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     messages.add(0, vo);
                 }
                 for (Iterator<Message> iterator = messages.iterator(); iterator
-                        .hasNext();) {
+                        .hasNext(); ) {
                     Message vo = iterator.next();
                     publishProgress(vo);
                 }
@@ -1770,7 +1768,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 
         @Override
         protected void onProgressUpdate(Message... values) {
-            addConversation(values[0], false,false);
+            addConversation(values[0], false, false);
         }
 
         @Override
@@ -1787,11 +1785,11 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         int index = listConversation.getFirstVisiblePosition();
         View v2 = listConversation.getChildAt(0);
         int oldCount = adapter.getCount();
-        int pos = (v2 == null ? 0 :  v2.getBottom());
+        int pos = (v2 == null ? 0 : v2.getBottom());
 
         @Override
         protected Void doInBackground(Void... params) {
-            cursor = messengerHelper.query(SQL_SELECT_MESSAGES, new String[] {
+            cursor = messengerHelper.query(SQL_SELECT_MESSAGES, new String[]{
                     groupId, groupId,
                     String.valueOf(loadLimit), String.valueOf(loadOffset)});
 
@@ -1802,7 +1800,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                 messages.add(vo);
             }
             for (Iterator<Message> iterator = messages.iterator(); iterator
-                    .hasNext();) {
+                    .hasNext(); ) {
                 Message vo = iterator.next();
                 publishProgress(vo);
             }
@@ -1851,10 +1849,10 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         String theDate = dateFormat.format(cdate);
         if (!lastDate.equals(theDate)) {
             lastDate = theDate;
-            if(!new Validations().getInstance(getApplicationContext()).cekRoom(groupId)){
+            if (!new Validations().getInstance(getApplicationContext()).cekRoom(groupId)) {
                 String iklan = new Validations().getInstance(getApplicationContext()).getContentValidation(14);
-                if (iklan.length()>0){
-                    theDate+="\n"+iklan;
+                if (iklan.length() > 0) {
+                    theDate += "\n" + iklan;
                 }
             }
             conversations.add(theDate);
@@ -1894,16 +1892,16 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                         long diffInMs = vo.getDeliveredDate().getTime() - m.getDeliveredDate().getTime();
                         long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
 
-                        if(diffInSec>60){
+                        if (diffInSec > 60) {
                             added = false;
                             createnew = true;
-                        }else {
+                        } else {
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(vo.getDeliveredDate());
                             int minutesVO = calendar.get(Calendar.MINUTE);
                             calendar.setTime(m.getDeliveredDate());
                             int minutesM = calendar.get(Calendar.MINUTE);
-                            if(minutesM != minutesVO){
+                            if (minutesM != minutesVO) {
                                 added = false;
                                 createnew = true;
                             }
@@ -1925,7 +1923,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     groupMessages = new ArrayList<Object>();
                     if (pisah) {
                         groupMessages.add("");
-                    }else{
+                    } else {
                         groupMessages.add(sinfo);
                     }
                     groupMessages.add(vo);
@@ -1940,7 +1938,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
             adapter.refreshList();
             scrollListConversationToBottom(true);
         }
-        if (receive){
+        if (receive) {
             adapter.refreshList();
         }
     }
@@ -1962,7 +1960,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
 
 
         String theDate = dateFormat.format(cdate);
-        if(lastDate.equals(theDate)){
+        if (lastDate.equals(theDate)) {
             conversations.remove(0);
         }
 
@@ -2000,16 +1998,16 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     long diffInMs = vo.getDeliveredDate().getTime() - m.getDeliveredDate().getTime();
                     long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
 
-                    if(diffInSec>60){
+                    if (diffInSec > 60) {
                         added = false;
                         createnew = true;
-                    }else {
+                    } else {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(vo.getDeliveredDate());
                         int minutesVO = calendar.get(Calendar.MINUTE);
                         calendar.setTime(m.getDeliveredDate());
                         int minutesM = calendar.get(Calendar.MINUTE);
-                        if(minutesM != minutesVO){
+                        if (minutesM != minutesVO) {
                             added = false;
                             createnew = true;
                         }
@@ -2029,27 +2027,27 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     groupMessages = new ArrayList<Object>();
                     if (pisah) {
                         groupMessages.add("");
-                    }else{
+                    } else {
                         groupMessages.add(sinfo);
                     }
                     groupMessages.add(vo);
-                    conversations.add(0,groupMessages);
+                    conversations.add(0, groupMessages);
                 }
 
             }
         } else {
-            conversations.add(0,vo);
+            conversations.add(0, vo);
         }
 
 
         lastDate = theDate;
-        if(!new Validations().getInstance(getApplicationContext()).cekRoom(groupId)){
+        if (!new Validations().getInstance(getApplicationContext()).cekRoom(groupId)) {
             String iklan = new Validations().getInstance(getApplicationContext()).getContentValidation(14);
-            if (iklan.length()>0){
-                theDate+="\n"+iklan;
+            if (iklan.length() > 0) {
+                theDate += "\n" + iklan;
             }
         }
-        conversations.add(0,theDate);
+        conversations.add(0, theDate);
         //((ConversationAdapter) listConversation.getAdapter()).notifyDataSetChanged();
     }
 
@@ -2082,7 +2080,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     .equals(intent.getAction())) {
                 Message vo = intent
                         .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if(!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)){
+                if (!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
                     if (groupId.equals(vo.getDestination())) {
                         updateConversation(vo);
 
@@ -2092,7 +2090,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     .equals(intent.getAction())) {
                 Message vo = intent
                         .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if(!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)){
+                if (!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
                     if (groupId.equals(vo.getDestination())) {
                         updateConversation(vo);
                     }
@@ -2101,7 +2099,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                     .equals(intent.getAction())) {
                 Message vo = intent
                         .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if(!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                if (!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
                     if (groupId.equals(vo.getDestination())) {
                         updateConversation(vo);
                     }
@@ -2112,19 +2110,19 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
             } else if (MessengerConnectionService.ACTION_CONNECTED
                     .equals(intent.getAction())) {
                 // setMessageFormEnabled(true);
-            }else if(UploadService.KEY_UPDATE_BAR .equals(intent.getAction())) {
+            } else if (UploadService.KEY_UPDATE_BAR.equals(intent.getAction())) {
                 Message vo = intent
                         .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if(!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)){
-                    if(groupId.equals(vo.getSource())){
+                if (!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                    if (groupId.equals(vo.getSource())) {
                         updateConversationProgressBar(vo);
                     }
                 }
 
-            }else if(UploadService.KEY_UPDATE_UPLOAD_BAR .equals(intent.getAction())) {
+            } else if (UploadService.KEY_UPDATE_UPLOAD_BAR.equals(intent.getAction())) {
                 Message vo = intent
                         .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if(!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                if (!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
                     if (groupId.equals(vo.getDestination())) {
                         updateConversation(vo);
                     }
@@ -2177,10 +2175,10 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if(result.startsWith("error") || result==null){
+            if (result.startsWith("error") || result == null) {
                 Toast.makeText(getApplicationContext(), "terjadi kesalahan jaringan ", Toast.LENGTH_LONG).show();
-            }else{
-                if(result.equalsIgnoreCase("1")){
+            } else {
+                if (result.equalsIgnoreCase("1")) {
                     client.disconnect();
                     com.byonchat.android.provider.Group g = messengerHelper.getGroup(groupId);
                     messengerHelper.deleteData(g);
@@ -2192,7 +2190,7 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
                                             groupId}
                             );
                     finish();
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext(), "Please try again later", Toast.LENGTH_LONG).show();
                 }
             }

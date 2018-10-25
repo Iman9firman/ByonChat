@@ -331,6 +331,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                         show = true;
                         aa = FragmentMyVideo.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), "", false, ByonChatMainRoomActivity.this);
                     } else if (category.equalsIgnoreCase("4")) {
+                        Log.w("kabadu", jsonArray.getJSONObject(i).getString("url_tembak"));
                         if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
                             List<String> valSetOne = new ArrayList<String>();
                             valSetOne.add(title);

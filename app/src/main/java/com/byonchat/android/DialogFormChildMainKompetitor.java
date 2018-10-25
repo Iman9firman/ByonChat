@@ -113,6 +113,7 @@ public class DialogFormChildMainKompetitor extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
+        Log.w("sendiri","oke3");
         linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
         nameTitle = (TextView) dialog.findViewById(R.id.name);
         mProceed = (Button) dialog.findViewById(R.id.btn_proceed);

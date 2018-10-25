@@ -8,7 +8,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
@@ -47,8 +46,6 @@ import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Intents.Insert;
 import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -110,14 +107,11 @@ import com.byonchat.android.provider.ChatParty;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Group;
-import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.provider.TimeLineDB;
-import com.byonchat.android.shortcutBadger.ShortcutBadgeException;
-import com.byonchat.android.shortcutBadger.ShortcutBadger;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.HttpHelper;
@@ -179,6 +173,7 @@ import java.util.Locale;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static com.byonchat.android.communication.NotificationReceiver.NOTIFY_ID_CONV;
 
@@ -980,21 +975,17 @@ public class ConversationActivity extends AppCompatActivity implements
         }
         countMessageUnread.close();
 
-        try {
-            int badgeCount = 0;
-            Cursor cursor = messengerHelper.query(
-                    SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
-                    new String[]{String.valueOf(Message.STATUS_UNREAD)});
-            int indexTotal = cursor.getColumnIndex("total");
-            while (cursor.moveToNext()) {
-                badgeCount = cursor.getInt(indexTotal);
-            }
-            cursor.close();
-
-            ShortcutBadger.setBadge(getApplicationContext(), badgeCount);
-        } catch (ShortcutBadgeException e) {
+        int badgeCount = 0;
+        Cursor cursor = messengerHelper.query(
+                SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
+                new String[]{String.valueOf(Message.STATUS_UNREAD)});
+        int indexTotal = cursor.getColumnIndex("total");
+        while (cursor.moveToNext()) {
+            badgeCount = cursor.getInt(indexTotal);
         }
+        cursor.close();
 
+        ShortcutBadger.applyCount(getApplicationContext(), badgeCount);
     }
 
     private boolean isNetworkConnectionAvailable() {

@@ -28,14 +28,12 @@ import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 
 import com.byonchat.android.communication.MessengerConnectionService;
@@ -49,17 +47,16 @@ import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
-import com.byonchat.android.provider.TimeLineDB;
-import com.byonchat.android.shortcutBadger.ShortcutBadgeException;
-import com.byonchat.android.shortcutBadger.ShortcutBadger;
-import com.byonchat.android.shortcutBadger.util.TabsUtils;
+import com.byonchat.android.utils.TabsUtils;
 import com.byonchat.android.utils.UploadService;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 
-public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener/*,ServiceConnection */{
+
+public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener/*,ServiceConnection */ {
 
     private MessengerDatabaseHelper messengerHelper;
     private FragmentDrawer drawerFragment;
@@ -95,143 +92,142 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-       try {
-           super.onCreate(savedInstanceState);
+        try {
+            super.onCreate(savedInstanceState);
 
 
-           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-               ComponentName mServiceComponent = new ComponentName(context, MyJobService.class);
-               JobInfo.Builder builder = null;
-               int kJobId = 0;
-               builder = new JobInfo.Builder(kJobId++, mServiceComponent);
-               builder.setPeriodic(60 * 1000);//1 menit
-               builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
-               builder.setRequiresDeviceIdle(true); // device should be idle
-               builder.setRequiresCharging(false); // we don't care if the device is charging or not
-               JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-               jobScheduler.schedule(builder.build());
-           }else{
-               Intent intent = new Intent(this, MyBroadcastReceiver.class);
-               PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                       this.getApplicationContext(), 234324243, intent, 0);
-               AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-               alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime(), 1000 * 60 , pendingIntent);//1 Menit
-               PackageManager pm = context.getPackageManager();
-               ComponentName receiver = new ComponentName(context, MyBroadcastReceiver.class);
-               pm.setComponentEnabledSetting(receiver,
-                       PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                       PackageManager.DONT_KILL_APP);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                ComponentName mServiceComponent = new ComponentName(context, MyJobService.class);
+                JobInfo.Builder builder = null;
+                int kJobId = 0;
+                builder = new JobInfo.Builder(kJobId++, mServiceComponent);
+                builder.setPeriodic(60 * 1000);//1 menit
+                builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
+                builder.setRequiresDeviceIdle(true); // device should be idle
+                builder.setRequiresCharging(false); // we don't care if the device is charging or not
+                JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                jobScheduler.schedule(builder.build());
+            } else {
+                Intent intent = new Intent(this, MyBroadcastReceiver.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        this.getApplicationContext(), 234324243, intent, 0);
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime(), 1000 * 60, pendingIntent);//1 Menit
+                PackageManager pm = context.getPackageManager();
+                ComponentName receiver = new ComponentName(context, MyBroadcastReceiver.class);
+                pm.setComponentEnabledSetting(receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
 
-           }
+            }
 
-           setTheme(R.style.AppTheme_NoActionBar);
-           if (messengerHelper == null) {
-               messengerHelper = MessengerDatabaseHelper.getInstance(this);
-           }
+            setTheme(R.style.AppTheme_NoActionBar);
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(this);
+            }
 
-           Intent intentStart = new Intent(this, UploadService.class);
-           intentStart.putExtra(UploadService.ACTION, "startService");
-           startService(intentStart);
-           IntervalDB db = new IntervalDB(getApplicationContext());
-           db.open();
-           Cursor cursor = db.getSingleContact(12);
-           if (cursor.getCount() > 0) {
-               if (cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)).equalsIgnoreCase("settingUp")) {
-                   Intent intents = new Intent(this, LoadContactScreen.class);
-                   startActivity(intents);
-                   finish();
-                   return;
-               } else if (cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)).equalsIgnoreCase("Finalizing")) {
-                   Intent intents = new Intent(this, FinalizingActivity.class);
-                   startActivity(intents);
-                   finish();
-                   return;
-               }
-           }
-           cursor.close();
-
-
-           final Contact contact = messengerHelper.getMyContact();
-
-           if (contact == null) {
-               Cursor cursorSkin = db.getCountSkin();
-               ArrayList<Skin> skinArrayList = db.retriveallSkin();
-
-               boolean insertByon = true;
-               for (Skin s : skinArrayList) {
-                   if (s.getTitle().equalsIgnoreCase("byonchat")) insertByon = false;
-               }
-
-               if (cursorSkin.getCount() == 0 || insertByon) {
-                   Bitmap logos = BitmapFactory.decodeResource(getResources(), R.drawable.logo_byon);
-                   Bitmap back = BitmapFactory.decodeResource(getResources(), R.drawable.bg_chat_baru);
-                   Bitmap header = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-                   Skin skin = new Skin("byonchat", "original", "#006b9c", logos, header, back);
-                   db.createSkin(skin);
-               }
-               cursorSkin.close();
-
-               db.close();
-               Intent intent = new Intent(this, RegistrationActivity.class);
-               startActivity(intent);
-               finish();
-               return;
-           }
-
-           setContentView(R.layout.activity_main);
-
-           color = getResources().getColor(R.color.colorPrimary);
-
-           toolbar = (Toolbar) findViewById(R.id.toolbar);
-           setSupportActionBar(toolbar);
-           getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            Intent intentStart = new Intent(this, UploadService.class);
+            intentStart.putExtra(UploadService.ACTION, "startService");
+            startService(intentStart);
+            IntervalDB db = new IntervalDB(getApplicationContext());
+            db.open();
+            Cursor cursor = db.getSingleContact(12);
+            if (cursor.getCount() > 0) {
+                if (cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)).equalsIgnoreCase("settingUp")) {
+                    Intent intents = new Intent(this, LoadContactScreen.class);
+                    startActivity(intents);
+                    finish();
+                    return;
+                } else if (cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)).equalsIgnoreCase("Finalizing")) {
+                    Intent intents = new Intent(this, FinalizingActivity.class);
+                    startActivity(intents);
+                    finish();
+                    return;
+                }
+            }
+            cursor.close();
 
 
-           Cursor cursorSelect = db.getSingleContact(4);
-           if (cursorSelect.getCount() > 0) {
-               String skin = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
-               Skin skins = null;
-               Cursor c = db.getCountSkin();
-               if (c.getCount() > 0) {
-                   skins = db.retriveSkinDetails(skin);
-                   color = Color.parseColor(skins.getColor());
-               }
-               c.close();
-           } else {
-               Interval interval = new Interval();
-               interval.setId(4);
-               interval.setTime("byonchat");
-               db.createContact(interval);
-           }
-           cursorSelect.close();
-           db.close();
+            final Contact contact = messengerHelper.getMyContact();
+
+            if (contact == null) {
+                Cursor cursorSkin = db.getCountSkin();
+                ArrayList<Skin> skinArrayList = db.retriveallSkin();
+
+                boolean insertByon = true;
+                for (Skin s : skinArrayList) {
+                    if (s.getTitle().equalsIgnoreCase("byonchat")) insertByon = false;
+                }
+
+                if (cursorSkin.getCount() == 0 || insertByon) {
+                    Bitmap logos = BitmapFactory.decodeResource(getResources(), R.drawable.logo_byon);
+                    Bitmap back = BitmapFactory.decodeResource(getResources(), R.drawable.bg_chat_baru);
+                    Bitmap header = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                    Skin skin = new Skin("byonchat", "original", "#006b9c", logos, header, back);
+                    db.createSkin(skin);
+                }
+                cursorSkin.close();
+
+                db.close();
+                Intent intent = new Intent(this, RegistrationActivity.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+
+            setContentView(R.layout.activity_main);
+
+            color = getResources().getColor(R.color.colorPrimary);
+
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-           drawerFragment = (FragmentDrawer)
-                   getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-           drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
-           drawerFragment.setDrawerListener(this);
+            Cursor cursorSelect = db.getSingleContact(4);
+            if (cursorSelect.getCount() > 0) {
+                String skin = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+                Skin skins = null;
+                Cursor c = db.getCountSkin();
+                if (c.getCount() > 0) {
+                    skins = db.retriveSkinDetails(skin);
+                    color = Color.parseColor(skins.getColor());
+                }
+                c.close();
+            } else {
+                Interval interval = new Interval();
+                interval.setId(4);
+                interval.setTime("byonchat");
+                db.createContact(interval);
+            }
+            cursorSelect.close();
+            db.close();
 
-           viewPager = (ViewPager) findViewById(R.id.viewpager);
-           setupViewPager(viewPager);
-           viewPager.setOffscreenPageLimit(5);
-           tabLayout = (TabLayout) findViewById(R.id.tabs);
-           tabLayout.setupWithViewPager(viewPager);
-           tabLayout.setSelectedTabIndicatorHeight(3);
-           initBackground(getResources().getString(R.string.tabtitle_rooms), color);
-           setupTabIconsOnly();
-           tabLayout.setOnTabSelectedListener(onTabSelectedListener(viewPager));
-       }catch (Exception e){
-           Log.w("lij",e.toString());
-       }
+
+            drawerFragment = (FragmentDrawer)
+                    getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
+            drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), toolbar);
+            drawerFragment.setDrawerListener(this);
+
+            viewPager = (ViewPager) findViewById(R.id.viewpager);
+            setupViewPager(viewPager);
+            viewPager.setOffscreenPageLimit(5);
+            tabLayout = (TabLayout) findViewById(R.id.tabs);
+            tabLayout.setupWithViewPager(viewPager);
+            tabLayout.setSelectedTabIndicatorHeight(3);
+            initBackground(getResources().getString(R.string.tabtitle_rooms), color);
+            setupTabIconsOnly();
+            tabLayout.setOnTabSelectedListener(onTabSelectedListener(viewPager));
+        } catch (Exception e) {
+            Log.w("lij", e.toString());
+        }
     }
-
 
 
     @Override
     protected void onPause() {
         unregisterReceiver(broadcastHandler);
-      //  getApplicationContext().unbindService(this);
+        //  getApplicationContext().unbindService(this);
         super.onPause();
     }
 
@@ -273,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 switch (i) {
 
                     case TABTAG_CONTACT:
-                        updateColorTab(1,color);
+                        updateColorTab(1, color);
                         initBackground(getResources().getString(R.string.tabtitle_contact), color);
                         tabLayout.setSelectedTabIndicatorColor(color);
                         break;
@@ -297,13 +293,13 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                         break;
 
                     case TABTAG_MYMEMBERS:
-                        updateColorTab(3,color);
+                        updateColorTab(3, color);
                         initBackground(getResources().getString(R.string.tabtitle_MyMembers), color);
                         tabLayout.setSelectedTabIndicatorColor(color);
                         break;
 
                     default:
-                        updateColorTab(0,color);
+                        updateColorTab(0, color);
                         initBackground(getResources().getString(R.string.tabtitle_rooms), color);
                         tabLayout.setSelectedTabIndicatorColor(color);
                         break;
@@ -321,13 +317,13 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         };
     }
 
-    private  void initBackground(String title, int color){
+    private void initBackground(String title, int color) {
         toolbar.setTitle(title);
-        Bitmap back_default = FilteringImage.headerColor(getWindow(),MainActivity.this,color);
+        Bitmap back_default = FilteringImage.headerColor(getWindow(), MainActivity.this, color);
         Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             toolbar.setBackground(back_draw_default);
-        }else{
+        } else {
             toolbar.setBackgroundDrawable(back_draw_default);
         }
     }
@@ -417,43 +413,37 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     }
 
-    public void updateColorTab(int position,int color){
-        for(int i=0;i<tabLayout.getTabCount();i++){
-            if(i==position){
-                TabsUtils.updateColor(tabLayout.getTabAt(i), selectorBackgroundColor(context,color));
-            }else{
-                TabsUtils.updateColor(tabLayout.getTabAt(i), selectorBackgroundColor(context,getApplicationContext().getResources().getColor(R.color.gray)));
+    public void updateColorTab(int position, int color) {
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            if (i == position) {
+                TabsUtils.updateColor(tabLayout.getTabAt(i), selectorBackgroundColor(context, color));
+            } else {
+                TabsUtils.updateColor(tabLayout.getTabAt(i), selectorBackgroundColor(context, getApplicationContext().getResources().getColor(R.color.gray)));
             }
         }
     }
 
-    public void addShortcutBadger(Context context){
+    public void addShortcutBadger(Context context) {
 
-        try {
-            int badgeCount = 0;
-            if (messengerHelper == null) {
-                messengerHelper = MessengerDatabaseHelper.getInstance(this);
+        int badgeCount = 0;
+        if (messengerHelper == null) {
+            messengerHelper = MessengerDatabaseHelper.getInstance(this);
+        }
+        Cursor cursor = messengerHelper.query(
+                SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
+                new String[]{String.valueOf(Message.STATUS_UNREAD)});
+        int indexTotal = cursor.getColumnIndex("total");
+        while (cursor.moveToNext()) {
+            badgeCount = cursor.getInt(indexTotal);
+        }
+        cursor.close();
+
+        ShortcutBadger.applyCount(context, badgeCount);
+        //blm material
+        if (tabLayout != null) {
+            if (tabLayout.getTabAt(2) != null) {
+                TabsUtils.updateTabBadge(tabLayout.getTabAt(2), badgeCount);
             }
-            Cursor cursor = messengerHelper.query(
-                    SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
-                    new String[] {String.valueOf(Message.STATUS_UNREAD)});
-            int indexTotal = cursor.getColumnIndex("total");
-            while (cursor.moveToNext()) {
-                badgeCount = cursor.getInt(indexTotal);
-            }
-            cursor.close();
-
-            ShortcutBadger.setBadge(context, badgeCount);
-            //blm material
-            if (tabLayout!=null){
-                if (tabLayout.getTabAt(2)!=null){
-                    TabsUtils.updateTabBadge(tabLayout.getTabAt(2), badgeCount);
-                }
-            }
-
-
-
-        } catch (ShortcutBadgeException e) {
         }
     }
 
@@ -463,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         public void onReceive(Context context, Intent intent) {
             if (MainActivity.ACTION_REFRESH_BADGER.equals(intent.getAction())) {
                 addShortcutBadger(context);
-            } else if (MainActivity.ACTION_REFRESH_NOTIF.equals(intent.getAction())){
+            } else if (MainActivity.ACTION_REFRESH_NOTIF.equals(intent.getAction())) {
                 addShortcutBadger(context);
                 ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
                         .cancel(NotificationReceiver.NOTIFY_ID);
@@ -472,18 +462,19 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             }
         }
     }
+
     @Override
     public void onBackPressed() {
-      kelar();
+        kelar();
     }
 
-    public void kelar(){
+    public void kelar() {
         if (((FragmentDrawer) drawerFragment).mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             ((FragmentDrawer) drawerFragment).mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
             ListHistoryChatFragment frag1 = (ListHistoryChatFragment) adapter.mFragmentList.get(2);
-            if(!frag1.finishActionModeBoolean()){
-               finish();
+            if (!frag1.finishActionModeBoolean()) {
+                finish();
             }
         }
     }

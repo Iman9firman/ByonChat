@@ -272,6 +272,7 @@ public class AboutSettingFragment extends Fragment {
             btnCekUpdate.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.INVISIBLE);
             if (result.equals(Boolean.TRUE)) {
+                // TODO: 19/10/18 aneh masih tidak bisa download 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

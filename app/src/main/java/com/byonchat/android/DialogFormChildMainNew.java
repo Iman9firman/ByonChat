@@ -35,6 +35,7 @@ import android.widget.Scroller;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseDropDown;
@@ -119,6 +120,7 @@ public class DialogFormChildMainNew extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
+        Log.w("sendiri", "oke5");
         linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
         nameTitle = (TextView) dialog.findViewById(R.id.name);
         mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
@@ -653,10 +655,10 @@ public class DialogFormChildMainNew extends DialogFragment {
 
                     linearEstimasi[count] = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.layout_child, null);
                     String valueTo = value;
-                    JSONArray jjj = new JSONArray(value);
-                    if (jjj.length() == 1) {
-                        valueTo = jjj.getString(0).toString();
+                    if (value.startsWith("[")) {
+
                     }
+
                     JSONObject jObject = new JSONObject(valueTo);
                     String url = jObject.getString("url");
 
@@ -695,8 +697,6 @@ public class DialogFormChildMainNew extends DialogFragment {
                         where = "kelas = '" + customersId + "'";
 
                     }
-
-                    Log.w("wew", where);
 
                     if (mDB.getWritableDatabase() != null) {
                         String namaTable = table;
@@ -739,6 +739,9 @@ public class DialogFormChildMainNew extends DialogFragment {
                             try {
                                 JSONObject jsonObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                                 int spinnerPosition = spinnerArrayAdapter.getPosition(jsonObject.getString(titlesss));
+                                if (spinnerPosition < 0) {
+                                    spinnerPosition = spinnerArrayAdapter.getPosition("--Add--");
+                                }
                                 spinner.setSelection(spinnerPosition);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -756,7 +759,147 @@ public class DialogFormChildMainNew extends DialogFragment {
                             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                                 dummyIdDate = Integer.parseInt(idListTask);
                                 List nilai = (List) hashMap.get(dummyIdDate);
-                                if (!spinner.getSelectedItem().toString().replace("'", "''").equals("--Please Select--")) {
+
+                                if (spinner.getSelectedItem().toString().replace("'", "''").equals("--Please Select--")) {
+
+                                    if (kolom.size() > 1) {
+                                        RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), spinner.getSelectedItem().toString().replace("'", "''"), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+
+                                        botListDB.deleteDetailRoomWithFlagContent(orderModel);
+
+                                        linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeAllViews();
+                                        linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(spinerTitle);
+                                    }
+
+                                } else if (spinner.getSelectedItem().toString().equals("--Add--")) {
+                                    Log.w("siap2", "2");
+                                    linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeAllViews();
+                                    linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(spinerTitle);
+
+                                    JSONObject jsonObject = null;
+                                    Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
+                                    if (cursorCild.getCount() > 0) {
+                                        try {
+                                            jsonObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+
+                                            boolean lanjut = false;
+                                            for (String abubu : spinnerArray) {
+                                                if (abubu.equalsIgnoreCase(jsonObject.getString(titlesss))) {
+                                                    lanjut = true;
+                                                }
+                                            }
+
+                                            if (lanjut) {
+                                                jsonObject = null;
+                                                if (kolom.size() > 1) {
+                                                    RoomsDetail orderModel = null;
+                                                    try {
+                                                        orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), function(jsonObject, titlesss, spinner.getSelectedItem().toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    // RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinner.getSelectedItem().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
+                                                    botListDB.deleteDetailRoomWithFlagContent(orderModel);
+                                                }
+
+                                            }
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    final EditText etFc[] = new EditText[finalTitleNames.length];
+                                    int ids = 0;
+                                    for (final String ahai : finalTitleNames) {
+
+                                        TextView textView = new TextView(getActivity());
+                                        textView.setText(ahai);
+                                        textView.setTextSize(15);
+                                        textView.setLayoutParams(new TableRow.LayoutParams(0));
+
+                                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params1.setMargins(30, 10, 30, 0);
+
+                                        etFc[ids] = (EditText) getActivity().getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+                                        try {
+                                            if (jsonObject != null) {
+                                                etFc[ids].setText(jsonObject.getString(ahai));
+                                                if (etFc.length - 1 == ids) {
+                                                    customersId = etFc[ids].getText().toString();
+                                                }
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+
+                                        final int finalIds = ids;
+                                        etFc[ids].addTextChangedListener(new TextWatcher() {
+                                            @Override
+                                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                            }
+
+                                            @Override
+                                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                            }
+
+                                            @Override
+                                            public void afterTextChanged(Editable s) {
+                                                if (etFc.length - 1 == finalIds) {
+                                                    customersId = s.toString();
+                                                }
+
+
+                                                Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
+
+                                                if (cEdit.getCount() > 0) {
+                                                    try {
+                                                        JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+
+                                                        RoomsDetail orderModel = null;
+                                                        try {
+                                                            orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), function(jsonObject, ahai, s.toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+
+
+                                                        botListDB.updateDetailRoomWithFlagContent(orderModel);
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                } else {
+                                                    RoomsDetail orderModel = null;
+                                                    try {
+                                                        try {
+                                                            orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), function(null, ahai, s.toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    botListDB.insertRoomsDetail(orderModel);
+                                                }
+
+                                            }
+                                        });
+
+                                        linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(textView, params1);
+                                        linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(etFc[ids], params1);
+                                        ids++;
+                                    }
+
+                                } else {
+
+                                    Log.w("siap2", "1");
                                     if (kolom.size() > 1) {
                                         final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
                                         linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1, counts - 1);
@@ -790,15 +933,6 @@ public class DialogFormChildMainNew extends DialogFragment {
 
                                     }
 
-                                } else {
-                                    if (kolom.size() > 1) {
-                                        RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), spinner.getSelectedItem().toString().replace("'", "''"), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
-
-                                        botListDB.deleteDetailRoomWithFlagContent(orderModel);
-
-                                        linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeAllViews();
-                                        linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(spinerTitle);
-                                    }
 
                                 }
                                /* Intent newIntent = new Intent("bLFormulas");
@@ -1407,7 +1541,7 @@ public class DialogFormChildMainNew extends DialogFragment {
                             JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                             int spinnerPosition = spinnerArrayAdapter.getPosition(jsonObject.getString(finalTitlle));
                             spinner.setSelection(spinnerPosition);
-                        }else {
+                        } else {
                             return;
                         }
 

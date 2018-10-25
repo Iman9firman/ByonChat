@@ -34,8 +34,6 @@ import com.byonchat.android.R;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
-import com.byonchat.android.shortcutBadger.ShortcutBadgeException;
-import com.byonchat.android.shortcutBadger.ShortcutBadger;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.UploadService;
 
@@ -44,6 +42,9 @@ import org.json.JSONObject;
 
 import java.net.URLDecoder;
 import java.util.Date;
+
+import me.leolin.shortcutbadger.ShortcutBadgeException;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class NotificationReceiver extends BroadcastReceiver {
     public static final int NOTIFY_ID = 2001;
@@ -114,19 +115,16 @@ public class NotificationReceiver extends BroadcastReceiver {
                     .getSystemService(Context.NOTIFICATION_SERVICE);
             mgr.notify(NOTIFY_ID, builder.getNotification());
 
-            try {
-                int badgeCount = 0;
-                Cursor cursor = messengerHelper.query(
-                        SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
-                        new String[]{String.valueOf(Message.STATUS_UNREAD)});
-                int indexTotal = cursor.getColumnIndex("total");
-                while (cursor.moveToNext()) {
-                    badgeCount = cursor.getInt(indexTotal);
-                }
-                cursor.close();
-                ShortcutBadger.setBadge(context, badgeCount);
-            } catch (ShortcutBadgeException e) {
+            int badgeCount = 0;
+            Cursor cursor = messengerHelper.query(
+                    SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
+                    new String[]{String.valueOf(Message.STATUS_UNREAD)});
+            int indexTotal = cursor.getColumnIndex("total");
+            while (cursor.moveToNext()) {
+                badgeCount = cursor.getInt(indexTotal);
             }
+            cursor.close();
+            ShortcutBadger.applyCount(context, badgeCount);
         } else if (name != null) {
             //add members
             Log.w("sudah","2");

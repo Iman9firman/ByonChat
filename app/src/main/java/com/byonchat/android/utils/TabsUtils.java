@@ -1,4 +1,4 @@
-package com.byonchat.android.shortcutBadger.util;
+package com.byonchat.android.utils;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

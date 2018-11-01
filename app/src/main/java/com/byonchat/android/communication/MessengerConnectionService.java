@@ -1363,10 +1363,10 @@ public class MessengerConnectionService extends Service {
 
         IntentFilter filter = new IntentFilter(
                 UploadService.class.getName() + ".sendFile");
-        filter.addAction(SMS_RECEIVED);
+        //  filter.addAction(SMS_RECEIVED);
         filter.addAction(LOCATION_RECEIVED);
-        filter.addAction(SMS_DELIVERED);
-        filter.addAction(SMS_SENT);
+        //  filter.addAction(SMS_DELIVERED);
+        //  filter.addAction(SMS_SENT);
         filter.setPriority(1);
         registerReceiver(receiver, filter);
 
@@ -1376,7 +1376,10 @@ public class MessengerConnectionService extends Service {
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         //@Override
         public void onReceive(Context context, Intent intent) {
+            /*
+            di tutup karena ini fitur SMS SOLDIER
             if (intent.getAction().equals(SMS_RECEIVED)) {
+
                 Message report = new Message(databaseHelper.getMyContact().getJabberId(), "x_byonchatbackground", "sms_gateway;" + intent.getStringExtra("id") + "|" + intent.getStringExtra("number") + "|" + "SMS RECEIVED" + "|" + intent.getFlags());
                 report.setType("text");
                 report.setSendDate(new Date());
@@ -1388,7 +1391,7 @@ public class MessengerConnectionService extends Service {
                 i.putExtra(KEY_MESSAGE_OBJECT, report);
                 sendBroadcast(i);
 
-                /*
+                *//*
                 bug kenapa
                 Bundle bundle = intent.getExtras();
                 SmsMessage[] msgs = null;
@@ -1410,7 +1413,7 @@ public class MessengerConnectionService extends Service {
                     }catch(Exception e){
 //                            //Log.d("Exception caught",e.getMessage());
                     }
-                }*/
+                }*//*
 
             } else if (intent.getAction().equals(SMS_DELIVERED)) {
                 switch (getResultCode()) {
@@ -1511,7 +1514,7 @@ public class MessengerConnectionService extends Service {
                     default:
                         break;
                 }
-            } else if (intent.getAction().equals(LOCATION_RECEIVED)) {
+            } else */if (intent.getAction().equals(LOCATION_RECEIVED)) {
                 GPSTracker gps = new GPSTracker(getApplicationContext());
                 if (gps.canGetLocation()) {
                     CountDownTimer cdt = new CountDownTimer(5000, 1000) {

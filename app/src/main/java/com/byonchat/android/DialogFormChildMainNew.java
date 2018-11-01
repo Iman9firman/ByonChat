@@ -899,7 +899,7 @@ public class DialogFormChildMainNew extends DialogFragment {
 
                                 } else {
 
-                                    Log.w("siap2", "1");
+                                    Log.w("siap2", "1" + "garpu : " + kolom.size());
                                     if (kolom.size() > 1) {
                                         final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
                                         linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1, counts - 1);
@@ -949,6 +949,13 @@ public class DialogFormChildMainNew extends DialogFragment {
                         linearEstimasi[count].addView(spinerTitle);
 
                     } else {
+
+                        getActivity().finish();
+                        Intent intent = new Intent(getActivity(), DownloadSqliteDinamicActivity.class);
+                        intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
+                        intent.putExtra("path_db", url);
+                        startActivity(intent);
+
                     }
                     TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                     params2.setMargins(60, 10, 30, 0);
@@ -1482,10 +1489,8 @@ public class DialogFormChildMainNew extends DialogFragment {
                 if (c.moveToFirst()) {
                     do {
                         String column1 = c.getString(0);
-
                         spinnerArray.add(column1);
                         if (!showSpinner) {
-
 
                             Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                             if (cEdit.getCount() > 0) {
@@ -1533,17 +1538,19 @@ public class DialogFormChildMainNew extends DialogFragment {
                 spinner.setAdapter(spinnerArrayAdapter);
                 final String finalTitlle = titlle;
 
-
                 Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                 if (cEdit.getCount() > 0) {
                     try {
-                        if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains(finalTitlle)) {
-                            JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                            int spinnerPosition = spinnerArrayAdapter.getPosition(jsonObject.getString(finalTitlle));
-                            spinner.setSelection(spinnerPosition);
-                        } else {
+// TODO: 28/10/18  siapa yang ada dropdown dinamis di from child
+                        //   if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains(finalTitlle)) {//
+                        Log.w("kasofoSOSO2", "alamal");
+                        JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                        int spinnerPosition = spinnerArrayAdapter.getPosition(jsonObject.getString(finalTitlle));
+                        spinner.setSelection(spinnerPosition);
+                       /* } else {
+                            Log.w("kasofoSOSO3", "alamal");
                             return;
-                        }
+                        }*/
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1557,6 +1564,7 @@ public class DialogFormChildMainNew extends DialogFragment {
                         final int count = view.getChildCount();
                         view.removeViews(asIs + 1, count - (asIs + 1));
                         if (!spinner.getSelectedItem().toString().replace("'", "''").equals("--Please Select--")) {
+
                             addSpinnerDinamic(jsonValue, namedb, view, table, coloum, asIs, where + " and " + coloum[asIs] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'", idListTask, type, finalI24, name);
 
                             Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));

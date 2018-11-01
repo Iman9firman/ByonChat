@@ -251,6 +251,7 @@ public class FragmentRoomMultipleTask extends Fragment {
     }
 
     public String abs(String ctn, String type) {
+        Log.w("type", type + "::" + ctn);
         String content = ctn;
         if (type != null) {
             if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
@@ -342,6 +343,8 @@ public class FragmentRoomMultipleTask extends Fragment {
             } else if (type.equalsIgnoreCase("rate")) {
 
             } else if (type.equalsIgnoreCase("form_isian")) {
+                content = "";
+            } else if (type.equalsIgnoreCase("remaining_budget")) {
                 content = "";
             }
         }
@@ -575,7 +578,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
     public String va(RoomsDetail roomsDetail) {
         String content = roomsDetail.getContent();
-
+        Log.w("type2", roomsDetail.getFlag_tab() + "::" + content);
         if (roomsDetail.getFlag_tab().equalsIgnoreCase("rear_camera") || roomsDetail.getFlag_tab().equalsIgnoreCase("front_camera")) {
             Random random = new SecureRandom();
             char[] result = new char[6];
@@ -643,6 +646,8 @@ public class FragmentRoomMultipleTask extends Fragment {
         } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("rate")) {
 
         } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("dropdown_form")) {
+            content = "";
+        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("remaining_budget")) {
             content = "";
         }
 
@@ -765,7 +770,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
             if (aa.getId().contains("|")) {
                 if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-                    new Refresh(getActivity()).execute( aa.getId(), username,idTab);
+                    new Refresh(getActivity()).execute(aa.getId(), username, idTab);
                 }
             }
 
@@ -815,72 +820,72 @@ public class FragmentRoomMultipleTask extends Fragment {
 
             Cursor cursorValue = BotListDB.getInstance(getContext()).getSingleRoomDetailFormWithFlag(getId, usr, idTab, "value");
             if (cursorValue.getCount() == 0) {
-                    if (username != null) {
+                if (username != null) {
 
-                        try {
-                            HttpParams httpParameters = new BasicHttpParams();
-                            HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
-                            HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                            HttpClient httpclient = new DefaultHttpClient(httpParameters);
-                            HttpPost httppost = new HttpPost(new ValidationsKey().getInstance(getContext()).getTargetUrl(usr) + GETTABDETAILPULLMULTIPLE);
+                    try {
+                        HttpParams httpParameters = new BasicHttpParams();
+                        HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
+                        HttpConnectionParams.setSoTimeout(httpParameters, 15000);
+                        HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                        HttpPost httppost = new HttpPost(new ValidationsKey().getInstance(getContext()).getTargetUrl(usr) + GETTABDETAILPULLMULTIPLE);
 
-                            // Add your data
-                            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                            nameValuePairs.add(new BasicNameValuePair("username_room", usr));
-                            nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", idTab));
+                        // Add your data
+                        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                        nameValuePairs.add(new BasicNameValuePair("username_room", usr));
+                        nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", idTab));
 
-                            if (getId != null || !getId.equalsIgnoreCase("")) {
-                                String[] ff = getId.split("\\|");
-                                if (ff.length == 2) {
-                                    nameValuePairs.add(new BasicNameValuePair("parent_id", ff[1]));
-                                    nameValuePairs.add(new BasicNameValuePair("id_list_push", ff[0]));
-                                }
+                        if (getId != null || !getId.equalsIgnoreCase("")) {
+                            String[] ff = getId.split("\\|");
+                            if (ff.length == 2) {
+                                nameValuePairs.add(new BasicNameValuePair("parent_id", ff[1]));
+                                nameValuePairs.add(new BasicNameValuePair("id_list_push", ff[0]));
                             }
+                        }
 
-                            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-                            // Execute HTTP Post Request
-                            HttpResponse response = httpclient.execute(httppost);
-                            int status = response.getStatusLine().getStatusCode();
-                            if (status == 200) {
-                                HttpEntity entity = response.getEntity();
-                                String data = EntityUtils.toString(entity);
-                                Log.w("bersama", data);
+                        // Execute HTTP Post Request
+                        HttpResponse response = httpclient.execute(httppost);
+                        int status = response.getStatusLine().getStatusCode();
+                        if (status == 200) {
+                            HttpEntity entity = response.getEntity();
+                            String data = EntityUtils.toString(entity);
+                            Log.w("bersama", data);
 
-                                try {
-                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                                    Calendar cal = Calendar.getInstance();
-                                    String time_str = dateFormat.format(cal.getTime());
-                                    JSONObject jsonRootObject = new JSONObject(data);
-                                    String username = jsonRootObject.getString("username_room");
-                                    String id_rooms_tab = jsonRootObject.getString("id_rooms_tab");
-                                    String attachment = jsonRootObject.getString("attachment");
-                                    String content = jsonRootObject.getString("data");
-                                    String include_assignto = jsonRootObject.getString("include_assignto");
-                                    String include_status_task = "0";
-                                    if (data.contains("include_status_task")) {
-                                        include_status_task = jsonRootObject.getString("include_status_task");
-                                    }
-
-
-                                    String api_officers = jsonRootObject.getString("api_officers");
-
-                                    BotListDB db = BotListDB.getInstance(context);
-                                    db.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from);
-                                    RoomsDetail orderModel = new RoomsDetail(getId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
-                                    db.insertRoomsDetail(orderModel);
+                            try {
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                                Calendar cal = Calendar.getInstance();
+                                String time_str = dateFormat.format(cal.getTime());
+                                JSONObject jsonRootObject = new JSONObject(data);
+                                String username = jsonRootObject.getString("username_room");
+                                String id_rooms_tab = jsonRootObject.getString("id_rooms_tab");
+                                String attachment = jsonRootObject.getString("attachment");
+                                String content = jsonRootObject.getString("data");
+                                String include_assignto = jsonRootObject.getString("include_assignto");
+                                String include_status_task = "0";
+                                if (data.contains("include_status_task")) {
+                                    include_status_task = jsonRootObject.getString("include_status_task");
+                                }
 
 
-                                    Log.w("IK : ", content);
+                                String api_officers = jsonRootObject.getString("api_officers");
 
-                                    String ccc = jsonDuaObjectW(content, attachment, api_officers, include_status_task);
-                                    if (include_assignto.equalsIgnoreCase("0")) {
-                                        ccc = jsonDuaObjectW(content, attachment, "", include_status_task);
-                                    }
+                                BotListDB db = BotListDB.getInstance(context);
+                                db.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from);
+                                RoomsDetail orderModel = new RoomsDetail(getId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
+                                db.insertRoomsDetail(orderModel);
 
 
-                                    RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
-                                    db.insertRoomsDetail(orderModel2);
+                                Log.w("IK : ", content);
+
+                                String ccc = jsonDuaObjectW(content, attachment, api_officers, include_status_task);
+                                if (include_assignto.equalsIgnoreCase("0")) {
+                                    ccc = jsonDuaObjectW(content, attachment, "", include_status_task);
+                                }
+
+
+                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
+                                db.insertRoomsDetail(orderModel2);
 
 
                                    /* mContext.runOnUiThread(new Runnable() {
@@ -890,23 +895,22 @@ public class FragmentRoomMultipleTask extends Fragment {
                                     });*/
 
 
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                        } catch (ConnectTimeoutException e) {
-                            e.printStackTrace();
-                        } catch (ClientProtocolException e) {
-                            // TODO Auto-generated catch block
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
                         }
 
-                        // new Refresh(getActivity()).execute(new ValidationsKey().getInstance(getContext()).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, aa.getId());
+                    } catch (ConnectTimeoutException e) {
+                        e.printStackTrace();
+                    } catch (ClientProtocolException e) {
+                        // TODO Auto-generated catch block
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
                     }
-            }
 
+                    // new Refresh(getActivity()).execute(new ValidationsKey().getInstance(getContext()).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, aa.getId());
+                }
+            }
 
 
         }

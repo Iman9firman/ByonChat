@@ -142,6 +142,7 @@ public class FormChildAdapter extends BaseAdapter {
 
             String totalHarga = new Validations().getInstance(context).numberToCurency(String.valueOf(nilai));
 
+            Log.w("sangkurian1", row_pos.getTitle() + "::" + row_pos.getDetail() + "::" + totalHarga);
             holder.title.setText(row_pos.getTitle());
             holder.detail.setText(row_pos.getDetail());
             holder.price.setText(totalHarga);
@@ -149,8 +150,9 @@ public class FormChildAdapter extends BaseAdapter {
             if (totalHarga.equalsIgnoreCase("0") || totalHarga.equalsIgnoreCase("0.00")) {
                 holder.price.setVisibility(View.GONE);
             } else {
-                holder.detail.setText(row_pos.getDetail() + " x " + new Validations().getInstance(context).numberToCurency(row_pos.getPrice()));
-
+                if (!from.equalsIgnoreCase("value")) {
+                    holder.detail.setText(row_pos.getDetail() + " x " + new Validations().getInstance(context).numberToCurency(row_pos.getPrice()));
+                }
             }
             holder.title.setSelected(true);
             holder.detail.setSelected(true);

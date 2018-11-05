@@ -68,12 +68,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public void deleteAllrow(String tableName,String idRoom,String idTab) {
-        getDatabase().execSQL("delete from " + tableName +" where idRoom = '"+idRoom+"' and idTab = '"+idTab+"'");
+    public void deleteAllrow(String tableName, String idRoom, String idTab) {
+        getDatabase().execSQL("delete from " + tableName + " where idRoom = '" + idRoom + "' and idTab = '" + idTab + "'");
     }
 
-    public Cursor selectAll(String tableName,String idRoom,String idTab) {
-        return getDatabase().rawQuery("Select * FROM " + tableName+" where idRoom = '"+idRoom+"'"+" and idTab = '"+idTab+"'", null);
+    public Cursor selectAll(String tableName, String idRoom, String idTab) {
+        return getDatabase().rawQuery("Select * FROM " + tableName + " where idRoom = '" + idRoom + "'" + " and idTab = '" + idTab + "'", null);
     }
 
     public Boolean checkTable(String tableName) {
@@ -89,7 +89,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return hasil;
     }
 
-    public void createUserTable(String tabName, String value,String username,String idTab) {
+    public void createUserTable(String tabName, String value, String username, String idTab) {
 
         Cursor cursor = getDatabase().rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tabName + "'", null);
         if (cursor != null) {
@@ -101,10 +101,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         cursor.close();
 
-        Cursor cc = selectAll(tabName,username,idTab);
+        Cursor cc = selectAll(tabName, username, idTab);
 
         if (cc.getCount() > 0) {
-            deleteAllrow(tabName,username,idTab);
+            deleteAllrow(tabName, username, idTab);
         }
 
 
@@ -126,6 +126,56 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 values.put("idRoom", username);
                 values.put("jabatan", jabatan);
                 values.put("divisi", divisi);
+                values.put("nik", nik);
+                values.put("no_tlpn", telp_number);
+                values.put("lokasi", lokasi);
+                values.put("nama", name);
+
+                getDatabase().insert(tabName, null, values);
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void createUserTableDua(String tabName, String value, String username, String idTab) {
+
+        Cursor cursor = getDatabase().rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tabName + "'", null);
+        if (cursor != null) {
+            if (cursor.getCount() == 0) {
+                String CREATE_TABLE_NEW_USER = "CREATE TABLE IF NOT EXISTS " + tabName + " (idRoom TEXT,lokasi TEXT,jabatan TEXT, divisi TEXT,nik TEXT,no_tlpn TEXT,nama TEXT,idTab TEXT)";
+                getDatabase().execSQL(CREATE_TABLE_NEW_USER);
+            }
+        }
+
+        cursor.close();
+
+        Cursor cc = selectAll(tabName, username, idTab);
+
+        if (cc.getCount() > 0) {
+            deleteAllrow(tabName, username, idTab);
+        }
+
+
+        try {
+            JSONObject sajojo = new JSONObject(value);
+            JSONArray alah = sajojo.getJSONArray("data");
+
+            for (int u = 0; u < alah.length(); u++) {
+
+                String name = alah.getJSONObject(u).getString("name");
+                String nik = alah.getJSONObject(u).getString("nik");
+                String telp_number = alah.getJSONObject(u).getString("telp_number");
+                String lokasi = alah.getJSONObject(u).getString("lokasi");
+
+                ContentValues values = new ContentValues();
+                values.put("idTab", idTab);
+                values.put("idRoom", username);
                 values.put("nik", nik);
                 values.put("no_tlpn", telp_number);
                 values.put("lokasi", lokasi);

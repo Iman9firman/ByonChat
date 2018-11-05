@@ -82,6 +82,7 @@ import com.byonchat.android.location.ActivityDirection;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseDropDown;
+import com.byonchat.android.provider.DataBaseHelper;
 import com.byonchat.android.provider.DatabaseKodePos;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
@@ -89,10 +90,13 @@ import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.MediaProcessingUtil;
+import com.byonchat.android.widget.ContactsCompletionView;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.tokenautocomplete.FilteredArrayAdapter;
+import com.tokenautocomplete.TokenCompleteTextView;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.apache.http.HttpEntity;
@@ -163,9 +167,10 @@ public class FragmentRoomAPI extends Fragment {
     RatingBar rat[];
     EditText et[];
     TextView tp[];
+    SearchableSpinner newSpinner[];
     Map<Integer, List<String>> hashMap = new HashMap<Integer, List<String>>();
     Map<Integer, List<String>> hashMapOcr = new HashMap<Integer, List<String>>();
-    Integer count ;
+    Integer count;
     boolean showButton = true;
     double latitude, longitude;
     GPSTracker gps;
@@ -181,7 +186,7 @@ public class FragmentRoomAPI extends Fragment {
     private static ArrayList<AttachmentAdapter.AttachmentMenuItem> attVideoItems;
     private String[] arrMonth = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     private View sss;
-    private Activity mContext ;
+    private Activity mContext;
 
     static {
         attCameraItems = new ArrayList<AttachmentAdapter.AttachmentMenuItem>();
@@ -204,7 +209,7 @@ public class FragmentRoomAPI extends Fragment {
 
     }
 
-    public static FragmentRoomAPI newInstance(String tit, String utm, String usr, String idrtab,String latLong,Activity ctx) {
+    public static FragmentRoomAPI newInstance(String tit, String utm, String usr, String idrtab, String latLong, Activity ctx) {
         FragmentRoomAPI fragmentRoomTask = new FragmentRoomAPI(ctx);
         Bundle args = new Bundle();
         args.putString("aa", tit);
@@ -235,7 +240,7 @@ public class FragmentRoomAPI extends Fragment {
         return sss;
     }
 
-    public void generateLayut(){
+    public void generateLayut() {
         linearLayout = (LinearLayout) sss.findViewById(R.id.linear);
         linearLayout.removeAllViewsInLayout();
         if (db == null) {
@@ -243,9 +248,35 @@ public class FragmentRoomAPI extends Fragment {
         }
 
 
+        RelativeLayout relativeLayout = (RelativeLayout) mContext.getLayoutInflater().inflate(R.layout.btn_refresh_layout, null);
+        ImageButton btn_refresh = (ImageButton) relativeLayout.findViewById(R.id.btn_refresh_api);
+
+        btn_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final AlertDialog.Builder alertbox = new AlertDialog.Builder(mContext);
+                alertbox.setMessage("Are you sure you want to refresh this form?");
+                alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        new Refresh(mContext).execute(urlTembak, username, idRoomTab);
+                    }
+                });
+                alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+                alertbox.show();
+
+
+            }
+        });
+
+        linearLayout.addView(relativeLayout);
 
         Cursor cursor = db.getSingleRoomDetailForm(username, idRoomTab);
-        
+
 
         if (cursor.getCount() > 0) {
             final String content = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
@@ -278,19 +309,18 @@ public class FragmentRoomAPI extends Fragment {
             }
             String firstLat = "";
             if (!latLongs.equalsIgnoreCase("")) {
-                firstLat = jsonCreateType(latLongs, "","");
+                firstLat = jsonCreateType(latLongs, "", "");
             }
 
             RoomsDetail orderModelM = new RoomsDetail(idDetail, idRoomTab, username, dateString, "0", firstLat, "parent");
-            
+
             db.insertRoomsDetail(orderModelM);
-            
+
             try {
-                if(count!=null){
+                if (count != null) {
                     count = null;
                 }
 
-                Log.w("kiasd",content);
 
                 JSONObject jsonRootObject = new JSONObject(content);
                 urlPost = jsonRootObject.getString("api_url");
@@ -303,6 +333,7 @@ public class FragmentRoomAPI extends Fragment {
                 rat = new RatingBar[jsonArray.length()];
                 linearEstimasi = new LinearLayout[jsonArray.length()];
                 imageView = new ImageView[jsonArray.length()];
+                newSpinner = new SearchableSpinner[jsonArray.length()];
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     final String idListTask = jsonArray.getJSONObject(i).getString("id_list_task").toString();
@@ -316,7 +347,132 @@ public class FragmentRoomAPI extends Fragment {
                     final String type = jsonArray.getJSONObject(i).getString("type").toString();
                     final String flag = jsonArray.getJSONObject(i).getString("flag").toString();
 
-                    if (type.equalsIgnoreCase("text")) {
+                    if (type.equalsIgnoreCase("dropdown_api")) {
+
+                        TextView textView = new TextView(mContext);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+                        textView.setLayoutParams(new TableRow.LayoutParams(0));
+
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params1.setMargins(30, 10, 30, 0);
+                        linearLayout.addView(textView, params1);
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                        linearEstimasi[count] = (LinearLayout) mContext.getLayoutInflater().inflate(R.layout.layout_child, null);
+
+                        final ArrayList<String> spinnerArray = new ArrayList<String>();
+                        final ArrayList<String> spinnerArrayNumb = new ArrayList<String>();
+                        spinnerArray.add("--Please Select--");
+                        spinnerArrayNumb.add("0");
+
+                        final LinearLayout spinerTitle = (LinearLayout) mContext.getLayoutInflater().inflate(R.layout.item_spiner_textview, null);
+                        TextView textViewFirst = (TextView) spinerTitle.findViewById(R.id.title);
+                        textViewFirst.setVisibility(View.GONE);
+
+                        textViewFirst.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
+
+                        final SearchableSpinner spinner = (SearchableSpinner) spinerTitle.findViewById(R.id.spinner);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+                        }
+                        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinner.setAdapter(spinnerArrayAdapter);
+
+                        DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(getContext());
+                        if (dataBaseHelper.checkTable("room_" + idRoomTab)) {
+                            Cursor curr = dataBaseHelper.selectAll("room_" + idRoomTab, username, idRoomTab);
+                            if (curr.getCount() > 0) {
+
+                                if (curr.moveToFirst()) {
+                                    do {
+                                        spinnerArray.add(curr.getString(6) + " (" + curr.getString(5) + ")");
+                                        spinnerArrayNumb.add(curr.getString(5));
+                                    } while (curr.moveToNext());
+                                }
+                            } else {
+                                Toast.makeText(mContext, Html.fromHtml(label) + " not found", Toast.LENGTH_LONG).show();
+                            }
+
+                        } else {
+                            new RefreshDBAsign(mContext, spinnerArrayAdapter).execute(value, username);
+                        }
+
+
+                        spinnerArrayAdapter.notifyDataSetChanged();
+
+
+                        final int finalI24 = i;
+                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                            @Override
+                            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                dummyIdDate = Integer.parseInt(idListTask);
+                                List nilai = (List) hashMap.get(dummyIdDate);
+                                if (!spinner.getSelectedItem().toString().replace("'", "''").equals("--Please Select--")) {
+                                    final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
+                                    linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1, counts - 1);
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
+
+                                    if (cEdit.getCount() > 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, spinnerArrayNumb.get(position), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
+                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                    } else {
+                                        RoomsDetail orderModel = null;
+                                        try {
+                                            orderModel = new RoomsDetail(idDetail, idRoomTab, username, spinnerArrayNumb.get(position), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
+
+                                            db.insertRoomsDetail(orderModel);
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parentView) {
+                                // your code here
+                            }
+
+                        });
+
+                        linearEstimasi[count].addView(spinerTitle);
+
+                        TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
+                        params2.setMargins(60, 10, 30, 0);
+                        linearEstimasi[count].setLayoutParams(params2);
+                        linearLayout.addView(linearEstimasi[count]);
+
+
+                    } else if (type.equalsIgnoreCase("text")) {
                         TextView textView = new TextView(mContext);
                         if (required.equalsIgnoreCase("1")) {
                             label += "<font size=\"3\" color=\"red\">*</font>";
@@ -342,8 +498,8 @@ public class FragmentRoomAPI extends Fragment {
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
 
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                             et[count].setSelection(et[count].length());
@@ -351,12 +507,12 @@ public class FragmentRoomAPI extends Fragment {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
                                 et[count].setSelection(et[count].length());
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type,String.valueOf(i)), name, "cild");
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
                             }
                         }
 
-                        
+
                         if ((!showButton)) {
                             et[count].setEnabled(false);
                         } else {
@@ -374,22 +530,22 @@ public class FragmentRoomAPI extends Fragment {
 
                                 @Override
                                 public void afterTextChanged(Editable s) {
-                                    
-                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI)));
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI)));
                                     if (cEdit.getCount() > 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type,String.valueOf(finalI)), name, "cild");
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
 
                                     } else {
                                         if (String.valueOf(s).length() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type,String.valueOf(finalI)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type,String.valueOf(finalI)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                         }
                                     }
-                                    
+
 
                                 }
                             });
@@ -437,19 +593,18 @@ public class FragmentRoomAPI extends Fragment {
                         et[count].setSingleLine(false);
                         et[count].setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type,String.valueOf(i)), name, "cild");
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
                             }
                         }
 
-                        
 
                         if ((!showButton)) {
                             et[count].setEnabled(false);
@@ -468,22 +623,22 @@ public class FragmentRoomAPI extends Fragment {
 
                                 @Override
                                 public void afterTextChanged(Editable s) {
-                                    
-                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI1)));
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI1)));
                                     if (cEdit.getCount() > 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type,String.valueOf(finalI1)), name, "cild");
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI1)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
 
                                     } else {
                                         if (String.valueOf(s).length() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type,String.valueOf(finalI1)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI1)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type,String.valueOf(finalI1)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI1)), name, "cild");
                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                         }
                                     }
-                                    
+
                                 }
                             });
                         }
@@ -512,12 +667,12 @@ public class FragmentRoomAPI extends Fragment {
                         et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
                         et.setText(value);
 
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             et.setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                         }
-                        
+
 
                         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params1.setMargins(30, 10, 30, 0);
@@ -558,19 +713,19 @@ public class FragmentRoomAPI extends Fragment {
                         et[count].setFocusable(false);
                         et[count].setFocusableInTouchMode(false); // user touches widget on phone with touch screen
 
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type,String.valueOf(i)), name, "cild");
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
                             }
                         }
 
-                        
+
                         if ((!showButton)) {
                             et[count].setEnabled(false);
                         } else {
@@ -582,14 +737,13 @@ public class FragmentRoomAPI extends Fragment {
                                     dummyIdDate = Integer.parseInt(idListTask);
                                     mYear = c.get(Calendar.YEAR);
 
-                                    
-                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI2)));
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI2)));
                                     if (cEdit.getCount() == 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type,String.valueOf(finalI2)), name, "cild");
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI2)), name, "cild");
                                         db.insertRoomsDetail(orderModel);
                                     }
 
-                                    
 
                                     DatePickerDialog dialog = new DatePickerDialog(mContext,
                                             mDateSetListener
@@ -640,19 +794,19 @@ public class FragmentRoomAPI extends Fragment {
 
                         et[count].setFocusable(false);
                         et[count].setFocusableInTouchMode(false); // user touches widget on phone with touch screen
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type,String.valueOf(i)), name, "cild");
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
                             }
                         }
                         final int finalI2 = i;
-                        
+
                         if ((!showButton)) {
                             et[count].setEnabled(false);
                         } else {
@@ -660,13 +814,13 @@ public class FragmentRoomAPI extends Fragment {
                                 @Override
                                 public void onClick(View v) {
                                     dummyIdDate = Integer.parseInt(idListTask);
-                                    
-                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, "time",String.valueOf(finalI2)));
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, "time", String.valueOf(finalI2)));
                                     if (cEdit.getCount() == 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, "time",String.valueOf(finalI2)), name, "cild");
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, "time", String.valueOf(finalI2)), name, "cild");
                                         db.insertRoomsDetail(orderModel);
                                     }
-                                    
+
                                     Calendar mcurrentTime = Calendar.getInstance();
                                     int hours = mcurrentTime.get(Calendar.HOUR_OF_DAY);
                                     int minute = mcurrentTime.get(Calendar.MINUTE);
@@ -719,19 +873,19 @@ public class FragmentRoomAPI extends Fragment {
                         et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
 
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type,String.valueOf(i)), name, "cild");
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
                             }
                         }
 
-                        
+
                         if ((!showButton)) {
                             et[count].setEnabled(false);
                         } else {
@@ -749,21 +903,21 @@ public class FragmentRoomAPI extends Fragment {
 
                                 @Override
                                 public void afterTextChanged(Editable s) {
-                                    
-                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI3)));
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI3)));
                                     if (cEdit.getCount() > 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type,String.valueOf(finalI3)), name, "cild");
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
                                     } else {
                                         if (String.valueOf(s).length() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type,String.valueOf(finalI3)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type,String.valueOf(finalI3)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                         }
                                     }
-                                    
+
                                 }
                             });
                         }
@@ -801,12 +955,12 @@ public class FragmentRoomAPI extends Fragment {
                         params.addRule(RelativeLayout.CENTER_IN_PARENT);
                         linearLayout.addView(imageView[count], params);
 
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             imageView[count].setImageBitmap(decodeBase64(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT))));
                         }
-                        
+
 
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
@@ -821,8 +975,8 @@ public class FragmentRoomAPI extends Fragment {
                         imageView[count].setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                
-                                Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI4)));
+
+                                Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI4)));
                                 if (cursorCild.getCount() > 0) {
                                     Intent intent = new Intent(getContext(), ZoomImageViewActivity.class);
                                     intent.putExtra(ZoomImageViewActivity.KEY_FILE, ZoomImageViewActivity.FROM);
@@ -830,16 +984,16 @@ public class FragmentRoomAPI extends Fragment {
                                     intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_B, username);
                                     intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_C, idRoomTab);
                                     intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_D, "cild");
-                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type,String.valueOf(finalI4)));
+                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type, String.valueOf(finalI4)));
                                     startActivity(intent);
                                 } else {
                                     int facing = 0;
                                     if (type.equalsIgnoreCase("front_camera")) {
                                         facing = 1;
                                     }
-                                    captureGalery(idDetail, username, idRoomTab, idListTask, type, name, flag, facing,String.valueOf(finalI4));
+                                    captureGalery(idDetail, username, idRoomTab, idListTask, type, name, flag, facing, String.valueOf(finalI4));
                                 }
-                                
+
                             }
                         });
 
@@ -855,8 +1009,8 @@ public class FragmentRoomAPI extends Fragment {
                                         mContext,
                                         android.R.layout.simple_list_item_1);
 
-                                
-                                final Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI5)));
+
+                                final Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI5)));
                                 if (cursorCild.getCount() > 0) {
                                     arrayAdapter.add("Retake");
                                     arrayAdapter.add("Delete");
@@ -864,7 +1018,7 @@ public class FragmentRoomAPI extends Fragment {
                                 } else {
                                     arrayAdapter.add("Capture");
                                 }
-                                
+
                                 builderSingle.setAdapter(arrayAdapter,
                                         new DialogInterface.OnClickListener() {
                                             @Override
@@ -875,12 +1029,12 @@ public class FragmentRoomAPI extends Fragment {
                                                     if (type.equalsIgnoreCase("front_camera")) {
                                                         facing = 1;
                                                     }
-                                                    captureGalery(idDetail, username, idRoomTab, idListTask, type, name, flag, facing,String.valueOf(finalI5));
+                                                    captureGalery(idDetail, username, idRoomTab, idListTask, type, name, flag, facing, String.valueOf(finalI5));
                                                 } else if (listName.equalsIgnoreCase("Delete")) {
-                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type,String.valueOf(finalI5)), name, "cild");
-                                                    
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI5)), name, "cild");
+
                                                     db.deleteDetailRoomWithFlagContent(orderModel);
-                                                    
+
                                                     generateLayut();
                                                    /* finish();
                                                     startActivity(getIntent());*/
@@ -891,7 +1045,7 @@ public class FragmentRoomAPI extends Fragment {
                                                     intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_B, username);
                                                     intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_C, idRoomTab);
                                                     intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_D, "cild");
-                                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type,String.valueOf(finalI5)));
+                                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type, String.valueOf(finalI5)));
                                                     startActivity(intent);
                                                 }
                                             }
@@ -940,14 +1094,14 @@ public class FragmentRoomAPI extends Fragment {
                             public void onClick(View view) {
                                 dummyIdDate = Integer.parseInt(idListTask);
                                 Intent i = new Intent(getContext(), ReaderOcr.class);
-                                startActivityForResult(i,OCR_REQUEST);
+                                startActivityForResult(i, OCR_REQUEST);
 
                             }
                         });
 
 
-                        RelativeLayout child ;
-                        if( jsonArray.getJSONObject(i).getString("ocr") != null){
+                        RelativeLayout child;
+                        if (jsonArray.getJSONObject(i).getString("ocr") != null) {
                             String isi = jsonArray.getJSONObject(i).getString("ocr").toString();
                             JSONArray jsonArrays = new JSONArray(isi);
                             for (int ia = 0; ia < jsonArrays.length(); ia++) {
@@ -955,18 +1109,18 @@ public class FragmentRoomAPI extends Fragment {
                                 final String nn = jsonArrays.getJSONObject(ia).getString("name").toString();
                                 linearEstimasi[count] = (LinearLayout) mContext.getLayoutInflater().inflate(R.layout.layout_child, null);
                                 child = (RelativeLayout) mContext.getLayoutInflater().inflate(R.layout.item_cild_ocr, null);
-                                ImageButton btnOption= (ImageButton) child.findViewById(R.id.btnOption);
-                                ImageButton btnCancel= (ImageButton) child.findViewById(R.id.btnCancel);
-                                final TextView namePickup= (TextView) child.findViewById(R.id.namePickup);
+                                ImageButton btnOption = (ImageButton) child.findViewById(R.id.btnOption);
+                                ImageButton btnCancel = (ImageButton) child.findViewById(R.id.btnCancel);
+                                final TextView namePickup = (TextView) child.findViewById(R.id.namePickup);
                                 namePickup.setText(ll);
-                                final EditText valuePickup= (EditText) child.findViewById(R.id.valuePickup);
+                                final EditText valuePickup = (EditText) child.findViewById(R.id.valuePickup);
 
-                                
-                                final Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                                final Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                                 if (cursorCild.getCount() > 0) {
-                                    valuePickup.setText(jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),nn)!=null?jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),nn):"");
+                                    valuePickup.setText(jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), nn) != null ? jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), nn) : "");
                                 }
-                                
+
 
                                 final int finalI25 = i;
                                 valuePickup.addTextChangedListener(new TextWatcher() {
@@ -982,13 +1136,13 @@ public class FragmentRoomAPI extends Fragment {
 
                                     @Override
                                     public void afterTextChanged(Editable s) {
-                                        
-                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI25)));
+
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI25)));
                                         if (cEdit.getCount() > 0) {
                                             JSONObject jsonObj = null;
                                             try {
                                                 JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, function(jsonObject,nn,s.toString()).toString(), jsonCreateType(idListTask, type,String.valueOf(finalI25)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, function(jsonObject, nn, s.toString()).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI25)), name, "cild");
                                                 db.updateDetailRoomWithFlagContent(orderModel);
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
@@ -1000,7 +1154,7 @@ public class FragmentRoomAPI extends Fragment {
                                             if (String.valueOf(s).length() > 0) {
                                                 JSONObject jsonObj = null;
                                                 try {
-                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, function(null,nn,s.toString()).toString(), jsonCreateType(idListTask, type,String.valueOf(finalI25)), name, "cild");
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, function(null, nn, s.toString()).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI25)), name, "cild");
                                                     db.insertRoomsDetail(orderModel);
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
@@ -1009,7 +1163,7 @@ public class FragmentRoomAPI extends Fragment {
                                                 }
                                             }
                                         }
-                                        
+
                                     }
                                 });
 
@@ -1017,7 +1171,7 @@ public class FragmentRoomAPI extends Fragment {
                                     @Override
                                     public void onClick(View v) {
                                         final AlertDialog.Builder alertbox = new AlertDialog.Builder(mContext);
-                                        alertbox.setMessage("Are you sure clear "+namePickup.getText()+"?");
+                                        alertbox.setMessage("Are you sure clear " + namePickup.getText() + "?");
                                         alertbox.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface arg0, int arg1) {
                                                 valuePickup.setText("");
@@ -1045,7 +1199,7 @@ public class FragmentRoomAPI extends Fragment {
                                         if (valueOcr != null) {
                                             for (Object element : valueOcr) {
                                                 if (element != null) {
-                                                    if (element.toString().trim().length()>0)
+                                                    if (element.toString().trim().length() > 0)
                                                         arrayAdapter.add(element.toString().trim());
                                                 }
                                             }
@@ -1056,10 +1210,10 @@ public class FragmentRoomAPI extends Fragment {
                                                     public void onClick(DialogInterface dialog, int which) {
                                                         String listName = arrayAdapter.getItem(which);
                                                         String space = "";
-                                                        if(valuePickup.getText().toString().length()>0){
+                                                        if (valuePickup.getText().toString().length() > 0) {
                                                             space = "\n";
                                                         }
-                                                        valuePickup.setText(valuePickup.getText()+space+listName);
+                                                        valuePickup.setText(valuePickup.getText() + space + listName);
                                                         valuePickup.setSelection(valuePickup.getText().length());
                                                     }
                                                 });
@@ -1103,32 +1257,32 @@ public class FragmentRoomAPI extends Fragment {
                         linearEstimasi[count].setLayoutParams(params2);
                         linearLayout.addView(linearEstimasi[count]);
 
-                        final Button btnOption= (Button) linearEstimasi[count].findViewById(R.id.btn_browse);
-                        final TextView valueFile= (TextView) linearEstimasi[count].findViewById(R.id.value);
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+                        final Button btnOption = (Button) linearEstimasi[count].findViewById(R.id.btn_browse);
+                        final TextView valueFile = (TextView) linearEstimasi[count].findViewById(R.id.value);
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
-                            valueFile.setText(jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"a"));
+                            valueFile.setText(jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "a"));
                         }
-                        
+
 
                         final int finalI25 = i;
                         btnOption.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 dummyIdDate = Integer.parseInt(idListTask);
-                                
+
                                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI25)));
                                 if (cEdit.getCount() == 0) {
                                     RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI25)), name, "cild");
                                     db.insertRoomsDetail(orderModel);
                                 }
-                                
+
 
                                 Intent intent = new Intent();
                                 intent.setType("file");
                                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(Intent.createChooser(intent,"Choose File to Upload.."),PICK_FILE_REQUEST);
+                                startActivityForResult(Intent.createChooser(intent, "Choose File to Upload.."), PICK_FILE_REQUEST);
 
                             }
                         });
@@ -1168,27 +1322,27 @@ public class FragmentRoomAPI extends Fragment {
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
                         final int finalI26 = i;
 
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             //  imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form, null);
                             imageView[count].setImageBitmap(decodeBase64(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT))));
                         }
-                        
+
 
                         imageView[count].setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 dummyIdDate = Integer.parseInt(idListTask);
-                                
+
                                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI26)));
                                 if (cEdit.getCount() == 0) {
                                     RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI26)), name, "cild");
                                     db.insertRoomsDetail(orderModel);
                                 }
-                                
+
                                 Intent intent = new Intent(getContext(), CaptureSignature.class);
-                                startActivityForResult(intent,SIGNATURE_ACTIVITY);
+                                startActivityForResult(intent, SIGNATURE_ACTIVITY);
 
                             }
                         });
@@ -1227,45 +1381,44 @@ public class FragmentRoomAPI extends Fragment {
                         linearLayout.addView(linearEstimasi[count]);
 
 
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             TextView start = (TextView) linearEstimasi[count].findViewById(R.id.valuePickup);
                             TextView end = (TextView) linearEstimasi[count].findViewById(R.id.valueEnd);
                             TextView jarak = (TextView) linearEstimasi[count].findViewById(R.id.valueJarak);
 
 
-                            String[] latlongS =jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"s").split(
+                            String[] latlongS = jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "s").split(
                                     Message.LOCATION_DELIMITER);
                             if (latlongS.length > 4) {
                                 String text = "<u><b>" + (String) latlongS[2] + "</b></u><br/>";
                                 start.setText(Html.fromHtml(text + latlongS[3]));
                             }
 
-                            String[] latlongE =jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"e").split(
+                            String[] latlongE = jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "e").split(
                                     Message.LOCATION_DELIMITER);
                             if (latlongE.length > 4) {
                                 String text = "<u><b>" + (String) latlongE[2] + "</b></u><br/>";
                                 end.setText(Html.fromHtml(text + latlongE[3]));
                             }
-                            jarak.setText(jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"d"));
+                            jarak.setText(jsonResultType(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "d"));
                         }
-                        
+
 
                         final int finalI27 = i;
                         linearEstimasi[count].setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 dummyIdDate = Integer.parseInt(idListTask);
-                                
+
                                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI27)));
                                 if (cEdit.getCount() == 0) {
                                     RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI27)), name, "cild");
                                     db.insertRoomsDetail(orderModel);
                                 }
-                                
+
                                 Intent i = new Intent(getContext(), ActivityDirection.class);
-                                startActivityForResult(i,PICK_ESTIMATION);
+                                startActivityForResult(i, PICK_ESTIMATION);
                             }
                         });
                     } else if (type.equalsIgnoreCase("rate")) {
@@ -1305,19 +1458,19 @@ public class FragmentRoomAPI extends Fragment {
                         rat[count].setLayoutParams(testLP);
                         linearLayout.addView(rat[count]);
 
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             rat[count].setRating(Float.parseFloat(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT))));
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 rat[count].setRating(Integer.parseInt(value));
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type,String.valueOf(i)), name, "cild");
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
                             }
                         }
                         final int finalI24 = i;
-                        
+
                         if ((!showButton)) {
                             rat[count].setEnabled(false);
                         } else {
@@ -1326,21 +1479,20 @@ public class FragmentRoomAPI extends Fragment {
                                 public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                                     List valueList = (List) hashMap.get(Integer.parseInt(idListTask));
                                     String conten = String.valueOf(rat[Integer.valueOf(valueList.get(0).toString())].getRating());
-                                    
-                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI24)));
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                                     if (cEdit.getCount() > 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username,conten , jsonCreateType(idListTask, type,String.valueOf(finalI24)), name, "cild");
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, conten, jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
                                     } else {
                                         if (conten.length() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, conten, jsonCreateType(idListTask, type,String.valueOf(finalI24)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, conten, jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username,conten, jsonCreateType(idListTask, type,String.valueOf(finalI24)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, conten, jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                         }
                                     }
-                                    
 
 
                                 }
@@ -1375,8 +1527,8 @@ public class FragmentRoomAPI extends Fragment {
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
                         et[count].setFocusable(false);
                         et[count].setFocusableInTouchMode(false); // user touches widget on phone with touch screen
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             String[] latlong = cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).split(
                                     Message.LOCATION_DELIMITER);
@@ -1386,7 +1538,7 @@ public class FragmentRoomAPI extends Fragment {
                             }
                         }
 
-                        
+
                         final String finalLabel1 = label;
                         final int finalI6 = i;
                         et[count].setOnTouchListener(new View.OnTouchListener() {
@@ -1394,9 +1546,9 @@ public class FragmentRoomAPI extends Fragment {
                             public boolean onTouch(final View view, MotionEvent motionEvent) {
                                 if (motionEvent.getAction() == MotionEvent.ACTION_UP && showDialog) {
                                     showDialog = false;
-                                    
-                                    final Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI6)));
-                                    
+
+                                    final Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI6)));
+
                                     if (cursorCild.getCount() > 0) {
                                         AlertDialog.Builder builderSingle = new AlertDialog.Builder(
                                                 getContext());
@@ -1416,13 +1568,13 @@ public class FragmentRoomAPI extends Fragment {
                                                     public void onClick(DialogInterface dialog, int which) {
                                                         String listName = arrayAdapter.getItem(which);
                                                         if (listName.equalsIgnoreCase("Retake")) {
-                                                            requestLocationInfo(idDetail, username, idRoomTab, idListTask, type, name,String.valueOf(finalI6));
+                                                            requestLocationInfo(idDetail, username, idRoomTab, idListTask, type, name, String.valueOf(finalI6));
                                                         } else if (listName.equalsIgnoreCase("Delete")) {
                                                             showDialog = true;
-                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type,String.valueOf(finalI6)), name, "cild");
-                                                            
+                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI6)), name, "cild");
+
                                                             db.deleteDetailRoomWithFlagContent(orderModel);
-                                                            
+
                                                             generateLayut();
                                                          /*   finish();
                                                             startActivity(getIntent());*/
@@ -1469,7 +1621,7 @@ public class FragmentRoomAPI extends Fragment {
                                         return true;
                                     } else {
                                         if ((showButton)) {
-                                            requestLocationInfo(idDetail, username, idRoomTab, idListTask, type, name,String.valueOf(finalI6));
+                                            requestLocationInfo(idDetail, username, idRoomTab, idListTask, type, name, String.valueOf(finalI6));
                                         }
 
                                     }
@@ -1533,182 +1685,182 @@ public class FragmentRoomAPI extends Fragment {
                         });
                     } else if (type.equalsIgnoreCase("dropdown_dinamis")) {
 
-                            TextView textView = new TextView(mContext);
-                            if (required.equalsIgnoreCase("1")) {
-                                label += "<font size=\"3\" color=\"red\">*</font>";
-                            }
-                            textView.setText(Html.fromHtml(label));
-                            textView.setTextSize(15);
-                            textView.setLayoutParams(new TableRow.LayoutParams(0));
+                        TextView textView = new TextView(mContext);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+                        textView.setLayoutParams(new TableRow.LayoutParams(0));
 
-                            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                            params1.setMargins(30, 10, 30, 0);
-                            linearLayout.addView(textView, params1);
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params1.setMargins(30, 10, 30, 0);
+                        linearLayout.addView(textView, params1);
 
-                            if (count == null) {
-                                count = 0;
-                            } else {
-                                count++;
-                            }
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
 
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(String.valueOf(count));
-                            valSetOne.add(required);
-                            valSetOne.add(type);
-                            valSetOne.add(name);
-                            valSetOne.add(label);
-                            valSetOne.add(String.valueOf(i));
-                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
-                            linearEstimasi[count] = (LinearLayout) mContext.getLayoutInflater().inflate(R.layout.layout_child, null);
+                        linearEstimasi[count] = (LinearLayout) mContext.getLayoutInflater().inflate(R.layout.layout_child, null);
 
-                            JSONObject jObject = new JSONObject(value);
-                            String url = jObject.getString("url");
-                            String[] aa = url.split("/");
-                            final String nama = aa[aa.length-1].toString();
-                            DataBaseDropDown mDB = new DataBaseDropDown(mContext,nama.substring(0,nama.indexOf(".")));
-                            if(mDB.getWritableDatabase()!=null){
-                                String namaTable = "";
-                                Cursor c2 = mDB.selectAll();
-                                if (c2.moveToFirst()) {
-                                    while ( !c2.isAfterLast() ) {
-                                        if(namaTable.equalsIgnoreCase("")){
-                                            namaTable= c2.getString(0);
-                                        }
-                                        c2.moveToNext();
+                        JSONObject jObject = new JSONObject(value);
+                        String url = jObject.getString("url");
+                        String[] aa = url.split("/");
+                        final String nama = aa[aa.length - 1].toString();
+                        DataBaseDropDown mDB = new DataBaseDropDown(mContext, nama.substring(0, nama.indexOf(".")));
+                        if (mDB.getWritableDatabase() != null) {
+                            String namaTable = "";
+                            Cursor c2 = mDB.selectAll();
+                            if (c2.moveToFirst()) {
+                                while (!c2.isAfterLast()) {
+                                    if (namaTable.equalsIgnoreCase("")) {
+                                        namaTable = c2.getString(0);
                                     }
+                                    c2.moveToNext();
                                 }
+                            }
 
-                                linearEstimasi[count].removeAllViews();
+                            linearEstimasi[count].removeAllViews();
 
-                                Cursor dbCursor = mDB.getWritableDatabase().query(namaTable, null, null, null, null, null, null);
-                                final String[] columnNames = dbCursor.getColumnNames();
-                                final Cursor c = mDB.getWritableDatabase().query(true,namaTable,new String[] {columnNames[0]},null , null, columnNames[0], null, null, null);
-                                final ArrayList<String> spinnerArray = new ArrayList<String>();
-                                spinnerArray.add("--Please Select--");
-                                if(c.moveToFirst()){
-                                    do{
-                                        String column1 = c.getString(0);
-                                        spinnerArray.add(column1);
-                                    }while(c.moveToNext());
+                            Cursor dbCursor = mDB.getWritableDatabase().query(namaTable, null, null, null, null, null, null);
+                            final String[] columnNames = dbCursor.getColumnNames();
+                            final Cursor c = mDB.getWritableDatabase().query(true, namaTable, new String[]{columnNames[0]}, null, null, columnNames[0], null, null, null);
+                            final ArrayList<String> spinnerArray = new ArrayList<String>();
+                            spinnerArray.add("--Please Select--");
+                            if (c.moveToFirst()) {
+                                do {
+                                    String column1 = c.getString(0);
+                                    spinnerArray.add(column1);
+                                } while (c.moveToNext());
+                            }
+                            c.close();
+
+                            final LinearLayout spinerTitle = (LinearLayout) mContext.getLayoutInflater().inflate(R.layout.item_spiner_textview, null);
+                            TextView textViewFirst = (TextView) spinerTitle.findViewById(R.id.title);
+                            JSONObject jObjectFirs = new JSONObject(value);
+                            final JSONArray titleDropdown = new JSONArray(jObjectFirs.getString("title"));
+                            final String titlesss = titleDropdown.get(0).toString();
+                            textViewFirst.setText(Html.fromHtml(titlesss));
+                            textViewFirst.setTextSize(15);
+
+                            final SearchableSpinner spinner = (SearchableSpinner) spinerTitle.findViewById(R.id.spinner);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+                            }
+                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinner.setAdapter(spinnerArrayAdapter);
+
+
+                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                            if (cursorCild.getCount() > 0) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                                    int spinnerPosition = spinnerArrayAdapter.getPosition(jsonObject.getString(titlesss));
+                                    spinner.setSelection(spinnerPosition);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                                c.close();
+                            }
 
-                                final LinearLayout spinerTitle = (LinearLayout) mContext.getLayoutInflater().inflate(R.layout.item_spiner_textview, null);
-                                TextView textViewFirst = (TextView) spinerTitle.findViewById(R.id.title);
-                                JSONObject jObjectFirs = new JSONObject(value);
-                                final JSONArray titleDropdown = new JSONArray(jObjectFirs.getString("title"));
-                                final String titlesss = titleDropdown.get(0).toString();
-                                textViewFirst.setText(Html.fromHtml(titlesss));
-                                textViewFirst.setTextSize(15);
 
-                                final SearchableSpinner spinner = (SearchableSpinner) spinerTitle.findViewById(R.id.spinner);
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                    spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
-                                }
-                                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
-                                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                spinner.setAdapter(spinnerArrayAdapter);
+                            final String finalNamaTable = namaTable;
+                            final int finalI24 = i;
+                            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-                                
-                                Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
-                                if (cursorCild.getCount() > 0) {
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                        int spinnerPosition = spinnerArrayAdapter.getPosition(jsonObject.getString(titlesss));
-                                        spinner.setSelection(spinnerPosition);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                
+                                @Override
+                                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                    dummyIdDate = Integer.parseInt(idListTask);
+                                    List nilai = (List) hashMap.get(dummyIdDate);
+                                    if (!spinner.getSelectedItem().toString().replace("'", "''").equals("--Please Select--")) {
+                                        if (columnNames.length > 1) {
+                                            final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
+                                            linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1, counts - 1);
+                                            addSpinner(value, nama.substring(0, nama.indexOf(".")), linearEstimasi[Integer.valueOf(nilai.get(0).toString())], finalNamaTable, columnNames, 0, columnNames[0] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'", idListTask, type, String.valueOf(finalI24), name);
 
-                                final String finalNamaTable = namaTable;
-                                final int finalI24 = i;
-                                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
 
-                                    @Override
-                                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                                        dummyIdDate = Integer.parseInt(idListTask);
-                                        List nilai = (List) hashMap.get(dummyIdDate);
-                                        if(!spinner.getSelectedItem().toString().replace("'","''").equals("--Please Select--")){
-                                            if (columnNames.length>1){
-                                                final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
-                                                linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1,counts-1);
-                                                addSpinner(value,nama.substring(0,nama.indexOf(".")),linearEstimasi[Integer.valueOf(nilai.get(0).toString())], finalNamaTable,columnNames,0, columnNames[0]+"= '"+spinner.getSelectedItem().toString().replace("'","''")+"'",idListTask,type,String.valueOf(finalI24),name);
-                                                
-                                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI24)));
-                                                
-                                                if (cEdit.getCount() > 0) {
-                                                    try {
-                                                        JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username,function(jsonObject,titlesss,spinner.getSelectedItem().toString().replace("'","''")).toString() , jsonCreateType(idListTask, type,String.valueOf(finalI24)), name, "cild");
-                                                        
-                                                        db.updateDetailRoomWithFlagContent(orderModel);
-                                                        
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    } catch (Exception e) {
-                                                        e.printStackTrace();
-                                                    }
+                                            if (cEdit.getCount() > 0) {
+                                                try {
+                                                    JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, function(jsonObject, titlesss, spinner.getSelectedItem().toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
 
-                                                } else {
-                                                    RoomsDetail orderModel = null;
-                                                    try {
-                                                        orderModel = new RoomsDetail(idDetail, idRoomTab, username,  function(null,titlesss,spinner.getSelectedItem().toString().replace("'","''")).toString(), jsonCreateType(idListTask, type,String.valueOf(finalI24)), name, "cild");
-                                                        
-                                                        db.insertRoomsDetail(orderModel);
-                                                        
-                                                    } catch (Exception e) {
-                                                        e.printStackTrace();
-                                                    }
+                                                    db.updateDetailRoomWithFlagContent(orderModel);
 
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                            } else {
+                                                RoomsDetail orderModel = null;
+                                                try {
+                                                    orderModel = new RoomsDetail(idDetail, idRoomTab, username, function(null, titlesss, spinner.getSelectedItem().toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
+
+                                                    db.insertRoomsDetail(orderModel);
+
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
                                                 }
 
                                             }
-                                        }else{
-                                            if (columnNames.length>1){
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username,spinner.getSelectedItem().toString().replace("'","''"), jsonCreateType(idListTask, type,String.valueOf(finalI24)), name, "cild");
-                                                
-                                                db.deleteDetailRoomWithFlagContent(orderModel);
-                                                
-                                                linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeAllViews();
-                                                linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(spinerTitle);
-                                            }
 
                                         }
+                                    } else {
+                                        if (columnNames.length > 1) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, spinner.getSelectedItem().toString().replace("'", "''"), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
+
+                                            db.deleteDetailRoomWithFlagContent(orderModel);
+
+                                            linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeAllViews();
+                                            linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(spinerTitle);
+                                        }
+
                                     }
-
-                                    @Override
-                                    public void onNothingSelected(AdapterView<?> parentView) {
-                                        // your code here
-                                    }
-
-                                });
-
-                                linearEstimasi[count].addView(spinerTitle);
-
-                            }else {
-                                if(deleteContent){
-                                    
-                                    db.deleteRoomsDetailbyId(idDetail, idListTask, username);
-                                    
                                 }
-                                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                                    Toast.makeText(mContext, "Please insert memmory card", Toast.LENGTH_LONG).show();
-                                    generateLayut();
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parentView) {
+                                    // your code here
                                 }
-                                generateLayut();
-                                Intent intent = new Intent(getContext(), DownloadSqliteDinamicActivity.class);
-                                intent.putExtra("name_db",nama.substring(0,nama.indexOf(".")));
-                                intent.putExtra("path_db",url);
-                                startActivity(intent);
-                                return;
+
+                            });
+
+                            linearEstimasi[count].addView(spinerTitle);
+
+                        } else {
+                            if (deleteContent) {
+
+                                db.deleteRoomsDetailbyId(idDetail, idListTask, username);
+
                             }
-                            TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
-                            params2.setMargins(60, 10, 30, 0);
-                            linearEstimasi[count].setLayoutParams(params2);
-                            linearLayout.addView(linearEstimasi[count]);
+                            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                Toast.makeText(mContext, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                                generateLayut();
+                            }
+                            generateLayut();
+                            Intent intent = new Intent(getContext(), DownloadSqliteDinamicActivity.class);
+                            intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
+                            intent.putExtra("path_db", url);
+                            startActivity(intent);
+                            return;
+                        }
+                        TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
+                        params2.setMargins(60, 10, 30, 0);
+                        linearEstimasi[count].setLayoutParams(params2);
+                        linearLayout.addView(linearEstimasi[count]);
 
                     } else if (type.equalsIgnoreCase("dropdown")) {
                         TextView textView = new TextView(mContext);
@@ -1748,16 +1900,15 @@ public class FragmentRoomAPI extends Fragment {
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
 
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             int spinnerPosition = spinnerArrayAdapter.getPosition(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                             spinner.setSelection(spinnerPosition);
                         } else {
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, spinner.getSelectedItem().toString().replace("'","''"), jsonCreateType(idListTask, type,String.valueOf(i)), name, "cild");
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, spinner.getSelectedItem().toString().replace("'", "''"), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                             db.insertRoomsDetail(orderModel);
                         }
-                        
+
 
                         if ((!showButton)) {
                             spinner.setEnabled(false);
@@ -1767,16 +1918,16 @@ public class FragmentRoomAPI extends Fragment {
 
                                 @Override
                                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
-                                    
-                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI7)));
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
                                     if (cEdit.getCount() > 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, spinnerArray.get(myPosition), jsonCreateType(idListTask, type,String.valueOf(finalI7)), name, "cild");
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, spinnerArray.get(myPosition), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
                                     } else {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, spinnerArray.get(myPosition), jsonCreateType(idListTask, type,String.valueOf(finalI7)), name, "cild");
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, spinnerArray.get(myPosition), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                         db.insertRoomsDetail(orderModel);
                                     }
-                                    
+
 
                                 }
 
@@ -1794,7 +1945,7 @@ public class FragmentRoomAPI extends Fragment {
                         linearLayout.addView(spinner, params2);
                     } else if (type.equalsIgnoreCase("input_kodepos")) {
                         final DatabaseKodePos mDB = new DatabaseKodePos(mContext);
-                        if(mDB.getWritableDatabase()!=null){
+                        if (mDB.getWritableDatabase() != null) {
                             TextView textView = new TextView(mContext);
                             if (required.equalsIgnoreCase("1")) {
                                 label += "<font size=\"3\" color=\"red\">*</font>";
@@ -1835,21 +1986,20 @@ public class FragmentRoomAPI extends Fragment {
                             kel.setText("-");
 
                             et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
-                            
-                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                             if (cursorCild.getCount() > 0) {
                                 String isi = cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-                                et[count].setText(jsonResultType(isi,"a"));
-                                prov.setText(jsonResultType(isi,"b"));
-                                kota.setText(jsonResultType(isi,"c"));
-                                kec.setText(jsonResultType(isi,"d"));
-                                kel.setText(jsonResultType(isi,"e"));
+                                et[count].setText(jsonResultType(isi, "a"));
+                                prov.setText(jsonResultType(isi, "b"));
+                                kota.setText(jsonResultType(isi, "c"));
+                                kec.setText(jsonResultType(isi, "d"));
+                                kel.setText(jsonResultType(isi, "e"));
                             } else {
                                 if (!value.equalsIgnoreCase("")) {
                                     et[count].setText(value);
                                 }
                             }
-                            
 
 
                             if ((!showButton)) {
@@ -1871,27 +2021,27 @@ public class FragmentRoomAPI extends Fragment {
 
                                     @Override
                                     public void afterTextChanged(Editable s) {
-                                        if(s.length()>4){
-                                            Cursor c = mDB.getWritableDatabase().query(true,"wilayah",new String[] {"propinsi,jenis,kabupaten,kecamatan,kelurahan"},"kode_pos = '"+s+"'",null , null, null, null, null);
+                                        if (s.length() > 4) {
+                                            Cursor c = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"propinsi,jenis,kabupaten,kecamatan,kelurahan"}, "kode_pos = '" + s + "'", null, null, null, null, null);
                                             final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                                                     mContext,
                                                     android.R.layout.simple_list_item_1);
                                             final ArrayList<ModelWilayah> modelWilayahs = new ArrayList<ModelWilayah>();
-                                            if(c.moveToFirst()){
-                                                do{
+                                            if (c.moveToFirst()) {
+                                                do {
                                                     String prov = c.getString(0);
                                                     String jenis = c.getString(1);
                                                     String kab = c.getString(2);
                                                     String kec = c.getString(3);
                                                     String kel = c.getString(4);
 
-                                                    ModelWilayah modelWilayah = new ModelWilayah(s.toString(),prov,kab,jenis,kec,kel);
+                                                    ModelWilayah modelWilayah = new ModelWilayah(s.toString(), prov, kab, jenis, kec, kel);
                                                     modelWilayahs.add(modelWilayah);
-                                                    arrayAdapter.add(prov+","+jenis+" "+ kab+","+kec+","+kel);
-                                                }while(c.moveToNext());
+                                                    arrayAdapter.add(prov + "," + jenis + " " + kab + "," + kec + "," + kel);
+                                                } while (c.moveToNext());
                                             }
 
-                                            if(arrayAdapter.getCount()==0){
+                                            if (arrayAdapter.getCount() == 0) {
                                                 android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(mContext);
                                                 alertDialogBuilder.setMessage("Kode Pos not valid");
 
@@ -1899,16 +2049,16 @@ public class FragmentRoomAPI extends Fragment {
                                                     @Override
                                                     public void onClick(DialogInterface arg0, int arg1) {
                                                         et[count].setError("not valid");
-                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type,String.valueOf(finalI8)), name, "cild");
-                                                        
+                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI8)), name, "cild");
+
                                                         db.deleteDetailRoomWithFlagContent(orderModel);
-                                                        
+
                                                     }
                                                 });
 
                                                 android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
                                                 alertDialog.show();
-                                            }else if (arrayAdapter.getCount()==1) {
+                                            } else if (arrayAdapter.getCount() == 1) {
 
                                                 final String strProv = modelWilayahs.get(0).getProv();
                                                 final String strKode = modelWilayahs.get(0).getKodepos();
@@ -1918,21 +2068,21 @@ public class FragmentRoomAPI extends Fragment {
                                                 final String strKel = modelWilayahs.get(0).getKel();
 
                                                 prov.setText(strProv);
-                                                kota.setText(strJen+" "+strKab);
+                                                kota.setText(strJen + " " + strKab);
                                                 kec.setText(strKec);
                                                 kel.setText(strKel);
 
-                                                
-                                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI8)));
+
+                                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI8)));
                                                 if (cEdit.getCount() > 0) {
-                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(strKode,strProv,strJen+" "+strKab,strKec,strKel), jsonCreateType(idListTask, type,String.valueOf(finalI8)), name, "cild");
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(strKode, strProv, strJen + " " + strKab, strKec, strKel), jsonCreateType(idListTask, type, String.valueOf(finalI8)), name, "cild");
                                                     db.updateDetailRoomWithFlagContent(orderModel);
                                                 } else {
-                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(strKode,strProv,strJen+" "+strKab,strKec,strKel), jsonCreateType(idListTask, type,String.valueOf(finalI8)), name, "cild");
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(strKode, strProv, strJen + " " + strKab, strKec, strKel), jsonCreateType(idListTask, type, String.valueOf(finalI8)), name, "cild");
                                                     db.insertRoomsDetail(orderModel);
                                                 }
-                                                
-                                            }else {
+
+                                            } else {
 
                                                 android.support.v7.app.AlertDialog.Builder builderSingle = new android.support.v7.app.AlertDialog.Builder(mContext);
                                                 builderSingle.setTitle("Pilih kelurahan ");
@@ -1959,35 +2109,35 @@ public class FragmentRoomAPI extends Fragment {
                                                                 final String strKel = modelWilayahs.get(which).getKel();
 
                                                                 prov.setText(strProv);
-                                                                kota.setText(strJen+" "+strKab);
+                                                                kota.setText(strJen + " " + strKab);
                                                                 kec.setText(strKec);
                                                                 kel.setText(strKel);
 
-                                                                
-                                                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI9)));
+
+                                                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI9)));
                                                                 if (cEdit.getCount() > 0) {
-                                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(strKode,strProv,strJen+" "+strKab,strKec,strKel), jsonCreateType(idListTask, type,String.valueOf(finalI9)), name, "cild");
+                                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(strKode, strProv, strJen + " " + strKab, strKec, strKel), jsonCreateType(idListTask, type, String.valueOf(finalI9)), name, "cild");
                                                                     db.updateDetailRoomWithFlagContent(orderModel);
                                                                 } else {
-                                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(strKode,strProv,strJen+" "+strKab,strKec,strKel), jsonCreateType(idListTask, type,String.valueOf(finalI9)), name, "cild");
+                                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(strKode, strProv, strJen + " " + strKab, strKec, strKel), jsonCreateType(idListTask, type, String.valueOf(finalI9)), name, "cild");
                                                                     db.insertRoomsDetail(orderModel);
                                                                 }
-                                                                
+
                                                             }
                                                         });
                                                 builderSingle.show();
 
                                                 c.close();
                                             }
-                                        }else{
+                                        } else {
                                             prov.setText("-");
                                             kota.setText("-");
                                             kec.setText("-");
                                             kel.setText("-");
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type,String.valueOf(finalI20)), name, "cild");
-                                            
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI20)), name, "cild");
+
                                             db.deleteDetailRoomWithFlagContent(orderModel);
-                                            
+
                                         }
                                     }
                                 });
@@ -2038,8 +2188,7 @@ public class FragmentRoomAPI extends Fragment {
                             linearLayout.addView(kel, params2);
 
 
-
-                        }else {
+                        } else {
                             generateLayut();
                             /*getActivity().finish();*/
                             Intent intent = new Intent(getContext(), DownloadUtilsActivity.class);
@@ -2047,7 +2196,7 @@ public class FragmentRoomAPI extends Fragment {
                         }
                     } else if (type.equalsIgnoreCase("dropdown_wilayah")) {
                         final DatabaseKodePos mDB = new DatabaseKodePos(mContext);
-                        if(mDB.getWritableDatabase()!=null){
+                        if (mDB.getWritableDatabase() != null) {
                             TextView textView = new TextView(mContext);
                             if (required.equalsIgnoreCase("1")) {
                                 label += "<font size=\"3\" color=\"red\">*</font>";
@@ -2066,14 +2215,14 @@ public class FragmentRoomAPI extends Fragment {
                             hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                             TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
-                            final Cursor c = mDB.getWritableDatabase().query(true,"wilayah",new String[] {"propinsi"},null , null, "propinsi", null, null, null);
+                            final Cursor c = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"propinsi"}, null, null, "propinsi", null, null, null);
                             final ArrayList<String> spinnerArrayPropinsi = new ArrayList<>();
                             spinnerArrayPropinsi.add("Semua Provinsi");
-                            if(c.moveToFirst()){
-                                do{
+                            if (c.moveToFirst()) {
+                                do {
                                     String column1 = c.getString(0);
                                     spinnerArrayPropinsi.add(column1);
-                                }while(c.moveToNext());
+                                } while (c.moveToNext());
                             }
                             c.close();
 
@@ -2094,7 +2243,7 @@ public class FragmentRoomAPI extends Fragment {
                             spinnerArrayKota.add("Semua Kota/Kabupaten");
                             final ArrayAdapter<String> spinnerKotaArrayAdapter = new ArrayAdapter<String>(
                                     mContext, android.R.layout.simple_spinner_item, spinnerArrayKota);
-                            spinnerKotaArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+                            spinnerKotaArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerKota.setAdapter(spinnerKotaArrayAdapter);
 
                             final Spinner spinnerKecamatan = new Spinner(mContext);
@@ -2105,7 +2254,7 @@ public class FragmentRoomAPI extends Fragment {
                             spinnerArrayKecamatan.add("Semua Kecamatan");
                             final ArrayAdapter<String> spinnerKecamatanArrayAdapter = new ArrayAdapter<String>(
                                     mContext, android.R.layout.simple_spinner_item, spinnerArrayKecamatan);
-                            spinnerKecamatanArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+                            spinnerKecamatanArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerKecamatan.setAdapter(spinnerKecamatanArrayAdapter);
 
                             final Spinner spinnerKelurahan = new Spinner(mContext);
@@ -2116,73 +2265,73 @@ public class FragmentRoomAPI extends Fragment {
                             spinnerArrayKelurahan.add("Semua Kelurahan");
                             final ArrayAdapter<String> spinnerKelurahanArrayAdapter = new ArrayAdapter<String>(
                                     mContext, android.R.layout.simple_spinner_item, spinnerArrayKelurahan);
-                            spinnerKelurahanArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+                            spinnerKelurahanArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerKelurahan.setAdapter(spinnerKelurahanArrayAdapter);
 
 
                             final TextView kodePos = (TextView) mContext.getLayoutInflater().inflate(R.layout.text_input_layout, null);
                             kodePos.setTextSize(15);
 
-                            
-                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                             if (cursorCild.getCount() > 0) {
                                 final String isi = cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-                                kodePos.setText(jsonResultType(isi,"a"));
+                                kodePos.setText(jsonResultType(isi, "a"));
 
 
-                                if(!jsonResultType(isi,"b").equalsIgnoreCase("Semua Provinsi")){
-                                    Cursor cKota = mDB.getWritableDatabase().query(true,"wilayah",new String[] {"jenis","kabupaten"},"propinsi = '"+jsonResultType(isi,"b")+"'",null , "kabupaten", null, null, null);
-                                    if(cKota.moveToFirst()){
-                                        do{
+                                if (!jsonResultType(isi, "b").equalsIgnoreCase("Semua Provinsi")) {
+                                    Cursor cKota = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"jenis", "kabupaten"}, "propinsi = '" + jsonResultType(isi, "b") + "'", null, "kabupaten", null, null, null);
+                                    if (cKota.moveToFirst()) {
+                                        do {
                                             String column1 = cKota.getString(0);
                                             String column2 = cKota.getString(1);
-                                            spinnerArrayKota.add(column1+" "+column2);
+                                            spinnerArrayKota.add(column1 + " " + column2);
 
-                                        }while(cKota.moveToNext());
+                                        } while (cKota.moveToNext());
                                         spinnerKotaArrayAdapter.notifyDataSetChanged();
                                     }
 
-                                    if(!jsonResultType(isi,"c").equalsIgnoreCase("Semua Kota/Kabupaten")){
-                                        Cursor cKecamatan = mDB.getWritableDatabase().query(true,"wilayah",new String[] {"kecamatan"},"propinsi = '"+jsonResultType(isi,"b")+"' and kabupaten = '"+jsonResultType(isi,"c").substring(5,jsonResultType(isi,"c").length())+"'",null , "kecamatan", null, null, null);
-                                        if(cKecamatan.moveToFirst()){
-                                            do{
+                                    if (!jsonResultType(isi, "c").equalsIgnoreCase("Semua Kota/Kabupaten")) {
+                                        Cursor cKecamatan = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"kecamatan"}, "propinsi = '" + jsonResultType(isi, "b") + "' and kabupaten = '" + jsonResultType(isi, "c").substring(5, jsonResultType(isi, "c").length()) + "'", null, "kecamatan", null, null, null);
+                                        if (cKecamatan.moveToFirst()) {
+                                            do {
                                                 String column1 = cKecamatan.getString(0);
                                                 spinnerArrayKecamatan.add(column1);
 
-                                            }while(cKecamatan.moveToNext());
+                                            } while (cKecamatan.moveToNext());
                                             spinnerKecamatanArrayAdapter.notifyDataSetChanged();
                                         }
 
-                                        if(!jsonResultType(isi,"d").equalsIgnoreCase("Semua Kecamatan")){
-                                            Cursor ckelurahan = mDB.getWritableDatabase().query(true,"wilayah",new String[] {"kelurahan"},"propinsi = '"+jsonResultType(isi,"b")+"' and kabupaten = '"+jsonResultType(isi,"c").substring(5,jsonResultType(isi,"c").length())+"' and kecamatan ='"+jsonResultType(isi,"d")+"'",null ,
+                                        if (!jsonResultType(isi, "d").equalsIgnoreCase("Semua Kecamatan")) {
+                                            Cursor ckelurahan = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"kelurahan"}, "propinsi = '" + jsonResultType(isi, "b") + "' and kabupaten = '" + jsonResultType(isi, "c").substring(5, jsonResultType(isi, "c").length()) + "' and kecamatan ='" + jsonResultType(isi, "d") + "'", null,
                                                     null, null, null, null);
-                                            if(ckelurahan.moveToFirst()){
-                                                do{
+                                            if (ckelurahan.moveToFirst()) {
+                                                do {
                                                     String column1 = ckelurahan.getString(0);
                                                     spinnerArrayKelurahan.add(column1);
 
-                                                }while(ckelurahan.moveToNext());
+                                                } while (ckelurahan.moveToNext());
                                                 spinnerKelurahanArrayAdapter.notifyDataSetChanged();
                                             }
 
                                         }
                                     }
 
-                                    int spinnerPositionProvinsi = spinnerArrayAdapter.getPosition(jsonResultType(isi,"b"));
+                                    int spinnerPositionProvinsi = spinnerArrayAdapter.getPosition(jsonResultType(isi, "b"));
                                     spinnerPropinsi.setSelection(spinnerPositionProvinsi);
-                                    int spinnerPositionKota = spinnerKotaArrayAdapter.getPosition(jsonResultType(isi,"c"));
+                                    int spinnerPositionKota = spinnerKotaArrayAdapter.getPosition(jsonResultType(isi, "c"));
                                     spinnerKota.setSelection(spinnerPositionKota);
-                                    int spinnerPositionKec = spinnerKecamatanArrayAdapter.getPosition(jsonResultType(isi,"d"));
+                                    int spinnerPositionKec = spinnerKecamatanArrayAdapter.getPosition(jsonResultType(isi, "d"));
                                     spinnerKecamatan.setSelection(spinnerPositionKec);
-                                    int spinnerPositionKel = spinnerKelurahanArrayAdapter.getPosition(jsonResultType(isi,"e"));
+                                    int spinnerPositionKel = spinnerKelurahanArrayAdapter.getPosition(jsonResultType(isi, "e"));
                                     spinnerKelurahan.setSelection(spinnerPositionKel);
                                 }
 
                             } else {
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-","Semua Provinsi","Semua Kota/Kabupaten","Semua Kecamatan","Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(i)), name, "cild");
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", "Semua Provinsi", "Semua Kota/Kabupaten", "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
                             }
-                            
+
 
                             if ((!showButton)) {
                                 spinnerPropinsi.setEnabled(false);
@@ -2196,50 +2345,50 @@ public class FragmentRoomAPI extends Fragment {
                                 spinnerPropinsi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     @Override
                                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                                        
-                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI10)));
+
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI10)));
                                         if (cEdit.getCount() > 0) {
-                                            if(jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"b").equalsIgnoreCase(spinnerArrayPropinsi.get(position))){
+                                            if (jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "b").equalsIgnoreCase(spinnerArrayPropinsi.get(position))) {
                                                 return;
                                             }
                                         }
-                                        
+
                                         spinnerArrayKota.clear();
                                         spinnerArrayKota.add("Semua Kota/Kabupaten");
-                                        if(position>0){
-                                            
+                                        if (position > 0) {
+
                                             if (cEdit.getCount() > 0) {
-                                                if(!jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"b").equalsIgnoreCase(spinnerArrayPropinsi.get(position))){
-                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerArrayPropinsi.get(position),"Semua Kota/Kabupaten","Semua Kecamatan","Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI11)), name, "cild");
+                                                if (!jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "b").equalsIgnoreCase(spinnerArrayPropinsi.get(position))) {
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerArrayPropinsi.get(position), "Semua Kota/Kabupaten", "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI11)), name, "cild");
                                                     db.updateDetailRoomWithFlagContent(orderModel);
                                                 }
                                             } else {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerArrayPropinsi.get(position),"Semua Kota/Kabupaten","Semua Kecamatan","Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI11)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerArrayPropinsi.get(position), "Semua Kota/Kabupaten", "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI11)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             }
-                                            
 
-                                            Cursor c = mDB.getWritableDatabase().query(true,"wilayah",new String[] {"jenis","kabupaten"},"propinsi = '"+spinnerArrayPropinsi.get(position)+"'",null , "kabupaten", null, null, null);
-                                            if(c.moveToFirst()){
-                                                do{
+
+                                            Cursor c = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"jenis", "kabupaten"}, "propinsi = '" + spinnerArrayPropinsi.get(position) + "'", null, "kabupaten", null, null, null);
+                                            if (c.moveToFirst()) {
+                                                do {
                                                     String column1 = c.getString(0);
                                                     String column2 = c.getString(1);
-                                                    spinnerArrayKota.add(column1+" "+column2);
+                                                    spinnerArrayKota.add(column1 + " " + column2);
 
-                                                }while(c.moveToNext());
+                                                } while (c.moveToNext());
                                             }
                                             c.close();
-                                        }else{
-                                            
-                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI12)));
+                                        } else {
+
+                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI12)));
                                             if (cEdit2.getCount() > 0) {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerArrayPropinsi.get(position),"Semua Kota/Kabupaten","Semua Kecamatan","Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI12)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerArrayPropinsi.get(position), "Semua Kota/Kabupaten", "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI12)), name, "cild");
                                                 db.updateDetailRoomWithFlagContent(orderModel);
                                             } else {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerArrayPropinsi.get(position),"Semua Kota/Kabupaten","Semua Kecamatan","Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI12)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerArrayPropinsi.get(position), "Semua Kota/Kabupaten", "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI12)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             }
-                                            
+
 
                                         }
                                         kodePos.setText("-");
@@ -2266,52 +2415,51 @@ public class FragmentRoomAPI extends Fragment {
                                 spinnerKota.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     @Override
                                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                                        
-                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI13)));
+
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI13)));
                                         if (cEdit.getCount() > 0) {
-                                            if(jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"c").equalsIgnoreCase(spinnerArrayKota.get(position))){
+                                            if (jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "c").equalsIgnoreCase(spinnerArrayKota.get(position))) {
                                                 return;
                                             }
                                         }
-                                        
+
                                         spinnerArrayKecamatan.clear();
                                         spinnerArrayKecamatan.add("Semua Kecamatan");
 
-                                        if(position>0){
-                                            String kota = spinnerArrayKota.get(position).toString().substring(5,spinnerArrayKota.get(position).toString().length());
-                                            
-                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI13)));
+                                        if (position > 0) {
+                                            String kota = spinnerArrayKota.get(position).toString().substring(5, spinnerArrayKota.get(position).toString().length());
+
+                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI13)));
                                             if (cEdit2.getCount() > 0) {
-                                                if(!jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"c").equalsIgnoreCase(spinnerArrayKota.get(position))){
-                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerArrayKota.get(position).toString(),"Semua Kecamatan","Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI13)), name, "cild");
+                                                if (!jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "c").equalsIgnoreCase(spinnerArrayKota.get(position))) {
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerArrayKota.get(position).toString(), "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI13)), name, "cild");
                                                     db.updateDetailRoomWithFlagContent(orderModel);
                                                 }
                                             } else {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerArrayKota.get(position).toString(),"Semua Kecamatan","Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI13)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerArrayKota.get(position).toString(), "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI13)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             }
-                                            
 
 
-                                            Cursor c = mDB.getWritableDatabase().query(true,"wilayah",new String[] {"kecamatan"},"propinsi = '"+spinnerPropinsi.getSelectedItem()+"' and kabupaten = '"+kota+"'",null , "kecamatan", null, null, null);
-                                            if(c.moveToFirst()){
-                                                do{
+                                            Cursor c = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"kecamatan"}, "propinsi = '" + spinnerPropinsi.getSelectedItem() + "' and kabupaten = '" + kota + "'", null, "kecamatan", null, null, null);
+                                            if (c.moveToFirst()) {
+                                                do {
                                                     String column1 = c.getString(0);
                                                     spinnerArrayKecamatan.add(column1);
-                                                }while(c.moveToNext());
+                                                } while (c.moveToNext());
                                             }
                                             c.close();
-                                        }else{
-                                            
-                                            Cursor cEdit3 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI14)));
+                                        } else {
+
+                                            Cursor cEdit3 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI14)));
                                             if (cEdit3.getCount() > 0) {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerArrayKota.get(position).toString(),"Semua Kecamatan","Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI14)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerArrayKota.get(position).toString(), "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI14)), name, "cild");
                                                 db.updateDetailRoomWithFlagContent(orderModel);
                                             } else {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerArrayKota.get(position).toString(),"Semua Kecamatan","Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI14)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerArrayKota.get(position).toString(), "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI14)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             }
-                                            
+
 
                                         }
                                         kodePos.setText("-");
@@ -2337,55 +2485,54 @@ public class FragmentRoomAPI extends Fragment {
                                 spinnerKecamatan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     @Override
                                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                                        
-                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI15)));
+
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI15)));
                                         if (cEdit.getCount() > 0) {
-                                            if(jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"d").equalsIgnoreCase(spinnerArrayKecamatan.get(position))){
+                                            if (jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "d").equalsIgnoreCase(spinnerArrayKecamatan.get(position))) {
                                                 return;
                                             }
                                         }
-                                        
+
 
                                         spinnerArrayKelurahan.clear();
                                         spinnerArrayKelurahan.add("Semua Kelurahan");
 
-                                        if(position>0){
-                                            String kota = spinnerKota.getSelectedItem().toString().substring(5,spinnerKota.getSelectedItem().toString().length());
-                                            
-                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI15)));
+                                        if (position > 0) {
+                                            String kota = spinnerKota.getSelectedItem().toString().substring(5, spinnerKota.getSelectedItem().toString().length());
+
+                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI15)));
                                             if (cEdit2.getCount() > 0) {
-                                                if(!jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"d").equalsIgnoreCase(spinnerArrayKecamatan.get(position))){
-                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerArrayKecamatan.get(position),"Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI15)), name, "cild");
+                                                if (!jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "d").equalsIgnoreCase(spinnerArrayKecamatan.get(position))) {
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerArrayKecamatan.get(position), "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI15)), name, "cild");
                                                     db.updateDetailRoomWithFlagContent(orderModel);
                                                 }
 
 
                                             } else {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerArrayKecamatan.get(position),"Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI15)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerArrayKecamatan.get(position), "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI15)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             }
-                                            
 
 
-                                            Cursor c = mDB.getWritableDatabase().query(true,"wilayah",new String[] {"kelurahan"},"propinsi = '"+spinnerPropinsi.getSelectedItem()+"' and kabupaten = '"+kota+"'"+" and kecamatan = '"+spinnerArrayKecamatan.get(position)+"'",null , null, null, null, null);
-                                            if(c.moveToFirst()){
-                                                do{
+                                            Cursor c = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"kelurahan"}, "propinsi = '" + spinnerPropinsi.getSelectedItem() + "' and kabupaten = '" + kota + "'" + " and kecamatan = '" + spinnerArrayKecamatan.get(position) + "'", null, null, null, null, null);
+                                            if (c.moveToFirst()) {
+                                                do {
                                                     String column1 = c.getString(0);
                                                     spinnerArrayKelurahan.add(column1);
-                                                }while(c.moveToNext());
+                                                } while (c.moveToNext());
                                             }
                                             c.close();
-                                        }else{
-                                            
-                                            Cursor cEdit3 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI16)));
+                                        } else {
+
+                                            Cursor cEdit3 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI16)));
                                             if (cEdit3.getCount() > 0) {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerArrayKecamatan.get(position),"Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI16)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerArrayKecamatan.get(position), "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI16)), name, "cild");
                                                 db.updateDetailRoomWithFlagContent(orderModel);
                                             } else {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerArrayKecamatan.get(position),"Semua Kelurahan"), jsonCreateType(idListTask, type,String.valueOf(finalI16)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerArrayKecamatan.get(position), "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(finalI16)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             }
-                                            
+
                                         }
                                         kodePos.setText("-");
                                         spinnerKelurahanArrayAdapter.notifyDataSetChanged();
@@ -2404,60 +2551,60 @@ public class FragmentRoomAPI extends Fragment {
                                 spinnerKelurahan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     @Override
                                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                                        
-                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI17)));
+
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI17)));
                                         if (cEdit.getCount() > 0) {
-                                            if(jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"e").equalsIgnoreCase(spinnerArrayKelurahan.get(position))){
+                                            if (jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "e").equalsIgnoreCase(spinnerArrayKelurahan.get(position))) {
                                                 return;
                                             }
                                         }
-                                        
-                                        if(position>0){
-                                            
-                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI17)));
+
+                                        if (position > 0) {
+
+                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI17)));
                                             if (cEdit2.getCount() > 0) {
-                                                if(!jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)),"e").equalsIgnoreCase(spinnerArrayKelurahan.get(position))){
-                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerKecamatan.getSelectedItem().toString(),spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type,String.valueOf(finalI17)), name, "cild");
+                                                if (!jsonResultType(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)), "e").equalsIgnoreCase(spinnerArrayKelurahan.get(position))) {
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerKecamatan.getSelectedItem().toString(), spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type, String.valueOf(finalI17)), name, "cild");
                                                     db.updateDetailRoomWithFlagContent(orderModel);
                                                 }
 
                                             } else {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerKecamatan.getSelectedItem().toString(),spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type,String.valueOf(finalI17)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerKecamatan.getSelectedItem().toString(), spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type, String.valueOf(finalI17)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             }
-                                            
 
-                                            String kota = spinnerKota.getSelectedItem().toString().substring(5,spinnerKota.getSelectedItem().toString().length());
-                                            Cursor c = mDB.getWritableDatabase().query(true,"wilayah",new String[] {"kode_pos"},"propinsi = '"+spinnerPropinsi.getSelectedItem()+"' and kabupaten = '"+kota+"'"+" and kecamatan = '"+spinnerKecamatan.getSelectedItem()+"' and kelurahan = '"+spinnerArrayKelurahan.get(position)+"'",null , null, null, null, null);
-                                            if(c.moveToFirst()){
-                                                do{
+
+                                            String kota = spinnerKota.getSelectedItem().toString().substring(5, spinnerKota.getSelectedItem().toString().length());
+                                            Cursor c = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"kode_pos"}, "propinsi = '" + spinnerPropinsi.getSelectedItem() + "' and kabupaten = '" + kota + "'" + " and kecamatan = '" + spinnerKecamatan.getSelectedItem() + "' and kelurahan = '" + spinnerArrayKelurahan.get(position) + "'", null, null, null, null, null);
+                                            if (c.moveToFirst()) {
+                                                do {
                                                     String column1 = c.getString(0);
                                                     kodePos.setText(column1);
-                                                    
-                                                    Cursor cEdit3 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI18)));
+
+                                                    Cursor cEdit3 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI18)));
                                                     if (cEdit3.getCount() > 0) {
-                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(column1,spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerKecamatan.getSelectedItem().toString(),spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type,String.valueOf(finalI18)), name, "cild");
+                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(column1, spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerKecamatan.getSelectedItem().toString(), spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type, String.valueOf(finalI18)), name, "cild");
                                                         db.updateDetailRoomWithFlagContent(orderModel);
                                                     } else {
-                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(column1,spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerKecamatan.getSelectedItem().toString(),spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type,String.valueOf(finalI18)), name, "cild");
+                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode(column1, spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerKecamatan.getSelectedItem().toString(), spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type, String.valueOf(finalI18)), name, "cild");
                                                         db.insertRoomsDetail(orderModel);
                                                     }
-                                                    
 
-                                                }while(c.moveToNext());
+
+                                                } while (c.moveToNext());
                                             }
                                             c.close();
-                                        }else {
-                                            
-                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI19)));
+                                        } else {
+
+                                            Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI19)));
                                             if (cEdit2.getCount() > 0) {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerKecamatan.getSelectedItem().toString(),spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type,String.valueOf(finalI19)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerKecamatan.getSelectedItem().toString(), spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type, String.valueOf(finalI19)), name, "cild");
                                                 db.updateDetailRoomWithFlagContent(orderModel);
                                             } else {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-",spinnerPropinsi.getSelectedItem().toString(),spinnerKota.getSelectedItem().toString(),spinnerKecamatan.getSelectedItem().toString(),spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type,String.valueOf(finalI19)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonPosCode("-", spinnerPropinsi.getSelectedItem().toString(), spinnerKota.getSelectedItem().toString(), spinnerKecamatan.getSelectedItem().toString(), spinnerArrayKelurahan.get(position)), jsonCreateType(idListTask, type, String.valueOf(finalI19)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             }
-                                            
+
                                         }
                                     }
 
@@ -2468,7 +2615,6 @@ public class FragmentRoomAPI extends Fragment {
 
                                 });
                             }
-
 
 
                             TextView tvProv = new TextView(mContext);
@@ -2515,16 +2661,16 @@ public class FragmentRoomAPI extends Fragment {
                             linearLayout.addView(spinnerKota, params5);
                             linearLayout.addView(tvKec, params4);
                             linearLayout.addView(spinnerKecamatan, params5);
-                            if(flag.equalsIgnoreCase("yes")){
+                            if (flag.equalsIgnoreCase("yes")) {
                                 linearLayout.addView(tvKel, params4);
                                 linearLayout.addView(spinnerKelurahan, params5);
                                 linearLayout.addView(tvKode, params4);
                                 linearLayout.addView(kodePos, params2);
-                            }else{
+                            } else {
                                 linearLayout.addView(tvKel, params4);
                                 linearLayout.addView(spinnerKelurahan, params2);
                             }
-                        }else {
+                        } else {
 
                             /*getActivity().finish();*/
                             Intent intent = new Intent(getContext(), DownloadUtilsActivity.class);
@@ -2556,8 +2702,8 @@ public class FragmentRoomAPI extends Fragment {
                         String isis = jsonArray.getJSONObject(i).getString("checkbox").toString();
                         Boolean setCheck = false;
                         JSONArray jsonArrayCeks = new JSONArray(isis);
-                        
-                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             String cc = cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
                             if (!cc.startsWith("[")) {
@@ -2572,7 +2718,7 @@ public class FragmentRoomAPI extends Fragment {
                             }
 
                         }
-                        
+
 
                         for (int iaa = 0; iaa < jsonArrayCeks.length(); iaa++) {
                             String l = jsonArrayCeks.getJSONObject(iaa).getString("label_checkbox").toString();
@@ -2604,20 +2750,20 @@ public class FragmentRoomAPI extends Fragment {
                                     @Override
                                     public void onClick(View v) {
                                         // TODO Auto-generated method stub
-                                        
+
                                         if (cb.isChecked()) {
-                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI21)));
+                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI21)));
                                             if (cEdit.getCount() > 0) {
                                                 String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
 
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, text + "," + jsonCheckBox(String.valueOf(cb.getId()), cb.getText().toString()), jsonCreateType(idListTask, type,String.valueOf(finalI21)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, text + "," + jsonCheckBox(String.valueOf(cb.getId()), cb.getText().toString()), jsonCreateType(idListTask, type, String.valueOf(finalI21)), name, "cild");
                                                 db.updateDetailRoomWithFlagContent(orderModel);
                                             } else {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonCheckBox(String.valueOf(cb.getId()), cb.getText().toString()), jsonCreateType(idListTask, type,String.valueOf(finalI21)), name, "cild");
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonCheckBox(String.valueOf(cb.getId()), cb.getText().toString()), jsonCreateType(idListTask, type, String.valueOf(finalI21)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             }
                                         } else {
-                                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI21)));
+                                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI21)));
                                             if (cursorCild.getCount() > 0) {
                                                 String cc = cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
                                                 if (!cc.startsWith("[")) {
@@ -2627,10 +2773,10 @@ public class FragmentRoomAPI extends Fragment {
                                                 try {
                                                     jsA = new JSONArray(cc);
                                                     if (jsA.length() > 1) {
-                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(removeJson(cb.getId(), jsA)), jsonCreateType(idListTask, type,String.valueOf(finalI22)), name, "cild");
+                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(removeJson(cb.getId(), jsA)), jsonCreateType(idListTask, type, String.valueOf(finalI22)), name, "cild");
                                                         db.updateDetailRoomWithFlagContent(orderModel);
                                                     } else {
-                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(cb.getText()), jsonCreateType(idListTask, type,String.valueOf(finalI22)), name, "cild");
+                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(cb.getText()), jsonCreateType(idListTask, type, String.valueOf(finalI22)), name, "cild");
                                                         db.deleteDetailRoomWithFlagContent(orderModel);
                                                     }
                                                 } catch (JSONException e) {
@@ -2638,7 +2784,7 @@ public class FragmentRoomAPI extends Fragment {
                                                 }
                                             }
                                         }
-                                        
+
                                     }
 
                                 });
@@ -2680,12 +2826,12 @@ public class FragmentRoomAPI extends Fragment {
                             rb[iaa] = new RadioButton(mContext);
                             rb[iaa].setText(l);
                             rb[iaa].setId(iaa);
-                            
+
                             if ((!showButton)) {
                                 rb[iaa].setEnabled(false);
                             }
 
-                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(i)));
+                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                             if (cursorCild.getCount() > 0) {
                                 if (rb[iaa].getText().toString().equalsIgnoreCase(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)))) {
                                     rb[iaa].setChecked(true);
@@ -2693,12 +2839,12 @@ public class FragmentRoomAPI extends Fragment {
                             } else {
                                 if (cek.equalsIgnoreCase("1")) {
                                     rb[iaa].setChecked(true);
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, rb[iaa].getText().toString(), jsonCreateType(idListTask, type,String.valueOf(i)), name, "cild");
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, rb[iaa].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                     db.insertRoomsDetail(orderModel);
                                 }
 
                             }
-                            
+
 
                             rg.addView(rb[iaa]);
                         }
@@ -2712,16 +2858,16 @@ public class FragmentRoomAPI extends Fragment {
                                 public void onCheckedChanged(RadioGroup group, int checkedId) {
                                     RadioButton rb = (RadioButton) group.findViewById(checkedId);
                                     if (null != rb && checkedId > -1) {
-                                        
-                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI23)));
+
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI23)));
                                         if (cEdit.getCount() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, rb.getText().toString(), jsonCreateType(idListTask, type,String.valueOf(finalI23)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, rb.getText().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
                                             db.updateDetailRoomWithFlagContent(orderModel);
                                         } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, rb.getText().toString(), jsonCreateType(idListTask, type,String.valueOf(finalI23)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, rb.getText().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         }
-                                        
+
                                     }
                                 }
                             });
@@ -2766,7 +2912,6 @@ public class FragmentRoomAPI extends Fragment {
                             }
                         });
 
-                        Log.w("get1122",value);
 
                         ImageLoaderLarge imgCard = new ImageLoaderLarge(mContext, true);
                         imgCard.DisplayImage(value, imageView[count]);
@@ -2799,8 +2944,8 @@ public class FragmentRoomAPI extends Fragment {
                         List<String> value = hashMap.get(key);
                         if (value != null) {
                             if (value.get(1).toString().equalsIgnoreCase("1")) {
-                                
-                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(),value.get(5).toString()));
+
+                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
                                 if (cEdit.getCount() > 0) {
                                     if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
                                         if (value.get(2).toString().equalsIgnoreCase("text") ||
@@ -2830,7 +2975,7 @@ public class FragmentRoomAPI extends Fragment {
                                         errorReq.add(value.get(4).toString());
                                     }
                                 }
-                                
+
                             }
                         }
                     }
@@ -2874,39 +3019,39 @@ public class FragmentRoomAPI extends Fragment {
                                     });
                                     return;
                                 } else {
-                                    
+
                                     Cursor cursorParent = db.getSingleRoomDetailFormWithFlag(idDetail, username, idRoomTab, "parent");
-                                    
+
                                     String latLongResult = "";
                                     if (cursorParent.getCount() > 0) {
-                                        latLongResult = jsonCreateType(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a"), String.valueOf(latitude) + "|" + String.valueOf(longitude),"");
+                                        latLongResult = jsonCreateType(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a"), String.valueOf(latitude) + "|" + String.valueOf(longitude), "");
 
                                     }
 
                                     RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, null, "1", latLongResult, "parent");
-                                    
+
                                     db.updateDetailRoomWithFlagContentParent(orderModel);
-                                    
+
 
                                 }
                             }
                         }
 
-                    }else{
+                    } else {
                         String latLongsAfter = "0.0|0.0";
-                        
+
                         Cursor cursorParent = db.getSingleRoomDetailFormWithFlag(idDetail, username, idRoomTab, "parent");
-                        
+
                         String latLongResult = "";
                         if (cursorParent.getCount() > 0) {
-                            latLongResult = jsonCreateType(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a"), latLongsAfter,"");
+                            latLongResult = jsonCreateType(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a"), latLongsAfter, "");
 
                         }
 
                         RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, null, "1", latLongResult, "parent");
-                        
+
                         db.updateDetailRoomWithFlagContentParent(orderModel);
-                        
+
                     }
 
 
@@ -2917,22 +3062,21 @@ public class FragmentRoomAPI extends Fragment {
                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
                         db.updateDetailRoomWithFlagContentParent(orderModel);
                         */
-                         new posTask().execute(urlPost, username, idRoomTab);
+
+                        new posTask().execute(urlPost, username, idRoomTab);
                     } else {
                         Toast.makeText(getContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
                     }
-
 
 
                 }
             });
             linearLayout.addView(btnRel);
 
-        }else{
+        } else {
             new Refresh(mContext).execute(urlTembak, username, idRoomTab);
         }
 
-        
 
     }
 
@@ -2978,7 +3122,6 @@ public class FragmentRoomAPI extends Fragment {
     }
 
 
-
     private class Refresh extends AsyncTask<String, String, String> {
         private ProgressDialog dialog;
         String error = "";
@@ -2989,6 +3132,11 @@ public class FragmentRoomAPI extends Fragment {
             this.activity = activity;
             context = activity;
             dialog = new ProgressDialog(context);
+
+            DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(getContext());
+            if (dataBaseHelper.checkTable("room_" + idRoomTab)) {
+                dataBaseHelper.deleteAllrow("room_" + idRoomTab, username, idRoomTab);
+            }
         }
 
         protected void onPreExecute() {
@@ -3011,7 +3159,7 @@ public class FragmentRoomAPI extends Fragment {
             }
             if (error.length() > 0) {
                 Toast.makeText(mContext, error, Toast.LENGTH_LONG).show();
-            }else{
+            } else {
                 Toast.makeText(mContext, "Form success download.", Toast.LENGTH_SHORT).show();
                 generateLayut();
             }
@@ -3046,6 +3194,7 @@ public class FragmentRoomAPI extends Fragment {
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);
                     try {
+
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         Calendar cal = Calendar.getInstance();
                         String time_str = dateFormat.format(cal.getTime());
@@ -3054,15 +3203,14 @@ public class FragmentRoomAPI extends Fragment {
                         String id_rooms_tab = jsonRootObject.getString("id_rooms_tab");
                         String content = jsonRootObject.getString("data");
 
-                        
-                        db.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username,"show");
+
+                        db.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, "show");
                         /*if(fromList.equalsIgnoreCase("hide")) {
                             RoomsDetail orderModel = new RoomsDetail(idDetail, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
                             db.insertRoomsDetail(orderModel);
                         }*/
                         RoomsDetail orderModel = new RoomsDetail(username, id_rooms_tab, username, data, "", time_str, "form");
                         db.insertRoomsDetail(orderModel);
-                        
 
 
                     } catch (JSONException e) {
@@ -3099,28 +3247,28 @@ public class FragmentRoomAPI extends Fragment {
 
     }
 
-    private void requestLocationInfo(String idDetail,String username,String idTab,String idListTask,String type,String name,String f){
+    private void requestLocationInfo(String idDetail, String username, String idTab, String idListTask, String type, String name, String f) {
         dummyIdDate = Integer.parseInt(idListTask);
 
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{
-                                Manifest.permission.ACCESS_FINE_LOCATION },
+                                Manifest.permission.ACCESS_FINE_LOCATION},
                         100);
             }
         } else {
             gps = new GPSTracker(mContext);
             LocationManager locManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-            if(locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 try {
-                    
-                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type,f));
+
+                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, f));
                     if (cEdit.getCount() == 0) {
-                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type,f), name, "cild");
+                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, f), name, "cild");
                         db.insertRoomsDetail(orderModel);
                     }
-                    
+
 
                     PlacePicker.IntentBuilder intentBuilder =
                             new PlacePicker.IntentBuilder();
@@ -3132,7 +3280,7 @@ public class FragmentRoomAPI extends Fragment {
                 } catch (GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
                 }
-            }else{
+            } else {
                 gps.showSettingsAlert();
             }
         }
@@ -3163,14 +3311,13 @@ public class FragmentRoomAPI extends Fragment {
                         imageView[Integer.valueOf(value.get(0).toString())].setImageBitmap(result);
                         String myBase64Image = encodeToBase64(result, Bitmap.CompressFormat.JPEG, 80);
 
-                        
 
                         Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                         if (cEdit.getCount() > 0) {
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, myBase64Image, jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                             db.updateDetailRoomWithFlagContent(orderModel);
                         }
-                        
+
 
                     }
 
@@ -3179,16 +3326,15 @@ public class FragmentRoomAPI extends Fragment {
                 if (result == null) {
                     //     btnPhoto.setVisibility(View.VISIBLE);
                 }
-                
+
 
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
-                    if(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")){
+                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
                         RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                         db.deleteDetailRoomWithFlagContent(orderModel);
                     }
                 }
-                
 
 
                 Toast.makeText(mContext, " Picture was not taken ", Toast.LENGTH_SHORT).show();
@@ -3196,16 +3342,16 @@ public class FragmentRoomAPI extends Fragment {
                 if (result == null) {
                     // btnPhoto.setVisibility(View.VISIBLE);
                 }
-                
+
 
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
-                    if(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")){
+                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
                         RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                         db.deleteDetailRoomWithFlagContent(orderModel);
                     }
                 }
-                
+
 
                 Toast.makeText(mContext, " Picture was not taken ", Toast.LENGTH_SHORT).show();
             }
@@ -3213,51 +3359,51 @@ public class FragmentRoomAPI extends Fragment {
             List value = (List) hashMap.get(dummyIdDate);
             if (resultCode == mContext.RESULT_OK) {
                 String result = data.getExtras().getString("status");
-                
+
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
                     RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, result, jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                     db.updateDetailRoomWithFlagContent(orderModel);
                 }
-                
-                imageView[Integer.valueOf(value.get(0).toString())].setImageBitmap(decodeBase64(result));
-            }else{
 
-                
+                imageView[Integer.valueOf(value.get(0).toString())].setImageBitmap(decodeBase64(result));
+            } else {
+
+
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
-                    if(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")){
+                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
                         RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                         db.deleteDetailRoomWithFlagContent(orderModel);
                         imageView[Integer.valueOf(value.get(0).toString())].setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
                     }
                 }
-                
+
             }
         } else if (requestCode == PICK_FILE_REQUEST) {
             List value = (List) hashMap.get(dummyIdDate);
             if (resultCode == mContext.RESULT_OK) {
-                if(data == null){
+                if (data == null) {
                     return;
                 }
                 Uri selectedFileUri = data.getData();
 
-                File ee = new File(ImageFilePath.getPath(mContext,selectedFileUri));
+                File ee = new File(ImageFilePath.getPath(mContext, selectedFileUri));
 
-                String fileName = selectedFileUri.toString().substring(selectedFileUri.toString().lastIndexOf('/'),selectedFileUri.toString().length());
-                if(ee.exists()){
+                String fileName = selectedFileUri.toString().substring(selectedFileUri.toString().lastIndexOf('/'), selectedFileUri.toString().length());
+                if (ee.exists()) {
                     String myBase64Image = encodeToBase64File(ee);
                     TextView textView = (TextView) linearEstimasi[Integer.valueOf(value.get(0).toString())].findViewById(R.id.value);
-                    textView.setText(fileName.replace("/",""));
-                    
+                    textView.setText(fileName.replace("/", ""));
+
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                     if (cEdit.getCount() > 0) {
-                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonCreateDocument(fileName.replace("/",""),myBase64Image), jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                        RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, jsonCreateDocument(fileName.replace("/", ""), myBase64Image), jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                         db.updateDetailRoomWithFlagContent(orderModel);
                     }
-                    
-                }else {
-                    Toast.makeText(mContext,"No such file or directory",Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(mContext, "No such file or directory", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -3265,10 +3411,10 @@ public class FragmentRoomAPI extends Fragment {
             if (data.hasExtra("result")) {
                 final List value = (List) hashMap.get(dummyIdDate);
                 String result = data.getExtras().getString("result");
-                Toast.makeText(mContext,"Success scan",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Success scan", Toast.LENGTH_SHORT).show();
                 String lines[] = result.split("\\r?\\n");
                 List<String> valSetOne = new ArrayList<String>();
-                for (String isi:lines){
+                for (String isi : lines) {
                     valSetOne.add(isi);
                 }
                 hashMapOcr.put(Integer.valueOf(value.get(0).toString()), valSetOne);
@@ -3284,69 +3430,69 @@ public class FragmentRoomAPI extends Fragment {
                     TextView jarak = (TextView) linearEstimasi[Integer.valueOf(value.get(0).toString())].findViewById(R.id.valueJarak);
 
 
-                    String[] latlongS =jsonResultType(result,"s").split(
+                    String[] latlongS = jsonResultType(result, "s").split(
                             Message.LOCATION_DELIMITER);
                     if (latlongS.length > 4) {
                         String text = "<u><b>" + (String) latlongS[2] + "</b></u><br/>";
                         start.setText(Html.fromHtml(text + latlongS[3]));
                     }
 
-                    String[] latlongE =jsonResultType(result,"e").split(
+                    String[] latlongE = jsonResultType(result, "e").split(
                             Message.LOCATION_DELIMITER);
                     if (latlongE.length > 4) {
                         String text = "<u><b>" + (String) latlongE[2] + "</b></u><br/>";
                         end.setText(Html.fromHtml(text + latlongE[3]));
                     }
-                    jarak.setText(jsonResultType(result,"d"));
-                    
+                    jarak.setText(jsonResultType(result, "d"));
+
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                     if (cEdit.getCount() > 0) {
                         RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, result, jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                         db.updateDetailRoomWithFlagContent(orderModel);
                     }
-                    
+
                 }
-            }else{
-                
+            } else {
+
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
-                    if(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")){
+                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
                         RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                         db.deleteDetailRoomWithFlagContent(orderModel);
                     }
                 }
-                
+
             }
         } else if (requestCode == PLACE_PICKER_REQUEST) {
-            showDialog=true;
+            showDialog = true;
             final List value = (List) hashMap.get(dummyIdDate);
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
                 final Place place = PlacePicker.getPlace(data, mContext);
-                final String name = place.getName()!=null? (String) place.getName() :" ";
-                final String address = place.getAddress()!=null? (String) place.getAddress() :" ";
+                final String name = place.getName() != null ? (String) place.getName() : " ";
+                final String address = place.getAddress() != null ? (String) place.getAddress() : " ";
                 final String web = String.valueOf(place.getWebsiteUri() != null ? place.getWebsiteUri() : " ");
 
-                
+
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
-                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, place.getLatLng().latitude + ";" + place.getLatLng().longitude+";"+name +";"+address+";"+web+";", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, place.getLatLng().latitude + ";" + place.getLatLng().longitude + ";" + name + ";" + address + ";" + web + ";", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                     db.updateDetailRoomWithFlagContent(orderModel);
                 }
-                
 
-                String text = "<u><b>" + name+ "</b></u><br/>";
-                et[Integer.valueOf(value.get(0).toString())].setText(Html.fromHtml(text+address));
 
-            }else {
-                
+                String text = "<u><b>" + name + "</b></u><br/>";
+                et[Integer.valueOf(value.get(0).toString())].setText(Html.fromHtml(text + address));
+
+            } else {
+
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
-                    if(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")){
+                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
                         RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                         db.deleteDetailRoomWithFlagContent(orderModel);
                     }
                 }
-                
+
             }
 
 
@@ -3375,14 +3521,13 @@ public class FragmentRoomAPI extends Fragment {
                         imageView[Integer.valueOf(value.get(0).toString())].setImageBitmap(result);
                         String myBase64Image = encodeToBase64(result, Bitmap.CompressFormat.JPEG, 80);
 
-                        
 
                         Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                         if (cEdit.getCount() > 0) {
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, myBase64Image, jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                             db.updateDetailRoomWithFlagContent(orderModel);
                         }
-                        
+
 
                     }
                 }
@@ -3430,7 +3575,7 @@ public class FragmentRoomAPI extends Fragment {
         return obj.toString();
     }
 
-    private String jsonCreateType(String idContent, String type,String f) {
+    private String jsonCreateType(String idContent, String type, String f) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("a", idContent);
@@ -3456,7 +3601,7 @@ public class FragmentRoomAPI extends Fragment {
     }
 
     public static JSONObject function(JSONObject obj, String keyMain, String newValue) throws Exception {
-        if(obj==null){
+        if (obj == null) {
             obj = new JSONObject();
             try {
                 obj.put(keyMain, newValue);
@@ -3464,14 +3609,14 @@ public class FragmentRoomAPI extends Fragment {
                 e.printStackTrace();
             }
             return obj;
-        }else{
+        } else {
             boolean insert = false;
             JSONObject json = new JSONObject();
             Iterator iterator = obj.keys();
             String key = null;
             while (iterator.hasNext()) {
                 key = (String) iterator.next();
-                if ((obj.optJSONArray(key)==null) && (obj.optJSONObject(key)==null)) {
+                if ((obj.optJSONArray(key) == null) && (obj.optJSONObject(key) == null)) {
                     if ((key.equals(keyMain))) {
                         insert = true;
                         try {
@@ -3479,7 +3624,7 @@ public class FragmentRoomAPI extends Fragment {
                             if (newValue.equalsIgnoreCase("")) {
                                 obj.remove(newValue);
                             }
-                        }catch (JSONException e) {
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
@@ -3490,7 +3635,7 @@ public class FragmentRoomAPI extends Fragment {
                     function(obj.getJSONObject(key), keyMain, newValue);
                 }
 
-                if(insert==false){
+                if (insert == false) {
                     try {
                         obj.put(keyMain, newValue);
                     } catch (JSONException e) {
@@ -3555,14 +3700,14 @@ public class FragmentRoomAPI extends Fragment {
     }
 
 
-    private void captureGalery(String idDetail,String username,String idTab,String idListTask,String type,String name,String flag,int facing,String idii){
-        
-        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type,idii));
+    private void captureGalery(String idDetail, String username, String idTab, String idListTask, String type, String name, String flag, int facing, String idii) {
+
+        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, idii));
         if (cEdit.getCount() == 0) {
-            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type,idii), name, "cild");
+            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, idii), name, "cild");
             db.insertRoomsDetail(orderModel);
         }
-        
+
         dummyIdDate = Integer.parseInt(idListTask);
 
         if (flag.equalsIgnoreCase("live_camera")) {
@@ -3738,7 +3883,7 @@ public class FragmentRoomAPI extends Fragment {
     private DialogInterface.OnDismissListener mOnDismissListenerDate =
             new DialogInterface.OnDismissListener() {
                 public void onDismiss(DialogInterface dialog) {
-                    
+
                     List value = (List) hashMap.get(dummyIdDate);
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                     if (cEdit.getCount() > 0) {
@@ -3747,13 +3892,13 @@ public class FragmentRoomAPI extends Fragment {
                             db.deleteDetailRoomWithFlagContent(orderModel);
                         }
                     }
-                    
+
                 }
             }; //onDismiss handler
     private DialogInterface.OnDismissListener mOnDismissListenerTime =
             new DialogInterface.OnDismissListener() {
                 public void onDismiss(DialogInterface dialog) {
-                    
+
                     List value = (List) hashMap.get(dummyIdDate);
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                     if (cEdit.getCount() > 0) {
@@ -3762,7 +3907,7 @@ public class FragmentRoomAPI extends Fragment {
                             db.deleteDetailRoomWithFlagContent(orderModel);
                         }
                     }
-                    
+
                 }
             };
 
@@ -3783,13 +3928,13 @@ public class FragmentRoomAPI extends Fragment {
                             List value = (List) hashMap.get(dummyIdDate);
                             et[Integer.valueOf(value.get(0).toString())].setText(sdate);
                             et[Integer.valueOf(value.get(0).toString())].setError(null);
-                            
+
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                             if (cEdit.getCount() > 0) {
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(sdate), jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                                 db.updateDetailRoomWithFlagContent(orderModel);
                             }
-                            
+
                         }
                     });
                 }
@@ -3808,13 +3953,13 @@ public class FragmentRoomAPI extends Fragment {
                             List value = (List) hashMap.get(dummyIdDate);
                             et[Integer.valueOf(value.get(0).toString())].setText(sdate);
                             et[Integer.valueOf(value.get(0).toString())].setError(null);
-                            
+
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                             if (cEdit.getCount() > 0) {
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, String.valueOf(sdate), jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                                 db.updateDetailRoomWithFlagContent(orderModel);
                             }
-                            
+
                         }
                     });
                 }
@@ -3829,14 +3974,14 @@ public class FragmentRoomAPI extends Fragment {
         return new String(sret);
     }
 
-    public void addSpinner(final String jsonValue,final String namedb,final LinearLayout view , final String table, final String[] coloum, final Integer from, final String where,final String idListTask,final String type,final String finalI24,final String name){
-        DataBaseDropDown mDB = new DataBaseDropDown(mContext,namedb);
-        if(mDB.getWritableDatabase()!=null) {
-            final Integer asIs = from+1;
-            if(asIs < coloum.length){
-                final Cursor c = mDB.getWritableDatabase().query(true, table, new String[]{coloum[asIs]},where, null, coloum[asIs], null, null, null);
+    public void addSpinner(final String jsonValue, final String namedb, final LinearLayout view, final String table, final String[] coloum, final Integer from, final String where, final String idListTask, final String type, final String finalI24, final String name) {
+        DataBaseDropDown mDB = new DataBaseDropDown(mContext, namedb);
+        if (mDB.getWritableDatabase() != null) {
+            final Integer asIs = from + 1;
+            if (asIs < coloum.length) {
+                final Cursor c = mDB.getWritableDatabase().query(true, table, new String[]{coloum[asIs]}, where, null, coloum[asIs], null, null, null);
                 final ArrayList<String> spinnerArray = new ArrayList<String>();
-                if(coloum.length-1!=asIs){
+                if (coloum.length - 1 != asIs) {
                     spinnerArray.add("--Please Select--");
                 }
                 if (c.moveToFirst()) {
@@ -3868,8 +4013,8 @@ public class FragmentRoomAPI extends Fragment {
                 spinner.setAdapter(spinnerArrayAdapter);
                 final String finalTitlle = titlle;
 
-                
-                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI24)));
+
+                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                 if (cEdit.getCount() > 0) {
                     try {
                         JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
@@ -3879,21 +4024,21 @@ public class FragmentRoomAPI extends Fragment {
                         e.printStackTrace();
                     }
                 }
-                
+
 
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                         final int count = view.getChildCount();
-                        view.removeViews(asIs+1,count-(asIs+1));
-                        if(!spinner.getSelectedItem().toString().replace("'","''").equals("--Please Select--")){
-                            addSpinner(jsonValue,namedb,view,table,coloum,asIs, where +" and " + coloum[asIs]+"= '"+spinner.getSelectedItem().toString().replace("'","''")+"'",idListTask,type,finalI24,name);
-                            
-                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type,String.valueOf(finalI24)));
+                        view.removeViews(asIs + 1, count - (asIs + 1));
+                        if (!spinner.getSelectedItem().toString().replace("'", "''").equals("--Please Select--")) {
+                            addSpinner(jsonValue, namedb, view, table, coloum, asIs, where + " and " + coloum[asIs] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'", idListTask, type, finalI24, name);
+
+                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idRoomTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                             if (cEdit.getCount() > 0) {
                                 try {
                                     JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username,function(jsonObject, finalTitlle,spinner.getSelectedItem().toString().replace("'","''")).toString() , jsonCreateType(idListTask, type,String.valueOf(finalI24)), name, "cild");
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idRoomTab, username, function(jsonObject, finalTitlle, spinner.getSelectedItem().toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
                                     db.updateDetailRoomWithFlagContent(orderModel);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -3904,14 +4049,14 @@ public class FragmentRoomAPI extends Fragment {
                             } else {
                                 RoomsDetail orderModel = null;
                                 try {
-                                    orderModel = new RoomsDetail(idDetail, idRoomTab, username,  function(null, finalTitlle,spinner.getSelectedItem().toString().replace("'","''")).toString(), jsonCreateType(idListTask, type,String.valueOf(finalI24)), name, "cild");
+                                    orderModel = new RoomsDetail(idDetail, idRoomTab, username, function(null, finalTitlle, spinner.getSelectedItem().toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
                                     db.insertRoomsDetail(orderModel);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
 
                             }
-                            
+
                         }
                     }
 
@@ -3951,7 +4096,6 @@ public class FragmentRoomAPI extends Fragment {
 
         public void postData(String valueIWantToSend, final String usr, final String idr) {
             // Create a new HttpClient and Post Header
-Log.w("valueIWantToSend",valueIWantToSend);
 
             try {
 
@@ -3962,9 +4106,9 @@ Log.w("valueIWantToSend",valueIWantToSend);
                 HttpPost httppost = new HttpPost(valueIWantToSend);
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
-                
+
                 Cursor cursorParent = db.getSingleRoomDetailFormWithFlag(idDetail, usr, idr, "parent");
-                
+
 
                 if (cursorParent.getCount() > 0) {
                     if (!cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)).equalsIgnoreCase("")) {
@@ -3987,17 +4131,17 @@ Log.w("valueIWantToSend",valueIWantToSend);
                 Contact contact = messengerHelper.getMyContact();
                 nameValuePairs.add(new BasicNameValuePair("bc_user", contact.getJabberId()));
 
-                
+
                 ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, usr, idr, "cild");
-                
+
 
                 for (int u = 0; u < list.size(); u++) {
 
                     JSONArray jsA = null;
                     String content = "";
                     String cc = list.get(u).getContent();
-                    if(jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah")){
-                        cc =   jsoncreateC(list.get(u).getContent());
+                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah")) {
+                        cc = jsoncreateC(list.get(u).getContent());
                     }
 
                     try {
@@ -4012,13 +4156,13 @@ Log.w("valueIWantToSend",valueIWantToSend);
                     }
 
 
-                    if (jsA != null ) {
-                        if(jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") ||jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")){
+                    if (jsA != null) {
+                        if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
                             nameValuePairs.add(new BasicNameValuePair(list.get(u).getFlag_tab(), list.get(u).getContent()));
-                         //   nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
-                          //  nameValuePairs.add(new BasicNameValuePair("value[]", list.get(u).getContent()));
-                          //  nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
-                        }else{
+                            //   nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
+                            //  nameValuePairs.add(new BasicNameValuePair("value[]", list.get(u).getContent()));
+                            //  nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
+                        } else {
                             try {
                                 for (int ic = 0; ic < jsA.length(); ic++) {
                                     final String icC = jsA.getJSONObject(ic).getString("c").toString();
@@ -4027,21 +4171,21 @@ Log.w("valueIWantToSend",valueIWantToSend);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            nameValuePairs.add(new BasicNameValuePair(list.get(u).getFlag_tab(),content.substring(0, content.length() - 1)));
-                          //  nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
-                         //   nameValuePairs.add(new BasicNameValuePair("value[]", content.substring(0, content.length() - 1)));
-                          //  nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
+                            nameValuePairs.add(new BasicNameValuePair(list.get(u).getFlag_tab(), content.substring(0, content.length() - 1)));
+                            //  nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
+                            //   nameValuePairs.add(new BasicNameValuePair("value[]", content.substring(0, content.length() - 1)));
+                            //  nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
                         }
                     } else {
-                        nameValuePairs.add(new BasicNameValuePair(list.get(u).getFlag_tab(),list.get(u).getContent()));
-                      //  nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
-                      //  nameValuePairs.add(new BasicNameValuePair("value[]", list.get(u).getContent()));
-                     //   nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
+
+                        nameValuePairs.add(new BasicNameValuePair(list.get(u).getFlag_tab(), list.get(u).getContent()));
+                        //  nameValuePairs.add(new BasicNameValuePair("key[]", list.get(u).getFlag_tab()));
+                        //  nameValuePairs.add(new BasicNameValuePair("value[]", list.get(u).getContent()));
+                        //   nameValuePairs.add(new BasicNameValuePair("type[]", jsonResultType(list.get(u).getFlag_content(), "b")));
                     }
 
                 }
 
-                Log.w("bubu",nameValuePairs+"");
 
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -4057,20 +4201,17 @@ Log.w("valueIWantToSend",valueIWantToSend);
 
                     JSONObject jsonRootObject = null;
                     try {
-                        Log.w("cucu",data);
 
                         jsonRootObject = new JSONObject(data);
                         String tipe = jsonRootObject.getString("type");
                         final String result = jsonRootObject.getString("result");
 
-                        if(tipe.equalsIgnoreCase("webview")){
-                            Log.w("cucu","1");
+                        if (tipe.equalsIgnoreCase("webview")) {
                             Intent intent = new Intent(mContext, WebViewByonActivity.class);
                             intent.putExtra(WebViewByonActivity.KEY_LINK_LOAD, result);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-                        }else if (tipe.equalsIgnoreCase("dialog")){
-                            Log.w("cucu","2");
+                        } else if (tipe.equalsIgnoreCase("dialog")) {
                             mContext.runOnUiThread(new Runnable() {
                                 public void run() {
                                     final AlertDialog.Builder alertbox = new AlertDialog.Builder(mContext);
@@ -4088,7 +4229,6 @@ Log.w("valueIWantToSend",valueIWantToSend);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
 
 
                 } else {
@@ -4131,16 +4271,128 @@ Log.w("valueIWantToSend",valueIWantToSend);
         }
     }
 
-    private void fifis(){
-        
-        db.deleteRoomsDetailbyId(idDetail,idRoomTab,username);
-        
+    private void fifis() {
+
+        db.deleteRoomsDetailbyId(idDetail, idRoomTab, username);
+
         progressDialog.dismiss();
         mContext.runOnUiThread(new Runnable() {
             public void run() {
                 generateLayut();
             }
         });
+    }
+
+
+    private class RefreshDBAsign extends AsyncTask<String, String, String> {
+        private ProgressDialog dialog;
+        String error = "";
+        private Activity activity;
+        private Context context;
+        ArrayAdapter<String> spinnerArrayAdapterNew;
+
+        public RefreshDBAsign(Activity activity, ArrayAdapter<String> spinnerArrayAdapter) {
+            this.activity = activity;
+            context = activity;
+            dialog = new ProgressDialog(activity);
+            spinnerArrayAdapterNew = spinnerArrayAdapter;
+
+        }
+
+        protected void onPreExecute() {
+            this.dialog.setMessage("Loading...");
+            this.dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0], params[1]);
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+
+
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+            if (error.length() > 0) {
+                Toast.makeText(context, error, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(context, "DB success download.", Toast.LENGTH_SHORT).show();
+                generateLayut();
+            }
+
+        }
+
+        protected void onProgressUpdate(String... string) {
+        }
+
+        public void postData(String valueIWantToSend, String usr) {
+            // Create a new HttpClient and Post Header
+
+            try {
+                HttpParams httpParameters = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
+                HttpConnectionParams.setSoTimeout(httpParameters, 15000);
+                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpPost httppost = new HttpPost(valueIWantToSend);
+
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("username_room", usr));
+                nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", idRoomTab));
+                MessengerDatabaseHelper messengerHelper = null;
+                if (messengerHelper == null) {
+                    messengerHelper = MessengerDatabaseHelper.getInstance(getContext());
+                }
+
+                Contact contact = messengerHelper.getMyContact();
+                nameValuePairs.add(new BasicNameValuePair("bc_user", contact.getJabberId()));
+
+
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                // Execute HTTP Post Request
+                HttpResponse response = httpclient.execute(httppost);
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200) {
+
+                    HttpEntity entity = response.getEntity();
+                    String data = EntityUtils.toString(entity);
+
+                    DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(context);
+                    dataBaseHelper.createUserTableDua("room_" + idRoomTab, data, username, idRoomTab);
+
+                } else {
+                    error = "Tolong periksa koneksi internet.";
+                }
+
+            } catch (ConnectTimeoutException e) {
+                e.printStackTrace();
+                getActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(context, "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (ClientProtocolException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(context, "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                // TODO Auto-generated catch block
+            } catch (IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(context, "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                // TODO Auto-generated catch block
+            }
+        }
+
     }
 
 

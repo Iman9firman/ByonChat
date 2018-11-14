@@ -5,6 +5,9 @@ import android.app.Application;
 import android.os.Handler;
 
 import com.byonchat.android.Manhera.Manhera;
+import com.byonchat.android.data.local.ByonchatVideoTubeDataStore;
+import com.byonchat.android.data.local.ByonchatVideoTubeDatabaseHelper;
+import com.byonchat.android.provider.BotListDB;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -16,8 +19,12 @@ public class Byonchat {
     @SuppressLint("StaticFieldLeak")
     private static Application appInstance;
     private static String appServer;
+    private static String appId;
+    private static String fileServer;
+    private static ByonchatVideoTubeDataStore videoTubeDataStore;
     private static Handler appHandler;
     private static String authorities;
+    private static BotListDB botListDB;
     private static ScheduledThreadPoolExecutor taskExecutor;
     private static boolean enableLog;
 
@@ -28,13 +35,21 @@ public class Byonchat {
         init(application, "https://bb.byonchat.com");
     }
 
-    public static void init(Application application, String serverBaseUrl) {
+    public static void init(Application application, String byonchatAppId) {
+        init(application, byonchatAppId, "https://bb.byonchat.com", "https://pp.byonchat.com");
+    }
+
+    public static void init(Application application, String byonchatAppId, String serverBaseUrl, String fileBaseUrl) {
         appInstance = application;
+        appId = byonchatAppId;
         appServer = serverBaseUrl;
+        fileServer = fileBaseUrl;
+        videoTubeDataStore = new ByonchatVideoTubeDatabaseHelper();
         appHandler = new Handler(appInstance.getApplicationContext().getMainLooper());
         taskExecutor = new ScheduledThreadPoolExecutor(5);
         appInstance.registerActivityLifecycleCallbacks(ActivityCallback.INSTANCE);
         authorities = appInstance.getPackageName();
+        botListDB = BotListDB.getInstance(application);
 
         Manhera.init(application);
     }
@@ -69,5 +84,35 @@ public class Byonchat {
 
     public static boolean isEnableLog() {
         return Byonchat.enableLog;
+    }
+
+    private static void checkAppIdSetup() throws RuntimeException {
+        if (appServer == null) {
+            throw new RuntimeException("Please init Byonchat with your app id before!");
+        }
+    }
+
+    public static String getAppId() {
+        checkAppIdSetup();
+        return appId;
+    }
+
+    public static String getFileServer() {
+        checkFileIdSetup();
+        return fileServer;
+    }
+
+    public static ByonchatVideoTubeDataStore getVideoTubeDataStore() {
+        return videoTubeDataStore;
+    }
+
+    private static void checkFileIdSetup() throws RuntimeException {
+        if (fileServer == null) {
+            throw new RuntimeException("Please init Byonchat with your file id before!");
+        }
+    }
+
+    public static BotListDB getBotListDB() {
+        return botListDB;
     }
 }

@@ -1,6 +1,13 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext.glideLibVersion = '3.8.0'
+    ext.okhttpLibVersion = '3.9.1'
+    ext.retroLambdaLibVersion = '3.7.0'
+    ext.rxunurlLibVersion = '0.2.0'
+    ext.retrofitLibVersion = '2.3.0'
+    ext.rxLibVersion = '1.0'
+
     repositories {
         jcenter()
         mavenCentral()
@@ -11,6 +18,7 @@ buildscript {
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6"
         classpath 'org.aspectj:aspectjtools:1.8.5'
+        classpath 'com.novoda:bintray-release:0.8.0'
         classpath 'com.google.gms:google-services:3.1.0'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -24,6 +32,13 @@ allprojects {
         google()
         flatDir {
             dirs 'libs'
+        }
+        maven { url "https://maven.google.com" }
+        maven { url 'https://jitpack.io' }
+    }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:deprecation"
         }
     }
 }

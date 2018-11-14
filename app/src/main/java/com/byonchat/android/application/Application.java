@@ -14,7 +14,8 @@ public class Application extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        Byonchat.init(this);
+        Byonchat.init(this, "Byonchat");
+        Byonchat.setEnableLog(android.support.multidex.BuildConfig.DEBUG);
     }
 }
 

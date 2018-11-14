@@ -80,6 +80,8 @@ import com.byonchat.android.room.FragmentRoomMultipleTask;
 import com.byonchat.android.room.FragmentRoomTask;
 import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
+import com.byonchat.android.ui.activity.ByonchatVideoBeforeDownloadActivity;
+import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.byonchat.android.utils.BlurBuilder;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.HttpHelper;
@@ -424,6 +426,18 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                         valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                         map.put(i, valSetOne);
                         aa = FragmentRoomPOS.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, ByonChatMainRoomActivity.this);
+                    } else if (category.equalsIgnoreCase("15")) {
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add("btube");
+                        valSetOne.add(username);
+                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                        valSetOne.add(color);
+                        valSetOne.add(include_latlong);
+                        show = true;
+                        valSetOne.add("showvideo");
+                        valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
+                        map.put(i, valSetOne);
+                        aa = ByonchatVideoFragment.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, ByonChatMainRoomActivity.this);
                     }
 
 
@@ -535,6 +549,15 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                                 intent.putExtra("idTask", "");
                             }
                             showFabIntent(intent);
+                        } else if (value.get(5).toString().equalsIgnoreCase("showvideo")) {
+                            Intent intent = ByonchatVideoBeforeDownloadActivity.generateIntent(getApplicationContext(),
+                                    username,
+                                    value.get(2).toString(),
+                                    value.get(6).toString(),
+                                    color,
+                                    colorText);
+                            intent.putExtra("tt", value.get(0).toString());
+                            showFabIntent(intent);
                         } else {
                             fab.hide();
                         }
@@ -564,6 +587,15 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                                 intent.putExtra("from", value.get(5).toString());
                                 intent.putExtra("idTask", "");
                             }
+                            showFabIntent(intent);
+                        } else if (value.get(5).toString().equalsIgnoreCase("showvideo")) {
+                            Intent intent = ByonchatVideoBeforeDownloadActivity.generateIntent(getApplicationContext(),
+                                    username,
+                                    value.get(2).toString(),
+                                    value.get(6).toString(),
+                                    color,
+                                    colorText);
+                            intent.putExtra("tt", value.get(0).toString());
                             showFabIntent(intent);
                         } else {
                             fab.hide();
@@ -1041,7 +1073,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
         return result;
     }
 
-    private String jsonResultType(String json, String type) {
+    public static String jsonResultType(String json, String type) {
         String hasil = "";
         JSONObject jObject = null;
         try {

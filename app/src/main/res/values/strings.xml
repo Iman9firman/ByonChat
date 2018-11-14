@@ -58,6 +58,18 @@
     <string name="activationcode_info_second">with verification code to the number below</string>
     <string name="activationcode_enter_digit">To complete your phone number verification, please enter the 6-digit activation code.</string>
 
+    <string name="action_download">Download</string>
+    <string name="action_delete_file">Delete from phone</string>
+    <string name="search_video">Search video</string>
+    <string name="byonchat_failed_download_file">Failed to download file!</string>
+    <string name="byonchat_coba_lagi">Lets try that again</string>
+    <string name="byonchat_tidak_responsif">Home isnt responding</string>
+    <string name="byonchat_empty_downloaded">Videos you download\nwill appear here</string>
+    <string name="byonchat_tidak_responsif_sebab">Thats why we cant show videos right now\nPlease check back later.</string>
+    <string name="byonchat_masalah_telusuri_video">There was a problem searching for videos</string>
+    <string name="byonchat_corrupted_file">Can not read file, please make sure that is not corrupted file!</string>
+    <string name="byonchat_error_no_handler">No handler for this type of file.</string>
+
     <string name="registration_hint_countrycode">Code</string>
     <string name="registration_hint_phone">Enter your phone number</string>
     <string name="registration_select_country">Select Country</string>

@@ -69,6 +69,7 @@ import com.byonchat.android.personalRoom.FragmentMyNewsNew;
 import com.byonchat.android.personalRoom.FragmentMyNote;
 import com.byonchat.android.personalRoom.FragmentMyPicture;
 import com.byonchat.android.personalRoom.FragmentMyVideo;
+import com.byonchat.android.personalRoom.FragmentProductCatalog;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.ContentRoom;
@@ -438,7 +439,13 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                         valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                         map.put(i, valSetOne);
                         aa = ByonchatVideoFragment.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, ByonChatMainRoomActivity.this);
+                    }else if (category.equalsIgnoreCase("16")) {
+                        //TIME=WATCH
+                        map.put(i, null);
+                        show = true;
+                        aa = FragmentProductCatalog.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, false, ByonChatMainRoomActivity.this);
                     }
+
 
 
                     String status = jsonArray.getJSONObject(i).getString("status").toString();

@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.byonchat.android.FragmentDinamicRoom.ItemRoomDetail;
 import com.byonchat.android.FragmentDinamicRoom.ModelFormChild;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -802,6 +803,7 @@ public class BotListDB extends SQLiteOpenHelper {
     }
 
     public Cursor getSingleRoomDetailFormWithFlagContentChild(String id, String idUsrNTb, String idDtlTskOld, String Status, String fCo) {
+        Log.w("jabwa", id + "<==>" + idUsrNTb + "<==>" + idDtlTskOld + "<==>" + Status + "<==>" + fCo);
         Cursor cursor = getDatabase().query(ROOM_DETAIl_TABLE, new String[]
                         {
                                 ROOM_DETAIL_ID, ROOM_DETAIL_ID_TAB, ROOM_DETAIL_ID_ROOM, ROOM_DETAIL_CONTENT, ROOM_DETAIL_FLAG_CONTENT, ROOM_DETAIL_FLAG_TAB, ROOM_DETAIL_FLAG_ROOM
@@ -844,20 +846,15 @@ public class BotListDB extends SQLiteOpenHelper {
                 }, ROOM_DETAIL_ID_ROOM + "='" + idDtlTskOld + "' AND " + ROOM_DETAIL_ID_TAB + "= '" + idUsrNTb + "'" + " AND " + ROOM_DETAIL_FLAG_ROOM + "= '" + Status + "'"
                 , null, ROOM_DETAIL_ID, null, null, null);
         if (cursor.moveToFirst()) {
+            Log.w("ada", "kabar");
             do {
 
                 String a = cursor.getString(cursor.getColumnIndex(ROOM_DETAIL_ID));
-               /* String b = cursor.getString(cursor.getColumnIndex(ROOM_DETAIL_ID_TAB));
-                String c = cursor.getString(cursor.getColumnIndex(ROOM_DETAIL_ID_ROOM));
-                String d = cursor.getString(cursor.getColumnIndex(ROOM_DETAIL_CONTENT));
-                String e = cursor.getString(cursor.getColumnIndex(ROOM_DETAIL_FLAG_CONTENT));
-                String f = cursor.getString(cursor.getColumnIndex(ROOM_DETAIL_FLAG_TAB));
-                String g = cursor.getString(cursor.getColumnIndex(ROOM_DETAIL_FLAG_ROOM));*/
-
-                //list.add(new RoomsDetail(a,"","","","","",""/*b,c,d,e,f,g*/));
                 list.add(a);
             } while (cursor.moveToNext());
         }
+
+
         return list;
     }
 

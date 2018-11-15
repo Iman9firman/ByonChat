@@ -1451,7 +1451,7 @@ public class DialogFormChildMainNew extends DialogFragment {
 
     }
 
-    private String getRandomString() {
+    public static String getRandomString() {
         long currentTimeMillis = System.currentTimeMillis();
         SecureRandom random = new SecureRandom();
 

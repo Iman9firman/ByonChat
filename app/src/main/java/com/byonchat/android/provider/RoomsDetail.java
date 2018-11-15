@@ -13,6 +13,10 @@ public class RoomsDetail {
     String flag_tab;
     String flag_room;
 
+    public RoomsDetail() {
+
+    }
+
     public RoomsDetail(String id, String pTab, String pRoom, String ctn, String fContent, String fTab, String fRoom) {
         this.id = id;
         this.parent_tab = pTab;
@@ -23,7 +27,7 @@ public class RoomsDetail {
         this.flag_room = fRoom;
     }
 
-    public RoomsDetail(String ctn, String fContent,String flag_tab) {
+    public RoomsDetail(String ctn, String fContent, String flag_tab) {
         this.content = ctn;
         this.flag_content = fContent;
         this.flag_tab = flag_tab;

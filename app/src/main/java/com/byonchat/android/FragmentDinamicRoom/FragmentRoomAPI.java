@@ -421,7 +421,6 @@ public class FragmentRoomAPI extends Fragment {
                             new RefreshDBAsign(mContext, spinnerArrayAdapter).execute(value, username);
                         }
 
-
                         spinnerArrayAdapter.notifyDataSetChanged();
 
 

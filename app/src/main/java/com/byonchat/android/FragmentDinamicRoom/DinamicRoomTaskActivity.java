@@ -243,12 +243,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     EditText et[];
     TextView tp[];
     ArrayList<ArrayList<String>> stringAPI;
+    Map<Integer, String> idFormChildParent = new HashMap<Integer, String>();
     Map<Integer, List<String>> hashMap = new HashMap<Integer, List<String>>();
     Map<Integer, List<String>> hashMapOcr = new HashMap<Integer, List<String>>();
     Map<Integer, List<String>> hashMapFormulas = new HashMap<Integer, List<String>>();
     Map<Integer, List<String>> hashMapDropForm = new HashMap<Integer, List<String>>();
     Map<Integer, List<String>> hashMapDropNew = new HashMap<Integer, List<String>>();
     HashMap<Integer, HashMap<String, String>> outerMap = new HashMap<Integer, HashMap<String, String>>();
+    HashMap<Integer, HashMap<String, ArrayList<String>>> newDropdownViews = new HashMap<Integer, HashMap<String, ArrayList<String>>>();
+    ArrayList<String> lolosReq = new ArrayList<>();
 
     AddChildFotoExModel valueIdValue;
     Integer count;
@@ -620,7 +623,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 final String label = joContent.getJSONObject(i).getString("label").toString();
                                 final String value = joContent.getJSONObject(i).getString("value").toString();
                                 final String type = joContent.getJSONObject(i).getString("type").toString();
+                                final String idValue = joContent.getJSONObject(i).getString("id").toString();
+                                Log.w("juba", idValue);
 
+// TODO: 08/11/18 jadi nnti listchild dimasukin ke dalem array untuk ambil data dari parennya
                                 if (type.equalsIgnoreCase("attach_api")) {
                                     TextView textV = new TextView(DinamicRoomTaskActivity.this);
                                     textV.setText(Html.fromHtml(label));
@@ -693,6 +699,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     linearValue.addView(linearLayout);
 
                                 } else if (type.equalsIgnoreCase("form_child")) {
+
+
+                                    JSONObject nn = new JSONObject(joContent.getJSONObject(i).toString());
+
+                                    idFormChildParent.put(Integer.valueOf(nn.getString("id")), joContent.getJSONObject(i).toString());
 
                                     TextView textV = new TextView(DinamicRoomTaskActivity.this);
                                     textV.setText(Html.fromHtml(label));
@@ -836,7 +847,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 }
                                             } else {
                                                 Log.w("bajuri4", iidd);
-                                                if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209")) {
+                                                if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209") || iidd.equalsIgnoreCase("2397")) {
                                                     Log.w("haihi", data);
 
                                                     JSONArray jsonarrayChild2 = new JSONArray(data);
@@ -1028,7 +1039,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 } else {
                                                     Log.w("toyin", mfc.getDetail() + "<->" + Integer.valueOf(mfc.getPrice().replace(".", "")) * Integer.valueOf(mfc.getDetail()));
 
-                                                    if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209")) {
+                                                    if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209") || iidd.equalsIgnoreCase("2397")) {
                                                         totalQ += Integer.valueOf(mfc.getDetail());
                                                         temp += Float.valueOf(mfc.getPrice()) * Integer.valueOf(mfc.getDetail());
 
@@ -1132,7 +1143,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     } else {
                                         Log.w("bisaS1", iidd);
-                                        if (Integer.valueOf(iidd) >= 2092 && Integer.valueOf(iidd) != 2207 && Integer.valueOf(iidd) != 2206 && Integer.valueOf(iidd) != 2209) {
+                                        if (Integer.valueOf(iidd) >= 2092 && Integer.valueOf(iidd) != 2207 && Integer.valueOf(iidd) != 2206 && Integer.valueOf(iidd) != 2209 && Integer.valueOf(iidd) != 2397) {
                                             Log.w("bisaS2", "3");
                                             final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "multiple", false);
                                             lv.setAdapter(adapter);
@@ -1187,106 +1198,111 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     linearValue.addView(etV, params22);
 
                                 } else if (type.equalsIgnoreCase("dropdown_dinamis") || type.equalsIgnoreCase("new_dropdown_dinamis") || type.equalsIgnoreCase("master_data")) {
-                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
-                                    textV.setText(Html.fromHtml(label));
-                                    textV.setTextSize(17);
-                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
 
 
-                                    JSONObject jsonObject = new JSONObject(value);
-                                    Iterator<String> keys = jsonObject.keys();
+                                    if (!value.equalsIgnoreCase("-")) {
+
+                                        TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                        textV.setText(Html.fromHtml(label));
+                                        textV.setTextSize(17);
+                                        textV.setLayoutParams(new TableRow.LayoutParams(0));
+
+                                        JSONObject jsonObject = new JSONObject(value);
+                                        Iterator<String> keys = jsonObject.keys();
 
 
-                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params11.setMargins(10, 10, 30, 0);
-                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params22.setMargins(50, 10, 30, 30);
-                                    linearValue.addView(textV, params11);
-                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-                                    linearValue.addView(line, params11);
+                                        LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params11.setMargins(10, 10, 30, 0);
+                                        LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params22.setMargins(50, 10, 30, 30);
+                                        linearValue.addView(textV, params11);
+                                        LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                        linearValue.addView(line, params11);
 
-                                    List<String> keysList = new ArrayList<String>();
-                                    while (keys.hasNext()) {
-                                        keysList.add(keys.next());
-                                    }
+                                        List<String> keysList = new ArrayList<String>();
+                                        while (keys.hasNext()) {
+                                            keysList.add(keys.next());
+                                        }
 
-                                    String longi = null, lanti = null;
-                                    for (String aa : keysList) {
-                                        if (jsonObject.getString(aa).startsWith("https://bb.byonchat.com/") && jsonObject.getString(aa).endsWith(".png")) {
-                                            TextView etV = (TextView) new TextView(context);
-                                            etV.setTextIsSelectable(true);
-                                            etV.setText(String.valueOf(aa));
-                                            linearValue.addView(etV, params22);
+                                        String longi = null, lanti = null;
+                                        for (String aa : keysList) {
+                                            if (jsonObject.getString(aa).startsWith("https://bb.byonchat.com/") && jsonObject.getString(aa).endsWith(".png")) {
+                                                TextView etV = (TextView) new TextView(context);
+                                                etV.setTextIsSelectable(true);
+                                                etV.setText(String.valueOf(aa));
+                                                linearValue.addView(etV, params22);
 
-                                            LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.image_loader_layout_form, null);
-                                            final ImageView imageView = (ImageView) linearLayout.findViewById(R.id.value);
-                                            Picasso.with(context).load(jsonObject.getString(aa)).into(imageView);
-                                            final String abab = jsonObject.getString(aa);
-                                            linearValue.addView(linearLayout, params22);
+                                                LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.image_loader_layout_form, null);
+                                                final ImageView imageView = (ImageView) linearLayout.findViewById(R.id.value);
+                                                Picasso.with(context).load(jsonObject.getString(aa)).into(imageView);
+                                                final String abab = jsonObject.getString(aa);
+                                                linearValue.addView(linearLayout, params22);
+                                                imageView.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+
+                                                        Intent intent = new Intent(context, ZoomImageViewActivity.class);
+                                                        intent.putExtra(ZoomImageViewActivity.KEY_FILE, abab);
+                                                        startActivity(intent);
+                                                    }
+                                                });
+
+
+                                            } else {
+                                                TextView etV = (TextView) new TextView(context);
+                                                etV.setTextIsSelectable(true);
+                                                etV.setText(String.valueOf(aa) + " = " + jsonObject.getString(aa));
+                                                linearValue.addView(etV, params22);
+
+                                            }
+
+                                            if (String.valueOf(aa).equalsIgnoreCase("Longitude")) {
+                                                longi = jsonObject.getString(aa);
+                                            } else if (String.valueOf(aa).equalsIgnoreCase("Latitude")) {
+                                                lanti = jsonObject.getString(aa);
+                                            }
+                                        }
+
+
+                                        if (longi != null && lanti != null) {
+                                            final Double l1 = Double.parseDouble(lanti);
+                                            final Double l2 = Double.parseDouble(longi);
+
+                                            ImageView imageView = new ImageView(this);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                imageView.setImageDrawable(getDrawable(R.drawable.ic_att_location));
+                                            } else {
+                                                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_att_location));
+                                            }
+
+
                                             imageView.setOnClickListener(new View.OnClickListener() {
                                                 @Override
-                                                public void onClick(View view) {
+                                                public void onClick(View v) {
+                                                    Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + l1 + ","
+                                                            + l2 + "(" + "Location" + ")");
 
-                                                    Intent intent = new Intent(context, ZoomImageViewActivity.class);
-                                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, abab);
-                                                    startActivity(intent);
+                                                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                                    mapIntent.setPackage("com.google.android.apps.maps");
+                                                    startActivity(mapIntent);
                                                 }
                                             });
 
-
-                                        } else {
-                                            TextView etV = (TextView) new TextView(context);
-                                            etV.setTextIsSelectable(true);
-                                            etV.setText(String.valueOf(aa) + " = " + jsonObject.getString(aa));
-                                            linearValue.addView(etV, params22);
-
-                                        }
-
-                                        if (String.valueOf(aa).equalsIgnoreCase("Longitude")) {
-                                            longi = jsonObject.getString(aa);
-                                        } else if (String.valueOf(aa).equalsIgnoreCase("Latitude")) {
-                                            lanti = jsonObject.getString(aa);
+                                            TextView textMap = new TextView(DinamicRoomTaskActivity.this);
+                                            textMap.setText("Location");
+                                            textMap.setTextSize(18);
+                                            textMap.setLayoutParams(new TableRow.LayoutParams(0));
+                                            linearValue.addView(textMap, params11);
+                                            LinearLayout line2 = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                            linearValue.addView(line2, params11);
+                                            int width = getWindowManager().getDefaultDisplay().getWidth();
+                                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 5);
+                                            params.setMargins(5, 15, 0, 30);
+                                            imageView.setLayoutParams(params);
+                                            linearValue.addView(imageView);
                                         }
                                     }
 
-
-                                    if (longi != null && lanti != null) {
-                                        final Double l1 = Double.parseDouble(lanti);
-                                        final Double l2 = Double.parseDouble(longi);
-
-                                        ImageView imageView = new ImageView(this);
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                            imageView.setImageDrawable(getDrawable(R.drawable.ic_att_location));
-                                        } else {
-                                            imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_att_location));
-                                        }
-
-
-                                        imageView.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + l1 + ","
-                                                        + l2 + "(" + "Location" + ")");
-
-                                                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                                                mapIntent.setPackage("com.google.android.apps.maps");
-                                                startActivity(mapIntent);
-                                            }
-                                        });
-
-                                        TextView textMap = new TextView(DinamicRoomTaskActivity.this);
-                                        textMap.setText("Location");
-                                        textMap.setTextSize(18);
-                                        textMap.setLayoutParams(new TableRow.LayoutParams(0));
-                                        linearValue.addView(textMap, params11);
-                                        LinearLayout line2 = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-                                        linearValue.addView(line2, params11);
-                                        int width = getWindowManager().getDefaultDisplay().getWidth();
-                                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 5);
-                                        params.setMargins(5, 15, 0, 30);
-                                        imageView.setLayoutParams(params);
-                                        linearValue.addView(imageView);
-                                    }
 
                                 } else if (type.equalsIgnoreCase("checkbox")) {
 
@@ -1574,7 +1590,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                 Log.w("ini", content);
 
-                JSONArray jsonArray = new JSONArray(content);
+                final JSONArray jsonArray = new JSONArray(content);
                 if (jsonArray.length() == 0) {
 
                     //di disable dlu
@@ -1608,7 +1624,153 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                     Log.w("asd:" + count, label + "--" + type);
 
-                    if (type.equalsIgnoreCase("attach_api")) {
+                    if (type.equalsIgnoreCase("dropdown_views")) {
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+                        textView.setLayoutParams(new TableRow.LayoutParams(0));
+
+                        TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
+                        final String isi = jsonArray.getJSONObject(i).getString("dropdown_views").toString();
+                        final JSONArray jsonArrays = new JSONArray(isi);
+
+
+                        final ArrayList<String> spinnerArray = new ArrayList<String>();
+
+
+                        HashMap<String, ArrayList<String>> hashMapss = new HashMap<>();
+
+                        for (int ia = 0; ia < jsonArrays.length(); ia++) {
+                            String l = jsonArrays.getJSONObject(ia).getString("label").toString();
+                            JSONArray pairs = jsonArrays.getJSONObject(ia).getJSONArray("pairs");
+                            final ArrayList<String> arrayPair = new ArrayList<String>();
+                            for (int iaa = 0; iaa < pairs.length(); iaa++) {
+                                arrayPair.add(pairs.get(iaa).toString());
+                            }
+                            hashMapss.put(l, arrayPair);
+                            spinnerArray.add(l);
+
+                        }
+
+                        newDropdownViews.put(Integer.parseInt(idListTask), hashMapss);
+
+                        SearchableSpinner spinner = new SearchableSpinner(this);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+                        }
+                        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinner.setAdapter(spinnerArrayAdapter);
+                        params2.setMargins(30, 10, 30, 40);
+                        spinner.setLayoutParams(params2);
+
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                        if (cursorCild.getCount() > 0) {
+                            int spinnerPosition = spinnerArrayAdapter.getPosition(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                            spinner.setSelection(spinnerPosition);
+                        } else {
+                            if (spinner.getSelectedItem() != null) {
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinner.getSelectedItem().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                db.insertRoomsDetail(orderModel);
+                            }
+
+                        }
+
+
+                        if ((!showButton)) {
+                            spinner.setEnabled(false);
+                        } else {
+                            final int finalI7 = i;
+                            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                                @Override
+                                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
+
+                                    HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
+                                    Iterator it = hashMapL.entrySet().iterator();
+                                    while (it.hasNext()) {
+                                        Map.Entry pair = (Map.Entry) it.next();
+                                        ArrayList<String> arrayPair = (ArrayList<String>) pair.getValue();
+
+                                        for (int ia = 0; ia < arrayPair.size(); ia++) {
+                                            List value = (List) hashMap.get(Integer.parseInt(arrayPair.get(ia)));
+                                            if (pair.getKey().toString().equalsIgnoreCase(spinnerArray.get(myPosition))) {
+                                                lolosReq.remove(arrayPair.get(ia));
+                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                    linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                                }
+                                            } else {
+                                                lolosReq.add(arrayPair.get(ia));
+                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                    linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                }
+
+                                            }
+                                        }
+                                    }
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
+                                    if (cEdit.getCount() > 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                    } else {
+                                        if (String.valueOf(spinnerArray.get(myPosition)).length() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                            db.insertRoomsDetail(orderModel);
+                                        } else {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                        }
+                                    }
+
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parentView) {
+                                }
+
+                            });
+                        }
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params1.setMargins(30, 10, 30, 0);
+
+                        LinearLayout.LayoutParams params12 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params12.setMargins(50, 10, 30, 0);
+
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add("");
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView, params1);
+
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(spinner, params1);
+                        View view = new View(this);
+                        view.setVisibility(View.INVISIBLE);
+
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(view, params2);
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+
+                    } else if (type.equalsIgnoreCase("attach_api")) {
                         if (count == null) {
                             count = 0;
                         } else {
@@ -1622,15 +1784,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         tp[count].setTextSize(15);
                         tp[count].setLayoutParams(new TableRow.LayoutParams(0));
 
-
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(String.valueOf(count));
-                        valSetOne.add(required);
-                        valSetOne.add(type);
-                        valSetOne.add(name);
-                        valSetOne.add(label);
-                        valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params1.setMargins(30, 10, 30, 0);
@@ -1716,8 +1869,23 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                 }
 
+                                List<String> valSetOne = new ArrayList<String>();
+                                valSetOne.add(String.valueOf(count));
+                                valSetOne.add(required);
+                                valSetOne.add(type);
+                                valSetOne.add(name);
+                                valSetOne.add(label);
+                                valSetOne.add(String.valueOf(i));
+
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(tp[count], params1);
+
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(linearEstimasi[count]);
+
+
+                                hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                             } else {
                                 Log.w("banib1", value);
@@ -1763,12 +1931,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
 
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.qr_scan_layout, null);
                         linearEstimasi[count].setLayoutParams(params2);
                         linearLayout.addView(linearEstimasi[count]);
+
 
                         final Button btnOption = (Button) linearEstimasi[count].findViewById(R.id.btn_browse);
                         final EditText valueFile = (EditText) linearEstimasi[count].findViewById(R.id.value);
@@ -1835,11 +2004,28 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         });
 
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
                     } else if (type.equalsIgnoreCase("form_child")) {
 
-                        Log.w("igni", idListTask);
-
                         final String formChild = jsonArray.getJSONObject(i).getString("form_child").toString();
+                        String asal = "";
+                        ArrayList<String> asall = new ArrayList<String>();
+
+                        if (jsonArray.getJSONObject(i).has("parent_child")) {
+                            String parent_child = jsonArray.getJSONObject(i).getString("parent_child");
+                            if (parent_child.equalsIgnoreCase("null")) {
+                            } else {
+
+                                asal = idFormChildParent.get(Integer.valueOf(parent_child));
+                                JSONArray jsonArrayCildWOO = new JSONArray(formChild);
+                                asall.add(0, "");
+                                for (int iasal = 0; iasal < jsonArrayCildWOO.length(); iasal++) {
+                                    asall.add(Integer.valueOf(jsonArrayCildWOO.getJSONObject(iasal).getString("order")), jsonArrayCildWOO.getJSONObject(iasal).getString("type"));
+                                }
+                            }
+                        }
+
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
@@ -1867,7 +2053,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                         if (idListTask.equalsIgnoreCase("65128")) {
                             Log.w("igni", "satu");
@@ -2366,6 +2552,36 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 idListTaskMasterForm = idListTask;
                                 List<String> listId = db.getAllRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), "child_detail");
 
+                                if (listId.size() == 0) {
+                                    if (asal.length() > 0) {
+                                        try {
+                                            JSONObject js1 = new JSONObject(asal);
+                                            JSONArray jsonArrayV = js1.getJSONArray("value");
+                                            for (int iz = 0; iz < jsonArrayV.length(); iz++) {
+
+                                                JSONArray jsonArrayVv = jsonArrayV.getJSONObject(iz).getJSONArray("data");
+                                                String resRandom = DialogFormChildMainNew.getRandomString();
+
+
+                                                for (int iasd = 0; iasd < jsonArrayVv.length(); iasd++) {
+                                                    String a = jsonArrayVv.getJSONObject(iasd).getString("key");
+                                                    String b = jsonArrayVv.getJSONObject(iasd).getString("value");
+                                                    String c = jsonArrayVv.getJSONObject(iasd).getString("type");
+
+                                                    RoomsDetail orderModel2 = new RoomsDetail(resRandom, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), b, jsonCreateType(String.valueOf(asall.indexOf(c)), c, String.valueOf(asall.indexOf(c) - 1)), a, "child_detail");
+                                                    db.insertRoomsDetail(orderModel2);
+                                                }
+                                                listId.add(resRandom);
+                                            }
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                }
+
+
                                 JSONArray jsonArrayMaster = new JSONArray();
                                 ArrayList<ModelFormChild> rowItems = new ArrayList<ModelFormChild>();
                                 try {
@@ -2379,9 +2595,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         objData.put("urutan", asd);
                                         asd++;
                                         List<RoomsDetail> list = db.getAllRoomDetailFormWithFlagContent(idchildDetail, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), "child_detail");
+
                                         JSONArray jsonArrayHUHU = new JSONArray();
                                         for (int u = 0; u < list.size(); u++) {
-                                            Log.w("slasa", "1");
+
 
                                             JSONObject objVV = new JSONObject();
                                             JSONArray jsA = null;
@@ -2493,6 +2710,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         String tPP = jObject.get("Part ID").toString() + " " + jObject.get("Nama Part").toString() + " (" + list.get(0).getContent() + ")";
                                                         decsUntuk = list.get(2).getContent();
                                                         priceUntuk = jObject.get("AVE").toString();
+
+                                                        Log.w("arash", idchildDetail + ":::" + tPP + ":::" + decsUntuk + ":::" + priceUntuk);
+
                                                         rowItems.add(new ModelFormChild(idchildDetail, tPP, decsUntuk, priceUntuk));
 
                                                     } catch (JSONException e) {
@@ -2617,6 +2837,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 FragmentManager fm = getSupportFragmentManager();
 
                                                 if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
+                                                    Log.w("kausar", item.getId());
+
                                                     DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
                                                     testDialog.setRetainInstance(true);
                                                     testDialog.show(fm, "Dialog");
@@ -2934,9 +3156,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         }
 
-
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(linearEstimasi[count], params3);
 
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
                     } else if (type.equalsIgnoreCase("text")) {
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -2951,6 +3174,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         } else {
                             count++;
                         }
+
                         et[count] = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
@@ -2959,7 +3183,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
@@ -3021,8 +3245,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         params2.setMargins(30, 10, 30, 40);
 
 
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(textView, params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(et[count], params2);
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("formula")) {
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -3037,6 +3264,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         } else {
                             count++;
                         }
+
                         et[count] = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
@@ -3045,7 +3273,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
@@ -3117,9 +3345,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params2.setMargins(30, 10, 30, 40);
 
-
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(textView, params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(et[count], params2);
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
                     } else if (type.equalsIgnoreCase("textarea")) {
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -3144,7 +3375,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
@@ -3210,16 +3441,34 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params2.setMargins(30, 10, 30, 40);
 
-
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(textView, params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(et[count], params2);
 
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
                     } else if (type.equalsIgnoreCase("text_info")) {
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(20);
                         textView.setLayoutParams(new TableRow.LayoutParams(0));
+
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
 
                         TextView et;
                         et = (TextView) getLayoutInflater().inflate(R.layout.text_view_layout, null);
@@ -3238,11 +3487,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         params1.setMargins(30, 10, 30, 0);
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params2.setMargins(30, 10, 30, 40);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+
                         linearLayout.addView(textView, params1);
                         if ((value.length() != 0) || (!value.equalsIgnoreCase(""))) {
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(et, params2);
                         }
 
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("date") || type.equalsIgnoreCase("time")) {
 
@@ -3267,7 +3521,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params1.setMargins(30, 10, 30, 0);
@@ -3276,8 +3529,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.date_layout_form, null);
                         linearEstimasi[count].setLayoutParams(params2);
+
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(tp[count], params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(linearEstimasi[count]);
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                         final ImageButton btnOption = (ImageButton) linearEstimasi[count].findViewById(R.id.btn_browse);
                         if (type.equalsIgnoreCase("time")) {
@@ -3348,7 +3606,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
@@ -3408,9 +3665,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params2.setMargins(30, 10, 30, 40);
 
-
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(textView, params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(et[count], params2);
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                     } else if (type.equalsIgnoreCase("currency")) {
 
@@ -3436,7 +3697,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
@@ -3523,10 +3784,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params2.setMargins(30, 10, 30, 40);
 
-
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(textView, params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(et[count], params2);
 
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
                     } else if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
@@ -3534,10 +3798,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(30, 10, 30, 0);
-                        textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
 
                         if (count == null) {
                             count = 0;
@@ -3545,12 +3805,29 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             count++;
                         }
 
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        linearLayout.addView(textView);
+
+
                         imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
                         int width = getWindowManager().getDefaultDisplay().getWidth();
                         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
                         params.setMargins(5, 15, 0, 0);
                         imageView[count].setLayoutParams(params);
                         params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(imageView[count], params);
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
@@ -3577,14 +3854,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         }
 
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(String.valueOf(count));
-                        valSetOne.add(required);
-                        valSetOne.add(type);
-                        valSetOne.add(name);
-                        valSetOne.add(label);
-                        valSetOne.add(String.valueOf(i));
+
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                         final int finalI4 = i;
                         imageView[count].setOnClickListener(new View.OnClickListener() {
@@ -3674,24 +3946,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(30, 10, 30, 0);
-                        textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
+
 
                         if (count == null) {
                             count = 0;
                         } else {
                             count++;
                         }
-
-                        imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
-                        imageView[count].setImageDrawable(getResources().getDrawable(R.drawable.ico_camera_reader));
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(5, 15, 0, 0);
-                        imageView[count].setLayoutParams(params);
-                        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-                        linearLayout.addView(imageView[count], params);
 
                         final List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
@@ -3700,7 +3961,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
+
+                        imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
+                        imageView[count].setImageDrawable(getResources().getDrawable(R.drawable.ico_camera_reader));
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(5, 15, 0, 0);
+                        imageView[count].setLayoutParams(params);
+                        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(imageView[count], params);
+
 
                         imageView[count].setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -3834,10 +4110,14 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     }
                                 });
                                 child.setLayoutParams(params2);
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(linearEstimasi[count]);
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(child);
                             }
                         }
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
                     } else if (type.equalsIgnoreCase("upload_document")) {
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
@@ -3845,16 +4125,14 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(30, 10, 30, 0);
-                        textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
+
 
                         if (count == null) {
                             count = 0;
                         } else {
                             count++;
                         }
+
 
                         final List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
@@ -3863,11 +4141,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
 
                         linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.upload_doc_layout, null);
                         linearEstimasi[count].setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(linearEstimasi[count]);
 
                         final Button btnOption = (Button) linearEstimasi[count].findViewById(R.id.btn_browse);
@@ -3900,6 +4183,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         });
 
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                     } else if (type.equalsIgnoreCase("signature")) {
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -3908,10 +4193,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(30, 10, 30, 0);
-                        textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
+
 
                         if (count == null) {
                             count = 0;
@@ -3919,13 +4201,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             count++;
                         }
 
-                        imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
-                        imageView[count].setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(5, 15, 0, 0);
-                        imageView[count].setLayoutParams(params);
-                        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-                        linearLayout.addView(imageView[count], params);
 
                         final List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
@@ -3934,6 +4209,23 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
+
+                        imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
+                        imageView[count].setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(5, 15, 0, 0);
+                        imageView[count].setLayoutParams(params);
+                        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(imageView[count], params);
+
+
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
                         final int finalI26 = i;
 
@@ -3969,12 +4261,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(30, 10, 30, 0);
-                        params3.setMargins(30, 10, 30, 30);
-                        textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
+
 
                         if (count == null) {
                             count = 0;
@@ -3989,12 +4276,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        params3.setMargins(30, 10, 30, 30);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
 
                         linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.estimation_layout, null);
                         linearEstimasi[count].setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(linearEstimasi[count]);
 
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
@@ -4045,11 +4342,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(30, 10, 30, 0);
-                        textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
-
+                        final List<String> valSetOne = new ArrayList<String>();
 
                         if (count == null) {
                             count = 0;
@@ -4057,15 +4350,18 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             count++;
                         }
 
-
-                        final List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
                         valSetOne.add(required);
                         valSetOne.add(type);
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
 
                         rat[count] = (RatingBar) getLayoutInflater().inflate(R.layout.costume_rating, null);
                         final LinearLayout.LayoutParams testLP = new LinearLayout.LayoutParams(
@@ -4073,8 +4369,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         testLP.setMargins(10, 20, 10, 10);
                         testLP.gravity = Gravity.CENTER_HORIZONTAL;
                         rat[count].setLayoutParams(testLP);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(rat[count]);
 
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
@@ -4146,7 +4444,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
                         et[count].setFocusable(false);
                         et[count].setFocusableInTouchMode(false); // user touches widget on phone with touch screen
 
@@ -4260,9 +4558,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         params2.setMargins(30, 10, 30, 40);
 
 
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(textView, params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(et[count], params2);
 
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("video")) {
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -4271,16 +4573,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(5, 15, 0, 0);
-                        textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
 
                         if (count == null) {
                             count = 0;
                         } else {
                             count++;
                         }
+
 
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
@@ -4289,7 +4588,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(5, 15, 0, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
 
                         imageView[count] = new ImageView(this);
                         imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
@@ -4299,6 +4603,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         params.setMargins(5, 15, 0, 0);
                         imageView[count].setLayoutParams(params);
                         params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(imageView[count], params);
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
@@ -4420,6 +4725,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         });
 
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("dropdown_form")) {
 
@@ -4431,17 +4737,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         textView.setTextSize(15);
                         textView.setLayoutParams(new TableRow.LayoutParams(0));
 
-                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params1.setMargins(30, 10, 30, 0);
-                        linearLayout.addView(textView, params1);
-
                         if (count == null) {
                             count = 0;
                         } else {
                             count++;
                         }
-
-                        idListTaskMasterForm = idListTask;
 
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
@@ -4450,7 +4750,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params1.setMargins(30, 10, 30, 0);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView, params1);
+
+                        idListTaskMasterForm = idListTask;
 
                         linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
                         final JSONObject jObject = new JSONObject(value);
@@ -4510,6 +4816,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     params2.setMargins(40, 10, 10, 0);
                                     relativeLayout.setLayoutParams(params2);
 
+                                    valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                     linearLayout.addView(relativeLayout);
 
                                 }
@@ -4539,14 +4846,14 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                         params2.setMargins(60, 10, 30, 0);
                         linearEstimasi[count].setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(linearEstimasi[count]);
 
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("new_dropdown_dinamis")) {
 
                         String foro = jsonArray.getJSONObject(i).getString("formula").toString();
-
-                        Log.w("supreme", foro);
 
                         JSONObject jObjects = null;
                         try {
@@ -4555,10 +4862,24 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             e.printStackTrace();
                         }
 
-                        if (jObjects != null) {
-                            Log.w("masd@@", foro);
-                            Log.w("masala", customersId);
 
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+                        Log.w("in1", String.valueOf(count));
+
+                        if (jObjects != null) {
                             TextView textView = new TextView(DinamicRoomTaskActivity.this);
                             if (required.equalsIgnoreCase("1")) {
                                 label += "<font size=\"3\" color=\"red\">*</font>";
@@ -4569,22 +4890,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                             params1.setMargins(30, 10, 30, 0);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                            Log.w("malee", String.valueOf(linearLayout.getChildCount()));
+
                             linearLayout.addView(textView, params1);
-
-                            if (count == null) {
-                                count = 0;
-                            } else {
-                                count++;
-                            }
-
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(String.valueOf(count));
-                            valSetOne.add(required);
-                            valSetOne.add(type);
-                            valSetOne.add(name);
-                            valSetOne.add(label);
-                            valSetOne.add(String.valueOf(i));
-                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                             linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
                             final JSONObject jObject = new JSONObject(value);
@@ -4860,7 +5169,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                             params2.setMargins(60, 10, 30, 0);
                             linearEstimasi[count].setLayoutParams(params2);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+
+                            Log.w("malem", String.valueOf(linearLayout.getChildCount()));
+
                             linearLayout.addView(linearEstimasi[count]);
+
 
                         } else {
                             //biasa
@@ -4874,22 +5188,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                             params1.setMargins(30, 10, 30, 0);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(textView, params1);
-
-                            if (count == null) {
-                                count = 0;
-                            } else {
-                                count++;
-                            }
-
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(String.valueOf(count));
-                            valSetOne.add(required);
-                            valSetOne.add(type);
-                            valSetOne.add(name);
-                            valSetOne.add(label);
-                            valSetOne.add(String.valueOf(i));
-                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                             linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
                             final JSONObject jObject = new JSONObject(value);
@@ -5028,6 +5328,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                                             dummyIdDate = Integer.parseInt(idListTask);
                                             List nilai = (List) hashMap.get(dummyIdDate);
+
                                             if (spinner.getSelectedItem().toString().equals("--Please Select--")) {
                                                 if (kolom.size() > 1) {
                                                     RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinner.getSelectedItem().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
@@ -5259,11 +5560,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                             params2.setMargins(60, 10, 30, 0);
                             linearEstimasi[count].setLayoutParams(params2);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(linearEstimasi[count]);
+
                         }
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
 
                     } else if (type.equalsIgnoreCase("dropdown_dinamis")) {
+
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
@@ -5272,10 +5578,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
                         textView.setLayoutParams(new TableRow.LayoutParams(0));
-
-                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params1.setMargins(30, 10, 30, 0);
-                        linearLayout.addView(textView, params1);
 
                         if (count == null) {
                             count = 0;
@@ -5290,7 +5592,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params1.setMargins(30, 10, 30, 0);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView, params1);
+
 
                         linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
                         JSONObject jObject = new JSONObject(value);
@@ -5469,7 +5775,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                         params2.setMargins(60, 10, 30, 0);
                         linearEstimasi[count].setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(linearEstimasi[count]);
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("dropdown")) {
                         //manual_input
@@ -5516,7 +5824,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                         final EditText et = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
                         et.setVisibility(View.GONE);
@@ -5605,16 +5913,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         LinearLayout.LayoutParams params12 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params12.setMargins(50, 10, 30, 0);
 
-
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(textView, params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(spinner, params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(et, params12);
 
                         //untuk kasih nafas haha
                         View view = new View(this);
                         view.setVisibility(View.INVISIBLE);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(view, params2);
-
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("input_kodepos")) {
                         final DatabaseKodePos mDB = new DatabaseKodePos(context);
@@ -5640,7 +5951,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             valSetOne.add(name);
                             valSetOne.add(label);
                             valSetOne.add(String.valueOf(i));
-                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                             et[count].setId(Integer.parseInt(idListTask));
                             et[count].setHint(placeHolder);
@@ -5852,18 +6163,31 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                             params2.setMargins(60, 10, 30, 40);
 
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(textView, params1);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(tvKode, params3);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(et[count], params5);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(tvProv, params4);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(prov, params5);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(tvKota, params4);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(kota, params5);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(tvKec, params4);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(kec, params5);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(tvKel, params4);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(kel, params2);
 
+
+                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                         } else {
                             if (deleteContent) {
@@ -5895,7 +6219,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             valSetOne.add(name);
                             valSetOne.add(label);
                             valSetOne.add(String.valueOf(i));
-                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
 
                             TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                             final Cursor c = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"propinsi"}, null, null, "propinsi", null, null, null);
@@ -6383,22 +6707,38 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             spinnerKecamatan.setLayoutParams(params4);
                             spinnerKelurahan.setLayoutParams(params4);
 
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(textView, params1);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(tvProv, params3);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(spinnerPropinsi, params5);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(tvKota, params4);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(spinnerKota, params5);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(tvKec, params4);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(spinnerKecamatan, params5);
+
                             if (flag.equalsIgnoreCase("yes")) {
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(tvKel, params4);
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(spinnerKelurahan, params5);
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(tvKode, params4);
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(kodePos, params2);
                             } else {
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(tvKel, params4);
+                                valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                                 linearLayout.addView(spinnerKelurahan, params2);
                             }
+                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
                         } else {
                             if (deleteContent) {
 
@@ -6410,6 +6750,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             startActivity(intent);
                             return;
                         }
+
                     } else if (type.equalsIgnoreCase("checkbox")) {
                         //add checkboxes
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -6418,11 +6759,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(30, 10, 30, 0);
-                        textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
-
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add("");
                         valSetOne.add(required);
@@ -6430,7 +6766,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
+
 
                         HashMap hashMapCheck = new HashMap();
                         String isis = jsonArray.getJSONObject(i).getString("checkbox").toString();
@@ -6525,22 +6866,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                 });
                             }
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(cb);
+                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
                         }
                     } else if (type.equalsIgnoreCase("radio")) {
 //sendiri
-                        // TODO: 07/09/18 lakukan penambahan edit text di other disamakan dengan dropdown 
+                        // TODO: 07/09/18 lakukan penambahan edit text di other disamakan dengan dropdown
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
                             label += "<font size=\"3\" color=\"red\">*</font>";
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(30, 10, 30, 0);
-                        textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
-
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add("");
                         valSetOne.add(required);
@@ -6548,7 +6886,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
 
 
                         String isis = jsonArray.getJSONObject(i).getString("radio").toString();
@@ -6690,12 +7032,17 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         LinearLayout.LayoutParams params12a = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params12a.setMargins(50, 10, 30, 40);
 
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(rg);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(et, params12);
                         View view = new View(this);
                         view.setVisibility(View.INVISIBLE);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(view, params12a);
 
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
                     } else if (type.equalsIgnoreCase("image_load")) {
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -6704,9 +7051,18 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add("");
+                        valSetOne.add("");
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params2.setMargins(30, 10, 30, 0);
                         textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(textView);
 
                         if (count == null) {
@@ -6715,14 +7071,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             count++;
                         }
 
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add("");
-                        valSetOne.add("");
-                        valSetOne.add(type);
-                        valSetOne.add(name);
-                        valSetOne.add(label);
-                        valSetOne.add(String.valueOf(i));
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                         imageView[count] = new ImageView(this);
 
@@ -6743,7 +7091,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
                         params.setMargins(5, 15, 0, 0);
                         imageView[count].setLayoutParams(params);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(imageView[count]);
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
                     } else if (type.equalsIgnoreCase("hidden")) {
 
                     } else if (type.equalsIgnoreCase("longlat")) {
@@ -6944,7 +7294,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         for (Integer key : hashMap.keySet()) {
                             List<String> value = hashMap.get(key);
                             if (value != null) {
-                                if (value.get(1).toString().equalsIgnoreCase("1")) {
+                                Boolean lolos = false;
+                                if (!lolosReq.isEmpty()) {
+                                    if (lolosReq.contains(String.valueOf(key))) {
+                                        lolos = true;
+                                    }
+                                }
+
+
+                                if (value.get(1).toString().equalsIgnoreCase("1") && !lolos) {
 
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
                                     if (cEdit.getCount() > 0) {
@@ -7237,7 +7595,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 });
             }
 
-        } else {
+        } else
+
+        {
             if (username != null) {
                 if (fromList.equalsIgnoreCase("hide")) {
                     new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
@@ -7271,6 +7631,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
+
         focusOnView();
 
     }

@@ -29,7 +29,7 @@ import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.data.model.Video;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.ui.activity.ByonchatDetailVideoTubeActivity;
-import com.byonchat.android.ui.activity.ByonchatVideoBeforeDownloadActivity;
+//import com.byonchat.android.ui.activity.ByonchatVideoBeforeDownloadActivity;
 import com.byonchat.android.ui.adapter.ByonchatVideoAdapter;
 import com.byonchat.android.ui.adapter.ForwardItemClickListener;
 import com.byonchat.android.ui.adapter.OnPopupItemClickListener;

@@ -16,7 +16,9 @@ import android.view.View;
 import com.byonchat.android.R;
 import com.byonchat.android.utils.AndroidUtil;
 
-public class SoloCircleProgress extends View implements SoloProgressView {
+public class SoloCircleProgress extends View implements com.byonchat.android.ui.viewholder.view.SoloProgressView {
+
+
     private Paint textPaint;
     private RectF rectF = new RectF();
 

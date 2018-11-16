@@ -11,6 +11,7 @@ public class PictureModel implements Parcelable {
     String myuserid, userid, id_photo, title, description, url,url_thumb, tgl_upload, duration, flag,color;
     Integer drawable;
     Boolean selected;
+    String type;
 
     public PictureModel() {
 
@@ -29,6 +30,7 @@ public class PictureModel implements Parcelable {
         drawable = in.readInt();
         flag = in.readString();
         color = in.readString();
+        type = in.readString();
     }
 
     public static final Creator<PictureModel> CREATOR = new Creator<PictureModel>() {
@@ -148,6 +150,14 @@ public class PictureModel implements Parcelable {
         this.color = color;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -167,5 +177,6 @@ public class PictureModel implements Parcelable {
         dest.writeInt(drawable);
         dest.writeString(flag);
         dest.writeString(color);
+        dest.writeString(type);
     }
 }

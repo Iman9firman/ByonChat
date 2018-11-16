@@ -69,6 +69,7 @@ import com.byonchat.android.personalRoom.FragmentMyNewsNew;
 import com.byonchat.android.personalRoom.FragmentMyNote;
 import com.byonchat.android.personalRoom.FragmentMyPicture;
 import com.byonchat.android.personalRoom.FragmentMyVideo;
+import com.byonchat.android.personalRoom.FragmentProductCatalog;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.ContentRoom;
@@ -424,6 +425,11 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                         valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                         map.put(i, valSetOne);
                         aa = FragmentRoomPOS.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, ByonChatMainRoomActivity.this);
+                    }else if (category.equalsIgnoreCase("16")) {
+                        //TIME=WATCH
+                        map.put(i, null);
+                        show = true;
+                        aa = FragmentProductCatalog.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, false, ByonChatMainRoomActivity.this);
                     }
 
 
@@ -821,6 +827,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                 public int compare(ContentRoom e1, ContentRoom e2) {
                     Date satu = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e1.getTime()));
                     Date dua = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e2.getTime()));
+                    Log.w("SATU",satu+"       DUA : "+dua);
                     if (satu.compareTo(dua) > 0) {
                         return -1;
                     } else {

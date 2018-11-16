@@ -8,6 +8,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -23,6 +25,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -439,13 +442,12 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                         valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                         map.put(i, valSetOne);
                         aa = ByonchatVideoFragment.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, ByonChatMainRoomActivity.this);
-                    }else if (category.equalsIgnoreCase("16")) {
+                    } else if (category.equalsIgnoreCase("16")) {
                         //TIME=WATCH
                         map.put(i, null);
                         show = true;
                         aa = FragmentProductCatalog.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, false, ByonChatMainRoomActivity.this);
                     }
-
 
 
                     String status = jsonArray.getJSONObject(i).getString("status").toString();
@@ -732,7 +734,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                             @Override
                             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                                 if (bitmap != null) {
-                                    Toast.makeText(ByonChatMainRoomActivity.this, "Create Shortcut Success", Toast.LENGTH_SHORT).show();
+                                   /* Toast.makeText(ByonChatMainRoomActivity.this, "Create Shortcut Success", Toast.LENGTH_SHORT).show();
                                     Intent aa = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
                                     aa.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                                     Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
@@ -740,7 +742,43 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                                     shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
                                     shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, aa);
                                     sendBroadcast(shortcutintent);
+                                    finish();*/
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                                        ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(ByonChatMainRoomActivity.this, name);
+                                        mShortcutInfoBuilder.setShortLabel(name);
+                                        mShortcutInfoBuilder.setLongLabel(name);
+                                        mShortcutInfoBuilder.setIcon(Icon.createWithBitmap(bitmap));
+
+                                        Intent shortcutIntent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
+                                        shortcutIntent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                                        shortcutIntent.setAction(Intent.ACTION_CREATE_SHORTCUT);
+                                        mShortcutInfoBuilder.setIntent(shortcutIntent);
+
+                                        ShortcutInfo mShortcutInfo = mShortcutInfoBuilder.build();
+                                        ShortcutManager mShortcutManager = getSystemService(ShortcutManager.class);
+                                        mShortcutManager.requestPinShortcut(mShortcutInfo, null);
+
+                                    } else {
+                                        Intent shortcutIntent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
+                                        shortcutIntent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+
+                                        shortcutIntent.setAction(Intent.ACTION_MAIN);
+
+                                        Intent addIntent = new Intent();
+                                        addIntent
+                                                .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+                                        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+                                        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+
+                                        addIntent
+                                                .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                                        addIntent.putExtra("duplicate", false);  //may it's already there so   don't duplicate
+                                        getApplicationContext().sendBroadcast(addIntent);
+
+                                    }
                                     finish();
+                                    Toast.makeText(ByonChatMainRoomActivity.this, "Shortcut Created", Toast.LENGTH_SHORT).show();
                                 }
                             }
 

@@ -94,7 +94,7 @@ public class SeekBar extends View implements RippleView, carbon.animation.StateA
         paint.setColor(colorControl);
         if (thumbX + thumbRadius < getWidth() - getPaddingLeft() - thumbRadius)
             canvas.drawLine(thumbX + thumbRadius, thumbY, getWidth() - getPaddingLeft() - thumbRadius, thumbY, paint);
-        canvas.save(Canvas.MATRIX_SAVE_FLAG);
+        canvas.save();
         canvas.translate(thumbX - thumbRadius * 1.5f, thumbY - thumbRadius * 1.5f);
         if (rippleDrawable != null && rippleDrawable.getStyle() == RippleDrawable.Style.Over)
             rippleDrawable.draw(canvas);

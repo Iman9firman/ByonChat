@@ -68,7 +68,7 @@ public class ChatImageRounded extends ImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         if (canvas.isOpaque()) { // If canvas is opaque, make it transparent
-            canvas.saveLayerAlpha(0, 0, canvas.getWidth(), canvas.getHeight(), 255, Canvas.HAS_ALPHA_LAYER_SAVE_FLAG);
+            canvas.saveLayerAlpha(0, 0, canvas.getWidth(), canvas.getHeight(), 255);
         }
 
         super.onDraw(canvas);

@@ -100,12 +100,12 @@ public class RangeSeekBar extends View implements RippleView, carbon.animation.S
             canvas.drawLine(getPaddingLeft() + thumbRadius, thumbY, thumbX - thumbRadius, thumbY, paint);
         if (thumbX2 + thumbRadius < getWidth() - getPaddingLeft() - thumbRadius)
             canvas.drawLine(thumbX2 + thumbRadius, thumbY, getWidth() - getPaddingLeft() - thumbRadius, thumbY, paint);
-        canvas.save(Canvas.MATRIX_SAVE_FLAG);
+        canvas.save();
         canvas.translate(thumbX - thumbRadius * 1.5f, thumbY - thumbRadius * 1.5f);
         if (rippleDrawable != null && rippleDrawable.getStyle() == RippleDrawable.Style.Over)
             rippleDrawable.draw(canvas);
         canvas.restore();
-        canvas.save(Canvas.MATRIX_SAVE_FLAG);
+        canvas.save();
         canvas.translate(thumbX - thumbRadius * 1.5f, thumbY - thumbRadius * 1.5f);
         if (rippleDrawable != null && rippleDrawable.getStyle() == RippleDrawable.Style.Over)
             rippleDrawable.draw(canvas);

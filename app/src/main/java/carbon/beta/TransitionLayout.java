@@ -159,7 +159,7 @@ public class TransitionLayout extends android.widget.FrameLayout {
         int topView = !inAnimation ? currentIndex : nextIndex;
 
         if (currentTransition == TransitionType.Radial) {
-            int saveCount = canvas.save(Canvas.CLIP_SAVE_FLAG);
+            int saveCount = canvas.save();
             float r = (float) (radius / Math.sqrt(2));
             canvas.clipRect(x - r, y - r, x + r, y + r, Region.Op.DIFFERENCE);
             drawChild(canvas, getChildAt(bottomView), getDrawingTime());

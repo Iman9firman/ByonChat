@@ -106,7 +106,7 @@ public class RippleDrawableCompat extends Drawable implements RippleDrawable {
     public void draw(Canvas canvas) {
         Rect bounds = getBounds();
         if (background != null) {
-            int saveCount = canvas.save(Canvas.CLIP_SAVE_FLAG);
+            int saveCount = canvas.save();
             canvas.clipRect(bounds);
             background.draw(canvas);
             canvas.restoreToCount(saveCount);

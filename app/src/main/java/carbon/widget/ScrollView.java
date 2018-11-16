@@ -284,7 +284,7 @@ public class ScrollView extends android.widget.ScrollView implements TintedView 
     @Override
     protected void dispatchDraw(@NonNull Canvas canvas) {
         if (header != null) {
-            int saveCount = canvas.save(Canvas.CLIP_SAVE_FLAG | Canvas.MATRIX_SAVE_FLAG);
+            int saveCount = canvas.save();
             int headerHeight = header.getMeasuredHeight();
             float scroll = getScrollY();
             canvas.clipRect(0, 0, getWidth(), Math.max(minHeader + scroll, headerHeight));
@@ -298,7 +298,7 @@ public class ScrollView extends android.widget.ScrollView implements TintedView 
             }
             canvas.restoreToCount(saveCount);
 
-            saveCount = canvas.save(Canvas.CLIP_SAVE_FLAG);
+            saveCount = canvas.save();
             canvas.clipRect(0, Math.max(minHeader + scroll, headerHeight), getWidth(), Integer.MAX_VALUE);
             super.dispatchDraw(canvas);
             canvas.restoreToCount(saveCount);

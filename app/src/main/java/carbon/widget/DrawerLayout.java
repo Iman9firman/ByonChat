@@ -147,7 +147,7 @@ public class DrawerLayout extends android.support.v4.widget.DrawerLayout impleme
                 y += getRootView().getHeight() / 2;   // looks nice
                 float length = (float) Math.sqrt(x * x + y * y);
 
-                int saveCount = canvas.save(Canvas.MATRIX_SAVE_FLAG);
+                int saveCount = canvas.save();
                 canvas.translate(
                         x / length * childElevation / 2,
                         y / length * childElevation / 2);
@@ -165,7 +165,7 @@ public class DrawerLayout extends android.support.v4.widget.DrawerLayout impleme
             RippleView rippleView = (RippleView) child;
             RippleDrawable rippleDrawable = rippleView.getRippleDrawable();
             if (rippleDrawable != null && rippleDrawable.getStyle() == RippleDrawable.Style.Borderless) {
-                int saveCount = canvas.save(Canvas.MATRIX_SAVE_FLAG);
+                int saveCount = canvas.save();
                 canvas.translate(
                         child.getLeft(),
                         child.getTop());

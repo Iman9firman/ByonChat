@@ -191,6 +191,13 @@
     <color name="dot_light_screen3">#93c6fd</color>
     <color name="dot_light_screen4">#00e7b8ff</color>
 
+    <color name="byonchat_secondary_text">#727272</color>
+    <color name="byonchat_primary_text">#3e3e3e</color>
+    <color name="byonchat_divider">#B6B6B6</color>
+    <color name="byonchat_divider_light">#D8D8D8</color>
+    <color name="byonchat_white">#ffffff</color>
+    <color name="byonchat_downloading_transparent">#30000000</color>
+
     <array name="array_dot_active">
         <item>@color/dot_light_screen1</item>
         <item>@color/dot_light_screen2</item>
@@ -204,7 +211,6 @@
         <item>@color/dot_dark_screen3</item>
         <item>@color/dot_dark_screen4</item>
     </array>
-
 
 
 </resources>

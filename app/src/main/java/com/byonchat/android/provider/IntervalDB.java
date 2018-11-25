@@ -36,6 +36,7 @@ public class IntervalDB {
 //id 22 untuk squence Video
 //id 23 untuk squence cekDaftarSMS
 //id 24 untuk squence chatOff
+//id 25 untuk squence limitBukaRoom
 
 	private static final String DB_NAME		= "interval_db";
 	private static final int	DB_VER		= 3;

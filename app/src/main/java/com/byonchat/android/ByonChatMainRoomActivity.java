@@ -94,6 +94,7 @@ import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
 import com.byonchat.android.utils.Utility;
 import com.byonchat.android.utils.UtilsPD;
+import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -177,7 +178,8 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
     Context context;
     private LocationAssistant assistant;
     private ProgressDialog progressDialog;
-
+    String protect;
+    String success;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -195,6 +197,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
         assistant.setVerbose(true);
 
         final Intent intent = getIntent();
+        success = intent.getStringExtra("success");
         username = intent.getStringExtra(ConversationActivity.KEY_JABBER_ID);
         targetURL = intent.getStringExtra(ConversationActivity.KEY_TITLE);
 
@@ -260,19 +263,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
             targetURL = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "e");
 
 
-            String protect = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "p");
-
-            if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("1")) {
-                if (intent.getStringExtra("success") == null) {
-                    finish();
-                    Intent a = new Intent(getApplicationContext(), LoginDinamicRoomActivity.class);
-                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                    a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
-                    startActivity(a);
-                }
-            }
-
-            Log.w("jasdi;", protect);
+            protect = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "p");
 
 
             content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
@@ -855,6 +846,45 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
                 .cancel(NotificationReceiver.NOTIFY_TASK);
         assistant.start();
+
+        // TODO: 23/11/18 cek setiap 15 menit
+        Log.w("kepanggil", "wow");
+
+        if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(25) == 1) {
+            if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("1")) {
+                if (success == null) {
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), LoginDinamicRoomActivity.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                    startActivity(a);
+                }
+            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("2")) {
+                if (success == null) {
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), LoginDinamicFingerPrint.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                    startActivity(a);
+                }
+            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("5")) {
+                if (success == null) {
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, "request");
+                    startActivity(a);
+                }
+            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("6")) {
+                if (success == null) {
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                    startActivity(a);
+                }
+            }
+        }
     }
 
     @Override

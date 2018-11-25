@@ -10,6 +10,7 @@
     <uses-permission
         android:name="android.permission.CLEAR_APP_CACHE"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -260,18 +261,16 @@
         </service>
 
         <activity
-            android:name="com.byonchat.android.ui.activity.ByonchatVideoBeforeDownloadActivity"
+            android:name=".ui.activity.ByonchatVideoBeforeDownloadActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-
         <activity
-            android:name="com.byonchat.android.ui.activity.ByonchatStreamingVideoTubeActivity"
+            android:name=".ui.activity.ByonchatStreamingVideoTubeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
-            android:name="com.byonchat.android.ui.activity.ByonchatDetailVideoTubeActivity"
+            android:name=".ui.activity.ByonchatDetailVideoTubeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--
@@ -463,7 +462,6 @@
         <activity
             android:name=".ImagePickerActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ConfirmationSendFileMultiple"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -492,7 +490,6 @@
         <activity
             android:name=".FragmentDinamicRoom.LoginRoomActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".FragmentDinamicRoom.DinamicRoomTaskActivity" />
         <activity android:name=".LoadingGetTabRoomActivity" />
 
@@ -581,6 +578,10 @@
             android:label="@string/title_login"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".LoginDinamicFingerPrint"
+            android:label="@string/title_login"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".DownloadSqliteDinamicActivity"
             android:label="@string/title_activity_download_utils"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -610,7 +611,7 @@
         <activity android:name=".ReaderOcr" />
         <activity
             android:name=".smsSolders.HomeSMSSolders"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".smsSolders.RegisterSMSActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -619,12 +620,13 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".smsSolders.HistorySmsActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -637,6 +639,10 @@
                 tools:replace="android:resource" />
         </provider>
 
+        <activity
+            android:name=".RequestPasscodeRoomActivity"
+            android:label="@string/title_activity_request_passcode_room"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

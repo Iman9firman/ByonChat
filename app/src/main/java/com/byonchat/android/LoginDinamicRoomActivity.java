@@ -38,6 +38,7 @@ import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDB;
+import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.squareup.picasso.Picasso;
 
@@ -119,7 +120,7 @@ public class LoginDinamicRoomActivity extends AppCompatActivity {
 
         loginUsr = (TextInputEditText) findViewById(R.id.login_userid);
         loginPass = (TextInputEditText) findViewById(R.id.login_password);
-        etNikLayout  = (TextInputLayout) findViewById(R.id.etNikLayout);
+        etNikLayout = (TextInputLayout) findViewById(R.id.etNikLayout);
         etPasswordLayout = (TextInputLayout) findViewById(R.id.etPasswordLayout);
 
 
@@ -315,6 +316,7 @@ public class LoginDinamicRoomActivity extends AppCompatActivity {
                 if (!nik.equalsIgnoreCase("") && !pass.equalsIgnoreCase("")) {
                     nameValuePairs.add(new BasicNameValuePair("nik", nik));
                     nameValuePairs.add(new BasicNameValuePair("password", pass));
+                    nameValuePairs.add(new BasicNameValuePair("is_fingerprint", "0"));
                 }
 
 
@@ -364,6 +366,7 @@ public class LoginDinamicRoomActivity extends AppCompatActivity {
 
                             finish();
                         } else {
+                            new Validations().getInstance(getApplicationContext()).setTimebyId(25);
                             finish();
                             Intent intent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
                             intent.putExtra(ConversationActivity.KEY_JABBER_ID, username_room);

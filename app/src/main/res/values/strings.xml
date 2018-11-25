@@ -505,4 +505,8 @@
     <string name="comment_error_failed_read_picture">Failed to read picture data!</string>
     <string name="comment_error_failed_open_picture">Failed to open picture!</string>
     <string name="corrupted_file">Can not read file, please make sure that is not corrupted file!</string>
+
+    <string name="title_fingerprint">One-touch Sign In</string>
+    <string name="desc_fingerprint">Please place your fingertip on the scanner to verify your identity</string>
+    <string name="title_activity_request_passcode_room">RequestPasscodeRoomActivity</string>
 </resources>

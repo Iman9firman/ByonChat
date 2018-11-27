@@ -643,6 +643,8 @@
             android:name=".RequestPasscodeRoomActivity"
             android:label="@string/title_activity_request_passcode_room"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <activity android:name=".personalRoom.utils.CloudStorageActivity"></activity>
     </application>
 
 </manifest>

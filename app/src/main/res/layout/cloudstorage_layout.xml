@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/RelativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cb_check_cloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/iv_image_cloud"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:focusable="false" />
+
+        <ImageView
+            android:id="@+id/iv_image_cloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentLeft="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:minWidth="40dp"
+            android:minHeight="40dp"/>
+
+        <TextView
+            android:id="@+id/tv_filename_cloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_image_cloud"
+            android:text="TextView"
+            android:clickable="false"
+            android:focusable="false" />
+
+        <TextView
+            android:id="@+id/tv_date_cloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_filename_cloud"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_image_cloud"
+            android:text="18/10/18"
+            android:focusable="false"
+            android:clickable="false" />
+        <TextView
+            android:id="@+id/tv_countFile_cloud"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tv_date_cloud"
+            android:layout_alignParentRight="true"
+            android:text="0 item"
+            android:focusable="false"
+            android:clickable="false"/>
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -12,20 +12,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,14 +30,10 @@ import com.byonchat.android.DownloadFileByonchat;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
-import com.byonchat.android.model.Image;
-import com.byonchat.android.personalRoom.adapter.PictureAdapter;
 import com.byonchat.android.personalRoom.adapter.PictureAdapterMine;
 import com.byonchat.android.personalRoom.adapter.ProductCatalogAdapter;
 import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.byonchat.android.personalRoom.model.PictureModel;
-import com.byonchat.android.personalRoom.utils.CatalogProductDialog;
-import com.byonchat.android.personalRoom.utils.ShareFileFromAPI;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
@@ -63,8 +56,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
-import carbon.beta.BottomSheet;
 
 /**
  * Created by lukma on 3/4/2016.
@@ -275,12 +266,9 @@ public class FragmentProductCatalog extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
             final PictureModel item = pictureModels.get(position);
-            /*Intent intent = new Intent(mContext.getApplicationContext(), PDFDetailActivity.class);
-            intent.putParcelableArrayListExtra("data", pictureModels);
-            intent.putExtra("pos", position);
-            startActivity(intent);*/
-            CatalogProductDialog cdd = new CatalogProductDialog(mContext, item);
-            cdd.show();
+                Intent intent = new Intent(mContext, DownloadFileByonchat.class);
+                intent.putExtra("path", item.getUrl());
+                mContext.startActivity(intent);
             }
         }));
     }

@@ -9331,13 +9331,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             alertbox.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     db.deleteRoomsDetailbyId(idDetail, idTab, username);
-                    if (calendar.equalsIgnoreCase("true boi")) {
-                        MyEventDatabase database = new MyEventDatabase(context);
-                        SQLiteDatabase db;
-                        db = database.getWritableDatabase();
-                        String[] args = {idDetail};
-                        db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
-                        db.close();
+                    if (calendar != null){
+                        if (calendar.equalsIgnoreCase("true boi")) {
+                            MyEventDatabase database = new MyEventDatabase(context);
+                            SQLiteDatabase db;
+                            db = database.getWritableDatabase();
+                            String[] args = {idDetail};
+                            db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
+                            db.close();
+                        }
                     }
                     finish();
                 }

@@ -85,6 +85,7 @@ import com.byonchat.android.room.FragmentRoomMultipleTask;
 import com.byonchat.android.room.FragmentRoomTask;
 import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
+import com.byonchat.android.tempSchedule.TempScheduleRoom;
 import com.byonchat.android.ui.activity.ByonchatVideoBeforeDownloadActivity;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.byonchat.android.utils.BlurBuilder;
@@ -379,6 +380,19 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                             aa = FragmentRoomMultipleTask.newInstance(title, jsonRootObject.getString("pull"), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, include_latlong, ByonChatMainRoomActivity.this, "showMultiple");
                             valSetOne.add("showMultiple");
                             map.put(i, valSetOne);
+                        } else if (include_pull.equalsIgnoreCase("7")){
+                            JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
+                            List<String> valSetOne = new ArrayList<String>();
+                            valSetOne.add(title);
+                            valSetOne.add(username);
+                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                            valSetOne.add(color);
+                            valSetOne.add(include_latlong);
+                            show = true;
+                            aa = TempScheduleRoom.newInstance(title,jsonRootObject.getString("pull"),username,jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(),color,include_latlong,ByonChatMainRoomActivity.this,"showMultiple");
+                            valSetOne.add("hideMultiple");
+                            map.put(i,valSetOne);
+
                         }
                     } else if (category.equalsIgnoreCase("5")) {
                         map.put(i, null);

@@ -355,7 +355,10 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs" />
+            android:value="AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo" />
+
+        <!--// test key
+        AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo-->
         <!--
            API debug
            android:value="AIzaSyC9uE41626BAiFV-eFvvfwu2guhsX3cxMo" />
@@ -645,6 +648,7 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <activity android:name=".personalRoom.utils.CloudStorageActivity"></activity>
+        <activity android:name=".tempSchedule.NotePreviewActivity"></activity>
     </application>
 
 </manifest>

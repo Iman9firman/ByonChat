@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -113,6 +114,7 @@ import com.byonchat.android.provider.DatabaseKodePos;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.tempSchedule.MyEventDatabase;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.ImageFilePath;
@@ -297,6 +299,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     private Activity activity;
     Context context;
 
+    //rombak zharfan
+    String calendar;
+    String startDate;
+    String dropdownViewIdParent;
+
     static {
         attCameraItems = new ArrayList<AttachmentAdapter.AttachmentMenuItem>();
         attCameraItems.add(new AttachmentAdapter.AttachmentMenuItem(R.drawable.ic_att_photo,
@@ -380,6 +387,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         color = getIntent().getStringExtra("col");
         latLong = getIntent().getStringExtra("ll");
         fromList = getIntent().getStringExtra("from");
+
+        //zharfan
+        calendar = getIntent().getStringExtra("clndr");
+        startDate = getIntent().getStringExtra("strtdt");
 
         if (getIntent().getStringExtra("customersId") != null) {
             customersId = getIntent().getStringExtra("customersId");
@@ -627,7 +638,31 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 Log.w("juba", idValue);
 
 // TODO: 08/11/18 jadi nnti listchild dimasukin ke dalem array untuk ambil data dari parennya
-                                if (type.equalsIgnoreCase("attach_api")) {
+                                if (type.equalsIgnoreCase("dropdown_views")) {
+                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                    textV.setText(Html.fromHtml(label));
+                                    textV.setTextSize(17);
+                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
+
+                                    JSONObject jObject = new JSONObject(value);
+                                    String vl = jObject.getString("value");
+                                    dropdownViewIdParent = jObject.getString("dropdown_view_id");
+
+                                    TextView etV = (TextView) new TextView(context);
+                                    etV.setTextIsSelectable(true);
+                                    etV.setText(Html.fromHtml(vl));
+                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    params11.setMargins(10, 10, 30, 0);
+                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    params22.setMargins(50, 10, 30, 30);
+                                    linearValue.addView(textV, params11);
+                                    linearValue.addView(line, params11);
+                                    linearValue.addView(etV, params22);
+
+
+                                } else if (type.equalsIgnoreCase("attach_api")) {
+
                                     TextView textV = new TextView(DinamicRoomTaskActivity.this);
                                     textV.setText(Html.fromHtml(label));
                                     textV.setTextSize(17);
@@ -1622,6 +1657,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     final String type = jsonArray.getJSONObject(i).getString("type").toString();
                     final String flag = jsonArray.getJSONObject(i).getString("flag").toString();
 
+                    //zharfan
+                    JSONArray dropdownViewId = null;
+                    if(jsonArray.getJSONObject(i).has("dropdown_view_parents")){
+                        dropdownViewId = jsonArray.getJSONObject(i).getJSONArray("dropdown_view_parents");
+                    }
+
                     Log.w("asd:" + count, label + "--" + type);
 
                     if (type.equalsIgnoreCase("dropdown_views")) {
@@ -1705,17 +1746,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                         for (int ia = 0; ia < arrayPair.size(); ia++) {
                                             List value = (List) hashMap.get(Integer.parseInt(arrayPair.get(ia)));
-                                            if (pair.getKey().toString().equalsIgnoreCase(spinnerArray.get(myPosition))) {
-                                                lolosReq.remove(arrayPair.get(ia));
-                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                    linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
-                                                }
-                                            } else {
-                                                lolosReq.add(arrayPair.get(ia));
-                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                    linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
-                                                }
+                                            if (value != null){
+                                                if (pair.getKey().toString().equalsIgnoreCase(spinnerArray.get(myPosition))) {
+                                                    lolosReq.remove(arrayPair.get(ia));
+                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                                    }
+                                                } else {
+                                                    lolosReq.add(arrayPair.get(ia));
+                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                    }
 
+                                                }
                                             }
                                         }
                                     }
@@ -7099,6 +7142,27 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     } else if (type.equalsIgnoreCase("longlat")) {
 
                     }
+
+                    // TODO: 11/26/18
+
+                    if (dropdownViewId != null){
+                        if (dropdownViewId.length() > 0 && dropdownViewIdParent != null) {
+                            Boolean shooww = false;
+                            for (int z = 0; z < dropdownViewId.length(); z++) {
+
+                                if (dropdownViewIdParent.equalsIgnoreCase(dropdownViewId.getString(z))) {
+                                    shooww = true;
+                                }
+                            }
+                            if (!shooww){
+                                List valuesss = (List) hashMap.get(Integer.parseInt(idListTask));
+                                for (int ii = 6; ii < valuesss.size(); ii++) {
+                                    lolosReq.add(idListTask);
+                                    linearLayout.getChildAt(Integer.valueOf(valuesss.get(ii).toString())).setVisibility(View.GONE);
+                                }
+                            }
+                        }
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -9267,6 +9331,14 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             alertbox.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     db.deleteRoomsDetailbyId(idDetail, idTab, username);
+                    if (calendar.equalsIgnoreCase("true boi")) {
+                        MyEventDatabase database = new MyEventDatabase(context);
+                        SQLiteDatabase db;
+                        db = database.getWritableDatabase();
+                        String[] args = {idDetail};
+                        db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
+                        db.close();
+                    }
                     finish();
                 }
             });
@@ -9581,6 +9653,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 entity.addPart("username_room", new StringBody(usr));
                 entity.addPart("id_rooms_tab", new StringBody(idr));
                 entity.addPart("id_detail_tab", new StringBody(idDetail));
+                if (calendar != null) {
+                    if (calendar.equalsIgnoreCase("true boi")) {
+
+                        entity.addPart("selected_date", new StringBody(startDate));
+                    }
+                }
 
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
                 if (cEdit.getCount() > 0) {

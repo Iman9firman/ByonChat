@@ -205,5 +205,8 @@ dependencies {
 
     compile 'com.itextpdf:itextpdf:5.5.13'
 
+    //Test Schedule
+    compile 'com.applandeo:material-calendar-view:1.0.1'
+
 }
 apply plugin: 'com.google.gms.google-services'

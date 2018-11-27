@@ -260,17 +260,6 @@
         </service>
 
         <activity
-            android:name="com.byonchat.android.ui.activity.ByonchatVideoBeforeDownloadActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-
-        <activity
-            android:name="com.byonchat.android.ui.activity.ByonchatStreamingVideoTubeActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity
             android:name="com.byonchat.android.ui.activity.ByonchatDetailVideoTubeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -626,7 +615,7 @@
         <activity
             android:name=".smsSolders.HistorySmsActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
-
+        <activity android:name=".personalRoom.utils.CloudStorageActivity"></activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.byonchat.android.provider"

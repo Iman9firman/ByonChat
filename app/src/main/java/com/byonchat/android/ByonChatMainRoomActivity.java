@@ -64,6 +64,7 @@ import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.personalRoom.FragmentMyCardID;
 import com.byonchat.android.personalRoom.FragmentMyNews;
 import com.byonchat.android.personalRoom.FragmentMyNewsNew;
 import com.byonchat.android.personalRoom.FragmentMyNote;
@@ -430,8 +431,12 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                         map.put(i, null);
                         show = true;
                         aa = FragmentProductCatalog.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, false, ByonChatMainRoomActivity.this);
+                    }else if (category.equalsIgnoreCase("17")) {
+                        //TIME=WATCH
+                        map.put(i, null);
+                        show = true;
+                        aa = FragmentMyCardID.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, false, ByonChatMainRoomActivity.this);
                     }
-
 
                     String status = jsonArray.getJSONObject(i).getString("status").toString();
                     if (status.equalsIgnoreCase("1") && show) {

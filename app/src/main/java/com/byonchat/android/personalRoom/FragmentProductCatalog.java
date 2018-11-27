@@ -39,8 +39,6 @@ import com.byonchat.android.personalRoom.adapter.PictureAdapterMine;
 import com.byonchat.android.personalRoom.adapter.ProductCatalogAdapter;
 import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.byonchat.android.personalRoom.model.PictureModel;
-import com.byonchat.android.personalRoom.utils.CatalogProductDialog;
-import com.byonchat.android.personalRoom.utils.ShareFileFromAPI;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
@@ -275,12 +273,9 @@ public class FragmentProductCatalog extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
             final PictureModel item = pictureModels.get(position);
-            /*Intent intent = new Intent(mContext.getApplicationContext(), PDFDetailActivity.class);
-            intent.putParcelableArrayListExtra("data", pictureModels);
-            intent.putExtra("pos", position);
-            startActivity(intent);*/
-            CatalogProductDialog cdd = new CatalogProductDialog(mContext, item);
-            cdd.show();
+                Intent intent = new Intent(mContext, DownloadFileByonchat.class);
+                intent.putExtra("path", item.getUrl());
+                mContext.startActivity(intent);
             }
         }));
     }

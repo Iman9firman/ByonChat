@@ -30,14 +30,24 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
+
 
 public class ShareFileFromAPI extends AppCompatActivity {
     private static final String SD_CARD_FOLDER = "ByonChatDoc";
     private ProgressDialog mProgressDialog;
     private String DOWNLOAD_PATH;
+    private String CARD_PATH;
     private String NAME_FILE;
 
     private class DownloadFile extends AsyncTask<Context, Integer, Boolean> {
@@ -126,20 +136,23 @@ public class ShareFileFromAPI extends AppCompatActivity {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Uri uri = FileProvider.getUriForFile(ShareFileFromAPI.this, getPackageName() + ".provider", oldFile);
-                    Intent share = new Intent();
-                    share.setAction(Intent.ACTION_SEND);
+                    if(CARD_PATH == null) {
+                        Intent share = new Intent();
+                        share.setAction(Intent.ACTION_SEND);
 //                    share.setType("application/pdf");
-                    if(extension.equals(".pdf")) {
-                        share.setType("application/pdf");
-                    }else if(extension.equals(".mp4")){
-                        share.setType("video/mp4");
+                        if (extension.equals(".pdf")) {
+                            share.setType("application/pdf");
+                        } else if (extension.equals(".mp4")) {
+                            share.setType("video/mp4");
+                        } else {
+                            share.setType("image/jpg");
+                        }
+                        share.putExtra(Intent.EXTRA_STREAM, uri);
+                        share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
+                        startActivity(share);
                     }else{
-                        share.setType("image/jpg");
+                        prepareMerging(uri);
                     }
-                    share.putExtra(Intent.EXTRA_STREAM, uri);
-                    share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
-                    startActivity(share);
-
                 } else {
 
                     MimeTypeMap map = MimeTypeMap.getSingleton();
@@ -147,13 +160,17 @@ public class ShareFileFromAPI extends AppCompatActivity {
                     String type = map.getMimeTypeFromExtension(ext);
                     if (type == null)
                         type = "*/*";
-                    Intent share = new Intent();
-                    share.setAction(Intent.ACTION_SEND);
-                    Uri data = Uri.fromFile(oldFile);
-                    share.setDataAndType(data, type);
-                    startActivity(share);
+                    if(CARD_PATH == null) {
+                        Intent share = new Intent();
+                        share.setAction(Intent.ACTION_SEND);
+                        Uri data = Uri.fromFile(oldFile);
+                        share.setDataAndType(data, type);
+                        startActivity(share);
+                    }else{
+                        Uri data = Uri.fromFile(oldFile);
+                        prepareMerging(data);
+                    }
                 }
-
 
             } else {
                 Toast.makeText(getApplicationContext(), "file can't accessed, plese try again later", Toast.LENGTH_LONG).show();
@@ -199,6 +216,7 @@ public class ShareFileFromAPI extends AppCompatActivity {
         linearLayoutContent.setVisibility(View.GONE);
 
         DOWNLOAD_PATH = getIntent().getStringExtra("path");
+        CARD_PATH = getIntent().getStringExtra("card");
 
         File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
 
@@ -215,18 +233,22 @@ public class ShareFileFromAPI extends AppCompatActivity {
 //                intent.setData(uri);
 //                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 //                startActivity(intent);
-                Intent share = new Intent();
-                share.setAction(Intent.ACTION_SEND);
-                if(extension.equals(".pdf")) {
-                    share.setType("application/pdf");
-                }else if(extension.equals(".mp4")){
-                    share.setType("video/mp4");
+                if(CARD_PATH == null) {
+                    Intent share = new Intent();
+                    share.setAction(Intent.ACTION_SEND);
+                    if (extension.equals(".pdf")) {
+                        share.setType("application/pdf");
+                    } else if (extension.equals(".mp4")) {
+                        share.setType("video/mp4");
+                    } else {
+                        share.setType("image/jpg");
+                    }
+                    share.putExtra(Intent.EXTRA_STREAM, uri);
+                    share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
+                    startActivity(share);
                 }else{
-                    share.setType("image/jpg");
+                    prepareMerging(uri);
                 }
-                share.putExtra(Intent.EXTRA_STREAM, uri);
-                share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
-                startActivity(share);
             } else {
 
                 MimeTypeMap map = MimeTypeMap.getSingleton();
@@ -234,11 +256,16 @@ public class ShareFileFromAPI extends AppCompatActivity {
                 String type = map.getMimeTypeFromExtension(ext);
                 if (type == null)
                     type = "*/*";
-                Intent share = new Intent();
-                share.setAction(Intent.ACTION_SEND);
-                Uri data = Uri.fromFile(oldFile);
-                share.setDataAndType(data, type);
-                startActivity(share);
+                if(CARD_PATH == null) {
+                    Intent share = new Intent();
+                    share.setAction(Intent.ACTION_SEND);
+                    Uri data = Uri.fromFile(oldFile);
+                    share.setDataAndType(data, type);
+                    startActivity(share);
+                }else {
+                    Uri data = Uri.fromFile(oldFile);
+                    prepareMerging(data);
+                }
             }
 
         } else {
@@ -250,4 +277,62 @@ public class ShareFileFromAPI extends AppCompatActivity {
             mDatabaseOpenTask.execute(new Context[]{this});
         }
     }
+
+    private void prepareMerging(Uri file){
+        File filer = new File(file.getPath());//create path from uri
+        Log.w("APAPAAAANNNN NOOH",file.getPath() +" ---- "+CARD_PATH+" -0-=0-=0-=- "+filer.getPath());
+
+        String fileOne = file.getPath().replace("/external_files","/storage/emulated/0");
+        /*String fileTwo = CARD_PATH;
+        File hasil = new File(Environment.getExternalStorageDirectory(),"hasil_merge.pdf");
+        hasil.getParentFile().mkdirs();
+        String fileHasil = hasil.getAbsolutePath();
+
+        try {
+            FileInputStream fisOne = new FileInputStream(fileOne);
+            FileInputStream fisTwo = new FileInputStream(fileTwo);
+            FileOutputStream fosHasil = new FileOutputStream(fileHasil);
+
+            mergePdfFiles(fisOne,fisTwo,fosHasil);
+        } catch (Exception e){
+            e.printStackTrace();
+            Log.w("sini", "Exc : "+ e.getMessage());
+        }
+
+        File outputFile = hasil;
+        Log.w("FILE HASIL MERGE",outputFile.getPath());
+
+//        Uri pdfUri = FileProvider.getUriForFile(getBaseContext(), getApplication().getApplicationContext().getPackageName() +
+//                ".my.package.name.provider", outputFile);
+
+        Uri pdfUri = FileProvider.getUriForFile(ShareFileFromAPI.this, getPackageName() + ".provider", outputFile);
+
+        Intent share = new Intent();
+        share.setAction(Intent.ACTION_SEND);
+        share.setType("application/pdf");
+        share.putExtra(Intent.EXTRA_STREAM, pdfUri);
+//        share.setPackage("*");
+        startActivity(share);
+
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        String ext = MimeTypeMap.getFileExtensionFromUrl(outputFile.getName());
+        String type = map.getMimeTypeFromExtension(ext);
+        Log.w("INI NIHHHHHH TYPE NYEEE",type);*/
+        Intent cloud = new Intent(this, CloudStorageActivity.class);
+        cloud.putExtra("card", fileOne);
+        startActivity(cloud);
+    }
+/*
+    private void mergePdfFiles(FileInputStream isOne, FileInputStream isTwo,FileOutputStream hasil) throws Exception {
+        PdfReader one = new PdfReader(isOne);
+        PdfReader two = new PdfReader(isTwo);
+        Document document = new Document();
+        PdfCopy copy = new PdfCopy(document, hasil);
+        document.open();
+        copy.addDocument(one);
+        copy.addDocument(two);
+        document.close();
+        one.close();
+        two.close();
+    }*/
 }

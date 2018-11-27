@@ -89,6 +89,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
+    //noinspection GradleCompatible
     androidTestCompile 'com.android.support.test:runner:1.0.2'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.2'
 
@@ -202,7 +203,7 @@ dependencies {
 
     compile "me.leolin:ShortcutBadger:1.1.22@aar"
 
-
+    compile 'com.itextpdf:itextpdf:5.5.13'
 
 }
 apply plugin: 'com.google.gms.google-services'

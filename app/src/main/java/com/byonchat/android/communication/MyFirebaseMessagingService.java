@@ -58,10 +58,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void sendNotification(String message, String title) {
 
+      /*todo perbaikan nanti dah ga bisa up dari firebase
         Intent intentStart = new Intent(this, UploadService.class);
         intentStart.putExtra(UploadService.ACTION, "startService");
         startService(intentStart);
-
+*/
 
        /* hilang firebase
        int requestID = (int) System.currentTimeMillis();

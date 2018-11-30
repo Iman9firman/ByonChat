@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.byonchat.android.FragmentDinamicRoom.DinamicListTaskAdapter;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.provider.BotListDB;
@@ -34,6 +39,7 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
     private Context c;
     AlertDialog.Builder dialog;
     View dialogView;
+    String status;
 
     //punya activity
     private String title;
@@ -69,32 +75,45 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
     public void onBindViewHolder(@NonNull MyHolder holder, int pos) {
         Note note = noteList.get(pos);
 
-
-
-        holder.title.setText(note.getTitle());
-        holder.desc.setText(note.getDesc());
+        holder.lokasi.setText(note.getLokasi());
+        holder.keterangan.setText(note.getKeterangan());
         holder.startTime.setText(note.getStartTime());
         holder.endTime.setText(note.getEndTime());
+        holder.status.setText(note.getStatus());
+
+        Drawable mDrawableLetf = c.getResources().getDrawable(R.drawable.status_work);
+        mDrawableLetf.setColorFilter(Color.parseColor(note.getWarna()), PorterDuff.Mode.SRC_ATOP);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            holder.status.setBackground(mDrawableLetf);
+        }
+
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!checkDate(startDate)){
+                if (!note.isSubmit()){
+                    if (!checkDate(startDate)){
 
-                    dialogEvent(note);
+                        dialogEvent(note);
 
+                    } else {
+                        Intent intent = new Intent(c, DinamicRoomTaskActivity.class);
+                        intent.putExtra("tt", title);
+                        intent.putExtra("uu", username);
+                        intent.putExtra("ii", idTab);
+                        intent.putExtra("col", color);
+                        intent.putExtra("ll", latLong);
+                        intent.putExtra("from", from);
+                        intent.putExtra("idTask", note.getId_detail());
+                        intent.putExtra("clndr",calendar);
+                        intent.putExtra("strtdt",startDate);
+                        c.startActivity(intent);
+                    }
                 } else {
-                    Intent intent = new Intent(c, DinamicRoomTaskActivity.class);
-                    intent.putExtra("tt", title);
-                    intent.putExtra("uu", username);
-                    intent.putExtra("ii", idTab);
-                    intent.putExtra("col", color);
-                    intent.putExtra("ll", latLong);
-                    intent.putExtra("from", from);
-                    intent.putExtra("idTask", note.getId_detail());
-                    intent.putExtra("clndr",calendar);
-                    c.startActivity(intent);
+                    dialogEvent(note);
                 }
+
             }
         });
 
@@ -109,13 +128,18 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
         dialogView = LayoutInflater.from(c).inflate(R.layout.note_dialog_layout,null);
         dialog.setView(dialogView);
         dialog.setCancelable(true);
-        dialog.setTitle(note.getTitle());
-        TextView time = (TextView) dialogView.findViewById(R.id.time_dialognote);
-        TextView content = (TextView) dialogView.findViewById(R.id.content_dialognote);
 
-        time.setText(note.getStartTime()+" > "+note.getEndTime());
-        content.setText(note.getDesc());
+        TextView dLokasi = dialogView.findViewById(R.id.tv_lokasi_dnote);
+        TextView dJam = dialogView.findViewById(R.id.tv_waktu_dnote);
+        TextView dKet = dialogView.findViewById(R.id.tv_ket_dnote);
+        TextView dAlasan = dialogView.findViewById(R.id.tv_alasan_dnote);
+        TextView dStatus = dialogView.findViewById(R.id.tv_status_dnote);
 
+        dLokasi.setText(note.getLokasi());
+        dJam.setText(note.getStartTime()+" - "+note.getEndTime());
+        dKet.setText(note.getKeterangan());
+        dAlasan.setText(note.getAlasan());
+        dStatus.setText("Status : "+note.getStatus());
         dialog.setNegativeButton("CLOSE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -149,19 +173,22 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
 
 class MyHolder extends RecyclerView.ViewHolder{
 
-    TextView title;
-    TextView desc;
+    TextView lokasi;
+    TextView keterangan;
     TextView startTime;
     TextView endTime;
+    TextView status;
     ConstraintLayout view;
 
     public MyHolder (View v){
         super(v);
-        title = (TextView) v.findViewById(R.id.title_note);
-        desc = (TextView) v.findViewById(R.id.desc_note);
+        lokasi = (TextView) v.findViewById(R.id.title_note);
+        keterangan = (TextView) v.findViewById(R.id.desc_note);
         startTime = (TextView) v.findViewById(R.id.startTime_note);
         endTime = (TextView) v.findViewById(R.id.endTime_note);
+        status = (TextView) v.findViewById(R.id.status_note);
         view = (ConstraintLayout) v.findViewById(R.id.view_note);
 
     }
+
 }

@@ -10212,6 +10212,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
                                 db.deleteRoomsDetailbyId(idDetail, idTab, usr);
+                                if (calendar != null){
+                                    if (calendar.equalsIgnoreCase("true boi")) {
+                                        MyEventDatabase database = new MyEventDatabase(context);
+                                        SQLiteDatabase db;
+                                        db = database.getWritableDatabase();
+                                        String[] args = {idDetail};
+                                        db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
+                                        db.close();
+                                    }
+                                }
                                 Toast.makeText(context, "Upload Berhasil.", Toast.LENGTH_SHORT).show();
                             }
                         });

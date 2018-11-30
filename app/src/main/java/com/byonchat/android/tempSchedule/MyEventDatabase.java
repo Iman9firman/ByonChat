@@ -13,6 +13,10 @@ public class MyEventDatabase extends SQLiteOpenHelper {
     public static final String EVENT_ID_DETAIL = "id_detail_event";
     public static final String EVENT_ID_TAB = "id_tab_event";
     public static final String EVENT_START_DATE = "startDate_event";
+    public static final String EVENT_STATUS = "status_event";
+    public static final String EVENT_VALUE = "value_event";
+    public static final String EVENT_WARNA = "warna_event";
+    public static final String EVENT_ISSUBMIT = "issubmit_event";
 //    public static final String EVENT_END_DATE = "endDate_event";
 //    public static final String EVENT_START_TIME = "startTime_event";
 //    public static final String EVENT_END_TIME = "endTime_event";
@@ -26,7 +30,11 @@ public class MyEventDatabase extends SQLiteOpenHelper {
             EVENT_ID + " INTEGER PRIMARY KEY, " +
             EVENT_ID_DETAIL + " TEXT, " +
             EVENT_ID_TAB + " TEXT, " +
-            EVENT_START_DATE + " TEXT" +
+            EVENT_START_DATE + " TEXT, " +
+            EVENT_STATUS + " TEXT, " +
+            EVENT_VALUE + " TEXT, " +
+            EVENT_WARNA + " TEXT, " +
+            EVENT_ISSUBMIT + " INTEGER DEFAULT 0"+
             /*EVENT_END_DATE + " TEXT, " +
             EVENT_START_TIME + " TEXT, " +
             EVENT_END_TIME + " TEXT, " +
@@ -51,5 +59,12 @@ public class MyEventDatabase extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
         db.execSQL(DROP_USER_TABLE);
         onCreate(db);
+    }
+
+    public void resetDatabase() {
+        SQLiteDatabase database = getWritableDatabase();
+        database.execSQL(DROP_USER_TABLE);
+        database.execSQL(CREATE_EVENT_TABLE);
+        database.close();
     }
 }

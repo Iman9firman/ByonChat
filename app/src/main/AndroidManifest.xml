@@ -355,9 +355,10 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo" />
+            android:value="AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs" />
 
         <!--// test key
+        AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo
         AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo-->
         <!--
            API debug

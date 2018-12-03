@@ -12,8 +12,8 @@ android {
         applicationId "com.byonchat.android"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 4
-        versionName "2.2"
+        versionCode 5
+        versionName "2.3"
         multiDexEnabled true
         renderscriptTargetApi 20
         renderscriptSupportModeEnabled true
@@ -81,7 +81,6 @@ repositories {
 //        classpath "me.tatarka:gradle-retrolambda:3.7.0"
 //    }
 //}
-
 
 
 dependencies {
@@ -196,7 +195,7 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.2.1'
     compile 'com.github.grennis:ExpandableRecyclerView:0.9.3'
 
-    compile (name: 'cameralibrary-release', ext: 'aar')
+    compile(name: 'cameralibrary-release', ext: 'aar')
     compile 'com.otaliastudios:cameraview:1.6.0'
 // https://mvnrepository.com/artifact/android.arch.lifecycle/extensions
     compile group: 'android.arch.lifecycle', name: 'extensions', version: '1.0.0-alpha1'

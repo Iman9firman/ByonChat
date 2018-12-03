@@ -1684,6 +1684,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                         final String isi = jsonArray.getJSONObject(i).getString("dropdown_views").toString();
+                        Log.w("sarinim", isi);
+
                         final JSONArray jsonArrays = new JSONArray(isi);
 
 
@@ -1740,35 +1742,43 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
 
                                     HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
-                                    Iterator it = hashMapL.entrySet().iterator();
-                                    while (it.hasNext()) {
-                                        Map.Entry pair = (Map.Entry) it.next();
-                                        ArrayList<String> arrayPair = (ArrayList<String>) pair.getValue();
+                                    ArrayList<String> udah = new ArrayList<>();
 
-                                        for (int ia = 0; ia < arrayPair.size(); ia++) {
-                                            List value = (List) hashMap.get(Integer.parseInt(arrayPair.get(ia)));
-                                            if (value != null) {
-                                                if (pair.getKey().toString().equalsIgnoreCase(spinnerArray.get(myPosition))) {
-                                                    lolosReq.remove(arrayPair.get(ia));
-                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
-                                                    }
-                                                } else {
-                                                    lolosReq.add(arrayPair.get(ia));
-                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
-                                                    }
-
+                                    for (int asik = 0; asik < spinnerArray.size(); asik++) {
+                                        String slip = spinnerArray.get(asik);
+                                        ArrayList<String> sss = hashMapL.get(slip);
+                                        if (slip.equalsIgnoreCase(spinnerArray.get(myPosition))) {
+                                            for (int ia = 0; ia < sss.size(); ia++) {
+                                                udah.add(sss.get(ia));
+                                                List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
+                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                    lolosReq.remove(sss.get(ia));
+                                                    linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
                                                 }
                                             }
+                                        } else {
+                                            //false
+                                            for (int ia = 0; ia < sss.size(); ia++) {
+                                                List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
+                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                    if (!udah.contains(sss.get(ia))) {
+                                                        lolosReq.add(sss.get(ia));
+                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                    }
+                                                }
+                                            }
+
                                         }
                                     }
-
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
-                                    if (cEdit.getCount() > 0) {
+                                    if (cEdit.getCount() > 0)
+
+                                    {
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
-                                    } else {
+                                    } else
+
+                                    {
                                         if (String.valueOf(spinnerArray.get(myPosition)).length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
@@ -5969,7 +5979,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         }
 
-                        SearchableSpinner spinner = new SearchableSpinner(this);
+                        LinearLayout spinerTitle = (LinearLayout) getLayoutInflater().inflate(R.layout.item_spiner_edit_text, null);
+
+                        final SearchableSpinner spinner = (SearchableSpinner) spinerTitle.findViewById(R.id.spinner);
+
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                             spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
                         }
@@ -5988,7 +6001,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(String.valueOf(i));
 
 
-                        final EditText et = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+                        final EditText et = (EditText) spinerTitle.findViewById(R.id.editTextOther);
                         et.setVisibility(View.GONE);
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
@@ -6016,6 +6029,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                 @Override
                                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
+                                    et.setVisibility(View.GONE);
                                     if (spinnerArrayFlag.size() == spinnerArray.size() && spinnerArrayFlag.get(myPosition).equalsIgnoreCase("manual_input")) {
                                         et.setVisibility(View.VISIBLE);
                                         et.addTextChangedListener(new TextWatcher() {
@@ -6078,9 +6092,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(textView, params1);
                         valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                        linearLayout.addView(spinner, params1);
-                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                        linearLayout.addView(et, params12);
+                        linearLayout.addView(spinerTitle, params1);
 
                         //untuk kasih nafas haha
                         View view = new View(this);
@@ -10212,7 +10224,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
                             public void run() {
                                 db.deleteRoomsDetailbyId(idDetail, idTab, usr);
-                                if (calendar != null){
+                                if (calendar != null) {
                                     if (calendar.equalsIgnoreCase("true boi")) {
                                         MyEventDatabase database = new MyEventDatabase(context);
                                         SQLiteDatabase db;

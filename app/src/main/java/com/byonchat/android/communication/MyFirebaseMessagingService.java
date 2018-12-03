@@ -33,6 +33,7 @@ import java.util.Map;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -51,18 +52,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Map<String, String> data = remoteMessage.getData();
         //you can get your text message here.
-        String text= data.get("text");
+        String text = data.get("text");
         Log.d(TAG, "From: " + text);
-        sendNotification(text,text);
+        //todo perbaikan nanti dah ga bisa up dari firebase
+        // sendNotification(text,text);
     }
 
     private void sendNotification(String message, String title) {
 
-      /*todo perbaikan nanti dah ga bisa up dari firebase
+
         Intent intentStart = new Intent(this, UploadService.class);
         intentStart.putExtra(UploadService.ACTION, "startService");
         startService(intentStart);
-*/
 
        /* hilang firebase
        int requestID = (int) System.currentTimeMillis();

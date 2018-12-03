@@ -196,6 +196,9 @@ dependencies {
     compile 'com.github.grennis:ExpandableRecyclerView:0.9.3'
 
     compile(name: 'cameralibrary-release', ext: 'aar')
+    compile(name: 'ocrlibrary-release', ext: 'aar')
+    compile 'com.google.android.gms:play-services-vision:10.2.1'
+
     compile 'com.otaliastudios:cameraview:1.6.0'
 // https://mvnrepository.com/artifact/android.arch.lifecycle/extensions
     compile group: 'android.arch.lifecycle', name: 'extensions', version: '1.0.0-alpha1'

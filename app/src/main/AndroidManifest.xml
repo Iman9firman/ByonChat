@@ -78,6 +78,9 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
 
+    <!-- OCR Library -->
+    <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary" />
+
     <permission-group
         android:name="android.permission-group.LOCATION"
         android:label="A label for your permission" />
@@ -650,6 +653,8 @@
 
         <activity android:name=".personalRoom.utils.CloudStorageActivity"></activity>
         <activity android:name=".tempSchedule.NotePreviewActivity"></activity>
+        <activity android:name=".personalRoom.coba_aja.LangsungDelete"></activity>
+
     </application>
 
 </manifest>

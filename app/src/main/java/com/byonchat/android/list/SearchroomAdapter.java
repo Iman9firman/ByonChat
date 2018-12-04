@@ -57,6 +57,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -470,7 +471,12 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
             } else {
 
                 roomsDB.open();
-                ContactBot contactBot = new ContactBot(name, desc, realname, link, type);
+                boolean isActived = true;
+                ArrayList<ContactBot> botArrayListist = roomsDB.retrieveRooms("2");
+                if (botArrayListist.size() > 0) {
+                    isActived = false;
+                }
+                ContactBot contactBot = new ContactBot("", name, desc, realname, link, type, isActived);
                 roomsDB.insertRooms(contactBot);
                 roomsDB.close();
 

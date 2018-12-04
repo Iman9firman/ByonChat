@@ -8,6 +8,8 @@ import com.byonchat.android.Manhera.Manhera;
 import com.byonchat.android.data.local.ByonchatVideoTubeDataStore;
 import com.byonchat.android.data.local.ByonchatVideoTubeDatabaseHelper;
 import com.byonchat.android.provider.BotListDB;
+import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.provider.RoomsDB;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -25,6 +27,8 @@ public class Byonchat {
     private static Handler appHandler;
     private static String authorities;
     private static BotListDB botListDB;
+    private static MessengerDatabaseHelper messengerDatabaseHelper;
+    private static RoomsDB roomsDB;
     private static ScheduledThreadPoolExecutor taskExecutor;
     private static boolean enableLog;
 
@@ -50,6 +54,8 @@ public class Byonchat {
         appInstance.registerActivityLifecycleCallbacks(ActivityCallback.INSTANCE);
         authorities = appInstance.getPackageName();
         botListDB = BotListDB.getInstance(application);
+        messengerDatabaseHelper = MessengerDatabaseHelper.getInstance(application);
+        roomsDB = new RoomsDB(application);
 
         Manhera.init(application);
     }
@@ -114,5 +120,13 @@ public class Byonchat {
 
     public static BotListDB getBotListDB() {
         return botListDB;
+    }
+
+    public static MessengerDatabaseHelper getMessengerHelper() {
+        return messengerDatabaseHelper;
+    }
+
+    public static RoomsDB getRoomsDB() {
+        return roomsDB;
     }
 }

@@ -3,7 +3,7 @@ package com.byonchat.android;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -24,7 +24,7 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 
-public class DetailGroupVoting extends ActionBarActivity  implements OnChartValueSelectedListener {
+public class DetailGroupVoting extends AppCompatActivity implements OnChartValueSelectedListener {
 
     protected BarChart mChart;
 

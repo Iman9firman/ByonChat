@@ -12,6 +12,7 @@ import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.ui.activity.MainActivityNew;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -66,7 +67,7 @@ public class FinalizingActivity extends AppCompatActivity {
                 db.close();
                 finish();
                 Intent i = new Intent();
-                i.setClass(getApplicationContext(), MainActivity.class);
+                i.setClass(getApplicationContext(), MainActivityNew.class);
                 startActivity(i);
             }else{
                 Toast.makeText(getApplicationContext(), "Please try again later", Toast.LENGTH_LONG).show();

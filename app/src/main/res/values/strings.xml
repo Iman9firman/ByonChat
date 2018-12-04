@@ -18,6 +18,15 @@
     <string name="sql_createtable_conversation_index_destination">CREATE INDEX IF NOT EXISTS messages_destination ON messages(destination);</string>
     <string name="sql_createtable_conversation_index_packetid">CREATE INDEX IF NOT EXISTS messages_packetid ON messages(packet_id);</string>
 
+    <string name="sql_createtable_rooms">CREATE TABLE IF NOT EXISTS rooms(<!--_id INTEGER PRIMARY KEY AUTOINCREMENT, -->
+        id INTEGER PRIMARY KEY, name TEXT, description TEXT, realname TEXT, link TEXT, type TEXT, is_active TEXT);</string>
+    <string name="sql_createtable_rooms_trending">CREATE TABLE IF NOT EXISTS trendings(<!--_id INTEGER PRIMARY KEY AUTOINCREMENT, -->
+        id INTEGER PRIMARY KEY, trending_name TEXT, type TEXT);</string>
+
+    <string name="add_rooms">Add room </string>
+    <string name="text_empty_selected">You can now add all your rooms.</string>
+    <string name="text_manage_selected">You can manage all your rooms.</string>
+
     <string name="sql_chat_list">SELECT cv.*, co.name, co.jid FROM (
           SELECT * FROM (
             SELECT *, source number from messages where source != ? and type != ? GROUP BY source

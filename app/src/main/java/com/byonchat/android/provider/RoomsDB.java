@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.byonchat.android.R;
 import com.byonchat.android.list.ItemListTrending;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  * Created by Lukmanpryg on 6/29/2016.
  */
 
-public class RoomsDB {
+public class RoomsDB extends SQLiteOpenHelper {
 
     public static final String ROOMS_ID = "id";
     public static final String ROOMS_NAME = "name";
@@ -23,14 +24,15 @@ public class RoomsDB {
     public static final String ROOMS_REALNAME = "realname";
     public static final String ROOMS_LINKICON = "link";
     public static final String ROOMS_TYPE = "type";
+    public static final String ROOMS_ISACTIVE = "is_active";
     public static final String TRENDING_ID = "id";
     public static final String TRENDING_NAME = "trending_name";
 
-    private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
+    private static RoomsDB instance;
 
     private static final String DATABASE_NAME = "ROOMS.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private static final String ROOMS_TABLE = "rooms";
     private static final String TRENDING_TABLE = "trendings";
@@ -42,8 +44,8 @@ public class RoomsDB {
             + ROOMS_DESC + " text, "
             + ROOMS_REALNAME + " text, "
             + ROOMS_LINKICON + " text, "
-            + ROOMS_TYPE + " text)";
-
+            + ROOMS_TYPE + " text, "
+            + ROOMS_ISACTIVE + " text)";
 
     private static final String CREATE_TABLE_TRENDING = "create table "
             + TRENDING_TABLE + " (" + TRENDING_ID
@@ -51,46 +53,60 @@ public class RoomsDB {
             + TRENDING_NAME + " text, "
             + ROOMS_TYPE + " text)";
 
-    private final Context mCtx;
+    private Context mCtx;
 
-    private static class DatabaseHelper extends SQLiteOpenHelper {
-        DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    @Override
+    public void onCreate(SQLiteDatabase sqliteDatabase) {
+        if (mDb == null) {
+            mDb = sqliteDatabase;
         }
 
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL(CREATE_TABLE_ROOMS);
-            db.execSQL(CREATE_TABLE_TRENDING);
-        }
+        createTable();
+    }
 
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            if (newVersion > oldVersion) {
-                db.execSQL(CREATE_TABLE_TRENDING);
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (newVersion > oldVersion) {
+            db.execSQL(mCtx.getString(R.string.sql_createtable_rooms));
+            db.execSQL(mCtx.getString(R.string.sql_createtable_rooms_trending));
+            db.execSQL("ALTER TABLE " + ROOMS_TABLE + " ADD COLUMN " + ROOMS_ISACTIVE + " text ");
 //                db.execSQL("ALTER TABLE vouchers ADD COLUMN icon text");
-            }
-
-            db.execSQL("DROP TABLE IF EXISTS " + ROOMS_TABLE);
-            db.execSQL("DROP TABLE IF EXISTS " + TRENDING_TABLE);
-            onCreate(db);
         }
     }
 
-    public void Reset() {
-        mDbHelper.onUpgrade(this.mDb, 1, 1);
+    private SQLiteDatabase getDatabase() {
+        if (mDb == null) {
+            mDb = getWritableDatabase();
+        }
+        return mDb;
     }
 
-    public RoomsDB(Context ctx) {
-        mCtx = ctx;
-        mDbHelper = new DatabaseHelper(mCtx);
+    private void createTable() {
+        getDatabase().execSQL(mCtx.getString(R.string.sql_createtable_rooms));
+        getDatabase().execSQL(mCtx.getString(R.string.sql_createtable_rooms_trending));
+    }
+
+    public RoomsDB(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.mCtx = context;
+    }
+
+    public synchronized static RoomsDB getInstance(
+            Context context) {
+        if (instance == null) {
+            instance = new RoomsDB(
+                    context.getApplicationContext());
+        }
+        return instance;
     }
 
     public RoomsDB open() throws SQLException {
-        mDb = mDbHelper.getWritableDatabase();
+        mDb = getWritableDatabase();
         return this;
     }
 
     public void close() {
-        mDbHelper.close();
+        mDb.close();
     }
 
     public void insertRooms(ContactBot contactBot) {
@@ -100,6 +116,7 @@ public class RoomsDB {
         cv.put(ROOMS_REALNAME, contactBot.getRealname());
         cv.put(ROOMS_LINKICON, contactBot.getLink());
         cv.put(ROOMS_TYPE, contactBot.getType());
+        cv.put(ROOMS_ISACTIVE, contactBot.isActive ? "1" : "0");
         mDb.insert(ROOMS_TABLE, null, cv);
     }
 
@@ -139,13 +156,13 @@ public class RoomsDB {
         ArrayList<ItemListTrending> listMemberCards = new ArrayList<ItemListTrending>();
         Cursor cur = mDb.query(true, TRENDING_TABLE, new String[]{
                         TRENDING_ID, TRENDING_NAME, ROOMS_TYPE}
-                , ROOMS_TYPE + "= '"+type+"'", null, null, null, null, null);
+                , ROOMS_TYPE + "= '" + type + "'", null, null, null, null, null);
         if (cur.moveToFirst()) {
             do {
                 String id = cur.getString(cur.getColumnIndex(TRENDING_ID));
                 String nam = cur.getString(cur.getColumnIndex(TRENDING_NAME));
                 String typ = cur.getString(cur.getColumnIndex(ROOMS_TYPE));
-                listMemberCards.add(new ItemListTrending(id, "#"+nam, typ));
+                listMemberCards.add(new ItemListTrending(id, "#" + nam, typ));
             } while (cur.moveToNext());
         }
         return listMemberCards;
@@ -155,7 +172,7 @@ public class RoomsDB {
         ArrayList<ContactBot> listMemberCards = new ArrayList<ContactBot>();
         Cursor cur = mDb.query(true, ROOMS_TABLE, new String[]{
                         ROOMS_ID, ROOMS_NAME, ROOMS_DESC, ROOMS_REALNAME, ROOMS_LINKICON, ROOMS_TYPE}
-                , ROOMS_TYPE + "= '"+type+"'", null, null, null, null, null);
+                , ROOMS_TYPE + "= '" + type + "'", null, null, null, null, null);
         if (cur.moveToFirst()) {
             do {
                 String id = cur.getString(cur.getColumnIndex(ROOMS_ID));
@@ -170,11 +187,50 @@ public class RoomsDB {
         return listMemberCards;
     }
 
+    public void updateActiveRooms(ContactBot contactBot) {
+        try {
+            ContentValues vc = new ContentValues();
+            vc.put(ROOMS_ISACTIVE, "0");
+            getDatabase().update(ROOMS_TABLE, vc, null, null);
+
+            ContentValues cv = new ContentValues();
+            cv.put(ROOMS_ISACTIVE, contactBot.isActive ? "0" : "1");
+            getDatabase().update(ROOMS_TABLE, cv, ROOMS_NAME + "=?", new String[]{contactBot.getName()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
+    public ArrayList<ContactBot> retrieveRooms(String type, boolean isActive) throws SQLException {
+        String isActived = "0";
+        if (isActive)
+            isActived = "1";
+        ArrayList<ContactBot> listMemberCards = new ArrayList<ContactBot>();
+        Cursor cur = mDb.query(true, ROOMS_TABLE, new String[]{
+                        ROOMS_ID, ROOMS_NAME, ROOMS_DESC, ROOMS_REALNAME, ROOMS_LINKICON, ROOMS_TYPE, ROOMS_ISACTIVE}
+                , ROOMS_TYPE + "= '" + type + "' AND " + ROOMS_ISACTIVE + "= '" + isActived + "'", null, null, null, null, null);
+        if (cur.moveToFirst()) {
+            do {
+                String id = cur.getString(cur.getColumnIndex(ROOMS_ID));
+                String nam = cur.getString(cur.getColumnIndex(ROOMS_NAME));
+                String des = cur.getString(cur.getColumnIndex(ROOMS_DESC));
+                String real = cur.getString(cur.getColumnIndex(ROOMS_REALNAME));
+                String ic = cur.getString(cur.getColumnIndex(ROOMS_LINKICON));
+                String typ = cur.getString(cur.getColumnIndex(ROOMS_TYPE));
+                String active = cur.getString(cur.getColumnIndex(ROOMS_ISACTIVE));
+                boolean isAct = active.equalsIgnoreCase("1");
+                listMemberCards.add(new ContactBot(id, nam, des, real, ic, typ, isAct));
+            } while (cur.moveToNext());
+        }
+        return listMemberCards;
+    }
+
     public ArrayList<ContactBot> retrieveRoomsByName(String name, String tipe) throws SQLException {
         ArrayList<ContactBot> listMemberCards = new ArrayList<ContactBot>();
         Cursor cur = mDb.query(true, ROOMS_TABLE, new String[]{
                         ROOMS_ID, ROOMS_NAME, ROOMS_DESC, ROOMS_REALNAME, ROOMS_LINKICON, ROOMS_TYPE}
-                , ROOMS_NAME + "= '"+name+"' AND " + ROOMS_TYPE + "= '"+tipe+"'", null, null, null, null, null);
+                , ROOMS_NAME + "= '" + name + "' AND " + ROOMS_TYPE + "= '" + tipe + "'", null, null, null, null, null);
         if (cur.moveToFirst()) {
             do {
                 String id = cur.getString(cur.getColumnIndex(ROOMS_ID));
@@ -194,7 +250,7 @@ public class RoomsDB {
         ArrayList<ContactBot> listMemberCards = new ArrayList<ContactBot>();
         Cursor cur = mDb.query(true, ROOMS_TABLE, new String[]{
                         ROOMS_ID, ROOMS_NAME, ROOMS_DESC, ROOMS_REALNAME, ROOMS_LINKICON, ROOMS_TYPE}
-                , ROOMS_REALNAME + "= '"+name+"' AND " + ROOMS_TYPE + "= '"+tipe+"'", null, null, null, null, null);
+                , ROOMS_REALNAME + "= '" + name + "' AND " + ROOMS_TYPE + "= '" + tipe + "'", null, null, null, null, null);
         if (cur.moveToFirst()) {
             do {
                 String id = cur.getString(cur.getColumnIndex(ROOMS_ID));

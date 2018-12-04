@@ -2,6 +2,11 @@ package com.byonchat.android.helpers;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.provider.Message;
+
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,5 +59,12 @@ public class Constants extends AppCompatActivity {
 
     protected static final String URL_POST = "https://bb.byonchat.com/bc_voucher_client/webservice/proses/repost_attachment.php";
 
+    public static String SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL = "SELECT count(*) total FROM "
+            + Message.TABLE_NAME
+            + " WHERE status = ?";
+
+    public static String URL_LAPOR_SELECTED = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/selectapop.php";
+
+    public static Map<Integer, List<String>> map = new HashMap<Integer, List<String>>();
 }
 

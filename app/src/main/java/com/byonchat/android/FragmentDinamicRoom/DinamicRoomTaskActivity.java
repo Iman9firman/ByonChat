@@ -20,7 +20,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -33,14 +32,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -51,7 +48,6 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Base64OutputStream;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -106,6 +102,7 @@ import com.byonchat.android.list.AttachmentAdapter;
 import com.byonchat.android.list.utilLoadImage.ImageLoaderLarge;
 import com.byonchat.android.location.ActivityDirection;
 import com.byonchat.android.model.AddChildFotoExModel;
+import com.byonchat.android.personalRoom.coba_aja.LangsungDelete;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
@@ -126,16 +123,15 @@ import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.ContactsCompletionView;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.guna.ocrlibrary.OCRCapture;
 import com.squareup.picasso.Picasso;
 import com.tokenautocomplete.FilteredArrayAdapter;
 import com.tokenautocomplete.TokenCompleteTextView;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import com.wang.avi.AVLoadingIndicatorView;
-
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -191,9 +187,10 @@ import java.util.regex.Pattern;
 
 import io.github.memfis19.annca.Annca;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
-import io.github.memfis19.annca.internal.ui.camera.Camera1Activity;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
+
+import static com.guna.ocrlibrary.OcrCaptureActivity.TextBlockObject;
 
 public class DinamicRoomTaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener {
 
@@ -226,6 +223,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     private static final int PICK_ESTIMATION = 1208;
     private static final int OCR_REQUEST = 1211;
     private static final int QRCODE_REQUEST = 1212;
+    private static final int CAMERA_SCAN_TEXT = 1213;
+
     private static final String MENU_GALLERY_TITLE = "Gallery";
     Integer totalUpload = 0;
     ArrayList<String> prosesUpload = new ArrayList<>();
@@ -245,8 +244,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     RatingBar rat[];
     EditText et[];
     TextView tp[];
+    RadioGroup rg[];
     ArrayList<ArrayList<String>> stringAPI;
     Map<Integer, String> idFormChildParent = new HashMap<Integer, String>();
+    Map<Integer, String> hashMapOcrKTP = new HashMap<Integer, String>();
     Map<Integer, List<String>> hashMap = new HashMap<Integer, List<String>>();
     Map<Integer, List<String>> hashMapOcr = new HashMap<Integer, List<String>>();
     Map<Integer, List<String>> hashMapFormulas = new HashMap<Integer, List<String>>();
@@ -1639,6 +1640,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 et = new EditText[jsonArray.length()];
                 tp = new TextView[jsonArray.length()];
                 rat = new RatingBar[jsonArray.length()];
+                rg = new RadioGroup[jsonArray.length()];
                 stringAPI = new ArrayList<ArrayList<String>>();
                 linearEstimasi = new LinearLayout[jsonArray.length()];
                 imageView = new ImageView[jsonArray.length()];
@@ -4111,6 +4113,159 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 return true;
                             }
                         });
+                    } else if (type.equalsIgnoreCase("ocr_ktp")) {
+                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+                        final List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
+
+                        imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
+                        imageView[count].setImageDrawable(getResources().getDrawable(R.drawable.ico_camera_reader));
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(5, 15, 0, 0);
+                        imageView[count].setLayoutParams(params);
+                        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(imageView[count], params);
+
+                        et[count] = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+
+
+                        et[count].setId(Integer.parseInt(idListTask));
+                        et[count].setHint("NIK");
+                        et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
+                        et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                        if (cursorCild.getCount() > 0) {
+                            et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                        } else {
+                            if (!value.equalsIgnoreCase("")) {
+                                et[count].setText(value);
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                db.insertRoomsDetail(orderModel);
+                            } else {
+                                Cursor cursorValue = db.getSingleRoomDetailFormWithFlag(idDetail, username, idTab, "value");
+                                if (cursorValue.getCount() > 0) {
+                                    String valUEParent = "";
+                                    final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
+                                    JSONArray jsonArrayYes = null;
+                                    try {
+                                        jsonArrayYes = new JSONArray(contentValue);
+                                        for (int ii = (jsonArrayYes.length() - 1); ii >= 0; ii--) {
+                                            JSONArray magic = new JSONArray(jsonArrayYes.getJSONArray(ii).toString());
+                                            JSONObject oContent2 = new JSONObject(magic.get(1).toString());
+                                            JSONArray joContent = oContent2.getJSONArray("value_detail");
+                                            for (int iff = 0; iff < joContent.length(); iff++) {
+                                                final String idValue = joContent.getJSONObject(i).getString("id").toString();
+                                                String pareen = jsonArray.getJSONObject(i).getString("copy_from").toString();
+                                                if (idValue.equalsIgnoreCase(pareen)) {
+                                                    valUEParent = joContent.getJSONObject(i).getString("value").toString();
+                                                }
+                                            }
+                                        }
+                                    } catch (Exception c) {
+
+                                    }
+
+                                    et[count].setText(valUEParent);
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                    db.insertRoomsDetail(orderModel);
+                                }
+                            }
+                        }
+
+                        if ((!showButton)) {
+                            et[count].setEnabled(false);
+                        } else {
+                            final int finalI3 = i;
+
+                            et[count].addTextChangedListener(new TextWatcher() {
+                                @Override
+                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                }
+
+                                @Override
+                                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                }
+
+                                @Override
+                                public void afterTextChanged(Editable s) {
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI3)));
+                                    if (cEdit.getCount() > 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
+                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                    } else {
+                                        if (String.valueOf(s).length() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
+                                            db.insertRoomsDetail(orderModel);
+
+                                        } else {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
+                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                        }
+                                        Intent newIntent = new Intent("bLFormulas");
+                                        sendBroadcast(newIntent);
+                                    }
+
+                                }
+                            });
+                        }
+
+                        LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params3.setMargins(30, 10, 30, 10);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(et[count], params3);
+
+
+                        if (jsonArray.getJSONObject(i).getString("ocr_ktp") != null) {
+
+                            imageView[count].setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dummyIdDate = Integer.parseInt(idListTask);
+
+                                    OCRCapture.Builder(DinamicRoomTaskActivity.this)
+                                            .setUseFlash(false)
+                                            .setAutoFocus(true)
+                                            .buildWithRequestCode(CAMERA_SCAN_TEXT);
+
+                                }
+                            });
+
+                            String isi = jsonArray.getJSONObject(i).getString("ocr_ktp").toString();
+
+                            hashMapOcrKTP.put(Integer.parseInt(idListTask), isi);
+                        }
+
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
                     } else if (type.equalsIgnoreCase("ocr")) {
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
@@ -4149,20 +4304,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(imageView[count], params);
 
-
-                        imageView[count].setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                dummyIdDate = Integer.parseInt(idListTask);
-                                Intent i = new Intent(context, ReaderOcr.class);
-                                startActivityForResult(i, OCR_REQUEST);
-
-                            }
-                        });
-
-
                         RelativeLayout child;
                         if (jsonArray.getJSONObject(i).getString("ocr") != null) {
+
+                            imageView[count].setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dummyIdDate = Integer.parseInt(idListTask);
+                                    Intent i = new Intent(context, ReaderOcr.class);
+                                    startActivityForResult(i, OCR_REQUEST);
+
+                                }
+                            });
+
                             String isi = jsonArray.getJSONObject(i).getString("ocr").toString();
                             JSONArray jsonArrays = new JSONArray(isi);
                             for (int ia = 0; ia < jsonArrays.length(); ia++) {
@@ -4288,6 +4442,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 linearLayout.addView(child);
                             }
                         }
+
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("upload_document")) {
@@ -7051,10 +7206,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         if (required.equalsIgnoreCase("1")) {
                             label += "<font size=\"3\" color=\"red\">*</font>";
                         }
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
                         List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add("");
+                        valSetOne.add(String.valueOf(count));
                         valSetOne.add(required);
                         valSetOne.add(type);
                         valSetOne.add(name);
@@ -7073,9 +7234,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         final RadioButton[] rb = new RadioButton[jsonArrayCeks.length()];
                         LinearLayout.LayoutParams params2b = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params2b.setMargins(30, 10, 30, 0);
-                        RadioGroup rg = new RadioGroup(this); //create the RadioGroup
-                        rg.setOrientation(RadioGroup.VERTICAL);//or RadioGroup.VERTICAL
-                        rg.setLayoutParams(params2b);
+                        rg[count] = new RadioGroup(this); //create the RadioGroup
+                        rg[count].setOrientation(RadioGroup.VERTICAL);//or RadioGroup.VERTICAL
+                        rg[count].setLayoutParams(params2b);
 
                         final EditText et = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
                         et.setVisibility(View.GONE);
@@ -7128,7 +7289,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
 
 
-                            rg.addView(rb[iaa]);
+                            rg[count].addView(rb[iaa]);
                         }
 
 
@@ -7136,10 +7297,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                         if ((!showButton)) {
-                            rg.setEnabled(false);
+                            rg[count].setEnabled(false);
                         } else {
                             final int finalI23 = i;
-                            rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                            rg[count].setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(RadioGroup group, int checkedId) {
 
@@ -7207,7 +7368,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         params12a.setMargins(50, 10, 30, 40);
 
                         valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                        linearLayout.addView(rg);
+                        linearLayout.addView(rg[count]);
                         valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(et, params12);
                         View view = new View(this);
@@ -8867,7 +9028,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.w("hall2o", requestCode + " == " + resultCode);
         if (requestCode == 11) {
             if (resultCode == RESULT_OK) {
                 String returnString = data.getStringExtra("PICTURE");
@@ -9190,6 +9350,26 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             }*/
 
 
+        } else if (requestCode == CAMERA_SCAN_TEXT) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                String text = data.getStringExtra(TextBlockObject);
+                List value = (List) hashMap.get(dummyIdDate);
+                String lala = getNIKKTP(text);
+                et[Integer.valueOf(value.get(0).toString())].setText(lala);
+                int pos = 0;
+                if (et[Integer.valueOf(value.get(0).toString())].length() > 1) {
+                    pos = et[Integer.valueOf(value.get(0).toString())].length() - 1;
+                }
+
+                et[Integer.valueOf(value.get(0).toString())].setSelection(pos);
+                String urlString = "https://infopemilu.kpu.go.id/pilkada2018/pemilih/dps/1/hasil-cari/resultDps.json?nik=" + lala
+                        + "&nama=&namaPropinsi=&namaKabKota=&namaKecamatan=&namaKelurahan=&notificationType=";
+
+                new getJSONeKtp(urlString).execute();
+
+            } else {
+                Toast.makeText(this, " We Can't found Your NIK, Please retry scanning process or Input your NIK manually ", Toast.LENGTH_SHORT).show();
+            }
         } else if (requestCode == OCR_REQUEST) {
             if (data.hasExtra("result")) {
                 final List value = (List) hashMap.get(dummyIdDate);
@@ -9438,6 +9618,175 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             }
         }
     }
+
+    private class getJSONeKtp extends AsyncTask<String, Void, String> {
+        private String vug;
+        private ProgressDialog dd;
+
+        private getJSONeKtp(String text) {
+            this.vug = text;
+            dd = new ProgressDialog(activity);
+            dd.setMessage("Please Wait");
+            dd.show();
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return GET(vug);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            dd.dismiss();
+            setData(result);
+        }
+    }
+
+    public void setData(String result) {
+        try {
+            JSONObject start = new JSONObject(result);
+            JSONArray data = start.getJSONArray("aaData");
+            JSONObject jsonObject = data.getJSONObject(0);
+
+            String nik = jsonObject.getString("nik");
+            String tanggal = nik.substring(6, 8);
+            String bulan = nik.substring(8, 10);
+            String tahun = nik.substring(10, 12);
+
+            String a = jsonObject.getString("nama");
+            String b = jsonObject.getString("jenisKelamin");
+            String c = jsonObject.getString("namaKelurahan");
+            String d = jsonObject.getString("namaKecamatan");
+            String e = jsonObject.getString("namaKabKota");
+            String g = jsonObject.getString("namaPropinsi");
+            String f = tanggal + "-" + bulan + "-" + tahun;
+
+            String isi = hashMapOcrKTP.get(dummyIdDate);
+
+            JSONArray jsonArrays = new JSONArray(isi);
+
+            for (int ia = 0; ia < jsonArrays.length(); ia++) {
+                String valueKTP = jsonArrays.getJSONObject(ia).getString("value").toString();
+                final String pairKTP = jsonArrays.getJSONObject(ia).getString("pairs").toString();
+
+                for (Integer key : hashMap.keySet()) {
+                    List<String> va = hashMap.get(key);
+                    if (va.get(3).equalsIgnoreCase(pairKTP)) {
+                        String lala = "";
+                        if (valueKTP.equalsIgnoreCase("nama")) {
+                            lala = a;
+                        } else if (valueKTP.equalsIgnoreCase("jenis_kelamin")) {
+                            lala = b;
+                        } else if (valueKTP.equalsIgnoreCase("provinsi")) {
+                            lala = g;
+                        } else if (valueKTP.equalsIgnoreCase("kota")) {
+                            lala = e;
+                        } else if (valueKTP.equalsIgnoreCase("kelurahan")) {
+                            lala = c;
+                        } else if (valueKTP.equalsIgnoreCase("kecamatan")) {
+                            lala = d;
+                        } else if (valueKTP.equalsIgnoreCase("tanggal")) {
+                            lala = f;
+                        }
+
+                        if (va.get(2).equalsIgnoreCase("radio")) {
+
+                            Log.w("kasar", lala);
+
+                            int radio_button_Id = 0;
+                            if (lala.contains("L")) {
+                                radio_button_Id = rg[Integer.valueOf(va.get(0).toString())].getChildAt(0).getId();
+                            } else {
+                                radio_button_Id = rg[Integer.valueOf(va.get(0).toString())].getChildAt(1).getId();
+                            }
+                            rg[Integer.valueOf(va.get(0).toString())].check(radio_button_Id);
+
+                        } else {
+                            et[Integer.valueOf(va.get(0).toString())].setText(lala);
+                        }
+
+                    }
+
+                }
+
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(activity, "KTP input manual", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public String getNIKKTP(String text) {
+        String[] array = text.split("\n");
+        boolean error = true;
+        Log.w("ALL", text);
+        for (int oi = 0; oi < array.length; oi++) {
+            if (array[oi].matches(": (.*)")) {
+                array[oi] = array[oi].replace(": ", "");
+            }
+            if (array[oi].matches(":(.*)")) {
+                array[oi] = array[oi].replace(":", "");
+            }
+            if (array[oi].matches("[0-9](.*)[0-9]")) {
+                Log.w("Here", array[oi] + " whats -> " + array[oi].length());
+                if (!array[oi].contains("-")) {
+                    if (array[oi].length() > 10) {
+                        String NIK = array[oi];
+                        error = false;
+                        Log.w("error 4", error + "");
+                        if (NIK.contains(",")) {
+                            NIK = NIK.replace(",", "");
+                        }
+                        if (NIK.contains(".")) {
+                            NIK = NIK.replace(".", "");
+                        }
+                        if (NIK.contains(" ")) {
+                            NIK = NIK.replace(" ", "");
+                        }
+                        if (NIK.contains("S")) {
+                            NIK = NIK.replace("S", "5");
+                        }
+                        if (NIK.contains("L")) {
+                            NIK = NIK.replace("L", "6");
+                        }
+                        if (NIK.contains("v")) {
+                            NIK = NIK.replace("v", "4");
+                        }
+                        if (NIK.contains("O")) {
+                            NIK = NIK.replace("O", "0");
+                        }
+                        if (NIK.contains("b")) {
+                            NIK = NIK.replace("b", "6");
+                        }
+                        if (NIK.contains("G")) {
+                            NIK = NIK.replace("G", "6");
+                        }
+                        if (NIK.contains("T")) {
+                            NIK = NIK.replace("T", "9");
+                        }
+                        if (NIK.contains("o")) {
+                            NIK = NIK.replace("o", "0");
+                        }
+                        if (NIK.contains("?")) {
+                            NIK = NIK.replace("?", "7");
+                        }
+                        if (NIK.contains("%")) {
+                            NIK = NIK.replace("%", "6");
+                        }
+                        if (NIK.contains("D")) {
+                            NIK = NIK.replace("D", "0");
+                        }
+                        return NIK;
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
 
     public static Bitmap overlay(Bitmap bmp1, Bitmap bmp2) {
         try {
@@ -9709,7 +10058,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         public void postData(String valueIWantToSend, String usr, String idr, String pId) {
             // Create a new HttpClient and Post Header
 
-            Log.w("mae", valueIWantToSend);
             try {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);

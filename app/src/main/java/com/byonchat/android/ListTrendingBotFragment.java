@@ -344,7 +344,7 @@ public class ListTrendingBotFragment extends Fragment {
                             String description = obj.getString("description");
                             String nama_display = obj.getString("nama_display");
                             String foto = obj.getString("foto");
-                            ContactBot aa = new ContactBot(String.valueOf(i + 1), username, description, nama_display, foto, "1", false);
+                            ContactBot aa = new ContactBot(String.valueOf(i + 1), username, description, nama_display, foto, "1", false, "");
                             roomsDB.insertRooms(aa);
                             if (isCancelled()) break;
                         }

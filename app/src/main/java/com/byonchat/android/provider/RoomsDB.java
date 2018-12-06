@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.byonchat.android.R;
 import com.byonchat.android.list.ItemListTrending;
@@ -24,6 +26,7 @@ public class RoomsDB extends SQLiteOpenHelper {
     public static final String ROOMS_REALNAME = "realname";
     public static final String ROOMS_LINKICON = "link";
     public static final String ROOMS_TYPE = "type";
+    public static final String ROOMS_TARGET_URL = "target_url";
     public static final String ROOMS_ISACTIVE = "is_active";
     public static final String TRENDING_ID = "id";
     public static final String TRENDING_NAME = "trending_name";
@@ -32,7 +35,7 @@ public class RoomsDB extends SQLiteOpenHelper {
     private static RoomsDB instance;
 
     private static final String DATABASE_NAME = "ROOMS.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     private static final String ROOMS_TABLE = "rooms";
     private static final String TRENDING_TABLE = "trendings";
@@ -69,8 +72,13 @@ public class RoomsDB extends SQLiteOpenHelper {
         if (newVersion > oldVersion) {
             db.execSQL(mCtx.getString(R.string.sql_createtable_rooms));
             db.execSQL(mCtx.getString(R.string.sql_createtable_rooms_trending));
-            db.execSQL("ALTER TABLE " + ROOMS_TABLE + " ADD COLUMN " + ROOMS_ISACTIVE + " text ");
-//                db.execSQL("ALTER TABLE vouchers ADD COLUMN icon text");
+            try {
+                db.execSQL("ALTER TABLE " + ROOMS_TABLE + " ADD COLUMN " + ROOMS_ISACTIVE + " text ");
+            } catch (SQLiteException e) {
+                //ignored when column exist
+                Log.e("IGNORE IT.", e.toString());
+            }
+            db.execSQL("ALTER TABLE " + ROOMS_TABLE + " ADD COLUMN " + ROOMS_TARGET_URL + " text ");
         }
     }
 
@@ -110,6 +118,10 @@ public class RoomsDB extends SQLiteOpenHelper {
     }
 
     public void insertRooms(ContactBot contactBot) {
+        ContentValues vc = new ContentValues();
+        vc.put(ROOMS_ISACTIVE, "0");
+        getDatabase().update(ROOMS_TABLE, vc, null, null);
+
         ContentValues cv = new ContentValues();
         cv.put(ROOMS_NAME, contactBot.getName());
         cv.put(ROOMS_DESC, contactBot.getDesc());
@@ -117,6 +129,7 @@ public class RoomsDB extends SQLiteOpenHelper {
         cv.put(ROOMS_LINKICON, contactBot.getLink());
         cv.put(ROOMS_TYPE, contactBot.getType());
         cv.put(ROOMS_ISACTIVE, contactBot.isActive ? "1" : "0");
+        cv.put(ROOMS_TARGET_URL, contactBot.getTargetUrl());
         mDb.insert(ROOMS_TABLE, null, cv);
     }
 
@@ -208,7 +221,7 @@ public class RoomsDB extends SQLiteOpenHelper {
             isActived = "1";
         ArrayList<ContactBot> listMemberCards = new ArrayList<ContactBot>();
         Cursor cur = mDb.query(true, ROOMS_TABLE, new String[]{
-                        ROOMS_ID, ROOMS_NAME, ROOMS_DESC, ROOMS_REALNAME, ROOMS_LINKICON, ROOMS_TYPE, ROOMS_ISACTIVE}
+                        ROOMS_ID, ROOMS_NAME, ROOMS_DESC, ROOMS_REALNAME, ROOMS_LINKICON, ROOMS_TYPE, ROOMS_ISACTIVE, ROOMS_TARGET_URL}
                 , ROOMS_TYPE + "= '" + type + "' AND " + ROOMS_ISACTIVE + "= '" + isActived + "'", null, null, null, null, null);
         if (cur.moveToFirst()) {
             do {
@@ -219,8 +232,9 @@ public class RoomsDB extends SQLiteOpenHelper {
                 String ic = cur.getString(cur.getColumnIndex(ROOMS_LINKICON));
                 String typ = cur.getString(cur.getColumnIndex(ROOMS_TYPE));
                 String active = cur.getString(cur.getColumnIndex(ROOMS_ISACTIVE));
+                String targeturl = cur.getString(cur.getColumnIndex(ROOMS_TARGET_URL));
                 boolean isAct = active.equalsIgnoreCase("1");
-                listMemberCards.add(new ContactBot(id, nam, des, real, ic, typ, isAct));
+                listMemberCards.add(new ContactBot(id, nam, des, real, ic, typ, isAct, targeturl));
             } while (cur.moveToNext());
         }
         return listMemberCards;

@@ -70,9 +70,9 @@
                     android:id="@+id/main.toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@drawable/toolbar_gradient"
                     app:layout_collapseMode="pin"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                <!--android:background="@drawable/toolbar_gradient"-->
 
                 <com.miguelcatalan.materialsearchview.MaterialSearchView
                     android:id="@+id/search_view_main"
@@ -290,6 +290,7 @@
         android:background="@android:color/white"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
+        app:itemBackground="?selectableItemBackground"
         app:menu="@menu/ims_nav_menu_main">
 
         <ListView

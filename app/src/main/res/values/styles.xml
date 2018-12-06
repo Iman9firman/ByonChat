@@ -38,6 +38,9 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="AppTheme.AppBarOverlay.Black" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.PopupOverlay.Black" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

@@ -58,6 +58,7 @@ import com.bumptech.glide.Glide;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.AdvRecy.MainDbHelper;
+import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.FinalizingActivity;
 import com.byonchat.android.LoadContactScreen;
 import com.byonchat.android.MainActivity;
@@ -140,10 +141,19 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         super.onViewReady(savedInstanceState);
+        resolveRoomConfig(savedInstanceState);
 
         resolveView();
         resolveListRooms();
         resolveOpenRooms();
+    }
+
+    protected void resolveRoomConfig(Bundle savedInstanceState) {
+        if (getIntent() != null) {
+            success = getIntent().getStringExtra("success");
+            username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
+            targetURL = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+        }
     }
 
     @Override
@@ -316,11 +326,13 @@ public class MainActivityNew extends MainBaseActivityNew {
                         case R.id.nav_item_four:
                             Toast.makeText(getBaseContext(), "Help clicked", Toast.LENGTH_SHORT).show();
                             break;
-                        case R.id.nav_item_create_shortcut:
-                            createShortcut();
+                        case R.id.nav_item_refresh:
+                            RefreshRoom();
                             break;
                         case R.id.nav_item_legal:
+                            Byonchat.getRoomsDB().open();
                             Byonchat.getRoomsDB().deleteRooms();
+                            Byonchat.getRoomsDB().close();
                             resolveNavHeader();
                             resolveListRooms();
                             resolveOpenRooms();
@@ -336,15 +348,10 @@ public class MainActivityNew extends MainBaseActivityNew {
             });
 
             if (!image_url.equalsIgnoreCase("")) {
-                Glide.with(this).load(image_url).into(backgroundImage);
-            } else {
                 Glide.with(this).load(background).into(backgroundImage);
+            } else {
+                Glide.with(this).load(R.drawable.wallpaper).into(backgroundImage);
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                /*colorForeground = color.replace("#", "#" + percent);
-                backgroundImage.setForeground(new ColorDrawable(Color.parseColor(colorForeground)));*/
-            }
-
 
             //appbar
             appBarLayout.addOnOffsetChangedListener((appBarLayout, i) -> {

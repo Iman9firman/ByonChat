@@ -1,7 +1,14 @@
 package com.byonchat.android;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -11,21 +18,29 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.helpers.Constants;
+import com.byonchat.android.list.ItemListMemberCard;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.ContentRoom;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
+import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.Utility;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +49,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 
@@ -157,6 +174,112 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         return null;
     }
 
+    protected void createShortcut() {
+        final Dialog dialogConfirmation;
+        dialogConfirmation = DialogUtil.customDialogConversationConfirmation(this);
+        dialogConfirmation.show();
+
+        TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
+        TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
+        txtConfirmation.setText("Create Shortcut " + title);
+        descConfirmation.setVisibility(View.VISIBLE);
+        descConfirmation.setText("Are you sure you want to Create Shortcut?");
+
+        Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
+        Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+        btnNo.setText("Cancel");
+        btnNo.setOnClickListener(v -> {
+            dialogConfirmation.dismiss();
+        });
+
+        btnYes.setOnClickListener(v -> {
+            dialogConfirmation.dismiss();
+            Picasso.with(ByonChatMainRoomActivity.this)
+                    .load(icon)
+                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                    .transform(new RoundedCornersTransformation(30, 0, RoundedCornersTransformation.CornerType.ALL))
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            if (bitmap != null) {
+                                   /* Toast.makeText(ByonChatMainRoomActivity.this, "Create Shortcut Success", Toast.LENGTH_SHORT).show();
+                                    Intent aa = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
+                                    aa.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                                    Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+                                    shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+                                    shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+                                    shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, aa);
+                                    sendBroadcast(shortcutintent);
+                                    finish();*/
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                                    ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(ByonChatMainRoomActivity.this, name);
+                                    mShortcutInfoBuilder.setShortLabel(name);
+                                    mShortcutInfoBuilder.setLongLabel(name);
+                                    mShortcutInfoBuilder.setIcon(Icon.createWithBitmap(bitmap));
+
+                                    Intent shortcutIntent = createIntentShortcut();
+                                    shortcutIntent.setAction(Intent.ACTION_CREATE_SHORTCUT);
+                                    mShortcutInfoBuilder.setIntent(shortcutIntent);
+
+                                    ShortcutInfo mShortcutInfo = mShortcutInfoBuilder.build();
+                                    ShortcutManager mShortcutManager = getSystemService(ShortcutManager.class);
+                                    mShortcutManager.requestPinShortcut(mShortcutInfo, null);
+
+                                } else {
+                                    Intent shortcutIntent = createIntentShortcut();
+                                    shortcutIntent.setAction(Intent.ACTION_MAIN);
+
+                                    Intent addIntent = new Intent();
+                                    addIntent
+                                            .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+                                    addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+                                    addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+
+                                    addIntent
+                                            .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                                    addIntent.putExtra("duplicate", false);  //may it's already there so   don't duplicate
+                                    getApplicationContext().sendBroadcast(addIntent);
+
+                                }
+                                finish();
+                                Toast.makeText(ByonChatMainRoomActivity.this, "Shortcut Created", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Toast.makeText(ByonChatMainRoomActivity.this, "Create Shortcut failed", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            Toast.makeText(ByonChatMainRoomActivity.this, "Please Wait", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+    }
+
+    protected Intent createIntentShortcut() {
+        Intent shortcutIntent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
+        shortcutIntent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_POSITION, position);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_COLOR, color);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_COLORTEXT, colorText);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_TARGETURL, targetURL);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_CATEGORY, category);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_TITLE, title);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_URL_TEMBAK, url_tembak);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_ID_ROOMS_TAB, id_rooms_tab);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_PULL, include_pull);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_LATLONG, include_latlong);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_STATUS, status);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_NAME, name);
+        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_ICON, icon);
+
+        return shortcutIntent;
+    }
+
     public String deleteById(final Integer posss) {
         final List value = (List) Constants.map.get(position);
         if (value != null) {
@@ -201,20 +324,28 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         return null;
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_room_dinamic, menu);
+        MenuItem action_add = menu.findItem(R.id.action_add);
+        MenuItem action_refresh = menu.findItem(R.id.action_refresh);
+
+        action_add.setVisible(false);
+        action_refresh.setVisible(false);
+
+        invalidateOptionsMenu();
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
+            case R.id.action_short:
+                createShortcut();
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @NonNull

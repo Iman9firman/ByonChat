@@ -188,6 +188,8 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                         }
 
                     }
+//                    Intent intent = ImsProfileActivity.generateIntent(getApplicationContext(), "");
+//                    startActivity(intent);
                 } else {
                     adapterSelected((IconItem) mAdapter.getData().get(position));
                 }
@@ -219,6 +221,8 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                     }
 
                 }
+//                Intent intent = ImsProfileActivity.generateIntent(getApplicationContext(), "");
+//                startActivity(intent);
             } else
                 adapterSelected((IconItem) mAdapter.getData().get(position));
         });
@@ -294,6 +298,40 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         }
         if (actionMode != null) {
             actionMode.setTitle(String.valueOf(selectedItem.size()));
+            /*actionMode.getMenu().findItem(R.id.action_forward)
+                    .setVisible(true);
+            if (selectedComments.size() == 1 && selectedComments.get(0).getStatus() >= SoloComment.STATE_ON_SOLO) {
+                Message soloComment = selectedComments.get(0);
+
+                actionMode.getMenu().findItem(R.id.action_reply).setVisible(true);
+
+                if (soloChatRoom.isGroup() && soloComment.getSource().equalsIgnoreCase(Solo.SoloMessengerHelper().getMyContact().getJabberId())) {
+                    actionMode.getMenu().findItem(R.id.action_info).setVisible(true);
+                } else {
+                    actionMode.getMenu().findItem(R.id.action_info).setVisible(false);
+                }
+
+                File localPath = Solo.getDataStore().getLocalPath(soloComment.getId());
+                if (localPath != null) {
+                    actionMode.getMenu().findItem(R.id.action_share).setVisible(true);
+                } else {
+                    actionMode.getMenu().findItem(R.id.action_share).setVisible(false);
+                }
+            } else {
+                actionMode.getMenu().findItem(R.id.action_reply).setVisible(false);
+                actionMode.getMenu().findItem(R.id.action_share).setVisible(false);
+                actionMode.getMenu().findItem(R.id.action_info).setVisible(false);
+            }
+
+            if (onlyTextOrLinkType(selectedComments)) {
+                actionMode.getMenu().findItem(R.id.action_copy).setVisible(true);
+            } else {
+                actionMode.getMenu().findItem(R.id.action_copy).setVisible(false);
+            }
+
+            actionMode.getMenu()
+                    .findItem(R.id.action_delete)
+                    .setVisible(true);*/
         }
     }
 
@@ -306,6 +344,9 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         menu.findItem(R.id.action_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//        menu.findItem(R.id.action_copy).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//        menu.findItem(R.id.action_share).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+//        menu.findItem(R.id.action_forward).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return true;
     }
 
@@ -324,6 +365,23 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
 
     protected void onSelectedCommentsAction(ActionMode mode, MenuItem item, List<IconItem> selectedItem) {
         int i = item.getItemId();
+        /*if (i == R.id.action_copy) {
+            copyComments(selectedComments);
+        } else if (i == R.id.action_share) {
+            if (selectedComments.size() > 0) {
+                shareComment(selectedComments.get(0));
+            }
+        } else if (i == R.id.action_reply) {
+            if (selectedComments.size() > 0) {
+                replyComment(selectedComments.get(0));
+            }
+        } else if (i == R.id.action_forward) {
+            forwardComments(selectedComments);
+        } else if (i == R.id.action_info && selectedComments.size() > 0) {
+            showCommentInfo(selectedComments.get(0));
+        } else if (i == R.id.action_delete && selectedComments.size() > 0) {
+            deleteComments(selectedComments);
+        }*/
         mode.finish();
     }
 

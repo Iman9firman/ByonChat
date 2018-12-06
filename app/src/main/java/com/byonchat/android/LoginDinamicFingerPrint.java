@@ -31,6 +31,7 @@ import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDB;
+import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.FingerprintHandler;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
@@ -423,7 +424,7 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
                         } else {
                             new Validations().getInstance(getApplicationContext()).setTimebyId(25);
                             finish();
-                            Intent intent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
                             intent.putExtra(ConversationActivity.KEY_JABBER_ID, username_room);
                             intent.putExtra("success", "");
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

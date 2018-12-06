@@ -105,8 +105,22 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     public static String FRAGMENT_ROOM_CARD_ID = "fragment_room_card_id";
     public static String FRAGMENT_ROOM_API_APURA = "fragment_room_api_apura";
 
-    protected static final String EXTRA_ITEM = "extra_item";
-    protected final static String KEY_POSITION = "POSITION";
+    public static final String EXTRA_ITEM = "extra_item";
+    public static final String EXTRA_POSITION = "extra_position";
+    public static final String EXTRA_COLOR = "extra_color";
+    public static final String EXTRA_COLORTEXT = "extra_colortext";
+    public static final String EXTRA_TARGETURL = "extra_targeturl";
+    public static final String EXTRA_CONTENT = "extra_content";
+    public static final String EXTRA_CATEGORY = "extra_category";
+    public static final String EXTRA_TITLE = "extra_title";
+    public final static String EXTRA_URL_TEMBAK = "extra_url_tembak";
+    public static final String EXTRA_ID_ROOMS_TAB = "extra_id_rooms_tab";
+    public static final String EXTRA_INCLUDE_PULL = "extra_include_pull";
+    public static final String EXTRA_INCLUDE_LATLONG = "extra_include_latlong";
+    public static final String EXTRA_STATUS = "extra_status";
+    public static final String EXTRA_NAME = "extra_name";
+    public static final String EXTRA_ICON = "extra_icon";
+    public static final String KEY_POSITION = "extra_key_position";
 
     protected ItemMain listItem;
     protected Fragment mFragment;
@@ -119,7 +133,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected String colorText;
     protected String targetURL;
     protected String username;
-    protected String content;
     protected String category;
     protected String title;
     protected String url_tembak;
@@ -127,6 +140,8 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected String include_pull;
     protected String include_latlong;
     protected String status;
+    protected String name;
+    protected String icon;
 
     @NonNull
     protected AppBarLayout vAppbar;
@@ -171,18 +186,20 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected abstract void onLoadView();
 
     protected void applyConfig() {
-        position = listItem.id;
-        username = listItem.username;
-        color = listItem.color;
-        colorText = listItem.colorText;
-        targetURL = listItem.targetURL;
-        category = listItem.category;
-        title = listItem.title;
-        url_tembak = listItem.url_tembak;
-        id_rooms_tab = listItem.id_rooms_tab;
-        include_pull = listItem.include_pull;
-        include_latlong = listItem.include_latlong;
-        status = listItem.status;
+        position = listItem != null ? listItem.id : getIntent().getExtras().getInt(EXTRA_POSITION, 0);
+        username = listItem != null ? listItem.username : getIntent().getExtras().getString(ConversationActivity.KEY_JABBER_ID);
+        color = listItem != null ? listItem.color : getIntent().getExtras().getString(EXTRA_COLOR);
+        colorText = listItem != null ? listItem.colorText : getIntent().getExtras().getString(EXTRA_COLORTEXT);
+        targetURL = listItem != null ? listItem.targetURL : getIntent().getExtras().getString(EXTRA_TARGETURL);
+        category = listItem != null ? listItem.category : getIntent().getExtras().getString(EXTRA_CATEGORY);
+        title = listItem != null ? listItem.title : getIntent().getExtras().getString(EXTRA_TITLE);
+        url_tembak = listItem != null ? listItem.url_tembak : getIntent().getExtras().getString(EXTRA_URL_TEMBAK);
+        id_rooms_tab = listItem != null ? listItem.id_rooms_tab : getIntent().getExtras().getString(EXTRA_ID_ROOMS_TAB);
+        include_pull = listItem != null ? listItem.include_pull : getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);
+        include_latlong = listItem != null ? listItem.include_latlong : getIntent().getExtras().getString(EXTRA_INCLUDE_LATLONG);
+        status = listItem != null ? listItem.status : getIntent().getExtras().getString(EXTRA_STATUS);
+        name = listItem != null ? listItem.name : getIntent().getExtras().getString(EXTRA_NAME);
+        icon = listItem != null ? listItem.icon : getIntent().getExtras().getString(EXTRA_ICON);
     }
 
     protected void onViewReady(Bundle savedInstanceState) {

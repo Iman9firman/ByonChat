@@ -1,6 +1,7 @@
 package com.byonchat.android;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -20,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -43,9 +45,12 @@ import com.byonchat.android.TagTrending.TagView;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.ItemListTrending;
 import com.byonchat.android.list.SearchroomAdapter;
+import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.personalRoom.PersonalRoomActivity;
+import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.IntervalDB;
@@ -56,11 +61,15 @@ import com.byonchat.android.provider.Skin;
 import com.byonchat.android.suggest.SuggestionAdapter;
 import com.byonchat.android.suggest.SuggestionAdapterHashTag;
 import com.byonchat.android.suggest.SuggestionAdapterTag;
+import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.JsonUtil;
 import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
+import com.byonchat.android.utils.UtilsPD;
+import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 
 import org.apache.http.HttpEntity;
@@ -92,6 +101,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.jsonResultType;
+
 public class NewSearchRoomActivity extends AppCompatActivity {
 
     Context context;
@@ -119,7 +130,9 @@ public class NewSearchRoomActivity extends AppCompatActivity {
     private static String URL_GET_SEARCH = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/yangmana.php";
     public String tipe = "", ttipe, skin, latitude = "", longitude = "", searchURL, encodedSearch, trendingURL;
     public static String searchText = "";
-    private String type, tipe_room,targetURL;
+    String id = "", name = "", desc = "", realname = "", link = "", type = "", tipe_room = "", targetURL = "";
+    private static ArrayList<ContactBot> catArray = new ArrayList<ContactBot>();
+    LaporSelectedRoom laporSelectedRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +146,6 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         if (messengerHelper == null) {
             messengerHelper = MessengerDatabaseHelper.getInstance(context);
         }
-
 
 
         if (roomsDB == null) {
@@ -211,8 +223,9 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showPopup(view, position);
 //                ContactBot item = adapter.newList().get(position);
-                try {
+                /*try {
                     JSONObject jObj = new JSONObject(botArrayListist.get(position).getType());
                     type = jObj.getString("type");
                     tipe_room = jObj.getString("tipe_room");
@@ -230,7 +243,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                         startActivity(intent);
                     } else if (Integer.valueOf(tipe_room) == 3) {
 
-                        if (Message.isJSONValid(botArrayListist.get(position).getDesc())){
+                        if (Message.isJSONValid(botArrayListist.get(position).getDesc())) {
                             JSONObject jObject = null;
                             try {
                                 jObject = new JSONObject(botArrayListist.get(position).getDesc());
@@ -240,7 +253,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
                                 boolean isAppInstalled = appInstalledOrNot(classs);
 
-                                if(isAppInstalled) {
+                                if (isAppInstalled) {
                                     Intent LaunchIntent = getPackageManager()
                                             .getLaunchIntentForPackage(classs);
                                     startActivity(LaunchIntent);
@@ -263,7 +276,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                        }else{
+                        } else {
                             Intent intent = new Intent(aa, ByonChatMainRoomActivity.class);
                             intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
                             intent.putExtra(ConversationActivity.KEY_TITLE, targetURL);
@@ -273,7 +286,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
                     }
                 } catch (Exception e) {
-                }
+                }*/
             }
         });
 
@@ -336,7 +349,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
             Intent myIntent = new Intent(Intent.ACTION_VIEW, webpage);
             startActivity(myIntent);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, "No application can handle this request. Please install a web browser or check your URL.",  Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No application can handle this request. Please install a web browser or check your URL.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
@@ -351,6 +364,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
         return false;
     }
+
     private void setTags(CharSequence cs) {
         if (cs.toString().equals("")) {
             tagGroup.addTags(new ArrayList<Tag>());
@@ -564,7 +578,12 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                     ContactBot aa5 = new ContactBot(String.valueOf(i), "", feedObj.getString("deskripsi"), feedObj.getString("room_name"), feedObj.getString("image_location"));
                     botArrayListist.add(aa5);
                 }
-                adapter = new SearchroomAdapter(getApplication(), botArrayListist, show, searchh, contact, messengerHelper);
+                adapter = new SearchroomAdapter(getApplication(), botArrayListist, show, searchh, contact, messengerHelper, new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        showPopup(view, position);
+                    }
+                });
                 lv.setAdapter(adapter);
             } catch (Exception e) {
                 lv.setVisibility(View.GONE);
@@ -703,7 +722,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
                         if (content.startsWith("[")) {
                             JSONArray result = new JSONArray(content);
-                            Log.w("juru",content);
+                            Log.w("juru", content);
                             for (int i = 0; i < result.length(); i++) {
                                 JSONObject obj = result.getJSONObject(i);
                                 String username = obj.getString("username");
@@ -715,23 +734,28 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                                 String tipe_room = obj.getString("tipe_room");
                                 String targetUrl = "https://" + MessengerConnectionService.HTTP_SERVER;
 
-                                if (obj.has("target_url")){
+                                if (obj.has("target_url")) {
                                     targetUrl = obj.getString("target_url");
                                 }
 
-                                Log.w("targetUrl",targetUrl);
+                                Log.w("targetUrl", targetUrl);
 
                                 ContactBot aa = null;
-                                if (classs.equalsIgnoreCase("")){
-                                    aa = new ContactBot(String.valueOf(i + 1), username, description, nama_display, foto, JsonUtil.toJsonRoom("2", tipe_room,targetUrl));
-                                }else{
-                                    aa = new ContactBot(String.valueOf(i + 1), username, JsonUtil.toJsonDescription(description,classs,url), nama_display, foto, JsonUtil.toJsonRoom("2", tipe_room,targetUrl));
+                                if (classs.equalsIgnoreCase("")) {
+                                    aa = new ContactBot(String.valueOf(i + 1), username, description, nama_display, foto, JsonUtil.toJsonRoom("2", tipe_room, targetUrl));
+                                } else {
+                                    aa = new ContactBot(String.valueOf(i + 1), username, JsonUtil.toJsonDescription(description, classs, url), nama_display, foto, JsonUtil.toJsonRoom("2", tipe_room, targetUrl));
                                 }
 
                                 botArrayListist.add(aa);
                                 if (isCancelled()) break;
                             }
-                            adapter = new SearchroomAdapter(NewSearchRoomActivity.this, botArrayListist, show, searchText, contact, messengerHelper);
+                            adapter = new SearchroomAdapter(NewSearchRoomActivity.this, botArrayListist, show, searchText, contact, messengerHelper, new OnItemClickListener() {
+                                @Override
+                                public void onItemClick(View view, int position) {
+                                    showPopup(view, position);
+                                }
+                            });
                             adapter.notifyDataSetChanged();
                             lv.setAdapter(adapter);
                         } else {
@@ -841,5 +865,313 @@ public class NewSearchRoomActivity extends AppCompatActivity {
             } catch (Exception e) {
             }
         }
+    }
+
+    private void showPopup(View view, final int position) {
+        // pass the imageview id
+        View menuItemView = view.findViewById(R.id.button_popup);
+        final PopupMenu popup = new PopupMenu(NewSearchRoomActivity.this, menuItemView);
+        MenuInflater inflate = popup.getMenuInflater();
+        try {
+            JSONObject jObj = new JSONObject(botArrayListist.get(position).getType());
+            type = jObj.getString("type");
+            tipe_room = jObj.getString("tipe_room");
+
+            if (Integer.valueOf(tipe_room) == 1) {
+                inflate.inflate(R.menu.menu_search_room_personal, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_chat:
+                                Intent intent = new Intent(NewSearchRoomActivity.this, ConversationActivity.class);
+                                intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
+                                startActivity(intent);
+                                break;
+                            default:
+                                return false;
+                        }
+                        return false;
+                    }
+                });
+
+            } else if (Integer.valueOf(tipe_room) == 2) {
+                inflate.inflate(R.menu.menu_search_room, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_chat:
+                            Intent intent = new Intent(NewSearchRoomActivity.this, ConversationActivity.class);
+                            intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
+                            startActivity(intent);
+                            break;
+                        case R.id.action_addToSelected:
+                            name = botArrayListist.get(position).getName();
+                            desc = botArrayListist.get(position).getDesc();
+                            realname = botArrayListist.get(position).getRealname();
+                            link = botArrayListist.get(position).getLink();
+                            String targetURL = "";
+
+                            try {
+                                JSONObject jObjy = new JSONObject(botArrayListist.get(position).getType());
+                                targetURL = jObj.getString("path");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                            type = "2";
+                            insertToDB(String.valueOf(position + 1), botArrayListist.get(position).getName(), botArrayListist.get(position).getDesc(), botArrayListist.get(position).getRealname(), botArrayListist.get(position).getLink(), botArrayListist.get(position).getType(), "2", targetURL);
+                            popup.dismiss();
+                            break;
+                        default:
+                            return false;
+                    }
+                    return false;
+                });
+            } else if (Integer.valueOf(tipe_room) == 3) {
+                inflate.inflate(R.menu.menu_search_room, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_chat:
+                            Intent intent = new Intent(NewSearchRoomActivity.this, ConversationActivity.class);
+                            intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
+                            startActivity(intent);
+                            break;
+                        case R.id.action_addToSelected:
+                            name = botArrayListist.get(position).getName();
+                            desc = botArrayListist.get(position).getDesc();
+                            realname = botArrayListist.get(position).getRealname();
+                            link = botArrayListist.get(position).getLink();
+                            type = "2";
+                            String targetURL = "";
+
+                            try {
+                                JSONObject jObjt = new JSONObject(botArrayListist.get(position).getType());
+                                targetURL = jObjt.getString("path");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            insertToDB(String.valueOf(position + 1), botArrayListist.get(position).getName(), botArrayListist.get(position).getDesc(), botArrayListist.get(position).getRealname(), botArrayListist.get(position).getLink(), botArrayListist.get(position).getType(), "2", targetURL);
+                            popup.dismiss();
+                            break;
+                        default:
+                            return false;
+                    }
+                    return false;
+                });
+            }
+        } catch (Exception e) {
+        }
+
+
+        popup.show();
+    }
+
+    public void insertToDB(String id, String name, String desc, String realname, String link, String json, String type, String path) {
+        if (roomsDB == null) {
+            roomsDB = new RoomsDB(NewSearchRoomActivity.this);
+        }
+
+        roomsDB.open();
+        catArray = roomsDB.retrieveRoomsByName(name, "2");
+        roomsDB.close();
+        if (catArray.size() > 0) {
+            Toast.makeText(NewSearchRoomActivity.this, realname + " is already added to selected rooms", Toast.LENGTH_SHORT).show();
+        } else {
+            requestKey(path, json);
+        }
+    }
+
+    private void requestKey(final String path, final String json) {
+        RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+            @Override
+            public void onTaskDone(String key) {
+                if (key.equalsIgnoreCase("null")) {
+                    Toast.makeText(NewSearchRoomActivity.this, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                } else {
+                    laporSelectedRoom = new LaporSelectedRoom(NewSearchRoomActivity.this, json);
+                    laporSelectedRoom.execute(key, path);
+                }
+            }
+        }, NewSearchRoomActivity.this);
+
+        testAsyncTask.execute();
+    }
+
+    class LaporSelectedRoom extends AsyncTask<String, Void, String> {
+
+        private static final int REGISTRATION_TIMEOUT = 3 * 1000;
+        private static final int WAIT_TIMEOUT = 30 * 1000;
+        private final HttpClient httpclient = new DefaultHttpClient();
+
+        final HttpParams params = httpclient.getParams();
+        HttpResponse response;
+        private String content = null;
+        private boolean error = false;
+        private Context mContext;
+        private ProgressDialog progressDialog;
+
+        String path = "";
+        String json = "";
+
+        public LaporSelectedRoom(Context context, String json) {
+            this.mContext = context;
+            this.json = json;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            if (progressDialog == null) {
+                progressDialog = UtilsPD.createProgressDialog(NewSearchRoomActivity.this);
+                progressDialog.show();
+            }
+        }
+
+        protected String doInBackground(String... key) {
+            try {
+                HttpClient httpClient = HttpHelper
+                        .createHttpClient(mContext);
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+                        1);
+
+                nameValuePairs.add(new BasicNameValuePair("username", messengerHelper.getMyContact().getJabberId()));
+                nameValuePairs.add(new BasicNameValuePair("key", key[0]));
+                nameValuePairs.add(new BasicNameValuePair("room_id", name));
+                nameValuePairs.add(new BasicNameValuePair("aksi", "1"));
+
+                path = key[1];
+
+                HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+                ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+
+                HttpPost post = new HttpPost(Constants.URLLAPORSELECTED);
+                post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                //Response from the Http Request
+                response = httpclient.execute(post);
+                StatusLine statusLine = response.getStatusLine();
+                //Check the Http Request for success
+                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    out.close();
+                    content = out.toString();
+
+
+                } else {
+                    //Closes the connection.
+                    error = true;
+                    content = statusLine.getReasonPhrase();
+                    response.getEntity().getContent().close();
+                    throw new IOException(content);
+                }
+
+            } catch (ClientProtocolException e) {
+                content = e.getMessage();
+                error = true;
+            } catch (IOException e) {
+                content = e.getMessage();
+                error = true;
+            } catch (Exception e) {
+                error = true;
+            }
+
+            return content;
+        }
+
+        protected void onCancelled() {
+        }
+
+        protected void onPostExecute(String content) {
+            progressDialog.dismiss();
+            if (error) {
+                if (content.contains("invalid_key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                        String key = new ValidationsKey().getInstance(mContext).key(true);
+                        if (key.equalsIgnoreCase("null")) {
+                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                        } else {
+                            laporSelectedRoom = new LaporSelectedRoom(NewSearchRoomActivity.this, json);
+                            laporSelectedRoom.execute(key, path);
+                        }
+                    } else {
+                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(mContext, content, Toast.LENGTH_LONG).show();
+                }
+            } else {
+
+                resolveValidation();
+
+                roomsDB.open();
+                boolean isActived = true;
+                ArrayList<ContactBot> botArrayListist = roomsDB.retrieveRooms("2");
+                /*if (botArrayListist.size() > 0) {
+                    isActived = false;
+                }*/
+                ContactBot contactBot = new ContactBot("", name, desc, realname, link, type, isActived, json);
+                roomsDB.insertRooms(contactBot);
+                roomsDB.close();
+
+                Intent intent = new Intent(NewSearchRoomActivity.this, MainActivityNew.class);
+                intent.putExtra(ConversationActivity.KEY_JABBER_ID, name);
+                intent.putExtra(ConversationActivity.KEY_TITLE, path);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+                Toast.makeText(NewSearchRoomActivity.this, realname + " has been added to selected rooms", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    protected void resolveValidation() {
+        /*String protect = "";
+        Cursor cur = Byonchat.getBotListDB().getSingleRoom(name);
+        if (cur.getCount() > 0) {
+            protect = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "p");
+        }
+
+        if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(25) == 1) {
+            if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("1")) {
+                if (success == null) {
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), LoginDinamicRoomActivity.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                    startActivity(a);
+                }
+            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("2")) {
+                if (success == null) {
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), LoginDinamicFingerPrint.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                    startActivity(a);
+                }
+            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("5")) {
+                if (success == null) {
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, "request");
+                    startActivity(a);
+                }
+            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("6")) {
+                if (success == null) {
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                    startActivity(a);
+                }
+            }
+        }*/
     }
 }

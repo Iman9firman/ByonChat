@@ -1,5 +1,6 @@
 package com.byonchat.android;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -14,6 +15,7 @@ import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.ui.activity.MainActivityNew;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -39,6 +41,15 @@ import java.util.Calendar;
 import java.util.List;
 
 public class LoadingGetTabRoomActivity extends AppCompatActivity {
+
+    public static Intent generateIntent(Context context, String username, String targetUrl) {
+        Intent intent = new Intent(context, LoadingGetTabRoomActivity.class);
+        intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+        if (targetUrl != null)
+            intent.putExtra(ConversationActivity.KEY_TITLE, targetUrl);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
+    }
 
     String finalPath = "/bc_voucher_client/webservice/get_tab_rooms.php";
     String linkPath = "https://" + MessengerConnectionService.HTTP_SERVER;
@@ -162,7 +173,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
 
                         Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
 
-                        Intent intent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
                         intent.putExtra(ConversationActivity.KEY_JABBER_ID, usr);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(ConversationActivity.KEY_TITLE, targetUrl);
@@ -170,7 +181,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         finish();
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Intent intent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
                         intent.putExtra(ConversationActivity.KEY_JABBER_ID, usr);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(ConversationActivity.KEY_TITLE, targetUrl);
@@ -179,7 +190,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         finish();
                     }
                 } else {
-                    Intent intent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
                     intent.putExtra(ConversationActivity.KEY_JABBER_ID, usr);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(ConversationActivity.KEY_TITLE, targetUrl);

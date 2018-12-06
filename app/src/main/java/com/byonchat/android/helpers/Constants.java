@@ -17,6 +17,8 @@ public class Constants extends AppCompatActivity {
 
     public static final int REQUEST_CODE_CAPTURE = 2000;
 
+    public static final int RESULT_REFRESH_ROOM = 1;
+
     public static final int FETCH_STARTED = 2001;
     public static final int FETCH_COMPLETED = 2002;
     public static final int ERROR = 2003;
@@ -32,6 +34,7 @@ public class Constants extends AppCompatActivity {
     public static final String DOWNLOAD_URL_WO_PARAM = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/video_local.php";
     public static final String DOWNLOAD_URL_W_PARAM = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/video_local.php?keywords=";
 
+    public static final String URLLAPORSELECTED = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/selectapop.php";
 
     public static final String PREF_WRITE_EXTERNAL_STORAGE_REQUESTED = "writeExternalRequested";
     public static final String PREF_CAMERA_REQUESTED = "cameraRequested";

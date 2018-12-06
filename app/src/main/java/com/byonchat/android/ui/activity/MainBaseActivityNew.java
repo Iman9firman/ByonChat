@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.location.Location;
@@ -231,11 +232,12 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected boolean isVisible = false;
     protected float radius = 5f;
-    protected String protect;
+    protected String protect = "";
+    protected String targetURL = "";
     protected String success;
     protected String username;
     protected String title;
-    protected String image_url;
+    protected String image_url = "";
     protected String percent;
     protected String color;
     protected String colorForeground;
@@ -319,7 +321,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
                 if (bcakdrop == null || bcakdrop.equalsIgnoreCase("") || bcakdrop.equalsIgnoreCase("null")) {
                     Manhera.getInstance().get()
-                            .load(R.drawable.earth_byon)
+                            .load(R.drawable.wallpaper)
                             .fitCenter()
                             .into(backgroundImage);
                 } else {
@@ -333,7 +335,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             }
         } else {
             Manhera.getInstance().get()
-                    .load(R.drawable.earth_byon)
+                    .load(R.drawable.wallpaper)
                     .fitCenter()
                     .into(backgroundImage);
         }
@@ -401,7 +403,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_two).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_three).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
+        nav_Menu.findItem(R.id.nav_item_refresh).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
     }
 
@@ -606,44 +608,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             }
         });
 
-        /*List<ItemMain> itemList = new ArrayList<>();
-        List<String> positionList = new ArrayList<>();
-        Gson gson = new Gson();
-        try {
-            sqLiteDatabase = database.getReadableDatabase();
-            Cursor cur = sqLiteDatabase.rawQuery("SELECT tabPosition FROM tabItem", null);
-            if (cur.getCount() > 0) {
-                while (cur.moveToNext()) {
-                    String output = cur.getString(0);
-                    System.out.println(output);
-                    Type type = new TypeToken<ArrayList<String>>() {
-                    }.getType();
-                    positionList = gson.fromJson(output, type);
-
-                    for (int i = 0; i < positionList.size(); i++) {
-                        String title = positionList.get(i);
-                        itemList.add(i, new ItemMain(i, title));
-                    }
-                }
-            } else {
-                for (int i = 0; i < 19; i++) {
-                    if (i % 2 == 0) {
-                        itemList.add(new ItemMain(i, i + " = Genap Genap"));
-                    } else {
-                        itemList.add(new ItemMain(i, i + " = Ganjil"));
-                    }
-                }
-                for (int j = 0; j < itemList.size(); j++) {
-                    String title = itemList.get(j).getTitle();
-                    positionList.add(j, title);
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println("Input String : err = " + e.getMessage());
-            e.printStackTrace();
-        }*/
-
         List<ItemMain> itemList = new ArrayList<>();
         List<String> positionList = new ArrayList<>();
         try {
@@ -651,18 +615,16 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             Log.w("aa", content);
 
             for (int i = 0; i < jsonArray.length(); i++) {
-//                if (current.equalsIgnoreCase(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString())) {
-//                    firstTab = i;
-//                }
                 String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
                 String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
                 String include_latlong = jsonArray.getJSONObject(i).getString("include_latlong").toString();
                 String include_pull = jsonArray.getJSONObject(i).getString("include_pull").toString();
                 String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
                 String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
+                String status = jsonArray.getJSONObject(i).getString("status").toString();
 
                 itemList.add(i, new ItemMain(i, category, title, url_tembak, include_pull, username,
-                        id_rooms_tab, color, colorText, targetURL, include_latlong, jsonArray.getJSONObject(i).getString("status").toString()));
+                        id_rooms_tab, color, colorText, targetURL, include_latlong, status, name, icon));
                 positionList.add(i, title);
 
                 if (category.equalsIgnoreCase("1")) {
@@ -793,6 +755,15 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         collapsingToolbarLayout.setStatusBarScrimColor(colors);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                backgroundImage.setForeground(new ColorDrawable(Color.parseColor("#" + percent + color)));
+            } catch (Exception e) {
+                colorForeground = color.replace("#", "#" + percent);
+                backgroundImage.setForeground(new ColorDrawable(Color.parseColor(colorForeground)));
+            }
+        }
     }
 
     protected void resolveValidationLogin() {
@@ -1101,156 +1072,40 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         }
     }
 
-    protected void createShortcut() {
+    protected void RefreshRoom() {
         Byonchat.getRoomsDB().open();
         botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
         Byonchat.getRoomsDB().close();
-
-        if (botArrayListist.size() > 0) {
-            Cursor cur = Byonchat.getBotListDB().getSingleRoom(botArrayListist.get(0).name);
-
-            if (cur.getCount() > 0) {
-                String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
-                String icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
-                String username = Byonchat.getMessengerHelper().getMyContact().getJabberId();
-
-                final Dialog dialogConfirmation;
-                dialogConfirmation = DialogUtil.customDialogConversationConfirmation(this);
-                dialogConfirmation.show();
-
-                TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
-                TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
-                txtConfirmation.setText("Create Shortcut " + botArrayListist.get(0).realname);
-                descConfirmation.setVisibility(View.VISIBLE);
-                descConfirmation.setText("Are you sure you want to Create Shortcut?");
-
-                Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
-                Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
-                btnNo.setText("Cancel");
-                btnNo.setOnClickListener(v -> {
-                    dialogConfirmation.dismiss();
-                });
-
-                btnYes.setOnClickListener(v -> {
-                    dialogConfirmation.dismiss();
-                    Picasso.with(MainBaseActivityNew.this)
-                            .load(icon)
-                            .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                            .transform(new RoundedCornersTransformation(30, 0, RoundedCornersTransformation.CornerType.ALL))
-                            .into(new Target() {
-                                @Override
-                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                    if (bitmap != null) {
-                                   /* Toast.makeText(ByonChatMainRoomActivity.this, "Create Shortcut Success", Toast.LENGTH_SHORT).show();
-                                    Intent aa = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
-                                    aa.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                                    Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
-                                    shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
-                                    shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
-                                    shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, aa);
-                                    sendBroadcast(shortcutintent);
-                                    finish();*/
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-                                            ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(MainBaseActivityNew.this, name);
-                                            mShortcutInfoBuilder.setShortLabel(name);
-                                            mShortcutInfoBuilder.setLongLabel(name);
-                                            mShortcutInfoBuilder.setIcon(Icon.createWithBitmap(bitmap));
-
-                                            Intent shortcutIntent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
-                                            shortcutIntent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                                            shortcutIntent.setAction(Intent.ACTION_CREATE_SHORTCUT);
-                                            mShortcutInfoBuilder.setIntent(shortcutIntent);
-
-                                            ShortcutInfo mShortcutInfo = mShortcutInfoBuilder.build();
-                                            ShortcutManager mShortcutManager = getSystemService(ShortcutManager.class);
-                                            mShortcutManager.requestPinShortcut(mShortcutInfo, null);
-
-                                        } else {
-                                            Intent shortcutIntent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
-                                            shortcutIntent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-
-                                            shortcutIntent.setAction(Intent.ACTION_MAIN);
-
-                                            Intent addIntent = new Intent();
-                                            addIntent
-                                                    .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-                                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
-                                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
-
-                                            addIntent
-                                                    .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-                                            addIntent.putExtra("duplicate", false);  //may it's already there so   don't duplicate
-                                            getApplicationContext().sendBroadcast(addIntent);
-
-                                        }
-                                        finish();
-                                        Toast.makeText(MainBaseActivityNew.this, "Shortcut Created", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-
-                                @Override
-                                public void onBitmapFailed(Drawable errorDrawable) {
-                                    Toast.makeText(MainBaseActivityNew.this, "Create Shortcut failed", Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                    Toast.makeText(MainBaseActivityNew.this, "Please Wait", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                });
-            }
-        }
-    }
-
-    private void RefreshRoom() {
         try {
-            Byonchat.getRoomsDB().open();
-            botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
-            Byonchat.getRoomsDB().close();
+            JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+            String targetURL = jObj.getString("path");
 
-            if (botArrayListist.size() > 0) {
-                JSONObject jObj = new JSONObject(botArrayListist.get(0).getType());
-                String targetURL = jObj.getString("path");
-                Cursor cur = Byonchat.getBotListDB().getSingleRoom(botArrayListist.get(0).name);
+            AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
+            alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
+            alertbox.setMessage("Are you sure you want to Refresh?");
+            alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
+                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                    startActivityForResult(LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL), Constants.RESULT_REFRESH_ROOM);
 
-                if (cur.getCount() > 0) {
-                    String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
-                    String icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
-                    String username = Byonchat.getMessengerHelper().getMyContact().getJabberId();
+                    /*finish();
+                    Intent ii = new Intent(getApplicationContext(), LoadingGetTabRoomActivity.class);
+                    ii.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    if (targetURL != null) {
+                        ii.putExtra(ConversationActivity.KEY_TITLE, targetURL);
+                    } else {
 
-                    AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
-                    alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
-                    alertbox.setMessage("Are you sure you want to Refresh?");
-                    alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
-                        if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                            finish();
-                            Intent ii = new Intent(getApplicationContext(), LoadingGetTabRoomActivity.class);
-                            ii.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                            if (targetURL != null) {
-                                ii.putExtra(ConversationActivity.KEY_TITLE, targetURL);
-                                Log.w("lahan", "1");
+                    }
 
-                            } else {
-                                Log.w("lahan", "2");
-
-                            }
-
-                            ii.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(ii);
-                        } else {
-                            Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
-                    });
-                    alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
-                    });
-                    alertbox.show();
-
+                    ii.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(ii);*/
+                } else {
+                    Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
-            }
-
+            });
+            alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
+            });
+            alertbox.show();
         } catch (JSONException e) {
             e.printStackTrace();
         }

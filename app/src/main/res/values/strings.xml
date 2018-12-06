@@ -19,7 +19,7 @@
     <string name="sql_createtable_conversation_index_packetid">CREATE INDEX IF NOT EXISTS messages_packetid ON messages(packet_id);</string>
 
     <string name="sql_createtable_rooms">CREATE TABLE IF NOT EXISTS rooms(<!--_id INTEGER PRIMARY KEY AUTOINCREMENT, -->
-        id INTEGER PRIMARY KEY, name TEXT, description TEXT, realname TEXT, link TEXT, type TEXT, is_active TEXT);</string>
+        id INTEGER PRIMARY KEY, name TEXT, description TEXT, realname TEXT, link TEXT, type TEXT, is_active TEXT, target_url TEXT);</string>
     <string name="sql_createtable_rooms_trending">CREATE TABLE IF NOT EXISTS trendings(<!--_id INTEGER PRIMARY KEY AUTOINCREMENT, -->
         id INTEGER PRIMARY KEY, trending_name TEXT, type TEXT);</string>
 

@@ -16,11 +16,13 @@ public class ItemMain implements Parcelable {
     public String include_pull;
     public String include_latlong;
     public String status;
+    public String name;
+    public String icon;
 
     public ItemMain(int id, String category, String title, String url_tembak,
                     String include_pull, String username, String id_rooms_tab,
                     String color, String colorText, String targetURL, String include_latlong,
-                    String status) {
+                    String status, String name, String icon) {
         this.id = id;
         this.category = category;
         this.title = title;
@@ -33,6 +35,8 @@ public class ItemMain implements Parcelable {
         this.targetURL = targetURL;
         this.include_latlong = include_latlong;
         this.status = status;
+        this.name = name;
+        this.icon = icon;
     }
 
     public int getId() {
@@ -70,6 +74,8 @@ public class ItemMain implements Parcelable {
         parcel.writeString(include_pull);
         parcel.writeString(include_latlong);
         parcel.writeString(status);
+        parcel.writeString(name);
+        parcel.writeString(icon);
     }
 
     protected ItemMain(Parcel in) {
@@ -85,6 +91,8 @@ public class ItemMain implements Parcelable {
         include_pull = in.readString();
         include_latlong = in.readString();
         status = in.readString();
+        name = in.readString();
+        icon = in.readString();
     }
 
     public static final Creator<ItemMain> CREATOR = new Creator<ItemMain>() {

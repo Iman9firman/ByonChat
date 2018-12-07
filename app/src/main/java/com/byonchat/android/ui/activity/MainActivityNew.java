@@ -437,7 +437,7 @@ public class MainActivityNew extends MainBaseActivityNew {
             });
 
             fab_menu_2.setOnClickListener(view -> {
-                Intent intent = ImsListHistoryChatActivity.generateIntent(getApplicationContext(), "chat");
+                Intent intent = ImsListHistoryChatActivity.generateIntent(getApplicationContext(), color, colorText);
                 startActivity(intent);
             });
 

@@ -240,6 +240,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected String image_url = "";
     protected String percent;
     protected String color;
+    protected String colorText;
     protected String colorForeground;
     protected int logo;
     protected int background;
@@ -293,6 +294,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 //        background = R.drawable.wallpaper;
         percent = "70";
         color = "#006b9c";
+        colorText = "#FFFFFF";
         room_id = 1;
 
         resolveNavHeader();
@@ -527,7 +529,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
         String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
         color = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
-        String colorText = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
+        colorText = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
         String description = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "c");
         String targetURL = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "e");
         String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
@@ -1100,7 +1102,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     startActivity(ii);*/
                 } else {
                     Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
-                    finish();
                 }
             });
             alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {

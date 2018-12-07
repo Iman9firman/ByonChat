@@ -37,6 +37,27 @@
         LEFT JOIN
         (SELECT name, jid FROM contacts UNION SELECT name, jid FROM groups) as co ON cv.number=co.jid;</string>
 
+    <string name="sql_chat_list_find">
+			SELECT cv.*, co.name, co.jid FROM
+			(
+			SELECT * FROM
+			(
+            SELECT *, source number from messages where source != ? and type != ?
+            union
+            SELECT *, destination number from messages where destination != ? and type != ?
+			)
+			t GROUP BY packet_id  ORDER BY  _id DESC, delivered_date
+			)
+			cv
+			LEFT JOIN
+			(SELECT name, jid FROM contacts UNION SELECT name, jid FROM groups) as co ON cv.number=co.jid;;
+
+        <!--SELECT * FROM (
+            SELECT *, source number from messages where source != ? and type != ?
+            union
+            SELECT *, destination number from messages where destination != ? and type != ?)
+        GROUP BY packet_id  ORDER BY  _id DESC, delivered_date;--></string>
+
     <string name="sql_insert_configuration">INSERT INTO configurations (name, value) VALUES(?, ?);</string>
     <string name="sql_contact_by_jid">SELECT * FROM contacts WHERE jid=?;</string>
     <string name="sql_group_by_jid">SELECT * FROM groups WHERE jid=?;</string>

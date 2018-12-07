@@ -39,6 +39,9 @@ public class Constants extends AppCompatActivity {
     public static final String PREF_WRITE_EXTERNAL_STORAGE_REQUESTED = "writeExternalRequested";
     public static final String PREF_CAMERA_REQUESTED = "cameraRequested";
 
+    public static final String EXTRA_ITEM = "extra_item";
+    public static final String EXTRA_COLOR = "extra_color";
+    public static final String EXTRA_COLORTEXT = "extra_colortext";
     public static final String EXTRA_PARENT = "parent_comment";
     public static final String EXTRA_POSITION = "position_comment";
     public static final String EXTRA_JUMLAH_COMMENT = "jumlah_comment";

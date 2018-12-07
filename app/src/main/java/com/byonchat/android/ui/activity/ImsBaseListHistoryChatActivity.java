@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +32,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,6 +42,7 @@ import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.IconItem;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.ChatParty;
@@ -49,6 +54,7 @@ import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.ui.view.ScrollListener;
 import com.byonchat.android.utils.ThrowProfileService;
 import com.byonchat.android.utils.Validations;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
@@ -62,30 +68,52 @@ import static com.byonchat.android.utils.Utility.hourInfoFormat;
 
 public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity implements ActionMode.Callback {
 
-    protected static final String ARGS = "args";
-
     protected List<IconItem> iconItemList = new ArrayList<>();
+    protected List<IconItem> messageItemList = new ArrayList<>();
+
+    protected ItemImsListHistoryAdapter mAdapter;
+    protected ItemImsListHistoryAdapter mMessageAdapter;
 
     protected LinearLayoutManager chatLayoutManager;
-    protected ItemImsListHistoryAdapter mAdapter;
     protected BroadcastHandler broadcastHandler = new BroadcastHandler();
     protected ActionMode actionMode;
-    protected String mArgs;
+    protected String mColor, mColorText;
 
     @NonNull
     protected AppBarLayout vAppBar;
+
     @NonNull
     protected Toolbar vToolbar;
+
     @NonNull
     protected ByonchatRecyclerView vListHistory;
+
+    @NonNull
+    protected FrameLayout vFrameChatLists;
+
+    @NonNull
+    protected FrameLayout vFrameMessageLists;
+
+    @NonNull
+    protected ByonchatRecyclerView vListHistoryFind;
+
     @NonNull
     protected SearchView vSearchEdt;
+
     @NonNull
     protected LinearLayout vFrameSearch;
+
     @NonNull
     protected RelativeLayout vToolbarBack;
+
+    @NonNull
+    protected MaterialSearchView vSearchView;
+
     @NonNull
     protected TextView vToolbarTitle;
+
+    @NonNull
+    protected ImageView vImgToolbarBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,12 +147,14 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
     }
 
     protected void resolveChatRoom(Bundle savedInstanceState) {
-        mArgs = getIntent().getStringExtra(ARGS);
-        if (mArgs == null && savedInstanceState != null) {
-            mArgs = savedInstanceState.getString(ARGS);
+        mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
+        mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
+        if (mColor == null && mColorText == null && savedInstanceState != null) {
+            mColor = savedInstanceState.getString(Constants.EXTRA_COLOR);
+            mColorText = savedInstanceState.getString(Constants.EXTRA_COLORTEXT);
         }
 
-        if (mArgs == null) {
+        if (mColor == null && mColorText == null) {
             finish();
             return;
         }
@@ -136,12 +166,23 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#a4a4a4"));
-
+        /*FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#a4a4a4"));
         vToolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        vToolbar.setTitleTextColor(getResources().getColor(R.color.ims_chat_list_primary_color));
+        vToolbar.setTitleTextColor(getResources().getColor(R.color.ims_chat_list_primary_color));*/
 
-        vToolbarBack.setOnClickListener(v -> onBackPressed());
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+        vToolbar.setBackgroundColor(Color.parseColor("#" + mColor));
+        vToolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+        vToolbarTitle.setTextColor(Color.parseColor("#" + mColorText));
+        vImgToolbarBack.setColorFilter(Color.parseColor("#" + mColorText));
+
+        vToolbarBack.setOnClickListener(v -> {
+            if (vSearchView.isSearchOpen()) {
+                vSearchView.closeSearch();
+            } else {
+                super.onBackPressed();
+            }
+        });
         vToolbarTitle.setText("Chat");
     }
 
@@ -161,6 +202,77 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         });
     }
 
+    protected void resolveOriginView(boolean isVisible) {
+        vFrameChatLists.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        vFrameMessageLists.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        vListHistoryFind.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    protected void resolveMaterialSearchView() {
+        vSearchView.setHint("Search ...");
+
+        vSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                View view = findViewById(R.id.main_search);
+                view.setVisibility(View.GONE);
+
+                if (query.length() == 0) {
+                    resolveOriginView(false);
+                } else {
+                    resolveOriginView(true);
+                }
+                mAdapter.getFilter().filter(query);
+                mMessageAdapter.getFilter().filter(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                View view = findViewById(R.id.main_search);
+                view.setVisibility(View.GONE);
+
+                if (query.length() == 0) {
+                    resolveOriginView(false);
+                } else {
+                    resolveOriginView(true);
+                }
+                mAdapter.getFilter().filter(query);
+                mMessageAdapter.getFilter().filter(query);
+                return true;
+            }
+        });
+
+        vSearchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                View view = findViewById(R.id.main_search);
+                view.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                View view = findViewById(R.id.main_search);
+                view.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.ims_menu_main_search, menu);
+        MenuItem item = menu.findItem(R.id.main_search);
+        Drawable yourdrawable = item.getIcon();
+        yourdrawable.mutate();
+        yourdrawable.setColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_IN);
+        vSearchView.setMenuItem(item);
+        if (vSearchView.isSearchOpen()) {
+            resolveOriginView(false);
+            item.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     protected void resolveListHistory() {
         iconItemList = new ArrayList<>();
         vListHistory.setUpAsList();
@@ -170,12 +282,14 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
             @Override
             public void onItemListClick(View view, int position) {
                 if (mAdapter.getSelectedComments().isEmpty()) {
-                    IconItem item = iconItemList.get(position);
+                    IconItem item = (IconItem) mAdapter.getData().get(position);
                     if (item.getJabberId().equalsIgnoreCase("")) {
                     } else {
                         Intent intent = new Intent(getApplicationContext(), ConversationActivity.class);
                         String jabberId = item.getJabberId();
                         intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+                        intent.putExtra(Constants.EXTRA_COLOR, mColor);
+                        intent.putExtra(Constants.EXTRA_COLORTEXT, mColorText);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             View imageView = view.findViewById(R.id.imagePhoto);
@@ -188,8 +302,6 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                         }
 
                     }
-//                    Intent intent = ImsProfileActivity.generateIntent(getApplicationContext(), "");
-//                    startActivity(intent);
                 } else {
                     adapterSelected((IconItem) mAdapter.getData().get(position));
                 }
@@ -203,12 +315,14 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
 
         mAdapter.setOnItemClickListener((view, position) -> {
             if (mAdapter.getSelectedComments().isEmpty()) {
-                IconItem item = iconItemList.get(position);
+                IconItem item = (IconItem) mAdapter.getData().get(position);
                 if (item.getJabberId().equalsIgnoreCase("")) {
                 } else {
                     Intent intent = new Intent(getApplicationContext(), ConversationActivity.class);
                     String jabberId = item.getJabberId();
                     intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+                    intent.putExtra(Constants.EXTRA_COLOR, mColor);
+                    intent.putExtra(Constants.EXTRA_COLORTEXT, mColorText);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         View imageView = view.findViewById(R.id.imagePhoto);
@@ -219,10 +333,7 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                     } else {
                         startActivity(intent);
                     }
-
                 }
-//                Intent intent = ImsProfileActivity.generateIntent(getApplicationContext(), "");
-//                startActivity(intent);
             } else
                 adapterSelected((IconItem) mAdapter.getData().get(position));
         });
@@ -234,6 +345,73 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         vListHistory.setAdapter(mAdapter);
 
         vListHistory.addOnScrollListener(new ScrollListener() {
+            @Override
+            public void onHide() {
+                hideViews();
+            }
+
+            @Override
+            public void onShow() {
+                showViews();
+            }
+        });
+    }
+
+    protected void resolveListHistoryFind() {
+        messageItemList = new ArrayList<>();
+        vListHistoryFind.setUpAsList();
+        vListHistoryFind.setNestedScrollingEnabled(false);
+        chatLayoutManager = (LinearLayoutManager) vListHistoryFind.getLayoutManager();
+        mMessageAdapter = new ItemImsListHistoryAdapter(getApplicationContext(), messageItemList, new ListHistoryItemClickListener() {
+            @Override
+            public void onItemListClick(View view, int position) {
+                if (mMessageAdapter.getSelectedComments().isEmpty()) {
+                    IconItem item = (IconItem) mMessageAdapter.getData().get(position);
+                    if (item.getJabberId().equalsIgnoreCase("")) {
+                    } else {
+                        Intent intent = new Intent(getApplicationContext(), ConversationActivity.class);
+                        String jabberId = item.getJabberId();
+                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+                        intent.putExtra(Constants.EXTRA_ITEM, item);
+                        intent.putExtra(Constants.EXTRA_COLOR, mColor);
+                        intent.putExtra(Constants.EXTRA_COLORTEXT, mColorText);
+                        startActivity(intent);
+                    }
+                } else {
+                    adapterSelected((IconItem) mMessageAdapter.getData().get(position));
+                }
+            }
+
+            @Override
+            public void onItemListLongClick(View view, int position) {
+                adapterSelected((IconItem) mMessageAdapter.getData().get(position));
+            }
+        });
+
+        mMessageAdapter.setOnItemClickListener((view, position) -> {
+            if (mMessageAdapter.getSelectedComments().isEmpty()) {
+                IconItem item = (IconItem) mMessageAdapter.getData().get(position);
+                if (item.getJabberId().equalsIgnoreCase("")) {
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), ConversationActivity.class);
+                    String jabberId = item.getJabberId();
+                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+                    intent.putExtra(Constants.EXTRA_ITEM, item);
+                    intent.putExtra(Constants.EXTRA_COLOR, mColor);
+                    intent.putExtra(Constants.EXTRA_COLORTEXT, mColorText);
+                    startActivity(intent);
+                }
+            } else
+                adapterSelected((IconItem) mMessageAdapter.getData().get(position));
+        });
+
+        mMessageAdapter.setOnLongItemClickListener((view, position) -> {
+            adapterSelected((IconItem) mMessageAdapter.getData().get(position));
+        });
+
+        vListHistoryFind.setAdapter(mMessageAdapter);
+
+        vListHistoryFind.addOnScrollListener(new ScrollListener() {
             @Override
             public void onHide() {
                 hideViews();
@@ -400,7 +578,7 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         }
     }
 
-    protected void listChatHistory() {
+    protected void resolveChatHistory() {
         Cursor cursor;
 
         String myJabberId = Byonchat.getMessengerHelper().getMyContact().getJabberId();
@@ -451,6 +629,85 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                 }
             }
 
+            long total = 0;
+            Cursor cursor2 = Byonchat.getMessengerHelper().query(
+                    SQL_SELECT_TOTAL_MESSAGES_UNREAD,
+                    new String[]{jabberId,
+                            jabberId});
+            int indexTotal = cursor2.getColumnIndex("total");
+            while (cursor2.moveToNext()) {
+                total = cursor2.getLong(indexTotal);
+            }
+            cursor2.close();
+
+            String signature = new Validations().getInstance(getApplicationContext()).getSignatureProfilePicture(jabberId, Byonchat.getMessengerHelper());
+
+            IconItem iconItem = new IconItem(jabberId, name, message,
+                    dInfo, cparty, total, Message.getStatusMessage(vo, myJabberId), signature);
+            iconItem.type = IconItem.TYPE_ORIGIN;
+            if (cparty instanceof Contact) {
+                // setProfilePicture(iconItem, (Contact) cparty);
+            }
+            iconItemList.add(iconItem);
+        }
+
+        if (mAdapter != null) {
+            mAdapter.setItems(iconItemList);
+        }
+    }
+
+    protected void resolveChatHistorySearch() {
+        Cursor cursor;
+
+        String myJabberId = Byonchat.getMessengerHelper().getMyContact().getJabberId();
+        cursor = Byonchat.getMessengerHelper().query(
+                getString(R.string.sql_chat_list_find),
+                new String[]{myJabberId, Message.TYPE_READSTATUS, myJabberId, Message.TYPE_READSTATUS});
+
+        int indexName = cursor.getColumnIndex(Contact.NAME);
+        int indexJabberId = cursor.getColumnIndex(Message.NUMBER);
+        int indexMessage = cursor.getColumnIndex(Message.MESSAGE);
+        int idMessage = cursor.getColumnIndex(Message._ID);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+                cal.get(Calendar.DATE), 0, 0, 0);
+        if (cursor.getCount() > 0) {
+            messageItemList.clear();
+        }
+        while (cursor.moveToNext()) {
+            String jabberId = cursor.getString(indexJabberId);
+            String name = cursor.getString(indexName);
+
+            String message = cursor.getString(indexMessage);
+            if (message == null)
+                continue;
+
+            Message vo = new Message(cursor);
+            message = Message.parsedMessageBodyHtmlCode(vo, getApplicationContext());
+            Date d = null;
+
+            d = vo.getSendDate();
+
+            String dInfo = null;
+            if (d != null) {
+                if (d.getTime() < cal.getTimeInMillis()) {
+                    dInfo = dateInfoFormat.format(d);
+                } else {
+                    dInfo = hourInfoFormat.format(d);
+                }
+            }
+            ChatParty cparty = null;
+            if (vo.isGroupChat()) {
+                cparty = Byonchat.getMessengerHelper().getGroup(jabberId);
+            } else {
+                if (name != null) {
+                    cparty = new Contact(name, jabberId, "");
+                } else {
+                    name = jabberId;
+                }
+            }
+
 
             long total = 0;
             Cursor cursor2 = Byonchat.getMessengerHelper().query(
@@ -467,23 +724,16 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
 
             IconItem iconItem = new IconItem(jabberId, name, message,
                     dInfo, cparty, total, Message.getStatusMessage(vo, myJabberId), signature);
-            iconItem.type = IconItem.TYPE_TEXT;
+            iconItem.type = IconItem.TYPE_MESSAGE_FIND;
             if (cparty instanceof Contact) {
                 // setProfilePicture(iconItem, (Contact) cparty);
             }
-            iconItemList.add(iconItem);
+            messageItemList.add(iconItem);
         }
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-
-                if (mAdapter != null) {
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-
+        if (mMessageAdapter != null) {
+            mMessageAdapter.setItems(messageItemList);
+        }
     }
 
     class BroadcastHandler extends BroadcastReceiver {
@@ -514,7 +764,8 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                 }
             } else if (MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY
                     .equals(intent.getAction())) {
-                listChatHistory();
+                resolveChatHistory();
+                resolveChatHistorySearch();
             } else if (MessengerConnectionService.ACTION_STATUS_CHANGED_CONTACT
                     .equals(intent.getAction())) {
                 refreshOneContactList();
@@ -585,22 +836,15 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
             super.onProgressUpdate(values);
             moveItemToTop(values[0]);
         }
-
     }
 
     public void moveItemToTop(final IconItem item) {
-
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-                int index = iconItemList.indexOf(item);
-                if (index != -1) {
-                    iconItemList.remove(index);
-                }
-                iconItemList.add(0, item);
-                mAdapter.notifyDataSetChanged();
-            }
-        });
+        int index = iconItemList.indexOf(item);
+        if (index != -1) {
+            iconItemList.remove(index);
+        }
+        iconItemList.add(0, item);
+        mAdapter.notifyDataSetChanged();
     }
 
     @NonNull
@@ -613,7 +857,19 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
     protected abstract ByonchatRecyclerView getListHistory();
 
     @NonNull
+    protected abstract ByonchatRecyclerView getListHistoryFind();
+
+    @NonNull
     protected abstract SearchView getSearchView();
+
+    @NonNull
+    protected abstract FrameLayout getFrameChatLists();
+
+    @NonNull
+    protected abstract FrameLayout getFrameMessageLists();
+
+    @NonNull
+    protected abstract MaterialSearchView getMaterialSearchView();
 
     @NonNull
     protected abstract LinearLayout getFrameSearch();
@@ -622,11 +878,15 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
     protected abstract RelativeLayout getToolbarBack();
 
     @NonNull
+    protected abstract ImageView getImgToolbarBack();
+
+    @NonNull
     protected abstract TextView getToolbarTitle();
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(ARGS, mArgs);
+        outState.putString(Constants.EXTRA_COLOR, mColor);
+        outState.putString(Constants.EXTRA_COLORTEXT, mColorText);
     }
 }

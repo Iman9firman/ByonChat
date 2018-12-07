@@ -11,6 +11,7 @@
     <color name="bubbleRight">#9acff4</color>
     <color name="colorMenu">#81b3d7</color>
     <color name="bubbleLeft">#e7e7e7</color>
+    <color name="frame_chats_messages">#eeeeee</color>
     <color name="grayOffTab">#9eb5c0</color>
     <color name="grayTab">#e6e6e6</color>
     <color name="grayList">#d2d3d5</color>

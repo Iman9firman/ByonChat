@@ -14,6 +14,7 @@ import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import com.byonchat.android.list.utilLoadImage.TextLoader;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.ui.viewholder.ImsHeaderViewHolder;
+import com.byonchat.android.ui.viewholder.ImsListHistoryFindViewHolder;
 import com.byonchat.android.ui.viewholder.ImsListHistoryViewHolder;
 import com.byonchat.android.utils.MediaProcessingUtil;
 
@@ -42,7 +44,8 @@ import java.util.Locale;
 public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     protected static final int VIEWTYPE_ITEM_HEADER = 0;
-    protected static final int VIEWTYPE_ITEM_TEXT = 1;
+    protected static final int VIEWTYPE_ITEM_ORIGIN = 1;
+    protected static final int VIEWTYPE_ITEM_MESSAGE_FIND = 2;
 
     protected List<IconItem> items;
     protected List<IconItem> itemsFiltered;
@@ -70,9 +73,9 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
         View view;
 
         switch (viewType) {
-            case VIEWTYPE_ITEM_TEXT:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ims_list_history, parent, false);
-                return new ImsListHistoryViewHolder(view, itemClickListener, longItemClickListener);
+            case VIEWTYPE_ITEM_MESSAGE_FIND:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ims_list_history_find, parent, false);
+                return new ImsListHistoryFindViewHolder(view, itemClickListener, longItemClickListener);
             case VIEWTYPE_ITEM_HEADER:
                 view = LayoutInflater.from(context).inflate(R.layout.item_ims_header, parent, false);
                 return new ImsHeaderViewHolder(view);
@@ -86,17 +89,24 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
         IconItem item = itemsFiltered.get(i);
         if (viewHolder instanceof ImsListHistoryViewHolder) {
 
-            resolveContent(viewHolder, item);
-
-//            showFileImage(viewHolder, item.jabberId);
-
             ((ImsListHistoryViewHolder) viewHolder).vTextInfo.setText(item.info);
 
             ((ImsListHistoryViewHolder) viewHolder).vDateInfo.setText(item.dateInfo);
 
             ((ImsListHistoryViewHolder) viewHolder).vTextUnread.setText(item.unread + "");
 
+            resolveContent(viewHolder, item);
+
             ((ImsListHistoryViewHolder) viewHolder).onCommentSelected(item);
+        } else if (viewHolder instanceof ImsListHistoryFindViewHolder) {
+
+            ((ImsListHistoryFindViewHolder) viewHolder).vTextInfo.setText(item.info);
+
+            ((ImsListHistoryFindViewHolder) viewHolder).vDateInfo.setText(item.dateInfo);
+
+            resolveContentFind(viewHolder, item);
+
+            ((ImsListHistoryFindViewHolder) viewHolder).onCommentSelected(item);
         }
     }
 
@@ -168,6 +178,31 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    private void resolveContentFind(RecyclerView.ViewHolder viewHolder, IconItem item) {
+        String regex = "[0-9]+";
+        if (item.getJabberId().matches(regex)) {
+
+            if (item.getTitle().matches(regex)) {
+                String title = "fetching id...";
+                ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle.setText(title);
+                textLoader.DisplayImage(item.getTitle(), ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle);
+
+                resolveSearchContentFind(((ImsListHistoryFindViewHolder) viewHolder), item.info);
+            } else {
+                ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle.setText(Html.fromHtml(item.getTitle()));
+
+                resolveSearchContentFind(((ImsListHistoryFindViewHolder) viewHolder), item.info);
+            }
+
+        } else {
+            String title = "fetching room...";
+            ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle.setText(title);
+            textLoader.DisplayImage(item.getTitle(), ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle);
+
+            resolveSearchContentFind(((ImsListHistoryFindViewHolder) viewHolder), item.info);
+        }
+    }
+
     protected void resolveSearchContent(ImsListHistoryViewHolder holder, String title) {
         if (mSearchText != null && !mSearchText.isEmpty()) {
             int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
@@ -185,23 +220,25 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
         } else {
             holder.vTextTitle.setText(title);
         }
+    }
 
-        /*if (mSearchText != null && !mSearchText.isEmpty()) {
-            int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
+    protected void resolveSearchContentFind(ImsListHistoryFindViewHolder holder, String message) {
+        if (mSearchText != null && !mSearchText.isEmpty()) {
+            int startPos = message.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
             int endPos = startPos + mSearchText.length();
 
             if (startPos != -1) {
-                Spannable spannable = new SpannableString(title);
+                Spannable spannable = new SpannableString(message);
                 ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
                 TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
                 spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                ((ImsListHistoryViewHolder) viewHolder).vTextTitle.setText(spannable);
+                holder.vTextInfo.setText(spannable);
             } else {
-                ((ImsListHistoryViewHolder) viewHolder).vTextTitle.setText(title);
+                holder.vTextInfo.setText(message);
             }
         } else {
-            ((ImsListHistoryViewHolder) viewHolder).vTextTitle.setText(title);
-        }*/
+            holder.vTextInfo.setText(message);
+        }
     }
 
     private void showFileImage(RecyclerView.ViewHolder viewHolder, String jabberId) {
@@ -222,7 +259,13 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemViewType(int position) {
-        return VIEWTYPE_ITEM_TEXT;
+        IconItem item = items.get(position);
+        switch (item.type) {
+            case IconItem.TYPE_MESSAGE_FIND:
+                return VIEWTYPE_ITEM_MESSAGE_FIND;
+            default:
+                return VIEWTYPE_ITEM_ORIGIN;
+        }
     }
 
     @Override
@@ -335,10 +378,26 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                 mSearchText = charString;
                 List<IconItem> filteredList = new ArrayList<>();
                 for (IconItem row : items) {
-                    String regex = "[0-9]+";
-                    if (row.getJabberId().matches(regex)) {
-                        if (row.getTitle().matches(regex)) {
-                            String title = "fetching id...";
+                    if (row.type.equalsIgnoreCase(IconItem.TYPE_ORIGIN)) {
+                        String regex = "[0-9]+";
+                        if (row.getJabberId().matches(regex)) {
+                            if (row.getTitle().matches(regex)) {
+                                String title = "fetching id...";
+                                Cursor cur = Byonchat.getBotListDB().getRealNameByName(row.getTitle().toLowerCase());
+                                if (cur.getCount() > 0) {
+                                    title = cur.getString(cur.getColumnIndex(BotListDB.ROOMS_REALNAME));
+                                }
+                                cur.close();
+                                if (title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
+                                    filteredList.add(row);
+                                }
+                            } else {
+                                if (row.getTitle().toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
+                                    filteredList.add(row);
+                                }
+                            }
+                        } else {
+                            String title = "fetching rooms...";
                             Cursor cur = Byonchat.getBotListDB().getRealNameByName(row.getTitle().toLowerCase());
                             if (cur.getCount() > 0) {
                                 title = cur.getString(cur.getColumnIndex(BotListDB.ROOMS_REALNAME));
@@ -347,26 +406,16 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                             if (title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
                                 filteredList.add(row);
                             }
-                        } else {
-                            if (row.getTitle().toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
-                                filteredList.add(row);
-                            }
                         }
-                    } else {
-                        String title = "fetching rooms...";
-                        Cursor cur = Byonchat.getBotListDB().getRealNameByName(row.getTitle().toLowerCase());
-                        if (cur.getCount() > 0) {
-                            title = cur.getString(cur.getColumnIndex(BotListDB.ROOMS_REALNAME));
-                        }
-                        cur.close();
-                        if (title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
-                            filteredList.add(row);
-                        }
-                    }
                     /*if (row.title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))
                             || row.info.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
                         filteredList.add(row);
                     }*/
+                    } else if (row.type.equalsIgnoreCase(IconItem.TYPE_MESSAGE_FIND)) {
+                        if (row.info.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
+                            filteredList.add(row);
+                        }
+                    }
                 }
 
                 itemsFiltered = filteredList;
@@ -382,21 +431,15 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
             itemsFiltered = (ArrayList<IconItem>) filterResults.values;
             notifyDataSetChanged();
 
-            setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    if (onItemClickListener != null) {
-                        onItemClickListener.onItemListClick(view, position);
-                    }
+            setOnItemClickListener((view, position) -> {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemListClick(view, position);
                 }
             });
 
-            setOnLongItemClickListener(new OnLongItemClickListener() {
-                @Override
-                public void onLongItemClick(View view, int position) {
-                    if (onItemClickListener != null) {
-                        onItemClickListener.onItemListLongClick(view, position);
-                    }
+            setOnLongItemClickListener((view, position) -> {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemListLongClick(view, position);
                 }
             });
         }

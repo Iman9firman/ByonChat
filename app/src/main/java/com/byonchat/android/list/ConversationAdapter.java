@@ -192,6 +192,21 @@ public class ConversationAdapter extends BaseAdapter {
         return row;
     }
 
+    public int findPosition(Message e) {
+        if (items == null) {
+            return -1;
+        }
+
+        int size = items.size();
+        for (int i = 0; i < size; i++) {
+            if (items.get(i).equals(e)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     private void displayConversation(final ConversationMessageHolder holder,
                                      final Message data, final int position, final String form) {
 

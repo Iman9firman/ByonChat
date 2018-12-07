@@ -11,6 +11,9 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,13 +21,17 @@ import android.widget.TextView;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NotificationReceiver;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
+import com.otaliastudios.cameraview.Frame;
 
 public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
 
-    public static Intent generateIntent(Context context, String args) {
+    public static Intent generateIntent(Context context, String color, String colorText) {
         Intent intent = new Intent(context, ImsListHistoryChatActivity.class);
-        intent.putExtra(ARGS, args);
+        intent.putExtra(Constants.EXTRA_COLOR, color);
+        intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
         return intent;
     }
 
@@ -37,9 +44,14 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
     protected void onLoadView() {
         vAppBar = getAppbar();
         vToolbar = getToolbar();
+        vFrameChatLists = getFrameChatLists();
+        vFrameMessageLists = getFrameMessageLists();
+        vImgToolbarBack = getImgToolbarBack();
+        vSearchView = getMaterialSearchView();
         vToolbarBack = getToolbarBack();
         vToolbarTitle = getToolbarTitle();
         vListHistory = getListHistory();
+        vListHistoryFind = getListHistoryFind();
         vSearchEdt = getSearchView();
         vFrameSearch = getFrameSearch();
     }
@@ -50,19 +62,23 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
 
         resolveToolbar();
         resolveListHistory();
+        resolveListHistoryFind();
         resolveSearchView();
+        resolveMaterialSearchView();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.ims_list_history_menu, menu);
-        resolveSearchMenu(menu);
+        /*getMenuInflater().inflate(R.menu.ims_list_history_menu, menu);
+        resolveSearchMenu(menu);*/
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.main_search:
+                item.setVisible(false);
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -73,7 +89,10 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        listChatHistory();
+        vSearchView.closeSearch();
+        resolveOriginView(false);
+        resolveChatHistory();
+        resolveChatHistorySearch();
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
                 .cancel(NotificationReceiver.NOTIFY_ID);
 
@@ -92,7 +111,6 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
     public void onPause() {
         super.onPause();
         unregisterReceiver(broadcastHandler);
-
     }
 
     @NonNull
@@ -109,8 +127,26 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
 
     @NonNull
     @Override
+    protected FrameLayout getFrameChatLists() {
+        return (FrameLayout) findViewById(R.id.frame_chat_lists);
+    }
+
+    @NonNull
+    @Override
+    protected FrameLayout getFrameMessageLists() {
+        return (FrameLayout) findViewById(R.id.frame_message_lists);
+    }
+
+    @NonNull
+    @Override
     protected ByonchatRecyclerView getListHistory() {
         return (ByonchatRecyclerView) findViewById(R.id.list_history);
+    }
+
+    @NonNull
+    @Override
+    protected ByonchatRecyclerView getListHistoryFind() {
+        return (ByonchatRecyclerView) findViewById(R.id.list_history_find);
     }
 
     @NonNull
@@ -129,6 +165,18 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
     @Override
     protected RelativeLayout getToolbarBack() {
         return (RelativeLayout) findViewById(R.id.toolbar_back);
+    }
+
+    @NonNull
+    @Override
+    protected MaterialSearchView getMaterialSearchView() {
+        return (MaterialSearchView) findViewById(R.id.search_view_main);
+    }
+
+    @NonNull
+    @Override
+    protected ImageView getImgToolbarBack() {
+        return (ImageView) findViewById(R.id.img_toolbar_back);
     }
 
     @NonNull

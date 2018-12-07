@@ -1,13 +1,16 @@
 package com.byonchat.android.list;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.byonchat.android.provider.ChatParty;
 
 import java.util.Comparator;
 
-public class IconItem {
-    public static final String TYPE_TEXT = "text";
+public class IconItem implements Parcelable {
+    public static final String TYPE_ORIGIN = "type_origin";
+    public static final String TYPE_MESSAGE_FIND = "type_message_find";
     public boolean isSelected;
     public boolean isPinned;
     public boolean isMuted;
@@ -205,4 +208,42 @@ public class IconItem {
                 && signature.equals(item.signature)*/
                 && type.equals(item.type);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(jabberId);
+        parcel.writeString(title);
+        parcel.writeString(info);
+        parcel.writeLong(unread);
+        parcel.writeString(dateInfo);
+        parcel.writeString(value);
+        parcel.writeString(signature);
+    }
+
+    protected IconItem(Parcel in) {
+        jabberId = in.readString();
+        title = in.readString();
+        info = in.readString();
+        unread = in.readLong();
+        dateInfo = in.readString();
+        value = in.readString();
+        signature = in.readString();
+    }
+
+    public static final Creator<IconItem> CREATOR = new Creator<IconItem>() {
+        @Override
+        public IconItem createFromParcel(Parcel in) {
+            return new IconItem(in);
+        }
+
+        @Override
+        public IconItem[] newArray(int size) {
+            return new IconItem[size];
+        }
+    };
 }

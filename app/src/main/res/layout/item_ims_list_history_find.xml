@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:ignore="UnusedAttribute">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/message_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin10"
+            android:layout_marginTop="@dimen/margin7"
+            android:layout_marginRight="@dimen/margin10"
+            android:layout_marginBottom="@dimen/margin5"
+            android:foreground="?selectableItemBackground"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/margin10"
+            android:paddingTop="@dimen/margin5"
+            android:paddingRight="@dimen/margin10"
+            android:paddingBottom="@dimen/margin5">
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:id="@+id/textTitle"
+                style="@style/TextMediumBlack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/dateInfo"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="Medium Text"
+                android:textColor="@color/ims_chat_list_primary_color"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@id/dateInfo"
+                style="@style/TextLightGray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/textTitle"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:paddingRight="5dp"
+                android:text="13:00"
+                android:textColor="@color/ims_chat_list_secondary_color" />
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                android:id="@+id/textInfo"
+                style="@style/TextLightGray"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textTitle"
+                android:layout_marginRight="@dimen/margin10"
+                android:ellipsize="end"
+                android:paddingTop="@dimen/margin3"
+                android:paddingRight="@dimen/margin3"
+                android:paddingBottom="@dimen/margin3"
+                android:singleLine="true"
+                android:text="TextView"
+                android:textColor="@color/ims_chat_list_secondary_color" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/selection"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" />
+
+</RelativeLayout>

@@ -66,10 +66,12 @@ import com.byonchat.android.MainSettingActivity;
 import com.byonchat.android.NewSearchRoomActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.RegistrationActivity;
+import com.byonchat.android.UpdateProfileActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.MyBroadcastReceiver;
 import com.byonchat.android.communication.MyJobService;
 import com.byonchat.android.communication.NotificationReceiver;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.Contact;
@@ -183,6 +185,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         addShortcutBadger(getApplicationContext());
 
         resolveValidationLogin();
+        resolveToolbarExpanded();
         resolveNavHeader();
         resolveListRooms();
         resolveOpenRooms();
@@ -313,6 +316,8 @@ public class MainActivityNew extends MainBaseActivityNew {
                     switch (id) {
                         case R.id.nav_item_one:
                             Intent intent = new Intent(getApplicationContext(), NewSearchRoomActivity.class);
+                            intent.putExtra(Constants.EXTRA_COLOR, color);
+                            intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
                             intent.putExtra("search", "all");
                             startActivity(intent);
                             break;
@@ -321,10 +326,15 @@ public class MainActivityNew extends MainBaseActivityNew {
                             break;
                         case R.id.nav_item_three:
                             Intent intent2 = new Intent(getApplicationContext(), MainSettingActivity.class);
+                            intent2.putExtra(Constants.EXTRA_COLOR, color);
+                            intent2.putExtra(Constants.EXTRA_COLORTEXT, colorText);
                             startActivity(intent2);
                             break;
                         case R.id.nav_item_four:
-                            Toast.makeText(getBaseContext(), "Help clicked", Toast.LENGTH_SHORT).show();
+                            Intent intent3 = new Intent(getApplicationContext(), UpdateProfileActivity.class);
+                            intent3.putExtra(Constants.EXTRA_COLOR, color);
+                            intent3.putExtra(Constants.EXTRA_COLORTEXT, colorText);
+                            startActivity(intent3);
                             break;
                         case R.id.nav_item_refresh:
                             RefreshRoom();

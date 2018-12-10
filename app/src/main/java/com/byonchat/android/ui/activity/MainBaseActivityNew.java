@@ -214,6 +214,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected RecyclerViewDragDropManager recyclerViewDragDropManager;
     protected ProgressDialog progressDialog;
 
+    protected List<ItemMain> itemList = new ArrayList<>();
+    protected List<String> positionList = new ArrayList<>();
+
     protected LaporSelectedRoom laporSelectedRoom;
     protected LocationAssistant assistant;
 
@@ -293,8 +296,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         logo = R.drawable.logo_byon;
 //        background = R.drawable.wallpaper;
         percent = "70";
-        color = "#006b9c";
-        colorText = "#FFFFFF";
+        color = "006b9c";
+        colorText = "FFFFFF";
         room_id = 1;
 
         resolveNavHeader();
@@ -304,7 +307,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         applyChatConfig();
     }
 
-    protected void resolveToolbar() {
+    protected void resolveToolbar(ContactBot contactBot) {
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
@@ -312,34 +315,25 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         getSupportActionBar().setTitle(title);
         collapsingToolbarLayout.setTitle(title);
 
-        Byonchat.getRoomsDB().open();
-        botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
-        Byonchat.getRoomsDB().close();
+        Cursor cur = Byonchat.getBotListDB().getSingleRoom(botArrayListist.get(0).name);
+        if (cur.getCount() > 0) {
+            String bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));
 
-        if (botArrayListist.size() > 0) {
-            Cursor cur = Byonchat.getBotListDB().getSingleRoom(botArrayListist.get(0).name);
-            if (cur.getCount() > 0) {
-                String bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));
-
-                if (bcakdrop == null || bcakdrop.equalsIgnoreCase("") || bcakdrop.equalsIgnoreCase("null")) {
-                    Manhera.getInstance().get()
-                            .load(R.drawable.wallpaper)
-                            .fitCenter()
-                            .into(backgroundImage);
-                } else {
-                    Manhera.getInstance().get()
-                            .load(bcakdrop)
-                            .fitCenter()
-                            .into(backgroundImage);
-                }
-
-                resolveListTabRooms(botArrayListist.get(0), cur);
+            if (bcakdrop == null || bcakdrop.equalsIgnoreCase("") || bcakdrop.equalsIgnoreCase("null")) {
+                Manhera.getInstance().get()
+                        .load(R.drawable.wallpaper)
+                        .fitCenter()
+                        .into(backgroundImage);
+            } else {
+                Manhera.getInstance().get()
+                        .load(bcakdrop)
+                        .fitCenter()
+                        .into(backgroundImage);
             }
+            resolveRecyclerView();
+            resolveListTabRooms(botArrayListist.get(0), cur);
         } else {
-            Manhera.getInstance().get()
-                    .load(R.drawable.wallpaper)
-                    .fitCenter()
-                    .into(backgroundImage);
+
         }
 
         resolveCollapsingToolbar(color);
@@ -516,64 +510,19 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             vNavTitle.setText(botArrayListist.get(0).realname);
 
             title = botArrayListist.get(0).realname;
+            username = botArrayListist.get(0).getName();
 
-            resolveToolbar();
+            resolveToolbar(botArrayListist.get(0));
         } else {
             // Do something here if you have not added rooms
-        }
-    }
-
-    protected void resolveListTabRooms(ContactBot item, Cursor sdf) {
-        username = item.getName();
-
-        Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
-        color = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
-        colorText = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
-        String description = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "c");
-        String targetURL = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "e");
-        String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
-        String icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
-        String bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));
-
-        protect = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "p");
-
-        if (Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a").equalsIgnoreCase("error")) {
-            if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                finish();
-                Intent ii = new Intent(MainBaseActivityNew.this, LoadingGetTabRoomActivity.class);
-                ii.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-//                if (targetURL != null) {
-//                    ii.putExtra(ConversationActivity.KEY_TITLE, targetURL);
-//                }
-                ii.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(ii);
-            } else {
-                Toast.makeText(MainBaseActivityNew.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-            return;
-        }
-
-        String current = "";
-        if (current.equalsIgnoreCase("")) {
-            current = cur.getString(cur.getColumnIndex(BotListDB.ROOM_FIRST_TAB));
-        }
-
-        /*if (color == null || color.equalsIgnoreCase("") || color.equalsIgnoreCase("null")) {
-            color = "006b9c";
-        }*/
-        if (bcakdrop == null || bcakdrop.equalsIgnoreCase("") || bcakdrop.equalsIgnoreCase("null")) {
             Manhera.getInstance().get()
-                    .load(R.drawable.earth_byon)
+                    .load(R.drawable.wallpaper)
                     .fitCenter()
                     .into(backgroundImage);
         }
-        if (colorText == null || colorText.equalsIgnoreCase("") || colorText.equalsIgnoreCase("null")) {
-            colorText = "ffffff";
-        }
-        new LoadImageFromURL(backdropBlur).execute(bcakdrop);
+    }
 
+    protected void resolveRecyclerView() {
         layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
 
         recyclerViewDragDropManager = new RecyclerViewDragDropManager();
@@ -610,11 +559,73 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             }
         });
 
-        List<ItemMain> itemList = new ArrayList<>();
-        List<String> positionList = new ArrayList<>();
+
+        final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, room_id, positionList);
+        adapter = myItemAdapter;
+        wrappedAdapter = recyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
+        GeneralItemAnimator animator = new DraggableItemAnimator();
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(wrappedAdapter);
+        recyclerView.setItemAnimator(animator);
+
+        recyclerViewDragDropManager.attachRecyclerView(recyclerView);
+
+        adapter.setOnItemClickListener((view, position) -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveListTabRooms(ContactBot item, Cursor sdf) {
+        Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
+        String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
+        color = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
+        colorText = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
+        String description = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "c");
+        String targetURL = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "e");
+        String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+        String icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
+        String bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));
+
+        protect = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "p");
+
+        if (Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a").equalsIgnoreCase("error")) {
+            if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                finish();
+                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, null);
+                startActivity(ii);
+            } else {
+                Toast.makeText(MainBaseActivityNew.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            return;
+        }
+
+        String current = "";
+        if (current.equalsIgnoreCase("")) {
+            current = cur.getString(cur.getColumnIndex(BotListDB.ROOM_FIRST_TAB));
+        }
+
+        /*if (color == null || color.equalsIgnoreCase("") || color.equalsIgnoreCase("null")) {
+            color = "006b9c";
+        }*/
+        if (bcakdrop == null || bcakdrop.equalsIgnoreCase("") || bcakdrop.equalsIgnoreCase("null")) {
+            Manhera.getInstance().get()
+                    .load(R.drawable.earth_byon)
+                    .fitCenter()
+                    .into(backgroundImage);
+        }
+        if (colorText == null || colorText.equalsIgnoreCase("") || colorText.equalsIgnoreCase("null")) {
+            colorText = "ffffff";
+        }
+        new LoadImageFromURL(backdropBlur).execute(bcakdrop);
+
         try {
             JSONArray jsonArray = new JSONArray(content);
             Log.w("aa", content);
+            itemList.clear();
+            positionList.clear();
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
@@ -636,7 +647,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 } else if (category.equalsIgnoreCase("3")) {
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("4")) {
-                    Log.w("kabadu", jsonArray.getJSONObject(i).getString("url_tembak"));
                     if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);
@@ -733,22 +743,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             e.printStackTrace();
         }
 
-
-        final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, room_id, positionList);
-        adapter = myItemAdapter;
-        wrappedAdapter = recyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
-        GeneralItemAnimator animator = new DraggableItemAnimator();
-
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(wrappedAdapter);
-        recyclerView.setItemAnimator(animator);
-
-        recyclerViewDragDropManager.attachRecyclerView(recyclerView);
-
-        adapter.setOnItemClickListener((view, position) -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), itemList.get(position));
-            startActivity(intent);
-        });
+        adapter.notifyDataSetChanged();
     }
 
     protected void resolveCollapsingToolbar(String color) {
@@ -804,6 +799,11 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 }
             }
         }
+    }
+
+    protected void resolveToolbarExpanded() {
+        appBarLayout.setExpanded(true, false);
+        searchView.showSearch(false);
     }
 
     public void addShortcutBadger(Context context) {
@@ -1087,19 +1087,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             alertbox.setMessage("Are you sure you want to Refresh?");
             alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
                 if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                    startActivityForResult(LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL), Constants.RESULT_REFRESH_ROOM);
-
-                    /*finish();
-                    Intent ii = new Intent(getApplicationContext(), LoadingGetTabRoomActivity.class);
-                    ii.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                    if (targetURL != null) {
-                        ii.putExtra(ConversationActivity.KEY_TITLE, targetURL);
-                    } else {
-
-                    }
-
-                    ii.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(ii);*/
+                    finish();
+                    Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                    startActivity(ii);
                 } else {
                     Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
                 }

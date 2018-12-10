@@ -2,9 +2,15 @@ package com.byonchat.android.AdvRecy;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.TextAppearanceSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +27,7 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHolder>
         implements DraggableItemAdapter<MyViewHolder>, Filterable {
@@ -65,7 +72,23 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         final ItemMain im = filterList.get(position);
 
-        holder.mTextView.setText(im.getTitle());
+        if (charString != null && !charString.isEmpty()) {
+            int startPos = im.getTitle().toLowerCase(Locale.getDefault()).indexOf(charString.toLowerCase(Locale.getDefault()));
+            int endPos = startPos + charString.length();
+
+            if (startPos != -1) {
+                Spannable spannable = new SpannableString(im.getTitle());
+                ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                holder.mTextView.setText(spannable);
+            } else {
+                holder.mTextView.setText(im.getTitle());
+            }
+        } else {
+            holder.mTextView.setText(im.getTitle());
+        }
+
         holder.mImageView.setImageResource(R.drawable.logo_byon);
 //        AutofitHelper.create(holder.mTextView);
 
@@ -127,7 +150,7 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
-                charString = constraint.toString().toUpperCase();
+                charString = constraint.toString().toLowerCase(Locale.getDefault());
 
                 if (charString.isEmpty()) {
                     results.values = itemList;
@@ -135,7 +158,7 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
                 } else {
                     List<ItemMain> filteredData = new ArrayList<>();
                     for (ItemMain row : itemList) {
-                        if (row.getTitle().toString().contains(charString)) {
+                        if (row.getTitle().toString().toLowerCase(Locale.getDefault()).contains(charString)) {
                             filteredData.add(row);
                         }
                     }
@@ -166,6 +189,11 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
         db.delete(MainDbHelper.TABLE_ITEM, null, null);
         long id = db.insert(MainDbHelper.TABLE_ITEM, null, cv);
         db.close();
+    }
+
+    public List<ItemMain> getData() {
+        itemList = filterList;
+        return filterList;
     }
 
     public void setOnItemClickListener(OnItemClickListener itemClickListener) {

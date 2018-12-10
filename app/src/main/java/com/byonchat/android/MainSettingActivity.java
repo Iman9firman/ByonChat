@@ -12,17 +12,24 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 
 import com.byonchat.android.adapter.SettingMainAdapter;
+import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.Skin;
 
 public class MainSettingActivity extends AppCompatActivity {
 
     private String colorAttachment = "#005982";
+    protected String mColor, mColorText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_setting);
+
+        mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
+        mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Settings");
@@ -31,11 +38,11 @@ public class MainSettingActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Profile"));
-     //   tabLayout.addTab(tabLayout.newTab().setText("Notification"));
+        //   tabLayout.addTab(tabLayout.newTab().setText("Notification"));
         tabLayout.addTab(tabLayout.newTab().setText("About"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         tabLayout.setSelectedTabIndicatorHeight(3);
-        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#" + mColorText));
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         final SettingMainAdapter adapter = new SettingMainAdapter
@@ -59,14 +66,14 @@ public class MainSettingActivity extends AppCompatActivity {
             }
         });
         IntervalDB db = new IntervalDB(this);
-        db.open();
+        /*db.open();
         Cursor cursorSelect = db.getSingleContact(4);
-        if(cursorSelect.getCount()>0){
+        if (cursorSelect.getCount() > 0) {
             String skin = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
             Skin skins = null;
-            Cursor c =  db.getCountSkin();
-            if(c.getCount()>0) {
-                skins =  db.retriveSkinDetails(skin);
+            Cursor c = db.getCountSkin();
+            if (c.getCount() > 0) {
+                skins = db.retriveSkinDetails(skin);
                 colorAttachment = skins.getColor();
                 toolbar.setBackgroundColor(Color.parseColor(colorAttachment));
                 tabLayout.setBackgroundColor(Color.parseColor(colorAttachment));
@@ -74,12 +81,19 @@ public class MainSettingActivity extends AppCompatActivity {
             c.close();
         }
         cursorSelect.close();
-        db.close();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        db.close();*/
+
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+        toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
+        toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+        tabLayout.setBackgroundColor(Color.parseColor("#" + mColor));
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(Color.parseColor(colorAttachment));
-        }
+        }*/
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

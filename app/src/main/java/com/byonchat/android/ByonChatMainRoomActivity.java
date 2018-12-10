@@ -60,6 +60,25 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         return intent;
     }
 
+    protected Intent generateShortcutIntent() {
+        Intent intent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
+        intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_POSITION, position);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_COLOR, color);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_COLORTEXT, colorText);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_TARGETURL, targetURL);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_CATEGORY, category);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_TITLE, title);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_URL_TEMBAK, url_tembak);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_ID_ROOMS_TAB, id_rooms_tab);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_PULL, include_pull);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_LATLONG, include_latlong);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_STATUS, status);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_NAME, name);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_ICON, icon);
+        return intent;
+    }
+
     @Override
     protected int getResourceLayout() {
         return R.layout.main_byonchat_room_activity;
@@ -213,12 +232,12 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
                                     finish();*/
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-                                    ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(ByonChatMainRoomActivity.this, name);
-                                    mShortcutInfoBuilder.setShortLabel(name);
-                                    mShortcutInfoBuilder.setLongLabel(name);
+                                    ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(ByonChatMainRoomActivity.this, title);
+                                    mShortcutInfoBuilder.setShortLabel(title);
+                                    mShortcutInfoBuilder.setLongLabel(title);
                                     mShortcutInfoBuilder.setIcon(Icon.createWithBitmap(bitmap));
 
-                                    Intent shortcutIntent = createIntentShortcut();
+                                    Intent shortcutIntent = generateShortcutIntent();
                                     shortcutIntent.setAction(Intent.ACTION_CREATE_SHORTCUT);
                                     mShortcutInfoBuilder.setIntent(shortcutIntent);
 
@@ -227,13 +246,13 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
                                     mShortcutManager.requestPinShortcut(mShortcutInfo, null);
 
                                 } else {
-                                    Intent shortcutIntent = createIntentShortcut();
+                                    Intent shortcutIntent = generateShortcutIntent();
                                     shortcutIntent.setAction(Intent.ACTION_MAIN);
 
                                     Intent addIntent = new Intent();
                                     addIntent
                                             .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-                                    addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+                                    addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
                                     addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
 
                                     addIntent
@@ -258,26 +277,6 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
                         }
                     });
         });
-    }
-
-    protected Intent createIntentShortcut() {
-        Intent shortcutIntent = new Intent(getApplicationContext(), ByonChatMainRoomActivity.class);
-        shortcutIntent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_POSITION, position);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_COLOR, color);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_COLORTEXT, colorText);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_TARGETURL, targetURL);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_CATEGORY, category);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_TITLE, title);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_URL_TEMBAK, url_tembak);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_ID_ROOMS_TAB, id_rooms_tab);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_PULL, include_pull);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_LATLONG, include_latlong);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_STATUS, status);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_NAME, name);
-        shortcutIntent.putExtra(ByonChatMainRoomActivity.EXTRA_ICON, icon);
-
-        return shortcutIntent;
     }
 
     public String deleteById(final Integer posss) {

@@ -133,6 +133,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
     String id = "", name = "", desc = "", realname = "", link = "", type = "", tipe_room = "", targetURL = "";
     private static ArrayList<ContactBot> catArray = new ArrayList<ContactBot>();
     LaporSelectedRoom laporSelectedRoom;
+    protected String mColor, mColorText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,12 +170,15 @@ public class NewSearchRoomActivity extends AppCompatActivity {
             ttipe = "1";
         }
 
+        mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
+        mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
 
         IntervalDB db = new IntervalDB(this);
-        db.open();
+        /*db.open();
         Cursor cursorSelect = db.getSingleContact(4);
         if (cursorSelect.getCount() > 0) {
             String skin = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
@@ -188,7 +192,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
             c.close();
         }
         cursorSelect.close();
-        db.close();
+        db.close();*/
 
         GPSTracker gps = new GPSTracker(context);
         if (gps.canGetLocation()) {
@@ -209,10 +213,14 @@ public class NewSearchRoomActivity extends AppCompatActivity {
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+        toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
+        toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             getWindow().setStatusBarColor(Color.parseColor(colorAttachment));
-        }
+        }*/
 
         lv = (ListView) findViewById(R.id.gonelist);
         linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);

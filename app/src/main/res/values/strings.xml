@@ -4,6 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="str_delete">Delete</string>
     <string name="group_create_info">Please provide group name</string>
+    <string name="str_not_able_open_room">You have not able to open this room, please update your application.</string>
     <string name="sql_createtable_configurations">CREATE TABLE IF NOT EXISTS configurations(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT);</string>
     <string name="sql_createtable_configurations_index">CREATE INDEX IF NOT EXISTS configuration_name ON configurations(name);</string>
     <string name="sql_createtable_group">CREATE TABLE IF NOT EXISTS groups(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, jid TEXT, status TEXT);</string>

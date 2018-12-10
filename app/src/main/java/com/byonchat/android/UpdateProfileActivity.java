@@ -9,7 +9,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,6 +20,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +31,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -38,6 +42,8 @@ import android.widget.Toast;
 
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
+import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
@@ -85,17 +91,17 @@ import java.util.List;
 
 
 public class UpdateProfileActivity extends ABNextServiceActivity implements
-        DialogInterface.OnClickListener , EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
-    private static final String[] photoMenu = new String[] { "Take a photo",
-            "Choose from Gallery",/*"Remove",*/"View" };
-    public static final String UPDATE_PROFILE = UpdateProfileActivity.class.getName()+".updateProfile";
+        DialogInterface.OnClickListener, EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener {
+    private static final String[] photoMenu = new String[]{"Take a photo",
+            "Choose from Gallery",/*"Remove",*/"View"};
+    public static final String UPDATE_PROFILE = UpdateProfileActivity.class.getName() + ".updateProfile";
     private static final String BUTTON_TITLE = "SAVE";
     private static final int REQ_CAMERA = 1201;
     private static final int REQ_FROM_FILE = 1202;
     private static final int REQ_GALLERY = 1203;
 
-    String FILE_UPLOAD_URL =  "https://"+ MessengerConnectionService.F_SERVER+"/profile.php";
-    String FILE_DELETE_FOTO =  "https://"+ MessengerConnectionService.F_SERVER+"/hapus_foto.php";
+    String FILE_UPLOAD_URL = "https://" + MessengerConnectionService.F_SERVER + "/profile.php";
+    String FILE_DELETE_FOTO = "https://" + MessengerConnectionService.F_SERVER + "/hapus_foto.php";
     private MessengerDatabaseHelper dbhelper;
     private Contact contact;
     private QuickContactBadge btnPhoto;
@@ -105,15 +111,29 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
     private File photoFile;
     private ImageButton btnEmoticon;
     private ListView listStatusDefault;
-    Uri selectedImageUri ;
+    Uri selectedImageUri;
     private LinearLayout emojicons;
-    boolean imageDelete =  false;
+    boolean imageDelete = false;
+    protected String mColor, mColorText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.update_profile);
         // getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header());
-        overridePendingTransition(R.anim.activity_open_translate,R.anim.activity_close_scale);
+        overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+
+        mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
+        mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
+
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + mColor)));
+
+        View view = findViewById(R.id.buttonAbNext);
+        if (view != null && view instanceof Button) {
+            ((Button) view).setTextColor(Color.parseColor("#" + mColorText));
+        }
+
         btnPhoto = (QuickContactBadge) findViewById(R.id.registrationPhotoButton);
         btnPhoto.setOnClickListener(new OnClickListener() {
             @Override
@@ -129,17 +149,17 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
         txtStatus = (EditText) findViewById(R.id.txtStatus);
         txtStatus.setText(dbhelper.getMyContact().getStatus());
         txtStatus.setCursorVisible(false);
-        txtPhonenumber = (TextView)findViewById(R.id.textViewPhoneNumber);
+        txtPhonenumber = (TextView) findViewById(R.id.textViewPhoneNumber);
         txtPhonenumber.setText("+" + Utility.formatPhoneNumber(dbhelper.getMyContact().getJabberId()));
         listStatusDefault = (ListView) findViewById(R.id.listStatusDefault);
         emojicons = (LinearLayout) findViewById(R.id.emojiconsLayout);
-        btnEmoticon=(ImageButton)findViewById(R.id.btn_add_emoticon);
+        btnEmoticon = (ImageButton) findViewById(R.id.btn_add_emoticon);
         btnEmoticon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(emojicons.getVisibility()==View.GONE){
+                if (emojicons.getVisibility() == View.GONE) {
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                     Animation animFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_bottom);
@@ -147,27 +167,27 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                     emojicons.startAnimation(animFade);
 
                     txtStatus.setFocusable(false);
-                }else {
+                } else {
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                     txtStatus.setFocusableInTouchMode(true);
                     txtStatus.requestFocus();
-                    InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(txtStatus, InputMethodManager.SHOW_IMPLICIT);
                     emojicons.setVisibility(View.GONE);
                 }
             }
         });
 
-        txtStatus.setOnTouchListener(new View.OnTouchListener()
-        {
+        txtStatus.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 txtStatus.setCursorVisible(true);
                 txtStatus.setSelection(txtStatus.getText().length());
-                InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(txtStatus, InputMethodManager.SHOW_IMPLICIT);
-                if(emojicons.getVisibility()==View.VISIBLE){
-                    emojicons.setVisibility(View.GONE);}
+                if (emojicons.getVisibility() == View.VISIBLE) {
+                    emojicons.setVisibility(View.GONE);
+                }
                 return false;
             }
         });
@@ -176,19 +196,19 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                 .getProfilePicName(contact));
         if (photoFile.exists()) {
             Bitmap asd = BitmapFactory.decodeFile(String.valueOf(photoFile));
-            btnPhoto.setImageBitmap(MediaProcessingUtil.getRoundedCornerBitmap(asd,10));
+            btnPhoto.setImageBitmap(MediaProcessingUtil.getRoundedCornerBitmap(asd, 10));
 
-        }else{
+        } else {
             Bitmap icon2 = BitmapFactory.decodeResource(getApplicationContext().getResources(),
                     R.drawable.ic_no_photo);
-            btnPhoto.setImageBitmap(MediaProcessingUtil.getRoundedCornerBitmap(icon2,10));
+            btnPhoto.setImageBitmap(MediaProcessingUtil.getRoundedCornerBitmap(icon2, 10));
         }
         if (pdialog != null) {
             pdialog.setMessage("Please wait a moment ..");
         }
 
 
-        String[] values = new String[] { "Available",
+        String[] values = new String[]{"Available",
                 "Busy",
                 "At school",
                 "At the movies",
@@ -205,7 +225,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                String  itemValue    = (String) listStatusDefault.getItemAtPosition(position);
+                String itemValue = (String) listStatusDefault.getItemAtPosition(position);
                 txtStatus.setText(itemValue);
             }
         });
@@ -239,7 +259,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
 
             case 1:
                 Intent intentPic;
-                if (Build.VERSION.SDK_INT < 19){
+                if (Build.VERSION.SDK_INT < 19) {
                     intentPic = new Intent();
                     intentPic.setAction(Intent.ACTION_GET_CONTENT);
                     intentPic.setType("image/*");
@@ -259,33 +279,33 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
 
             case 2:
 
-                if(imageDelete==false){
+                if (imageDelete == false) {
                     Intent intent = new Intent(this, FullScreenUpdateProfileActivity.class);
-                    intent.putExtra(FullScreenUpdateProfileActivity.JAB_ID,contact.getJabberId());
-                    if(imageOutput!=null){
-                        intent.putExtra(FullScreenUpdateProfileActivity.PATH,imageOutput.getAbsolutePath());
-                    }else{
-                        intent.putExtra(FullScreenUpdateProfileActivity.PATH,photoFile.getAbsolutePath());
+                    intent.putExtra(FullScreenUpdateProfileActivity.JAB_ID, contact.getJabberId());
+                    if (imageOutput != null) {
+                        intent.putExtra(FullScreenUpdateProfileActivity.PATH, imageOutput.getAbsolutePath());
+                    } else {
+                        intent.putExtra(FullScreenUpdateProfileActivity.PATH, photoFile.getAbsolutePath());
                     }
                     startActivity(intent);
                 }
 
                 break;
             case 3:
-                if(NetworkInternetConnectionStatus.getInstance(this).isOnline(this)){
+                if (NetworkInternetConnectionStatus.getInstance(this).isOnline(this)) {
                     final AlertDialog.Builder alertbox = new AlertDialog.Builder(this);
                     alertbox.setMessage("Are you sure delete photo?");
                     alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             Bitmap icon2 = BitmapFactory.decodeResource(getApplicationContext().getResources(),
                                     R.drawable.ic_no_photo);
-                            btnPhoto.setImageBitmap(MediaProcessingUtil.getRoundedCornerBitmap(icon2,10));
+                            btnPhoto.setImageBitmap(MediaProcessingUtil.getRoundedCornerBitmap(icon2, 10));
                             imageDelete = true;
                             String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
-                            if (key.equalsIgnoreCase("null")){
-                                Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                            if (key.equalsIgnoreCase("null")) {
+                                Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                                 pdialog.dismiss();
-                            }else{
+                            } else {
                                 new requestDeleteFoto(getApplicationContext()).execute(key);
                             }
                         }
@@ -296,7 +316,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                     });
                     alertbox.show();
 
-                }else{
+                } else {
                     Toast.makeText(this, R.string.no_internet, Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -307,19 +327,16 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
     }
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
         //closing transition animations
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         super.onDestroy();
         overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
-
 
 
     private void startMainActivity() {
@@ -328,15 +345,15 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
-        if(resultCode == RESULT_OK){
+        if (resultCode == RESULT_OK) {
             if (requestCode == REQ_GALLERY) {
                 imageOutput = MediaProcessingUtil.getOutputFile("jpeg");
-                beginCrop(result.getData(),Uri.fromFile(imageOutput));
+                beginCrop(result.getData(), Uri.fromFile(imageOutput));
             } else if (requestCode == Crop.REQUEST_CROP) {
                 handleCrop(resultCode, result);
-            }else if (requestCode == REQ_CAMERA) {
+            } else if (requestCode == REQ_CAMERA) {
                 getContentResolver().notifyChange(selectedImageUri, null);
-                if(decodeFile(imageOutput.getAbsolutePath())) {
+                if (decodeFile(imageOutput.getAbsolutePath())) {
                     beginCrop(Uri.fromFile(imageOutput));
                 }
             }
@@ -345,10 +362,11 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
     }
 
     private void beginCrop(Uri source) {
-        Crop.of(source, source).asSquare().withMaxSize(480,480).start(this);
+        Crop.of(source, source).asSquare().withMaxSize(480, 480).start(this);
     }
-    private void beginCrop(Uri source,Uri destination) {
-        Crop.of(source, destination).asSquare().withMaxSize(480,480).start(this);
+
+    private void beginCrop(Uri source, Uri destination) {
+        Crop.of(source, destination).asSquare().withMaxSize(480, 480).start(this);
     }
 
     private void handleCrop(int resultCode, Intent result) {
@@ -383,7 +401,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
     }
 
 
-    public  boolean decodeFile(String path) {
+    public boolean decodeFile(String path) {
         int orientation;
         try {
             if (path == null) {
@@ -401,7 +419,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                 bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
                         bm.getHeight(), m, true);
                 final File f = new File(path);
-                if (f.exists ()) f.delete ();
+                if (f.exists()) f.delete();
                 try {
                     FileOutputStream out = new FileOutputStream(f);
                     bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -417,7 +435,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                 bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
                         bm.getHeight(), m, true);
                 final File f = new File(path);
-                if (f.exists ()) f.delete ();
+                if (f.exists()) f.delete();
                 try {
                     FileOutputStream out = new FileOutputStream(f);
                     bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -428,13 +446,12 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                     e.printStackTrace();
                 }
                 return true;
-            }
-            else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
                 m.postRotate(270);
                 bm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
                         bm.getHeight(), m, true);
                 final File f = new File(path);
-                if (f.exists ()) f.delete ();
+                if (f.exists()) f.delete();
                 try {
                     FileOutputStream out = new FileOutputStream(f);
                     bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -447,7 +464,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                 return true;
             }
             final File f = new File(path);
-            if (f.exists ()) f.delete ();
+            if (f.exists()) f.delete();
             try {
                 FileOutputStream out = new FileOutputStream(f);
                 bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
@@ -588,9 +605,9 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
             IntervalDB db = new IntervalDB(getApplicationContext());
             db.open();
             Cursor cursorSelect = db.getSingleContact(13);
-            if(cursorSelect.getCount()>0){
-                db.updateContact(13,imageOutput.getAbsolutePath());
-            }else {
+            if (cursorSelect.getCount() > 0) {
+                db.updateContact(13, imageOutput.getAbsolutePath());
+            } else {
                 Interval interval = new Interval();
                 interval.setId(13);
                 interval.setTime(imageOutput.getAbsolutePath());
@@ -603,13 +620,13 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
             c.setStatus(status);
 
             String name;
-            if(c.getRealname() == null || c.getRealname().equalsIgnoreCase("")){
+            if (c.getRealname() == null || c.getRealname().equalsIgnoreCase("")) {
                 name = c.getJabberId();
-            }else{
+            } else {
                 name = c.getRealname();
             }
 
-            TimeLine timeLine = new TimeLine(c.getJabberId(), toJson("semua", c.getStatus()), new Date(),name, "0");
+            TimeLine timeLine = new TimeLine(c.getJabberId(), toJson("semua", c.getStatus()), new Date(), name, "0");
             TimeLineDB timeLineDB = TimeLineDB.getInstance(getApplicationContext());
             timeLineDB.insert(timeLine);
 
@@ -620,15 +637,15 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                 startService(intent);
             }
 
-        }else{
+        } else {
             IntervalDB db = new IntervalDB(getApplicationContext());
             db.open();
             Cursor cursorSelect = db.getSingleContact(13);
-            if(cursorSelect.getCount()>0){
-                if(cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME)).equalsIgnoreCase("null")){
-                    db.updateContact(13,"null");
+            if (cursorSelect.getCount() > 0) {
+                if (cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME)).equalsIgnoreCase("null")) {
+                    db.updateContact(13, "null");
                 }
-            }else {
+            } else {
                 Interval interval = new Interval();
                 interval.setId(13);
                 interval.setTime("null");
@@ -641,13 +658,13 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
             c.setStatus(status);
 
             String name;
-            if(c.getRealname() == null || c.getRealname().equalsIgnoreCase("")){
+            if (c.getRealname() == null || c.getRealname().equalsIgnoreCase("")) {
                 name = c.getJabberId();
-            }else{
+            } else {
                 name = c.getRealname();
             }
 
-            TimeLine timeLine = new TimeLine(c.getJabberId(), toJson("status", c.getStatus()), new Date(),name, "0");
+            TimeLine timeLine = new TimeLine(c.getJabberId(), toJson("status", c.getStatus()), new Date(), name, "0");
             TimeLineDB timeLineDB = TimeLineDB.getInstance(getApplicationContext());
             timeLineDB.insert(timeLine);
 
@@ -701,7 +718,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                         1);
 
                 nameValuePairs.add(new BasicNameValuePair("username", contact.getJabberId()));
-                nameValuePairs.add(new BasicNameValuePair("key",key[0]));
+                nameValuePairs.add(new BasicNameValuePair("key", key[0]));
 
                 HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
                 HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
@@ -725,7 +742,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                     code = result.getString("code");
                     code_text = result.getString("code_text");
                     desc = result.getString("description");
-                    if(!code.equalsIgnoreCase("200")) error=true;
+                    if (!code.equalsIgnoreCase("200")) error = true;
                 } else {
                     //Closes the connection.
                     error = true;
@@ -735,7 +752,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
                 }
 
             } catch (ClientProtocolException e) {
-                content =  e.getMessage();
+                content = e.getMessage();
                 error = true;
             } catch (IOException e) {
                 content = e.getMessage();
@@ -755,33 +772,33 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
             pdialog.dismiss();
             if (error) {
                 pdialog.dismiss();
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
+                if (content.contains("invalid_key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
 
                         String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
-                            Toast.makeText(mContext,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                        if (key.equalsIgnoreCase("null")) {
+                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                             pdialog.dismiss();
-                        }else{
+                        } else {
                             new requestDeleteFoto(mContext).execute(key);
                         }
-                    }else{
+                    } else {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                if(code.equalsIgnoreCase("200")){
+                if (code.equalsIgnoreCase("200")) {
                     if (!binder.isConnected()) {
                         showErrorDialog();
                         return;
                     }
                     File a = getFileStreamPath(MediaProcessingUtil
                             .getProfilePicName(contact));
-                    if(a.exists()) a.delete();
+                    if (a.exists()) a.delete();
                     new PhotoUploader().execute();
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext(), desc, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -791,19 +808,19 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
     }
 
 
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if(emojicons.getVisibility()==View.GONE){
+            if (emojicons.getVisibility() == View.GONE) {
          /*       Intent intent = new Intent(this, MainActivity.class);
                 intent.putExtra("from","0" );
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);*/
                 finish();
-            }else {
+            } else {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                 txtStatus.setFocusableInTouchMode(true);
                 txtStatus.requestFocus();
-                InputMethodManager imm =  (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(txtStatus, InputMethodManager.SHOW_IMPLICIT);
                 emojicons.setVisibility(View.GONE);
             }
@@ -813,14 +830,14 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
     }
 
 
-    public static String toJson(String action, String status){
+    public static String toJson(String action, String status) {
         try {
             JSONObject parent = new JSONObject();
             parent.put("action", action);
             parent.put("status", status);
 
             return parent.toString();
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;

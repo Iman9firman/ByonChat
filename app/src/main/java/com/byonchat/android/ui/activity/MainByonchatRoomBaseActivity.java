@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byonchat.android.AdvRecy.ItemMain;
+import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.FragmentDirectory;
@@ -167,10 +168,16 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        onSetStatusBarColor();
-        setContentView(getResourceLayout());
-        onLoadView();
-        onViewReady(savedInstanceState);
+
+        try {
+            onSetStatusBarColor();
+            setContentView(getResourceLayout());
+            onLoadView();
+            onViewReady(savedInstanceState);
+        } catch (Exception e) {
+            finish();
+            Toast.makeText(this, R.string.str_not_able_open_room, Toast.LENGTH_SHORT).show();
+        }
     }
 
     protected void onSetStatusBarColor() {
@@ -186,20 +193,25 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected abstract void onLoadView();
 
     protected void applyConfig() {
-        position = listItem != null ? listItem.id : getIntent().getExtras().getInt(EXTRA_POSITION, 0);
-        username = listItem != null ? listItem.username : getIntent().getExtras().getString(ConversationActivity.KEY_JABBER_ID);
-        color = listItem != null ? listItem.color : getIntent().getExtras().getString(EXTRA_COLOR);
-        colorText = listItem != null ? listItem.colorText : getIntent().getExtras().getString(EXTRA_COLORTEXT);
-        targetURL = listItem != null ? listItem.targetURL : getIntent().getExtras().getString(EXTRA_TARGETURL);
-        category = listItem != null ? listItem.category : getIntent().getExtras().getString(EXTRA_CATEGORY);
-        title = listItem != null ? listItem.title : getIntent().getExtras().getString(EXTRA_TITLE);
-        url_tembak = listItem != null ? listItem.url_tembak : getIntent().getExtras().getString(EXTRA_URL_TEMBAK);
-        id_rooms_tab = listItem != null ? listItem.id_rooms_tab : getIntent().getExtras().getString(EXTRA_ID_ROOMS_TAB);
-        include_pull = listItem != null ? listItem.include_pull : getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);
-        include_latlong = listItem != null ? listItem.include_latlong : getIntent().getExtras().getString(EXTRA_INCLUDE_LATLONG);
-        status = listItem != null ? listItem.status : getIntent().getExtras().getString(EXTRA_STATUS);
-        name = listItem != null ? listItem.name : getIntent().getExtras().getString(EXTRA_NAME);
-        icon = listItem != null ? listItem.icon : getIntent().getExtras().getString(EXTRA_ICON);
+        try {
+            position = listItem != null ? listItem.id : getIntent().getExtras().getInt(EXTRA_POSITION, 0);
+            username = listItem != null ? listItem.username : getIntent().getExtras().getString(ConversationActivity.KEY_JABBER_ID);
+            color = listItem != null ? listItem.color : getIntent().getExtras().getString(EXTRA_COLOR);
+            colorText = listItem != null ? listItem.colorText : getIntent().getExtras().getString(EXTRA_COLORTEXT);
+            targetURL = listItem != null ? listItem.targetURL : getIntent().getExtras().getString(EXTRA_TARGETURL);
+            category = listItem != null ? listItem.category : getIntent().getExtras().getString(EXTRA_CATEGORY);
+            title = listItem != null ? listItem.title : getIntent().getExtras().getString(EXTRA_TITLE);
+            url_tembak = listItem != null ? listItem.url_tembak : getIntent().getExtras().getString(EXTRA_URL_TEMBAK);
+            id_rooms_tab = listItem != null ? listItem.id_rooms_tab : getIntent().getExtras().getString(EXTRA_ID_ROOMS_TAB);
+            include_pull = listItem != null ? listItem.include_pull : getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);
+            include_latlong = listItem != null ? listItem.include_latlong : getIntent().getExtras().getString(EXTRA_INCLUDE_LATLONG);
+            status = listItem != null ? listItem.status : getIntent().getExtras().getString(EXTRA_STATUS);
+            name = listItem != null ? listItem.name : getIntent().getExtras().getString(EXTRA_NAME);
+            icon = listItem != null ? listItem.icon : getIntent().getExtras().getString(EXTRA_ICON);
+        } catch (Exception e) {
+            finish();
+            Toast.makeText(this, R.string.str_not_able_open_room, Toast.LENGTH_SHORT).show();
+        }
     }
 
     protected void onViewReady(Bundle savedInstanceState) {
@@ -377,12 +389,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                         String targetURL = jObj.getString("path");*/
 
                 finish();
-                Intent ii = new Intent(MainByonchatRoomBaseActivity.this, LoadingGetTabRoomActivity.class);
-                ii.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                if (targetURL != null) {
-                    ii.putExtra(ConversationActivity.KEY_TITLE, targetURL);
-                }
-                ii.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
                 startActivity(ii);
                     /*}
                 } catch (JSONException e) {
@@ -528,20 +535,78 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected abstract FloatingActionButton getFloatingButton();
 
     protected void resolveChatRoom(Bundle savedInstanceState) {
-        listItem = getIntent().getParcelableExtra(EXTRA_ITEM);
-        if (listItem == null && savedInstanceState != null) {
-            listItem = savedInstanceState.getParcelable(EXTRA_ITEM);
-        }
+        if (getIntent().hasExtra(EXTRA_ITEM)) {
+            listItem = getIntent().getParcelableExtra(EXTRA_ITEM);
+            if (listItem == null && savedInstanceState != null) {
+                listItem = savedInstanceState.getParcelable(EXTRA_ITEM);
+            }
 
-        if (listItem == null) {
-            finish();
-            return;
+            if (listItem == null) {
+                finish();
+                return;
+            }
+        } else {
+            username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
+            position = getIntent().getExtras().getInt(EXTRA_POSITION, 0);
+            username = getIntent().getExtras().getString(ConversationActivity.KEY_JABBER_ID);
+            color = getIntent().getExtras().getString(EXTRA_COLOR);
+            colorText = getIntent().getExtras().getString(EXTRA_COLORTEXT);
+            targetURL = getIntent().getExtras().getString(EXTRA_TARGETURL);
+            category = getIntent().getExtras().getString(EXTRA_CATEGORY);
+            title = getIntent().getExtras().getString(EXTRA_TITLE);
+            url_tembak = getIntent().getExtras().getString(EXTRA_URL_TEMBAK);
+            id_rooms_tab = getIntent().getExtras().getString(EXTRA_ID_ROOMS_TAB);
+            include_pull = getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);
+            include_latlong = getIntent().getExtras().getString(EXTRA_INCLUDE_LATLONG);
+            status = getIntent().getExtras().getString(EXTRA_STATUS);
+            name = getIntent().getExtras().getString(EXTRA_NAME);
+            icon = getIntent().getExtras().getString(EXTRA_ICON);
+
+            if (username == null && savedInstanceState != null) {
+                username = savedInstanceState.getString(ConversationActivity.KEY_JABBER_ID);
+                position = savedInstanceState.getInt(EXTRA_POSITION, 0);
+                username = savedInstanceState.getString(ConversationActivity.KEY_JABBER_ID);
+                color = savedInstanceState.getString(EXTRA_COLOR);
+                colorText = savedInstanceState.getString(EXTRA_COLORTEXT);
+                targetURL = savedInstanceState.getString(EXTRA_TARGETURL);
+                category = savedInstanceState.getString(EXTRA_CATEGORY);
+                title = savedInstanceState.getString(EXTRA_TITLE);
+                url_tembak = savedInstanceState.getString(EXTRA_URL_TEMBAK);
+                id_rooms_tab = savedInstanceState.getString(EXTRA_ID_ROOMS_TAB);
+                include_pull = savedInstanceState.getString(EXTRA_INCLUDE_PULL);
+                include_latlong = savedInstanceState.getString(EXTRA_INCLUDE_LATLONG);
+                status = savedInstanceState.getString(EXTRA_STATUS);
+                name = savedInstanceState.getString(EXTRA_NAME);
+                icon = savedInstanceState.getString(EXTRA_ICON);
+            }
+
+            if (username == null) {
+                finish();
+                return;
+            }
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(EXTRA_ITEM, listItem);
+        if (getIntent().hasExtra(EXTRA_ITEM)) {
+            outState.putParcelable(EXTRA_ITEM, listItem);
+        } else {
+            outState.putString(ConversationActivity.KEY_JABBER_ID, username);
+            outState.putInt(ByonChatMainRoomActivity.EXTRA_POSITION, position);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_COLOR, color);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_COLORTEXT, colorText);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_TARGETURL, targetURL);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_CATEGORY, category);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_TITLE, title);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_URL_TEMBAK, url_tembak);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_ID_ROOMS_TAB, id_rooms_tab);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_INCLUDE_PULL, include_pull);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_INCLUDE_LATLONG, include_latlong);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_STATUS, status);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_NAME, name);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_ICON, icon);
+        }
     }
 }

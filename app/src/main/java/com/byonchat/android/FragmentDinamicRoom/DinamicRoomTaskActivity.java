@@ -11779,21 +11779,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("as", "jal");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
-
 
                 File sourceFile = new File(resizeAndCompressImageBeforeSend(context, ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
 
                 if (!sourceFile.exists()) {
                     return "File not exists";
                 }
-
-                Log.w("kasmi1", username);
-                Log.w("kasmi2", id_room);
-                Log.w("kasmi3", id_list);
 
                 ContentType contentType = ContentType.create("image/jpeg");
                 entity.addPart("username_room", new StringBody(username));
@@ -11809,13 +11803,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 HttpEntity r_entity = response.getEntity();
 
                 int statusCode = response.getStatusLine().getStatusCode();
-                Log.w("ilona", statusCode + "");
                 if (statusCode == 200) {
-                    Log.w("sampi1", r_entity.toString());
-                    Log.w("sampi2", r_entity.getContent().toString());
-                    responseString = EntityUtils.toString(r_entity);
-
-                    Log.w("habitant", responseString);
+                    String _response = EntityUtils.toString(r_entity); // content will be consume only once
+                    return _response;
                 } else {
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
@@ -11832,7 +11822,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         @Override
         protected void onPostExecute(String result) {
-            Log.w("adaMampuj", result);
 
             try {
                 JSONObject jsonObject = new JSONObject(result);
@@ -11847,7 +11836,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     JSONObject last = sas.getJSONObject(Integer.valueOf(pos));
                     last.put("u", fileNameServer);
 
-                    Log.w("hasid;", jsos.toString());
                     RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsos.toString(), getFlag_content, getFlag_tab, "cild");
                     db.updateDetailRoomWithFlagContent(orderModel);
                     uploadFileChild("looping");
@@ -11856,7 +11844,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.w("kenapa", e.toString());
 
             }
             super.onPostExecute(result);

@@ -102,7 +102,6 @@ import com.byonchat.android.list.AttachmentAdapter;
 import com.byonchat.android.list.utilLoadImage.ImageLoaderLarge;
 import com.byonchat.android.location.ActivityDirection;
 import com.byonchat.android.model.AddChildFotoExModel;
-import com.byonchat.android.personalRoom.coba_aja.LangsungDelete;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
@@ -11409,8 +11408,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             t++;
                                         }
                                         Integer column0 = c.getInt(0);
-                                        String column1 = c.getString(1);
-                                        String column2 = c.getString(2);
                                         Integer column3 = c.getInt(3);
                                         String column4 = c.getString(4);
 
@@ -11435,7 +11432,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         expandableListDetailJSONObject.put(titleS, Items);
 
 
-                                        //  jsonArray.put(jsonCheckBoxDua(customersId, String.valueOf(column0), String.valueOf(column3), String.valueOf(t), String.valueOf(Item.size() - 1), "0", ""));
                                     } while (c.moveToNext());
 
                                     JSONObject jsonObject = new JSONObject();

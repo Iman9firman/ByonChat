@@ -13,9 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -28,7 +26,6 @@ import com.byonchat.android.model.AddChildFotoExModel;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.DialogUtil;
-import com.google.gson.JsonArray;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -157,8 +154,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                         imageB.setVisibility(View.VISIBLE);
                         imageC.setVisibility(View.GONE);
                         imageD.setVisibility(View.GONE);
-
-                        //Picasso.with(context).load("file:////storage/emulated/0/Pictures/com.byonchat.android" + jsonArray.getJSONObject(0).getString("r")).into(imageA);
 
                         imageA.setOnClickListener(new View.OnClickListener() {
                             @Override

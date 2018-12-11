@@ -71,18 +71,6 @@
             android:tint="@color/white"
             app:srcCompat="@drawable/pdf_ico" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/who_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
-            android:padding="5dp"
-            android:visibility="gone"
-            android:tint="@color/white"
-            app:srcCompat="@drawable/pdf_ico" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

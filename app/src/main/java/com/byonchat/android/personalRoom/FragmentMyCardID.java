@@ -21,7 +21,6 @@ import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
-import com.byonchat.android.personalRoom.coba_aja.LangsungDelete;
 import com.byonchat.android.personalRoom.utils.ShareFileFromAPI;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
@@ -65,7 +64,6 @@ public class FragmentMyCardID extends Fragment {
     private Activity mContext ;
     private ImageView imCard;
     private FloatingActionButton big_share, card_share, merge_share;
-    private FloatingActionButton whoS;
     public static int IMGS[] = {
             R.drawable.bt_add_image,
     };
@@ -131,7 +129,6 @@ public class FragmentMyCardID extends Fragment {
         big_share = (FloatingActionButton) sss.findViewById(R.id.main_share);
         card_share = (FloatingActionButton) sss.findViewById(R.id.card_share);
         merge_share = (FloatingActionButton) sss.findViewById(R.id.all_share);
-        whoS = (FloatingActionButton) sss.findViewById(R.id.who_share);
 
         big_share.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,11 +136,9 @@ public class FragmentMyCardID extends Fragment {
                 if(card_share.getVisibility()==View.GONE){
                     card_share.setVisibility(View.VISIBLE);
                     merge_share.setVisibility(View.VISIBLE);
-                    whoS.setVisibility(View.VISIBLE);
                 }else {
                     card_share.setVisibility(View.GONE);
                     merge_share.setVisibility(View.GONE);
-                    whoS.setVisibility(View.GONE);
                 }
             }
         });
@@ -152,14 +147,6 @@ public class FragmentMyCardID extends Fragment {
             @Override
             public void onClick(View v) {
                 addFile();
-            }
-        });
-
-        whoS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent fiuoeh = new Intent(getActivity(), LangsungDelete.class);
-                startActivity(fiuoeh);
             }
         });
 

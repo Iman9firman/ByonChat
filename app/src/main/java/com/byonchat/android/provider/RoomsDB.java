@@ -78,11 +78,11 @@ public class RoomsDB extends SQLiteOpenHelper {
             db.execSQL(mCtx.getString(R.string.sql_createtable_rooms_trending));
             try {
                 db.execSQL("ALTER TABLE " + ROOMS_TABLE + " ADD COLUMN " + ROOMS_ISACTIVE + " text ");
+                db.execSQL("ALTER TABLE " + ROOMS_TABLE + " ADD COLUMN " + ROOMS_TARGET_URL + " text ");
             } catch (SQLiteException e) {
                 //ignored when column exist
                 Log.e("IGNORE IT.", e.toString());
             }
-            db.execSQL("ALTER TABLE " + ROOMS_TABLE + " ADD COLUMN " + ROOMS_TARGET_URL + " text ");
         }
     }
 

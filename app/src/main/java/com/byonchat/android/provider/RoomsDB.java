@@ -35,7 +35,7 @@ public class RoomsDB extends SQLiteOpenHelper {
     private static RoomsDB instance;
 
     private static final String DATABASE_NAME = "ROOMS.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     private static final String ROOMS_TABLE = "rooms";
     private static final String TRENDING_TABLE = "trendings";
@@ -70,6 +70,10 @@ public class RoomsDB extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (newVersion > oldVersion) {
+            if (newVersion == 6) {
+                db.execSQL("DROP TABLE IF EXISTS " + ROOMS_TABLE);
+            }
+
             db.execSQL(mCtx.getString(R.string.sql_createtable_rooms));
             db.execSQL(mCtx.getString(R.string.sql_createtable_rooms_trending));
             try {

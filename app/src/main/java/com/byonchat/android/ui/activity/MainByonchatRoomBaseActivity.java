@@ -694,6 +694,12 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         animator.setDuration(200);
         searchAppBarLayout.setVisibility(View.VISIBLE);
         animator.start();
+
+        searchEditText.requestFocus();
+        View view = getCurrentFocus();
+        InputMethodManager methodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert methodManager != null && view != null;
+        methodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @TargetApi(21)

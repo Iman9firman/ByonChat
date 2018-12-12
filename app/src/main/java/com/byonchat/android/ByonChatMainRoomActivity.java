@@ -120,6 +120,9 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         super.onResume();
 
         vSearchView.closeSearch();
+
+        if (searchAppBarLayout.getVisibility() == View.VISIBLE)
+            hideSearchBar(positionFromRight);
     }
 
     public static String jsonResultType(String json, String type) {

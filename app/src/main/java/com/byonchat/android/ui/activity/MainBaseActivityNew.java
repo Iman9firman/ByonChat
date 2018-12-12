@@ -902,7 +902,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
         bv1.setVisibility(badgeCount == 0 ? View.GONE : View.VISIBLE);
         bv1.setText(badgeCount + "");
-        bv1.show();
+
+        if (badgeCount > 0)
+            bv1.show();
     }
 
     class BroadcastHandler extends BroadcastReceiver {

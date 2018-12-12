@@ -89,6 +89,8 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
             holder.mTextView.setText(im.getTitle());
         }
 
+        holder.mTextView.setSelected(true);
+
         holder.mImageView.setImageResource(R.drawable.logo_byon);
 //        AutofitHelper.create(holder.mTextView);
 

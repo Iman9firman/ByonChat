@@ -1,5 +1,8 @@
 package com.byonchat.android.ui.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
@@ -330,7 +333,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                         .fitCenter()
                         .into(backgroundImage);
             }
-            resolveRecyclerView();
             resolveListTabRooms(botArrayListist.get(0), cur);
         } else {
 
@@ -803,7 +805,83 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected void resolveToolbarExpanded() {
         appBarLayout.setExpanded(true, false);
-        searchView.showSearch(false);
+        if (searchView.isSearchOpen())
+            searchView.showSearch(false);
+    }
+
+    void resolveAnimation() {
+        if (i == 0)
+            vTxtStatusWarning.setText(getResources().getString(R.string.text_empty_selected));
+        else if (i == 1)
+            vTxtStatusWarning.setText(getResources().getString(R.string.text_manage_selected));
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                vTxtStatusWarning.setVisibility(View.VISIBLE);
+                ObjectAnimator animatorY = ObjectAnimator.ofFloat(vTxtStatusWarning, "y", 400f);
+                animatorY.setDuration(700);
+                ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(vTxtStatusWarning, View.ALPHA, 0.0f, 1.0f);
+                alphaAnimation.setDuration(700);
+                AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.playTogether(animatorY, alphaAnimation);
+                animatorSet.start();
+
+                animation();
+
+            }
+        }, 500);
+    }
+
+    void animation() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animatorY = ObjectAnimator.ofFloat(vTxtStatusWarning, "y", 300f);
+                animatorY.setDuration(700);
+                ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(vTxtStatusWarning, View.ALPHA, 1.0f, 0.0f);
+                alphaAnimation.setDuration(700);
+                final AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.playTogether(animatorY, alphaAnimation);
+                animatorSet.start();
+                animatorSet.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animator) {
+
+                        vTxtStatusWarning.setVisibility(View.GONE);
+                        animator = ObjectAnimator.ofFloat(vTxtStatusWarning, "y", 500f);
+                        animator.setDuration(0);
+                        animator.start();
+
+                        i++;
+
+                        if (i == 2) {
+                            i = 0;
+                            resolveAnimation();
+                        } else
+                            resolveAnimation();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animator) {
+                    }
+                });
+
+            }
+        }, 2000);
+
     }
 
     public void addShortcutBadger(Context context) {

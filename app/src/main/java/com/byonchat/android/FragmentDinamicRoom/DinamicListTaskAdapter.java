@@ -2,18 +2,25 @@ package com.byonchat.android.FragmentDinamicRoom;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,14 +37,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * Created by Iman Firmansyah on 3/21/2016.
  */
-public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
     private static String LOG_TAG = "DinamicListTaskAdapter";
     private ArrayList<ContentRoom> mDataset;
+    private ArrayList<ContentRoom> mDatasetFind;
+    private String charString;
     private static MyClickListener myClickListener;
     private static MyClickListenerLongClick myClickListenerLongClick;
     public Context context;
@@ -102,13 +112,14 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public DinamicListTaskAdapter(ArrayList<ContentRoom> myDataset, Context ctx) {
         mDataset = myDataset;
+        mDatasetFind = myDataset;
         context = ctx;
         PHOTO_TEXT_BACKGROUND_COLORS = ctx.getResources().getIntArray(R.array.contacts_text_background_colors);
     }
 
     @Override
     public int getItemViewType(int position) {
-        return mDataset.get(position) != null ? VIEW_ITEM : VIEW_PROG;
+        return mDatasetFind.get(position) != null ? VIEW_ITEM : VIEW_PROG;
     }
 
     @Override
@@ -126,10 +137,15 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return vh;
     }
 
+    public List<ContentRoom> getData() {
+        mDataset = mDatasetFind;
+        return mDatasetFind;
+    }
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof DataObjectHolder) {
-            final String displayName = mDataset.get(position).getTitle();
+            final String displayName = mDatasetFind.get(position).getTitle();
 
             final int backgroundColorToUse = PHOTO_TEXT_BACKGROUND_COLORS[position
                     % PHOTO_TEXT_BACKGROUND_COLORS.length];
@@ -141,10 +157,10 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
 
 
-            if (String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("") || String.valueOf(mDataset.get(position).getStatus()) == null) {
+            if (String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("") || String.valueOf(mDatasetFind.get(position).getStatus()) == null) {
                 ((DataObjectHolder) holder).status.setVisibility(View.INVISIBLE);
             } else {
-                String sts = String.valueOf(mDataset.get(position).getStatus());
+                String sts = String.valueOf(mDatasetFind.get(position).getStatus());
 
                 if (sts.equalsIgnoreCase("")) {
                     ((DataObjectHolder) holder).status.setVisibility(View.GONE);
@@ -167,13 +183,13 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                     Drawable mDrawableLetf = context.getResources().getDrawable(R.drawable.status_work);
 
-                    if (String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("new") || String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("4")) {
+                    if (String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("new") || String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("4")) {
 
-                    } else if (String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("draft") || String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("0")) {
+                    } else if (String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("draft") || String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("0")) {
                         mDrawableLetf.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP);
-                    } else if (String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("proses") || String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("1")) {
+                    } else if (String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("proses") || String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("1")) {
                         mDrawableLetf.setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
-                    } else if (String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("failed") || String.valueOf(mDataset.get(position).getStatus()).equalsIgnoreCase("3")) {
+                    } else if (String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("failed") || String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("3")) {
                         mDrawableLetf.setColorFilter(Color.MAGENTA, PorterDuff.Mode.SRC_ATOP);
                     } else {
                         if (sts.equalsIgnoreCase("Reject")) {
@@ -189,24 +205,24 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 }
             }
 
-            if (String.valueOf(mDataset.get(position).getTime()).equalsIgnoreCase("") || String.valueOf(mDataset.get(position).getTime()) == null) {
+            if (String.valueOf(mDatasetFind.get(position).getTime()).equalsIgnoreCase("") || String.valueOf(mDatasetFind.get(position).getTime()) == null) {
                 ((DataObjectHolder) holder).dateInfo.setVisibility(View.INVISIBLE);
             } else {
-                ((DataObjectHolder) holder).dateInfo.setText(Utility.parseDateToddMMyyyy(String.valueOf(mDataset.get(position).getTime())));
+                setFindedText(((DataObjectHolder) holder).dateInfo, Utility.parseDateToddMMyyyy(String.valueOf(mDatasetFind.get(position).getTime())));
             }
 
-            if (String.valueOf(mDataset.get(position).getContent()).equalsIgnoreCase("") || String.valueOf(mDataset.get(position).getContent()) == null) {
+            if (String.valueOf(mDatasetFind.get(position).getContent()).equalsIgnoreCase("") || String.valueOf(mDatasetFind.get(position).getContent()) == null) {
                 ((DataObjectHolder) holder).label.setVisibility(View.INVISIBLE);
                 ((DataObjectHolder) holder).textInfo.setVisibility(View.INVISIBLE);
                 ((DataObjectHolder) holder).titleCenter.setVisibility(View.VISIBLE);
-                ((DataObjectHolder) holder).titleCenter.setText(displayName);
-            } else {
 
-                ((DataObjectHolder) holder).label.setText(displayName);
+                setFindedText(((DataObjectHolder) holder).titleCenter, displayName);
+            } else {
+                setFindedText(((DataObjectHolder) holder).label, displayName);
 
                 JSONObject jObject = null;
                 try {
-                    jObject = new JSONObject(String.valueOf(mDataset.get(position).getContent()));
+                    jObject = new JSONObject(String.valueOf(mDatasetFind.get(position).getContent()));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -214,7 +230,10 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 if (jObject != null) {
                     ((DataObjectHolder) holder).label.setVisibility(View.VISIBLE);
                     ((DataObjectHolder) holder).titleCenter.setVisibility(View.INVISIBLE);
-                    ((DataObjectHolder) holder).textInfo.setText(mDataset.get(position).getContent());
+
+                    String content = mDatasetFind.get(position).getContent();
+
+                    setFindedText(((DataObjectHolder) holder).textInfo, content);
                 } else {
 
                 }
@@ -225,19 +244,38 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     }
 
+    protected void setFindedText(TextView view, String args) {
+        if (charString != null && !charString.isEmpty()) {
+            int startPos = args.toLowerCase(Locale.getDefault()).indexOf(charString.toLowerCase(Locale.getDefault()));
+            int endPos = startPos + charString.length();
+
+            if (startPos != -1) {
+                Spannable spannable = new SpannableString(args);
+                ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                view.setText(spannable);
+            } else {
+                view.setText(args);
+            }
+        } else {
+            view.setText(args);
+        }
+    }
+
     public void addItem(ContentRoom dataObj, int index) {
-        mDataset.add(dataObj);
+        mDatasetFind.add(dataObj);
         notifyItemInserted(index);
     }
 
     public void deleteItem(int index) {
-        mDataset.remove(index);
+        mDatasetFind.remove(index);
         notifyItemRemoved(index);
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return mDatasetFind.size();
     }
 
     public interface MyClickListener {
@@ -246,5 +284,39 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public interface MyClickListenerLongClick {
         public void onLongClick(int position, View v);
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();
+                charString = constraint.toString().toLowerCase(Locale.getDefault());
+
+                if (charString.isEmpty()) {
+                    results.values = mDataset;
+                    results.count = mDataset.size();
+                } else {
+                    List<ContentRoom> filteredData = new ArrayList<>();
+                    for (ContentRoom row : mDataset) {
+                        if (row.getTitle().toString().toLowerCase(Locale.getDefault()).contains(charString)
+                                || row.getContent().toString().toLowerCase(Locale.getDefault()).contains(charString)
+                                || Utility.parseDateToddMMyyyy(String.valueOf(row.getTime())).toLowerCase(Locale.getDefault()).contains(charString)) {
+                            filteredData.add(row);
+                        }
+                    }
+                    results.values = filteredData;
+                    results.count = filteredData.size();
+                }
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mDatasetFind = (ArrayList<ContentRoom>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }

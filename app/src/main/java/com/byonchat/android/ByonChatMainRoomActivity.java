@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Build;
@@ -38,6 +40,7 @@ import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.Utility;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -91,6 +94,7 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         vImgToolbarBack = getImgToolbarBack();
         vToolbarTitle = getToolbarTitle();
         vAppbar = getAppBar();
+        vSearchView = getMaterialSearchView();
         vContainerFragment = getFrameFragment();
         vFloatingButton = getFloatingButton();
     }
@@ -102,6 +106,14 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         resolveToolbar();
         resolveFragment();
         resolveFloatingButton();
+        resolveMaterialSearchView();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        vSearchView.closeSearch();
     }
 
     public static String jsonResultType(String json, String type) {
@@ -175,6 +187,70 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
                     intent.putExtra("uu", value.get(1).toString());
                     intent.putExtra("ii", value.get(2).toString());
                     intent.putExtra("idTask", listItem.get(posss).getIdHex());
+                    intent.putExtra("col", value.get(3).toString());
+                    intent.putExtra("ll", value.get(4).toString());
+                    intent.putExtra("from", value.get(5).toString());
+                    if (!statusBaru.equalsIgnoreCase("")) {
+                        intent.putExtra("isReject", statusBaru);
+                    }
+
+
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public String idLoof(ContentRoom contentRoomFind) {
+        List value = (List) Constants.map.get(position);
+        if (value != null) {
+            String statusBaru = "";
+            ArrayList<ContentRoom> listItem = new ArrayList<>();
+            ArrayList<RoomsDetail> listItem2;
+            listItem2 = Byonchat.getBotListDB().allRoomDetailFormWithFlag("", value.get(1).toString(), value.get(2).toString(), "parent");
+            for (RoomsDetail aa : listItem2) {
+
+                ArrayList<RoomsDetail> listItem3 = Byonchat.getBotListDB().allRoomDetailFormWithFlag(aa.getId(), value.get(1).toString(), value.get(2).toString(), "list");
+                for (RoomsDetail ii : listItem3) {
+                    if (ii.getFlag_content().equalsIgnoreCase("1")) {
+                        Log.w("2abub", ii.getContent());
+                        JSONObject jO = null;
+                        try {
+                            jO = new JSONObject(ii.getContent());
+                            statusBaru = jO.getString("bb");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                String date = "";
+                date = aa.getContent();
+                ContentRoom contentRoom = new ContentRoom(aa.getId(), "", date, "", "", "", "");
+                listItem.add(contentRoom);
+            }
+
+            Collections.sort(listItem, (e1, e2) -> {
+                Date satu = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e1.getTime()));
+                Date dua = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e2.getTime()));
+                if (satu.compareTo(dua) > 0) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            });
+
+            if (value.size() > 1) {
+                try {
+                    Intent intent = new Intent(getApplicationContext(), DinamicRoomTaskActivity.class);
+                    intent.putExtra("tt", value.get(0).toString());
+                    intent.putExtra("uu", value.get(1).toString());
+                    intent.putExtra("ii", value.get(2).toString());
+                    intent.putExtra("idTask", contentRoomFind.getIdHex());
                     intent.putExtra("col", value.get(3).toString());
                     intent.putExtra("ll", value.get(4).toString());
                     intent.putExtra("from", value.get(5).toString());
@@ -323,6 +399,50 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         return null;
     }
 
+    public String deleteById(ContentRoom contentRoomFind) {
+        final List value = (List) Constants.map.get(position);
+        if (value != null) {
+            final ArrayList<RoomsDetail> listItem2;
+            listItem2 = Byonchat.getBotListDB().allRoomDetailFormWithFlag("", value.get(1).toString(), value.get(2).toString(), "parent");
+
+            String title = "";
+            final AlertDialog.Builder alertbox = new AlertDialog.Builder(ByonChatMainRoomActivity.this);
+            alertbox.setTitle("Delete");
+            alertbox.setMessage(title);
+            alertbox.setPositiveButton("Yes", (arg0, arg1) -> {
+                if (value.size() > 1) {
+                    ArrayList<ContentRoom> listItem = new ArrayList<>();
+                    for (RoomsDetail aa : listItem2) {
+                        String date = "";
+                        date = aa.getContent();
+                        ContentRoom contentRoom = new ContentRoom(aa.getId(), "", date, "", "", "", "");
+                        listItem.add(contentRoom);
+                    }
+
+                    Collections.sort(listItem, (e1, e2) -> {
+                        Date satu = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e1.getTime()));
+                        Date dua = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e2.getTime()));
+                        if (satu.compareTo(dua) > 0) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    });
+
+                    Byonchat.getBotListDB().deleteRoomsDetailbyId(contentRoomFind.getIdHex(), value.get(2).toString(), value.get(1).toString());
+                    finish();
+                    getIntent().putExtra(KEY_POSITION, position);
+                    startActivity(getIntent());
+                }
+            });
+            alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
+            });
+            alertbox.show();
+        }
+
+        return null;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_room_dinamic, menu);
@@ -331,8 +451,18 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 
         action_add.setVisible(false);
         action_refresh.setVisible(false);
-
         invalidateOptionsMenu();
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        Drawable yourdrawable = item.getIcon();
+        yourdrawable.mutate();
+        yourdrawable.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_IN);
+        vSearchView.setMenuItem(item);
+        if (vSearchView.isSearchOpen()) {
+//            resolveOriginView(false);
+            item.setVisible(false);
+        }
+
         return true;
     }
 
@@ -381,6 +511,12 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
     @Override
     protected FrameLayout getFrameFragment() {
         return (FrameLayout) findViewById(R.id.container_open_fragment);
+    }
+
+    @NonNull
+    @Override
+    protected MaterialSearchView getMaterialSearchView() {
+        return (MaterialSearchView) findViewById(R.id.search_view_main);
     }
 
     @NonNull

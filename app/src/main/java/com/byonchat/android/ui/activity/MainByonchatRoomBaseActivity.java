@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +26,8 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -71,6 +75,7 @@ import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.tempSchedule.TempScheduleRoom;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.byonchat.android.utils.Utility;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -160,6 +165,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected TextView vToolbarTitle;
 
     @NonNull
+    protected MaterialSearchView vSearchView;
+
+    @NonNull
     protected FrameLayout vContainerFragment;
 
     @NonNull
@@ -193,25 +201,22 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected abstract void onLoadView();
 
     protected void applyConfig() {
-        try {
-            position = listItem != null ? listItem.id : getIntent().getExtras().getInt(EXTRA_POSITION, 0);
-            username = listItem != null ? listItem.username : getIntent().getExtras().getString(ConversationActivity.KEY_JABBER_ID);
-            color = listItem != null ? listItem.color : getIntent().getExtras().getString(EXTRA_COLOR);
-            colorText = listItem != null ? listItem.colorText : getIntent().getExtras().getString(EXTRA_COLORTEXT);
-            targetURL = listItem != null ? listItem.targetURL : getIntent().getExtras().getString(EXTRA_TARGETURL);
-            category = listItem != null ? listItem.category : getIntent().getExtras().getString(EXTRA_CATEGORY);
-            title = listItem != null ? listItem.title : getIntent().getExtras().getString(EXTRA_TITLE);
-            url_tembak = listItem != null ? listItem.url_tembak : getIntent().getExtras().getString(EXTRA_URL_TEMBAK);
-            id_rooms_tab = listItem != null ? listItem.id_rooms_tab : getIntent().getExtras().getString(EXTRA_ID_ROOMS_TAB);
-            include_pull = listItem != null ? listItem.include_pull : getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);
-            include_latlong = listItem != null ? listItem.include_latlong : getIntent().getExtras().getString(EXTRA_INCLUDE_LATLONG);
-            status = listItem != null ? listItem.status : getIntent().getExtras().getString(EXTRA_STATUS);
-            name = listItem != null ? listItem.name : getIntent().getExtras().getString(EXTRA_NAME);
-            icon = listItem != null ? listItem.icon : getIntent().getExtras().getString(EXTRA_ICON);
-        } catch (Exception e) {
-            finish();
-            Toast.makeText(this, R.string.str_not_able_open_room, Toast.LENGTH_SHORT).show();
-        }
+        position = listItem != null ? listItem.id : getIntent().getExtras().getInt(EXTRA_POSITION, 0);
+        username = listItem != null ? listItem.username : getIntent().getExtras().getString(ConversationActivity.KEY_JABBER_ID);
+        color = listItem != null ? listItem.color : getIntent().getExtras().getString(EXTRA_COLOR);
+        colorText = listItem != null ? listItem.colorText : getIntent().getExtras().getString(EXTRA_COLORTEXT);
+        targetURL = listItem != null ? listItem.targetURL : getIntent().getExtras().getString(EXTRA_TARGETURL);
+        category = listItem != null ? listItem.category : getIntent().getExtras().getString(EXTRA_CATEGORY);
+        title = listItem != null ? listItem.title : getIntent().getExtras().getString(EXTRA_TITLE);
+        url_tembak = listItem != null ? listItem.url_tembak : getIntent().getExtras().getString(EXTRA_URL_TEMBAK);
+        id_rooms_tab = listItem != null ? listItem.id_rooms_tab : getIntent().getExtras().getString(EXTRA_ID_ROOMS_TAB);
+        include_pull = listItem != null ? listItem.include_pull : getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);
+        include_latlong = listItem != null ? listItem.include_latlong : getIntent().getExtras().getString(EXTRA_INCLUDE_LATLONG);
+        status = listItem != null ? listItem.status : getIntent().getExtras().getString(EXTRA_STATUS);
+        name = listItem != null ? listItem.name : getIntent().getExtras().getString(EXTRA_NAME);
+        icon = listItem != null ? listItem.icon : getIntent().getExtras().getString(EXTRA_ICON);
+
+        Log.w("Tambahan", category);
     }
 
     protected void onViewReady(Bundle savedInstanceState) {
@@ -237,6 +242,81 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         vToolbarTitle.setText(title);
     }
 
+    protected void resolveMaterialSearchView() {
+        vSearchView.setHint("Search ...");
+
+        vSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                View view = findViewById(R.id.action_short);
+                if (null != view)
+                    view.setVisibility(View.GONE);
+
+                if (query.length() == 0) {
+//                    resolveOriginView(false);
+                } else {
+//                    resolveOriginView(true);
+                }
+
+                if (mFragment instanceof FragmentRoomMultipleTask) {
+                    FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                    fragment.onActionSearch(query);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                View view = findViewById(R.id.action_short);
+                if (null != view)
+                    view.setVisibility(View.GONE);
+
+                if (query.length() == 0) {
+//                    resolveOriginView(false);
+                } else {
+//                    resolveOriginView(true);
+                }
+
+                if (mFragment instanceof FragmentRoomMultipleTask) {
+                    FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                    fragment.onActionSearch(query);
+                }
+                return true;
+            }
+        });
+
+        vSearchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                View view = findViewById(R.id.action_short);
+                if (null != view)
+                    view.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                View view = findViewById(R.id.action_short);
+                if (null != view)
+                    view.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    /*@Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.ims_menu_main_search, menu);
+        MenuItem item = menu.findItem(R.id.main_search);
+        Drawable yourdrawable = item.getIcon();
+        yourdrawable.mutate();
+        yourdrawable.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_IN);
+        vSearchView.setMenuItem(item);
+        if (vSearchView.isSearchOpen()) {
+//            resolveOriginView(false);
+            item.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }*/
+
     protected void resolveFragment() {
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
 
@@ -254,7 +334,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     show = true;
                     mFragment = FragmentMyVideo.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, "", false, MainByonchatRoomBaseActivity.this);
                 } else if (category.equalsIgnoreCase("4")) {
-                    Log.w("kabadu", url_tembak);
+                    Log.w("kabadu", url_tembak + " - " + include_pull);
                     if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);
@@ -530,6 +610,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     @NonNull
     protected abstract FrameLayout getFrameFragment();
+
+    @NonNull
+    protected abstract MaterialSearchView getMaterialSearchView();
 
     @NonNull
     protected abstract FloatingActionButton getFloatingButton();

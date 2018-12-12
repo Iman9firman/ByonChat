@@ -97,9 +97,10 @@
                 style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin100"
+                android:layout_marginTop="@dimen/margin140"
                 android:fadingEdgeLength="48dp"
                 android:requiresFadingEdge="vertical"
+                android:text="You have not any selected rooms"
                 android:textAlignment="center"
                 android:textColor="@color/textColorSecondary"
                 android:textSize="16sp" />

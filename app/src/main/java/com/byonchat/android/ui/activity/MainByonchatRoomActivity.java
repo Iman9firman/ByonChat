@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.R;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 public class MainByonchatRoomActivity extends MainByonchatRoomBaseActivity {
 
@@ -37,6 +38,7 @@ public class MainByonchatRoomActivity extends MainByonchatRoomBaseActivity {
         vImgToolbarBack = getImgToolbarBack();
         vToolbarTitle = getToolbarTitle();
         vAppbar = getAppBar();
+        vSearchView = getMaterialSearchView();
         vContainerFragment = getFrameFragment();
         vFloatingButton = getFloatingButton();
     }
@@ -105,5 +107,11 @@ public class MainByonchatRoomActivity extends MainByonchatRoomBaseActivity {
     @Override
     protected FloatingActionButton getFloatingButton() {
         return (FloatingActionButton) findViewById(R.id.fabAction);
+    }
+
+    @NonNull
+    @Override
+    protected MaterialSearchView getMaterialSearchView() {
+        return (MaterialSearchView) findViewById(R.id.search_view_main);
     }
 }

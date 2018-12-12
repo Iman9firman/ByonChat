@@ -31,30 +31,44 @@
             app:popupTheme="@style/AppTheme.AppBarOverlay.Black">
 
             <RelativeLayout
-                android:id="@+id/toolbar_back"
-                android:layout_width="?actionBarSize"
-                android:layout_height="?actionBarSize"
-                android:background="?selectableItemBackground"
-                android:gravity="center">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/img_toolbar_back"
+                <RelativeLayout
+                    android:id="@+id/toolbar_back"
+                    android:layout_width="?actionBarSize"
+                    android:layout_height="?actionBarSize"
+                    android:background="?selectableItemBackground"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/img_toolbar_back"
+                        style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Title"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:backgroundTint="@color/ims_chat_list_primary_color"
+                        android:tint="@color/ims_chat_list_primary_color"
+                        app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/toolbar_title"
                     style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Title"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:backgroundTint="@color/ims_chat_list_primary_color"
-                    android:tint="@color/ims_chat_list_primary_color"
-                    app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/toolbar_back"
+                    android:text="Chat"
+                    android:textColor="@color/ims_chat_list_primary_color" />
 
+                <com.miguelcatalan.materialsearchview.MaterialSearchView
+                    android:id="@+id/search_view_main"
+                    style="@style/MaterialSearchViewStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_collapseMode="pin" />
             </RelativeLayout>
-
-            <TextView
-                android:id="@+id/toolbar_title"
-                style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chat"
-                android:textColor="@color/ims_chat_list_primary_color" />
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>

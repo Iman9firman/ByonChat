@@ -146,6 +146,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         resolveRoomConfig(savedInstanceState);
 
         resolveView();
+        resolveAnimation();
         resolveListRooms();
         resolveOpenRooms();
     }
@@ -307,6 +308,7 @@ public class MainActivityNew extends MainBaseActivityNew {
             cursorSelect.close();
             db.close();
 
+            resolveRecyclerView();
             resolveNavHeader();
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
@@ -382,6 +384,8 @@ public class MainActivityNew extends MainBaseActivityNew {
 
             vBtnAddRooms.setOnClickListener(v -> {
                 Intent intent = new Intent(getApplicationContext(), NewSearchRoomActivity.class);
+                intent.putExtra(Constants.EXTRA_COLOR, color);
+                intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
                 intent.putExtra("search", "all");
                 startActivity(intent);
             });

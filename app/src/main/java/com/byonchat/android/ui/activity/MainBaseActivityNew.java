@@ -303,6 +303,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         colorText = "FFFFFF";
         room_id = 1;
 
+        resolveRecyclerView();
         resolveNavHeader();
     }
 
@@ -1154,6 +1155,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected void RefreshRoom() {
         Byonchat.getRoomsDB().open();
+        Byonchat.getRoomsDB().deleteRooms();
         botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
         Byonchat.getRoomsDB().close();
         try {

@@ -824,6 +824,7 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                     Message.parsedMessageBodyHtmlCode(msg, getApplicationContext()), hourInfoFormat.format(msg
                     .getSendDate()), cparty, total, Message.getStatusMessage(msg, Byonchat.getMessengerHelper().getMyContact().getJabberId()), signature
             );
+            item.type = IconItem.TYPE_ORIGIN;
             if (cparty instanceof Contact) {
                 //  setProfilePicture(item, (Contact) cparty);
             }

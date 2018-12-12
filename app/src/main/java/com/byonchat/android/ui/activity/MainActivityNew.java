@@ -308,6 +308,8 @@ public class MainActivityNew extends MainBaseActivityNew {
             cursorSelect.close();
             db.close();
 
+            mActivity = this;
+
             resolveNavHeader();
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 

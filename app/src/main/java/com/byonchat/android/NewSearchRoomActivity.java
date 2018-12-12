@@ -1128,6 +1128,11 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                 roomsDB.insertRooms(contactBot);
                 roomsDB.close();
 
+                if (MainActivityNew.mActivity != null) {
+                    MainActivityNew.mActivity.finish();
+                }
+
+                finish();
                 Intent intent = new Intent(NewSearchRoomActivity.this, MainActivityNew.class);
                 intent.putExtra(ConversationActivity.KEY_JABBER_ID, name);
                 intent.putExtra(ConversationActivity.KEY_TITLE, path);

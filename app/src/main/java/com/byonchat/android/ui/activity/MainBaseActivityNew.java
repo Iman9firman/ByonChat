@@ -3,6 +3,7 @@ package com.byonchat.android.ui.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
@@ -236,6 +237,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected static final String ACTION_REFRESH_NOTIF = MainBaseActivityNew.class
             .getName() + ".refreshNotif";
 
+    public static Activity mActivity;
     protected boolean isVisible = false;
     protected float radius = 5f;
     protected String protect = "";
@@ -1155,7 +1157,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected void RefreshRoom() {
         Byonchat.getRoomsDB().open();
-        Byonchat.getRoomsDB().deleteRooms();
         botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
         Byonchat.getRoomsDB().close();
         try {

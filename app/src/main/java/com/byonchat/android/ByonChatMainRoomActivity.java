@@ -22,8 +22,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,12 +99,16 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         vSearchView = getMaterialSearchView();
         vContainerFragment = getFrameFragment();
         vFloatingButton = getFloatingButton();
+        searchAppBarLayout = getFrameSearchAppBar();
+        searchToolBar = getSearchToolbar();
+        searchEditText = getSearchForm();
     }
 
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         super.onViewReady(savedInstanceState);
 
+        resolveSearchBar();
         resolveToolbar();
         resolveFragment();
         resolveFloatingButton();
@@ -453,7 +459,7 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         action_refresh.setVisible(false);
         invalidateOptionsMenu();
 
-        MenuItem item = menu.findItem(R.id.action_search);
+        /*MenuItem item = menu.findItem(R.id.action_search);
         Drawable yourdrawable = item.getIcon();
         yourdrawable.mutate();
         yourdrawable.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_IN);
@@ -461,7 +467,7 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         if (vSearchView.isSearchOpen()) {
 //            resolveOriginView(false);
             item.setVisible(false);
-        }
+        }*/
 
         return true;
     }
@@ -469,6 +475,9 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_search:
+                showSearchBar(positionFromRight);
+                return true;
             case R.id.action_short:
                 createShortcut();
                 return true;
@@ -486,7 +495,7 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
     @NonNull
     @Override
     protected AppBarLayout getAppBar() {
-        return (AppBarLayout) findViewById(R.id.app_bar);
+        return (AppBarLayout) findViewById(R.id.appbar);
     }
 
     @NonNull
@@ -523,6 +532,24 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
     @Override
     protected FloatingActionButton getFloatingButton() {
         return (FloatingActionButton) findViewById(R.id.fabAction);
+    }
+
+    @NonNull
+    @Override
+    protected LinearLayout getFrameSearchAppBar() {
+        return (LinearLayout) findViewById(R.id.frame_search_appbar);
+    }
+
+    @NonNull
+    @Override
+    protected Toolbar getSearchToolbar() {
+        return (Toolbar) findViewById(R.id.search_toolbar);
+    }
+
+    @NonNull
+    @Override
+    protected EditText getSearchForm() {
+        return (EditText) findViewById(R.id.search_edittext);
     }
 }
 

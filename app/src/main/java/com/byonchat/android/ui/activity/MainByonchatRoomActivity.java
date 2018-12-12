@@ -9,8 +9,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -113,5 +115,23 @@ public class MainByonchatRoomActivity extends MainByonchatRoomBaseActivity {
     @Override
     protected MaterialSearchView getMaterialSearchView() {
         return (MaterialSearchView) findViewById(R.id.search_view_main);
+    }
+
+    @NonNull
+    @Override
+    protected LinearLayout getFrameSearchAppBar() {
+        return (LinearLayout) findViewById(R.id.frame_search_appbar);
+    }
+
+    @NonNull
+    @Override
+    protected Toolbar getSearchToolbar() {
+        return (Toolbar) findViewById(R.id.search_toolbar);
+    }
+
+    @NonNull
+    @Override
+    protected EditText getSearchForm() {
+        return (EditText) findViewById(R.id.search_edittext);
     }
 }

@@ -1,6 +1,9 @@
 package com.byonchat.android.ui.activity;
 
+import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,15 +27,21 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -75,7 +84,10 @@ import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.tempSchedule.TempScheduleRoom;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.byonchat.android.utils.Utility;
+import com.googlecode.mp4parser.authoring.Edit;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -149,6 +161,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected String name;
     protected String icon;
 
+    protected boolean isSearchView = false;
+    protected static float positionFromRight = 1;
+
     @NonNull
     protected AppBarLayout vAppbar;
 
@@ -172,6 +187,15 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     @NonNull
     protected FloatingActionButton vFloatingButton;
+
+    @NonNull
+    protected View searchAppBarLayout;
+
+    @NonNull
+    protected Toolbar searchToolBar;
+
+    @NonNull
+    protected EditText searchEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +247,38 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         resolveChatRoom(savedInstanceState);
 
         applyConfig();
+    }
+
+    protected void resolveSearchBar() {
+        if (searchToolBar != null) {
+            searchToolBar.setNavigationIcon(R.drawable.ic_action_navigation_arrow_back);
+            searchAppBarLayout.setVisibility(View.GONE);
+            searchToolBar.setNavigationOnClickListener(v -> {
+                hideSearchBar(positionFromRight);
+            });
+
+            searchEditText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (mFragment instanceof FragmentRoomMultipleTask) {
+                        FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (mFragment instanceof FragmentRoomMultipleTask) {
+                        FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
+                    }
+                }
+            });
+        }
     }
 
     protected void resolveToolbar() {
@@ -593,6 +649,97 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         popup.showAtLocation(listViewSort, Gravity.NO_GRAVITY, p.x + OFFSET_X, p.y + OFFSET_Y);
     }
 
+    @TargetApi(21)
+    protected void showSearchBar(float positionFromRight) {
+        isSearchView = true;
+        AnimatorSet set = new AnimatorSet();
+        set.setDuration(100).addListener(new com.nineoldandroids.animation.Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(com.nineoldandroids.animation.Animator animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(com.nineoldandroids.animation.Animator animation) {
+                searchEditText.requestFocus();
+                if (searchEditText != null) {
+                    InputMethodManager imm = (InputMethodManager)
+                            searchEditText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(com.nineoldandroids.animation.Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(com.nineoldandroids.animation.Animator animation) {
+
+            }
+        });
+        set.start();
+
+        int cx = vToolbar.getWidth() - (int) (getResources().getDimension(R.dimen.margin48) * (0.5f + positionFromRight));
+        int cy = (vToolbar.getTop() + vToolbar.getBottom()) / 2;
+
+        int dx = Math.max(cx, vToolbar.getWidth() - cx);
+        int dy = Math.max(cy, vToolbar.getHeight() - cy);
+        float finalRadius = (float) Math.hypot(dx, dy);
+
+        final Animator animator;
+        animator = ViewAnimationUtils
+                .createCircularReveal(searchAppBarLayout, cx, cy, 0, finalRadius);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(200);
+        searchAppBarLayout.setVisibility(View.VISIBLE);
+        animator.start();
+    }
+
+    @TargetApi(21)
+    protected void hideSearchBar(float positionFromRight) {
+        isSearchView = false;
+        int cx = vToolbar.getWidth() - (int) (getResources().getDimension(R.dimen.margin48) * (0.5f + positionFromRight));
+        int cy = (vToolbar.getTop() + vToolbar.getBottom()) / 2;
+
+        int dx = Math.max(cx, vToolbar.getWidth() - cx);
+        int dy = Math.max(cy, vToolbar.getHeight() - cy);
+        float finalRadius = (float) Math.hypot(dx, dy);
+
+        Animator animator;
+        animator = ViewAnimationUtils
+                .createCircularReveal(searchAppBarLayout, cx, cy, finalRadius, 0);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(200);
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                searchAppBarLayout.setVisibility(View.GONE);
+                if (searchEditText != null) {
+                    InputMethodManager imm = (InputMethodManager)
+                            searchEditText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+            }
+        });
+        searchEditText.setText("");
+        animator.start();
+
+        vAppbar.setVisibility(View.VISIBLE);
+    }
+
     @NonNull
     protected abstract AppBarLayout getAppBar();
 
@@ -616,6 +763,15 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     @NonNull
     protected abstract FloatingActionButton getFloatingButton();
+
+    @NonNull
+    protected abstract LinearLayout getFrameSearchAppBar();
+
+    @NonNull
+    protected abstract Toolbar getSearchToolbar();
+
+    @NonNull
+    protected abstract EditText getSearchForm();
 
     protected void resolveChatRoom(Bundle savedInstanceState) {
         if (getIntent().hasExtra(EXTRA_ITEM)) {

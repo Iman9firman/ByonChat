@@ -1,11 +1,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" >
-    <item android:id="@+id/action_add" android:title="Add Room"
-        android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_short" android:title="Create Shortcut"
-        android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_refresh" android:title="Refresh Tab"
-        android:orderInCategory="100" app:showAsAction="never" />
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_action_action_search"
+        android:orderInCategory="100"
+        android:title="Search"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_add"
+        android:orderInCategory="100"
+        android:title="Add Room"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_short"
+        android:orderInCategory="100"
+        android:title="Create Shortcut"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:title="Refresh Tab"
+        app:showAsAction="never" />
 
 </menu>

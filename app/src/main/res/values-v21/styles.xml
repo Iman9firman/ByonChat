@@ -9,6 +9,14 @@
         <item name="actionModeBackground">@color/grayOffTab</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/grayOffTab</item>
+        <item name="android:windowBackground">@drawable/background_splash</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="HeaderTransparent" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:windowTranslucentStatus">true</item>

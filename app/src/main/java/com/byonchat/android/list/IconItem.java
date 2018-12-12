@@ -1,24 +1,37 @@
 package com.byonchat.android.list;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.byonchat.android.provider.ChatParty;
 
 import java.util.Comparator;
 
-public class IconItem {
-    private String jabberId;
-    private String title;
-    private String info;
-    private long unread;
-    private String dateInfo;
-    private ChatParty chatParty;
-    private Uri imageUri;
-    private boolean editMode;
-    private String value;
-    private int imageAction = 0;
-    private boolean haveRoooms = false;
-    private String signature;
+public class IconItem implements Parcelable {
+    public static final String TYPE_ORIGIN = "type_origin";
+    public static final String TYPE_MESSAGE_FIND = "type_message_find";
+    public boolean isSelected;
+    public boolean isPinned;
+    public boolean isMuted;
+
+    public String jabberId;
+    public String title;
+    public String info;
+    public long unread;
+    public String dateInfo;
+    public ChatParty chatParty;
+    public Uri imageUri;
+    public boolean editMode;
+    public String value;
+    public int imageAction = 0;
+    public boolean haveRoooms = false;
+    public String signature;
+    public String type;
+
+    public IconItem() {
+
+    }
 
     public IconItem(String jabberId, String title, String info,
                     String dateInfo, ChatParty contact) {
@@ -30,7 +43,7 @@ public class IconItem {
     }
 
     public IconItem(String jabberId, String title, String info,
-                    String dateInfo, ChatParty contact, long unreadMessage, String type,String signature) {
+                    String dateInfo, ChatParty contact, long unreadMessage, String type, String signature) {
         this.jabberId = jabberId;
         this.title = title;
         this.info = info;
@@ -51,8 +64,9 @@ public class IconItem {
         this.unread = unreadMessage;
         this.value = type;
     }
+
     public IconItem(String jabberId, String title, String info,
-                    String dateInfo, ChatParty contact, long unreadMessage, String type,boolean haveRoooms) {
+                    String dateInfo, ChatParty contact, long unreadMessage, String type, boolean haveRoooms) {
         this.jabberId = jabberId;
         this.title = title;
         this.info = info;
@@ -74,7 +88,21 @@ public class IconItem {
 
     };
 
+    public boolean isSelected() {
+        return isSelected;
+    }
 
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isMuted() {
+        return isMuted;
+    }
+
+    public void setMuted(boolean muted) {
+        isMuted = muted;
+    }
 
     public String getTitle() {
         return title;
@@ -164,4 +192,58 @@ public class IconItem {
         }
         return false;
     }
+
+    public boolean areContentsTheSame(IconItem item) {
+        return jabberId.equals(item.jabberId)
+                && title.equals(item.title)
+                && info.equals(item.info)
+                /*&& unread == item.unread*/
+                && dateInfo.equals(item.dateInfo)
+                /*&& chatParty.equals(item.chatParty)
+                && imageUri.equals(item.imageUri)
+                && editMode == item.editMode
+                && value.equals(item.value)
+                && imageAction == item.imageAction
+                && haveRoooms == item.haveRoooms
+                && signature.equals(item.signature)*/
+                && type.equals(item.type);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(jabberId);
+        parcel.writeString(title);
+        parcel.writeString(info);
+        parcel.writeLong(unread);
+        parcel.writeString(dateInfo);
+        parcel.writeString(value);
+        parcel.writeString(signature);
+    }
+
+    protected IconItem(Parcel in) {
+        jabberId = in.readString();
+        title = in.readString();
+        info = in.readString();
+        unread = in.readLong();
+        dateInfo = in.readString();
+        value = in.readString();
+        signature = in.readString();
+    }
+
+    public static final Creator<IconItem> CREATOR = new Creator<IconItem>() {
+        @Override
+        public IconItem createFromParcel(Parcel in) {
+            return new IconItem(in);
+        }
+
+        @Override
+        public IconItem[] newArray(int size) {
+            return new IconItem[size];
+        }
+    };
 }

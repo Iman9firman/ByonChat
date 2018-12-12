@@ -8,21 +8,39 @@ public class ContactBot {
     public String link;
     public String realname;
     public String type;
+    public boolean isActive;
+    public String targetUrl;
 
-    public ContactBot(String name,String desc,String realname,String link, String type) {
+    public ContactBot(String name, String desc, String realname, String link, String type) {
         this.name = name;
         this.desc = desc;
         this.link = link;
         this.realname = realname;
         this.type = type;
     }
-    public ContactBot(String id,String name,String desc,String realname,String link, String type) {
+
+    public ContactBot(String id, String name, String desc, String realname, String link, String type) {
         this.id = id;
         this.name = name;
         this.desc = desc;
         this.link = link;
         this.realname = realname;
         this.type = type;
+    }
+
+    public ContactBot(String id, String name, String desc, String realname, String link, String type, boolean isActive, String json) {
+        this.id = id;
+        this.name = name;
+        this.desc = desc;
+        this.link = link;
+        this.realname = realname;
+        this.type = type;
+        this.isActive = isActive;
+        this.targetUrl = json;
+    }
+
+    public String getTargetUrl() {
+        return targetUrl;
     }
 
     public String getDesc() {

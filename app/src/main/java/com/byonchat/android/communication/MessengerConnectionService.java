@@ -336,6 +336,7 @@ public class MessengerConnectionService extends Service {
         if (contact != null) {
             xmppOpen();
             doSomethingRepeatedly();
+            //disini errornya - permission
             this.getApplicationContext().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contentObserver);
             started = true;
         }
@@ -1514,7 +1515,8 @@ public class MessengerConnectionService extends Service {
                     default:
                         break;
                 }
-            } else */if (intent.getAction().equals(LOCATION_RECEIVED)) {
+            } else */
+            if (intent.getAction().equals(LOCATION_RECEIVED)) {
                 GPSTracker gps = new GPSTracker(getApplicationContext());
                 if (gps.canGetLocation()) {
                     CountDownTimer cdt = new CountDownTimer(5000, 1000) {

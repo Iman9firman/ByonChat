@@ -13,7 +13,22 @@
         <item name="colorAccent">@color/colorAcent</item>
     </style>
 
+    <style name="MaterialSearchViewStyle">
+        <!-- Background for the search bar -->
+        <item name="searchBackground">@android:color/white</item>
 
+        <!-- Change background for the suggestions list view -->
+        <item name="searchSuggestionBackground">@android:color/white</item>
+
+        <!-- Change text color for edit text. This will also be the color of the cursor -->
+        <item name="android:textColor">@color/colorPrimary</item>
+
+        <!-- Change hint text color for edit text -->
+        <item name="android:textColorHint">@color/colorPrimary</item>
+
+        <!-- Hint for edit text -->
+        <item name="android:hint">"Search here okay ?"</item>
+    </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -23,6 +38,9 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="AppTheme.AppBarOverlay.Black" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.PopupOverlay.Black" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -501,7 +519,7 @@
         <item name="android:background">@null</item>
     </style>
 
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/grayOffTab</item>
         <item name="android:windowBackground">@drawable/background_splash</item>

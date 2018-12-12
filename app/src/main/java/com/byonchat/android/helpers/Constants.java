@@ -2,6 +2,11 @@ package com.byonchat.android.helpers;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.provider.Message;
+
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,6 +16,8 @@ import java.util.Map;
 public class Constants extends AppCompatActivity {
 
     public static final int REQUEST_CODE_CAPTURE = 2000;
+
+    public static final int RESULT_REFRESH_ROOM = 1;
 
     public static final int FETCH_STARTED = 2001;
     public static final int FETCH_COMPLETED = 2002;
@@ -27,10 +34,14 @@ public class Constants extends AppCompatActivity {
     public static final String DOWNLOAD_URL_WO_PARAM = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/video_local.php";
     public static final String DOWNLOAD_URL_W_PARAM = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/video_local.php?keywords=";
 
+    public static final String URLLAPORSELECTED = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/selectapop.php";
 
     public static final String PREF_WRITE_EXTERNAL_STORAGE_REQUESTED = "writeExternalRequested";
     public static final String PREF_CAMERA_REQUESTED = "cameraRequested";
 
+    public static final String EXTRA_ITEM = "extra_item";
+    public static final String EXTRA_COLOR = "extra_color";
+    public static final String EXTRA_COLORTEXT = "extra_colortext";
     public static final String EXTRA_PARENT = "parent_comment";
     public static final String EXTRA_POSITION = "position_comment";
     public static final String EXTRA_JUMLAH_COMMENT = "jumlah_comment";
@@ -54,5 +65,12 @@ public class Constants extends AppCompatActivity {
 
     protected static final String URL_POST = "https://bb.byonchat.com/bc_voucher_client/webservice/proses/repost_attachment.php";
 
+    public static String SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL = "SELECT count(*) total FROM "
+            + Message.TABLE_NAME
+            + " WHERE status = ?";
+
+    public static String URL_LAPOR_SELECTED = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/selectapop.php";
+
+    public static Map<Integer, List<String>> map = new HashMap<Integer, List<String>>();
 }
 

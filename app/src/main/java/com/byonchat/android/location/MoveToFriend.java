@@ -12,7 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,7 +50,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class MoveToFriend extends ActionBarActivity implements OnMapReadyCallback {
+public class MoveToFriend extends AppCompatActivity implements OnMapReadyCallback {
 	GoogleMap map;
 	String name, id, frnd_name, frnd_lat, frnd_longi, frnd_id;
 	LatLng my_latlong, frnd_latlong;

@@ -95,9 +95,11 @@ import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.createMeme.PhotoSortrActivity;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.AttachmentAdapter;
 import com.byonchat.android.list.AttachmentAdapter.AttachmentMenuItem;
 import com.byonchat.android.list.ConversationAdapter;
+import com.byonchat.android.list.IconItem;
 import com.byonchat.android.list.utilLoadImage.ImageLoaderFromSD;
 import com.byonchat.android.list.utilLoadImage.TextLoader;
 import com.byonchat.android.model.Image;
@@ -112,6 +114,7 @@ import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.provider.TimeLineDB;
+import com.byonchat.android.ui.activity.ImsBaseListHistoryChatActivity;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.HttpHelper;
@@ -306,6 +309,8 @@ public class ConversationActivity extends AppCompatActivity implements
     public static ConversationActivity instance = null;
     private ArrayList<Image> images = new ArrayList<>();
     BotListDB botListDB = null;
+    protected IconItem itemFind;
+    protected String mColor, mColorText;
 
     static {
         attCameraItems = new ArrayList<AttachmentMenuItem>();
@@ -333,6 +338,8 @@ public class ConversationActivity extends AppCompatActivity implements
         outState.putString(BUNDLE_KEY_FILE_TO_SEND, fileToSend);
         outState.putInt(BUNDLE_KEY_CURREQ, attCurReq);
         outState.putString(BUNDLE_KEY_CAMERA_FILEOUTPUT, cameraFileOutput);
+        outState.putString(Constants.EXTRA_COLOR, mColor);
+        outState.putString(Constants.EXTRA_COLORTEXT, mColorText);
 
     }
 
@@ -343,6 +350,20 @@ public class ConversationActivity extends AppCompatActivity implements
         attCurReq = savedInstanceState.getInt(BUNDLE_KEY_CURREQ);
         cameraFileOutput = savedInstanceState
                 .getString(BUNDLE_KEY_CAMERA_FILEOUTPUT);
+    }
+
+    protected void resolveChatRoom(Bundle savedInstanceState) {
+        mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
+        mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
+        if (mColor == null && mColorText == null && savedInstanceState != null) {
+            mColor = savedInstanceState.getString(Constants.EXTRA_COLOR);
+            mColorText = savedInstanceState.getString(Constants.EXTRA_COLORTEXT);
+        }
+
+        if (mColor == null && mColorText == null) {
+            /*finish();*/
+            return;
+        }
     }
 
     private void setBarTitle(String title, boolean show) {
@@ -431,7 +452,7 @@ public class ConversationActivity extends AppCompatActivity implements
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
-
+        resolveChatRoom(state);
         instance = this;
        /*material desgin ga ada cek version
        if (!new Validations().getInstance(getApplicationContext()).getContentValidation(16).equalsIgnoreCase(getResources().getString(R.string.version))) {
@@ -450,6 +471,9 @@ public class ConversationActivity extends AppCompatActivity implements
         imageLoaderFromSD = new ImageLoaderFromSD(getApplicationContext());
         conversationType = getIntent().getIntExtra(KEY_CONVERSATION_TYPE, 0);
         title = getIntent().getStringExtra(KEY_TITLE);
+        if (getIntent().hasExtra(Constants.EXTRA_ITEM)) {
+            itemFind = getIntent().getParcelableExtra(Constants.EXTRA_ITEM);
+        }
         final String destinationAddr = getIntent().getStringExtra(KEY_JABBER_ID);
         final String messageForward = getIntent().getStringExtra(KEY_MESSAGE_FORWARD);
         textLoader = new TextLoader(getApplicationContext());
@@ -528,6 +552,12 @@ public class ConversationActivity extends AppCompatActivity implements
                 Picasso.with(this).load(Color.parseColor(colorAttachment))
                         .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(logoToolbar);
                 toolbar.setBackground(back_draw);
+
+                if (getIntent().hasExtra(Constants.EXTRA_COLOR) && getIntent().hasExtra(Constants.EXTRA_COLORTEXT)) {
+                    FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+                    toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
+                    toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+                }
 
             }
             c.close();
@@ -913,6 +943,8 @@ public class ConversationActivity extends AppCompatActivity implements
             }
         }
 
+        if (itemFind != null) {
+        }
     }
 
     private String createAKA(String aa, String bb) {

@@ -30,6 +30,7 @@ import com.byonchat.android.data.model.Video;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.ui.activity.ByonchatDetailVideoTubeActivity;
 import com.byonchat.android.ui.activity.ByonchatVideoBeforeDownloadActivity;
+import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
 import com.byonchat.android.ui.adapter.ByonchatVideoAdapter;
 import com.byonchat.android.ui.adapter.ForwardItemClickListener;
 import com.byonchat.android.ui.adapter.OnPopupItemClickListener;
@@ -57,7 +58,7 @@ public class ByonchatVideoFragment extends Fragment implements SwipeRefreshLayou
     protected ByonchatVideoAdapter mAdapter;
 
     protected boolean isChanged = true;
-    protected ByonChatMainRoomActivity activity;
+    protected MainByonchatRoomBaseActivity activity;
 
     @NonNull
     protected RelativeLayout vFrameError;
@@ -78,11 +79,11 @@ public class ByonchatVideoFragment extends Fragment implements SwipeRefreshLayou
 
     }
 
-    public ByonchatVideoFragment(ByonChatMainRoomActivity activity) {
+    public ByonchatVideoFragment(MainByonchatRoomBaseActivity activity) {
         this.activity = activity;
     }
 
-    public static ByonchatVideoFragment newInstance(String myc, String tit, String utm, String usr, String idrtab, String color, ByonChatMainRoomActivity activity) {
+    public static ByonchatVideoFragment newInstance(String myc, String tit, String utm, String usr, String idrtab, String color, MainByonchatRoomBaseActivity activity) {
         ByonchatVideoFragment fragment = new ByonchatVideoFragment(activity);
         Bundle args = new Bundle();
         args.putString("aa", tit);

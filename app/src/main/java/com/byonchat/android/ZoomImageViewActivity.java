@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Window;
@@ -25,7 +25,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.net.URI;
 
-public class ZoomImageViewActivity extends ActionBarActivity {
+public class ZoomImageViewActivity extends AppCompatActivity {
     TouchImageView imageView;
     String uriImage;
     public static final String KEY_FILE = "FILE";

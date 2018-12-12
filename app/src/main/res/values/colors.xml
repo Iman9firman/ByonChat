@@ -4,12 +4,14 @@
     <color name="colorPrimaryDark">#004a6d</color>
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
+    <color name="statusBackground">#8000</color>
     <color name="navigationBarColor">#000000</color>
     <color name="colorAccent">#c8e8ff</color>
     <color name="colorAccentDark">#a4d9ff</color>
     <color name="bubbleRight">#9acff4</color>
     <color name="colorMenu">#81b3d7</color>
     <color name="bubbleLeft">#e7e7e7</color>
+    <color name="frame_chats_messages">#eeeeee</color>
     <color name="grayOffTab">#9eb5c0</color>
     <color name="grayTab">#e6e6e6</color>
     <color name="grayList">#d2d3d5</color>
@@ -198,6 +200,18 @@
     <color name="byonchat_white">#ffffff</color>
     <color name="byonchat_downloading_transparent">#30000000</color>
 
+    <color name="Lavender">#A04FF6</color>
+    <color name="Border">#4456EB</color>
+    <color name="textColorSecondary">#676767</color>
+    <color name="ims_secondary_color">#7B7B7B</color>
+    <color name="ims_third_color">#B8B8B8</color>
+    <color name="ims_chat_list_primary_color">#676767</color>
+    <color name="ims_chat_list_secondary_color">#A8A8A8</color>
+    <color name="ims_chat_list_background_color">#f2f3f4</color>
+    <color name="ims_chat_list_notification_color">#B1B1B1</color>
+    <color name="ims_search_rounded_color">#ededed</color>
+    <color name="ims_blur_background">#109e9e9e</color>
+
     <array name="array_dot_active">
         <item>@color/dot_light_screen1</item>
         <item>@color/dot_light_screen2</item>
@@ -211,7 +225,6 @@
         <item>@color/dot_dark_screen3</item>
         <item>@color/dot_dark_screen4</item>
     </array>
-
 
 
 </resources>

@@ -13,7 +13,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +38,7 @@ import com.byonchat.android.utilVideoWebView.VideoEnabledWebView;
 import java.io.File;
 
 
-public class WebViewByonActivity extends ActionBarActivity {
+public class WebViewByonActivity extends AppCompatActivity {
 
 
     public final static String KEY_LINK_LOAD = "LINK_LOAD_WEB";

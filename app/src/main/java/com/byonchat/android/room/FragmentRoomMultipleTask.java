@@ -185,7 +185,8 @@ public class FragmentRoomMultipleTask extends Fragment {
 
             @Override
             public void onLongClick(int position, View v) {
-                ((ByonChatMainRoomActivity) mContext).deleteById(position);
+                /*((ByonChatMainRoomActivity) mContext).deleteById(position);*/
+                ((ByonChatMainRoomActivity) mContext).deleteById((ContentRoom) myadapter.getData().get(position));
             }
         });
 
@@ -194,7 +195,8 @@ public class FragmentRoomMultipleTask extends Fragment {
                 new DinamicListTaskAdapter.MyClickListener() {
                     @Override
                     public void onItemClick(int position, View v) {
-                        ((ByonChatMainRoomActivity) mContext).idLoof(position);
+                        /*((ByonChatMainRoomActivity) mContext).idLoof(position);*/
+                        ((ByonChatMainRoomActivity) mContext).idLoof((ContentRoom) myadapter.getData().get(position));
 
                     }
                 });
@@ -967,5 +969,8 @@ public class FragmentRoomMultipleTask extends Fragment {
         return obj.toString();
     }
 
+    public void onActionSearch(String args) {
+        myadapter.getFilter().filter(args);
+    }
 
 }

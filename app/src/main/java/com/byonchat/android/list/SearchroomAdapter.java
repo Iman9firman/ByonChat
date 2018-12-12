@@ -30,6 +30,7 @@ import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDB;
+import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
@@ -57,6 +58,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
     MessengerDatabaseHelper messengerHelper = null;
     Contact contact;
     String id = "", name = "", desc = "", realname = "", link = "", type = "", tipe_room = "";
+    public OnItemClickListener itemClickListener;
 
     public SearchroomAdapter(Context ctx, ArrayList<ContactBot> contactBot, boolean showTitle) {
         context = ctx;
@@ -87,7 +90,11 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         imageLoader = new ImageLoader(context);
     }
 
-    public SearchroomAdapter(Context ctx, ArrayList<ContactBot> contactBot, boolean showTitle, String b, Contact contact, MessengerDatabaseHelper messengerHelper) {
+    public SearchroomAdapter(Context ctx,
+                             ArrayList<ContactBot> contactBot,
+                             boolean showTitle, String b,
+                             Contact contact, MessengerDatabaseHelper messengerHelper,
+                             OnItemClickListener itemClickListener) {
         bold = b;
         context = ctx;
         this.showTitle = showTitle;
@@ -97,6 +104,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         imageLoader = new ImageLoader(context);
         this.contact = contact;
         this.messengerHelper = messengerHelper;
+        this.itemClickListener = itemClickListener;
     }
 
     public int getCount() {
@@ -166,7 +174,10 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         holder.btnPopup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPopup(v, position);
+//                showPopup(v, position);
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(v, position);
+                }
             }
         });
 
@@ -280,7 +291,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
 
 
                                 type = "2";
-                                insertToDB(String.valueOf(position + 1), catArrayList.get(position).getName(), catArrayList.get(position).getDesc(), catArrayList.get(position).getRealname(), catArrayList.get(position).getLink(), "2", targetURL);
+                                insertToDB(String.valueOf(position + 1), catArrayList.get(position).getName(), catArrayList.get(position).getDesc(), catArrayList.get(position).getRealname(), catArrayList.get(position).getLink(), catArrayList.get(position).getType(), "2", targetURL);
                                 popup.dismiss();
                                 break;
                             default:
@@ -317,7 +328,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                                     e.printStackTrace();
                                 }
 
-                                insertToDB(String.valueOf(position + 1), catArrayList.get(position).getName(), catArrayList.get(position).getDesc(), catArrayList.get(position).getRealname(), catArrayList.get(position).getLink(), "2", targetURL);
+                                insertToDB(String.valueOf(position + 1), catArrayList.get(position).getName(), catArrayList.get(position).getDesc(), catArrayList.get(position).getRealname(), catArrayList.get(position).getLink(), catArrayList.get(position).getType(), "2", targetURL);
                                 popup.dismiss();
                                 break;
                             default:
@@ -334,7 +345,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         popup.show();
     }
 
-    public void insertToDB(String id, String name, String desc, String realname, String link, String type, String path) {
+    public void insertToDB(String id, String name, String desc, String realname, String link, String json, String type, String path) {
         if (roomsDB == null) {
             roomsDB = new RoomsDB(context);
         }
@@ -345,18 +356,18 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         if (catArray.size() > 0) {
             Toast.makeText(context, realname + " is already added to selected rooms", Toast.LENGTH_SHORT).show();
         } else {
-            requestKey(path);
+            requestKey(path, json);
         }
     }
 
-    private void requestKey(final String path) {
+    private void requestKey(final String path, final String json) {
         RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
             @Override
             public void onTaskDone(String key) {
                 if (key.equalsIgnoreCase("null")) {
                     Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                 } else {
-                    laporSelectedRoom = new LaporSelectedRoom(context);
+                    laporSelectedRoom = new LaporSelectedRoom(context, json);
                     laporSelectedRoom.execute(key, path);
                 }
             }
@@ -379,9 +390,11 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         private ProgressDialog progressDialog;
 
         String path = "";
+        String json = "";
 
-        public LaporSelectedRoom(Context context) {
+        public LaporSelectedRoom(Context context, String json) {
             this.mContext = context;
+            this.json = json;
 
         }
 
@@ -458,7 +471,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                         if (key.equalsIgnoreCase("null")) {
                             Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                         } else {
-                            laporSelectedRoom = new LaporSelectedRoom(context);
+                            laporSelectedRoom = new LaporSelectedRoom(context, json);
                             laporSelectedRoom.execute(key, path);
                         }
                     } else {
@@ -470,7 +483,12 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
             } else {
 
                 roomsDB.open();
-                ContactBot contactBot = new ContactBot(name, desc, realname, link, type);
+                boolean isActived = true;
+                ArrayList<ContactBot> botArrayListist = roomsDB.retrieveRooms("2");
+                if (botArrayListist.size() > 0) {
+                    isActived = false;
+                }
+                ContactBot contactBot = new ContactBot("", name, desc, realname, link, type, isActived, json);
                 roomsDB.insertRooms(contactBot);
                 roomsDB.close();
 

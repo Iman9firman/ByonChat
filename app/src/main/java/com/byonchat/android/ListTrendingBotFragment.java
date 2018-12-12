@@ -169,7 +169,7 @@ public class ListTrendingBotFragment extends Fragment {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
-                if (Message.isJSONValid(botArrayListist.get(position).getDesc())){
+                if (Message.isJSONValid(botArrayListist.get(position).getDesc())) {
                     JSONObject jObject = null;
                     try {
                         jObject = new JSONObject(botArrayListist.get(position).getDesc());
@@ -179,7 +179,7 @@ public class ListTrendingBotFragment extends Fragment {
 
                         boolean isAppInstalled = appInstalledOrNot(classs);
 
-                        if(isAppInstalled) {
+                        if (isAppInstalled) {
                             Intent LaunchIntent = context.getPackageManager()
                                     .getLaunchIntentForPackage(classs);
                             startActivity(LaunchIntent);
@@ -202,7 +202,7 @@ public class ListTrendingBotFragment extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }else{
+                } else {
                     Intent intent = new Intent(context, ByonChatMainRoomActivity.class);
                     intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -222,7 +222,7 @@ public class ListTrendingBotFragment extends Fragment {
             Intent myIntent = new Intent(Intent.ACTION_VIEW, webpage);
             startActivity(myIntent);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, "No application can handle this request. Please install a web browser or check your URL.",  Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "No application can handle this request. Please install a web browser or check your URL.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
@@ -344,7 +344,7 @@ public class ListTrendingBotFragment extends Fragment {
                             String description = obj.getString("description");
                             String nama_display = obj.getString("nama_display");
                             String foto = obj.getString("foto");
-                            ContactBot aa = new ContactBot(String.valueOf(i + 1), username, description, nama_display, foto, "1");
+                            ContactBot aa = new ContactBot(String.valueOf(i + 1), username, description, nama_display, foto, "1", false, "");
                             roomsDB.insertRooms(aa);
                             if (isCancelled()) break;
                         }

@@ -2,7 +2,7 @@ package com.byonchat.android.list;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -131,8 +131,8 @@ public class MainListFragment extends ListFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (getActivity() instanceof ActionBarActivity) {
-            return ((ActionBarActivity) getActivity())
+        if (getActivity() instanceof AppCompatActivity) {
+            return ((AppCompatActivity) getActivity())
                     .onOptionsItemSelected(item);
         } else {
             return super.onOptionsItemSelected(item);
@@ -141,8 +141,8 @@ public class MainListFragment extends ListFragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if (getActivity() instanceof ActionBarActivity) {
-            return ((ActionBarActivity) getActivity())
+        if (getActivity() instanceof AppCompatActivity) {
+            return ((AppCompatActivity) getActivity())
                     .onContextItemSelected(item);
         } else {
             return super.onContextItemSelected(item);

@@ -46,6 +46,7 @@ public class Message implements Data {
 
 
     public static final String TABLE_NAME = "messages";
+    public static final String _ID = "_id";
     public static final String DELIVERED_DATE = "delivered_date";
     public static final String SEND_DATE = "send_date";
     public static final String PACKET_ID = "packet_id";
@@ -53,6 +54,7 @@ public class Message implements Data {
     public static final String SOURCE_INFO = "source_info";
     public static final String DESTINATION = "destination";
     public static final String MESSAGE = "message";
+    public static final String NUMBER = "number";
     public static final String STATUS = "status";
     public static final String TYPE = "type";
     public static final String IS_GROUP_CHAT = "is_group_chat";

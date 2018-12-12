@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/nav_item_one"
+            android:icon="@drawable/baseline_search_24"
+            android:iconTint="@color/textColorSecondary"
+            android:title="Search" />
+        <item
+            android:id="@+id/nav_item_two"
+            android:icon="@drawable/baseline_share_24"
+            android:iconTint="@color/textColorSecondary"
+            android:title="Invite Friend" />
+        <item
+            android:id="@+id/nav_item_three"
+            android:icon="@drawable/baseline_settings_black_24"
+            android:iconTint="@color/textColorSecondary"
+            android:title="Setting" />
+        <item
+            android:id="@+id/nav_item_four"
+            android:icon="@drawable/ic_mood_black_24dp"
+            android:iconTint="@color/textColorSecondary"
+            android:title="Set Status" />
+    </group>
+
+    <group android:id="@+id/group_menu">
+        <item
+            android:id="@+id/nav_item_refresh"
+            android:title="Refresh Room" />
+        <item
+            android:id="@+id/nav_item_legal"
+            android:title="Legal" />
+    </group>
+
+</menu>

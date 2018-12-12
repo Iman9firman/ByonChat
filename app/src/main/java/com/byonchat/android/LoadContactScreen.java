@@ -31,6 +31,7 @@ import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.ValidationsKey;
@@ -460,7 +461,7 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
                         progressBar.setProgress(90);
                         finish();
                         Intent i = new Intent();
-                        i.setClass(getApplicationContext(), MainActivity.class);
+                        i.setClass(getApplicationContext(), MainActivityNew.class);
                         startActivity(i);
                     } else {
                         HashMap<Long, Contact> dbMap = loadContactFromDb();
@@ -480,7 +481,7 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
                             progressBar.setProgress(90);
                             finish();
                             Intent i = new Intent();
-                            i.setClass(getApplicationContext(), MainActivity.class);
+                            i.setClass(getApplicationContext(), MainActivityNew.class);
                             startActivity(i);
                         } else {
                             new searchThemeRequest(getApplicationContext()).execute(key);
@@ -694,7 +695,7 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
         db.close();
         finish();
         Intent i = new Intent();
-        i.setClass(getApplicationContext(), MainActivity.class);
+        i.setClass(getApplicationContext(), MainActivityNew.class);
         startActivity(i);
 
         cursor.close();

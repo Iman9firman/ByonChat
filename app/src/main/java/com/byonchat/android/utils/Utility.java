@@ -12,6 +12,9 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.provider.Message;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,8 +23,22 @@ import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Utility {
+
+    public static final SimpleDateFormat dateInfoFormat = new SimpleDateFormat(
+            "dd/MM/yyyy", Locale.getDefault());
+    public static final SimpleDateFormat hourInfoFormat = new SimpleDateFormat(
+            "HH:mm", Locale.getDefault());
+    public static String SQL_SELECT_TOTAL_MESSAGES_UNREAD = "SELECT count(*) total FROM "
+            + Message.TABLE_NAME
+            + " WHERE ("
+            + Message.DESTINATION
+            + "=? OR "
+            + Message.SOURCE + "=? )"
+            + " AND status = 12";
+
     // convert from bitmap to byte array
     public static byte[] getBytes(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -137,5 +154,30 @@ public class Utility {
         if (inputMethodManager != null) {
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    public static String jsonResultType(String json, String type) {
+        String hasil = "";
+        JSONObject jObject = null;
+        try {
+            jObject = new JSONObject(json);
+        } catch (JSONException e) {
+            hasil = "error";
+            e.printStackTrace();
+        }
+        if (jObject != null) {
+            try {
+                hasil = jObject.getString(type);
+            } catch (JSONException e) {
+                hasil = "error";
+                e.printStackTrace();
+            }
+        }
+
+        if (type.equalsIgnoreCase("e") && hasil.equalsIgnoreCase("error")) {
+            hasil = "https://" + MessengerConnectionService.HTTP_SERVER;
+        }
+
+        return hasil;
     }
 }

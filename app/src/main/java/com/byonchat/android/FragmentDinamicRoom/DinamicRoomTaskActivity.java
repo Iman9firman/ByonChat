@@ -20,8 +20,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
@@ -406,7 +408,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         Cursor cursor = db.getSingleRoomDetailForm(username, idTab);
         if (cursor.getCount() > 0) {
-            getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(context).headerCostume(getWindow(), "#" + color));
+            /*getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(context).headerCostume(getWindow(), "#" + color));*/
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + color)));
             final String conBefore = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
             String content = conBefore;
 

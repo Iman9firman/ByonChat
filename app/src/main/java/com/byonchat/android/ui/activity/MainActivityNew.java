@@ -41,6 +41,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -469,7 +470,9 @@ public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
     public void onBackPressed() {
-        if (searchView.isSearchOpen()) {
+        if (drawerLayout.isDrawerOpen(Gravity.START)) {
+            drawerLayout.closeDrawer(Gravity.START);
+        } else if (searchView.isSearchOpen()) {
             searchView.closeSearch();
         } else {
             super.onBackPressed();

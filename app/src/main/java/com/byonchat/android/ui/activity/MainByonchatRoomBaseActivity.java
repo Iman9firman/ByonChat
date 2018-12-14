@@ -163,6 +163,8 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     protected boolean isSearchView = false;
     protected static float positionFromRight = 1;
+    protected Menu menu;
+    protected boolean isVisible = false;
 
     @NonNull
     protected AppBarLayout vAppbar;
@@ -358,20 +360,14 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         });
     }
 
-    /*@Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.ims_menu_main_search, menu);
-        MenuItem item = menu.findItem(R.id.main_search);
-        Drawable yourdrawable = item.getIcon();
-        yourdrawable.mutate();
-        yourdrawable.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_IN);
-        vSearchView.setMenuItem(item);
-        if (vSearchView.isSearchOpen()) {
-//            resolveOriginView(false);
-            item.setVisible(false);
+    private void updateMenuItem() {
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        if (isVisible) {
+            menuItem.setVisible(isVisible);
+        } else {
+            menuItem.setVisible(isVisible);
         }
-        return super.onPrepareOptionsMenu(menu);
-    }*/
+    }
 
     protected void resolveFragment() {
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);

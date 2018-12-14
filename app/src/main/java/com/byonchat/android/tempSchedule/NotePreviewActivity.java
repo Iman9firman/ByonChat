@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -103,7 +104,8 @@ public class NotePreviewActivity extends AppCompatActivity {
             from = intent.getStringExtra("from");
             calendar = "true boi";
             setTitle(titleBar);
-            getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getBaseContext()).headerCostume(getWindow(), "#" + color));
+            /*getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getBaseContext()).headerCostume(getWindow(), "#" + color));*/
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + color)));
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_notepreview);

@@ -457,22 +457,26 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         getMenuInflater().inflate(R.menu.menu_room_dinamic, menu);
         MenuItem action_add = menu.findItem(R.id.action_add);
         MenuItem action_refresh = menu.findItem(R.id.action_refresh);
+        MenuItem action_search = menu.findItem(R.id.action_search);
 
         action_add.setVisible(false);
         action_refresh.setVisible(false);
+        action_search.setVisible(false);
         invalidateOptionsMenu();
 
-        /*MenuItem item = menu.findItem(R.id.action_search);
-        Drawable yourdrawable = item.getIcon();
-        yourdrawable.mutate();
-        yourdrawable.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_IN);
-        vSearchView.setMenuItem(item);
-        if (vSearchView.isSearchOpen()) {
-//            resolveOriginView(false);
-            item.setVisible(false);
-        }*/
-
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        String category = listItem != null ? listItem.category : getIntent().getExtras().getString(EXTRA_CATEGORY);
+        String include_pull = listItem != null ? listItem.include_pull : getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);
+        if (category.equalsIgnoreCase("4")) {
+            if (include_pull.equalsIgnoreCase("4") || include_pull.equalsIgnoreCase("5") || include_pull.equalsIgnoreCase("6")) {
+                menu.findItem(R.id.action_search).setVisible(true);
+            }
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override

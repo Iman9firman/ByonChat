@@ -656,84 +656,176 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         }
     }
 
+    public class LoadMessageList extends AsyncTask<String, Void, List<IconItem>> {
+        List<IconItem> iconItems = new ArrayList<>();
+
+        @Override
+        protected List<IconItem> doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            Cursor cursor;
+
+            String myJabberId = Byonchat.getMessengerHelper().getMyContact().getJabberId();
+            cursor = Byonchat.getMessengerHelper().query(
+                    getString(R.string.sql_chat_list_find),
+                    new String[]{myJabberId, Message.TYPE_READSTATUS, myJabberId, Message.TYPE_READSTATUS});
+
+            int indexName = cursor.getColumnIndex(Contact.NAME);
+            int indexJabberId = cursor.getColumnIndex(Message.NUMBER);
+            int indexMessage = cursor.getColumnIndex(Message.MESSAGE);
+            int idMessage = cursor.getColumnIndex(Message._ID);
+
+            Calendar cal = Calendar.getInstance();
+            cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DATE), 0, 0, 0);
+            if (cursor.getCount() > 0) {
+                iconItems.clear();
+            }
+            while (cursor.moveToNext()) {
+                String jabberId = cursor.getString(indexJabberId);
+                String name = cursor.getString(indexName);
+
+                String message = cursor.getString(indexMessage);
+                if (message == null)
+                    continue;
+
+                Message vo = new Message(cursor);
+                message = Message.parsedMessageBodyHtmlCode(vo, getApplicationContext());
+                Date d = null;
+
+                d = vo.getSendDate();
+
+                String dInfo = null;
+                if (d != null) {
+                    if (d.getTime() < cal.getTimeInMillis()) {
+                        dInfo = dateInfoFormat.format(d);
+                    } else {
+                        dInfo = hourInfoFormat.format(d);
+                    }
+                }
+                ChatParty cparty = null;
+                if (vo.isGroupChat()) {
+                    cparty = Byonchat.getMessengerHelper().getGroup(jabberId);
+                } else {
+                    if (name != null) {
+                        cparty = new Contact(name, jabberId, "");
+                    } else {
+                        name = jabberId;
+                    }
+                }
+
+
+                long total = 0;
+                Cursor cursor2 = Byonchat.getMessengerHelper().query(
+                        SQL_SELECT_TOTAL_MESSAGES_UNREAD,
+                        new String[]{jabberId,
+                                jabberId});
+                int indexTotal = cursor2.getColumnIndex("total");
+                while (cursor2.moveToNext()) {
+                    total = cursor2.getLong(indexTotal);
+                }
+                cursor2.close();
+
+                String signature = new Validations().getInstance(getApplicationContext()).getSignatureProfilePicture(jabberId, Byonchat.getMessengerHelper());
+
+                IconItem iconItem = new IconItem(jabberId, name, message,
+                        dInfo, cparty, total, Message.getStatusMessage(vo, myJabberId), signature);
+                iconItem.type = IconItem.TYPE_MESSAGE_FIND;
+
+                iconItems.add(iconItem);
+            }
+            return iconItems;
+        }
+
+        @Override
+        protected void onPostExecute(List<IconItem> iconItems) {
+            super.onPostExecute(iconItems);
+
+            if (mMessageAdapter != null) {
+                mMessageAdapter.setItems(iconItems);
+            }
+        }
+    }
+
+
     protected void resolveChatHistorySearch() {
-        Cursor cursor;
-
-        String myJabberId = Byonchat.getMessengerHelper().getMyContact().getJabberId();
-        cursor = Byonchat.getMessengerHelper().query(
-                getString(R.string.sql_chat_list_find),
-                new String[]{myJabberId, Message.TYPE_READSTATUS, myJabberId, Message.TYPE_READSTATUS});
-
-        int indexName = cursor.getColumnIndex(Contact.NAME);
-        int indexJabberId = cursor.getColumnIndex(Message.NUMBER);
-        int indexMessage = cursor.getColumnIndex(Message.MESSAGE);
-        int idMessage = cursor.getColumnIndex(Message._ID);
-
-        Calendar cal = Calendar.getInstance();
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
-                cal.get(Calendar.DATE), 0, 0, 0);
-        if (cursor.getCount() > 0) {
-            messageItemList.clear();
-        }
-        while (cursor.moveToNext()) {
-            String jabberId = cursor.getString(indexJabberId);
-            String name = cursor.getString(indexName);
-
-            String message = cursor.getString(indexMessage);
-            if (message == null)
-                continue;
-
-            Message vo = new Message(cursor);
-            message = Message.parsedMessageBodyHtmlCode(vo, getApplicationContext());
-            Date d = null;
-
-            d = vo.getSendDate();
-
-            String dInfo = null;
-            if (d != null) {
-                if (d.getTime() < cal.getTimeInMillis()) {
-                    dInfo = dateInfoFormat.format(d);
-                } else {
-                    dInfo = hourInfoFormat.format(d);
-                }
-            }
-            ChatParty cparty = null;
-            if (vo.isGroupChat()) {
-                cparty = Byonchat.getMessengerHelper().getGroup(jabberId);
-            } else {
-                if (name != null) {
-                    cparty = new Contact(name, jabberId, "");
-                } else {
-                    name = jabberId;
-                }
-            }
-
-
-            long total = 0;
-            Cursor cursor2 = Byonchat.getMessengerHelper().query(
-                    SQL_SELECT_TOTAL_MESSAGES_UNREAD,
-                    new String[]{jabberId,
-                            jabberId});
-            int indexTotal = cursor2.getColumnIndex("total");
-            while (cursor2.moveToNext()) {
-                total = cursor2.getLong(indexTotal);
-            }
-            cursor2.close();
-
-            String signature = new Validations().getInstance(getApplicationContext()).getSignatureProfilePicture(jabberId, Byonchat.getMessengerHelper());
-
-            IconItem iconItem = new IconItem(jabberId, name, message,
-                    dInfo, cparty, total, Message.getStatusMessage(vo, myJabberId), signature);
-            iconItem.type = IconItem.TYPE_MESSAGE_FIND;
-            if (cparty instanceof Contact) {
-                // setProfilePicture(iconItem, (Contact) cparty);
-            }
-            messageItemList.add(iconItem);
-        }
-
-        if (mMessageAdapter != null) {
-            mMessageAdapter.setItems(messageItemList);
-        }
+        new LoadMessageList().execute();
+//        Cursor cursor;
+//
+//        String myJabberId = Byonchat.getMessengerHelper().getMyContact().getJabberId();
+//        cursor = Byonchat.getMessengerHelper().query(
+//                getString(R.string.sql_chat_list_find),
+//                new String[]{myJabberId, Message.TYPE_READSTATUS, myJabberId, Message.TYPE_READSTATUS});
+//
+//        int indexName = cursor.getColumnIndex(Contact.NAME);
+//        int indexJabberId = cursor.getColumnIndex(Message.NUMBER);
+//        int indexMessage = cursor.getColumnIndex(Message.MESSAGE);
+//        int idMessage = cursor.getColumnIndex(Message._ID);
+//
+//        Calendar cal = Calendar.getInstance();
+//        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+//                cal.get(Calendar.DATE), 0, 0, 0);
+//        if (cursor.getCount() > 0) {
+//            messageItemList.clear();
+//        }
+//        while (cursor.moveToNext()) {
+//            String jabberId = cursor.getString(indexJabberId);
+//            String name = cursor.getString(indexName);
+//
+//            String message = cursor.getString(indexMessage);
+//            if (message == null)
+//                continue;
+//
+//            Message vo = new Message(cursor);
+//            message = Message.parsedMessageBodyHtmlCode(vo, getApplicationContext());
+//            Date d = null;
+//
+//            d = vo.getSendDate();
+//
+//            String dInfo = null;
+//            if (d != null) {
+//                if (d.getTime() < cal.getTimeInMillis()) {
+//                    dInfo = dateInfoFormat.format(d);
+//                } else {
+//                    dInfo = hourInfoFormat.format(d);
+//                }
+//            }
+//            ChatParty cparty = null;
+//            if (vo.isGroupChat()) {
+//                cparty = Byonchat.getMessengerHelper().getGroup(jabberId);
+//            } else {
+//                if (name != null) {
+//                    cparty = new Contact(name, jabberId, "");
+//                } else {
+//                    name = jabberId;
+//                }
+//            }
+//
+//
+//            long total = 0;
+//            Cursor cursor2 = Byonchat.getMessengerHelper().query(
+//                    SQL_SELECT_TOTAL_MESSAGES_UNREAD,
+//                    new String[]{jabberId,
+//                            jabberId});
+//            int indexTotal = cursor2.getColumnIndex("total");
+//            while (cursor2.moveToNext()) {
+//                total = cursor2.getLong(indexTotal);
+//            }
+//            cursor2.close();
+//
+//            String signature = new Validations().getInstance(getApplicationContext()).getSignatureProfilePicture(jabberId, Byonchat.getMessengerHelper());
+//
+//            IconItem iconItem = new IconItem(jabberId, name, message,
+//                    dInfo, cparty, total, Message.getStatusMessage(vo, myJabberId), signature);
+//            iconItem.type = IconItem.TYPE_MESSAGE_FIND;
+//            if (cparty instanceof Contact) {
+//                // setProfilePicture(iconItem, (Contact) cparty);
+//            }
+//            messageItemList.add(iconItem);
+//        }
+//
+//        if (mMessageAdapter != null) {
+//            mMessageAdapter.setItems(messageItemList);
+//        }
     }
 
     class BroadcastHandler extends BroadcastReceiver {

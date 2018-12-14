@@ -748,7 +748,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             e.printStackTrace();
         }
 
-        adapter.notifyDataSetChanged();
+        adapter.setItems(itemList, positionList);
     }
 
     protected void resolveCollapsingToolbar(String color) {

@@ -310,12 +310,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 if (null != view)
                     view.setVisibility(View.GONE);
 
-                if (query.length() == 0) {
-//                    resolveOriginView(false);
-                } else {
-//                    resolveOriginView(true);
-                }
-
                 if (mFragment instanceof FragmentRoomMultipleTask) {
                     FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                     fragment.onActionSearch(query);
@@ -328,12 +322,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 View view = findViewById(R.id.action_short);
                 if (null != view)
                     view.setVisibility(View.GONE);
-
-                if (query.length() == 0) {
-//                    resolveOriginView(false);
-                } else {
-//                    resolveOriginView(true);
-                }
 
                 if (mFragment instanceof FragmentRoomMultipleTask) {
                     FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
@@ -358,15 +346,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     view.setVisibility(View.VISIBLE);
             }
         });
-    }
-
-    private void updateMenuItem() {
-        MenuItem menuItem = menu.findItem(R.id.action_search);
-        if (isVisible) {
-            menuItem.setVisible(isVisible);
-        } else {
-            menuItem.setVisible(isVisible);
-        }
     }
 
     protected void resolveFragment() {

@@ -430,13 +430,13 @@ public class MainActivityNew extends MainBaseActivityNew {
             searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
+                    adapter.getFilter().filter(query);
                     return true;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     adapter.getFilter().filter(newText);
-//                wrappedAdapter.notifyDataSetChanged();
                     return true;
                 }
             });
@@ -456,12 +456,6 @@ public class MainActivityNew extends MainBaseActivityNew {
                 Intent intent = ImsListHistoryChatActivity.generateIntent(getApplicationContext(), color, colorText);
                 startActivity(intent);
             });
-
-            /*fab_menu_3.setOnClickListener(view -> {
-             *//*createShortcutOfApp();*//*
-            Intent intent = ImsProfileActivity.generateIntent(getApplicationContext(), "profile");
-            startActivity(intent);
-        });*/
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -96,9 +96,20 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
 
     }
 
+    public void setItems(List<ItemMain> items, List<String> positionList) {
+        this.itemList = items;
+        this.filterList = items;
+        this.positionList = positionList;
+        notifyDataSetChanged();
+    }
+
+    public int getBasicItemCount() {
+        return (null != filterList ? filterList.size() : 0);
+    }
+
     @Override
     public int getItemCount() {
-        return filterList.size();
+        return getBasicItemCount();
     }
 
     @Override

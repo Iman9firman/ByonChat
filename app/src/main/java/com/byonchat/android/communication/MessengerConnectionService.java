@@ -1792,7 +1792,9 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
     private void disconnect() {
         //Log.d(TAG, "disconnect()");
-        xmppConnection.disconnect();
+        if (xmppConnection != null) {
+            xmppConnection.disconnect();
+        }
     }
 
     public static void startService(Context context) {

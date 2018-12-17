@@ -139,13 +139,13 @@ public class RoomsDB {
         ArrayList<ItemListTrending> listMemberCards = new ArrayList<ItemListTrending>();
         Cursor cur = mDb.query(true, TRENDING_TABLE, new String[]{
                         TRENDING_ID, TRENDING_NAME, ROOMS_TYPE}
-                , ROOMS_TYPE + "= '"+type+"'", null, null, null, null, null);
+                , ROOMS_TYPE + "= '" + type + "'", null, null, null, null, null);
         if (cur.moveToFirst()) {
             do {
                 String id = cur.getString(cur.getColumnIndex(TRENDING_ID));
                 String nam = cur.getString(cur.getColumnIndex(TRENDING_NAME));
                 String typ = cur.getString(cur.getColumnIndex(ROOMS_TYPE));
-                listMemberCards.add(new ItemListTrending(id, "#"+nam, typ));
+                listMemberCards.add(new ItemListTrending(id, "#" + nam, typ));
             } while (cur.moveToNext());
         }
         return listMemberCards;
@@ -155,7 +155,7 @@ public class RoomsDB {
         ArrayList<ContactBot> listMemberCards = new ArrayList<ContactBot>();
         Cursor cur = mDb.query(true, ROOMS_TABLE, new String[]{
                         ROOMS_ID, ROOMS_NAME, ROOMS_DESC, ROOMS_REALNAME, ROOMS_LINKICON, ROOMS_TYPE}
-                , ROOMS_TYPE + "= '"+type+"'", null, null, null, null, null);
+                , ROOMS_TYPE + "= '" + type + "'", null, null, null, null, null);
         if (cur.moveToFirst()) {
             do {
                 String id = cur.getString(cur.getColumnIndex(ROOMS_ID));
@@ -174,7 +174,7 @@ public class RoomsDB {
         ArrayList<ContactBot> listMemberCards = new ArrayList<ContactBot>();
         Cursor cur = mDb.query(true, ROOMS_TABLE, new String[]{
                         ROOMS_ID, ROOMS_NAME, ROOMS_DESC, ROOMS_REALNAME, ROOMS_LINKICON, ROOMS_TYPE}
-                , ROOMS_NAME + "= '"+name+"' AND " + ROOMS_TYPE + "= '"+tipe+"'", null, null, null, null, null);
+                , ROOMS_NAME + "= '" + name + "' AND " + ROOMS_TYPE + "= '" + tipe + "'", null, null, null, null, null);
         if (cur.moveToFirst()) {
             do {
                 String id = cur.getString(cur.getColumnIndex(ROOMS_ID));
@@ -194,7 +194,7 @@ public class RoomsDB {
         ArrayList<ContactBot> listMemberCards = new ArrayList<ContactBot>();
         Cursor cur = mDb.query(true, ROOMS_TABLE, new String[]{
                         ROOMS_ID, ROOMS_NAME, ROOMS_DESC, ROOMS_REALNAME, ROOMS_LINKICON, ROOMS_TYPE}
-                , ROOMS_REALNAME + "= '"+name+"' AND " + ROOMS_TYPE + "= '"+tipe+"'", null, null, null, null, null);
+                , ROOMS_REALNAME + "= '" + name + "' AND " + ROOMS_TYPE + "= '" + tipe + "'", null, null, null, null, null);
         if (cur.moveToFirst()) {
             do {
                 String id = cur.getString(cur.getColumnIndex(ROOMS_ID));

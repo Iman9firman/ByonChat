@@ -61,7 +61,7 @@ public class FragmentMyCardID extends Fragment {
     private MessengerDatabaseHelper messengerHelper;
     private EndlessRecyclerViewScrollListener scrollListener;
     private static String URL_DELETE_PICTURE = "https://" + MessengerConnectionService.HTTP_SERVER2 + "/personal_room/webservice/proses/delete_photo.php";
-    private Activity mContext ;
+    private Activity mContext;
     private ImageView imCard;
     private FloatingActionButton big_share, card_share, merge_share;
     public static int IMGS[] = {
@@ -75,6 +75,7 @@ public class FragmentMyCardID extends Fragment {
     public FragmentMyCardID(Activity ctx) {
         mContext = ctx;
     }
+
     public static FragmentMyCardID newInstance(String myc, String tit, String utm, String usr, String idrtab, String color, Boolean flag, Activity act) {
         FragmentMyCardID fragmentRoomTask = new FragmentMyCardID(act);
         Bundle args = new Bundle();
@@ -133,10 +134,10 @@ public class FragmentMyCardID extends Fragment {
         big_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(card_share.getVisibility()==View.GONE){
+                if (card_share.getVisibility() == View.GONE) {
                     card_share.setVisibility(View.VISIBLE);
                     merge_share.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     card_share.setVisibility(View.GONE);
                     merge_share.setVisibility(View.GONE);
                 }
@@ -159,7 +160,7 @@ public class FragmentMyCardID extends Fragment {
             intentd.putExtra("path", CardLink.get(0));
             intentd.putExtra("card", CardLink.get(0));
             mContext.startActivity(intentd);
-        }else {
+        } else {
             requestAddFilePermission();
         }
     }
@@ -278,15 +279,17 @@ public class FragmentMyCardID extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             HashMap<String, String> data = new HashMap<String, String>();
+            data.put("bc_user", params[1]);
             data.put("username_room", params[2]);
             data.put("id_rooms_tab", params[3]);
+
 //            idTab = params[3];
             String result = profileSaveDescription.sendPostRequest(params[0], data);
             return result;
         }
 
         protected void onPostExecute(String s) {
-            Log.w("Lewat --------------- 1","iya");
+            Log.w("Lewat --------------- 1", "iya");
             if (s.equals(null)) {
                 Toast.makeText(mContext.getApplicationContext(), "Internet Problem.", Toast.LENGTH_SHORT).show();
             } else {
@@ -309,9 +312,9 @@ public class FragmentMyCardID extends Fragment {
 
                 ArrayList<RoomsDetail> allRoomDetailFormWithFlag = db.allRoomDetailFormWithFlag("", username, idRoomTab, "value");
                 if (allRoomDetailFormWithFlag != null) {
-                    Log.w("Lewat --------------- 2","iya");
-                    Log.w("Lewat --------------- 3",allRoomDetailFormWithFlag+"");
-                    Log.w("Lewat --------------- 4",username +" - "+ idRoomTab+" - "+urlTembak);
+                    Log.w("Lewat --------------- 2", "iya");
+                    Log.w("Lewat --------------- 3", allRoomDetailFormWithFlag + "");
+                    Log.w("Lewat --------------- 4", username + " - " + idRoomTab + " - " + urlTembak);
                     refresh(allRoomDetailFormWithFlag, true);
                 }
             }
@@ -333,9 +336,9 @@ public class FragmentMyCardID extends Fragment {
                 String tgl_upload = c.getString("add_date");
                 CardLink.add(file_kartu);
 
-                Log.w("SAYA yeyeye 1",c+"");
+                Log.w("SAYA yeyeye 1", c + "");
 //                Log.w("SAYA yeyeye 2",item2+"");
-                Log.w("SAYA yeyeye 3",file_kartu+"");
+                Log.w("SAYA yeyeye 3", file_kartu + "");
 //                Log.w("SAYA yeyeye 4",c+"");
 
                 Picasso.with(mContext).load(thump).into(imCard);

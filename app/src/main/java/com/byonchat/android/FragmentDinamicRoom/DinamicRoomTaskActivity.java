@@ -1948,6 +1948,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         });
 
                         String jsonData = jsonArray.getJSONObject(i).getString("attach_api");
+                        Log.w("siapa11", jsonData);
                         JSONArray ja = null;
                         try {
                             ja = new JSONArray(jsonData);
@@ -1956,6 +1957,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
                         if (ja != null) {
+                            Log.w("siapa", "sssa");
+
                             if (ja.length() == 0) {
                                 Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                                 if (cursorCild.getCount() > 0) {
@@ -8050,13 +8053,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
                         if (cEdit2.getCount() > 0) {
-                            Log.w("gang1", "1");
-
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), "", "", "utility");
                             db.updateDetailRoomWithFlagContent(orderModel);
 
                         } else {
-                            Log.w("gang2", "1");
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), "", "", "utility");
                             db.insertRoomsDetail(orderModel);
                         }

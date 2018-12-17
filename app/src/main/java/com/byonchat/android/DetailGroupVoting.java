@@ -3,7 +3,7 @@ package com.byonchat.android;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -24,7 +24,7 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 
-public class DetailGroupVoting extends ActionBarActivity  implements OnChartValueSelectedListener {
+public class DetailGroupVoting extends AppCompatActivity implements OnChartValueSelectedListener {
 
     protected BarChart mChart;
 
@@ -88,15 +88,12 @@ public class DetailGroupVoting extends ActionBarActivity  implements OnChartValu
         mChart.invalidate();
 
 
-
-
-
     }
 
     public class MyValueFormatter implements ValueFormatter {
         @Override
         public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-            return Math.round(value)+"";
+            return Math.round(value) + "";
         }
     }
 
@@ -121,7 +118,7 @@ public class DetailGroupVoting extends ActionBarActivity  implements OnChartValu
         barDataSet1.setColors(ColorTemplate.COLORFUL_COLORS);
         barDataSet1.setValueFormatter(new MyValueFormatter());
 
-        dataSets =  new ArrayList<IBarDataSet>();
+        dataSets = new ArrayList<IBarDataSet>();
         dataSets.add(barDataSet1);
         return dataSets;
     }

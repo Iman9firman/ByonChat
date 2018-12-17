@@ -1379,12 +1379,23 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
         IntentFilter filter = new IntentFilter(
                 UploadService.class.getName() + ".sendFile");
-        //  filter.addAction(SMS_RECEIVED);
         filter.addAction(LOCATION_RECEIVED);
-        //  filter.addAction(SMS_DELIVERED);
-        //  filter.addAction(SMS_SENT);
         filter.setPriority(1);
         registerReceiver(receiver, filter);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationReceiver notifReceive = new NotificationReceiver();
+            IntentFilter nya = new IntentFilter();
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.messageReceived");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.addCard");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.inviteGroup");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.reqGps");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.taskDone");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.refreshRoom");
+
+            getBaseContext().registerReceiver(notifReceive, nya);
+        }
+
 
     }
 

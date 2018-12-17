@@ -50,6 +50,7 @@ import com.byonchat.android.provider.Skin;
 import com.byonchat.android.provider.TimeLine;
 import com.byonchat.android.provider.TimeLineDB;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
+import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.GetRealNameRoom;
 import com.byonchat.android.utils.HttpHelper;
@@ -192,7 +193,7 @@ import java.util.TimerTask;
 
 import static com.byonchat.android.utils.PicassoOwnCache.cacheDir;
 
-public class MessengerConnectionService extends Service {
+public class MessengerConnectionService extends Service implements AllAboutUploadTask.OnTaskCompleted {
     public static final String CHAT_SERVER = "ss.byonchat.com";
     public static final String UTIL_SERVER = "uu.byonchat.com";
     public static final String HTTP_SERVER = "bb.byonchat.com";
@@ -1155,6 +1156,21 @@ public class MessengerConnectionService extends Service {
         }
     }
 
+    @Override
+    public void onTaskProses(String response) {
+
+    }
+
+    @Override
+    public void onTaskUpdate(int response, String message) {
+
+    }
+
+    @Override
+    public void onTaskCompleted(int status, String response) {
+
+    }
+
     private class MyContentObserver extends ContentObserver {
 
         public MyContentObserver() {
@@ -1514,7 +1530,8 @@ public class MessengerConnectionService extends Service {
                     default:
                         break;
                 }
-            } else */if (intent.getAction().equals(LOCATION_RECEIVED)) {
+            } else */
+            if (intent.getAction().equals(LOCATION_RECEIVED)) {
                 GPSTracker gps = new GPSTracker(getApplicationContext());
                 if (gps.canGetLocation()) {
                     CountDownTimer cdt = new CountDownTimer(5000, 1000) {
@@ -4884,29 +4901,27 @@ Log.w("every",co.getJabberId());
         @Override
         public void connected(XMPPConnection connection) {
             if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                /* jangan kirim dlu ya
-                List<Rooms> roomses =  botListDB.getListRooms();
-                for (Rooms aa: roomses){
+                List<Rooms> roomses = botListDB.getListRooms();
+                for (Rooms aa : roomses) {
                     String content = aa.getContent().toString();
                     JSONArray jsonArray = null;
                     try {
                         jsonArray = new JSONArray(content);
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            if(jsonArray.getJSONObject(i).getString("category_tab").toString().equalsIgnoreCase("4")){
-                                ArrayList<RoomsDetail> roomsDetails = botListDB.allRoomDetailFormWithFlag("",aa.getUsername(),jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(),"parent");
-                                for(RoomsDetail bb : roomsDetails){
-                                    if(bb.getFlag_content().equalsIgnoreCase("3")){
+                            if (jsonArray.getJSONObject(i).getString("category_tab").toString().equalsIgnoreCase("4")) {
+                                ArrayList<RoomsDetail> roomsDetails = botListDB.allRoomDetailFormWithFlag("", aa.getUsername(), jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), "parent");
+                                for (RoomsDetail bb : roomsDetails) {
+                                    if (bb.getFlag_content().equalsIgnoreCase("3")) {
+                                        Log.w("ia", "wwowo2");
+
                                         SimpleDateFormat hourFormat = new SimpleDateFormat(
                                                 "HH:mm:ss dd/MM/yyyy", Locale.getDefault());
                                         long date = System.currentTimeMillis();
                                         String dateString = hourFormat.format(date);
-                                        RoomsDetail orderModel = new RoomsDetail(bb.getId(), bb.getParent_tab(), aa.getUsername(),dateString, "1", null, "parent");
+                                        RoomsDetail orderModel = new RoomsDetail(bb.getId(), bb.getParent_tab(), aa.getUsername(), dateString, "1", null, "parent");
                                         botListDB.updateDetailRoomWithFlagContentParent(orderModel);
-                                        if(jsonArray.getJSONObject(i).getString("include_pull").toString().equalsIgnoreCase("1")){
-                                            postData(new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl(aa.getUsername()) + DinamicRoomTaskActivity.PULLDETAIL,aa.getUsername(),bb.getParent_tab(),bb.getId());
-                                        }else{
-                                            postData(new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl(aa.getUsername()) + DinamicRoomTaskActivity.POSDETAIL,aa.getUsername(),bb.getParent_tab(),bb.getId());
-                                        }
+
+                                        new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(MessengerConnectionService.this, bb.getId(), aa.getUsername(), bb.getParent_tab());
 
 
                                     }
@@ -4917,7 +4932,7 @@ Log.w("every",co.getJabberId());
                         e.printStackTrace();
                     }
 
-                }*/
+                }
 
                 Contact contact = databaseHelper.getMyContact();
 

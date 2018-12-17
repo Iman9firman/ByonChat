@@ -64,6 +64,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andremion.counterfab.CounterFab;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.AdvRecy.MainDbHelper;
@@ -79,6 +80,7 @@ import com.byonchat.android.RequestPasscodeRoomActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
+import com.byonchat.android.curved.CurvedImageView;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
 import com.byonchat.android.local.Byonchat;
@@ -106,6 +108,7 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+import com.rom4ek.arcnavigationview.ArcNavigationView;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -145,8 +148,8 @@ import static com.byonchat.android.helpers.Constants.URL_LAPOR_SELECTED;
 
 public abstract class MainBaseActivityNew extends AppCompatActivity implements LocationAssistant.Listener {
 
-    @NonNull
-    protected BadgeView bv1;
+//    @NonNull
+//    protected BadgeView bv1;
 
     @NonNull
     protected CoordinatorLayout root_view;
@@ -167,7 +170,16 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected Toolbar tb;
 
     @NonNull
-    protected FloatingActionButton fab_logo, fab_menu_1, fab_menu_2/*, fab_menu_3*/;
+    protected ImageView vBtnToolbarSearch;
+
+    @NonNull
+    protected TextView vToolbarSearchText;
+
+    @NonNull
+    protected FloatingActionButton fab_logo;
+
+    @NonNull
+    CounterFab fab_menu_1, fab_menu_2/*, fab_menu_3*/;
 
     @NonNull
     protected CardView card_search_main;
@@ -206,7 +218,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected AppBarLayout appBarLayout;
 
     @NonNull
-    protected ImageView backgroundImage;
+    protected CurvedImageView backgroundImage;
 
     @NonNull
     protected MaterialSearchView searchView;
@@ -228,6 +240,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected BotAdapter mAdapterRoomList;
     protected RecyclerView.Adapter wrappedAdapter;
 
+    protected ArrayList<ContactBot> botArrayLististPrimary = new ArrayList<ContactBot>();
     protected ArrayList<ContactBot> botArrayListist = new ArrayList<ContactBot>();
     protected List<String> numbers = new ArrayList<>();
 
@@ -346,36 +359,54 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected void resolveListRooms() {
         Byonchat.getRoomsDB().open();
-        botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2");
+        botArrayLististPrimary = Byonchat.getRoomsDB().retrieveRooms("2", true);
+        botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", false);
         Byonchat.getRoomsDB().close();
 
-        if (botArrayListist.size() == 1) {
-            vTxtStatusWarning.setVisibility(View.GONE);
-            vBtnOpenRooms.setVisibility(View.GONE);
-            vFrameWarning.setVisibility(View.INVISIBLE);
-            vBtnAddRooms.setVisibility(View.INVISIBLE);
+        if (botArrayLististPrimary.size() > 0 && botArrayListist.size() == 0) {
+            if (botArrayLististPrimary.size() > 0) {
+                resolveNavHeader();
+                refreshList();
 
-            card_search_main.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.VISIBLE);
-        } else if (botArrayListist.size() > 1) {
-            resolveNavHeader();
-            refreshList();
+                vTxtStatusWarning.setVisibility(View.GONE);
+                vFrameWarning.setVisibility(View.INVISIBLE);
+                vBtnAddRooms.setVisibility(View.INVISIBLE);
 
-            vTxtStatusWarning.setVisibility(View.GONE);
-            vFrameWarning.setVisibility(View.INVISIBLE);
-            vBtnAddRooms.setVisibility(View.INVISIBLE);
-
-            vBtnOpenRooms.setVisibility(View.VISIBLE);
-            card_search_main.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.VISIBLE);
+                vBtnOpenRooms.setVisibility(View.INVISIBLE);
+                card_search_main.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
         } else {
-            vTxtStatusWarning.setVisibility(View.VISIBLE);
-            vFrameWarning.setVisibility(View.VISIBLE);
-            vBtnAddRooms.setVisibility(View.VISIBLE);
+            if (botArrayListist.size() == 1) {
+                resolveNavHeader();
+                refreshList();
+                vTxtStatusWarning.setVisibility(View.GONE);
+                vFrameWarning.setVisibility(View.INVISIBLE);
+                vBtnAddRooms.setVisibility(View.INVISIBLE);
 
-            vBtnOpenRooms.setVisibility(View.INVISIBLE);
-            card_search_main.setVisibility(View.INVISIBLE);
-            recyclerView.setVisibility(View.INVISIBLE);
+                vBtnOpenRooms.setVisibility(View.VISIBLE);
+                card_search_main.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+            } else if (botArrayListist.size() > 1) {
+                resolveNavHeader();
+                refreshList();
+
+                vTxtStatusWarning.setVisibility(View.GONE);
+                vFrameWarning.setVisibility(View.INVISIBLE);
+                vBtnAddRooms.setVisibility(View.INVISIBLE);
+
+                vBtnOpenRooms.setVisibility(View.VISIBLE);
+                card_search_main.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+            } else {
+                vTxtStatusWarning.setVisibility(View.VISIBLE);
+                vFrameWarning.setVisibility(View.VISIBLE);
+                vBtnAddRooms.setVisibility(View.VISIBLE);
+
+                vBtnOpenRooms.setVisibility(View.INVISIBLE);
+                card_search_main.setVisibility(View.INVISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -405,7 +436,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_three).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_refresh).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
+        nav_Menu.findItem(R.id.nav_item_legal).setVisible(true);
     }
 
     protected void refreshList() {
@@ -513,13 +544,22 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     .into(vNavLogo);
 
             vNavTitle.setText(botArrayListist.get(0).realname);
+            vToolbarSearchText.setText(botArrayListist.get(0).realname);
 
             title = botArrayListist.get(0).realname;
             username = botArrayListist.get(0).getName();
 
             resolveToolbar(botArrayListist.get(0));
         } else {
-            // Do something here if you have not added rooms
+            Manhera.getInstance()
+                    .get()
+                    .load(R.drawable.logo_byon)
+                    .fitCenter()
+                    .into(vNavLogo);
+
+            vNavTitle.setText("ByonChat");
+            vToolbarSearchText.setText("ByonChat");
+
             Manhera.getInstance().get()
                     .load(R.drawable.wallpaper)
                     .fitCenter()
@@ -760,10 +800,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
-                backgroundImage.setForeground(new ColorDrawable(Color.parseColor("#" + percent + color)));
+//                backgroundImage.setForeground(new ColorDrawable(Color.parseColor("#" + percent + color)));
             } catch (Exception e) {
                 colorForeground = color.replace("#", "#" + percent);
-                backgroundImage.setForeground(new ColorDrawable(Color.parseColor(colorForeground)));
+//                backgroundImage.setForeground(new ColorDrawable(Color.parseColor(colorForeground)));
             }
         }
     }
@@ -809,7 +849,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected void resolveToolbarExpanded() {
         appBarLayout.setExpanded(true, false);
         if (searchView.isSearchOpen())
-            searchView.showSearch(false);
+            searchView.closeSearch();
     }
 
     void resolveAnimation() {
@@ -898,13 +938,15 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         }
         cursor.close();
 
-        ShortcutBadger.applyCount(context, badgeCount);
+        fab_menu_2.setCount(badgeCount);
+
+        /*ShortcutBadger.applyCount(context, badgeCount);
 
         bv1.setVisibility(badgeCount == 0 ? View.GONE : View.VISIBLE);
         bv1.setText(badgeCount + "");
 
         if (badgeCount > 0)
-            bv1.show();
+            bv1.show();*/
     }
 
     class BroadcastHandler extends BroadcastReceiver {

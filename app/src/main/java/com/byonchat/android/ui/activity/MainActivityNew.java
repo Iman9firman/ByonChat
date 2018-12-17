@@ -123,6 +123,8 @@ public class MainActivityNew extends MainBaseActivityNew {
         navigationView = findViewById(R.id.nav_view);
         vListRooms = findViewById(R.id.list_view);
         recyclerView = findViewById(R.id.recycler_main);
+        vBtnToolbarSearch = findViewById(R.id.ic_toolbar_title);
+        vToolbarSearchText = findViewById(R.id.text_toolbar_title);
 
         card_menu_main = findViewById(R.id.card_nav_main);
 //        blurView = findViewById(R.id.blurView);
@@ -138,7 +140,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         vNavTitle = headerview.findViewById(R.id.nav_title);
         vBtnOpenRooms = headerview.findViewById(R.id.nav_button_open_room);
 
-        bv1 = new BadgeView(getBaseContext(), fab_menu_2);
+//        bv1 = new BadgeView(getBaseContext(), fab_menu_2);
     }
 
     @Override
@@ -371,15 +373,15 @@ public class MainActivityNew extends MainBaseActivityNew {
             appBarLayout.addOnOffsetChangedListener((appBarLayout, i) -> {
                 if (Math.abs(i) - appBarLayout.getTotalScrollRange() == 0) {
                     card_search_main.setVisibility(View.GONE);
-                    isVisible = false;
+                    isVisible = true;
                     invalidateOptionsMenu();
                 } else {
-                    card_search_main.setVisibility(View.VISIBLE);
+                    card_search_main.setVisibility(View.GONE);
                     isVisible = true;
-                    if (searchView.isSearchOpen()) {
+                    /*if (searchView.isSearchOpen()) {
                         searchView.closeSearch();
                         tb.setVisibility(View.VISIBLE);
-                    }
+                    }*/
                     invalidateOptionsMenu();
                 }
             });
@@ -418,6 +420,9 @@ public class MainActivityNew extends MainBaseActivityNew {
                     }
                 }, 500);
             });
+            vBtnToolbarSearch.setOnClickListener(v -> {
+                searchView.showSearch(true);
+            });
 
             final Drawable windowBackground = getWindow().getDecorView().getBackground();
 //            blurView.setupWith(root_view)
@@ -443,12 +448,12 @@ public class MainActivityNew extends MainBaseActivityNew {
             searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
                 @Override
                 public void onSearchViewShown() {
-                    //Do some magic
+                    tb.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onSearchViewClosed() {
-                    //Do some magic
+                    tb.setVisibility(View.VISIBLE);
                 }
             });
 

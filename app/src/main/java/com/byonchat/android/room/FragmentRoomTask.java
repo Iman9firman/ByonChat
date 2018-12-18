@@ -56,6 +56,9 @@ public class FragmentRoomTask extends Fragment {
     String idTab;
     String title;
 
+    public FragmentRoomTask() {
+    }
+
     public FragmentRoomTask(Activity ctx) {
         mContext = ctx;
 
@@ -139,7 +142,7 @@ public class FragmentRoomTask extends Fragment {
             status = aa.getFlag_content();
             String titLes = Message.parsedMessageText(JsonToStringKey(title));
 
-            Log.w("2abubu",titLes);
+            Log.w("2abubu", titLes);
 
             if (titLes.contains("https")) {
                 titLes = desc;

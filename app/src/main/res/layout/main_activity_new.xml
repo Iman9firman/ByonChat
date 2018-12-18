@@ -35,7 +35,7 @@
                 <com.byonchat.android.curved.CurvedImageView
                     android:id="@+id/main.backdrop"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="300dp"
                     android:elevation="5dp"
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"

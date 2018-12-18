@@ -418,6 +418,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         });
     }
 
+    protected void resolveRefreshGrid() {
+        adapter.getFilter().filter("");
+    }
+
     protected void roomsOpened() {
         if (vListRooms.getVisibility() == View.GONE) {
             resolveNavMenu(false);

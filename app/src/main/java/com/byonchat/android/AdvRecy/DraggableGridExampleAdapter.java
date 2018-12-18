@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,6 +98,7 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
     }
 
     public void setItems(List<ItemMain> items, List<String> positionList) {
+        Log.w("bahagia", "jalan");
         this.itemList = items;
         this.filterList = items;
         this.positionList = positionList;

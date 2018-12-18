@@ -193,6 +193,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         resolveNavHeader();
         resolveListRooms();
         resolveOpenRooms();
+        resolveRefreshGrid();
     }
 
     @Override

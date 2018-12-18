@@ -1,6 +1,7 @@
 package com.byonchat.android.ui.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -32,6 +33,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,6 +54,7 @@ import com.byonchat.android.ui.adapter.ItemImsListHistoryAdapter;
 import com.byonchat.android.ui.adapter.ListHistoryItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.ui.view.ScrollListener;
+import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.ThrowProfileService;
 import com.byonchat.android.utils.Validations;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -476,40 +479,6 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         }
         if (actionMode != null) {
             actionMode.setTitle(String.valueOf(selectedItem.size()));
-            /*actionMode.getMenu().findItem(R.id.action_forward)
-                    .setVisible(true);
-            if (selectedComments.size() == 1 && selectedComments.get(0).getStatus() >= SoloComment.STATE_ON_SOLO) {
-                Message soloComment = selectedComments.get(0);
-
-                actionMode.getMenu().findItem(R.id.action_reply).setVisible(true);
-
-                if (soloChatRoom.isGroup() && soloComment.getSource().equalsIgnoreCase(Solo.SoloMessengerHelper().getMyContact().getJabberId())) {
-                    actionMode.getMenu().findItem(R.id.action_info).setVisible(true);
-                } else {
-                    actionMode.getMenu().findItem(R.id.action_info).setVisible(false);
-                }
-
-                File localPath = Solo.getDataStore().getLocalPath(soloComment.getId());
-                if (localPath != null) {
-                    actionMode.getMenu().findItem(R.id.action_share).setVisible(true);
-                } else {
-                    actionMode.getMenu().findItem(R.id.action_share).setVisible(false);
-                }
-            } else {
-                actionMode.getMenu().findItem(R.id.action_reply).setVisible(false);
-                actionMode.getMenu().findItem(R.id.action_share).setVisible(false);
-                actionMode.getMenu().findItem(R.id.action_info).setVisible(false);
-            }
-
-            if (onlyTextOrLinkType(selectedComments)) {
-                actionMode.getMenu().findItem(R.id.action_copy).setVisible(true);
-            } else {
-                actionMode.getMenu().findItem(R.id.action_copy).setVisible(false);
-            }
-
-            actionMode.getMenu()
-                    .findItem(R.id.action_delete)
-                    .setVisible(true);*/
         }
     }
 
@@ -522,15 +491,11 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
     @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         menu.findItem(R.id.action_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//        menu.findItem(R.id.action_copy).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//        menu.findItem(R.id.action_share).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//        menu.findItem(R.id.action_forward).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return true;
     }
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        mode.finish();
         onSelectedCommentsAction(mode, item, mAdapter.getSelectedComments());
         return false;
     }
@@ -543,24 +508,54 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
 
     protected void onSelectedCommentsAction(ActionMode mode, MenuItem item, List<IconItem> selectedItem) {
         int i = item.getItemId();
-        /*if (i == R.id.action_copy) {
-            copyComments(selectedComments);
-        } else if (i == R.id.action_share) {
-            if (selectedComments.size() > 0) {
-                shareComment(selectedComments.get(0));
-            }
-        } else if (i == R.id.action_reply) {
-            if (selectedComments.size() > 0) {
-                replyComment(selectedComments.get(0));
-            }
-        } else if (i == R.id.action_forward) {
-            forwardComments(selectedComments);
-        } else if (i == R.id.action_info && selectedComments.size() > 0) {
-            showCommentInfo(selectedComments.get(0));
-        } else if (i == R.id.action_delete && selectedComments.size() > 0) {
-            deleteComments(selectedComments);
-        }*/
+        if (i == R.id.action_delete && selectedItem.size() > 0) {
+            deleteMessages(selectedItem);
+        }
         mode.finish();
+    }
+
+    protected void deleteMessages(List<IconItem> selectedItem) {
+        final List<String> jabId = new ArrayList<>();
+        for (int i = selectedItem.size() - 1; i >= 0; i--) {
+            IconItem item = selectedItem.get(i);
+            jabId.add(item.getJabberId());
+        }
+
+        String title = "Confirm Delete";
+        String message = "Once you delete your chat history you won't be able to get it back. Delete?";
+
+        final Dialog dialogConfirmation;
+        dialogConfirmation = DialogUtil.customDialogConversationConfirmation(this);
+        dialogConfirmation.show();
+
+        TextView txtConfirmation = dialogConfirmation.findViewById(R.id.confirmationTxt);
+        TextView descConfirmation = dialogConfirmation.findViewById(R.id.confirmationDesc);
+        txtConfirmation.setText(title);
+        descConfirmation.setVisibility(View.VISIBLE);
+        descConfirmation.setText(message);
+
+        Button btnNo = dialogConfirmation.findViewById(R.id.btnNo);
+        Button btnYes = dialogConfirmation.findViewById(R.id.btnYes);
+
+        btnNo.setOnClickListener(v -> {
+            dialogConfirmation.dismiss();
+        });
+
+        btnYes.setOnClickListener(v -> {
+            for (String jj : jabId) {
+                Byonchat.getMessengerHelper()
+                        .deleteRows(
+                                Message.TABLE_NAME,
+                                " destination=? OR source =? ",
+                                new String[]{jj,
+                                        jj}
+                        );
+                Intent intent = new Intent(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
+                sendBroadcast(intent);
+            }
+            resolveChatHistory();
+            dialogConfirmation.dismiss();
+        });
     }
 
     protected void updateMessage(Message vo) {
@@ -749,83 +744,6 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
 
     protected void resolveChatHistorySearch() {
         new LoadMessageList().execute();
-//        Cursor cursor;
-//
-//        String myJabberId = Byonchat.getMessengerHelper().getMyContact().getJabberId();
-//        cursor = Byonchat.getMessengerHelper().query(
-//                getString(R.string.sql_chat_list_find),
-//                new String[]{myJabberId, Message.TYPE_READSTATUS, myJabberId, Message.TYPE_READSTATUS});
-//
-//        int indexName = cursor.getColumnIndex(Contact.NAME);
-//        int indexJabberId = cursor.getColumnIndex(Message.NUMBER);
-//        int indexMessage = cursor.getColumnIndex(Message.MESSAGE);
-//        int idMessage = cursor.getColumnIndex(Message._ID);
-//
-//        Calendar cal = Calendar.getInstance();
-//        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
-//                cal.get(Calendar.DATE), 0, 0, 0);
-//        if (cursor.getCount() > 0) {
-//            messageItemList.clear();
-//        }
-//        while (cursor.moveToNext()) {
-//            String jabberId = cursor.getString(indexJabberId);
-//            String name = cursor.getString(indexName);
-//
-//            String message = cursor.getString(indexMessage);
-//            if (message == null)
-//                continue;
-//
-//            Message vo = new Message(cursor);
-//            message = Message.parsedMessageBodyHtmlCode(vo, getApplicationContext());
-//            Date d = null;
-//
-//            d = vo.getSendDate();
-//
-//            String dInfo = null;
-//            if (d != null) {
-//                if (d.getTime() < cal.getTimeInMillis()) {
-//                    dInfo = dateInfoFormat.format(d);
-//                } else {
-//                    dInfo = hourInfoFormat.format(d);
-//                }
-//            }
-//            ChatParty cparty = null;
-//            if (vo.isGroupChat()) {
-//                cparty = Byonchat.getMessengerHelper().getGroup(jabberId);
-//            } else {
-//                if (name != null) {
-//                    cparty = new Contact(name, jabberId, "");
-//                } else {
-//                    name = jabberId;
-//                }
-//            }
-//
-//
-//            long total = 0;
-//            Cursor cursor2 = Byonchat.getMessengerHelper().query(
-//                    SQL_SELECT_TOTAL_MESSAGES_UNREAD,
-//                    new String[]{jabberId,
-//                            jabberId});
-//            int indexTotal = cursor2.getColumnIndex("total");
-//            while (cursor2.moveToNext()) {
-//                total = cursor2.getLong(indexTotal);
-//            }
-//            cursor2.close();
-//
-//            String signature = new Validations().getInstance(getApplicationContext()).getSignatureProfilePicture(jabberId, Byonchat.getMessengerHelper());
-//
-//            IconItem iconItem = new IconItem(jabberId, name, message,
-//                    dInfo, cparty, total, Message.getStatusMessage(vo, myJabberId), signature);
-//            iconItem.type = IconItem.TYPE_MESSAGE_FIND;
-//            if (cparty instanceof Contact) {
-//                // setProfilePicture(iconItem, (Contact) cparty);
-//            }
-//            messageItemList.add(iconItem);
-//        }
-//
-//        if (mMessageAdapter != null) {
-//            mMessageAdapter.setItems(messageItemList);
-//        }
     }
 
     class BroadcastHandler extends BroadcastReceiver {

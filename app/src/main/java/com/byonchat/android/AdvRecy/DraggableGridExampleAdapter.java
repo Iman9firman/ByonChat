@@ -98,7 +98,6 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
     }
 
     public void setItems(List<ItemMain> items, List<String> positionList) {
-        Log.w("bahagia", "jalan");
         this.itemList = items;
         this.filterList = items;
         this.positionList = positionList;

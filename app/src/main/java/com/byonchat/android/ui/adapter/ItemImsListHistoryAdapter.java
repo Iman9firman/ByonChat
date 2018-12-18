@@ -93,7 +93,7 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
 
             ((ImsListHistoryViewHolder) viewHolder).vDateInfo.setText(item.dateInfo);
 
-            ((ImsListHistoryViewHolder) viewHolder).vTextUnread.setText(item.unread + "");
+            ((ImsListHistoryViewHolder) viewHolder).vTextUnread.setText(item.unread > 99 ? "99+" : item.unread + "");
 
             resolveContent(viewHolder, item);
 

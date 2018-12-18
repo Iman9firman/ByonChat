@@ -1,16 +1,12 @@
 package com.byonchat.android.FragmentDinamicRoom;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +16,12 @@ import android.widget.TextView;
 import com.byonchat.android.R;
 import com.byonchat.android.adapter.CircularContactView;
 import com.byonchat.android.provider.ContentRoom;
-import com.byonchat.android.utils.OnLoadMoreListener;
 import com.byonchat.android.utils.Utility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
 /**

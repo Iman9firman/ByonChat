@@ -2647,8 +2647,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     perhitungan = true;
                                 }
                             }
-                            if (idListTask.equalsIgnoreCase("66668")) {
-                                //honda spk
+
+                            if (perhitungan) {
+
+                                Log.w("igni", "empat");
                                 linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.from_cild_layout, null);
 
                                 Button addCild = (Button) linearEstimasi[count].findViewById(R.id.btn_add_cild);
@@ -2723,7 +2725,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             String contentS = "";
 
                                             String cc = list.get(u).getContent();
-                                            if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown")) {
+                                            if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah")) {
                                                 cc = jsoncreateC(list.get(u).getContent());
                                             }
 
@@ -2740,13 +2742,18 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                             if (jsA != null) {
                                                 Log.w("slasa1", "1");
-                                                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown")) {
+                                                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
                                                     try {
+                                                        Log.w("slasa2", "1");
                                                         objVV.put("key", list.get(u).getFlag_tab());
                                                         JSONObject jObject = null;
                                                         try {
                                                             jObject = new JSONObject(list.get(u).getContent());
-                                                            titleUntuk = list.get(u).getContent();
+                                                            titleUntuk = jsonResultType(list.get(u).getContent(), "Name Detail");
+                                                            tambahan = jsonResultType(list.get(u).getContent(), "Unit");
+                                                            if (titleUntuk.equalsIgnoreCase("")) {
+                                                                titleUntuk = jsonResultType(list.get(u).getContent(), "SKU");
+                                                            }
                                                             objVV.put("value", jObject);
                                                         } catch (JSONException e) {
                                                             objVV.put("value", list.get(u).getContent());
@@ -2778,11 +2785,18 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                                 }
                                             } else {
-
-                                                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
-                                                    decsUntuk = list.get(u).getContent();
-                                                } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("formula")) {
-                                                    priceUntuk = list.get(u).getContent();
+                                                if (idListTaskMasterForm.equalsIgnoreCase("62483")) {
+                                                    if (list.get(u).getFlag_tab().equalsIgnoreCase("qty")) {
+                                                        decsUntuk = list.get(u).getContent();
+                                                    } else if (list.get(u).getFlag_tab().equalsIgnoreCase("total")) {
+                                                        priceUntuk = list.get(u).getContent();
+                                                    }
+                                                } else {
+                                                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
+                                                        decsUntuk = list.get(u).getContent();
+                                                    } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("formula")) {
+                                                        priceUntuk = list.get(u).getContent();
+                                                    }
                                                 }
 
 
@@ -2797,8 +2811,41 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
                                             jsonArrayHUHU.put(objVV);
                                         }
-                                        rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk));
 
+                                        if (idListTaskMasterForm.equalsIgnoreCase("62483")) {
+                                            Double nilai = 0.00;
+                                            try {
+                                                nilai = Double.parseDouble(priceUntuk != null ? priceUntuk.replace(",", "") : "0") / Double.parseDouble(decsUntuk != null ? decsUntuk.replace(",", "") : "0");
+                                            } catch (Exception e) {
+                                                nilai = 0.00;
+                                            }
+                                            rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk + " " + tambahan, String.valueOf(nilai)));
+                                        } else {
+// TODO: 28/10/18 impelria maintenance
+                                            if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
+                                                if (Message.isJSONValid(list.get(1).getContent())) {
+                                                    JSONObject jObject = null;
+                                                    try {
+                                                        jObject = new JSONObject(list.get(1).getContent());
+                                                        String tPP = jObject.get("Part ID").toString() + " " + jObject.get("Nama Part").toString() + " (" + list.get(0).getContent() + ")";
+                                                        decsUntuk = list.get(2).getContent();
+                                                        priceUntuk = jObject.get("AVE").toString();
+
+                                                        Log.w("arash", idchildDetail + ":::" + tPP + ":::" + decsUntuk + ":::" + priceUntuk);
+
+                                                        rowItems.add(new ModelFormChild(idchildDetail, tPP, decsUntuk, priceUntuk));
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                }
+                                            } else {
+                                                rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk));
+                                            }
+
+
+                                        }
                                         objData.put("data", jsonArrayHUHU);
                                         jsonArrayMaster.put(objData);
                                     }
@@ -2928,634 +2975,309 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
                             } else {
-                                if (perhitungan) {
+                                //
 
-                                    Log.w("igni", "empat");
-                                    linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.from_cild_layout, null);
+                                Log.w("igni", "lima" + idListTask);
 
-                                    Button addCild = (Button) linearEstimasi[count].findViewById(R.id.btn_add_cild);
-                                    ListView lv = (ListView) linearEstimasi[count].findViewById(R.id.listOrder);
-                                    TextView tQty = (TextView) linearEstimasi[count].findViewById(R.id.total_detail_order);
-                                    TextView tPrice = (TextView) linearEstimasi[count].findViewById(R.id.total_price_order);
+                                linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout, null);
+                                TableRow tableLayout = (TableRow) linearEstimasi[count].findViewById(R.id.tableRow2);
+                                Button addCild = (Button) linearEstimasi[count].findViewById(R.id.btn_add_cild);
+                                TextView titleName = (TextView) linearEstimasi[count].findViewById(R.id.titleName);
+                                TextView total_price_order = (TextView) linearEstimasi[count].findViewById(R.id.total_price_order);
+                                ListView lv = (ListView) linearEstimasi[count].findViewById(R.id.listOrder);
 
-                                    lv.setOnTouchListener(new View.OnTouchListener() {
-                                        // Setting on Touch Listener for handling the touch inside ScrollView
-                                        @Override
-                                        public boolean onTouch(View v, MotionEvent event) {
-                                            v.getParent().requestDisallowInterceptTouchEvent(true);
-                                            return false;
-                                        }
-                                    });
 
-                                    tQty.setText("");
-                                    tPrice.setText("");
-                                    idListTaskMasterForm = idListTask;
-                                    List<String> listId = db.getAllRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), "child_detail");
+                                lv.setOnTouchListener(new View.OnTouchListener() {
+                                    // Setting on Touch Listener for handling the touch inside ScrollView
+                                    @Override
+                                    public boolean onTouch(View v, MotionEvent event) {
+                                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                                        return false;
+                                    }
+                                });
 
-                                    if (listId.size() == 0) {
-                                        if (asal.length() > 0) {
+                                idListTaskMasterForm = idListTask;
+                                List<String> listId = db.getAllRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), "child_detail");
+
+                                JSONArray jsonArrayMaster = new JSONArray();
+                                ArrayList<ModelFormChild> rowItems = new ArrayList<ModelFormChild>();
+
+                                try {
+                                    int asd = 0;
+                                    for (String idchildDetail : listId) {
+                                        String titleUntuk = "";
+                                        String decsUntuk = "";
+                                        String priceUntuk = "";
+                                        JSONObject objData = new JSONObject();
+                                        objData.put("urutan", asd);
+                                        asd++;
+                                        List<RoomsDetail> list = db.getAllRoomDetailFormWithFlagContent(idchildDetail, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), "child_detail");
+                                        JSONArray jsonArrayHUHU = new JSONArray();
+                                        for (int u = 0; u < list.size(); u++) {
+                                            JSONObject objVV = new JSONObject();
+                                            JSONArray jsA = null;
+                                            String contentS = "";
+
+                                            String cc = list.get(u).getContent();
+                                            if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah")) {
+                                                cc = jsoncreateC(list.get(u).getContent());
+                                            }
+
                                             try {
-                                                JSONObject js1 = new JSONObject(asal);
-                                                JSONArray jsonArrayV = js1.getJSONArray("value");
-                                                for (int iz = 0; iz < jsonArrayV.length(); iz++) {
-
-                                                    JSONArray jsonArrayVv = jsonArrayV.getJSONObject(iz).getJSONArray("data");
-                                                    String resRandom = DialogFormChildMainNew.getRandomString();
-
-
-                                                    for (int iasd = 0; iasd < jsonArrayVv.length(); iasd++) {
-                                                        String a = jsonArrayVv.getJSONObject(iasd).getString("key");
-                                                        String b = jsonArrayVv.getJSONObject(iasd).getString("value");
-                                                        String c = jsonArrayVv.getJSONObject(iasd).getString("type");
-
-                                                        RoomsDetail orderModel2 = new RoomsDetail(resRandom, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), b, jsonCreateType(String.valueOf(asall.indexOf(c)), c, String.valueOf(asall.indexOf(c) - 1)), a, "child_detail");
-                                                        db.insertRoomsDetail(orderModel2);
+                                                if (cc.startsWith("{")) {
+                                                    if (!cc.startsWith("[")) {
+                                                        cc = "[" + cc + "]";
                                                     }
-                                                    listId.add(resRandom);
+                                                    jsA = new JSONArray(cc);
                                                 }
-
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
-                                        }
-
-                                    }
-
-
-                                    JSONArray jsonArrayMaster = new JSONArray();
-                                    ArrayList<ModelFormChild> rowItems = new ArrayList<ModelFormChild>();
-                                    try {
-                                        int asd = 0;
-                                        for (String idchildDetail : listId) {
-                                            String titleUntuk = "";
-                                            String decsUntuk = "";
-                                            String priceUntuk = "";
-                                            String tambahan = "";
-                                            JSONObject objData = new JSONObject();
-                                            objData.put("urutan", asd);
-                                            asd++;
-                                            List<RoomsDetail> list = db.getAllRoomDetailFormWithFlagContent(idchildDetail, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), "child_detail");
-
-                                            JSONArray jsonArrayHUHU = new JSONArray();
-                                            for (int u = 0; u < list.size(); u++) {
-
-
-                                                JSONObject objVV = new JSONObject();
-                                                JSONArray jsA = null;
-                                                String contentS = "";
-
-                                                String cc = list.get(u).getContent();
-                                                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah")) {
-                                                    cc = jsoncreateC(list.get(u).getContent());
-                                                }
-
-                                                try {
-                                                    if (cc.startsWith("{")) {
-                                                        if (!cc.startsWith("[")) {
-                                                            cc = "[" + cc + "]";
-                                                        }
-                                                        jsA = new JSONArray(cc);
-                                                    }
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                if (jsA != null) {
-                                                    Log.w("slasa1", "1");
-                                                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
-                                                        try {
-                                                            Log.w("slasa2", "1");
-                                                            objVV.put("key", list.get(u).getFlag_tab());
-                                                            JSONObject jObject = null;
-                                                            try {
-                                                                jObject = new JSONObject(list.get(u).getContent());
-                                                                titleUntuk = jsonResultType(list.get(u).getContent(), "Name Detail");
-                                                                tambahan = jsonResultType(list.get(u).getContent(), "Unit");
-                                                                if (titleUntuk.equalsIgnoreCase("")) {
-                                                                    titleUntuk = jsonResultType(list.get(u).getContent(), "SKU");
-                                                                }
-                                                                objVV.put("value", jObject);
-                                                            } catch (JSONException e) {
-                                                                objVV.put("value", list.get(u).getContent());
-                                                                e.printStackTrace();
-                                                            }
-
-                                                            objVV.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    } else {
-                                                        Log.w("slasa3", "1");
-                                                        try {
-                                                            for (int ic = 0; ic < jsA.length(); ic++) {
-                                                                final String icC = jsA.getJSONObject(ic).getString("c").toString();
-                                                                contentS += icC + "|";
-                                                            }
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        try {
-                                                            objVV.put("key", list.get(u).getFlag_tab());
-                                                            objVV.put("value", contentS.substring(0, contentS.length() - 1));
-                                                            objVV.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    }
-                                                } else {
-                                                    if (idListTaskMasterForm.equalsIgnoreCase("62483")) {
-                                                        if (list.get(u).getFlag_tab().equalsIgnoreCase("qty")) {
-                                                            decsUntuk = list.get(u).getContent();
-                                                        } else if (list.get(u).getFlag_tab().equalsIgnoreCase("total")) {
-                                                            priceUntuk = list.get(u).getContent();
-                                                        }
-                                                    } else {
-                                                        if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
-                                                            decsUntuk = list.get(u).getContent();
-                                                        } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("formula")) {
-                                                            priceUntuk = list.get(u).getContent();
-                                                        }
-                                                    }
-
+                                            if (jsA != null) {
+                                                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
 
                                                     try {
                                                         objVV.put("key", list.get(u).getFlag_tab());
-                                                        objVV.put("value", list.get(u).getContent());
+                                                        JSONObject jObject = null;
+                                                        try {
+                                                            jObject = new JSONObject(list.get(u).getContent());
+                                                            titleUntuk = jsonResultType(list.get(u).getContent(), "Nama");
+                                                            if (titleUntuk.equalsIgnoreCase("")) {
+                                                                titleUntuk = jsonResultType(list.get(u).getContent(), "Name Detail");
+                                                            }
+                                                            if (titleUntuk.equalsIgnoreCase("")) {
+                                                                titleUntuk = jsonResultType(list.get(u).getContent(), "Nama Siswa");
+                                                            }
+                                                            objVV.put("value", jObject);
+                                                        } catch (JSONException e) {
+                                                            objVV.put("value", list.get(u).getContent());
+                                                            e.printStackTrace();
+                                                        }
+
+                                                        objVV.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                } else {
+                                                    try {
+                                                        for (int ic = 0; ic < jsA.length(); ic++) {
+                                                            final String icC = jsA.getJSONObject(ic).getString("c").toString();
+                                                            contentS += icC + "|";
+                                                        }
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    try {
+                                                        objVV.put("key", list.get(u).getFlag_tab());
+                                                        objVV.put("value", contentS.substring(0, contentS.length() - 1));
                                                         objVV.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
                                                     } catch (JSONException e) {
                                                         e.printStackTrace();
                                                     }
 
                                                 }
-                                                jsonArrayHUHU.put(objVV);
+                                            } else {
+                                                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("front_camera") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera")) {
+                                                    titleName.setText(list.get(u).getFlag_tab());
+                                                    titleUntuk = list.get(u).getContent();
+                                                } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown")) {
+                                                    titleName.setText(list.get(u).getFlag_tab());
+                                                    titleUntuk = list.get(u).getContent();
+                                                    Log.w("lama1", titleUntuk);
+                                                } else {
+                                                    Log.w("lama1a", titleUntuk);
+                                                    decsUntuk = list.get(u).getContent();
+                                                    Log.w("lama2a", decsUntuk);
+                                                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
+                                                        priceUntuk = list.get(u).getContent();
+                                                    }
+
+                                                }
+
+                                                try {
+                                                    objVV.put("key", list.get(u).getFlag_tab());
+                                                    objVV.put("value", list.get(u).getContent());
+                                                    objVV.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                if (list.get(u).getFlag_tab().equalsIgnoreCase("biaya")) {
+                                                    tableLayout.setVisibility(View.VISIBLE);
+                                                }
+
                                             }
 
-                                            if (idListTaskMasterForm.equalsIgnoreCase("62483")) {
-                                                Double nilai = 0.00;
-                                                try {
-                                                    nilai = Double.parseDouble(priceUntuk != null ? priceUntuk.replace(",", "") : "0") / Double.parseDouble(decsUntuk != null ? decsUntuk.replace(",", "") : "0");
-                                                } catch (Exception e) {
-                                                    nilai = 0.00;
+                                            JSONArray jsonArrayCildQQ = new JSONArray(formChild);
+                                            for (int jsonArrayCildQQi = 0; jsonArrayCildQQi < jsonArrayCildQQ.length(); jsonArrayCildQQi++) {
+                                                String idd = jsonArrayCildQQ.getJSONObject(jsonArrayCildQQi).getString("order").toString();
+                                                if (jsonResultType(list.get(u).getFlag_content(), "a").equalsIgnoreCase(idd)) {
+                                                    objVV.put("label", jsonArrayCildQQ.getJSONObject(jsonArrayCildQQi).getString("label").toString());
                                                 }
-                                                rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk + " " + tambahan, String.valueOf(nilai)));
-                                            } else {
-// TODO: 28/10/18 impelria maintenance
-                                                if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
-                                                    if (Message.isJSONValid(list.get(1).getContent())) {
-                                                        JSONObject jObject = null;
-                                                        try {
-                                                            jObject = new JSONObject(list.get(1).getContent());
-                                                            String tPP = jObject.get("Part ID").toString() + " " + jObject.get("Nama Part").toString() + " (" + list.get(0).getContent() + ")";
-                                                            decsUntuk = list.get(2).getContent();
-                                                            priceUntuk = jObject.get("AVE").toString();
+                                            }
 
-                                                            Log.w("arash", idchildDetail + ":::" + tPP + ":::" + decsUntuk + ":::" + priceUntuk);
+                                            jsonArrayHUHU.put(objVV);
+                                        }
 
-                                                            rowItems.add(new ModelFormChild(idchildDetail, tPP, decsUntuk, priceUntuk));
+                                        Integer start = Integer.valueOf(idListTask);
 
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
+                                        if (start >= 65480) {
+                                            titleUntuk = list.get(0).getContent().toString();
+                                            if (list.size() > 1) {
+
+                                                decsUntuk = list.get(1).getContent().toString();
+                                                String valUs = "";
+                                                if (Message.isJSONValid(decsUntuk)) {
+                                                    JSONObject jObject = null;
+                                                    try {
+                                                        jObject = new JSONObject(decsUntuk);
+
+                                                        Iterator<String> keys = jObject.keys();
+                                                        while (keys.hasNext()) {
+                                                            String keyValue = (String) keys.next();
+                                                            String valueString = jObject.getString(keyValue);
+                                                            valUs += keyValue + " : " + valueString + "\n";
                                                         }
 
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
                                                     }
-                                                } else {
-                                                    rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk));
+
+                                                }
+
+                                                if (valUs.length() != 0) {
+                                                    titleUntuk += "\n" + valUs.substring(0, (valUs.length() - 1));
+                                                    decsUntuk = "";
+                                                    if (list.size() == 2) {
+                                                        decsUntuk = list.get(1).getContent().toString();
+
+                                                    }
+
                                                 }
 
 
-                                            }
-                                            objData.put("data", jsonArrayHUHU);
-                                            jsonArrayMaster.put(objData);
-                                        }
-
-                                        Log.w("slasa77", jsonArrayMaster.toString());
-
-
-                                        Integer totalQ = 0;
-                                        Double totalP = 0.0;
-                                        Double nilai = 0.0;
-                                        for (ModelFormChild mfc : rowItems) {
-                                            try {
-                                                String dodo = mfc.getDetail();
-                                                if (dodo.contains(" ")) {
-                                                    dodo = dodo.substring(0, dodo.indexOf(" "));
-                                                }
-                                                String ssss = new Validations().getInstance(context).numberToCurency(String.valueOf(Double.parseDouble(mfc.getPrice().replace(",", "")) * Double.parseDouble(dodo.replace(",", ""))));
-                                                totalP += Double.parseDouble(ssss.replace(",", ""));
-                                                totalQ += Integer.valueOf(dodo);
-                                            } catch (Exception e) {
-
-                                            }
-                                        }
-
-                                        String totalHarga = new Validations().getInstance(context).numberToCurency(totalP + "");
-
-                                        tQty.setText(totalQ + "");
-                                        tPrice.setText(totalHarga);
-
-                                        final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "form", false);
-                                        lv.setAdapter(adapter);
-
-                                        if (jsonArrayMaster.length() > 0) {
-                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
-                                            if (cEdit.getCount() > 0) {
-                                                String contentValue = jsonArrayMaster.toString();
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                                db.updateDetailRoomWithFlagContent(orderModel);
-                                            } else {
-                                                String contentValue = jsonArrayMaster.toString();
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                                db.insertRoomsDetail(orderModel);
-                                            }
-                                        } else {
-                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
-                                            if (cEdit.getCount() > 0) {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                                db.deleteDetailRoomWithFlagContent(orderModel);
+                                            } else if (list.size() == 1) {
+                                                decsUntuk = "";
                                             }
                                         }
 
 
-                                        final String finalDbMaster = dbMaster;
-                                        addCild.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
-                                                    FragmentManager fm = getSupportFragmentManager();
-                                                    DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
-                                                    testDialog.setRetainInstance(true);
-                                                    testDialog.show(fm, "Dialog");
-                                                } else {
-                                                    if (customersId.equalsIgnoreCase("")) {
-                                                        final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
-                                                        alertbox.setTitle("required");
-                                                        String content = "Please Select Customer ";
-                                                        alertbox.setTitle(content);
-                                                        alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                                            public void onClick(DialogInterface arg0, int arg1) {
+                                        rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk));
+                                        objData.put("data", jsonArrayHUHU);
 
-                                                            }
-                                                        });
-
-                                                        alertbox.show();
-                                                        return;
-                                                    }
-                                                    if (idListTask.equalsIgnoreCase("62483")) {
-                                                        //talking Order lemindo
-                                                        FragmentManager fm = getSupportFragmentManager();
-                                                        DialogFormChildMainLemindo testDialog = DialogFormChildMainLemindo.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId);
-                                                        testDialog.setRetainInstance(true);
-                                                        testDialog.show(fm, "Dialog");
-
-                                                    } else {
-                                                        FragmentManager fm = getSupportFragmentManager();
-                                                        DialogFormChildMain testDialog = DialogFormChildMain.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId);
-                                                        testDialog.setRetainInstance(true);
-                                                        testDialog.show(fm, "Dialog");
-                                                    }
-                                                }
-                                            }
-                                        });
-
-
-                                        lv.setClickable(true);
-                                        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                            @Override
-                                            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                                                if (idListTaskMasterForm.equalsIgnoreCase("62483")) {
-                                                    //talking Order lemindo
-                                                    ModelFormChild item = (ModelFormChild) adapter.getItem(position);
-                                                    FragmentManager fm = getSupportFragmentManager();
-                                                    DialogFormChildMainLemindo testDialog = DialogFormChildMainLemindo.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId);
-                                                    testDialog.setRetainInstance(true);
-                                                    testDialog.show(fm, "Dialog");
-
-                                                } else {
-                                                    ModelFormChild item = (ModelFormChild) adapter.getItem(position);
-                                                    FragmentManager fm = getSupportFragmentManager();
-
-                                                    if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
-                                                        Log.w("kausar", item.getId());
-
-                                                        DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
-                                                        testDialog.setRetainInstance(true);
-                                                        testDialog.show(fm, "Dialog");
-
-                                                    } else {
-
-                                                        DialogFormChildMain testDialog = DialogFormChildMain.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId);
-                                                        testDialog.setRetainInstance(true);
-                                                        testDialog.show(fm, "Dialog");
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+                                        jsonArrayMaster.put(objData);
                                     }
-                                } else {
-                                    //
 
-                                    Log.w("igni", "lima" + idListTask);
+                                    Integer totalQ = 0;
+                                    for (ModelFormChild mfc : rowItems) {
+                                        try {
+                                            totalQ += Integer.valueOf(mfc.getDetail().replace(",", ""));
+                                        } catch (Exception e) {
+                                        }
+                                    }
 
-                                    linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout, null);
-                                    TableRow tableLayout = (TableRow) linearEstimasi[count].findViewById(R.id.tableRow2);
-                                    Button addCild = (Button) linearEstimasi[count].findViewById(R.id.btn_add_cild);
-                                    TextView titleName = (TextView) linearEstimasi[count].findViewById(R.id.titleName);
-                                    TextView total_price_order = (TextView) linearEstimasi[count].findViewById(R.id.total_price_order);
-                                    ListView lv = (ListView) linearEstimasi[count].findViewById(R.id.listOrder);
+                                    DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+                                    formatter.applyPattern("#,###,###,###");
+                                    String formattedString = formatter.format(totalQ);
+
+                                    total_price_order.setText(formattedString);
+
+                                    final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "", imageForm);
+                                    lv.setAdapter(adapter);
+
+                                    if (jsonArrayMaster.length() > 0) {
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                                        if (cEdit.getCount() > 0) {
+
+                                            String contentValue = jsonArrayMaster.toString();
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                            db.updateDetailRoomWithFlagContent(orderModel);
+                                        } else {
+
+                                            String contentValue = jsonArrayMaster.toString();
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                            db.insertRoomsDetail(orderModel);
+                                        }
+                                    } else {
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                                        if (cEdit.getCount() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                        }
+                                    }
 
 
-                                    lv.setOnTouchListener(new View.OnTouchListener() {
-                                        // Setting on Touch Listener for handling the touch inside ScrollView
+                                    final String finalDbMaster = dbMaster;
+                                    addCild.setOnClickListener(new View.OnClickListener() {
                                         @Override
-                                        public boolean onTouch(View v, MotionEvent event) {
-                                            v.getParent().requestDisallowInterceptTouchEvent(true);
-                                            return false;
+                                        public void onClick(View v) {
+                                            FragmentManager fm = getSupportFragmentManager();
+                                            ArrayList<String> ada = new ArrayList<>();
+                                            JSONArray jsonArrayCild = null;
+                                            try {
+                                                jsonArrayCild = new JSONArray(formChild);
+                                                for (int i = 0; i < jsonArrayCild.length(); i++) {
+                                                    final String type = jsonArrayCild.getJSONObject(i).getString("type").toString();
+                                                    if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
+                                                        ada.add("1");
+                                                    }
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            if (ada.size() == 0) {
+                                                DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
+                                                testDialog.setRetainInstance(true);
+                                                testDialog.show(fm, "Dialog");
+                                            } else {
+                                                DialogFormChildMainNcal testDialog = DialogFormChildMainNcal.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
+                                                testDialog.setRetainInstance(true);
+                                                testDialog.show(fm, "Dialog");
+                                            }
+
                                         }
                                     });
 
-                                    idListTaskMasterForm = idListTask;
-                                    List<String> listId = db.getAllRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), "child_detail");
 
-                                    JSONArray jsonArrayMaster = new JSONArray();
-                                    ArrayList<ModelFormChild> rowItems = new ArrayList<ModelFormChild>();
-
-                                    try {
-                                        int asd = 0;
-                                        for (String idchildDetail : listId) {
-                                            String titleUntuk = "";
-                                            String decsUntuk = "";
-                                            JSONObject objData = new JSONObject();
-                                            objData.put("urutan", asd);
-                                            asd++;
-                                            List<RoomsDetail> list = db.getAllRoomDetailFormWithFlagContent(idchildDetail, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), "child_detail");
-                                            JSONArray jsonArrayHUHU = new JSONArray();
-                                            for (int u = 0; u < list.size(); u++) {
-                                                JSONObject objVV = new JSONObject();
-                                                JSONArray jsA = null;
-                                                String contentS = "";
-
-                                                String cc = list.get(u).getContent();
-                                                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah")) {
-                                                    cc = jsoncreateC(list.get(u).getContent());
-                                                }
-
-                                                try {
-                                                    if (cc.startsWith("{")) {
-                                                        if (!cc.startsWith("[")) {
-                                                            cc = "[" + cc + "]";
-                                                        }
-                                                        jsA = new JSONArray(cc);
-                                                    }
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-                                                if (jsA != null) {
-                                                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
-
-                                                        try {
-                                                            objVV.put("key", list.get(u).getFlag_tab());
-                                                            JSONObject jObject = null;
-                                                            try {
-                                                                jObject = new JSONObject(list.get(u).getContent());
-                                                                titleUntuk = jsonResultType(list.get(u).getContent(), "Nama");
-                                                                if (titleUntuk.equalsIgnoreCase("")) {
-                                                                    titleUntuk = jsonResultType(list.get(u).getContent(), "Name Detail");
-                                                                }
-                                                                if (titleUntuk.equalsIgnoreCase("")) {
-                                                                    titleUntuk = jsonResultType(list.get(u).getContent(), "Nama Siswa");
-                                                                }
-                                                                objVV.put("value", jObject);
-                                                            } catch (JSONException e) {
-                                                                objVV.put("value", list.get(u).getContent());
-                                                                e.printStackTrace();
-                                                            }
-
-                                                            objVV.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    } else {
-                                                        try {
-                                                            for (int ic = 0; ic < jsA.length(); ic++) {
-                                                                final String icC = jsA.getJSONObject(ic).getString("c").toString();
-                                                                contentS += icC + "|";
-                                                            }
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                        try {
-                                                            objVV.put("key", list.get(u).getFlag_tab());
-                                                            objVV.put("value", contentS.substring(0, contentS.length() - 1));
-                                                            objVV.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    }
-                                                } else {
-                                                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("front_camera") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera")) {
-                                                        titleName.setText(list.get(u).getFlag_tab());
-                                                        titleUntuk = list.get(u).getContent();
-                                                    } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown")) {
-                                                        titleName.setText(list.get(u).getFlag_tab());
-                                                        titleUntuk = list.get(u).getContent();
-                                                        Log.w("lama1", titleUntuk);
-                                                    } else {
-                                                        Log.w("lama1a", titleUntuk);
-                                                        decsUntuk = list.get(u).getContent();
-                                                        Log.w("lama2a", decsUntuk);
-                                                    }
-
-                                                    try {
-                                                        objVV.put("key", list.get(u).getFlag_tab());
-                                                        objVV.put("value", list.get(u).getContent());
-                                                        objVV.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-                                                    if (list.get(u).getFlag_tab().equalsIgnoreCase("biaya")) {
-                                                        tableLayout.setVisibility(View.VISIBLE);
-                                                    }
-
-                                                }
-
-                                                JSONArray jsonArrayCildQQ = new JSONArray(formChild);
-                                                for (int jsonArrayCildQQi = 0; jsonArrayCildQQi < jsonArrayCildQQ.length(); jsonArrayCildQQi++) {
-                                                    String idd = jsonArrayCildQQ.getJSONObject(jsonArrayCildQQi).getString("order").toString();
-                                                    if (jsonResultType(list.get(u).getFlag_content(), "a").equalsIgnoreCase(idd)) {
-                                                        objVV.put("label", jsonArrayCildQQ.getJSONObject(jsonArrayCildQQi).getString("label").toString());
-                                                    }
-                                                }
-
-                                                jsonArrayHUHU.put(objVV);
-                                            }
-
-                                            Integer start = Integer.valueOf(idListTask);
-
-                                            if (start >= 65480) {
-                                                titleUntuk = list.get(0).getContent().toString();
-                                                if (list.size() > 1) {
-
-                                                    decsUntuk = list.get(1).getContent().toString();
-                                                    String valUs = "";
-                                                    if (Message.isJSONValid(decsUntuk)) {
-                                                        JSONObject jObject = null;
-                                                        try {
-                                                            jObject = new JSONObject(decsUntuk);
-
-                                                            Iterator<String> keys = jObject.keys();
-                                                            while (keys.hasNext()) {
-                                                                String keyValue = (String) keys.next();
-                                                                String valueString = jObject.getString(keyValue);
-                                                                valUs += keyValue + " : " + valueString + "\n";
-                                                            }
-
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    }
-
-                                                    if (valUs.length() != 0) {
-                                                        titleUntuk += "\n" + valUs.substring(0, (valUs.length() - 1));
-                                                        decsUntuk = "";
-                                                        if (list.size() == 2) {
-                                                            decsUntuk = list.get(1).getContent().toString();
-
-                                                        }
-
-                                                    }
-
-
-                                                } else if (list.size() == 1) {
-                                                    decsUntuk = "";
-                                                }
-                                            }
-
-
-                                            rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, ""));
-                                            objData.put("data", jsonArrayHUHU);
-
-                                            jsonArrayMaster.put(objData);
-                                        }
-
-                                        Integer totalQ = 0;
-                                        for (ModelFormChild mfc : rowItems) {
+                                    lv.setClickable(true);
+                                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                                            ModelFormChild item = (ModelFormChild) adapter.getItem(position);
+                                            FragmentManager fm = getSupportFragmentManager();
+                                            ArrayList<String> ada = new ArrayList<>();
+                                            JSONArray jsonArrayCild = null;
                                             try {
-                                                totalQ += Integer.valueOf(mfc.getDetail().replace(",", ""));
-                                            } catch (Exception e) {
+                                                jsonArrayCild = new JSONArray(formChild);
+                                                for (int i = 0; i < jsonArrayCild.length(); i++) {
+                                                    final String type = jsonArrayCild.getJSONObject(i).getString("type").toString();
+                                                    if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
+                                                        ada.add("1");
+                                                    }
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
                                             }
-                                        }
 
-                                        DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-                                        formatter.applyPattern("#,###,###,###");
-                                        String formattedString = formatter.format(totalQ);
 
-                                        total_price_order.setText(formattedString);
-
-                                        final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "", imageForm);
-                                        lv.setAdapter(adapter);
-
-                                        if (jsonArrayMaster.length() > 0) {
-                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
-                                            if (cEdit.getCount() > 0) {
-
-                                                String contentValue = jsonArrayMaster.toString();
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                            if (ada.size() == 0) {
+                                                DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
+                                                testDialog.setRetainInstance(true);
+                                                testDialog.show(fm, "Dialog");
                                             } else {
+                                                DialogFormChildMainNcal testDialog = DialogFormChildMainNcal.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
+                                                testDialog.setRetainInstance(true);
+                                                testDialog.show(fm, "Dialog");
+                                            }
 
-                                                String contentValue = jsonArrayMaster.toString();
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                                db.insertRoomsDetail(orderModel);
-                                            }
-                                        } else {
-                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
-                                            if (cEdit.getCount() > 0) {
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                                db.deleteDetailRoomWithFlagContent(orderModel);
-                                            }
                                         }
-
-
-                                        final String finalDbMaster = dbMaster;
-                                        addCild.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                FragmentManager fm = getSupportFragmentManager();
-                                                ArrayList<String> ada = new ArrayList<>();
-                                                JSONArray jsonArrayCild = null;
-                                                try {
-                                                    jsonArrayCild = new JSONArray(formChild);
-                                                    for (int i = 0; i < jsonArrayCild.length(); i++) {
-                                                        final String type = jsonArrayCild.getJSONObject(i).getString("type").toString();
-                                                        if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
-                                                            ada.add("1");
-                                                        }
-                                                    }
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                if (ada.size() == 0) {
-                                                    DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
-                                                    testDialog.setRetainInstance(true);
-                                                    testDialog.show(fm, "Dialog");
-                                                } else {
-                                                    DialogFormChildMainNcal testDialog = DialogFormChildMainNcal.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
-                                                    testDialog.setRetainInstance(true);
-                                                    testDialog.show(fm, "Dialog");
-                                                }
-
-                                            }
-                                        });
-
-
-                                        lv.setClickable(true);
-                                        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                            @Override
-                                            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                                                ModelFormChild item = (ModelFormChild) adapter.getItem(position);
-                                                FragmentManager fm = getSupportFragmentManager();
-                                                ArrayList<String> ada = new ArrayList<>();
-                                                JSONArray jsonArrayCild = null;
-                                                try {
-                                                    jsonArrayCild = new JSONArray(formChild);
-                                                    for (int i = 0; i < jsonArrayCild.length(); i++) {
-                                                        final String type = jsonArrayCild.getJSONObject(i).getString("type").toString();
-                                                        if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
-                                                            ada.add("1");
-                                                        }
-                                                    }
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-
-                                                if (ada.size() == 0) {
-                                                    DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
-                                                    testDialog.setRetainInstance(true);
-                                                    testDialog.show(fm, "Dialog");
-                                                } else {
-                                                    DialogFormChildMainNcal testDialog = DialogFormChildMainNcal.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
-                                                    testDialog.setRetainInstance(true);
-                                                    testDialog.show(fm, "Dialog");
-                                                }
-
-                                            }
-                                        });
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                                    });
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
                             }
 
@@ -8355,6 +8077,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             String dateString = hourFormat.format(date);
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
                             db.updateDetailRoomWithFlagContentParent(orderModel);
+
+                            Log.w("cete", idDetail + "::" + username + "::" + idTab);
 
                             new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(DinamicRoomTaskActivity.this, idDetail, username, idTab);
                         } else

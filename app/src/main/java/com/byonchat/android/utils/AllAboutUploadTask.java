@@ -81,7 +81,7 @@ public class AllAboutUploadTask {
 
     public void UploadTask(OnTaskCompleted _taskCompleted, String _idDetail, String _username, String _idTab) {
         this.taskCompleted = _taskCompleted;
-        Log.w("ia2","wwowo");
+
         if (db == null) {
             db = BotListDB.getInstance(context);
         }
@@ -90,6 +90,8 @@ public class AllAboutUploadTask {
         username = _username;
         idTab = _idTab;
         taskCompleted.onTaskProses("proses");
+
+        Log.w("ia2UU", idDetail + ":::" + username + ":::" + idTab);
 
         Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "utility", "");
 
@@ -412,6 +414,7 @@ public class AllAboutUploadTask {
 
         public void postData(String valueIWantToSend, final String usr, final String idr, final String idDetail) {
             // Create a new HttpClient and Post Header
+            Log.w("Chats", usr + "<>" + idr + "<>" + idDetail);
             prosesUpload.add("ada");
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(valueIWantToSend);
@@ -515,6 +518,7 @@ public class AllAboutUploadTask {
                 if (fromList.equalsIgnoreCase("hide") || fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
 
                     if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
+                        Log.w("byy", idDetail);
                         String[] ff = idDetail.split("\\|");
                         if (ff.length == 2) {
                             entity.addPart("parent_id", new StringBody(ff[1]));

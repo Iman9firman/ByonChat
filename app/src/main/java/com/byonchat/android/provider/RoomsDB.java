@@ -30,7 +30,7 @@ public class RoomsDB {
     private SQLiteDatabase mDb;
 
     private static final String DATABASE_NAME = "ROOMS.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 3;//6
 
     private static final String ROOMS_TABLE = "rooms";
     private static final String TRENDING_TABLE = "trendings";

@@ -43,21 +43,21 @@ import java.util.List;
 
 public class CloudStorageActivity extends AppCompatActivity {
 
-    ListView m_RootList,rootList_upload;
+    ListView m_RootList, rootList_upload;
     ImageView iconFile;
-    FloatingActionButton fab_cloud,fab_create,fab_upload;
-    TextView textCreate,textUpdate,textRoot;
-    Animation fabOpen,fabClose,rotateFrwd,rotateBckwd;
+    FloatingActionButton fab_cloud, fab_create, fab_upload;
+    TextView textCreate, textUpdate, textRoot;
+    Animation fabOpen, fabClose, rotateFrwd, rotateBckwd;
     boolean isOpen = false;
-    private List<String> m_item,u_item;
-    private List<String> m_path,u_path;
-    private List<String> m_files,u_files;
-    private List<String> m_filesPath,u_filesPath;
-    private String m_root=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ByonChatDoc";
-    private String u_root=Environment.getExternalStorageDirectory().getAbsolutePath();
-    ListAdapter m_listAdapter,u_listAdapter;
-    String m_curDir,u_curDir;
-    String m_text,u_text;
+    private List<String> m_item, u_item;
+    private List<String> m_path, u_path;
+    private List<String> m_files, u_files;
+    private List<String> m_filesPath, u_filesPath;
+    private String m_root = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ByonChatDoc";
+    private String u_root = Environment.getExternalStorageDirectory().getAbsolutePath();
+    ListAdapter m_listAdapter, u_listAdapter;
+    String m_curDir, u_curDir;
+    String m_text, u_text;
     AlertDialog show;
     private String CARD_PATH;
 
@@ -79,9 +79,9 @@ public class CloudStorageActivity extends AppCompatActivity {
         textRoot = (TextView) findViewById(R.id.text_root_cloud);
 
         fabOpen = AnimationUtils.loadAnimation(this, R.anim.fab_open);
-        fabClose= AnimationUtils.loadAnimation(this, R.anim.fab_close);
+        fabClose = AnimationUtils.loadAnimation(this, R.anim.fab_close);
         rotateFrwd = AnimationUtils.loadAnimation(this, R.anim.fab_rotate_forward);
-        rotateBckwd= AnimationUtils.loadAnimation(this, R.anim.fab_rotate_backward);
+        rotateBckwd = AnimationUtils.loadAnimation(this, R.anim.fab_rotate_backward);
         fab_cloud.setVisibility(View.GONE);
         getDirFromRoot(m_root);
 
@@ -105,7 +105,7 @@ public class CloudStorageActivity extends AppCompatActivity {
                 AnimateFab();
                 AlertDialog.Builder dialog = new AlertDialog.Builder(CloudStorageActivity.this);
                 LayoutInflater inflater = getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.activity_cloud_storage,null);
+                View dialogView = inflater.inflate(R.layout.activity_cloud_storage, null);
                 dialog.setView(dialogView);
                 dialog.setCancelable(true);
                 dialog.setTitle("Select File");
@@ -121,81 +121,70 @@ public class CloudStorageActivity extends AppCompatActivity {
             }
         });
     }
-    public void getDirFromRoot(String p_rootPath)
-    {
+
+    public void getDirFromRoot(String p_rootPath) {
         m_item = new ArrayList<String>();
-        Boolean m_isRoot=true;
+        Boolean m_isRoot = true;
         m_path = new ArrayList<String>();
-        m_files=new ArrayList<String>();
-        m_filesPath=new ArrayList<String>();
+        m_files = new ArrayList<String>();
+        m_filesPath = new ArrayList<String>();
         File m_file = new File(p_rootPath);
         File[] m_filesArray = m_file.listFiles();
-        if(!p_rootPath.equals(m_root))
-        {
+        if (!p_rootPath.equals(m_root)) {
             m_item.add("../");
             m_path.add(m_file.getParent());
-            m_isRoot=false;
+            m_isRoot = false;
         }
         m_curDir = p_rootPath;
         //sorting file list in alphabetical order
         Arrays.sort(m_filesArray);
-        for(int i=0; i < m_filesArray.length; i++)
-        {
+        for (int i = 0; i < m_filesArray.length; i++) {
             File file = m_filesArray[i];
-            if(file.isDirectory())
-            {
+            if (file.isDirectory()) {
                 m_item.add(file.getName());
                 m_path.add(file.getPath());
-            }
-            else
-            {
+            } else {
                 m_files.add(file.getName());
                 m_filesPath.add(file.getPath());
             }
         }
-        for(String m_AddFile:m_files)
-        {
+        for (String m_AddFile : m_files) {
             m_item.add(m_AddFile);
         }
-        for(String m_AddPath:m_filesPath)
-        {
+        for (String m_AddPath : m_filesPath) {
             m_path.add(m_AddPath);
         }
-        m_listAdapter=new ListAdapter(this,m_item,m_path,m_isRoot);
+        m_listAdapter = new ListAdapter(this, m_item, m_path, m_isRoot);
         m_RootList.setAdapter(m_listAdapter);
         m_RootList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                File m_isFile=new File(m_path.get(position));
-                if(m_isFile.isDirectory())
-                {
+                File m_isFile = new File(m_path.get(position));
+                if (m_isFile.isDirectory()) {
                     getDirFromRoot(m_isFile.toString());
-                }
-                else
-                {
-                    Toast.makeText(CloudStorageActivity.this, "This is File"+m_path.get(position), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(CloudStorageActivity.this, "This is File" + m_path.get(position), Toast.LENGTH_SHORT).show();
                     prepareMerging(m_path.get(position));
                 }
             }
         });
         textRoot();
     }
+
     //Method to delete selected files
-    void deleteFile()
-    {
-        for(int m_delItem : m_listAdapter.m_selectedItem)
-        {
-            File m_delFile =new File(m_path.get(m_delItem));
-            Log.d("file",m_path.get(m_delItem));
-            boolean m_isDelete=m_delFile.delete();
+    void deleteFile() {
+        for (int m_delItem : m_listAdapter.m_selectedItem) {
+            File m_delFile = new File(m_path.get(m_delItem));
+            Log.d("file", m_path.get(m_delItem));
+            boolean m_isDelete = m_delFile.delete();
             Toast.makeText(CloudStorageActivity.this, "File(s) Deledted", Toast.LENGTH_SHORT).show();
             getDirFromRoot(m_curDir);
         }
     }
-    void createNewFolder( final int p_opt)
-    {
+
+    void createNewFolder(final int p_opt) {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Create new folder");
@@ -209,19 +198,16 @@ public class CloudStorageActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 m_text = m_edtinput.getText().toString();
-                if(p_opt == 1)
-                {
-                    File m_newPath=new File(m_curDir,m_text);
-                    Log.w("Path :",String.valueOf(m_newPath));
-                    if(!m_newPath.exists()) {
+                if (p_opt == 1) {
+                    File m_newPath = new File(m_curDir, m_text);
+                    Log.w("Path :", String.valueOf(m_newPath));
+                    if (!m_newPath.exists()) {
                         m_newPath.mkdir();
                         m_listAdapter.notifyDataSetChanged();
                     }
-                }
-                else
-                {
+                } else {
                     try {
-                        FileOutputStream m_Output = new FileOutputStream((m_curDir+File.separator+m_text), false);
+                        FileOutputStream m_Output = new FileOutputStream((m_curDir + File.separator + m_text), false);
                         m_Output.close();
                         //  <!--<intent-filter>
                         //  <action android:name="android.intent.action.SEARCH" />
@@ -229,11 +215,9 @@ public class CloudStorageActivity extends AppCompatActivity {
                         //  <meta-data android:name="android.app.searchable"
                         //  android:resource="@xml/searchable"/>-->
 
-                    } catch (FileNotFoundException e)
-                    {
+                    } catch (FileNotFoundException e) {
                         e.printStackTrace();
-                    } catch (IOException e)
-                    {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -251,17 +235,19 @@ public class CloudStorageActivity extends AppCompatActivity {
         builder.setView(m_edtinput);
         builder.show();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home :
+        switch (item.getItemId()) {
+            case android.R.id.home:
                 onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
-    private  void  AnimateFab(){
+
+    private void AnimateFab() {
         // kalo baru di buka false
-        if (!isOpen){
+        if (!isOpen) {
             fab_cloud.startAnimation(rotateFrwd);
             fab_create.startAnimation(fabOpen);
             fab_upload.startAnimation(fabOpen);
@@ -270,8 +256,7 @@ public class CloudStorageActivity extends AppCompatActivity {
             isOpen = true;
             textCreate.startAnimation(fabOpen);
             textUpdate.startAnimation(fabOpen);
-        }
-        else {
+        } else {
             fab_cloud.startAnimation(rotateBckwd);
             fab_create.startAnimation(fabClose);
             fab_upload.startAnimation(fabClose);
@@ -285,10 +270,10 @@ public class CloudStorageActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!m_curDir.equals(m_root)){
+        if (!m_curDir.equals(m_root)) {
             getDirFromRoot(m_path.get(0));
-        } else if(u_curDir != null) {
-            if (!u_curDir.equals(u_root)){
+        } else if (u_curDir != null) {
+            if (!u_curDir.equals(u_root)) {
                 uploadFile(u_path.get(0));
             }
         } else {
@@ -296,18 +281,19 @@ public class CloudStorageActivity extends AppCompatActivity {
         }
     }
 
-    public void textRoot(){
-        try{
+    public void textRoot() {
+        try {
             int lastIndex = m_curDir.lastIndexOf("byonchat");
-            String previewRoot = m_curDir.substring(lastIndex).replace("byonchat","Home > Root");
-            String root = previewRoot.replace("/"," > ");
+            String previewRoot = m_curDir.substring(lastIndex).replace("byonchat", "Home > Root");
+            String root = previewRoot.replace("/", " > ");
             textRoot.setText(root);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-    public void uploadFile(String rootPath){
+
+    public void uploadFile(String rootPath) {
         u_item = new ArrayList<String>();
         Boolean u_isRoot = true;
         u_path = new ArrayList<String>();
@@ -315,54 +301,46 @@ public class CloudStorageActivity extends AppCompatActivity {
         u_filesPath = new ArrayList<String>();
         File u_file = new File(rootPath);
         File[] u_filesArray = u_file.listFiles();
-        if(!rootPath.equals(u_root))
-        {
+        if (!rootPath.equals(u_root)) {
             u_item.add("../");
             u_path.add(u_file.getParent());
-            u_isRoot=false;
+            u_isRoot = false;
         }
-        u_curDir=rootPath;
+        u_curDir = rootPath;
         //sorting file list in alphabetical order
         Arrays.sort(u_filesArray);
-        for(int i=0; i < u_filesArray.length; i++)
-        {
+        for (int i = 0; i < u_filesArray.length; i++) {
             File file = u_filesArray[i];
-            if(file.isDirectory())
-            {
+            if (file.isDirectory()) {
                 u_item.add(file.getName());
                 u_path.add(file.getPath());
-            }
-            else
-            {
+            } else {
                 u_files.add(file.getName());
                 u_filesPath.add(file.getPath());
             }
         }
-        for(String m_AddFile:u_files)
-        {
+        for (String m_AddFile : u_files) {
             u_item.add(m_AddFile);
         }
-        for(String m_AddPath:u_filesPath)
-        {
+        for (String m_AddPath : u_filesPath) {
             u_path.add(m_AddPath);
         }
-        u_listAdapter=new ListAdapter(this,u_item,u_path,u_isRoot);
+        u_listAdapter = new ListAdapter(this, u_item, u_path, u_isRoot);
         rootList_upload.setAdapter(u_listAdapter);
         rootList_upload.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                File u_isFile=new File(u_path.get(position));
-                if(u_isFile.isDirectory())
-                {
+                File u_isFile = new File(u_path.get(position));
+                if (u_isFile.isDirectory()) {
                     uploadFile(u_isFile.toString());
                 } else {
                     String input = u_path.get(position);
                     String inputPath = u_isFile.getParent();
                     String inputFile = input.substring(input.lastIndexOf("/"));
                     String outputPath = m_curDir;
-                    copyFile(inputPath,inputFile,outputPath);
+                    copyFile(inputPath, inputFile, outputPath);
                     show.dismiss();
                     getDirFromRoot(m_curDir);
                 }
@@ -370,6 +348,7 @@ public class CloudStorageActivity extends AppCompatActivity {
         });
 
     }
+
     private void copyFile(String inputPath, String inputFile, String outputPath) {
 
         InputStream in = null;
@@ -377,9 +356,8 @@ public class CloudStorageActivity extends AppCompatActivity {
         try {
 
             //create output directory if it doesn't exist
-            File dir = new File (outputPath);
-            if (!dir.exists())
-            {
+            File dir = new File(outputPath);
+            if (!dir.exists()) {
                 dir.mkdirs();
             }
 
@@ -400,24 +378,17 @@ public class CloudStorageActivity extends AppCompatActivity {
             out.close();
             out = null;
 
-        }  catch (FileNotFoundException fnfe1) {
-            Log.e("sini", "1 : "+ fnfe1.getMessage());
-        }
-        catch (Exception e) {
-            Log.e("sini", "2 : "+ e.getMessage());
+        } catch (FileNotFoundException fnfe1) {
+            Log.e("sini", "1 : " + fnfe1.getMessage());
+        } catch (Exception e) {
+            Log.e("sini", "2 : " + e.getMessage());
         }
     }
 
-    private void prepareMerging(String path){
-//        File filer = new File(file.getPath());//create path from uri
-//        Log.w("APAPAAAANNNN NOOH",file.getPath() +" ---- "+CARD_PATH+" -0-=0-=0-=- "+filer.getPath());
-//
-//        String fileOne = file.getPath().replace("/external_files","/storage/emulated/0");
-        Log.w("LINK 2 2 Nya fewbg 1",path+"   8-0463u9gvf436h-  ");
-        Log.w("LINK 2 2 Nya fiebg 2",CARD_PATH+"   8-0463u9gvf436h-  ");
+    private void prepareMerging(String path) {
         String fileOne = path;
         String fileTwo = CARD_PATH;
-        File hasil = new File(Environment.getExternalStorageDirectory(),"hasil_merge.pdf");
+        File hasil = new File(Environment.getExternalStorageDirectory(), "brosur.pdf");
         hasil.getParentFile().mkdirs();
         String fileHasil = hasil.getAbsolutePath();
 
@@ -426,17 +397,13 @@ public class CloudStorageActivity extends AppCompatActivity {
             FileInputStream fisTwo = new FileInputStream(fileTwo);
             FileOutputStream fosHasil = new FileOutputStream(fileHasil);
 
-            mergePdfFiles(fisOne,fisTwo,fosHasil);
-        } catch (Exception e){
+            mergePdfFiles(fisOne, fisTwo, fosHasil);
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.w("sini", "Exc : "+ e.getMessage());
+            Log.w("sini", "Exc : " + e.getMessage());
         }
 
         File outputFile = hasil;
-        Log.w("FILE HASIL MERGE",outputFile.getPath());
-
-//        Uri pdfUri = FileProvider.getUriForFile(getBaseContext(), getApplication().getApplicationContext().getPackageName() +
-//                ".my.package.name.provider", outputFile);
 
         Uri pdfUri = FileProvider.getUriForFile(CloudStorageActivity.this, getPackageName() + ".provider", outputFile);
 
@@ -444,22 +411,14 @@ public class CloudStorageActivity extends AppCompatActivity {
         share.setAction(Intent.ACTION_SEND);
         share.setType("application/pdf");
         share.putExtra(Intent.EXTRA_STREAM, pdfUri);
-//        share.setPackage("*");
         startActivity(share);
 
         MimeTypeMap map = MimeTypeMap.getSingleton();
         String ext = MimeTypeMap.getFileExtensionFromUrl(outputFile.getName());
         String type = map.getMimeTypeFromExtension(ext);
-        Log.w("INI NIHHHHHH TYPE NYEEE",type);
-//        if (type == null)
-//            type = "*/*";
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        Uri data = Uri.fromFile(outputFile);
-//        intent.setDataAndType(data, type);
-//        startActivity(intent);
     }
 
-    private void mergePdfFiles(FileInputStream isOne, FileInputStream isTwo,FileOutputStream hasil) throws Exception {
+    private void mergePdfFiles(FileInputStream isOne, FileInputStream isTwo, FileOutputStream hasil) throws Exception {
         PdfReader one = new PdfReader(isOne);
         PdfReader two = new PdfReader(isTwo);
         Document document = new Document();

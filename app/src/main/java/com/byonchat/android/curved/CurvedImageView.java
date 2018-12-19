@@ -152,17 +152,14 @@ public class CurvedImageView extends AppCompatImageView {
             gradientDirection = styledAttributes.getInt(R.styleable.CurvedImageView_gradientDirection, 0);
         }
 
-        /* Default start color is transparent*/
         gradientStartColor = styledAttributes.getColor(R.styleable.CurvedImageView_gradientStartColor, Color.TRANSPARENT);
 
-        /* Default end color is transparent*/
         gradientEndColor = styledAttributes.getColor(R.styleable.CurvedImageView_gradientEndColor, Color.TRANSPARENT);
 
         if (styledAttributes.hasValue(R.styleable.CurvedImageView_curvedTintColor)) {
             tintColor = styledAttributes.getColor(R.styleable.CurvedImageView_curvedTintColor, 0);
         }
 
-        /* Default curvature direction would be outward*/
         curvatureDirection = styledAttributes.getInt(R.styleable.CurvedImageView_curvatureDirection, 0);
 
         styledAttributes.recycle();
@@ -207,7 +204,7 @@ public class CurvedImageView extends AppCompatImageView {
             @Override
             public void onGenerated(Palette palette) {
                 if (tintMode == TintMode.AUTOMATIC) {
-                    int defaultColor = 0x000000;
+                    int defaultColor = 0x00000000;
                     tintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
                     if (palette.getDarkMutedColor(defaultColor) != 0) {
                         System.out.println(palette.getMutedColor(defaultColor));
@@ -220,8 +217,9 @@ public class CurvedImageView extends AppCompatImageView {
                     }
                     tintPaint.setAlpha(tintAmount);
                 } else {
+                    int defaultColor = 0x00000000;
                     tintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                    tintPaint.setColor(tintColor);
+                    tintPaint.setColor(defaultColor);
                     tintPaint.setAlpha(tintAmount);
                 }
             }
@@ -261,7 +259,7 @@ public class CurvedImageView extends AppCompatImageView {
         mPaint.setXfermode(null);
     }
 
-    private int getDpForPixel (int pixel) {
+    private int getDpForPixel(int pixel) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixel, mContext.getResources().getDisplayMetrics());
     }
 

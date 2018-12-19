@@ -123,6 +123,7 @@ dependencies {
     compile "org.igniterealtime.smack:smack-bosh:4.1.7"
 
     // BlurView
+    compile 'jp.wasabeef:blurry:2.1.1'
     compile 'com.eightbitlab:blurview:1.5.0'
     compile 'com.eightbitlab:supportrenderscriptblur:1.0.2'
 

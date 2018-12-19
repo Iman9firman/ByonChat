@@ -211,6 +211,7 @@
     <color name="ims_chat_list_notification_color">#B1B1B1</color>
     <color name="ims_search_rounded_color">#ededed</color>
     <color name="ims_blur_background">#109e9e9e</color>
+    <color name="ims_blur_list_background">#a3ffffff</color>
 
     <array name="array_dot_active">
         <item>@color/dot_light_screen1</item>

@@ -117,6 +117,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         backgroundImage = findViewById(R.id.main_backdrop);
         searchView = findViewById(R.id.search_view_main);
         backdropBlur = findViewById(R.id.backdropblur);
+        vImgBlur = findViewById(R.id.bg_blur);
 
         root_view = findViewById(R.id.main_group);
         drawerLayout = findViewById(R.id.drawer_main);

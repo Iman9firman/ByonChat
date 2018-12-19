@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -80,6 +81,7 @@ import com.byonchat.android.RequestPasscodeRoomActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
+import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.curved.CurvedImageView;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
@@ -140,6 +142,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.blurry.Blurry;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -189,6 +192,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     @NonNull
     protected ImageView backdropBlur;
+
+    @NonNull
+    protected ImageView vImgBlur;
 
     @NonNull
     protected ImageView vNavLogo;
@@ -541,6 +547,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         Byonchat.getRoomsDB().close();
 
         if (botArrayListist.size() > 0) {
+
             Manhera.getInstance()
                     .get()
                     .load(botArrayListist.get(0).link)
@@ -569,6 +576,14 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     .fitCenter()
                     .into(backgroundImage);
         }
+
+        BitmapDrawable d = (BitmapDrawable) vImgBlur.getDrawable();
+        Bitmap b = d.getBitmap();
+        Blurry.with(getApplicationContext())
+                .radius(10)
+                .sampling(10)
+                .from(b)
+                .into(vImgBlur);
     }
 
     protected void resolveRecyclerView() {
@@ -684,6 +699,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
                 String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
                 String status = jsonArray.getJSONObject(i).getString("status").toString();
+                String icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
 
                 itemList.add(i, new ItemMain(i, category, title, url_tembak, include_pull, username,
                         id_rooms_tab, color, colorText, targetURL, include_latlong, status, name, icon));
@@ -801,6 +817,19 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         collapsingToolbarLayout.setStatusBarScrimColor(colors);
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
+
+        /*FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + color));
+//        tb.setBackgroundColor(Color.parseColor("#" + color));
+
+        String warna = "#" + color;
+        String top = warna.replace("#", "#70");
+        String bottom = warna.replace("#", "#00");
+
+        int[] col = {Color.parseColor(warna), Color.parseColor(bottom)};
+        GradientDrawable gd = new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM, col);
+        gd.setCornerRadius(0f);
+        tb.setBackground(gd);*/
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {

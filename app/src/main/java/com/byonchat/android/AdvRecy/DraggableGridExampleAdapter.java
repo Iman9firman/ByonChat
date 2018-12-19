@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import com.byonchat.android.Manhera.Manhera;
 import com.byonchat.android.R;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
@@ -92,7 +93,10 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
 
         holder.mTextView.setSelected(true);
 
-        holder.mImageView.setImageResource(R.drawable.logo_byon);
+        Manhera.getInstance().get()
+                .load(R.drawable.logo_byon)
+                .placeholder(R.drawable.logo_byon)
+                .into(holder.mImageView);
 //        AutofitHelper.create(holder.mTextView);
 
     }

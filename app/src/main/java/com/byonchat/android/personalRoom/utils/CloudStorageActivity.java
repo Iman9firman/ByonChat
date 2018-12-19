@@ -387,8 +387,9 @@ public class CloudStorageActivity extends AppCompatActivity {
 
     private void prepareMerging(String path) {
         String fileOne = path;
+        String Nama_Merge = path.replace("/storage/emulated/0/ByonChatDoc/","");
         String fileTwo = CARD_PATH;
-        File hasil = new File(Environment.getExternalStorageDirectory(), "brosur.pdf");
+        File hasil = new File(Environment.getExternalStorageDirectory(), Nama_Merge);
         hasil.getParentFile().mkdirs();
         String fileHasil = hasil.getAbsolutePath();
 

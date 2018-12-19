@@ -159,6 +159,7 @@ public class FragmentMyCardID extends Fragment {
             Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
             intentd.putExtra("path", CardLink.get(0));
             intentd.putExtra("card", CardLink.get(0));
+            intentd.putExtra("nama_file", CardLink.get(1));
             mContext.startActivity(intentd);
         } else {
             requestAddFilePermission();
@@ -335,6 +336,7 @@ public class FragmentMyCardID extends Fragment {
 //                String type = c.getString("type");
                 String tgl_upload = c.getString("add_date");
                 CardLink.add(file_kartu);
+                CardLink.add(title);
 
                 Log.w("SAYA yeyeye 1", c + "");
 //                Log.w("SAYA yeyeye 2",item2+"");
@@ -348,6 +350,7 @@ public class FragmentMyCardID extends Fragment {
                     public void onClick(View v) {
                         Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
                         intentd.putExtra("path", file_kartu);
+                        intentd.putExtra("nama_file",title);
                         mContext.startActivity(intentd);
                     }
                 });

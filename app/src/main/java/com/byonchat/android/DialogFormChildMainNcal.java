@@ -1730,7 +1730,6 @@ public class DialogFormChildMainNcal extends DialogFragment {
             }
 
             if (intent.getAction().equals("SOME_ACTION")) {
-                Log.w("ada nih", intent.getStringExtra("data"));
                 List value = (List) hashMap.get(dummyIdDate);
                 if (value != null) {
                     if (value.size() > 0) {

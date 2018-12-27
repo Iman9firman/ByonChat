@@ -1,6 +1,7 @@
 package com.byonchat.android.communication;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -189,10 +190,15 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static com.byonchat.android.utils.PicassoOwnCache.cacheDir;
 
 public class MessengerConnectionService extends Service {
+    private ScheduledExecutorService scheduleTaskExecutor;
+    private NotificationReceiver notifReceive;
     public static final String CHAT_SERVER = "ss.byonchat.com";
     public static final String UTIL_SERVER = "uu.byonchat.com";
     public static final String HTTP_SERVER = "bb.byonchat.com";
@@ -297,6 +303,8 @@ public class MessengerConnectionService extends Service {
     private BlockListDB blockListDB;
     private BotListDB botListDB;
     private Timer timer = new Timer();
+    private TimerTask timerTask;
+    public int counter = 0;
     private static String SQL_REMOVE_MESSAGES_STATUS = "DELETE FROM " + Message.TABLE_NAME + " WHERE " + Message.PACKET_ID + " =?;";
     private static String SQL_UPDATE_MESSAGES = "UPDATE " + Message.TABLE_NAME + " SET status = " + Message.STATUS_READ + " WHERE " + Message.PACKET_ID + " =?;";
     private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
@@ -327,21 +335,54 @@ public class MessengerConnectionService extends Service {
         SmackConfiguration.addDisabledSmackClass("org.jivesoftware.smackx.xdatavalidation.XDataValidationManager");
     }
 
+    public void startTimer() {
+        timer = new Timer();
+        initializeTimerTask();
+        timer.schedule(timerTask, 1000, 1000); //
+    }
+
+    public void initializeTimerTask() {
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Log.i("in timer", "in timer ++++  " + (counter++));
+            }
+        };
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-
+        startTimer();
 
         Contact contact = databaseHelper.getMyContact();
         if (contact != null) {
             xmppOpen();
             doSomethingRepeatedly();
-            //disini errornya - permission
             this.getApplicationContext().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contentObserver);
             started = true;
         }
 
+        if (scheduleTaskExecutor == null) {
+            scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
+            scheduleTaskExecutor.scheduleAtFixedRate(new MessengerConnectionTask(this), 0, 1, TimeUnit.SECONDS);
+        }
+
         return START_STICKY;
+    }
+
+    private class MessengerConnectionTask implements Runnable {
+        Context context;
+
+        private MessengerConnectionTask(Context context) {
+            this.context = context;
+        }
+
+        public void run() {
+            Intent i = new Intent(context, UploadService.class);
+            i.putExtra(UploadService.ACTION, "startService");
+            context.startService(i);
+        }
     }
 
     private void doSomethingRepeatedly() {
@@ -1371,6 +1412,18 @@ public class MessengerConnectionService extends Service {
         filter.setPriority(1);
         registerReceiver(receiver, filter);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notifReceive = new NotificationReceiver();
+            IntentFilter nya = new IntentFilter();
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.messageReceived");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.addCard");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.inviteGroup");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.reqGps");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.taskDone");
+            nya.addAction("com.byonchat.android.communication.MessengerConnectionService.refreshRoom");
+
+            getBaseContext().registerReceiver(notifReceive, nya);
+        }
     }
 
     //This will handle the broadcast
@@ -1719,9 +1772,11 @@ public class MessengerConnectionService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Intent intent = new Intent(this, DummyActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        Intent intent = new Intent(getApplicationContext(), MessengerConnectionService.class);
+        intent.putExtra(UploadService.ACTION, "startService");
+        PendingIntent pendingIntent = PendingIntent.getService(this, 5555555, intent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
     }
 
     @Override
@@ -1742,9 +1797,22 @@ public class MessengerConnectionService extends Service {
         pingListener = null;
         started = false;
         unregisterReceiver(receiver);
+        unregisterReceiver(notifReceive);
 
-        Intent broadcastIntent = new Intent("com.byonchat.android.utils.ConnectionChangeReceiver");
-        sendBroadcast(broadcastIntent);
+        try {
+            timerTask.cancel();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        AlarmManager alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
+        Intent i = new Intent(this, MessengerConnectionService.class);
+        i.putExtra(UploadService.ACTION, "startService");
+        PendingIntent pendingIntent = PendingIntent.getService(this, 5555555, i, 0);
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1, pendingIntent);
+
+//        Intent broadcastIntent = new Intent("com.byonchat.android.utils.ConnectionChangeReceiver");
+//        sendBroadcast(broadcastIntent);
     }
 
     public Contact getCurContact() {
@@ -1766,7 +1834,8 @@ public class MessengerConnectionService extends Service {
 
     private void disconnect() {
         //Log.d(TAG, "disconnect()");
-        xmppConnection.disconnect();
+        if (xmppConnection != null)
+            xmppConnection.disconnect();
     }
 
     public static void startService(Context context) {
@@ -4889,6 +4958,8 @@ Log.w("every",co.getJabberId());
         @Override
         public void connected(XMPPConnection connection) {
             if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+
+                new ConnectionHelper().start();
                 /* jangan kirim dlu ya
                 List<Rooms> roomses =  botListDB.getListRooms();
                 for (Rooms aa: roomses){
@@ -5000,8 +5071,6 @@ Log.w("every",co.getJabberId());
         public void connectionClosed() {
             // Log.w(getClass().getSimpleName(), "connection closed. reconnecting...");
             sendBroadcast(ACTION_DISCONNECTED);
-
-            new ConnectionHelper().start();
             /*xmppOpen();*/
         }
 

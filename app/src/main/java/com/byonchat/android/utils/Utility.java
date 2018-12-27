@@ -4,6 +4,10 @@ package com.byonchat.android.utils;
  * Created by Iman Firmansyah on 1/9/2015.
  */
 
+import android.annotation.TargetApi;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -13,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.communication.MyJobService;
 import com.byonchat.android.provider.Message;
 
 import org.json.JSONArray;
@@ -51,17 +56,17 @@ public class Utility {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
-    public static String formatPhoneNumber(String number){
-        if (number.length()>12){
-            number  =   number.substring(0, number.length()-4) + "-" + number.substring(number.length()-4, number.length());
-            if (number.length()>9){
-                number  =   number.substring(0,number.length()-9)+"-"+number.substring(number.length()-9,number.length());
-                if (number.length()>13){
-                    number  =   number.substring(0, number.length()-13)+" "+number.substring(number.length()-13, number.length());
+    public static String formatPhoneNumber(String number) {
+        if (number.length() > 12) {
+            number = number.substring(0, number.length() - 4) + "-" + number.substring(number.length() - 4, number.length());
+            if (number.length() > 9) {
+                number = number.substring(0, number.length() - 9) + "-" + number.substring(number.length() - 9, number.length());
+                if (number.length() > 13) {
+                    number = number.substring(0, number.length() - 13) + " " + number.substring(number.length() - 13, number.length());
                 }
             }
-        }else{
-            if (number.length()>4) {
+        } else {
+            if (number.length() > 4) {
                 number = number.substring(0, number.length() - 4) + "-" + number.substring(number.length() - 4, number.length());
                 if (number.length() > 8) {
                     number = number.substring(0, number.length() - 8) + "-" + number.substring(number.length() - 8, number.length());
@@ -73,30 +78,30 @@ public class Utility {
         }
         return number;
     }
-    
-    public static String roomName(Context context , String rooms,boolean getName){
+
+    public static String roomName(Context context, String rooms, boolean getName) {
         String roomsName = "";
-        if(getName){
+        if (getName) {
             roomsName = new GetRealNameRoom().getInstance(context).getName(rooms);
-        }else{
+        } else {
             String name[] = rooms.split("_");
 
-            if(name[0].length()==1){
-                roomsName = rooms.substring(2,rooms.length()).replace("_"," ");
-            }else{
-                roomsName = rooms.replace("_"," ");
+            if (name[0].length() == 1) {
+                roomsName = rooms.substring(2, rooms.length()).replace("_", " ");
+            } else {
+                roomsName = rooms.replace("_", " ");
             }
         }
-        return  roomsName;
+        return roomsName;
     }
 
-    public static String roomType(String rooms){
+    public static String roomType(String rooms) {
         String name[] = rooms.split("_");
         String roomsName = "";
-        if(name[0].length()==1){
-            roomsName = rooms.substring(0,1);
+        if (name[0].length() == 1) {
+            roomsName = rooms.substring(0, 1);
         }
-        return  roomsName;
+        return roomsName;
     }
 
     public static String parseDateToddMMyyyy(String time) {
@@ -119,7 +124,7 @@ public class Utility {
     }
 
 
-    public static Date convertStringToDate(String dateInString){
+    public static Date convertStringToDate(String dateInString) {
 
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
         try {
@@ -179,5 +184,18 @@ public class Utility {
         }
 
         return hasil;
+    }
+
+    @TargetApi(23)
+    public static void scheduleJob(Context context) {
+        ComponentName serviceComponent = new ComponentName(context, MyJobService.class);
+        JobInfo.Builder builder = new JobInfo.Builder(123123, serviceComponent);
+        builder.setMinimumLatency(1 * 1000); // wait at least
+        builder.setOverrideDeadline(3 * 1000); // maximum delay
+        builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
+        builder.setRequiresDeviceIdle(true); // device should be idle
+        builder.setRequiresCharging(false); // we don't care if the device is charging or not
+        JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
+        jobScheduler.schedule(builder.build());
     }
 }

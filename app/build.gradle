@@ -114,13 +114,13 @@ dependencies {
     compile 'com.miguelcatalan:materialsearchview:1.4.0'
     //noinspection GradleCompatible
     compile 'com.github.quentin7b:android-location-tracker:3.2'
-    compile group: 'org.igniterealtime.smack', name: 'smack-resolver-minidns', version: '4.1.7'
-    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.1.7'
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.1.7'
-    compile group: 'org.igniterealtime.smack', name: 'smack-legacy', version: '4.1.7'
-    compile group: 'org.igniterealtime.smack', name: 'smack-sasl-provided', version: '4.1.7'
-    compile group: 'org.igniterealtime.smack', name: 'smack-android', version: '4.1.7'
-    compile "org.igniterealtime.smack:smack-bosh:4.1.7"
+    compile group: 'org.igniterealtime.smack', name: 'smack-resolver-minidns', version: '4.1.8'
+    compile group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.1.8'
+    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.1.8'
+    compile group: 'org.igniterealtime.smack', name: 'smack-legacy', version: '4.1.8'
+    compile group: 'org.igniterealtime.smack', name: 'smack-sasl-provided', version: '4.1.8'
+    compile group: 'org.igniterealtime.smack', name: 'smack-android', version: '4.1.8'
+    compile "org.igniterealtime.smack:smack-bosh:4.1.8"
 
     // BlurView
     compile 'jp.wasabeef:blurry:2.1.1'

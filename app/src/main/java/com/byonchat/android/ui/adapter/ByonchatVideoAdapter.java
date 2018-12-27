@@ -160,14 +160,7 @@ public class ByonchatVideoAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    public void addOrDelete(Video c) {
-        int i = findPosition(c);
-        if (i >= 0) {
-            remove(c);
-        } else {
-            add(c);
-        }
-    }
+
 
     public void add(Video e) {
         items.add(0, e);

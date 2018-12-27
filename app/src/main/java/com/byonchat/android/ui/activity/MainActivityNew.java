@@ -3,6 +3,8 @@ package com.byonchat.android.ui.activity;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.NotificationManager;
@@ -23,6 +25,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,12 +44,14 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -84,6 +89,7 @@ import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.UploadService;
+import com.byonchat.android.utils.Utility;
 import com.byonchat.android.widget.BadgeView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -95,7 +101,10 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.internal.Util;
 
 public class MainActivityNew extends MainBaseActivityNew {
 
@@ -213,38 +222,50 @@ public class MainActivityNew extends MainBaseActivityNew {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    private void resolveView() {
+    protected boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i(MainActivityNew.class.getName(), "isMyServiceRunning? " + true + "");
+                return true;
+            }
+        }
+
+        Log.i(MainActivityNew.class.getName(), "isMyServiceRunning? " + false + "");
+        return false;
+    }
+
+    @SuppressWarnings("WrongConstant")
+    protected void resolveView() {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ComponentName mServiceComponent = new ComponentName(this, MyJobService.class);
-                JobInfo.Builder builder = null;
-                int kJobId = 0;
-                builder = new JobInfo.Builder(kJobId++, mServiceComponent);
-                builder.setPeriodic(60 * 1000);//1 menit
-                builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
-                builder.setRequiresDeviceIdle(true); // device should be idle
-                builder.setRequiresCharging(false); // we don't care if the device is charging or not
-                JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                jobScheduler.schedule(builder.build());
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                Utility.scheduleJob(this);
             } else {
-                Intent intent = new Intent(this, MyBroadcastReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                        this.getApplicationContext(), 234324243, intent, 0);
-                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime(), 1000 * 60, pendingIntent);//1 Menit
-                PackageManager pm = getPackageManager();
-                ComponentName receiver = new ComponentName(this, MyBroadcastReceiver.class);
+                mUploadService = new UploadService();
+                mServiceIntent = new Intent(this, mUploadService.getClass());
+                mServiceIntent.putExtra(UploadService.ACTION, "startService");
+                if (!isMyServiceRunning(mUploadService.getClass())) {
+                    startService(mServiceIntent);
+                }
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 5555555,
+                        mServiceIntent, 0);
+                int alarmType = AlarmManager.ELAPSED_REALTIME;
+                final int FIFTEEN_SEC_MILLIS = 15000;
+                AlarmManager alarmManager = (AlarmManager)
+                        getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+                alarmManager.setRepeating(alarmType, SystemClock.elapsedRealtime() + FIFTEEN_SEC_MILLIS,
+                        FIFTEEN_SEC_MILLIS, pendingIntent);
+
+                ComponentName receiver = new ComponentName(getApplicationContext(), MyBroadcastReceiver.class);
+                PackageManager pm = getApplicationContext().getPackageManager();
+
                 pm.setComponentEnabledSetting(receiver,
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                         PackageManager.DONT_KILL_APP);
-
             }
 
-//            setTheme(R.style.AppTheme_NoActionBar);
-
-            Intent intentStart = new Intent(this, UploadService.class);
-            intentStart.putExtra(UploadService.ACTION, "startService");
-            startService(intentStart);
             IntervalDB db = new IntervalDB(getApplicationContext());
             db.open();
             Cursor cursor = db.getSingleContact(12);

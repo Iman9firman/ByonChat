@@ -13,7 +13,7 @@ import java.util.Date;
  * Created by imanfirmansyah on 3/3/17.
  */
 
-public class MyBroadcastReceiver  extends BroadcastReceiver {
+public class MyBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 

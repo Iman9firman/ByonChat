@@ -99,6 +99,7 @@ import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.LocationAssistant;
 import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
+import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
 import com.byonchat.android.utils.UtilsPD;
 import com.byonchat.android.utils.Validations;
@@ -231,6 +232,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     @NonNull
     protected RecyclerView recyclerView;
+
+    protected UploadService mUploadService;
+    protected Intent mServiceIntent;
 
     protected RecyclerView.LayoutManager layoutManager;
     protected RecyclerViewDragDropManager recyclerViewDragDropManager;

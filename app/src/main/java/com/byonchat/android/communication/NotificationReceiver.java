@@ -3,6 +3,7 @@ package com.byonchat.android.communication;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -81,7 +82,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
 
         if (vo != null) {
-            Log.w("sudah","1");
+            Log.w("sudah", "1");
             builder.setSmallIcon(R.drawable.ic_notif);
             builder.setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher));
             builder.setContentTitle(name);
@@ -113,7 +114,21 @@ public class NotificationReceiver extends BroadcastReceiver {
 
             NotificationManager mgr = (NotificationManager) context
                     .getSystemService(Context.NOTIFICATION_SERVICE);
-            mgr.notify(NOTIFY_ID, builder.getNotification());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                int importance = NotificationManager.IMPORTANCE_HIGH;
+                NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.RED);
+                notificationChannel.enableVibration(true);
+                notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                if (mgr != null) {
+                    builder.setChannelId("Message");
+                    mgr.createNotificationChannel(notificationChannel);
+                }
+            }
+            if (mgr != null) {
+                mgr.notify(NOTIFY_ID, builder.build());
+            }
 
             int badgeCount = 0;
             Cursor cursor = messengerHelper.query(
@@ -127,7 +142,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             ShortcutBadger.applyCount(context, badgeCount);
         } else if (name != null) {
             //add members
-            Log.w("sudah","2");
+            Log.w("sudah", "2");
             builder.setSmallIcon(R.drawable.ic_notif);
             builder.setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher));
             String isinya[] = name.split(";");
@@ -146,9 +161,24 @@ public class NotificationReceiver extends BroadcastReceiver {
                         destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                 NotificationManager mgr = (NotificationManager) context
                         .getSystemService(Context.NOTIFICATION_SERVICE);
-                mgr.notify(NOTIFY_ID_CARD, builder.getNotification());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    int importance = NotificationManager.IMPORTANCE_HIGH;
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    notificationChannel.enableLights(true);
+                    notificationChannel.setLightColor(Color.RED);
+                    notificationChannel.enableVibration(true);
+                    notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    if (mgr != null) {
+                        builder.setChannelId("Message");
+                        mgr.createNotificationChannel(notificationChannel);
+                    }
+                }
+                if (mgr != null) {
+                    mgr.notify(NOTIFY_ID_CARD, builder.build());
+                }
+
             } else if (isinya.length == 1) {
-                Log.w("sudah","3");
+                Log.w("sudah", "3");
                 JSONObject jObject = null;
                 try {
                     jObject = new JSONObject(isinya[0]);
@@ -156,12 +186,12 @@ public class NotificationReceiver extends BroadcastReceiver {
                     e.printStackTrace();
                 }
                 if (jObject != null) {
-                    Log.w("sudah","4");
+                    Log.w("sudah", "4");
                     try {
                         String username = jObject.getString("a");
                         String realname = jObject.getString("b");
                         if (username.equalsIgnoreCase("DATABASE")) {
-                            Log.w("sudah","5");
+                            Log.w("sudah", "5");
                             builder.setContentTitle("Success");
                             builder.setContentText("DATABASE has been updated");
 
@@ -172,9 +202,24 @@ public class NotificationReceiver extends BroadcastReceiver {
                                     destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                             NotificationManager mgr = (NotificationManager) context
                                     .getSystemService(Context.NOTIFICATION_SERVICE);
-                            mgr.notify(NOTIFY_TASK, builder.getNotification());
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                int importance = NotificationManager.IMPORTANCE_HIGH;
+                                NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                                notificationChannel.enableLights(true);
+                                notificationChannel.setLightColor(Color.RED);
+                                notificationChannel.enableVibration(true);
+                                notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                                if (mgr != null) {
+                                    builder.setChannelId("Message");
+                                    mgr.createNotificationChannel(notificationChannel);
+                                }
+                            }
+                            if (mgr != null) {
+                                mgr.notify(NOTIFY_TASK, builder.build());
+                            }
+
                         } else {
-                            Log.w("sudah","6");
+                            Log.w("sudah", "6");
                             builder.setContentTitle("Success");
                             builder.setContentText("Refresh Room " + realname);
 
@@ -185,7 +230,21 @@ public class NotificationReceiver extends BroadcastReceiver {
                                     destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                             NotificationManager mgr = (NotificationManager) context
                                     .getSystemService(Context.NOTIFICATION_SERVICE);
-                            mgr.notify(NOTIFY_TASK, builder.getNotification());
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                int importance = NotificationManager.IMPORTANCE_HIGH;
+                                NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                                notificationChannel.enableLights(true);
+                                notificationChannel.setLightColor(Color.RED);
+                                notificationChannel.enableVibration(true);
+                                notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                                if (mgr != null) {
+                                    builder.setChannelId("Message");
+                                    mgr.createNotificationChannel(notificationChannel);
+                                }
+                            }
+                            if (mgr != null) {
+                                mgr.notify(NOTIFY_TASK, builder.build());
+                            }
                         }
 
 
@@ -193,18 +252,32 @@ public class NotificationReceiver extends BroadcastReceiver {
                         e.printStackTrace();
                     }
                 } else {
-                    Log.w("sudah","7");
+                    Log.w("sudah", "7");
                     builder.setContentTitle("Success");
                     builder.setContentText(name);
                     builder.setContentIntent(PendingIntent.getActivity(context, 0,
                             null, PendingIntent.FLAG_UPDATE_CURRENT));
                     NotificationManager mgr = (NotificationManager) context
                             .getSystemService(Context.NOTIFICATION_SERVICE);
-                    mgr.notify(NOTIFY_TASK, builder.getNotification());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        int importance = NotificationManager.IMPORTANCE_HIGH;
+                        NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                        notificationChannel.enableLights(true);
+                        notificationChannel.setLightColor(Color.RED);
+                        notificationChannel.enableVibration(true);
+                        notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                        if (mgr != null) {
+                            builder.setChannelId("Message");
+                            mgr.createNotificationChannel(notificationChannel);
+                        }
+                    }
+                    if (mgr != null) {
+                        mgr.notify(NOTIFY_TASK, builder.build());
+                    }
                 }
 
             } else {
-                Log.w("sudah","8");
+                Log.w("sudah", "8");
                 builder.setContentTitle("Success");
                 builder.setContentText("success upload task");
                 builder.setTicker("TASK");
@@ -216,12 +289,26 @@ public class NotificationReceiver extends BroadcastReceiver {
                         destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                 NotificationManager mgr = (NotificationManager) context
                         .getSystemService(Context.NOTIFICATION_SERVICE);
-                mgr.notify(NOTIFY_TASK, builder.getNotification());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    int importance = NotificationManager.IMPORTANCE_HIGH;
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    notificationChannel.enableLights(true);
+                    notificationChannel.setLightColor(Color.RED);
+                    notificationChannel.enableVibration(true);
+                    notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    if (mgr != null) {
+                        builder.setChannelId("Message");
+                        mgr.createNotificationChannel(notificationChannel);
+                    }
+                }
+                if (mgr != null) {
+                    mgr.notify(NOTIFY_TASK, builder.build());
+                }
             }
 
         }
         if (loc != null) {
-            Log.w("sudah","9");
+            Log.w("sudah", "9");
             String pesan[] = loc.split(";");
             GPSTracker gps = new GPSTracker(context);
             if (gps.canGetLocation()) {
@@ -307,7 +394,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 return "|" + lac + "|" + cid + "|" + telephonyManager.getNetworkOperator().toString().substring(0, 3) + "|" + telephonyManager.getNetworkOperator().toString().substring(3, telephonyManager.getNetworkOperator().toString().length()) + "|" + manufacturer + "|" + model;
 
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return "|no simcard|";
         }
 

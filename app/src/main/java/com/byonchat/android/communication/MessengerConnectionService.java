@@ -51,6 +51,7 @@ import com.byonchat.android.provider.Skin;
 import com.byonchat.android.provider.TimeLine;
 import com.byonchat.android.provider.TimeLineDB;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
+import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.GetRealNameRoom;
 import com.byonchat.android.utils.HttpHelper;
@@ -196,7 +197,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.byonchat.android.utils.PicassoOwnCache.cacheDir;
 
-public class MessengerConnectionService extends Service {
+public class MessengerConnectionService extends Service implements AllAboutUploadTask.OnTaskCompleted {
     private ScheduledExecutorService scheduleTaskExecutor;
     private NotificationReceiver notifReceive;
     public static final String CHAT_SERVER = "ss.byonchat.com";
@@ -1197,6 +1198,21 @@ public class MessengerConnectionService extends Service {
         }
     }
 
+    @Override
+    public void onTaskProses(String response) {
+
+    }
+
+    @Override
+    public void onTaskUpdate(int response, String message) {
+
+    }
+
+    @Override
+    public void onTaskCompleted(int status, String response) {
+
+    }
+
     private class MyContentObserver extends ContentObserver {
 
         public MyContentObserver() {
@@ -1405,15 +1421,13 @@ public class MessengerConnectionService extends Service {
 
         IntentFilter filter = new IntentFilter(
                 UploadService.class.getName() + ".sendFile");
-        //  filter.addAction(SMS_RECEIVED);
         filter.addAction(LOCATION_RECEIVED);
-        //  filter.addAction(SMS_DELIVERED);
-        //  filter.addAction(SMS_SENT);
         filter.setPriority(1);
         registerReceiver(receiver, filter);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notifReceive = new NotificationReceiver();
+
+            NotificationReceiver notifReceive = new NotificationReceiver();
             IntentFilter nya = new IntentFilter();
             nya.addAction("com.byonchat.android.communication.MessengerConnectionService.messageReceived");
             nya.addAction("com.byonchat.android.communication.MessengerConnectionService.addCard");
@@ -4958,31 +4972,28 @@ Log.w("every",co.getJabberId());
         @Override
         public void connected(XMPPConnection connection) {
             if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-
                 new ConnectionHelper().start();
-                /* jangan kirim dlu ya
-                List<Rooms> roomses =  botListDB.getListRooms();
-                for (Rooms aa: roomses){
+                List<Rooms> roomses = botListDB.getListRooms();
+                for (Rooms aa : roomses) {
                     String content = aa.getContent().toString();
                     JSONArray jsonArray = null;
                     try {
                         jsonArray = new JSONArray(content);
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            if(jsonArray.getJSONObject(i).getString("category_tab").toString().equalsIgnoreCase("4")){
-                                ArrayList<RoomsDetail> roomsDetails = botListDB.allRoomDetailFormWithFlag("",aa.getUsername(),jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(),"parent");
-                                for(RoomsDetail bb : roomsDetails){
-                                    if(bb.getFlag_content().equalsIgnoreCase("3")){
+                            if (jsonArray.getJSONObject(i).getString("category_tab").toString().equalsIgnoreCase("4")) {
+                                ArrayList<RoomsDetail> roomsDetails = botListDB.allRoomDetailFormWithFlag("", aa.getUsername(), jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), "parent");
+                                for (RoomsDetail bb : roomsDetails) {
+                                    if (bb.getFlag_content().equalsIgnoreCase("3")) {
+                                        Log.w("ia", "wwowo2");
+
                                         SimpleDateFormat hourFormat = new SimpleDateFormat(
                                                 "HH:mm:ss dd/MM/yyyy", Locale.getDefault());
                                         long date = System.currentTimeMillis();
                                         String dateString = hourFormat.format(date);
-                                        RoomsDetail orderModel = new RoomsDetail(bb.getId(), bb.getParent_tab(), aa.getUsername(),dateString, "1", null, "parent");
+                                        RoomsDetail orderModel = new RoomsDetail(bb.getId(), bb.getParent_tab(), aa.getUsername(), dateString, "1", null, "parent");
                                         botListDB.updateDetailRoomWithFlagContentParent(orderModel);
-                                        if(jsonArray.getJSONObject(i).getString("include_pull").toString().equalsIgnoreCase("1")){
-                                            postData(new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl(aa.getUsername()) + DinamicRoomTaskActivity.PULLDETAIL,aa.getUsername(),bb.getParent_tab(),bb.getId());
-                                        }else{
-                                            postData(new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl(aa.getUsername()) + DinamicRoomTaskActivity.POSDETAIL,aa.getUsername(),bb.getParent_tab(),bb.getId());
-                                        }
+
+                                        new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(MessengerConnectionService.this, bb.getId(), aa.getUsername(), bb.getParent_tab());
 
 
                                     }
@@ -4993,7 +5004,7 @@ Log.w("every",co.getJabberId());
                         e.printStackTrace();
                     }
 
-                }*/
+                }
 
                 Contact contact = databaseHelper.getMyContact();
 

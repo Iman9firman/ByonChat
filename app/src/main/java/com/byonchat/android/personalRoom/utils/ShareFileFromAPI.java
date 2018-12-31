@@ -49,6 +49,8 @@ public class ShareFileFromAPI extends AppCompatActivity {
     private String DOWNLOAD_PATH;
     private String CARD_PATH;
     private String NAME_FILE;
+    private String NEW_NAME_FILE;
+
 
     private class DownloadFile extends AsyncTask<Context, Integer, Boolean> {
 
@@ -69,7 +71,8 @@ public class ShareFileFromAPI extends AppCompatActivity {
         protected Boolean doInBackground(Context... params) {
             try {
                 File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
-                File dbDownloadPath = new File(oldFolder, NAME_FILE);
+                File dbDownloadPath = new File(oldFolder, NEW_NAME_FILE);
+                Log.w("GW YAKIN",NAME_FILE);
                 if (!oldFolder.exists()) {
                     oldFolder.mkdirs();
                 }
@@ -131,7 +134,7 @@ public class ShareFileFromAPI extends AppCompatActivity {
             if (result.equals(Boolean.TRUE)) {
                 finish();
                 File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
-                File oldFile = new File(oldFolder, NAME_FILE);
+                File oldFile = new File(oldFolder, NEW_NAME_FILE);
                 String extension = NAME_FILE.substring(NAME_FILE.lastIndexOf("."));
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -222,9 +225,12 @@ public class ShareFileFromAPI extends AppCompatActivity {
 
         NAME_FILE = DOWNLOAD_PATH.toString().substring(DOWNLOAD_PATH.toString().lastIndexOf('/'), DOWNLOAD_PATH.toString().length());
 
-        File oldFile = new File(oldFolder, NAME_FILE);
         String extension = NAME_FILE.substring(NAME_FILE.lastIndexOf("."));
+
+        NEW_NAME_FILE = getIntent().getStringExtra("nama_file")+extension;
+        File oldFile = new File(oldFolder, NEW_NAME_FILE);
         if (oldFile.exists()) {
+            Log.w("GW YAKIN ADA","LESi");
             finish();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 Uri uri = FileProvider.getUriForFile(ShareFileFromAPI.this, getPackageName() + ".provider", oldFile);
@@ -264,6 +270,7 @@ public class ShareFileFromAPI extends AppCompatActivity {
             }
 
         } else {
+            Log.w("GW YAKIN GK ADA","LESon");
             if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
                 finish();
@@ -279,6 +286,7 @@ public class ShareFileFromAPI extends AppCompatActivity {
 
         Intent cloud = new Intent(this, CloudStorageActivity.class);
         cloud.putExtra("card", fileOne);
+        cloud.putExtra("nama_file",NEW_NAME_FILE);
         startActivity(cloud);
     }
 }

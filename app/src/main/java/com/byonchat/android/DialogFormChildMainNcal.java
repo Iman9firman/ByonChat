@@ -22,6 +22,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -491,6 +492,9 @@ public class DialogFormChildMainNcal extends DialogFragment {
 
     @Override
     public void onDestroy() {
+        if (localBroadcastReceiver != null){
+            LocalBroadcastManager.getInstance(mContext).unregisterReceiver(localBroadcastReceiver);
+        }
         super.onDestroy();
     }
 
@@ -498,10 +502,10 @@ public class DialogFormChildMainNcal extends DialogFragment {
     public void onResume() {
         super.onResume();
 
-        if (localBroadcastReceiver != null) {
+        /*if (localBroadcastReceiver != null) {
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(
                     localBroadcastReceiver);
-        }
+        }*/
 
         if (idchildDetail.equalsIgnoreCase("")) {
             idchildDetail = getRandomString();
@@ -1726,7 +1730,6 @@ public class DialogFormChildMainNcal extends DialogFragment {
             }
 
             if (intent.getAction().equals("SOME_ACTION")) {
-                Log.w("ada nih", intent.getStringExtra("data"));
                 List value = (List) hashMap.get(dummyIdDate);
                 if (value != null) {
                     if (value.size() > 0) {

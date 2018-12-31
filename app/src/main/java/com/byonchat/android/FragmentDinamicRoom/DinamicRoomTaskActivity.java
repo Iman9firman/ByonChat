@@ -114,6 +114,7 @@ import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.tempSchedule.MyEventDatabase;
+import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.ImageFilePath;
@@ -193,7 +194,7 @@ import zharfan.com.cameralibrary.CameraActivity;
 
 import static com.guna.ocrlibrary.OcrCaptureActivity.TextBlockObject;
 
-public class DinamicRoomTaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener {
+public class DinamicRoomTaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener, AllAboutUploadTask.OnTaskCompleted {
 
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
@@ -1670,7 +1671,67 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                     Log.w("asd:" + count, label + "--" + type);
 
-                    if (type.equalsIgnoreCase("dropdown_views")) {
+                    if (type.equalsIgnoreCase("preview_document")) {
+
+
+                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+
+                        final List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
+
+                        linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.upload_doc_layout, null);
+                        linearEstimasi[count].setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(linearEstimasi[count]);
+
+                        final JSONObject jObject = new JSONObject(value);
+                        String urlP = jObject.getString("url");
+                        String valueP = jObject.getString("value");
+
+
+                        final Button btnOption = (Button) linearEstimasi[count].findViewById(R.id.btn_browse);
+                        btnOption.setText("Open");
+                        final TextView valueFile = (TextView) linearEstimasi[count].findViewById(R.id.value);
+                        valueFile.setText(valueP);
+
+                        final int finalI25 = i;
+                        btnOption.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(context, DownloadFileByonchat.class);
+                                intent.putExtra("path", urlP);
+                                startActivity(intent);
+                            }
+                        });
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                        lolosReq.add(idListTask);
+
+                    } else if (type.equalsIgnoreCase("dropdown_views")) {
 
                         if (count == null) {
                             count = 0;
@@ -1774,6 +1835,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                         }
                                     }
+
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
                                     if (cEdit.getCount() > 0)
 
@@ -1889,6 +1951,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         });
 
                         String jsonData = jsonArray.getJSONObject(i).getString("attach_api");
+                        Log.w("siapa11", jsonData);
                         JSONArray ja = null;
                         try {
                             ja = new JSONArray(jsonData);
@@ -1897,6 +1960,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
                         if (ja != null) {
+                            Log.w("siapa", "sssa");
+
                             if (ja.length() == 0) {
                                 Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                                 if (cursorCild.getCount() > 0) {
@@ -2914,8 +2979,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     e.printStackTrace();
                                 }
                             } else {
+                                //
 
-                                Log.w("igni", "lima");
+                                Log.w("igni", "lima" + idListTask);
 
                                 linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout, null);
                                 TableRow tableLayout = (TableRow) linearEstimasi[count].findViewById(R.id.tableRow2);
@@ -2945,6 +3011,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     for (String idchildDetail : listId) {
                                         String titleUntuk = "";
                                         String decsUntuk = "";
+                                        String priceUntuk = "";
                                         JSONObject objData = new JSONObject();
                                         objData.put("urutan", asd);
                                         asd++;
@@ -3027,6 +3094,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     Log.w("lama1a", titleUntuk);
                                                     decsUntuk = list.get(u).getContent();
                                                     Log.w("lama2a", decsUntuk);
+                                                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
+                                                        priceUntuk = list.get(u).getContent();
+                                                    }
+
                                                 }
 
                                                 try {
@@ -3097,7 +3168,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         }
 
 
-                                        rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, ""));
+                                        rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk));
                                         objData.put("data", jsonArrayHUHU);
 
                                         jsonArrayMaster.put(objData);
@@ -3212,6 +3283,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     e.printStackTrace();
                                 }
                             }
+
+
                         }
 
                         valSetOne.add(String.valueOf(linearLayout.getChildCount()));
@@ -3759,7 +3832,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         et[count].setHint(placeHolder);
                         et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
-
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
@@ -3777,14 +3849,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     try {
                                         jsonArrayYes = new JSONArray(contentValue);
                                         for (int ii = (jsonArrayYes.length() - 1); ii >= 0; ii--) {
+
                                             JSONArray magic = new JSONArray(jsonArrayYes.getJSONArray(ii).toString());
                                             JSONObject oContent2 = new JSONObject(magic.get(1).toString());
                                             JSONArray joContent = oContent2.getJSONArray("value_detail");
                                             for (int iff = 0; iff < joContent.length(); iff++) {
-                                                final String idValue = joContent.getJSONObject(i).getString("id").toString();
+                                                String idValue = joContent.getJSONObject(iff).getString("id").toString();
                                                 String pareen = jsonArray.getJSONObject(i).getString("copy_from").toString();
                                                 if (idValue.equalsIgnoreCase(pareen)) {
-                                                    valUEParent = joContent.getJSONObject(i).getString("value").toString();
+                                                    valUEParent = joContent.getJSONObject(iff).getString("value").toString();
                                                 }
                                             }
                                         }
@@ -3793,7 +3866,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     }
 
                                     et[count].setText(valUEParent);
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, valUEParent, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                     db.insertRoomsDetail(orderModel);
                                 }
                             }
@@ -7648,6 +7721,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         b.setEnabled(false);
                         boolean berhenti = false;
 
+
                         List<String> errorReq = new ArrayList<String>();
                         for (Integer key : hashMap.keySet()) {
                             List<String> value = hashMap.get(key);
@@ -7656,6 +7730,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 if (!lolosReq.isEmpty()) {
                                     if (lolosReq.contains(String.valueOf(key))) {
                                         lolos = true;
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
+                                        if (cEdit.getCount() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                        }
                                     }
                                 }
 
@@ -7783,6 +7862,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         }
 
+
                         if (!linkGetAsignTo.equalsIgnoreCase(""))
 
                         {
@@ -7806,7 +7886,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         }
 
-
                         if (includeStatus)
 
                         {
@@ -7827,7 +7906,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
 
                         }
-
 
                         if (berhenti)
 
@@ -7939,13 +8017,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     latitude = gps.getLatitude();
                                     longitude = gps.getLongitude();
                                     if (latitude == 0.0 && longitude == 0.0) {
-                                        /*DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
-                                            public void run() {
-                                                Toast.makeText(context, "Harap coba kembali dalam waktu 1 menit, karena data gps anda sedang diaktifkan", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-                                        return;*/
-
                                         Cursor cursorParent = db.getSingleRoomDetailFormWithFlag(idDetail, username, idTab, "parent");
                                         String latLongResult = "";
                                         if (cursorParent.getCount() > 0) {
@@ -7969,18 +8040,50 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         }
 
-                        showProgressDialogWithTitle();
+                        Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "utility", "");
 
-                        if (NetworkInternetConnectionStatus.getInstance(context).
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("fromList", fromList);
+                            jsonObject.put("calendar", calendar);
+                            jsonObject.put("isReject", isReject);
+                            jsonObject.put("customersId", customersId);
+                            jsonObject.put("startDate", startDate);
+                            jsonObject.put("idListTaskMasterForm", idListTaskMasterForm);
+                            if (includeStatus) {
+                                jsonObject.put("includeStatus", includeStatus);
+                                jsonObject.put("labelDone", labelDone);
+                                jsonObject.put("labelApprove", labelApprove);
+                            }
+                            if (!linkGetAsignTo.equalsIgnoreCase("")) {
+                                jsonObject.put("linkGetAsignTo", linkGetAsignTo);
+                            }
 
-                                isOnline(context))
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (cEdit2.getCount() > 0) {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), "", "", "utility");
+                            db.updateDetailRoomWithFlagContent(orderModel);
+
+                        } else {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), "", "", "utility");
+                            db.insertRoomsDetail(orderModel);
+                        }
+
+
+                        if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context))
 
                         {
                             long date = System.currentTimeMillis();
                             String dateString = hourFormat.format(date);
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
                             db.updateDetailRoomWithFlagContentParent(orderModel);
-                            uploadFileChild("pertama");
+
+                            Log.w("cete", idDetail + "::" + username + "::" + idTab);
+
+                            new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(DinamicRoomTaskActivity.this, idDetail, username, idTab);
                         } else
 
                         {
@@ -8118,242 +8221,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 mainScrooll.scrollTo(0, linearLayout.getTop());
             }
         });
-    }
-
-
-    private void uploadFileChild(String ainnu) {
-        ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, username, idTab, "cild");
-        ArrayList<String> listUploadTotal = new ArrayList<>();
-        ArrayList<String> listUpload = new ArrayList<>();
-
-        if (ainnu.equalsIgnoreCase("pertama")) {
-            for (int u = 0; u < list.size(); u++) {
-                JSONArray jsA = null;
-                String content = "";
-
-                String cc = list.get(u).getContent();
-
-                try {
-                    if (cc.startsWith("{")) {
-                        if (!cc.startsWith("[")) {
-                            cc = "[" + cc + "]";
-                        }
-                        jsA = new JSONArray(cc);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-                if (jsA != null) {
-                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(list.get(u).getContent());
-                            Iterator<String> iter = jsonObject.keys();
-
-                            while (iter.hasNext()) {
-                                String key = iter.next();
-                                try {
-                                    JSONArray jsAdd = jsonObject.getJSONArray(key);
-                                    for (int ic = 0; ic < jsAdd.length(); ic++) {
-                                        JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
-
-                                        JSONArray aa = new JSONArray();
-                                        if (oContent.has("f")) {
-                                            aa = oContent.getJSONArray("f");
-                                        }
-
-                                        if (aa.length() > 0) {
-                                            for (int a = 0; a < aa.length(); a++) {
-                                                if (aa.getJSONObject(a).getString("u").equalsIgnoreCase("")) {
-                                                    listUploadTotal.add("1");
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                } catch (JSONException e) {
-                                    // Something went wrong!
-                                }
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } else {
-                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("form_child")) {
-                        try {
-                            JSONArray jsonArray = new JSONArray(list.get(u).getContent());
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONArray jsnobject = new JSONArray(jsonArray.getJSONObject(i).getString("data"));
-                                for (int ii = 0; ii < jsnobject.length(); ii++) {
-                                    JSONObject c = jsnobject.getJSONObject(ii);
-                                    if (c.getString("type").equalsIgnoreCase("front_camera") || c.getString("type").equalsIgnoreCase("rear_camera")) {
-                                        String aa[] = c.getString("value").toString().split(";");
-                                        if (aa.length == 2) {
-                                            if (aa[0].length() == 0) {
-                                                listUploadTotal.add("1");
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-
-            }
-
-        }
-
-        totalUpload = totalUpload + listUploadTotal.size();
-
-        for (int u = 0; u < list.size(); u++) {
-            JSONArray jsA = null;
-            String content = "";
-
-            String cc = list.get(u).getContent();
-
-            try {
-                if (cc.startsWith("{")) {
-                    if (!cc.startsWith("[")) {
-                        cc = "[" + cc + "]";
-                    }
-                    jsA = new JSONArray(cc);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            if (jsA != null) {
-                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(list.get(u).getContent());
-                        Iterator<String> iter = jsonObject.keys();
-
-                        while (iter.hasNext()) {
-                            String key = iter.next();
-                            try {
-                                JSONArray jsAdd = jsonObject.getJSONArray(key);
-                                for (int ic = 0; ic < jsAdd.length(); ic++) {
-                                    JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
-
-                                    JSONArray aa = new JSONArray();
-                                    if (oContent.has("f")) {
-                                        aa = oContent.getJSONArray("f");
-                                    }
-
-                                    if (aa.length() > 0) {
-                                        for (int a = 0; a < aa.length(); a++) {
-                                            if (aa.getJSONObject(a).getString("u").equalsIgnoreCase("")) {
-                                                listUpload.add("1");
-                                                new UploadFileToServerCild().execute(
-                                                        new ValidationsKey().getInstance(context).getTargetUrl(username) + POST_FOTO,
-                                                        username,
-                                                        idTab,
-                                                        idListTaskMasterForm,
-                                                        list.get(u).getContent(),
-                                                        aa.getJSONObject(a).getString("r"),
-                                                        jsAdd.get(ic).toString(),
-                                                        a + "",
-                                                        key,
-                                                        list.get(u).getFlag_content(),
-                                                        list.get(u).getFlag_tab(),
-                                                        ic + "");
-                                                return;
-                                            }
-                                        }
-                                    }
-                                }
-
-                            } catch (JSONException e) {
-                                // Something went wrong!
-                            }
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                Log.w("baaa", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("form_child")) {
-                    try {
-                        JSONArray jsonArray = new JSONArray(list.get(u).getContent());
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONArray jsnobject = new JSONArray(jsonArray.getJSONObject(i).getString("data"));
-                            for (int ii = 0; ii < jsnobject.length(); ii++) {
-                                JSONObject c = jsnobject.getJSONObject(ii);
-                                if (c.getString("type").equalsIgnoreCase("front_camera") || c.getString("type").equalsIgnoreCase("rear_camera")) {
-                                    String aa[] = c.getString("value").toString().split(";");
-                                    if (aa.length == 2) {
-                                        if (aa[0].length() == 0) {
-                                            listUpload.add("1");
-                                            String idLisTask = "";
-                                            JSONObject cs = null;
-                                            try {
-                                                cs = new JSONObject(list.get(u).getFlag_content());
-                                                idLisTask = cs.getString("a");
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                            new UploadFileToServer().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POST_FOTO, username, idTab, idLisTask, cc, c.getString("value").toString(), list.get(u).getId(), list.get(u).getParent_tab(), list.get(u).getParent_room(), aa[1], list.get(u).getFlag_content(), list.get(u).getFlag_tab(), list.get(u).getFlag_room());
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-               /*  nanti lagi
-                else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera")) {
-                    if (!Message.isJSONValid(list.get(u).getContent())) {
-                        listUpload.add("1");
-                        String idLisTask = "";
-                        JSONObject c = null;
-                        try {
-                            c = new JSONObject(list.get(u).getFlag_content());
-                            idLisTask = c.getString("a");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        new UploadFileToServerB().execute(POST_FOTO, username, idTab, idLisTask, list.get(u).getId(), list.get(u).getParent_tab(), list.get(u).getParent_room(), list.get(u).getContent(), list.get(u).getFlag_content(), list.get(u).getFlag_tab(), list.get(u).getFlag_room());
-                        return;
-                    }
-                }*/
-
-            }
-
-        }
-
-        if (listUpload.size() == 0) {
-            if (fromList.equalsIgnoreCase("show")) {
-                new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
-            } else if (fromList.equalsIgnoreCase("hide")) {
-                new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLDETAIL, username, idTab, idDetail);
-            } else {
-                if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
-                    String[] ff = idDetail.split("\\|");
-                    if (ff.length == 2) {
-                        new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAIL, username, idTab, idDetail);
-                    } else {
-                        new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
-                    }
-                }
-            }
-        } else {
-            uploadFileChild("looping");
-        }
     }
 
     private String jsonCreateTypeChild(String idContent, String type, String f, String idlisttask, String idDetailss) {
@@ -9621,6 +9488,55 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         }
     }
 
+    @Override
+    public void onTaskProses(String response) {
+        showProgressDialogWithTitle();
+    }
+
+    @Override
+    public void onTaskUpdate(int progres, String message) {
+        if (progressDialog.isIndeterminate()) {
+            progressDialog.setIndeterminate(false);
+        }
+        progressDialog.setProgress(progres);
+        if (!message.equalsIgnoreCase("")) {
+            progressDialog.setMessage(message);
+        }
+    }
+
+    @Override
+    public void onTaskCompleted(int response, String message) {
+        DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                progressDialog.dismiss();
+                if (response == 0) {
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else if (response == 1) {
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else if (response == 20) {
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else if (response == 50) {
+                    AlertDialog.Builder builder = DialogUtil.generateAlertDialog(DinamicRoomTaskActivity.this,
+                            "Warning", message);
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @TargetApi(11)
+                                public void onClick(
+                                        DialogInterface dialog, int id) {
+                                    b.setEnabled(true);
+                                    dialog.cancel();
+                                }
+                            }
+                    );
+                    builder.show();
+                }
+            }
+        });
+    }
+
+
     private class getJSONeKtp extends AsyncTask<String, Void, String> {
         private String vug;
         private ProgressDialog dd;
@@ -9919,7 +9835,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     @Override
     public void onBackPressed() {
-        if (showButton) {
+        /*if (showButton) {
             final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
             alertbox.setMessage("Are you sure you want to save?");
             alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -9946,7 +9862,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             alertbox.show();
         } else {
             finish();
-        }
+        }*/
+        finish();
     }
 
     @Override
@@ -10193,480 +10110,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     }
 
-
-    private class posTask extends AsyncTask<String, Integer, String> {
-
-        String error = "";
-        long totalSize = 0;
-        File gpxfile = null;
-
-        @Override
-        protected String doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            postData(params[0], params[1], params[2], params[3]);
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (progressDialog.isIndeterminate()) {
-                progressDialog.setIndeterminate(false);
-            }
-            progressDialog.setProgress(0);
-        }
-
-        protected void onPostExecute(String result) {
-            if (error.length() > 0) {
-                Toast.makeText(context, error, Toast.LENGTH_LONG).show();
-            }
-            //dialog.dismiss();
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-            if (progressDialog.isIndeterminate()) {
-                progressDialog.setIndeterminate(false);
-            }
-            progressDialog.setProgress(progress[0]);
-            progressDialog.setMessage("Upload Value ... ");
-        }
-
-        public void postData(String valueIWantToSend, final String usr, final String idr, final String idDetail) {
-            // Create a new HttpClient and Post Header
-            prosesUpload.add("ada");
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(valueIWantToSend);
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                Log.w("asslams", (int) ((num / (float) totalSize) * 100) + "");
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-
-                ContentType contentType = ContentType.create("multipart/form-data");
-                entity.addPart("username_room", new StringBody(usr));
-                entity.addPart("id_rooms_tab", new StringBody(idr));
-                entity.addPart("id_detail_tab", new StringBody(idDetail));
-                if (calendar != null) {
-                    if (calendar.equalsIgnoreCase("true boi")) {
-
-                        entity.addPart("selected_date", new StringBody(startDate));
-                    }
-                }
-
-                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
-                if (cEdit.getCount() > 0) {
-                    String cc = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-                    String has = "";
-                    if (cc.contains("All")) {
-                        DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(context);
-                        Cursor curr = dataBaseHelper.selectAll("room", username, idTab);
-                        if (curr.getCount() > 0) {
-                            if (curr.moveToFirst()) {
-                                do {
-                                    if (has.length() == 0) {
-                                        has = curr.getString(5);
-                                    } else {
-                                        has += "," + curr.getString(5);
-                                    }
-
-                                } while (curr.moveToNext());
-                            }
-                        }
-                    } else {
-                        String[] su = cc.split(",");
-                        for (String ss : su) {
-                            if (has.length() == 0) {
-                                has = ss.split(" - ")[1];
-                            } else {
-                                has += "," + ss.split(" - ")[1];
-                            }
-                        }
-                    }
-
-
-                    entity.addPart("assign_to", new StringBody(has));
-
-                }
-
-
-                if (includeStatus) {
-                    Cursor cucuTv = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "includeStatus", "");
-                    if (cucuTv.getCount() > 0) {
-                        String cucuTvi = cucuTv.getString(cucuTv.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-                        String resultti = "0";
-                        if (cucuTvi.equalsIgnoreCase(labelApprove)) {
-                            resultti = "1";
-                        } else if (cucuTvi.equalsIgnoreCase(labelDone)) {
-                            resultti = "2";
-                        }
-                        entity.addPart("status_task", new StringBody(resultti));
-                    }
-                }
-
-
-                if (!isReject.equalsIgnoreCase("")) {
-                    entity.addPart("is_reject", new StringBody(isReject));
-                }
-
-
-                Cursor cursorParent = db.getSingleRoomDetailFormWithFlag(idDetail, usr, idr, "parent");
-
-
-                if (cursorParent.getCount() > 0) {
-                    if (!cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)).equalsIgnoreCase("")) {
-                        entity.addPart("latlong_before", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a")));
-                        entity.addPart("latlong_after", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "b")));
-                    } else {
-                        entity.addPart("latlong_before", new StringBody("null"));
-                        entity.addPart("latlong_after", new StringBody("null"));
-                    }
-                } else {
-                    entity.addPart("latlong_before", new StringBody("null"));
-                    entity.addPart("latlong_after", new StringBody("null"));
-                }
-
-                if (fromList.equalsIgnoreCase("hide") || fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
-
-                    if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
-                        String[] ff = idDetail.split("\\|");
-                        if (ff.length == 2) {
-                            entity.addPart("parent_id", new StringBody(ff[1]));
-                            entity.addPart("id_list_push", new StringBody(ff[0]));
-                        }
-                    }
-                }
-
-                MessengerDatabaseHelper messengerHelper = null;
-                if (messengerHelper == null) {
-                    messengerHelper = MessengerDatabaseHelper.getInstance(context);
-                }
-
-                Contact contact = messengerHelper.getMyContact();
-                entity.addPart("bc_user", new StringBody(contact.getJabberId()));
-
-                ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, usr, idr, "cild");
-
-                JSONArray jsonArrayKey = new JSONArray();
-                JSONArray jsonArrayValue = new JSONArray();
-                JSONArray jsonArrayType = new JSONArray();
-                JSONArray jsonArrayDate = new JSONArray();
-
-                for (int u = 0; u < list.size(); u++) {
-
-                    JSONArray jsA = null;
-                    String content = "";
-
-                    String cc = list.get(u).getContent();
-                    Log.w("cinta", cc);
-
-                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah")) {
-                        cc = jsoncreateC(list.get(u).getContent());
-                    } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("form_child")) {
-
-                    } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(cc);
-                            Iterator<String> iter = jsonObject.keys();
-
-                            JSONObject jsHead = new JSONObject();
-                            JSONArray jsAU = new JSONArray();
-                            while (iter.hasNext()) {
-                                JSONObject joN = new JSONObject();
-                                String key = iter.next();
-                                try {
-                                    JSONArray jsAdd = jsonObject.getJSONArray(key);
-                                    JSONArray newJS = new JSONArray();
-                                    for (int ic = 0; ic < jsAdd.length(); ic++) {
-                                        JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
-                                        String lastCusID = oContent.getString("iD");
-                                        String val = oContent.getString("v");
-                                        String not = oContent.getString("n");
-                                        JSONArray aa = new JSONArray();
-                                        if (oContent.has("f")) {
-                                            aa = oContent.getJSONArray("f");
-                                        }
-
-
-                                        JSONObject jOdetail = new JSONObject();
-                                        jOdetail.put("id", lastCusID);
-                                        jOdetail.put("val", val);
-                                        jOdetail.put("note", not);
-                                        jOdetail.put("foto", aa);
-
-
-                                        newJS.put(jOdetail);
-
-                                    }
-                                    joN.put("id", key.toString());
-                                    joN.put("checklists", newJS);
-                                    jsAU.put(joN);
-
-                                } catch (JSONException e) {
-                                    // Something went wrong!
-                                }
-                            }
-
-                            jsHead.put("outlet_id", customersId);
-                            jsHead.put("audit", jsAU);
-                            cc = jsHead.toString();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    try {
-                        if (cc.startsWith("{")) {
-                            if (!cc.startsWith("[")) {
-                                cc = "[" + cc + "]";
-                            }
-                            jsA = new JSONArray(cc);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    if (jsA != null) {
-                        if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
-
-                            jsonArrayKey.put(list.get(u).getFlag_tab());
-                            jsonArrayValue.put(list.get(u).getContent());
-                            jsonArrayDate.put("");
-                            jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                        } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
-
-                            jsonArrayKey.put(list.get(u).getFlag_tab());
-                            jsonArrayValue.put(cc);
-                            jsonArrayDate.put("");
-                            jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                        } else {
-                            if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("front_camera")) {
-
-                                if (Message.isJSONValid(list.get(u).getContent())) {
-                                    JSONObject jObject = null;
-                                    try {
-                                        jObject = new JSONObject(list.get(u).getContent());
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    if (jObject != null) {
-                                        try {
-                                            String a = jObject.getString("a");
-                                            String b = jObject.getString("b");
-
-                                            jsonArrayKey.put(list.get(u).getFlag_tab());
-                                            jsonArrayValue.put(a);
-                                            jsonArrayDate.put(b);
-                                            jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                } else {
-                                    jsonArrayKey.put(list.get(u).getFlag_tab());
-                                    jsonArrayValue.put(list.get(u).getContent());
-                                    jsonArrayDate.put("");
-                                    jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                                }
-
-
-                            } else {
-                                try {
-                                    for (int ic = 0; ic < jsA.length(); ic++) {
-                                        final String icC = jsA.getJSONObject(ic).getString("c").toString();
-                                        content += icC + "|";
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                jsonArrayKey.put(list.get(u).getFlag_tab());
-                                jsonArrayValue.put(content.substring(0, content.length() - 1));
-                                jsonArrayDate.put("");
-                                jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                            }
-
-
-                        }
-                    } else {
-                        jsonArrayKey.put(list.get(u).getFlag_tab());
-                        jsonArrayValue.put(list.get(u).getContent());
-                        jsonArrayDate.put("");
-                        jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
-                    }
-                }
-
-
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("key", jsonArrayKey);
-                    jsonObject.put("value", jsonArrayValue);
-                    jsonObject.put("type", jsonArrayType);
-                    jsonObject.put("date", jsonArrayDate);
-
-                    Log.w("harlem", jsonObject.toString());
-
-                    try {
-                        File root = new File(Environment.getExternalStorageDirectory(), "ByonChat_Upload");
-                        if (!root.exists()) {
-                            root.mkdirs();
-                        }
-                        gpxfile = new File(root, usr + idr + idDetail + ".json");
-                        FileWriter writer = new FileWriter(gpxfile);
-                        writer.append(jsonObject.toString());
-                        writer.flush();
-                        writer.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-                entity.addPart("file_json", new FileBody(gpxfile, contentType, gpxfile.getName()));
-
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                Log.w("kask", statusCode + "");
-                if (statusCode == 200) {
-                    Log.w("berhasil", "hore");
-                    if (gpxfile.exists()) {
-                        gpxfile.delete();
-                    }
-
-                    final String data = EntityUtils.toString(r_entity);
-                    Log.w("harr", data);
-
-                    if (data.equalsIgnoreCase("0")) {
-                        DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
-                            public void run() {
-                                Log.w("carmin1", "lala" + "");
-                                long date = System.currentTimeMillis();
-                                String dateString = hourFormat.format(date);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
-                                db.updateDetailRoomWithFlagContentParent(orderModel);
-                                Toast.makeText(context, "Upload Gagal.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        finish();
-                    } else if (data.equalsIgnoreCase("1")) {
-                        DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
-                            public void run() {
-                                db.deleteRoomsDetailbyId(idDetail, idTab, usr);
-                                if (calendar != null) {
-                                    if (calendar.equalsIgnoreCase("true boi")) {
-                                        MyEventDatabase database = new MyEventDatabase(context);
-                                        SQLiteDatabase db;
-                                        db = database.getWritableDatabase();
-                                        String[] args = {idDetail};
-                                        db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
-                                        db.close();
-                                    }
-                                }
-                                Toast.makeText(context, "Upload Berhasil.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        finish();
-                    } else {
-                        DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
-                            public void run() {
-                                progressDialog.dismiss();
-                                AlertDialog.Builder builder = DialogUtil.generateAlertDialog(DinamicRoomTaskActivity.this,
-                                        "Warning", data);
-                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                            @TargetApi(11)
-                                            public void onClick(
-                                                    DialogInterface dialog, int id) {
-                                                b.setEnabled(true);
-                                                dialog.cancel();
-                                            }
-                                        }
-                                );
-                                builder.show();
-
-
-                            }
-                        });
-                    }
-                } else {
-                    Log.w("gagal", "hore");
-                    if (gpxfile.exists()) {
-                        gpxfile.delete();
-                    }
-                    DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            Log.w("carmin2", "lala" + "");
-                            long date = System.currentTimeMillis();
-                            String dateString = hourFormat.format(date);
-
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "3", null, "parent");
-                            db.updateDetailRoomWithFlagContentParent(orderModel);
-
-                            Toast.makeText(context, "Upload Gagal.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    finish();
-                    error = "Tolong periksa koneksi internet.1";
-                }
-
-            } catch (ClientProtocolException e) {
-                Log.w("gagal1", e.toString());
-                if (gpxfile.exists()) {
-                    gpxfile.delete();
-                }
-                DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        long date = System.currentTimeMillis();
-                        String dateString = hourFormat.format(date);
-
-                        RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
-                        db.updateDetailRoomWithFlagContentParent(orderModel);
-
-                        Toast.makeText(context, "Tolong periksa koneksi internet.2", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                finish();
-            } catch (IOException e) {
-                if (gpxfile.exists()) {
-                    gpxfile.delete();
-                }
-                DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        long date = System.currentTimeMillis();
-                        String dateString = hourFormat.format(date);
-
-                        RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
-                        db.updateDetailRoomWithFlagContentParent(orderModel);
-
-                        Toast.makeText(context, "Tolong periksa koneksi internet.3", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                finish();
-                Log.w("gagal2", e.toString());
-            }
-        }
-    }
 
     public String getStringFile(File f) {
         InputStream inputStream = null;
@@ -11610,249 +11053,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         return type;
     }
 
-    private class UploadFileToServer extends AsyncTask<String, Integer, String> {
-        long totalSize = 0;
-        private ProgressDialog Dialog = new ProgressDialog(context);
-        String valueSS, valueS, getId, getParent_tab, getParent_room, uri, getFlag_content, getFlag_tab, getFlag_room;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (progressDialog.isIndeterminate()) {
-                progressDialog.setIndeterminate(false);
-            }
-            progressDialog.setProgress(0);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], params[12]);
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-            if (progressDialog.isIndeterminate()) {
-                progressDialog.setIndeterminate(false);
-            }
-            progressDialog.setProgress(progress[0]);
-            progressDialog.setMessage("Upload Image " + prosesUpload.size() + "/" + totalUpload);
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile(String URL, String username, String id_room, String id_list, String valueSS_, String valueS_, String getId_, String getParent_tab_, String getParent_room_, String _uri, String getFlag_content_, String getFlag_tab_, String getFlag_room_) {
-            prosesUpload.add("ada");
-            String responseString = null;
-            valueSS = valueSS_;
-            valueS = valueS_;
-            getId = getId_;
-            getParent_tab = getParent_tab_;
-            getParent_room = getParent_room_;
-            uri = _uri;
-            getFlag_content = getFlag_content_;
-            getFlag_tab = getFlag_tab_;
-            getFlag_room = getFlag_room_;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(URL);
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-
-                            }
-                        });
-
-                File sourceFile = new File(resizeAndCompressImageBeforeSend(context, uri, "fileUploadBC_" + new Date().getTime() + ".jpg"));
-                if (!sourceFile.exists()) {
-                    return "File not exists";
-                }
-
-                ContentType contentType = ContentType.create("image/jpeg");
-                entity.addPart("username_room", new StringBody(username));
-                entity.addPart("id_rooms_tab", new StringBody(id_room));
-                entity.addPart("id_list_task", new StringBody(id_list));
-                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
-
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-
-                if (statusCode == 200) {
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-                String message = jsonObject.getString("message");
-                if (message.length() == 0) {
-                    String fileNameServer = jsonObject.getString("filename");
-                    String aadc = valueSS.replace("\"value\":\"" + (valueS.replace("/", "\\/")) + "\"", "\"value\":" + "\"" + fileNameServer + ";" + (uri.replace("/", "\\/")) + "\"");
-                    RoomsDetail orderModel = new RoomsDetail(getId, getParent_tab, getParent_room, aadc, getFlag_content, getFlag_tab, getFlag_room);
-                    db.updateDetailRoomWithFlagContent(orderModel);
-                    uploadFileChild("looping");
-                } else {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            super.onPostExecute(result);
-        }
-    }
-
-
-    private class UploadFileToServerCild extends AsyncTask<String, Integer, String> {
-        long totalSize = 0;
-        String ii;
-        String ff;
-        String jsonDetail;
-        String jsonMaster;
-        String pos;
-        String posS;
-        String key;
-        String getFlag_content;
-        String getFlag_tab;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (progressDialog.isIndeterminate()) {
-                progressDialog.setIndeterminate(false);
-            }
-            progressDialog.setProgress(0);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11]);
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-            if (progressDialog.isIndeterminate()) {
-                progressDialog.setIndeterminate(false);
-            }
-            progressDialog.setProgress(progress[0]);
-            progressDialog.setMessage("Upload Image " + prosesUpload.size() + "/" + totalUpload);
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile(String URL, String username, String id_room, String id_list, String to, String i, String c, String poss, String ky, String gfc, String gft, String ps) {
-            prosesUpload.add("ada");
-            String responseString = null;
-            ii = "/storage/emulated/0/Pictures/com.byonchat.android" + i;
-            ff = i;
-            pos = poss;
-            posS = ps;
-            key = ky;
-            getFlag_content = gfc;
-            getFlag_tab = gft;
-            key = ky;
-
-            jsonDetail = c;
-            jsonMaster = to;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(URL);
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                File sourceFile = new File(resizeAndCompressImageBeforeSend(context, ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
-
-                if (!sourceFile.exists()) {
-                    return "File not exists";
-                }
-
-                ContentType contentType = ContentType.create("image/jpeg");
-                entity.addPart("username_room", new StringBody(username));
-                entity.addPart("id_rooms_tab", new StringBody(id_room));
-                entity.addPart("id_list_task", new StringBody(id_list));
-                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
-
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    String _response = EntityUtils.toString(r_entity); // content will be consume only once
-                    return _response;
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-                String message = jsonObject.getString("message");
-                if (message.length() == 0) {
-                    String fileNameServer = jsonObject.getString("filename");
-
-                    JSONObject jsos = new JSONObject(jsonMaster);
-                    JSONArray kk = jsos.getJSONArray(key);
-                    JSONObject sasa = kk.getJSONObject(Integer.valueOf(posS));
-                    JSONArray sas = sasa.getJSONArray("f");
-                    JSONObject last = sas.getJSONObject(Integer.valueOf(pos));
-                    last.put("u", fileNameServer);
-
-                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsos.toString(), getFlag_content, getFlag_tab, "cild");
-                    db.updateDetailRoomWithFlagContent(orderModel);
-                    uploadFileChild("looping");
-                } else {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-
-            }
-            super.onPostExecute(result);
-        }
-    }
-
 
     public static String resizeAndCompressImageBeforeSend(Context context, String filePath, String fileName) {
         final int MAX_IMAGE_SIZE = 100 * 1024; // max final file size in kilobytes
@@ -11910,100 +11110,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         return inSampleSize;
     }
 
-
-    private class UploadFileToServerB extends AsyncTask<String, Integer, String> {
-        long totalSize = 0;
-        private ProgressDialog Dialog = new ProgressDialog(context);
-        String valueS, getId, getParent_tab, getParent_room, uri, getFlag_content, getFlag_tab, getFlag_room;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10]);
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile(String URL, String username, String id_room, String id_list, String getId_, String getParent_tab_, String getParent_room_, String _uri, String getFlag_content_, String getFlag_tab_, String getFlag_room_) {
-            String responseString = null;
-            getId = getId_;
-            getParent_tab = getParent_tab_;
-            getParent_room = getParent_room_;
-            uri = _uri;
-            getFlag_content = getFlag_content_;
-            getFlag_tab = getFlag_tab_;
-            getFlag_room = getFlag_room_;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(URL);
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-
-                            }
-                        });
-
-
-                ContentType contentType = ContentType.create("image/jpeg");
-                entity.addPart("username_room", new StringBody(username));
-                entity.addPart("id_rooms_tab", new StringBody(id_room));
-                entity.addPart("id_list_task", new StringBody(id_list));
-                entity.addPart("file_input", new StringBody("base64"));
-                entity.addPart("value", new StringBody(uri));
-
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-
-                if (statusCode == 200) {
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-                String message = jsonObject.getString("message");
-                if (message.length() == 0 || message.contains("null")) {
-                    String fileNameServer = jsonObject.getString("filename");
-                    RoomsDetail orderModel = new RoomsDetail(getId, getParent_tab, getParent_room, jsonDuaObject(uri, fileNameServer, "", ""), getFlag_content, getFlag_tab, getFlag_room);
-                    db.updateDetailRoomWithFlagContent(orderModel);
-                    uploadFileChild("looping");
-                } else {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            super.onPostExecute(result);
-        }
-
-    }
 
     public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality) {
         ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();

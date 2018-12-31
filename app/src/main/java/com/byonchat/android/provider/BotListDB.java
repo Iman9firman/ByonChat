@@ -54,7 +54,7 @@ public class BotListDB extends SQLiteOpenHelper {
     private SQLiteDatabase database;
 
     private static final String DATABASE_NAME = "BotList.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 7;//8
 
     private static final String BOT_TABLE = "BotList";
     private static final String ROOMNAME_TABLE = "RoomName";

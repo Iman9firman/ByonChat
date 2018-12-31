@@ -88,15 +88,12 @@ public class DetailGroupVoting extends AppCompatActivity implements OnChartValue
         mChart.invalidate();
 
 
-
-
-
     }
 
     public class MyValueFormatter implements ValueFormatter {
         @Override
         public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-            return Math.round(value)+"";
+            return Math.round(value) + "";
         }
     }
 
@@ -121,7 +118,7 @@ public class DetailGroupVoting extends AppCompatActivity implements OnChartValue
         barDataSet1.setColors(ColorTemplate.COLORFUL_COLORS);
         barDataSet1.setValueFormatter(new MyValueFormatter());
 
-        dataSets =  new ArrayList<IBarDataSet>();
+        dataSets = new ArrayList<IBarDataSet>();
         dataSets.add(barDataSet1);
         return dataSets;
     }

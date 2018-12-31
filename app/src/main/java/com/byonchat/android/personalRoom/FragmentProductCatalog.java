@@ -268,6 +268,7 @@ public class FragmentProductCatalog extends Fragment {
             final PictureModel item = pictureModels.get(position);
                 Intent intent = new Intent(mContext, DownloadFileByonchat.class);
                 intent.putExtra("path", item.getUrl());
+                intent.putExtra("nama_file",item.getTitle());
                 mContext.startActivity(intent);
             }
         }));

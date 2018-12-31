@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.byonchat.android.list.utilLoadImage.ImageLoaderLarge;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.utils.TouchImageView;
@@ -23,7 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.net.URI;
 
 public class ZoomImageViewActivity extends AppCompatActivity {
     TouchImageView imageView;

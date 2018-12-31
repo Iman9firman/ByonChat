@@ -2,13 +2,10 @@ package com.byonchat.android.room;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,23 +18,18 @@ import android.widget.Toast;
 
 import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicListTaskAdapter;
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
-import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContentRoom;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
-import com.byonchat.android.provider.SubmitingModel;
-import com.byonchat.android.provider.SubmitingRoomDB;
 import com.byonchat.android.utils.EndlessRecyclerOnScrollListener;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
-import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
 import com.byonchat.android.utils.ValidationsKey;
 
@@ -64,16 +56,13 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.SecureRandom;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -253,7 +242,7 @@ public class FragmentRoomMultipleTask extends Fragment {
     }
 
     public String abs(String ctn, String type) {
-        Log.w("type", type + "::" + ctn);
+        Log.w("hasilABS", type + "::" + ctn);
         String content = ctn;
         if (type != null) {
             if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
@@ -348,7 +337,11 @@ public class FragmentRoomMultipleTask extends Fragment {
                 content = "";
             } else if (type.equalsIgnoreCase("remaining_budget")) {
                 content = "";
+            } else if (type.equalsIgnoreCase("null")) {
+                content = "--";
             }
+        } else {
+            content = "-";
         }
 
         return content;
@@ -423,6 +416,7 @@ public class FragmentRoomMultipleTask extends Fragment {
                     response.getEntity().writeTo(out);
                     out.close();
                     content = out.toString();
+                    Log.w("kasus", content);
                     JSONObject result = new JSONObject(content.toString());
 
                     JSONArray menuitemArray = result.getJSONArray("list_pull");
@@ -449,16 +443,21 @@ public class FragmentRoomMultipleTask extends Fragment {
                             String date = oParent.getString("add_date");
                             String bc_user = oParent.getString("bc_user");
                             String is_reject = "";
+                            String report_status = "4";
                             if (oParent.has("is_reject")) {
                                 is_reject = oParent.getString("is_reject");
                             }
+                            if (oParent.has("report_status")) {
+                                report_status = oParent.getString("report_status");
+                            }
 
-                            Log.w("subami", is_reject);
+                            Log.w("subami1", report_status);
+                            Log.w("subami2", is_reject);
 
                             Cursor cursorParent = botListDB.getSingleRoomDetailFormWithFlag(id + "|" + parent_id, username, idTab, "parent");
 
                             if (cursorParent.getCount() == 0) {
-                                RoomsDetail orderModel = new RoomsDetail(id + "|" + parent_id, idTab, username, date, "4", "", "parent");
+                                RoomsDetail orderModel = new RoomsDetail(id + "|" + parent_id, idTab, username, date, report_status, "", "parent");
                                 botListDB.insertRoomsDetail(orderModel);
                                 if (joContent.length() == 1) {
                                     RoomsDetail orderModelTitle211 = new RoomsDetail(id + "|" + parent_id, idTab, username, joContent.getJSONObject(0).getString("value").toString(), "1", joContent.getJSONObject(0).getString("type").toString(), "list");

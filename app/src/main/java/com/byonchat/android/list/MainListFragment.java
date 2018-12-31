@@ -105,7 +105,7 @@ public class MainListFragment extends ListFragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
-            ContextMenuInfo menuInfo) {
+                                    ContextMenuInfo menuInfo) {
         if (contextMenuId != 0) {
             super.onCreateContextMenu(menu, v, menuInfo);
             android.view.MenuInflater inflater = getActivity()
@@ -122,7 +122,7 @@ public class MainListFragment extends ListFragment {
         setRetainInstance(true);
 
         if (adapter == null) {
-            adapter = new ContactAdapter(getActivity().getApplicationContext(), items );
+            adapter = new ContactAdapter(getActivity().getApplicationContext(), items);
         }
         setListAdapter(adapter);
         getListView().setDivider(null);

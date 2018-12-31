@@ -9837,7 +9837,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     @Override
     public void onBackPressed() {
-        /*if (showButton) {
+        if (showButton) {
             final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
             alertbox.setMessage("Are you sure you want to save?");
             alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -9864,8 +9864,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             alertbox.show();
         } else {
             finish();
-        }*/
-        finish();
+        }
     }
 
     @Override

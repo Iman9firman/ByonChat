@@ -36,7 +36,6 @@ public class RoomsDB extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ROOMS.db";
     private static final int DATABASE_VERSION = 6;
-
     private static final String ROOMS_TABLE = "rooms";
     private static final String TRENDING_TABLE = "trendings";
 

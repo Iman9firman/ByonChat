@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -241,8 +242,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         status = listItem != null ? listItem.status : getIntent().getExtras().getString(EXTRA_STATUS);
         name = listItem != null ? listItem.name : getIntent().getExtras().getString(EXTRA_NAME);
         icon = listItem != null ? listItem.icon : getIntent().getExtras().getString(EXTRA_ICON);
-
-        Log.w("Tambahan", category);
     }
 
     protected void onViewReady(Bundle savedInstanceState) {
@@ -515,6 +514,8 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     }
 
     protected void resolveFloatingButton() {
+        vFloatingButton.setBackgroundTintList(ColorStateList.valueOf(Color
+                .parseColor("#" + color)));
         if (next) {
             List value = (List) Constants.map.get(position);
             if (value != null) {

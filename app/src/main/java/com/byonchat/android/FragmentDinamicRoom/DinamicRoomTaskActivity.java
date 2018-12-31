@@ -100,6 +100,7 @@ import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.adapter.ExpandableListAdapter;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
+import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.list.AttachmentAdapter;
 import com.byonchat.android.list.utilLoadImage.ImageLoaderLarge;
 import com.byonchat.android.location.ActivityDirection;
@@ -411,6 +412,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         if (cursor.getCount() > 0) {
             /*getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(context).headerCostume(getWindow(), "#" + color));*/
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + color)));
+            FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + color));
             final String conBefore = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
             String content = conBefore;
 

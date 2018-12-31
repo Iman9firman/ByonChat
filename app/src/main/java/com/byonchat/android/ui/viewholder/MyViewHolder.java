@@ -1,5 +1,6 @@
 package com.byonchat.android.ui.viewholder;
 
+import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ public class MyViewHolder extends AbstractDraggableItemViewHolder implements Vie
     public OnLongItemClickListener longItemClickListener;
     public TextView mTextView;
     public ImageView mImageView;
+    public CardView mCardview;
 
     public MyViewHolder(View v,
                         OnItemClickListener itemClickListener,
@@ -23,6 +25,7 @@ public class MyViewHolder extends AbstractDraggableItemViewHolder implements Vie
         super(v);
         mTextView = v.findViewById(R.id.title_item_grid);
         mImageView = v.findViewById(R.id.logo_item_grid);
+        mCardview = v.findViewById(R.id.cardview);
 
         this.itemClickListener = itemClickListener;
         this.longItemClickListener = longItemClickListener;

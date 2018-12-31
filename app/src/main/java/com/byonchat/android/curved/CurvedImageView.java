@@ -48,7 +48,7 @@ public class CurvedImageView extends AppCompatImageView {
     /**
      * @param curvatureHeight changes the amount of curve. Default is 50.
      */
-    int curvatureHeight = 50;
+    int curvatureHeight = 25;
 
     /**
      * @param tintAmount varies from 0-255

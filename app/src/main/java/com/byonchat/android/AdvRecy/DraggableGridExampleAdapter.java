@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -94,10 +95,10 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
         holder.mTextView.setSelected(true);
 
         Manhera.getInstance().get()
-                .load(R.drawable.logo_byon)
+                .load(im.iconName.equalsIgnoreCase(null)
+                        || im.iconName.equalsIgnoreCase("null") ? im.iconTest : im.iconName)
                 .placeholder(R.drawable.logo_byon)
                 .into(holder.mImageView);
-//        AutofitHelper.create(holder.mTextView);
 
     }
 

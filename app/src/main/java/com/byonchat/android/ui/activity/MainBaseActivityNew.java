@@ -705,17 +705,21 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 String status = jsonArray.getJSONObject(i).getString("status").toString();
                 String icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
 
-                itemList.add(i, new ItemMain(i, category, title, url_tembak, include_pull, username,
-                        id_rooms_tab, color, colorText, targetURL, include_latlong, status, name, icon));
-                positionList.add(i, title);
+                ItemMain itemMain = new ItemMain(i, category, title, url_tembak, include_pull,
+                        username, id_rooms_tab, color, colorText, targetURL, include_latlong,
+                        status, name, icon, icon_name);
 
                 if (category.equalsIgnoreCase("1")) {
                     Constants.map.put(i, null);
+                    itemMain.iconTest = R.drawable.ic_room_about;
                 } else if (category.equalsIgnoreCase("2")) {
                     Constants.map.put(i, null);
+                    itemMain.iconTest = R.drawable.ic_room_photo;
                 } else if (category.equalsIgnoreCase("3")) {
                     Constants.map.put(i, null);
+                    itemMain.iconTest = R.drawable.ic_room_video;
                 } else if (category.equalsIgnoreCase("4")) {
+                    itemMain.iconTest = R.drawable.ic_room_task;
                     if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);
@@ -768,20 +772,28 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
                     }
                 } else if (category.equalsIgnoreCase("5")) {
+                    itemMain.iconTest = R.drawable.ic_room_note;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("14")) {
+                    itemMain.iconTest = R.drawable.ic_room_news;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("6")) {
+                    itemMain.iconTest = R.drawable.ic_room_news;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("7")) {
+                    itemMain.iconTest = R.drawable.ic_room_directory;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("8")) {
+                    itemMain.iconTest = R.drawable.ic_streaming_video;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("9")) {
+                    itemMain.iconTest = R.drawable.ic_room_radio;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("10")) {
+                    itemMain.iconTest = R.drawable.ic_room_api;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("11")) {
+                    itemMain.iconTest = R.drawable.logo_byon;
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add("pos");
                     valSetOne.add(username);
@@ -792,6 +804,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                     Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("15")) {
+                    itemMain.iconTest = R.drawable.ic_room_video_local;
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add("btube");
                     valSetOne.add(username);
@@ -802,10 +815,15 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                     Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("16")) {
+                    itemMain.iconTest = R.drawable.ic_room_catalog;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("17")) {
+                    itemMain.iconTest = R.drawable.ic_room_name_card;
                     Constants.map.put(i, null);
                 }
+
+                itemList.add(i, itemMain);
+                positionList.add(i, title);
             }
             Constants.map.put(jsonArray.length(), null);
         } catch (JSONException e) {

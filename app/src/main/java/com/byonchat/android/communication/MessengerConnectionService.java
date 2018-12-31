@@ -2302,10 +2302,36 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
             databaseHelper.insertData(vo);
             if (vo.getType().equalsIgnoreCase(Message.TYPE_TEXT) || vo.getType().equalsIgnoreCase(Message.TYPE_LOC) || vo.getType().equalsIgnoreCase(Message.TYPE_BROADCAST)) {
-                Intent intent = new Intent(ACTION_MESSAGE_RECEIVED);
-                intent.putExtra(KEY_MESSAGE_OBJECT, vo);
-                intent.putExtra(KEY_CONTACT_NAME, name + additionalInfo);
-                sendOrderedBroadcast(intent, null);
+                if (vo.getSource().equals("askhonda_bot")) {
+                    String source = null, isi_msg = null;
+                    try {
+                        JSONObject jO = new JSONObject(vo.getMessage());
+                        source = jO.getString("bc_user");
+                        isi_msg = jO.getString("message");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Message nm = new Message(source, databaseHelper.getMyContact().getJabberId(), isi_msg);
+                    nm.setDeliveredDate(vo.getDeliveredDate());
+                    nm.setId(vo.getId());
+                    nm.setSendDate(vo.getSendDate());
+                    databaseHelper.updateData(nm);
+
+                    String namo = source;
+                    if (namo.matches("[0-9]+")) {
+                        Contact contact = databaseHelper.getContact(namo);
+                        namo = contact.getName();
+                    }
+                    Intent intent = new Intent(ACTION_MESSAGE_RECEIVED);
+                    intent.putExtra(KEY_MESSAGE_OBJECT, nm);
+                    intent.putExtra(KEY_CONTACT_NAME, namo + additionalInfo);
+                    sendOrderedBroadcast(intent, null);
+                } else {
+                    Intent intent = new Intent(ACTION_MESSAGE_RECEIVED);
+                    intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                    intent.putExtra(KEY_CONTACT_NAME, name + additionalInfo);
+                    sendOrderedBroadcast(intent, null);
+                }
             } else if (vo.getType().equalsIgnoreCase(Message.TYPE_IMAGE)) {
                 String regex = "[0-9]+";
                 if (!vo.getSource().matches(regex)) {

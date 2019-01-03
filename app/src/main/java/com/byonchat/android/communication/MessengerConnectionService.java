@@ -1785,6 +1785,8 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
+        stopSelf();
+
         Intent intent = new Intent(getApplicationContext(), MessengerConnectionService.class);
         intent.putExtra(UploadService.ACTION, "startService");
         PendingIntent pendingIntent = PendingIntent.getService(this, 5555555, intent, PendingIntent.FLAG_ONE_SHOT);

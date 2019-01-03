@@ -313,7 +313,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_acount_setting" />
 
-        <service android:name=".communication.MessengerConnectionService" />
+        <service android:name=".communication.MessengerConnectionService"></service>
         <service android:name=".utils.RefreshContactService" />
         <service android:name=".utils.StreamService" />
         <service android:name=".utils.UploadService">

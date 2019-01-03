@@ -17,9 +17,10 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        //Toast.makeText(context, "Alarm....", Toast.LENGTH_LONG).show();
-        Intent intentStart = new Intent(context, UploadService.class);
-        intentStart.putExtra(UploadService.ACTION, "startService");
-        context.startService(intentStart);
+        if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+            Intent intentStart = new Intent(context, UploadService.class);
+            intentStart.putExtra(UploadService.ACTION, "startService");
+            context.startService(intentStart);
+        }
     }
 }

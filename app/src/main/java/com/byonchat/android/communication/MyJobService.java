@@ -118,7 +118,9 @@ public class MyJobService extends JobService {
                             .build();
                     startForeground(101, notification);
 
-                    MessengerConnectionService.startService(context);
+                    if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                        MessengerConnectionService.startService(context);
+                    }
                 }
             } catch (Exception e) {
                 Log.w("datapusat", e.toString());

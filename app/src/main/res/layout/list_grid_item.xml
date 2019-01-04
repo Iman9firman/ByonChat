@@ -27,15 +27,16 @@
                 android:id="@+id/logo_item_grid"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/margin10"
                 android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_default="percent"
-                app:layout_constraintHeight_percent=".5"
+                app:layout_constraintHeight_percent=".4"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent=".5" />
+                app:layout_constraintWidth_percent=".4" />
 
             <TextView
                 android:id="@+id/title_item_grid"
@@ -52,7 +53,7 @@
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textAlignment="center"
-                android:textColor="@color/textColorSecondary"
+                android:textColor="@color/byonchat_primary_text"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"

@@ -24,9 +24,11 @@ import com.byonchat.android.R;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.viewholder.MyViewHolder;
+import com.byonchat.android.utils.Fonts;
 import com.google.gson.Gson;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
+import com.itextpdf.text.Font;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,8 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
     private String charString;
     private int room_id;
 
+    protected Fonts fonts;
+
     private MainDbHelper database;
     private SQLiteDatabase db;
 
@@ -56,6 +60,8 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
         this.filterList = itemList;
         this.room_id = room_id;
         this.positionList = positionList;
+
+        fonts = new Fonts();
     }
 
     @Override
@@ -99,6 +105,8 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
                         || im.iconName.equalsIgnoreCase("null") ? im.iconTest : im.iconName)
                 .placeholder(R.drawable.logo_byon)
                 .into(holder.mImageView);
+
+        fonts.FontFamily(context.getAssets(), holder.mTextView, Fonts.FONT_ROBOTO_BOLD);
 
     }
 

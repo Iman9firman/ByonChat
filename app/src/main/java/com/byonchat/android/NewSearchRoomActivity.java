@@ -1132,14 +1132,17 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                     MainActivityNew.mActivity.finish();
                 }
 
+                Toast.makeText(NewSearchRoomActivity.this, realname + " has been added to selected rooms", Toast.LENGTH_SHORT).show();
                 finish();
-                Intent intent = new Intent(NewSearchRoomActivity.this, MainActivityNew.class);
+                /*Intent intent = new Intent(NewSearchRoomActivity.this, MainActivityNew.class);
                 intent.putExtra(ConversationActivity.KEY_JABBER_ID, name);
                 intent.putExtra(ConversationActivity.KEY_TITLE, path);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                startActivity(intent);*/
 
-                Toast.makeText(NewSearchRoomActivity.this, realname + " has been added to selected rooms", Toast.LENGTH_SHORT).show();
+                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), name, path);
+                startActivity(ii);
+
             }
         }
     }

@@ -213,7 +213,7 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#303F9F"));
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + color));
 
         vToolbar.setBackgroundColor(Color.parseColor("#" + color));
         vToolbar.setTitleTextColor(Color.parseColor("#" + colorText));
@@ -265,7 +265,7 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
                 List<Video> videoList = new ArrayList<>();
                 Video video = videos.get(position);
                 videoList.add(video);
-                Intent intent = ByonchatStreamingVideoTubeActivity.generateIntent(getApplicationContext(), video);
+                Intent intent = ByonchatStreamingVideoTubeActivity.generateIntent(getApplicationContext(), video, color, colorText);
                 startActivity(intent);
             } else
                 adapterSelected((Video) mAdapter.getData().get(position));

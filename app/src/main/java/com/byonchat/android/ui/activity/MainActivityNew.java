@@ -18,6 +18,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -64,6 +65,7 @@ import com.bumptech.glide.Glide;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.AdvRecy.MainDbHelper;
+import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.FinalizingActivity;
 import com.byonchat.android.LoadContactScreen;
@@ -200,6 +202,73 @@ public class MainActivityNew extends MainBaseActivityNew {
 
         resolveValidationLogin();
         resolveToolbarExpanded();
+        resolveNavHeader();
+        resolveListRooms();
+        resolveOpenRooms();
+        resolveRefreshGrid();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+        }
+
+        recyclerViewDragDropManager = new RecyclerViewDragDropManager();
+        recyclerViewDragDropManager.setInitiateOnLongPress(true);
+        recyclerViewDragDropManager.setInitiateOnMove(false);
+        recyclerViewDragDropManager.setLongPressTimeout(750);
+        recyclerViewDragDropManager.setDragStartItemAnimationDuration(250);
+        recyclerViewDragDropManager.setDraggingItemAlpha(0.8f);
+        recyclerViewDragDropManager.setDraggingItemScale(1.3f);
+        recyclerViewDragDropManager.setDraggingItemRotation(15.0f);
+
+        recyclerViewDragDropManager.setOnItemDragEventListener(new RecyclerViewDragDropManager.OnItemDragEventListener() {
+            @Override
+            public void onItemDragStarted(int position) {
+                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    //deprecated in API 26
+                    v.vibrate(50);
+                }
+            }
+
+            @Override
+            public void onItemDragPositionChanged(int fromPosition, int toPosition) {
+            }
+
+            @Override
+            public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
+            }
+
+            @Override
+            public void onItemDragMoveDistanceUpdated(int offsetX, int offsetY) {
+            }
+        });
+
+
+        final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, room_id, positionList);
+        adapter = myItemAdapter;
+        wrappedAdapter = recyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
+        GeneralItemAnimator animator = new DraggableItemAnimator();
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(wrappedAdapter);
+        recyclerView.setItemAnimator(animator);
+
+        recyclerViewDragDropManager.attachRecyclerView(recyclerView);
+
+        adapter.setOnItemClickListener((view, position) -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+
         resolveNavHeader();
         resolveListRooms();
         resolveOpenRooms();

@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -591,7 +592,11 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void resolveRecyclerView() {
-        layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+        } else {
+            layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
+        }
 
         recyclerViewDragDropManager = new RecyclerViewDragDropManager();
         recyclerViewDragDropManager.setInitiateOnLongPress(true);

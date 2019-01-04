@@ -14,11 +14,15 @@ import com.byonchat.android.R;
 import com.byonchat.android.data.model.Video;
 
 public class ByonchatStreamingVideoTubeActivity extends AppCompatActivity {
-    public static final String EXTRA_VIDEO = "extra_videos";
+    public static String EXTRA_VIDEO = "extra_videos";
+    public static String EXTRA_COLOR = "color";
+    public static String EXTRA_COLOR_TEXT = "colorText";
 
-    public static Intent generateIntent(Context context, Video video) {
+    public static Intent generateIntent(Context context, Video video, String color, String colorText) {
         Intent intent = new Intent(context, ByonchatStreamingVideoTubeActivity.class);
         intent.putExtra(EXTRA_VIDEO, video);
+        intent.putExtra(EXTRA_COLOR, color);
+        intent.putExtra(EXTRA_COLOR_TEXT, colorText);
         return intent;
     }
 

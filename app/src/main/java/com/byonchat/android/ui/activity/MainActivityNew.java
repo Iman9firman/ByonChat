@@ -151,8 +151,6 @@ public class MainActivityNew extends MainBaseActivityNew {
         vNavLogo = headerview.findViewById(R.id.nav_logo);
         vNavTitle = headerview.findViewById(R.id.nav_title);
         vBtnOpenRooms = headerview.findViewById(R.id.nav_button_open_room);
-
-//        bv1 = new BadgeView(getBaseContext(), fab_menu_2);
     }
 
     @Override
@@ -234,7 +232,6 @@ public class MainActivityNew extends MainBaseActivityNew {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
                 } else {
-                    //deprecated in API 26
                     v.vibrate(50);
                 }
             }

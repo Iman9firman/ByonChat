@@ -14,6 +14,8 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
@@ -2328,6 +2330,29 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     intent.putExtra(KEY_MESSAGE_OBJECT, nm);
                     intent.putExtra(KEY_CONTACT_NAME, namo + additionalInfo);
                     sendOrderedBroadcast(intent, null);
+                }else if(vo.getSource().equals("server_get_location")) {
+                    if (vo.getMessage().matches("latlong(.*)")) {
+                        String[] separated = vo.getMessage().split(";");
+                        Log.w("AHAHA", separated[1] + "   ----    " + separated[2]);
+                        double lati = Double.parseDouble(separated[1]);
+                        double longi = Double.parseDouble(separated[2]);
+                        Message nm = new Message(databaseHelper.getMyContact().getJabberId(), vo.getSource(), getAddress(lati, longi));
+                        nm.setDeliveredDate(vo.getDeliveredDate());
+                        nm.setId(vo.getId());
+                        nm.setSendDate(vo.getSendDate());
+                        databaseHelper.updateData(nm);
+
+                        Intent intent = new Intent(ACTION_MESSAGE_RECEIVED);
+                        intent.putExtra(KEY_MESSAGE_OBJECT, nm);
+                        intent.putExtra(KEY_CONTACT_NAME, name + additionalInfo);
+                        sendOrderedBroadcast(intent, null);
+
+                        try {
+                            sendMessage(nm);
+                        } catch (SmackException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 } else {
                     Intent intent = new Intent(ACTION_MESSAGE_RECEIVED);
                     intent.putExtra(KEY_MESSAGE_OBJECT, vo);
@@ -5356,5 +5381,18 @@ Log.w("every",co.getJabberId());
         File[] files = fullCacheDir.listFiles();
         int numberOfImages = files.length;
         System.out.println("Total images in Folder " + numberOfImages);
+    }
+
+    public String getAddress(double lat, double lng) {
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+            Address obj = addresses.get(0);
+            return obj.getAddressLine(0).split(",")[0] + " | " + obj.getAddressLine(0).split(",")[1] + " | " + obj.getSubAdminArea();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return "";
     }
 }

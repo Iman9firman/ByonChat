@@ -203,19 +203,7 @@ dependencies {
 
     //CameraLib
     compile 'com.otaliastudios:cameraview:1.6.0'
-    compile(name: 'zhar_camlib', ext: 'aar') {
-        exclude group: 'com.google.firebase'
-        exclude group: 'org.json', module: 'json'
-    }
-    compile("com.google.firebase:firebase-core:16.0.5") {
-        exclude group: 'org.json', module: 'json'
-     }
-    compile("com.google.firebase:firebase-ml-vision:18.0.2") {
-        exclude group: 'org.json', module: 'json'
-    }
-    compile("com.google.firebase:firebase-ml-vision-face-model:17.0.2") {
-        exclude group: 'org.json', module: 'json'
-    }
+    compile(name: 'zhar_camlib', ext: 'aar')
 
     compile(name: 'ocrlibrary-release', ext: 'aar')
     compile 'com.google.android.gms:play-services-vision:10.2.1'

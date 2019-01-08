@@ -831,4 +831,8 @@ public class FragmentRoomTaskWater extends Fragment {
 
         return obj.toString();
     }
+
+    public void onActionSearch(String args) {
+        myadapter.getFilter().filter(args);
+    }
 }

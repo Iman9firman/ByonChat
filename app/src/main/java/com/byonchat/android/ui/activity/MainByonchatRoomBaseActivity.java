@@ -268,13 +268,26 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     if (mFragment instanceof FragmentRoomMultipleTask) {
                         FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
+                    } else if (mFragment instanceof FragmentRoomTask) {
+                        FragmentRoomTask fragment = (FragmentRoomTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
+                    } else if (mFragment instanceof FragmentRoomTaskWater) {
+                        FragmentRoomTaskWater fragment = (FragmentRoomTaskWater) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
                     }
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
+
                     if (mFragment instanceof FragmentRoomMultipleTask) {
                         FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
+                    } else if (mFragment instanceof FragmentRoomTask) {
+                        FragmentRoomTask fragment = (FragmentRoomTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
+                    } else if (mFragment instanceof FragmentRoomTaskWater) {
+                        FragmentRoomTaskWater fragment = (FragmentRoomTaskWater) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
                     }
                 }
@@ -312,6 +325,12 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 if (mFragment instanceof FragmentRoomMultipleTask) {
                     FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                     fragment.onActionSearch(query);
+                } else if (mFragment instanceof FragmentRoomTask) {
+                    FragmentRoomTask fragment = (FragmentRoomTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                    fragment.onActionSearch(query);
+                } else if (mFragment instanceof FragmentRoomTaskWater) {
+                    FragmentRoomTaskWater fragment = (FragmentRoomTaskWater) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                    fragment.onActionSearch(query);
                 }
                 return true;
             }
@@ -324,6 +343,12 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
                 if (mFragment instanceof FragmentRoomMultipleTask) {
                     FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                    fragment.onActionSearch(query);
+                } else if (mFragment instanceof FragmentRoomTask) {
+                    FragmentRoomTask fragment = (FragmentRoomTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                    fragment.onActionSearch(query);
+                } else if (mFragment instanceof FragmentRoomTaskWater) {
+                    FragmentRoomTaskWater fragment = (FragmentRoomTaskWater) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                     fragment.onActionSearch(query);
                 }
                 return true;

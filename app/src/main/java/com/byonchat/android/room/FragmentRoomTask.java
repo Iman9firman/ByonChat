@@ -210,5 +210,7 @@ public class FragmentRoomTask extends Fragment {
         return title;
     }
 
-
+    public void onActionSearch(String args) {
+        myadapter.getFilter().filter(args);
+    }
 }

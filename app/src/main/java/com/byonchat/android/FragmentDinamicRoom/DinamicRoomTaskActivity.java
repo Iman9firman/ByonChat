@@ -9485,21 +9485,24 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         } else if (requestCode == CAMERA_SCAN_TEXT) {
             if (resultCode == CommonStatusCodes.SUCCESS) {
-                String text = data.getStringExtra(TextBlockObject);
-                List value = (List) hashMap.get(dummyIdDate);
-                String lala = getNIKKTP(text);
-                et[Integer.valueOf(value.get(0).toString())].setText(lala);
-                int pos = 0;
-                if (et[Integer.valueOf(value.get(0).toString())].length() > 1) {
-                    pos = et[Integer.valueOf(value.get(0).toString())].length() - 1;
+                try {
+                    String text = data.getStringExtra(TextBlockObject);
+                    List value = (List) hashMap.get(dummyIdDate);
+                    String lala = getNIKKTP(text);
+                    et[Integer.valueOf(value.get(0).toString())].setText(lala);
+                    int pos = 0;
+                    if (et[Integer.valueOf(value.get(0).toString())].length() > 1) {
+                        pos = et[Integer.valueOf(value.get(0).toString())].length() - 1;
+                    }
+
+                    et[Integer.valueOf(value.get(0).toString())].setSelection(pos);
+                    String urlString = "https://infopemilu.kpu.go.id/pilkada2018/pemilih/dps/1/hasil-cari/resultDps.json?nik=" + lala
+                            + "&nama=&namaPropinsi=&namaKabKota=&namaKecamatan=&namaKelurahan=&notificationType=";
+
+                    new getJSONeKtp(urlString).execute();
+                }catch (Exception e){
+
                 }
-
-                et[Integer.valueOf(value.get(0).toString())].setSelection(pos);
-                String urlString = "https://infopemilu.kpu.go.id/pilkada2018/pemilih/dps/1/hasil-cari/resultDps.json?nik=" + lala
-                        + "&nama=&namaPropinsi=&namaKabKota=&namaKecamatan=&namaKelurahan=&notificationType=";
-
-                new getJSONeKtp(urlString).execute();
-
             } else {
                 Toast.makeText(this, " We Can't found Your NIK, Please retry scanning process or Input your NIK manually ", Toast.LENGTH_SHORT).show();
             }

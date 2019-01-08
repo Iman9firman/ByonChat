@@ -32,12 +32,14 @@ import com.byonchat.android.ConversationGroupActivity;
 import com.byonchat.android.MainActivity;
 import com.byonchat.android.MemberDetailActivity;
 import com.byonchat.android.R;
+import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.UploadService;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -83,63 +85,181 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         if (vo != null) {
             Log.w("sudah", "1");
-            builder.setSmallIcon(R.drawable.ic_notif);
-            builder.setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher));
-            builder.setContentTitle(name);
-            String content = Message.parsedMessageBodyHtmlCode(vo, context);
-            builder.setContentText(content);
-            builder.setTicker("New message from " + name);
-            Intent destIntent = new Intent(context, ConversationActivity.class);
-            destIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, vo.getSource());
+            Log.w("sudah1", vo.getMessage());
+            bc:
+//1_277091610admin//2595//8;List Pengiriman Mobil
+            if (vo.getMessage().startsWith("bc://")) {
 
-            if (vo.isGroupChat()) {
-                String nameAdd = vo.getSourceInfo();
-                Contact contact = messengerHelper.getContact(vo.getSourceInfo());
+                Log.w("sudah1", vo.getMessage());
 
-                if (contact != null) {
-                    nameAdd = contact.getName();
+                builder.setSmallIcon(R.drawable.ic_notif);
+                builder.setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher));
+                builder.setContentTitle(name);
+                String content = Message.parsedMessageBodyHtmlCode(vo, context);
+                builder.setContentText(content);
+                builder.setTicker("New message from " + name);
+
+                String asal[] = vo.getMessage().split("//");
+
+                Intent destIntent = new Intent(context, ByonChatMainRoomActivity.class);
+                BotListDB botListDB = BotListDB.getInstance(context);
+
+                Cursor cursorIS = botListDB.getSingleRoom(asal[1]);
+
+                if (cursorIS.getCount() > 0) {
+                    String a = cursorIS.getString(cursorIS.getColumnIndexOrThrow(BotListDB.ROOM_ID));
+                    String b = cursorIS.getString(cursorIS.getColumnIndexOrThrow(BotListDB.ROOM_USERNAME));
+                    String c = cursorIS.getString(cursorIS.getColumnIndexOrThrow(BotListDB.ROOM_REALNAME));
+                    String d = cursorIS.getString(cursorIS.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
+                    String e = cursorIS.getString(cursorIS.getColumnIndexOrThrow(BotListDB.ROOM_COLOR));
+                    String h = cursorIS.getString(cursorIS.getColumnIndexOrThrow(BotListDB.ROOM_ICON));
+
+                    try {
+                        Log.w("lala2", d);
+                        JSONArray jsonArray = new JSONArray(d);
+                        for (int iss = 0; iss < jsonArray.length(); iss++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(iss);
+                            Log.w("kasuk :: ", jsonObject.toString());
+                            //   Log.w("kasuk :: " + iss, jsonArray.getJSONObject(iss).getString("urutan"));
+
+                            if (jsonObject.getString("id_rooms_tab").equalsIgnoreCase(asal[2])) {
+
+                                String aaa = b;
+                                String bbb = (jsonObject.getString("include_latlong"));
+                                String ccc = (jsonObject.getString("url_tembak"));
+                                String ddd = (jsonObject.getString("category_tab"));
+                                String ddds = (jsonObject.getString("id_rooms_tab"));
+                                String eee = (jsonObject.getString("include_pull"));
+                                String fff = (jsonObject.getString("tab_name"));
+                                String hhh = (jsonObject.getString("status"));
+                                String iii = h;
+
+                                JSONObject jsonObject1 = new JSONObject(e);
+                                String jjj = jsonObject1.getString("a");
+                                String kkk = jsonObject1.getString("b");
+                                String lll = jsonObject1.getString("e");
+                                String mmm = c;
+
+                                destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, aaa);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_POSITION, iss);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_COLOR, jjj);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_COLORTEXT, kkk);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_TARGETURL, lll);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_CATEGORY, ddd);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_TITLE, fff);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_URL_TEMBAK, ccc);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_ID_ROOMS_TAB, ddds);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_PULL, eee);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_LATLONG, bbb);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_STATUS, hhh);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_NAME, mmm);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_ICON, iii);
+
+                            }
+                        }
+
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                        Log.w("lala33", e1.getMessage());
+                    }
+
                 }
 
-                if (nameAdd.equals(messengerHelper.getMyContact().getName())) nameAdd = "";
-                String contentGroup = Message.parsedMessageBodyHtmlCode(vo, context);
-                builder.setContentText(nameAdd + " : " + contentGroup);
-                destIntent = new Intent(context, ConversationGroupActivity.class);
-                destIntent.putExtra(ConversationGroupActivity.EXTRA_KEY_NEW_PERSON, "0");
-                destIntent.putExtra(ConversationGroupActivity.EXTRA_KEY_STICKY, "0");
+
+                destIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, vo.getSource());
-            }
-            builder.setContentIntent(PendingIntent.getActivity(context, 0,
-                    destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                builder.setContentIntent(PendingIntent.getActivity(context, 0,
+                        destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
-            NotificationManager mgr = (NotificationManager) context
-                    .getSystemService(Context.NOTIFICATION_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                int importance = NotificationManager.IMPORTANCE_HIGH;
-                NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
-                notificationChannel.enableLights(true);
-                notificationChannel.setLightColor(Color.RED);
-                notificationChannel.enableVibration(true);
-                notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-                if (mgr != null) {
-                    builder.setChannelId("Message");
-                    mgr.createNotificationChannel(notificationChannel);
+                NotificationManager mgr = (NotificationManager) context
+                        .getSystemService(Context.NOTIFICATION_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    int importance = NotificationManager.IMPORTANCE_HIGH;
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    notificationChannel.enableLights(true);
+                    notificationChannel.setLightColor(Color.RED);
+                    notificationChannel.enableVibration(true);
+                    notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    if (mgr != null) {
+                        builder.setChannelId("Message");
+                        mgr.createNotificationChannel(notificationChannel);
+                    }
                 }
-            }
-            if (mgr != null) {
-                mgr.notify(NOTIFY_ID, builder.build());
+                if (mgr != null) {
+                    mgr.notify(NOTIFY_ID, builder.build());
+                }
+
+                int badgeCount = 0;
+                Cursor cursor = messengerHelper.query(
+                        SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
+                        new String[]{String.valueOf(Message.STATUS_UNREAD)});
+                int indexTotal = cursor.getColumnIndex("total");
+                while (cursor.moveToNext()) {
+                    badgeCount = cursor.getInt(indexTotal);
+                }
+                cursor.close();
+                ShortcutBadger.applyCount(context, badgeCount);
+
+            } else {
+                builder.setSmallIcon(R.drawable.ic_notif);
+                builder.setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher));
+                builder.setContentTitle(name);
+                String content = Message.parsedMessageBodyHtmlCode(vo, context);
+                builder.setContentText(content);
+                builder.setTicker("New message from " + name);
+                Intent destIntent = new Intent(context, ConversationActivity.class);
+                destIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, vo.getSource());
+
+                if (vo.isGroupChat()) {
+                    String nameAdd = vo.getSourceInfo();
+                    Contact contact = messengerHelper.getContact(vo.getSourceInfo());
+
+                    if (contact != null) {
+                        nameAdd = contact.getName();
+                    }
+
+                    if (nameAdd.equals(messengerHelper.getMyContact().getName())) nameAdd = "";
+                    String contentGroup = Message.parsedMessageBodyHtmlCode(vo, context);
+                    builder.setContentText(nameAdd + " : " + contentGroup);
+                    destIntent = new Intent(context, ConversationGroupActivity.class);
+                    destIntent.putExtra(ConversationGroupActivity.EXTRA_KEY_NEW_PERSON, "0");
+                    destIntent.putExtra(ConversationGroupActivity.EXTRA_KEY_STICKY, "0");
+                    destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, vo.getSource());
+                }
+                builder.setContentIntent(PendingIntent.getActivity(context, 0,
+                        destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+
+                NotificationManager mgr = (NotificationManager) context
+                        .getSystemService(Context.NOTIFICATION_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    int importance = NotificationManager.IMPORTANCE_HIGH;
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    notificationChannel.enableLights(true);
+                    notificationChannel.setLightColor(Color.RED);
+                    notificationChannel.enableVibration(true);
+                    notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    if (mgr != null) {
+                        builder.setChannelId("Message");
+                        mgr.createNotificationChannel(notificationChannel);
+                    }
+                }
+                if (mgr != null) {
+                    mgr.notify(NOTIFY_ID, builder.build());
+                }
+
+                int badgeCount = 0;
+                Cursor cursor = messengerHelper.query(
+                        SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
+                        new String[]{String.valueOf(Message.STATUS_UNREAD)});
+                int indexTotal = cursor.getColumnIndex("total");
+                while (cursor.moveToNext()) {
+                    badgeCount = cursor.getInt(indexTotal);
+                }
+                cursor.close();
+                ShortcutBadger.applyCount(context, badgeCount);
             }
 
-            int badgeCount = 0;
-            Cursor cursor = messengerHelper.query(
-                    SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
-                    new String[]{String.valueOf(Message.STATUS_UNREAD)});
-            int indexTotal = cursor.getColumnIndex("total");
-            while (cursor.moveToNext()) {
-                badgeCount = cursor.getInt(indexTotal);
-            }
-            cursor.close();
-            ShortcutBadger.applyCount(context, badgeCount);
         } else if (name != null) {
             //add members
             Log.w("sudah", "2");

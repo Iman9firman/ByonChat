@@ -121,6 +121,7 @@ import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.LocationAssistant;
 import com.byonchat.android.utils.MediaProcessingUtil;
+import com.byonchat.android.utils.Utility;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.ContactsCompletionView;
@@ -531,6 +532,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             JSONArray joContent = oContent2.getJSONArray("value_detail");
                             String bc_user = oContent.getString("bc_user");
 
+                            Log.w("magiv", magic.get(0).toString());
 
                             JSONObject oUser = new JSONObject(bc_user);
 
@@ -1544,7 +1546,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     Log.w("3", "satu");
                                     String[] ff = idDetail.split("\\|");
                                     if (ff.length == 2) {
-                                        Log.w("4", "satu");
+                                        Log.w("4Satu", username + "::" + idTab + "::" + idDetail);
                                         new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail);
                                     }
                                 }
@@ -5132,128 +5134,382 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("dropdown_form")) {
-
-                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
-                        if (required.equalsIgnoreCase("1")) {
-                            label += "<font size=\"3\" color=\"red\">*</font>";
-                        }
-                        textView.setText(Html.fromHtml(label));
-                        textView.setTextSize(15);
-                        textView.setLayoutParams(new TableRow.LayoutParams(0));
-
-                        if (count == null) {
-                            count = 0;
-                        } else {
-                            count++;
-                        }
-
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(String.valueOf(count));
-                        valSetOne.add(required);
-                        valSetOne.add(type);
-                        valSetOne.add(name);
-                        valSetOne.add(label);
-                        valSetOne.add(String.valueOf(i));
-
-                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params1.setMargins(30, 10, 30, 0);
-                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                        linearLayout.addView(textView, params1);
-
-                        idListTaskMasterForm = idListTask;
-
-                        linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
-                        final JSONObject jObject = new JSONObject(value);
-                        String url = jObject.getString("url");
-                        DataBaseDropDown mDB = null;
-
-                        String[] aa = url.split("/");
-                        String nama = aa[aa.length - 1].toString();
-                        if (!nama.contains(".")) {
-                            if (!dbMaster.equalsIgnoreCase("")) {
-                                String[] aaBB = dbMaster.split("/");
-                                nama = aaBB[aaBB.length - 1].toString();
+                        Log.w("idListTask", idListTask);
+                        if (idListTask.equalsIgnoreCase("66989")) {
+                            TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                            if (required.equalsIgnoreCase("1")) {
+                                label += "<font size=\"3\" color=\"red\">*</font>";
                             }
-                        }
+                            textView.setText(Html.fromHtml(label));
+                            textView.setTextSize(15);
+                            textView.setLayoutParams(new TableRow.LayoutParams(0));
 
-                        final int finalI5 = i;
-                        mDB = new DataBaseDropDown(context, nama.substring(0, nama.indexOf(".")));
-                        try {
-
-
-                            final HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
-                            final List<String> expandableListTitle = new ArrayList<String>();
-
-                            if (mDB.getWritableDatabase() != null) {
-                                String table = jsonArray.getJSONObject(i).getString("formula").toString();
-                                if (table != null) {
-
-                                    List<String> valFormula = new ArrayList<String>();
-                                    valFormula.add(nama.substring(0, nama.indexOf(".")));
-                                    valFormula.add(table);
-                                    hashMapDropForm.put(Integer.parseInt(idListTask), valFormula);
-
-                                    RelativeLayout relativeLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.expandable_listview, null);
-                                    expandableListView[count] = (ExpandableListView) relativeLayout.findViewById(R.id.expandableView);
-
-                                    Log.w("coba", count + "");
-
-                                    final ExpandableListAdapter expandableListAdapter = new ExpandableListAdapter(this, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(idListTask, type, String.valueOf(finalI5)), name);
-                                    expandableListView[count].setAdapter(expandableListAdapter);
-                                    expandableListView[count].setGroupIndicator(null);
-
-                                    setListViewHeightBasedOnChildren(expandableListView[count]);
-
-                                    expandableListView[count].setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
-                                        @Override
-                                        public boolean onGroupClick(ExpandableListView parent, View v,
-                                                                    int groupPosition, long id) {
-
-                                            setListViewHeight(parent, groupPosition);
-
-                                            return false;
-                                        }
-                                    });
-
-                                    TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
-                                    params2.setMargins(40, 10, 10, 0);
-                                    relativeLayout.setLayoutParams(params2);
-
-                                    valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                                    linearLayout.addView(relativeLayout);
-
-                                }
-
+                            if (count == null) {
+                                count = 0;
                             } else {
-                                if (deleteContent) {
-                                    db.deleteRoomsDetailbyId(idDetail, idTab, username);
-                                }
-                                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                                    Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
-                                    finish();
-                                }
-
-                                Log.w("sabu", url);
-
-                                finish();
-                                Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
-                                intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
-                                intent.putExtra("path_db", url);
-                                startActivity(intent);
-                                return;
+                                count++;
                             }
-                        } catch (Exception e) {
 
+                            List<String> valSetOne = new ArrayList<String>();
+                            valSetOne.add(String.valueOf(count));
+                            valSetOne.add(required);
+                            valSetOne.add(type);
+                            valSetOne.add(name);
+                            valSetOne.add(label);
+                            valSetOne.add(String.valueOf(i));
+
+                            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            params1.setMargins(30, 10, 30, 0);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                            linearLayout.addView(textView, params1);
+
+                            idListTaskMasterForm = idListTask;
+
+                            linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
+                            final JSONObject jObject = new JSONObject(value);
+                            String url = jObject.getString("url");
+                            DataBaseDropDown mDB = null;
+
+                            String[] aa = url.split("/");
+                            String nama = aa[aa.length - 1].toString();
+                            if (!nama.contains(".")) {
+                                if (!dbMaster.equalsIgnoreCase("")) {
+                                    String[] aaBB = dbMaster.split("/");
+                                    nama = aaBB[aaBB.length - 1].toString();
+                                }
+                            }
+
+                            final int finalI5 = i;
+                            mDB = new DataBaseDropDown(context, nama.substring(0, nama.indexOf(".")));
+                            try {
+
+
+                                final HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+                                final List<String> expandableListTitle = new ArrayList<String>();
+
+                                if (mDB.getWritableDatabase() != null) {
+                                    String table = jsonArray.getJSONObject(i).getString("formula").toString();
+                                    if (table != null) {
+
+                                        List<String> valFormula = new ArrayList<String>();
+                                        valFormula.add(nama.substring(0, nama.indexOf(".")));
+                                        valFormula.add(table);
+                                        hashMapDropForm.put(Integer.parseInt(idListTask), valFormula);
+
+                                        RelativeLayout relativeLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.expandable_listview, null);
+                                        expandableListView[count] = (ExpandableListView) relativeLayout.findViewById(R.id.expandableView);
+
+                                        Log.w("coba", count + "");
+
+                                        final ExpandableListAdapter expandableListAdapter = new ExpandableListAdapter(this, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(idListTask, type, String.valueOf(finalI5)), name);
+                                        expandableListView[count].setAdapter(expandableListAdapter);
+                                        expandableListView[count].setGroupIndicator(null);
+
+                                        setListViewHeightBasedOnChildren(expandableListView[count]);
+
+                                        expandableListView[count].setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+                                            @Override
+                                            public boolean onGroupClick(ExpandableListView parent, View v,
+                                                                        int groupPosition, long id) {
+
+                                                setListViewHeight(parent, groupPosition);
+
+                                                return false;
+                                            }
+                                        });
+
+                                        TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
+                                        params2.setMargins(40, 10, 10, 0);
+                                        relativeLayout.setLayoutParams(params2);
+
+                                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                                        linearLayout.addView(relativeLayout);
+
+                                    }
+
+
+                                } else {
+                                    if (deleteContent) {
+                                        db.deleteRoomsDetailbyId(idDetail, idTab, username);
+                                    }
+                                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                        Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
+
+                                    Log.w("sabu", url);
+
+                                    finish();
+                                    Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
+                                    intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
+                                    intent.putExtra("path_db", url);
+                                    startActivity(intent);
+                                    return;
+                                }
+                            } catch (Exception e) {
+
+                            }
+
+                            TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
+                            params2.setMargins(60, 10, 30, 0);
+                            linearEstimasi[count].setLayoutParams(params2);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                            linearLayout.addView(linearEstimasi[count]);
+
+                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                            if (hashMapDropForm.size() > 0) {
+                                customersId = "BK";
+
+                                Iterator it = hashMapDropForm.entrySet().iterator();
+                                while (it.hasNext()) {
+                                    Map.Entry pair = (Map.Entry) it.next();
+                                    List valuess = (List) hashMapDropForm.get(pair.getKey());
+                                    String DBmaster = valuess.get(0).toString();
+
+                                    String Formulamaster = valuess.get(1).toString();
+
+                                    JSONObject jObjectFormula = null;
+                                    try {
+                                        Log.w("badaui2", Formulamaster);
+                                        List<String> expandableListTitle = new ArrayList<String>();
+                                        HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+
+                                        HashMap<String, List<JSONObject>> expandableListDetailJSONObject = new HashMap<String, List<JSONObject>>();
+                                        List<String> expandableListTitleJSON = new ArrayList<String>();
+
+                                        jObjectFormula = new JSONObject(Formulamaster);
+
+                                        String data = jObjectFormula.getString("data");
+                                        JSONObject jObjectFormula2 = new JSONObject(data);
+                                        JSONArray jsonArraySelect = jObjectFormula2.getJSONArray("select");
+
+                                        String aass[] = new String[jsonArraySelect.length()];
+
+                                        for (int ia = 0; ia < jsonArraySelect.length(); ia++) {
+                                            String ll = jsonArraySelect.getString(ia);
+                                            aass[ia] = ll;
+                                        }
+
+                                        String from = jObjectFormula2.getString("from");
+                                        String where = jObjectFormula2.getString("where");
+
+                                        String defaultValue = "";
+                                        List valueForms = (List) hashMap.get(pair.getKey());
+
+                                        DataBaseDropDown mDBss = new DataBaseDropDown(context, DBmaster);
+                                        if (mDB.getWritableDatabase() != null) {
+                                            final Cursor css = mDBss.getWritableDatabase().query(true, from, aass, where, null, null, null, null, null);
+
+                                            if (css.moveToFirst()) {
+                                                String titleOld = "";
+                                                List<String> Item = null;
+                                                List<JSONObject> Items = null;
+                                                int t = -1;
+                                                do {
+                                                    String title = css.getString(1);
+                                                    String titleS = String.valueOf(css.getInt(3));
+                                                    if (!titleOld.equalsIgnoreCase(title)) {
+                                                        Item = new ArrayList<String>();
+                                                        Items = new ArrayList<JSONObject>();
+                                                        titleOld = title;
+                                                        expandableListTitle.add(title);
+                                                        expandableListTitleJSON.add(titleS);
+                                                        t++;
+                                                    }
+                                                    Integer column0 = css.getInt(0);
+                                                    Integer column3 = css.getInt(3);
+                                                    String column4 = css.getString(4);
+
+                                                    JSONObject obj = new JSONObject();
+                                                    JSONObject objS = new JSONObject();
+                                                    try {
+                                                        obj.put("t", column4);
+                                                        obj.put("iT", String.valueOf(column3));
+                                                        obj.put("iD", String.valueOf(column0));
+
+                                                        objS.put("iD", String.valueOf(column0));
+                                                        objS.put("v", "");
+                                                        objS.put("n", "");
+
+                                                    } catch (JSONException e) {
+                                                        // TODO Auto-generated catch block e.printStackTrace();
+                                                    }
+                                                    Item.add(obj.toString());
+                                                    Items.add(objS);
+
+                                                    expandableListDetail.put(title, Item);
+                                                    expandableListDetailJSONObject.put(titleS, Items);
+
+
+                                                } while (css.moveToNext());
+
+                                                JSONObject jsonObject = new JSONObject();
+                                                for (String title : expandableListTitleJSON) {
+                                                    List<JSONObject> ala = expandableListDetailJSONObject.get(title);
+                                                    JSONArray JsArray = new JSONArray();
+                                                    for (JSONObject aha : ala) {
+                                                        JsArray.put(aha);
+                                                    }
+                                                    jsonObject.put(title, JsArray);
+                                                }
+                                                jsonObject.put("customersId", customersId);
+
+                                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()));
+                                                if (cEdit.getCount() == 0) {
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()), valueForms.get(3).toString(), "cild");
+                                                    db.insertRoomsDetail(orderModel);
+                                                } else {
+                                                    String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                                                    JSONObject lala = new JSONObject(text);
+                                                    if (!lala.getString("customersId").equalsIgnoreCase(customersId)) {
+                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()), valueForms.get(3).toString(), "cild");
+                                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                                    }
+                                                }
+                                            }
+                                            css.close();
+                                        } else {
+                                            Log.w("lauas", "111");
+
+                                        }
+
+                                        Log.w("kamgi", Integer.valueOf(valueForms.get(0).toString()) + "");
+                                        ExpandableListAdapter listAdapter = new ExpandableListAdapter(activity, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()), valueForms.get(3).toString());
+                                        expandableListView[Integer.valueOf(valueForms.get(0).toString())].setAdapter(listAdapter);
+                                        setListViewHeightBasedOnChildren(expandableListView[Integer.valueOf(valueForms.get(0).toString())]);
+
+                                    } catch (Exception e) {
+                                        Log.d("InputStream", e.getLocalizedMessage());
+                                    }
+                                }
+                            }
+
+                        } else {
+                            TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                            if (required.equalsIgnoreCase("1")) {
+                                label += "<font size=\"3\" color=\"red\">*</font>";
+                            }
+                            textView.setText(Html.fromHtml(label));
+                            textView.setTextSize(15);
+                            textView.setLayoutParams(new TableRow.LayoutParams(0));
+
+                            if (count == null) {
+                                count = 0;
+                            } else {
+                                count++;
+                            }
+
+                            List<String> valSetOne = new ArrayList<String>();
+                            valSetOne.add(String.valueOf(count));
+                            valSetOne.add(required);
+                            valSetOne.add(type);
+                            valSetOne.add(name);
+                            valSetOne.add(label);
+                            valSetOne.add(String.valueOf(i));
+
+                            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            params1.setMargins(30, 10, 30, 0);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                            linearLayout.addView(textView, params1);
+
+                            idListTaskMasterForm = idListTask;
+
+                            linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
+                            final JSONObject jObject = new JSONObject(value);
+                            String url = jObject.getString("url");
+                            DataBaseDropDown mDB = null;
+
+                            String[] aa = url.split("/");
+                            String nama = aa[aa.length - 1].toString();
+                            if (!nama.contains(".")) {
+                                if (!dbMaster.equalsIgnoreCase("")) {
+                                    String[] aaBB = dbMaster.split("/");
+                                    nama = aaBB[aaBB.length - 1].toString();
+                                }
+                            }
+
+                            final int finalI5 = i;
+                            mDB = new DataBaseDropDown(context, nama.substring(0, nama.indexOf(".")));
+                            try {
+
+
+                                final HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+                                final List<String> expandableListTitle = new ArrayList<String>();
+
+                                if (mDB.getWritableDatabase() != null) {
+                                    String table = jsonArray.getJSONObject(i).getString("formula").toString();
+                                    if (table != null) {
+
+                                        List<String> valFormula = new ArrayList<String>();
+                                        valFormula.add(nama.substring(0, nama.indexOf(".")));
+                                        valFormula.add(table);
+                                        hashMapDropForm.put(Integer.parseInt(idListTask), valFormula);
+
+                                        RelativeLayout relativeLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.expandable_listview, null);
+                                        expandableListView[count] = (ExpandableListView) relativeLayout.findViewById(R.id.expandableView);
+
+                                        Log.w("coba", count + "");
+
+                                        final ExpandableListAdapter expandableListAdapter = new ExpandableListAdapter(this, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(idListTask, type, String.valueOf(finalI5)), name);
+                                        expandableListView[count].setAdapter(expandableListAdapter);
+                                        expandableListView[count].setGroupIndicator(null);
+
+                                        setListViewHeightBasedOnChildren(expandableListView[count]);
+
+                                        expandableListView[count].setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+                                            @Override
+                                            public boolean onGroupClick(ExpandableListView parent, View v,
+                                                                        int groupPosition, long id) {
+
+                                                setListViewHeight(parent, groupPosition);
+
+                                                return false;
+                                            }
+                                        });
+
+                                        TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
+                                        params2.setMargins(40, 10, 10, 0);
+                                        relativeLayout.setLayoutParams(params2);
+
+                                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                                        linearLayout.addView(relativeLayout);
+
+                                    }
+
+                                } else {
+                                    if (deleteContent) {
+                                        db.deleteRoomsDetailbyId(idDetail, idTab, username);
+                                    }
+                                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                        Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
+
+                                    Log.w("sabu", url);
+
+                                    finish();
+                                    Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
+                                    intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
+                                    intent.putExtra("path_db", url);
+                                    startActivity(intent);
+                                    return;
+                                }
+                            } catch (Exception e) {
+
+                            }
+
+                            TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
+                            params2.setMargins(60, 10, 30, 0);
+                            linearEstimasi[count].setLayoutParams(params2);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                            linearLayout.addView(linearEstimasi[count]);
+
+                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
                         }
 
-                        TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
-                        params2.setMargins(60, 10, 30, 0);
-                        linearEstimasi[count].setLayoutParams(params2);
-                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                        linearLayout.addView(linearEstimasi[count]);
-
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("new_dropdown_dinamis")) {
 
@@ -8105,11 +8361,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         {
             if (username != null) {
                 if (fromList.equalsIgnoreCase("hide")) {
+                    Log.w("kasmia", GETTABDETAILPULL + "::" + username + "::" + idTab + "::" + idDetail);
                     new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
                 } else if (fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
                     if (!idDetail.equalsIgnoreCase("")) {
                         String[] ff = idDetail.split("\\|");
                         if (ff.length == 2) {
+
                             new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail);
                         } else {
                             new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
@@ -8946,10 +9204,14 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 e.printStackTrace();
                             }
                         }
+                        if (idListTaskMasterForm.equalsIgnoreCase("66986")) {
+                            ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[0].getExpandableListAdapter();
+                            ancur.notifyDataSetChanged();
+                        } else {
+                            ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[1].getExpandableListAdapter();
+                            ancur.notifyDataSetChanged();
+                        }
 
-
-                        ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[1].getExpandableListAdapter();
-                        ancur.notifyDataSetChanged();
                     }
 
                 } else {
@@ -10838,6 +11100,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             if (mDB.getWritableDatabase() != null) {
 
                                 final Cursor c = mDB.getWritableDatabase().query(true, from, aass, where, new String[]{customersId}, null, null, null, null);
+                                Log.w("mem", c.getCount() + "");
+
                                 if (c.moveToFirst()) {
                                     String titleOld = "";
                                     List<String> Item = null;

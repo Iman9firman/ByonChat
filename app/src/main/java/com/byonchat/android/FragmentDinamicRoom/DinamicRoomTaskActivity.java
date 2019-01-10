@@ -285,12 +285,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     String officer = "";
     boolean deleteContent = false;
     int mYear, mMonth, mDay;
+    Calendar dummyCalendar;
     int dummyIdDate;
+    String dummyFlagDate;
+    String dummyFormulaDate;
     private int attCurReq = 0;
     Boolean showDialog = true;
     private BroadcastHandler broadcastHandler = new BroadcastHandler();
-    static final int DATE_DIALOG_ID = 1;
-    static final int TIME_DIALOG_ID = 2;
+    static final int DATE_DIALOG_ID = 1000;
+    static final int TIME_DIALOG_ID = 2000;
     private static final ArrayList<AttachmentAdapter.AttachmentMenuItem> attCameraItems;
     private static final ArrayList<AttachmentAdapter.AttachmentMenuItem> attVideoItems;
 
@@ -3688,16 +3691,26 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         }
 
+                        final String formula = jsonArray.getJSONObject(i).getString("formula").toString();
 
                         final int finalI2 = i;
+                        String finalLabel2 = label;
+                        String finalLabel3 = flag;
                         btnOption.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                final Calendar c = Calendar.getInstance();
+                                if (finalLabel3.length() > 0) {
+                                    dummyFlagDate = finalLabel3;
+                                    dummyFormulaDate = formula;
+
+                                }
+
+                                dummyCalendar = Calendar.getInstance();
                                 dummyIdDate = Integer.parseInt(idListTask);
-                                mYear = c.get(Calendar.YEAR);
-                                mMonth = c.get(Calendar.MONTH);
-                                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                                mYear = dummyCalendar.get(Calendar.YEAR);
+                                mMonth = dummyCalendar.get(Calendar.MONTH);
+                                mDay = dummyCalendar.get(Calendar.DAY_OF_MONTH);
 
                                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI2)));
                                 if (cEdit.getCount() == 0) {
@@ -3708,7 +3721,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 if (type.equalsIgnoreCase("time")) {
                                     showDialog(TIME_DIALOG_ID);
                                 } else {
-                                    showDialog(DATE_DIALOG_ID);
+                                    // showDialog(DATE_DIALOG_ID);
+                                    showDialog(Integer.valueOf(String.valueOf(DATE_DIALOG_ID) + finalLabel3));
                                 }
 
                                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -9500,7 +9514,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             + "&nama=&namaPropinsi=&namaKabKota=&namaKecamatan=&namaKelurahan=&notificationType=";
 
                     new getJSONeKtp(urlString).execute();
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
             } else {
@@ -10550,21 +10564,44 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     }
 
     protected Dialog onCreateDialog(int id) {
-        if (id == TIME_DIALOG_ID) {
-
-            Calendar mcurrentTime = Calendar.getInstance();
-            int hours = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-            int minute = mcurrentTime.get(Calendar.MINUTE);
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
-                    this, mTimePicker, hours, minute, true);
-            timePickerDialog.setOnDismissListener(mOnDismissListenerTime);
-            return timePickerDialog;
-        }
-
         DatePickerDialog dialog = new DatePickerDialog(this,
                 mDateSetListener
                 , mYear, mMonth, mDay);
 
+        if (id == TIME_DIALOG_ID) {
+
+        } else {
+            int iid = id - DATE_DIALOG_ID;
+
+            if (iid == 9001) {
+                //lock backdate
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, 0);
+                dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+            } else if (iid == 9002) {
+                //lock backdate dan hari ini
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, +1);
+                dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+            } else if (iid == 9003) {
+                //bisa setting start dan max date load from formula
+                //rumus start date = -/+ dari new Date
+                // end date =  start date + "enddate"
+
+            } else if (iid == 9004) {
+                //bisa setting this week
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, +1);
+
+                dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+
+                dialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+            } else if (iid == 9005) {
+                //bisa setting this week lock backdate
+            } else if (iid == 9006) {
+                //bisa setting next week
+            }
+        }
         dialog.setOnDismissListener(mOnDismissListenerDate);
 
         return dialog;

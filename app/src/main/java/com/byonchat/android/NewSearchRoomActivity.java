@@ -140,7 +140,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_search_room);
 
-        if (context != null) {
+        if (context == null) {
             context = NewSearchRoomActivity.this;
         }
 

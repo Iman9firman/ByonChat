@@ -696,10 +696,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
         try {
             JSONArray jsonArray = new JSONArray(content);
-            Log.w("aa", content);
+            Log.w("aKaK", content);
             itemList.clear();
             positionList.clear();
-
             for (int i = 0; i < jsonArray.length(); i++) {
                 String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
                 String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
@@ -708,7 +707,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
                 String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
                 String status = jsonArray.getJSONObject(i).getString("status").toString();
-                String icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
+                String icon_name = "";
+                if (jsonArray.getJSONObject(i).has("icon_name")) {
+                    icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
+                }
 
                 ItemMain itemMain = new ItemMain(i, category, title, url_tembak, include_pull,
                         username, id_rooms_tab, color, colorText, targetURL, include_latlong,
@@ -833,7 +835,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             Constants.map.put(jsonArray.length(), null);
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.w("menahanIS", e.getMessage());
         }
+        Log.w("menahan", itemList.size() + "");
 
         adapter.setItems(itemList, positionList);
     }

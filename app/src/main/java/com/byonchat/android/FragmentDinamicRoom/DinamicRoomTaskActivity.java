@@ -10572,17 +10572,21 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         } else {
             int iid = id - DATE_DIALOG_ID;
+            Calendar calendar = Calendar.getInstance();
+            int today = calendar.get(Calendar.DAY_OF_WEEK);
 
             if (iid == 9001) {
                 //lock backdate
-                Calendar calendar = Calendar.getInstance();
+
                 calendar.add(Calendar.DATE, 0);
                 dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+
             } else if (iid == 9002) {
                 //lock backdate dan hari ini
-                Calendar calendar = Calendar.getInstance();
+
                 calendar.add(Calendar.DATE, +1);
                 dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+
             } else if (iid == 9003) {
                 //bisa setting start dan max date load from formula
                 //rumus start date = -/+ dari new Date
@@ -10590,16 +10594,31 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
             } else if (iid == 9004) {
                 //bisa setting this week
-                Calendar calendar = Calendar.getInstance();
-                calendar.add(Calendar.DATE, +1);
 
+                calendar.add(Calendar.DATE, 1 - today);
                 dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
-
+                calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, 7 - today);
                 dialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+
             } else if (iid == 9005) {
                 //bisa setting this week lock backdate
+
+                calendar.add(Calendar.DATE, 0);
+                dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+                calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, 7 - today);
+                dialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
+
             } else if (iid == 9006) {
                 //bisa setting next week
+                
+                int nextWeek = 7 - (today - 1);
+                calendar.add(Calendar.DATE, nextWeek);
+                dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+                calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, nextWeek + 6);
+                dialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
             }
         }
         dialog.setOnDismissListener(mOnDismissListenerDate);

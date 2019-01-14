@@ -12,6 +12,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -54,6 +55,27 @@ public class Utility {
     // convert from byte array to bitmap
     public static Bitmap getPhoto(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+
+    //Range
+    public static String sideRange(Location Office, Location People, double rangeInMeters){
+        double distance = Office.distanceTo(People);
+        String insideOrOutside = null;
+
+        if(distance <= rangeInMeters){
+            insideOrOutside = "Inside";
+        }else{
+            insideOrOutside = "Outside";
+        }
+
+        return insideOrOutside;
+    }
+
+    //Distance
+    public static double distanceInMeters(Location from, Location to){
+        double distance = from.distanceTo(to);
+
+        return distance;
     }
 
     public static String formatPhoneNumber(String number) {

@@ -146,7 +146,7 @@ import java.util.List;
 
 import jp.wasabeef.blurry.Blurry;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
-import me.leolin.shortcutbadger.ShortcutBadger;
+//import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL;
 import static com.byonchat.android.helpers.Constants.URL_LAPOR_SELECTED;
@@ -825,6 +825,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     itemMain.iconTest = R.drawable.ic_room_catalog;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("17")) {
+                    itemMain.iconTest = R.drawable.ic_room_name_card;
+                    Constants.map.put(i, null);
+                }else if (category.equalsIgnoreCase("18")) {
                     itemMain.iconTest = R.drawable.ic_room_name_card;
                     Constants.map.put(i, null);
                 }

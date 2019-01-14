@@ -76,6 +76,7 @@ import com.byonchat.android.personalRoom.FragmentMyNote;
 import com.byonchat.android.personalRoom.FragmentMyPicture;
 import com.byonchat.android.personalRoom.FragmentMyVideo;
 import com.byonchat.android.personalRoom.FragmentProductCatalog;
+import com.byonchat.android.personalRoom.FragmentWebView;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.ContentRoom;
 import com.byonchat.android.provider.RoomsDetail;
@@ -374,7 +375,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     protected void resolveFragment() {
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-
+        Log.w("CEK WV GANDHIP",category +"  -  "+title);
         if (cur.getCount() > 0) {
             try {
                 if (category.equalsIgnoreCase("1")) {
@@ -499,6 +500,10 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     //TIME=WATCH
                     show = true;
                     mFragment = FragmentMyCardID.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, false, MainByonchatRoomBaseActivity.this);
+                }else if (category.equalsIgnoreCase("18")) {
+                    //TIME=WATCH
+                    show = true;
+                    mFragment = FragmentWebView.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, false, MainByonchatRoomBaseActivity.this);
                 }
 
                 if (status.equalsIgnoreCase("1") && show) {

@@ -3695,7 +3695,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         final int finalI2 = i;
                         String finalLabel2 = label;
-                        String finalLabel3 = flag;
+                        String finalLabel3 = flag.equalsIgnoreCase("null") ? "" : flag;
                         btnOption.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

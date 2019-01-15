@@ -34,6 +34,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
@@ -42,6 +43,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
@@ -312,6 +315,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     String calendar;
     String startDate;
     String dropdownViewIdParent;
+    Boolean call = false;
 
     static {
         attCameraItems = new ArrayList<AttachmentAdapter.AttachmentMenuItem>();
@@ -358,6 +362,57 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (idTab.equalsIgnoreCase("2644")) {
+            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+            PhoneStateListener callStateListener = new PhoneStateListener() {
+                public void onCallStateChanged(int state, String incomingNumber) {
+                    if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                        call = true;
+                    }
+
+                    if (state == TelephonyManager.CALL_STATE_IDLE) {
+                        if (call) {
+                            call = false;
+                            String strUriCalls = "content://call_log/calls";
+                            Uri uriCalls = Uri.parse(strUriCalls);
+                            Cursor c;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                c = getBaseContext().getContentResolver().query(uriCalls, null, null, null);
+                            } else {
+                                c = getBaseContext().getContentResolver().query(uriCalls, null, null, null, null);
+                            }
+                            if (c.getCount() == 0) {
+
+                            } else {
+                                while (c.moveToNext()) {
+                                    int number = c.getColumnIndex(CallLog.Calls.NUMBER);
+                                    int type = c.getColumnIndex(CallLog.Calls.TYPE);
+                                    int date = c.getColumnIndex(CallLog.Calls.DATE);
+                                    int duration = c.getColumnIndex(CallLog.Calls.DURATION);
+                                    String phNumber = c.getString(number);
+                                    String callType = c.getString(type);
+                                    String callDate = c.getString(date);
+                                    Date callDayTime = new Date(Long.valueOf(callDate));
+                                    String callDuration = c.getString(duration);
+                                    String dir = null;
+                                    int dircode = Integer.parseInt(callType);
+
+                                    et[1].setText(String.format("%02d  minutes %02d second", Integer.valueOf(callDuration) / 60, Integer.valueOf(callDuration) % 60));
+
+
+                                    getBaseContext().getContentResolver().delete(uriCalls, "NUMBER = ?", new String[]{phNumber});
+                                    break;
+                                }
+                            }
+                            c.close();
+                        }
+                    }
+                }
+            };
+            telephonyManager.listen(callStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
 
 
         assistant.start();
@@ -411,6 +466,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
         getSupportActionBar().setTitle(title);
+        Log.w("haskdi", idTab + ":::" + title);
+
 
         Cursor cursor = db.getSingleRoomDetailForm(username, idTab);
         if (cursor.getCount() > 0) {
@@ -1510,6 +1567,27 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     linearValue.addView(textV, params11);
                                     linearValue.addView(etV, params22);
 
+                                } else if (type.equalsIgnoreCase("number")) {
+
+                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                    textV.setText(Html.fromHtml(label));
+                                    textV.setTextSize(17);
+                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
+
+
+                                    TextView etV = (TextView) new TextView(context);
+                                    etV.setTextIsSelectable(true);
+                                    etV.setText(Html.fromHtml(value));
+                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    params11.setMargins(10, 10, 30, 0);
+                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                    params22.setMargins(50, 10, 30, 30);
+                                    if (!idTab.equalsIgnoreCase("2644")) {
+                                        linearValue.addView(textV, params11);
+                                        linearValue.addView(line, params11);
+                                        linearValue.addView(etV, params22);
+                                    }
                                 } else {
                                     TextView textV = new TextView(DinamicRoomTaskActivity.this);
                                     textV.setText(Html.fromHtml(label));
@@ -3489,6 +3567,118 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         linearLayout.addView(et[count], params2);
 
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                    } else if (type.equalsIgnoreCase("call_direct")) {
+
+                        LinearLayout btnRel2 = (LinearLayout) getLayoutInflater().inflate(R.layout.button_call_direct, null);
+                        ImageButton b2 = (ImageButton) btnRel2.findViewById(R.id.btn_submit);
+                        final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(5, 15, 0, 0);
+                        btnRel2.setLayoutParams(params);
+                        linearLayout.addView(btnRel2);
+
+                        b2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (ActivityCompat.checkSelfPermission(DinamicRoomTaskActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                    return;
+                                }
+                                startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:+" + et[0].getText().toString())));
+                            }
+                        });
+
+                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+                        textView.setLayoutParams(new TableRow.LayoutParams(0));
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+                        et[count] = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+
+                        et[count].setId(Integer.parseInt(idListTask));
+                        et[count].setHint(placeHolder);
+                        et[count].setSingleLine(true);
+                        et[count].setEnabled(false);
+                        et[count].setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
+                        et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                        if (cursorCild.getCount() > 0) {
+                            et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                        } else {
+                            if (!value.equalsIgnoreCase("")) {
+                                et[count].setText(value);
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                db.insertRoomsDetail(orderModel);
+                            }
+                        }
+
+                        if ((!showButton)) {
+                            et[count].setEnabled(false);
+                        } else {
+                            final int finalI1 = i;
+                            et[count].addTextChangedListener(new TextWatcher() {
+                                @Override
+                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                }
+
+                                @Override
+                                public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                }
+
+                                @Override
+                                public void afterTextChanged(Editable s) {
+                                    Intent newIntent = new Intent("bLFormulas");
+                                    sendBroadcast(newIntent);
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI1)));
+                                    if (cEdit.getCount() > 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI1)), name, "cild");
+                                        db.updateDetailRoomWithFlagContent(orderModel);
+
+                                    } else {
+                                        if (String.valueOf(s).length() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI1)), name, "cild");
+                                            db.insertRoomsDetail(orderModel);
+                                        } else {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI1)), name, "cild");
+                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params1.setMargins(30, 10, 30, 0);
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 40);
+
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView, params1);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(et[count], params2);
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+
                     } else if (type.equalsIgnoreCase("textarea")) {
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -3932,12 +4122,15 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params2.setMargins(30, 10, 30, 40);
 
-                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                        linearLayout.addView(textView, params1);
-                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                        linearLayout.addView(et[count], params2);
+                        if (!idTab.equalsIgnoreCase("2644")) {
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                            linearLayout.addView(textView, params1);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                            linearLayout.addView(et[count], params2);
 
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                        }
 
 
                     } else if (type.equalsIgnoreCase("currency")) {
@@ -7977,7 +8170,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 linearLayout.addView(btnRel);
             }
 
-
             if (showButton) {
 
                 LinearLayout btnRel = (LinearLayout) getLayoutInflater().inflate(R.layout.button_submit_form, null);
@@ -10612,7 +10804,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
             } else if (iid == 9006) {
                 //bisa setting next week
-                
+
                 int nextWeek = 7 - (today - 1);
                 calendar.add(Calendar.DATE, nextWeek);
                 dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());

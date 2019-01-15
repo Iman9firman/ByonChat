@@ -2330,7 +2330,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     intent.putExtra(KEY_MESSAGE_OBJECT, nm);
                     intent.putExtra(KEY_CONTACT_NAME, namo + additionalInfo);
                     sendOrderedBroadcast(intent, null);
-                }else if(vo.getSource().equals("server_get_location")) {
+                } else if (vo.getSource().equals("server_get_location")) {
                     if (vo.getMessage().matches("latlong(.*)")) {
                         String[] separated = vo.getMessage().split(";");
                         Log.w("AHAHA", separated[1] + "   ----    " + separated[2]);

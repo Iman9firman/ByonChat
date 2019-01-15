@@ -58,13 +58,13 @@ public class Utility {
     }
 
     //Range
-    public static String sideRange(Location Office, Location People, double rangeInMeters){
+    public static String sideRange(Location Office, Location People, double rangeInMeters) {
         double distance = Office.distanceTo(People);
         String insideOrOutside = null;
 
-        if(distance <= rangeInMeters){
+        if (distance <= rangeInMeters) {
             insideOrOutside = "Inside";
-        }else{
+        } else {
             insideOrOutside = "Outside";
         }
 
@@ -72,7 +72,7 @@ public class Utility {
     }
 
     //Distance
-    public static double distanceInMeters(Location from, Location to){
+    public static double distanceInMeters(Location from, Location to) {
         double distance = from.distanceTo(to);
 
         return distance;

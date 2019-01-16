@@ -2254,7 +2254,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 }
 
                                 DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-                                formatter.applyPattern("#,###,###,###");
+                                formatter.applyPattern("#,###,###,###.#####");
                                 String formattedString = formatter.format(totalQ);
 
                                 total_price_order.setText(formattedString);
@@ -9916,34 +9916,41 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     @Override
     public void onBackPressed() {
-        if (showButton) {
-            final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
-            alertbox.setMessage("Are you sure you want to save?");
-            alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                    finish();
-                }
-            });
-            alertbox.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                    db.deleteRoomsDetailbyId(idDetail, idTab, username);
-                    if (calendar != null) {
-                        if (calendar.equalsIgnoreCase("true boi")) {
-                            MyEventDatabase database = new MyEventDatabase(context);
-                            SQLiteDatabase db;
-                            db = database.getWritableDatabase();
-                            String[] args = {idDetail};
-                            db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
-                            db.close();
-                        }
+        //if (showButton) {
+        final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
+        alertbox.setMessage("Are you sure you want to save?");
+        alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                finish();
+                SimpleDateFormat dateFormatNew = new SimpleDateFormat(
+                        "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+                long date = System.currentTimeMillis();
+                String dateString = dateFormatNew.format(date);
+                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "0", null, "parent");
+                db.updateDetailRoomWithFlagContentParent(orderModel);
+            }
+        });
+        alertbox.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                db.deleteRoomsDetailbyId(idDetail, idTab, username);
+                if (calendar != null) {
+                    if (calendar.equalsIgnoreCase("true boi")) {
+                        MyEventDatabase database = new MyEventDatabase(context);
+                        SQLiteDatabase db;
+                        db = database.getWritableDatabase();
+                        String[] args = {idDetail};
+                        db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
+                        db.close();
                     }
-                    finish();
                 }
-            });
-            alertbox.show();
-        } else {
+                finish();
+            }
+        });
+        alertbox.show();
+        /*} else {
             finish();
-        }
+        }*/
     }
 
     @Override

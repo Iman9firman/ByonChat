@@ -117,7 +117,7 @@ public class DialogFormChildMainLemindo extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
 
-        Log.w("sendiri","oke1");
+        Log.w("sendiri", "oke1");
         linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
         nameTitle = (TextView) dialog.findViewById(R.id.name);
         mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
@@ -658,7 +658,7 @@ public class DialogFormChildMainLemindo extends DialogFragment {
 
                             @Override
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                                Log.w("wow3", s.toString());
                             }
 
                             @Override
@@ -666,38 +666,29 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                                 List value = (List) hashMap.get(Integer.parseInt(idListTask));
                                 et[Integer.valueOf(value.get(0).toString())].removeTextChangedListener(this);
 
-                                try {
-                                    String originalString = s.toString();
+                                Log.w("iah1", s.toString());
+                                String formattedString = hasilTotla(s.toString());
+                                Log.w("iah2", formattedString);
 
-                                    Long longval;
-                                    if (originalString.contains(",")) {
-                                        originalString = originalString.replaceAll(",", "");
-                                    }
-                                    longval = Long.parseLong(originalString);
+                                //setting text after format to EditText
+                                et[Integer.valueOf(value.get(0).toString())].setText(formattedString);
+                                et[Integer.valueOf(value.get(0).toString())].setSelection(et[Integer.valueOf(value.get(0).toString())].getText().length());
 
-                                    DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-                                    formatter.applyPattern("#,###,###,###");
-                                    String formattedString = formatter.format(longval);
+                                Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI3)));
+                                if (cEdit.getCount() > 0) {
+                                    Log.w("wow1", formattedString);
 
-                                    //setting text after format to EditText
-                                    et[Integer.valueOf(value.get(0).toString())].setText(formattedString);
-                                    et[Integer.valueOf(value.get(0).toString())].setSelection(et[Integer.valueOf(value.get(0).toString())].getText().length());
-                                    Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI3)));
-                                    if (cEdit.getCount() > 0) {
+                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "child_detail");
+                                    botListDB.updateDetailRoomWithFlagContent(orderModel);
+                                } else {
+                                    Log.w("wow2", formattedString);
+                                    if (String.valueOf(s).length() > 0) {
                                         RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "child_detail");
-                                        botListDB.updateDetailRoomWithFlagContent(orderModel);
+                                        botListDB.insertRoomsDetail(orderModel);
                                     } else {
-                                        if (String.valueOf(s).length() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "child_detail");
-                                            botListDB.insertRoomsDetail(orderModel);
-                                        } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "child_detail");
-                                            botListDB.deleteDetailRoomWithFlagContent(orderModel);
-                                        }
+                                        RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "child_detail");
+                                        botListDB.deleteDetailRoomWithFlagContent(orderModel);
                                     }
-
-                                } catch (NumberFormatException nfe) {
-                                    nfe.printStackTrace();
                                 }
 
                                 et[Integer.valueOf(value.get(0).toString())].addTextChangedListener(this);
@@ -1473,25 +1464,25 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                 }
 */
 
-                if (asIs==3){
+                if (asIs == 3) {
                     spinnerArray.add("--Please Select--");
                     Cursor cu = mDB.getWritableDatabase().query(true, table, new String[]{"unit_kemasan"}, where, null, null, null, null, null);
-                    Log.w("disini",cu.getCount()+"");
-                    if (cu!=null){
-                        Log.w("disini",cu.getCount()+"");
+                    Log.w("disini", cu.getCount() + "");
+                    if (cu != null) {
+                        Log.w("disini", cu.getCount() + "");
                         if (cu.moveToFirst()) {
                             do {
                                 String column1 = cu.getString(0);
-                                if (column1!=null){
+                                if (column1 != null) {
                                     spinnerArray.add(column1);
                                 }
                             } while (cu.moveToNext());
                         }
                         cu.close();
-                    }else{
+                    } else {
 
                     }
-                }else{
+                } else {
                     if (coloum.length - 1 != asIs) {
                         spinnerArray.add("--Please Select--");
                         refresh("", "", "", "");
@@ -1559,7 +1550,7 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                 if (cEdit.getCount() > 0) {
                     try {
                         JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                        if (jsonObject.getString(finalTitlle).equalsIgnoreCase("null")){
+                        if (jsonObject.getString(finalTitlle).equalsIgnoreCase("null")) {
                             int spinnerPosition = spinnerArrayAdapter.getPosition(jsonObject.getString(finalTitlle));
                             spinner.setSelection(spinnerPosition);
                         }
@@ -1685,7 +1676,7 @@ public class DialogFormChildMainLemindo extends DialogFragment {
             DataBaseDropDown mDB = new DataBaseDropDown(getContext(), dbName);
             if (item.equalsIgnoreCase("--Please Select--")) {
                 et[1].setText("");
-            } else if (item.length()>5) {
+            } else if (item.length() > 5) {
                 if (mDB.getWritableDatabase() != null) {
                     Cursor c2 = mDB.getWritableDatabase().rawQuery("SELECT COALESCE((Select IDR from special_price  where id_customers = ? and item_number = ?),IDR,'0') as IDR," +
                             "COALESCE((Select USD from special_price  where id_customers = ? and item_number = ?),USD,'0') as USD " +
@@ -1757,16 +1748,16 @@ public class DialogFormChildMainLemindo extends DialogFragment {
             et[2].setVisibility(View.GONE);
             tp[2].setVisibility(View.GONE);
 
-            if (String.valueOf(et[4].getText()).equalsIgnoreCase("")) {
+            if (String.valueOf(et[4].getText()).equalsIgnoreCase("") || String.valueOf(et[3].getText()).equalsIgnoreCase("")) {
                 et[5].setText("");
             } else {
                 Double b = Double.parseDouble(String.valueOf(et[3].getText().toString().replace(",", "").equalsIgnoreCase("") ? (hargaDasarIDR != "" ? hargaDasarIDR : "0") : et[3].getText().toString().replace(",", "")));
                 Double c = Double.parseDouble(String.valueOf(et[4].getText().toString().replace(",", "") != "" ? et[4].getText().toString().replace(",", "") : "0"));
                 Double total = b * c;
-                et[5].setText(new Validations().getInstance(getContext()).numberToCurency(String.valueOf(total)));
+                et[5].setText(hasilTotla(String.valueOf(total)));
                 if (!tax) {
                     Double totalTax = total * 0.1;
-                    et[5].setText(new Validations().getInstance(getContext()).numberToCurency(String.valueOf(total + totalTax)));
+                    et[5].setText(hasilTotla(String.valueOf(total + totalTax)));
                 }
             }
         } else {
@@ -1774,7 +1765,7 @@ public class DialogFormChildMainLemindo extends DialogFragment {
             et[2].setVisibility(View.VISIBLE);
             String harga = new Validations().getInstance(getContext()).numberToCurencyUSD(hargaDasarUSD);
             et[1].setText(harga);
-            if (String.valueOf(et[4].getText()).equalsIgnoreCase("")) {
+            if (String.valueOf(et[4].getText()).equalsIgnoreCase("") || String.valueOf(et[3].getText()).equalsIgnoreCase("")) {
                 et[5].setText("");
             } else {
                 if (et[2].getText().toString().length() > 0) {
@@ -1782,13 +1773,30 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                     Double b = Double.parseDouble(String.valueOf(et[3].getText().toString().replace(",", "").equalsIgnoreCase("") ? (hargaDasarUSD != "" ? hargaDasarUSD : "0") : et[3].getText().toString().replace(",", "")));
                     Double c = Double.parseDouble(String.valueOf(et[4].getText() != null ? et[4].getText().toString().replace(",", "") : "0"));
                     Double total = a * b * c;
-                    et[5].setText(new Validations().getInstance(getContext()).numberToCurency(String.valueOf(total)));
+                    et[5].setText(hasilTotla(String.valueOf(total)));
                     if (!tax) {
                         Double totalTax = total * 0.1;
-                        et[5].setText(new Validations().getInstance(getContext()).numberToCurency(String.valueOf(total + totalTax)));
+                        et[5].setText(hasilTotla(String.valueOf(total + totalTax)));
                     }
                 }
             }
         }
+    }
+
+    private String hasilTotla(String originalString) {
+        Log.w("kasogi1", originalString);
+        Double longval;
+        if (originalString.contains(",")) {
+            originalString = originalString.replaceAll(",", "");
+        }
+        longval = Double.parseDouble(originalString);
+
+        DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+        formatter.applyPattern("#,###,###,###.#####");
+        String formattedString = formatter.format(longval);
+
+        Log.w("kasogi2", formattedString);
+
+        return formattedString;
     }
 }

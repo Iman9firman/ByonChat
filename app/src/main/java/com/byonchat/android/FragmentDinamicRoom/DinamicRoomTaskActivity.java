@@ -2797,7 +2797,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             if (dodo.contains(" ")) {
                                                 dodo = dodo.substring(0, dodo.indexOf(" "));
                                             }
-                                            String ssss = new Validations().getInstance(context).numberToCurency(String.valueOf(Double.parseDouble(mfc.getPrice().replace(",", "")) * Double.parseDouble(dodo.replace(",", ""))));
+                                            String ssss = String.valueOf(Double.parseDouble(mfc.getPrice().replace(",", "")) * Double.parseDouble(dodo.replace(",", "")));
                                             totalP += Double.parseDouble(ssss.replace(",", ""));
                                             totalQ += Integer.valueOf(dodo);
                                         } catch (Exception e) {
@@ -2806,7 +2806,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     }
 
                                     String totalHarga = new Validations().getInstance(context).numberToCurency(totalP + "");
-
                                     tQty.setText(totalQ + "");
                                     tPrice.setText(totalHarga);
 

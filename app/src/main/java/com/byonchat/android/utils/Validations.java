@@ -23,10 +23,12 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class Validations {
@@ -797,8 +799,8 @@ public class Validations {
         db.close();
     }
 
-    public String numberToCurency(String nilai) {
-        DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
+    public String numberToCurency(String originalString) {
+        /*DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
         DecimalFormatSymbols formatRp = new DecimalFormatSymbols();
 
         formatRp.setCurrencySymbol("");
@@ -813,7 +815,18 @@ public class Validations {
             dump = 0;
         }
 
-        return kursIndonesia.format(dump);
+        return kursIndonesia.format(dump);*/
+        Double longval;
+        if (originalString.contains(",")) {
+            originalString = originalString.replaceAll(",", "");
+        }
+        longval = Double.parseDouble(originalString);
+
+        DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+        formatter.applyPattern("#,###,###,###.#####");
+        String formattedString = formatter.format(longval);
+
+        return formattedString;
     }
 
     public String numberToCurencyBack(String nilai) {

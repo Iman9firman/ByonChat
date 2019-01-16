@@ -667,12 +667,19 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                                 et[Integer.valueOf(value.get(0).toString())].removeTextChangedListener(this);
 
                                 Log.w("iah1", s.toString());
-                                String formattedString = hasilTotla(s.toString());
+                                String formattedString;
+                                if(s.toString().matches("[0-9](.*)")) {
+                                    formattedString = hasilTotla(s.toString());
+                                }else {
+                                    formattedString = s.toString();
+                                }
                                 Log.w("iah2", formattedString);
 
-                                //setting text after format to EditText
-                                et[Integer.valueOf(value.get(0).toString())].setText(formattedString);
-                                et[Integer.valueOf(value.get(0).toString())].setSelection(et[Integer.valueOf(value.get(0).toString())].getText().length());
+                                    //setting text after format to EditText
+                                    if (!s.toString().endsWith(".")){
+                                        et[Integer.valueOf(value.get(0).toString())].setText(formattedString);
+                                        et[Integer.valueOf(value.get(0).toString())].setSelection(et[Integer.valueOf(value.get(0).toString())].getText().length());
+                                    }
 
                                 Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI3)));
                                 if (cEdit.getCount() > 0) {
@@ -1784,7 +1791,6 @@ public class DialogFormChildMainLemindo extends DialogFragment {
     }
 
     private String hasilTotla(String originalString) {
-        Log.w("kasogi1", originalString);
         Double longval;
         if (originalString.contains(",")) {
             originalString = originalString.replaceAll(",", "");
@@ -1794,8 +1800,6 @@ public class DialogFormChildMainLemindo extends DialogFragment {
         DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
         formatter.applyPattern("#,###,###,###.#####");
         String formattedString = formatter.format(longval);
-
-        Log.w("kasogi2", formattedString);
 
         return formattedString;
     }

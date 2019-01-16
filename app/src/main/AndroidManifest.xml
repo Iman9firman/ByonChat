@@ -680,6 +680,7 @@
 
         <activity android:name=".personalRoom.utils.CloudStorageActivity"></activity>
         <activity android:name=".tempSchedule.NotePreviewActivity"></activity>
+        <activity android:name=".LoginISS"></activity>
 
     </application>
 

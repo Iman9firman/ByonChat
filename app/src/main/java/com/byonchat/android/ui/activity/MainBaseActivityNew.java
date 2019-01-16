@@ -76,6 +76,7 @@ import com.byonchat.android.ListSelectedBotFragment;
 import com.byonchat.android.LoadingGetTabRoomActivity;
 import com.byonchat.android.LoginDinamicFingerPrint;
 import com.byonchat.android.LoginDinamicRoomActivity;
+import com.byonchat.android.LoginISS;
 import com.byonchat.android.Manhera.Manhera;
 import com.byonchat.android.R;
 import com.byonchat.android.RequestPasscodeRoomActivity;
@@ -910,6 +911,17 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     startActivity(a);
                 }
             }
+
+            if(title.equalsIgnoreCase("ISS INDONESIA")){
+                if (success == null) {
+                    Toast.makeText(this, "ISS INDONESIA", Toast.LENGTH_SHORT).show();
+                    Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                    startActivity(a);
+                }
+            }
+
         }
     }
 
@@ -1291,6 +1303,31 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             alertbox.show();
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    protected void SwipeRoom() {
+        Byonchat.getRoomsDB().open();
+        botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
+        Byonchat.getRoomsDB().close();
+
+        try {
+            JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+            String targetURL = jObj.getString("path");
+
+            Log.w("Stats sweeping 1", targetURL);
+            if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                finish();
+                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                Log.w("Stats sweeping 2", username);
+                startActivity(ii);
+            } else {
+                Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.w("Stats sweeping Error", e);
         }
     }
 

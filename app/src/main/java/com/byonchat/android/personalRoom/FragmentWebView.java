@@ -124,13 +124,13 @@ public class FragmentWebView extends Fragment {
         }
         View sss = inflater.inflate(R.layout.activity_web_view, container, false);
 
-        Location aa = new Location("point A");
+        /*Location aa = new Location("point A");
         aa.setLatitude(-6.2799206);
         aa.setLongitude(106.7150757);
         Location bb = new Location("point B");
         bb.setLatitude(-6.2799151);
         bb.setLongitude(106.7149063);
-        Toast.makeText(mContext,Utility.distanceInMeters(aa,bb)+"   --   "+Utility.sideRange(aa,bb,500),Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext,Utility.distanceInMeters(aa,bb)+"   --   "+Utility.sideRange(aa,bb,500),Toast.LENGTH_SHORT).show();*/
 
         if (pdialog == null) {
             pdialog = new ProgressDialog(mContext);

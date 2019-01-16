@@ -136,15 +136,23 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         String username = jsonRootObject.getString("username_room");
                         String content = jsonRootObject.getString("tab_room");
                         String realname = jsonRootObject.getString("nama_display");
-                        String icon = jsonRootObject.getString("icon");
-                        String backdrop = jsonRootObject.getString("backdrop");
-                        String color = jsonRootObject.getString("color");
+                        String icon = jsonRootObject.getString("icon"); // byonchat
+                        String backdrop = jsonRootObject.getString("backdrop")
+                                .equalsIgnoreCase("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/") ? ""
+                                : jsonRootObject.getString("backdrop"); //null default kita
+                        String color = jsonRootObject.getString("color")
+                                .equalsIgnoreCase("null") ? "FFFFFF"
+                                : jsonRootObject.getString("color");  //null putih
                         String lastUpdate = jsonRootObject.getString("last_update");
                         String firstTab = jsonRootObject.getString("current_tab");
-                        String textColor = jsonRootObject.getString("color_text");
+                        String textColor = jsonRootObject.getString("color_text")
+                                .equalsIgnoreCase("null") ? "000000"
+                                : jsonRootObject.getString("color_text"); //null hitam
                         String description = jsonRootObject.getString("description");
                         String officer = jsonRootObject.getString("officer");
                         String protect = "0";
+
+                        Log.w("skidrow", color + " -- " + icon + " -- " + textColor + " -- " + backdrop);
                         if (jsonRootObject.has("password_protected")) {
                             protect = jsonRootObject.getString("password_protected");
                         }

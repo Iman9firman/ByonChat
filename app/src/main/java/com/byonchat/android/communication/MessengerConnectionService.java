@@ -1427,7 +1427,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         filter.setPriority(1);
         registerReceiver(receiver, filter);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notifReceive = new NotificationReceiver();
             IntentFilter nya = new IntentFilter();
             nya.addAction("com.byonchat.android.communication.MessengerConnectionService.messageReceived");

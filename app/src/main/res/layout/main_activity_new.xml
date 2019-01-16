@@ -46,7 +46,7 @@
                     android:elevation="5dp"
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/wallpaper" />
+                    android:src="@drawable/byonchat_room" />
 
                 <ImageView
                     android:id="@+id/backdropblur"

@@ -324,7 +324,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         image_url = "";
         title = "ByonChat";
         logo = R.drawable.logo_byon;
-//        background = R.drawable.wallpaper;
+        background = R.drawable.byonchat_room;
         percent = "70";
         color = "006b9c";
         colorText = "FFFFFF";
@@ -352,7 +352,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
             if (bcakdrop == null || bcakdrop.equalsIgnoreCase("") || bcakdrop.equalsIgnoreCase("null")) {
                 Manhera.getInstance().get()
-                        .load(R.drawable.wallpaper)
+                        .load(background)
                         .fitCenter()
                         .into(backgroundImage);
             } else {
@@ -578,7 +578,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             vToolbarSearchText.setText("ByonChat");
 
             Manhera.getInstance().get()
-                    .load(R.drawable.wallpaper)
+                    .load(background)
                     .fitCenter()
                     .into(backgroundImage);
         }
@@ -654,8 +654,16 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected void resolveListTabRooms(ContactBot item, Cursor sdf) {
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
         String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
-        color = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
-        colorText = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
+        color = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a")
+                .equalsIgnoreCase("null")
+                || Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a")
+                .equalsIgnoreCase("") ? color :
+                Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
+        colorText = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b")
+                .equalsIgnoreCase("null")
+                || Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b")
+                .equalsIgnoreCase("") ? color :
+                Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
         String description = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "c");
         String targetURL = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "e");
         String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
@@ -681,19 +689,19 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             current = cur.getString(cur.getColumnIndex(BotListDB.ROOM_FIRST_TAB));
         }
 
-        /*if (color == null || color.equalsIgnoreCase("") || color.equalsIgnoreCase("null")) {
-            color = "006b9c";
-        }*/
-        if (bcakdrop == null || bcakdrop.equalsIgnoreCase("") || bcakdrop.equalsIgnoreCase("null")) {
+        if (bcakdrop == null
+                || bcakdrop.equalsIgnoreCase("")
+                || bcakdrop.equalsIgnoreCase("null")) {
             Manhera.getInstance().get()
-                    .load(R.drawable.earth_byon)
+                    .load(background)
                     .fitCenter()
                     .into(backgroundImage);
         }
-        if (colorText == null || colorText.equalsIgnoreCase("") || colorText.equalsIgnoreCase("null")) {
-            colorText = "ffffff";
-        }
-        new LoadImageFromURL(backdropBlur).execute(bcakdrop);
+
+        if (bcakdrop != null
+                || !bcakdrop.equalsIgnoreCase("")
+                || !bcakdrop.equalsIgnoreCase("null"))
+            new LoadImageFromURL(backdropBlur).execute(bcakdrop);
 
         try {
             JSONArray jsonArray = new JSONArray(content);
@@ -828,7 +836,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 } else if (category.equalsIgnoreCase("17")) {
                     itemMain.iconTest = R.drawable.ic_room_name_card;
                     Constants.map.put(i, null);
-                }else if (category.equalsIgnoreCase("18")) {
+                } else if (category.equalsIgnoreCase("18")) {
                     itemMain.iconTest = R.drawable.ic_room_name_card;
                     Constants.map.put(i, null);
                 }
@@ -912,7 +920,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 }
             }
 
-            if(title.equalsIgnoreCase("ISS INDONESIA")){
+            if (title.equalsIgnoreCase("ISS INDONESIA")) {
                 if (success == null) {
                     Toast.makeText(this, "ISS INDONESIA", Toast.LENGTH_SHORT).show();
                     Intent a = new Intent(getApplicationContext(), LoginISS.class);

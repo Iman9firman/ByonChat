@@ -8,19 +8,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.ActionMenuView;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -29,16 +38,19 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.Resource;
 import com.byonchat.android.TagTrending.Tag;
 import com.byonchat.android.TagTrending.TagClass;
 import com.byonchat.android.TagTrending.TagView;
@@ -48,16 +60,11 @@ import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.ItemListTrending;
 import com.byonchat.android.list.SearchroomAdapter;
-import com.byonchat.android.local.Byonchat;
-import com.byonchat.android.personalRoom.PersonalRoomActivity;
-import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.IntervalDB;
-import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDB;
-import com.byonchat.android.provider.Skin;
 import com.byonchat.android.suggest.SuggestionAdapter;
 import com.byonchat.android.suggest.SuggestionAdapterHashTag;
 import com.byonchat.android.suggest.SuggestionAdapterTag;
@@ -69,7 +76,6 @@ import com.byonchat.android.utils.JsonUtil;
 import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
 import com.byonchat.android.utils.UtilsPD;
-import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 
 import org.apache.http.HttpEntity;
@@ -100,8 +106,6 @@ import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.byonchat.android.utils.Utility.jsonResultType;
 
 public class NewSearchRoomActivity extends AppCompatActivity {
 
@@ -173,9 +177,24 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
         mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
 
+        Log.w("asdfasdfasdf", mColor + " -- " + mColorText);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mColor.equalsIgnoreCase("FFFFFF") && mColorText.equalsIgnoreCase("000000"))
+            toolbar.getContext().setTheme(R.style.AppTheme_AppBarOverlay_Black);
+        else
+            toolbar.getContext().setTheme(R.style.ThemeOverlay_AppCompat_Dark_ActionBar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
+
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+        toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
+        toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(Color.parseColor(colorAttachment));
+        }*/
 
         IntervalDB db = new IntervalDB(this);
         /*db.open();
@@ -212,15 +231,6 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                 db.close();
             }
         }
-
-        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
-        toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
-        toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
-
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.parseColor(colorAttachment));
-        }*/
 
         lv = (ListView) findViewById(R.id.gonelist);
         linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);
@@ -404,6 +414,10 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.activity_slide_in_down, R.anim.activity_slide_out_down);
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -430,8 +444,19 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         searchItem.expandActionView();
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(Color.parseColor("#" + mColorText));
+        searchEditText.setHintTextColor(Color.parseColor("#" + mColorText));
         searchEditText.setHint(tipe);
         searchEditText.setFocusable(true);
+
+        ImageView searchImageView = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        Drawable mDrawable = context.getResources().getDrawable(R.drawable.ic_byonchat_close);
+        mDrawable.setColorFilter(new
+                PorterDuffColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_ATOP));
+        searchImageView.setImageDrawable(mDrawable);
+
+        ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor("#" + mColorText));
+        searchEditText.setBackgroundTintList(colorStateList);
         final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchAutoComplete.setThreshold(0);
         searchAutoComplete.setAdapter(new SuggestionAdapterHashTag(aa));

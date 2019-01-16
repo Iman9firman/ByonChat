@@ -10762,6 +10762,14 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         if (id == TIME_DIALOG_ID) {
 
+            Calendar mcurrentTime = Calendar.getInstance();
+            int hours = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+            int minute = mcurrentTime.get(Calendar.MINUTE);
+            TimePickerDialog timePickerDialog = new TimePickerDialog(
+                    this, mTimePicker, hours, minute, true);
+            timePickerDialog.setOnDismissListener(mOnDismissListenerTime);
+            return timePickerDialog;
+
         } else {
             int iid = id - DATE_DIALOG_ID;
             Calendar calendar = Calendar.getInstance();

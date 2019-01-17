@@ -650,6 +650,7 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                             }
                         }
                         final int finalI3 = i;
+                        final int[] stop = new int[1];
                         et[count].addTextChangedListener(new TextWatcher() {
                             @Override
                             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -658,7 +659,6 @@ public class DialogFormChildMainLemindo extends DialogFragment {
 
                             @Override
                             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                Log.w("wow3", s.toString());
                             }
 
                             @Override
@@ -666,14 +666,27 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                                 List value = (List) hashMap.get(Integer.parseInt(idListTask));
                                 et[Integer.valueOf(value.get(0).toString())].removeTextChangedListener(this);
 
-                                Log.w("iah1", s.toString());
                                 String formattedString;
                                 if(s.toString().matches("[0-9](.*)")) {
-                                    formattedString = hasilTotla(s.toString());
+                                    if(s.toString().endsWith(".")){
+                                        stop[0] = s.toString().length();
+                                    }
+                                    if(s.toString().contains(".")){
+                                        formattedString = s.toString();
+                                        //Cut
+                                        if(!s.toString().endsWith("0")) {
+                                            formattedString = hasilTotla(s.toString());
+                                        }
+                                        if(s.toString().length() >= stop[0]+5){
+                                            String cut = s.toString().substring(0,stop[0]+5);
+                                            formattedString = cut;
+                                        }
+                                    }else {
+                                        formattedString = hasilTotla(s.toString());
+                                    }
                                 }else {
                                     formattedString = s.toString();
                                 }
-                                Log.w("iah2", formattedString);
 
                                     //setting text after format to EditText
                                     if (!s.toString().endsWith(".")){

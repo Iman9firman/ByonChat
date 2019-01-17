@@ -9,27 +9,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.ActionMenuItemView;
-import android.support.v7.widget.ActionMenuView;
-import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -38,19 +31,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.load.engine.Resource;
 import com.byonchat.android.TagTrending.Tag;
 import com.byonchat.android.TagTrending.TagClass;
 import com.byonchat.android.TagTrending.TagView;
@@ -120,6 +110,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
     private RoomsDB roomsDB;
     EditText searchEditText;
     private TagView tagGroup;
+    private FrameLayout vToolbarContainer;
     SearchroomAdapter adapter;
     private boolean show = false;
     private ImageView btnRefresh;
@@ -177,24 +168,10 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
         mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
 
-        Log.w("asdfasdfasdf", mColor + " -- " + mColorText);
-
+        vToolbarContainer = (FrameLayout) findViewById(R.id.toolbar_container);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (mColor.equalsIgnoreCase("FFFFFF") && mColorText.equalsIgnoreCase("000000"))
-            toolbar.getContext().setTheme(R.style.AppTheme_AppBarOverlay_Black);
-        else
-            toolbar.getContext().setTheme(R.style.ThemeOverlay_AppCompat_Dark_ActionBar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
 
-        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
-        toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
-        toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
-
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.parseColor(colorAttachment));
-        }*/
+        resolveToolbar();
 
         IntervalDB db = new IntervalDB(this);
         /*db.open();
@@ -361,6 +338,22 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         });
     }
 
+    protected void resolveToolbar() {
+        if (mColor.equalsIgnoreCase("FFFFFF") && mColorText.equalsIgnoreCase("000000")) {
+            View lytToolbarDark = getLayoutInflater().inflate(R.layout.toolbar_dark, vToolbarContainer);
+            Toolbar toolbarDark = lytToolbarDark.findViewById(R.id.toolbar_dark);
+            vToolbarContainer.removeView(toolbar);
+            setSupportActionBar(toolbarDark);
+        } else {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setTitle("");
+
+            FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+            toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
+            toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+        }
+    }
+
     public void openWebPage(String url) {
         try {
             Uri webpage = Uri.parse(url);
@@ -455,8 +448,8 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                 PorterDuffColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_ATOP));
         searchImageView.setImageDrawable(mDrawable);
 
-        ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor("#" + mColorText));
-        searchEditText.setBackgroundTintList(colorStateList);
+//        ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor("#" + mColorText));
+//        searchEditText.setBackgroundTintList(colorStateList);
         final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchAutoComplete.setThreshold(0);
         searchAutoComplete.setAdapter(new SuggestionAdapterHashTag(aa));
@@ -498,6 +491,12 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                 if (newText.equalsIgnoreCase("")) {
                     searchText = newText;
                     searchAutoComplete.setAdapter(new SuggestionAdapterTag(aa, newText));
+
+                    if (linlaHeaderProgress.getVisibility() == View.GONE) {
+                        linearTrending.setVisibility(View.VISIBLE);
+                        emptyList.setVisibility(View.GONE);
+                        lv.setVisibility(View.GONE);
+                    }
                 } else {
                     if (mSearchView.getQuery().length() >= 3) {
                         searchText = newText;
@@ -627,16 +626,27 @@ public class NewSearchRoomActivity extends AppCompatActivity {
     }
 
     private void requestKey() {
+        linlaHeaderProgress.setVisibility(View.VISIBLE);
+        linearTrending.setVisibility(View.GONE);
+        emptyList.setVisibility(View.GONE);
+        lv.setVisibility(View.GONE);
+
         RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
             @Override
             public void onTaskDone(String key) {
                 if (key.equalsIgnoreCase("null")) {
+                    linlaHeaderProgress.setVisibility(View.GONE);
+                    linearTrending.setVisibility(View.GONE);
+                    emptyList.setVisibility(View.GONE);
+                    lv.setVisibility(View.GONE);
+
                     Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                 } else {
                     if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
                         requestSearchResult = new RequestSearchResult(context);
                         requestSearchResult.execute(key);
                     } else {
+                        linlaHeaderProgress.setVisibility(View.GONE);
                         lv.setVisibility(View.GONE);
                         linearTrending.setVisibility(View.GONE);
                         emptyList.setVisibility(View.VISIBLE);

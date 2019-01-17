@@ -3,6 +3,7 @@ package com.byonchat.android.utils;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.provider.Contact;

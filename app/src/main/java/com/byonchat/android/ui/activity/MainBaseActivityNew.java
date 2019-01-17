@@ -41,6 +41,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -346,6 +347,13 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         getSupportActionBar().setTitle(title);
         collapsingToolbarLayout.setTitle(title);
 
+        tb.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(botArrayListist.get(0).name);
         if (cur.getCount() > 0) {
             String bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));
@@ -452,7 +460,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_three).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_refresh).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
+        nav_Menu.findItem(R.id.nav_item_legal).setVisible(true);
     }
 
     protected void refreshList() {

@@ -452,7 +452,6 @@ public class MainActivityNew extends MainBaseActivityNew {
                 drawerLayout.openDrawer(GravityCompat.START);
             });
 
-            Log.w("skidrow", image_url);
             if (!image_url.equalsIgnoreCase("")) {
                 Glide.with(this).load(background).into(backgroundImage);
             } else {

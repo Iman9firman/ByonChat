@@ -32,6 +32,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +40,7 @@ import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -84,6 +86,7 @@ import com.byonchat.android.room.FragmentRoomMultipleTask;
 import com.byonchat.android.room.FragmentRoomTask;
 import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.tempSchedule.TempScheduleRoom;
+import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.byonchat.android.utils.Utility;
 import com.googlecode.mp4parser.authoring.Edit;
@@ -275,12 +278,14 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     } else if (mFragment instanceof FragmentRoomTaskWater) {
                         FragmentRoomTaskWater fragment = (FragmentRoomTaskWater) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
+                    } else if (mFragment instanceof ByonchatPDFFragment) {
+                        ByonchatPDFFragment fragment = (ByonchatPDFFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
                     }
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
-
                     if (mFragment instanceof FragmentRoomMultipleTask) {
                         FragmentRoomMultipleTask fragment = (FragmentRoomMultipleTask) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
@@ -289,6 +294,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                         fragment.onActionSearch(s.toString());
                     } else if (mFragment instanceof FragmentRoomTaskWater) {
                         FragmentRoomTaskWater fragment = (FragmentRoomTaskWater) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
+                    } else if (mFragment instanceof ByonchatPDFFragment) {
+                        ByonchatPDFFragment fragment = (ByonchatPDFFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
                     }
                 }
@@ -375,7 +383,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     protected void resolveFragment() {
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        Log.w("CEK WV GANDHIP",category +"  -  "+title);
+        Log.w("CEK WV GANDHIP", category + "  -  " + title);
         if (cur.getCount() > 0) {
             try {
                 if (category.equalsIgnoreCase("1")) {
@@ -500,11 +508,15 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     //TIME=WATCH
                     show = true;
                     mFragment = FragmentMyCardID.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, false, MainByonchatRoomBaseActivity.this);
-                }else if (category.equalsIgnoreCase("18")) {
+                } else if (category.equalsIgnoreCase("18")) {
                     //TIME=WATCH
                     show = true;
                     mFragment = FragmentWebView.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, false, MainByonchatRoomBaseActivity.this);
+                } else if (category.equalsIgnoreCase("19")) {
+                    show = true;
+                    mFragment = ByonchatPDFFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 }
+                Toast.makeText(this, category, Toast.LENGTH_SHORT).show();
 
                 if (status.equalsIgnoreCase("1") && show) {
 //                    adapter.addFragment(mFragment, title);

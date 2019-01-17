@@ -479,6 +479,8 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
             } else if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
                 menu.findItem(R.id.action_search).setVisible(true);
             }
+        } else if (category.equalsIgnoreCase("19")) {
+            menu.findItem(R.id.action_search).setVisible(true);
         }
         return super.onPrepareOptionsMenu(menu);
     }

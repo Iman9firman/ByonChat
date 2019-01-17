@@ -226,6 +226,7 @@
                         android:textSize="@dimen/notification_subtext_size" />
 
                     <View
+                        android:id="@+id/comments_line"
                         android:layout_width="2dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="@dimen/note_button_space_divider"

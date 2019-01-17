@@ -51,8 +51,8 @@ import java.util.regex.Pattern;
  * Created by lukma on 3/7/2016.
  */
 public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final String URL_SAVE_LOVES = "https://"+ MessengerConnectionService.HTTP_SERVER+"/bc_voucher_client/webservice/proses/list_note_like.php";
-    private static final String URL_SAVE_DISLIKE = "https://"+ MessengerConnectionService.HTTP_SERVER+"/bc_voucher_client/webservice/proses/list_note_dislike.php";
+    private static final String URL_SAVE_LOVES = "https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/proses/list_note_like.php";
+    private static final String URL_SAVE_DISLIKE = "https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/proses/list_note_dislike.php";
     private List<NewsFeedItem> feedItems;
     private NewsFeedListAdapter adapter;
     ImageLoader imageLoader;
@@ -70,8 +70,8 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     /**/
 
     public NewsFeedListAdapter(Activity activity, List<NewsFeedItem> feedItem, RecyclerView recyclerView) {
-        if (db==null){
-            db=BotListDB.getInstance(activity.getApplicationContext());
+        if (db == null) {
+            db = BotListDB.getInstance(activity.getApplicationContext());
         }
         this.mContext = activity;
         feedItems = feedItem;
@@ -127,14 +127,13 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
-
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int i) {
-        if (db==null){
-            db=BotListDB.getInstance(mContext.getApplicationContext());
+        if (db == null) {
+            db = BotListDB.getInstance(mContext.getApplicationContext());
         }
 
         if (holder instanceof FeedItemsHolderNews) {
-            final NewsFeedItem item =  feedItems.get(i);
+            final NewsFeedItem item = feedItems.get(i);
 
             ((FeedItemsHolderNews) holder).name.setText(item.getTitle());
             ((FeedItemsHolderNews) holder).timestamp.setText("Updates on : " + item.getTimeStamp());
@@ -156,8 +155,8 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             });
 
-            if(item.getUserDislike()!=null){
-                if(item.getUserDislike().equalsIgnoreCase("false")){
+            if (item.getUserDislike() != null) {
+                if (item.getUserDislike().equalsIgnoreCase("false")) {
                     ((FeedItemsHolderNews) holder).btNix.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -165,12 +164,12 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                             if (cursorValue.getCount() > 0) {
                                 final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
-                                if(!contentValue.equalsIgnoreCase("")){
+                                if (!contentValue.equalsIgnoreCase("")) {
                                     try {
                                         JSONObject c = new JSONObject(contentValue);
-                                        if (c.getString("user_dislike").equalsIgnoreCase("false")){
-                                            Log.w("sudah","masuk");
-                                            new saveLikeNotes(holder).execute(item.getMyuserid(),item.getUserid(),item.getId(),item.getJumlahLove(),item.getIdRoomTab(),URL_SAVE_DISLIKE);
+                                        if (c.getString("user_dislike").equalsIgnoreCase("false")) {
+                                            Log.w("sudah", "masuk");
+                                            new saveLikeNotes(holder).execute(item.getMyuserid(), item.getUserid(), item.getId(), item.getJumlahLove(), item.getIdRoomTab(), URL_SAVE_DISLIKE);
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -179,14 +178,14 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             }
                         }
                     });
-                }else if (item.getUserDislike().equals("true")) {
+                } else if (item.getUserDislike().equals("true")) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         ((FeedItemsHolderNews) holder).btNix.setEnabled(false);
                     }
                 }
             }
 
-            if(item.getUserDislike()!=null){
+            if (item.getUserDislike() != null) {
                 if (item.getUserLike().equals("false")) {
                     ((FeedItemsHolderNews) holder).btLoves.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -196,11 +195,11 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                             if (cursorValue.getCount() > 0) {
                                 final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
-                                if(!contentValue.equalsIgnoreCase("")){
+                                if (!contentValue.equalsIgnoreCase("")) {
                                     try {
                                         JSONObject c = new JSONObject(contentValue);
-                                        if (c.getString("user_like").equalsIgnoreCase("false")){
-                                            new saveLikeNotes(holder).execute(item.getMyuserid(),item.getUserid(),item.getId(),item.getJumlahLove(),item.getIdRoomTab(),URL_SAVE_LOVES);
+                                        if (c.getString("user_like").equalsIgnoreCase("false")) {
+                                            new saveLikeNotes(holder).execute(item.getMyuserid(), item.getUserid(), item.getId(), item.getJumlahLove(), item.getIdRoomTab(), URL_SAVE_LOVES);
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -320,7 +319,7 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public class FeedItemsHolderNews extends RecyclerView.ViewHolder {
-        public LinearLayout main_content, layoutComment, btLoves, btComment,btNix;
+        public LinearLayout main_content, layoutComment, btLoves, btComment, btNix;
         public TextView name, timestamp, txtStatusMsg, totalComments, totalLoves;
         public Target iconView;
         /*public TextView tvName;
@@ -354,10 +353,10 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public class RefreshHolder extends RecyclerView.ViewHolder{
+    public class RefreshHolder extends RecyclerView.ViewHolder {
         public ImageView refreshButton;
 
-        public RefreshHolder(View view){
+        public RefreshHolder(View view) {
             super(view);
             refreshButton = (ImageView) view.findViewById(R.id.btn_refresh);
         }
@@ -416,7 +415,7 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         if (!contentValue.equalsIgnoreCase("")) {
                             try {
                                 JSONObject c = new JSONObject(contentValue);
-                                if(url.equalsIgnoreCase(URL_SAVE_LOVES)){
+                                if (url.equalsIgnoreCase(URL_SAVE_LOVES)) {
                                     if (c.getString("user_like").equalsIgnoreCase("false")) {
                                         try {
                                             JSONObject j = DinamicRoomTaskActivity.function(c, "amount_of_like", String.valueOf(Integer.valueOf(c.getString("amount_of_like")) + 1));
@@ -433,7 +432,7 @@ public class NewsFeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                             e.printStackTrace();
                                         }
                                     }
-                                }else if(url.equalsIgnoreCase(URL_SAVE_DISLIKE)){
+                                } else if (url.equalsIgnoreCase(URL_SAVE_DISLIKE)) {
                                     if (c.getString("user_dislike").equalsIgnoreCase("false")) {
                                         try {
                                             JSONObject j = DinamicRoomTaskActivity.function(c, "amount_of_dislike", String.valueOf(Integer.valueOf(c.getString("amount_of_dislike")) + 1));

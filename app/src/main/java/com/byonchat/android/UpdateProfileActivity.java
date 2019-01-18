@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -126,8 +127,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
         mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
         mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
 
-        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + mColor)));
+        resolveToolbar();
 
         View view = findViewById(R.id.buttonAbNext);
         if (view != null && view instanceof Button) {
@@ -230,6 +230,16 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
             }
         });
 
+    }
+
+    protected void resolveToolbar() {
+        if (mColor.equalsIgnoreCase("FFFFFF") && mColorText.equalsIgnoreCase("000000")) {
+            View lytToolbarDark = getLayoutInflater().inflate(R.layout.toolbar_dark, null);
+            Toolbar toolbarDark = lytToolbarDark.findViewById(R.id.toolbar_dark);
+        } else {
+            FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + mColor)));
+        }
     }
 
     @Override

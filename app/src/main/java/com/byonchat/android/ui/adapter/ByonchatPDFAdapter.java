@@ -60,10 +60,10 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         switch (viewType) {
             case VIEWTYPE_ITEM_TEXT:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_news, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_pdf_control, parent, false);
                 return new ByonchatPDFViewHolder(view, itemClickListener, longItemClickListener);
             default:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_news, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_pdf_control, parent, false);
                 return new ByonchatPDFViewHolder(view, itemClickListener, longItemClickListener);
         }
     }

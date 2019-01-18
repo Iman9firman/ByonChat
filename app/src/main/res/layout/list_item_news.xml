@@ -16,8 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/margin5"
-        android:paddingTop="@dimen/margin5">
+        android:paddingTop="@dimen/margin5"
+        android:paddingBottom="@dimen/margin5">
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -54,8 +54,8 @@
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true" />
             </RelativeLayout>
         </FrameLayout>
@@ -99,8 +99,8 @@
                 android:layout_height="wrap_content"
                 android:lines="2"
                 android:maxLines="2"
-                android:paddingRight="@dimen/oto_feed_item_margin"
                 android:paddingTop="@dimen/oto_feed_item_margin"
+                android:paddingRight="@dimen/oto_feed_item_margin"
                 android:text="Highend Monoshock "
                 android:textColor="@color/description"
                 android:textSize="@dimen/oto_feed_item_profile_status" />
@@ -140,8 +140,8 @@
                         android:id="@+id/tsLikesCounter1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/margin7"
                         android:layout_marginTop="@dimen/margin2"
+                        android:layout_marginRight="@dimen/margin7"
                         android:inAnimation="@anim/slide_in_likes_counter"
                         android:outAnimation="@anim/slide_out_likes_counter">
 

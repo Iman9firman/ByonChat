@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.byonchat.android.R;
@@ -27,6 +28,7 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
     public TextView vTxtPreview, vTxtRequest;
     public View vView, vPreviewLine, vRequestLine;
     public LinearLayout vDotA, vDotB;
+    public TextSwitcher vTsLikesCounter1, vTsLikesCounter2;
 
     protected Drawable selectionBackground;
     protected int selectionChecked;
@@ -60,6 +62,8 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
         vTxtRequest = (TextView) view.findViewById(R.id.text_btn_comment);
         vDotA = (LinearLayout) view.findViewById(R.id.dotA);
         vDotB = (LinearLayout) view.findViewById(R.id.dotB);
+        vTsLikesCounter1 = (TextSwitcher) view.findViewById(R.id.tsLikesCounter1);
+        vTsLikesCounter2 = (TextSwitcher) view.findViewById(R.id.tsLikesCounter2);
 
         loadText();
         loadConfig();
@@ -82,6 +86,8 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
         vBtNix.setVisibility(View.GONE);
         vDotA.setVisibility(View.GONE);
         vDotB.setVisibility(View.GONE);
+        vTsLikesCounter1.setVisibility(View.GONE);
+        vTsLikesCounter2.setVisibility(View.GONE);
     }
 
     protected void loadConfig() {

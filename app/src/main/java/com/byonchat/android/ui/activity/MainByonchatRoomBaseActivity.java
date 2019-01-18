@@ -516,7 +516,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     show = true;
                     mFragment = ByonchatPDFFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 }
-                Toast.makeText(this, category, Toast.LENGTH_SHORT).show();
 
                 if (status.equalsIgnoreCase("1") && show) {
 //                    adapter.addFragment(mFragment, title);

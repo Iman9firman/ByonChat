@@ -28,204 +28,67 @@
             android:paddingTop="@dimen/margin5"
             android:paddingBottom="@dimen/margin5">
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="@dimen/margin5"
-                android:layout_marginRight="@dimen/margin5">
+                android:orientation="vertical"
+                android:paddingTop="@dimen/margin5"
+                android:paddingBottom="@dimen/margin5">
 
-                <carbon.widget.LinearLayout
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin1"
-                    android:orientation="vertical"
-                    app:carbon_cornerRadius="10dp">
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/margin5"
+                    android:layout_marginRight="@dimen/margin5">
 
-                    <com.byonchat.android.utils.PicassoView
-                        android:id="@+id/imagePhoto"
-                        android:layout_width="@dimen/verticaltextview_size_90"
-                        android:layout_height="@dimen/verticaltextview_size_90"
-                        android:background="@android:color/white"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_no_photo"
-                        android:visibility="visible"
-                        app:carbon_inAnimation="none"
-                        app:carbon_outAnimation="none" />
-                </carbon.widget.LinearLayout>
-
-                <RelativeLayout
-                    android:layout_width="92dp"
-                    android:layout_height="92dp"
-                    android:background="@drawable/profile_rounded_border">
-
-                    <View
+                    <carbon.widget.LinearLayout
+                        android:id="@+id/frame_photo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentTop="true" />
-                </RelativeLayout>
-            </FrameLayout>
+                        android:layout_margin="@dimen/margin1"
+                        android:orientation="vertical"
+                        app:carbon_cornerRadius="10dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/profile_margin_profile_to_text">
+                        <com.byonchat.android.utils.PicassoView
+                            android:id="@+id/imagePhoto"
+                            android:layout_width="@dimen/margin50"
+                            android:layout_height="@dimen/margin50"
+                            android:background="@android:color/white"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_no_photo"
+                            android:visibility="visible"
+                            app:carbon_inAnimation="none"
+                            app:carbon_outAnimation="none" />
+                    </carbon.widget.LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    <RelativeLayout
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/profile_rounded_border">
 
-                    <TextView
-                        android:id="@+id/name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:singleLine="true"
-                        android:text="YS MONOSHOCK - PIGGY BANK"
-                        android:textColor="@color/judul"
-                        android:textSize="@dimen/oto_feed_item_profile_name"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/timestamp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Updates on : 26-1-2016, 10:10 AM"
-                    android:textColor="@color/timestamp"
-                    android:textSize="@dimen/oto_feed_item_timestamp" />
-
-                <TextView
-                    android:id="@+id/txtStatusMsg"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:lines="2"
-                    android:maxLines="2"
-                    android:paddingTop="@dimen/oto_feed_item_margin"
-                    android:paddingRight="@dimen/oto_feed_item_margin"
-                    android:text="Highend Monoshock "
-                    android:textColor="@color/description"
-                    android:textSize="@dimen/oto_feed_item_profile_status" />
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="true" />
+                    </RelativeLayout>
+                </FrameLayout>
 
                 <LinearLayout
                     android:id="@+id/layoutComment"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin3"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/btLoves"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/margin25"
-                        android:layout_gravity="center"
-                        android:background="@drawable/button_timeline_background"
-                        android:gravity="center_vertical|center_horizontal"> <!-- 1 -->
-
-                        <TextView
-                            android:id="@+id/text"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginLeft="@dimen/margin7"
-                            android:layout_marginRight="@dimen/margin7"
-                            android:gravity="center"
-                            android:text="Loves"
-                            android:textColor="@color/text_like_counter"
-                            android:textSize="@dimen/notification_subtext_size" />
-
-                        <View
-                            android:id="@+id/viee"
-                            android:layout_width="2dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginRight="@dimen/margin3"
-                            android:background="@color/button_timeline_background_border" />
-
-                        <TextSwitcher
-                            android:id="@+id/tsLikesCounter1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin2"
-                            android:layout_marginRight="@dimen/margin7"
-                            android:inAnimation="@anim/slide_in_likes_counter"
-                            android:outAnimation="@anim/slide_out_likes_counter">
-
-                            <TextView
-                                android:id="@+id/totalLoves"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLength="3"
-                                android:text="123"
-                                android:textColor="@color/text_like_counter"
-                                android:textSize="@dimen/notification_subtext_size" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/text_like_counter" />
-                        </TextSwitcher>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/dotA"
-                        android:layout_width="15dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"> <!-- 2 -->
-
-                        <View
-                            android:layout_width="4dp"
-                            android:layout_height="4dp"
-                            android:layout_marginLeft="@dimen/margin5"
-                            android:layout_marginRight="@dimen/margin5"
-                            android:background="@drawable/bg_dot" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/btNix"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"> <!-- 3 -->
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Nix"
-                            android:textColor="@color/text_like_counter"
-                            android:textSize="@dimen/notification_subtext_size" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/dotB"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"> <!-- 4 -->
-
-                        <View
-                            android:layout_width="4dp"
-                            android:layout_height="4dp"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="@dimen/margin5"
-                            android:layout_marginRight="@dimen/margin5"
-                            android:background="@drawable/bg_dot" />
-
-                    </LinearLayout>
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/btComment"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/margin25"
+                        android:layout_width="50dp"
+                        android:layout_height="25dp"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="@dimen/margin5"
                         android:background="@drawable/button_timeline_background"
                         android:gravity="center_vertical|center_horizontal"><!-- 5 -->
 
@@ -234,43 +97,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginLeft="@dimen/margin7"
-                            android:layout_marginRight="@dimen/margin7"
                             android:gravity="center"
                             android:text="Comments"
                             android:textColor="@color/text_like_counter"
-                            android:textSize="@dimen/notification_subtext_size" />
-
-                        <View
-                            android:id="@+id/comments_line"
-                            android:layout_width="2dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginRight="@dimen/note_button_space_divider"
-                            android:background="@color/button_timeline_background_border" />
-
-                        <TextSwitcher
-                            android:id="@+id/tsLikesCounter2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="@dimen/margin7"
-                            android:inAnimation="@anim/slide_in_likes_counter"
-                            android:outAnimation="@anim/slide_out_likes_counter">
-
-                            <TextView
-                                android:id="@+id/totalComments"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLength="3"
-                                android:paddingTop="@dimen/margin2"
-                                android:text="123"
-                                android:textColor="@color/text_like_counter"
-                                android:textSize="@dimen/notification_subtext_size" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/text_like_counter" />
-                        </TextSwitcher>
+                            android:textSize="10sp" />
 
                     </LinearLayout>
 
@@ -285,6 +115,92 @@
 
                     </LinearLayout>
                 </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/profile_margin_profile_to_text">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:singleLine="true"
+                        android:text="Title : "
+                        android:textColor="@color/judul"
+                        android:textSize="@dimen/oto_feed_item_profile_name"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:text="YS MONOSHOCK - PIGGY BANK"
+                        android:textColor="@color/judul"
+                        android:textSize="@dimen/oto_feed_item_profile_name"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Upload Date : "
+                        android:textColor="@color/timestamp"
+                        android:textSize="@dimen/oto_feed_item_timestamp" />
+
+                    <TextView
+                        android:id="@+id/timestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Updates on : 26-1-2016, 10:10 AM"
+                        android:textColor="@color/timestamp"
+                        android:textSize="@dimen/oto_feed_item_timestamp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lines="2"
+                        android:maxLines="2"
+                        android:paddingTop="@dimen/oto_feed_item_margin"
+                        android:paddingRight="@dimen/oto_feed_item_margin"
+                        android:text="Description : "
+                        android:textColor="@color/description"
+                        android:textSize="@dimen/oto_feed_item_profile_status" />
+
+                    <TextView
+                        android:id="@+id/txtStatusMsg"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:lines="2"
+                        android:maxLines="2"
+                        android:paddingTop="@dimen/oto_feed_item_margin"
+                        android:paddingRight="@dimen/oto_feed_item_margin"
+                        android:text="Highend Monoshock "
+                        android:textColor="@color/description"
+                        android:textSize="@dimen/oto_feed_item_profile_status" />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
 

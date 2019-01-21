@@ -32,7 +32,6 @@ public class MyJobService extends JobService {
     NotificationManager mNotificationManager;
     Thread thread = null;
 
-    @TargetApi(26)
     @Override
     public boolean onStartJob(JobParameters params) {
 

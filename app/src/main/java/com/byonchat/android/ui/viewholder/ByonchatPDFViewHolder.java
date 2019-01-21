@@ -23,12 +23,11 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
 
     public LinearLayout vMainContent;
     public Target vIconView;
-    public LinearLayout vLayoutComment, vBtLoves, vBtComment, vBtNix;
-    public TextView vName, vTimestamp, vTxtStatusMsg, vTotalComments, vTotalLoves;
-    public TextView vTxtPreview, vTxtRequest;
-    public View vView, vPreviewLine, vRequestLine;
-    public LinearLayout vDotA, vDotB;
-    public TextSwitcher vTsLikesCounter1, vTsLikesCounter2;
+    public LinearLayout vLayoutComment, vBtComment;
+    public TextView vName, vTimestamp, vTxtStatusMsg;
+    public TextView vTxtRequest;
+    public View vView;
+    public carbon.widget.LinearLayout vFramePhoto;
 
     protected Drawable selectionBackground;
     protected int selectionChecked;
@@ -50,20 +49,10 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
         vIconView = (Target) view.findViewById(R.id.imagePhoto);
         vMainContent = (LinearLayout) view.findViewById(R.id.main_content);
         vLayoutComment = (LinearLayout) view.findViewById(R.id.layoutComment);
-        vBtLoves = (LinearLayout) view.findViewById(R.id.btLoves);
         vBtComment = (LinearLayout) view.findViewById(R.id.btComment);
-        vTotalComments = (TextView) view.findViewById(R.id.totalComments);
-        vTotalLoves = (TextView) view.findViewById(R.id.totalLoves);
-        vBtNix = (LinearLayout) view.findViewById(R.id.btNix);
         vView = (View) view.findViewById(R.id.view);
-        vPreviewLine = (View) view.findViewById(R.id.viee);
-        vRequestLine = (View) view.findViewById(R.id.comments_line);
-        vTxtPreview = (TextView) view.findViewById(R.id.text);
         vTxtRequest = (TextView) view.findViewById(R.id.text_btn_comment);
-        vDotA = (LinearLayout) view.findViewById(R.id.dotA);
-        vDotB = (LinearLayout) view.findViewById(R.id.dotB);
-        vTsLikesCounter1 = (TextSwitcher) view.findViewById(R.id.tsLikesCounter1);
-        vTsLikesCounter2 = (TextSwitcher) view.findViewById(R.id.tsLikesCounter2);
+        vFramePhoto = (carbon.widget.LinearLayout) view.findViewById(R.id.frame_photo);
 
         loadText();
         loadConfig();
@@ -76,18 +65,7 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
     }
 
     protected void loadText() {
-        vTxtPreview.setText("Preview");
         vTxtRequest.setText("Request");
-
-        vPreviewLine.setVisibility(View.GONE);
-        vRequestLine.setVisibility(View.GONE);
-        vTotalComments.setVisibility(View.GONE);
-        vTotalLoves.setVisibility(View.GONE);
-        vBtNix.setVisibility(View.GONE);
-        vDotA.setVisibility(View.GONE);
-        vDotB.setVisibility(View.GONE);
-        vTsLikesCounter1.setVisibility(View.GONE);
-        vTsLikesCounter2.setVisibility(View.GONE);
     }
 
     protected void loadConfig() {

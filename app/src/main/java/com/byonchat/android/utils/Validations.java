@@ -800,22 +800,9 @@ public class Validations {
     }
 
     public String numberToCurency(String originalString) {
-        /*DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
-        DecimalFormatSymbols formatRp = new DecimalFormatSymbols();
-
-        formatRp.setCurrencySymbol("");
-        formatRp.setMonetaryDecimalSeparator('.');
-        formatRp.setGroupingSeparator(',');
-
-        double dump = 0;
-        kursIndonesia.setDecimalFormatSymbols(formatRp);
-        try {
-            dump = Double.parseDouble(nilai);
-        } catch (Exception e) {
-            dump = 0;
+        if (originalString.equalsIgnoreCase("")) {
+            originalString = "0";
         }
-
-        return kursIndonesia.format(dump);*/
         Double longval;
         if (originalString.contains(",")) {
             originalString = originalString.replaceAll(",", "");
@@ -850,6 +837,10 @@ public class Validations {
 
 
     public String numberToCurencyUSD(String nilai) {
+        if (nilai.equalsIgnoreCase("")) {
+            nilai = "0";
+        }
+
         DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
         DecimalFormatSymbols formatRp = new DecimalFormatSymbols();
 

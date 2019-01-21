@@ -667,32 +667,32 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                                 et[Integer.valueOf(value.get(0).toString())].removeTextChangedListener(this);
 
                                 String formattedString;
-                                if(s.toString().matches("[0-9](.*)")) {
-                                    if(s.toString().endsWith(".")){
+                                if (s.toString().matches("[0-9](.*)")) {
+                                    if (s.toString().endsWith(".")) {
                                         stop[0] = s.toString().length();
                                     }
-                                    if(s.toString().contains(".")){
+                                    if (s.toString().contains(".")) {
                                         formattedString = s.toString();
                                         //Cut
-                                        if(!s.toString().endsWith("0")) {
-                                            formattedString = hasilTotla(s.toString());
+                                        if (!s.toString().endsWith("0")) {
+                                            formattedString = new Validations().getInstance(getContext()).numberToCurency(s.toString());
                                         }
-                                        if(s.toString().length() >= stop[0]+5){
-                                            String cut = s.toString().substring(0,stop[0]+5);
+                                        if (s.toString().length() >= stop[0] + 5) {
+                                            String cut = s.toString().substring(0, stop[0] + 5);
                                             formattedString = cut;
                                         }
-                                    }else {
-                                        formattedString = hasilTotla(s.toString());
+                                    } else {
+                                        formattedString = new Validations().getInstance(getContext()).numberToCurency(s.toString());
                                     }
-                                }else {
+                                } else {
                                     formattedString = s.toString();
                                 }
 
-                                    //setting text after format to EditText
-                                    if (!s.toString().endsWith(".")){
-                                        et[Integer.valueOf(value.get(0).toString())].setText(formattedString);
-                                        et[Integer.valueOf(value.get(0).toString())].setSelection(et[Integer.valueOf(value.get(0).toString())].getText().length());
-                                    }
+                                //setting text after format to EditText
+                                if (!s.toString().endsWith(".")) {
+                                    et[Integer.valueOf(value.get(0).toString())].setText(formattedString);
+                                    et[Integer.valueOf(value.get(0).toString())].setSelection(et[Integer.valueOf(value.get(0).toString())].getText().length());
+                                }
 
                                 Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI3)));
                                 if (cEdit.getCount() > 0) {
@@ -1774,10 +1774,11 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                 Double b = Double.parseDouble(String.valueOf(et[3].getText().toString().replace(",", "").equalsIgnoreCase("") ? (hargaDasarIDR != "" ? hargaDasarIDR : "0") : et[3].getText().toString().replace(",", "")));
                 Double c = Double.parseDouble(String.valueOf(et[4].getText().toString().replace(",", "") != "" ? et[4].getText().toString().replace(",", "") : "0"));
                 Double total = b * c;
-                et[5].setText(hasilTotla(String.valueOf(total)));
+                ;
+                et[5].setText(new Validations().getInstance(getContext()).numberToCurency(String.valueOf(total)));
                 if (!tax) {
                     Double totalTax = total * 0.1;
-                    et[5].setText(hasilTotla(String.valueOf(total + totalTax)));
+                    et[5].setText(new Validations().getInstance(getContext()).numberToCurency(String.valueOf(total + totalTax)));
                 }
             }
         } else {
@@ -1793,27 +1794,14 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                     Double b = Double.parseDouble(String.valueOf(et[3].getText().toString().replace(",", "").equalsIgnoreCase("") ? (hargaDasarUSD != "" ? hargaDasarUSD : "0") : et[3].getText().toString().replace(",", "")));
                     Double c = Double.parseDouble(String.valueOf(et[4].getText() != null ? et[4].getText().toString().replace(",", "") : "0"));
                     Double total = a * b * c;
-                    et[5].setText(hasilTotla(String.valueOf(total)));
+                    et[5].setText(new Validations().getInstance(getContext()).numberToCurency(String.valueOf(total)));
                     if (!tax) {
                         Double totalTax = total * 0.1;
-                        et[5].setText(hasilTotla(String.valueOf(total + totalTax)));
+                        et[5].setText(new Validations().getInstance(getContext()).numberToCurency(String.valueOf(total + totalTax)));
                     }
                 }
             }
         }
     }
 
-    private String hasilTotla(String originalString) {
-        Double longval;
-        if (originalString.contains(",")) {
-            originalString = originalString.replaceAll(",", "");
-        }
-        longval = Double.parseDouble(originalString);
-
-        DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-        formatter.applyPattern("#,###,###,###.#####");
-        String formattedString = formatter.format(longval);
-
-        return formattedString;
-    }
 }

@@ -366,10 +366,10 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             started = true;
         }
 
-        if (scheduleTaskExecutor == null) {
-            scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
-            scheduleTaskExecutor.scheduleAtFixedRate(new MessengerConnectionTask(this), 0, 1, TimeUnit.SECONDS);
-        }
+//        if (scheduleTaskExecutor == null) {
+//            scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
+//            scheduleTaskExecutor.scheduleAtFixedRate(new MessengerConnectionTask(this), 0, 1, TimeUnit.SECONDS);
+//        }
 
         return START_STICKY;
     }
@@ -4824,178 +4824,193 @@ Log.w("every",co.getJabberId());
                     return;
                 connectionHelperStarted = true;
 
-                while (!xmppConnection.isAuthenticated()) {
-
-                    while (!xmppConnection.isConnected()) {
-                        try {
-                            xmppConnection.connect();
-
-                            configure();
-                            ServiceDiscoveryManager sdm = ServiceDiscoveryManager
-                                    .getInstanceFor(xmppConnection);
-
-                            sdm.addFeature("http://jabber.org/protocol/disco#info");
-                            sdm.addFeature("jabber:iq:privacy");
-
-                            startPingBoss();
-                            addStreamManagementAckListener();
-
-                            //set our receipt manager
-                            DeliveryReceiptManager.getInstanceFor(xmppConnection).addReceiptReceivedListener(new ReceiptReceivedListener() {
-                                @Override
-                                public void onReceiptReceived(String fromJid, String toJid, String receiptId, Stanza receipt) {
-                                    //Log.d(TAG, "onReceiptReceived from:" + fromJid + " to:" + toJid + " receiptid:" + receiptId);
-                                }
-                            });
-                            //DeliveryReceiptManager.getInstanceFor(xmppConnection).dontAutoAddDeliveryReceiptRequests();
-                            //DeliveryReceiptManager.getInstanceFor(xmppConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.disabled);
-                            addMucInvitationListener();
-                        } catch (Exception e) {
-                            Log.e(getClass().getSimpleName(),
-                                    "Error connecting to " + SERVER_HOST + ":"
-                                            + SERVER_PORT + ": " + e.getMessage());
-                            try {
-                                sleep(3000);
-                            } catch (InterruptedException ie) {
-                            }
-                        }
-                    }   //end while isconnected
-
+                if (MessengerConnectionService.started) {
                     try {
-                        Contact myContact;
-                        while ((myContact = getCurContact()) == null) {
-                            try {
-                                sleep(10000);
-                            } catch (InterruptedException ie) {
-                            }
-                        }
+                        while (!xmppConnection.isAuthenticated()) {
 
-                        if (!xmppConnection.isAuthenticated()) {
-                            SASLAuthentication.unregisterSASLMechanism("DIGEST-MD5");
-                            //SASLAuthentication.supportSASLMechanism("PLAIN", 0);
-                            SASLAuthentication.registerSASLMechanism(new SASLPlainMechanism());
-                            xmppConnection.login(myContact.getJabberId(),
-                                    myContact.getName());
+                            if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                                while (!xmppConnection.isConnected()) {
+                                    try {
+                                        xmppConnection.connect();
 
-                            ChatManager.getInstanceFor(xmppConnection).addChatListener(
-                                    new ChatManagerListener() {
-                                        @Override
-                                        public void chatCreated(Chat chat,
-                                                                boolean createdLocally) {
-                                            if (!createdLocally) {
-                                                chat.addMessageListener(chatMsgListener);
+                                        configure();
+                                        ServiceDiscoveryManager sdm = ServiceDiscoveryManager
+                                                .getInstanceFor(xmppConnection);
+
+                                        sdm.addFeature("http://jabber.org/protocol/disco#info");
+                                        sdm.addFeature("jabber:iq:privacy");
+
+                                        startPingBoss();
+                                        addStreamManagementAckListener();
+
+                                        //set our receipt manager
+                                        DeliveryReceiptManager.getInstanceFor(xmppConnection).addReceiptReceivedListener(new ReceiptReceivedListener() {
+                                            @Override
+                                            public void onReceiptReceived(String fromJid, String toJid, String receiptId, Stanza receipt) {
+                                                //Log.d(TAG, "onReceiptReceived from:" + fromJid + " to:" + toJid + " receiptid:" + receiptId);
                                             }
+                                        });
+                                        //DeliveryReceiptManager.getInstanceFor(xmppConnection).dontAutoAddDeliveryReceiptRequests();
+                                        //DeliveryReceiptManager.getInstanceFor(xmppConnection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.disabled);
+                                        addMucInvitationListener();
+                                    } catch (Exception e) {
+                                        Log.e(getClass().getSimpleName(),
+                                                "Error connecting to " + SERVER_HOST + ":"
+                                                        + SERVER_PORT + ": " + e.getMessage());
+                                        try {
+                                            sleep(3000);
+                                        } catch (InterruptedException ie) {
                                         }
-                                    });
-                            sendBroadcast(ACTION_CONNECTED);
-                        }
+                                    }
+                                }   //end while isconnected
+                            }
 
-                        String SQL_SELECT_MESSAGES = "SELECT *  FROM "
-                                + Message.TABLE_NAME + " WHERE status = 1 order by packet_id desc";
-
-                        Cursor cursor = databaseHelper.query(SQL_SELECT_MESSAGES, new String[]{});
-
-                        ArrayList<Message> messages = new ArrayList<Message>();
-
-                        while (cursor.moveToNext()) {
-                            Message vo = new Message(cursor);
-                            messages.add(0, vo);
-                        }
-                        cursor.close();
-                        for (Iterator<Message> iterator = messages.iterator(); iterator
-                                .hasNext(); ) {
-                            Message vo = iterator.next();
-                            if (vo.isGroupChat()) {
-
-                                if (!ConversationGroupActivity.client.isConnected()) {
-                                    ConversationGroupActivity.client.connect();
+                            try {
+                                Contact myContact;
+                                while ((myContact = getCurContact()) == null) {
+                                    try {
+                                        sleep(10000);
+                                    } catch (InterruptedException ie) {
+                                    }
                                 }
 
-                                Intent intent = new Intent(getApplicationContext(), UploadService.class);
-                                intent.putExtra(UploadService.ACTION, "sendTextGroup");
-                                intent.putExtra(UploadService.KEY_MESSAGE, vo);
-                                startService(intent);
-                            } else {
-                                if (vo.getType().equals(Message.TYPE_VIDEO) || vo.getType().equals(Message.TYPE_IMAGE)) {
-                                    if (isXmppConnected()) sendFile(vo);
-                                } else if (vo.getType().equals(Message.TYPE_LOC)) {
-                                    if (isXmppConnected()) sendLocation(vo);
-                                } else if (vo.getType().equals(Message.TYPE_TEXT)) {
-                                    if (isXmppConnected()) sendMessage(vo);
-                                } else if (vo.getType().equals(Message.TYPE_TARIK)) {
-                                    if (isXmppConnected()) sendTarikPesan(vo);
-                                } else if (vo.getType().equals(Message.TYPE_READSTATUS)) {
-                                    if (isXmppConnected()) sendReadStatus(vo);
-                                    ;
+                                if (!xmppConnection.isAuthenticated()) {
+                                    SASLAuthentication.unregisterSASLMechanism("DIGEST-MD5");
+                                    //SASLAuthentication.supportSASLMechanism("PLAIN", 0);
+                                    SASLAuthentication.registerSASLMechanism(new SASLPlainMechanism());
+                                    xmppConnection.login(myContact.getJabberId(),
+                                            myContact.getName());
+
+                                    ChatManager.getInstanceFor(xmppConnection).addChatListener(
+                                            new ChatManagerListener() {
+                                                @Override
+                                                public void chatCreated(Chat chat,
+                                                                        boolean createdLocally) {
+                                                    if (!createdLocally) {
+                                                        chat.addMessageListener(chatMsgListener);
+                                                    }
+                                                }
+                                            });
+                                    sendBroadcast(ACTION_CONNECTED);
+                                }
+
+                                String SQL_SELECT_MESSAGES = "SELECT *  FROM "
+                                        + Message.TABLE_NAME + " WHERE status = 1 order by packet_id desc";
+
+                                Cursor cursor = databaseHelper.query(SQL_SELECT_MESSAGES, new String[]{});
+
+                                ArrayList<Message> messages = new ArrayList<Message>();
+
+                                while (cursor.moveToNext()) {
+                                    Message vo = new Message(cursor);
+                                    messages.add(0, vo);
+                                }
+                                cursor.close();
+                                for (Iterator<Message> iterator = messages.iterator(); iterator
+                                        .hasNext(); ) {
+                                    Message vo = iterator.next();
+                                    if (vo.isGroupChat()) {
+
+                                        if (!ConversationGroupActivity.client.isConnected()) {
+                                            ConversationGroupActivity.client.connect();
+                                        }
+
+                                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
+                                        intent.putExtra(UploadService.ACTION, "sendTextGroup");
+                                        intent.putExtra(UploadService.KEY_MESSAGE, vo);
+                                        startService(intent);
+                                    } else {
+                                        if (vo.getType().equals(Message.TYPE_VIDEO) || vo.getType().equals(Message.TYPE_IMAGE)) {
+                                            if (isXmppConnected()) sendFile(vo);
+                                        } else if (vo.getType().equals(Message.TYPE_LOC)) {
+                                            if (isXmppConnected()) sendLocation(vo);
+                                        } else if (vo.getType().equals(Message.TYPE_TEXT)) {
+                                            if (isXmppConnected()) sendMessage(vo);
+                                        } else if (vo.getType().equals(Message.TYPE_TARIK)) {
+                                            if (isXmppConnected()) sendTarikPesan(vo);
+                                        } else if (vo.getType().equals(Message.TYPE_READSTATUS)) {
+                                            if (isXmppConnected()) sendReadStatus(vo);
+                                            ;
+                                        }
+                                    }
+                                }
+
+                                IntervalDB db = new IntervalDB(getApplicationContext());
+                                db.open();
+                                Cursor c = db.getSingleContact(13);
+                                if (c.getCount() > 0) {
+                                    Intent intent = new Intent(getApplicationContext(), UploadProfileService.class);
+                                    startService(intent);
+                                }
+                                db.close();
+
+
+                            } catch (Exception e) {
+                                Log.e(getClass().getSimpleName(),
+                                        "Error login: " + e.getMessage());
+                                try {
+                                    sleep(3000);
+                                } catch (InterruptedException ie) {
                                 }
                             }
-                        }
-
-                        IntervalDB db = new IntervalDB(getApplicationContext());
-                        db.open();
-                        Cursor c = db.getSingleContact(13);
-                        if (c.getCount() > 0) {
-                            Intent intent = new Intent(getApplicationContext(), UploadProfileService.class);
-                            startService(intent);
-                        }
-                        db.close();
-
-
+                        } //end if authenticated
                     } catch (Exception e) {
                         Log.e(getClass().getSimpleName(),
-                                "Error login: " + e.getMessage());
+                                "Error logout: " + e.getMessage());
                         try {
                             sleep(3000);
                         } catch (InterruptedException ie) {
                         }
                     }
-                } //end if authenticated
+                }
 
-                Roster.getInstanceFor(xmppConnection).setSubscriptionMode(
-                        Roster.SubscriptionMode.accept_all
-                );
-                addPresenceListener();
+                if (xmppConnection != null) {
+                    Roster.getInstanceFor(xmppConnection).setSubscriptionMode(
+                            Roster.SubscriptionMode.accept_all
+                    );
+                    addPresenceListener();
 //Log.w("bukan1","ke tartik");
-                if (mucSubjectUpdatedListener == null) {
-                    // Log.w("bukan2","ke tartik");
-                    mucSubjectUpdatedListener = new MucSubjectUpdatedListener();
-                    mucParticipantStatusListener = new GroupParticipantStatusListener();
+                    if (mucSubjectUpdatedListener == null) {
+                        // Log.w("bukan2","ke tartik");
+                        mucSubjectUpdatedListener = new MucSubjectUpdatedListener();
+                        mucParticipantStatusListener = new GroupParticipantStatusListener();
 
-                    Group group = new Group();
-                    Cursor cursor = databaseHelper.query(
-                            "SELECT * FROM " + group.getTableName(), null);
-                    if (!xmppConnection.isConnected()) {
-                        SystemClock.sleep(100);
-                    }
-                    while (cursor.moveToNext()) {
-                        group = new Group(cursor);
-                        if (Group.STATUS_INACTIVE.equals(group.getStatus()))
-                            continue;
-                        String groupId = group.getJabberId() + "@"
-                                + CONFERENCE_SERVER;
-                        MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(xmppConnection);
-                        MultiUserChat muc = mucMgr.getMultiUserChat(groupId);
-                        try {
-                            //sudah sampi sini
-                            DiscussionHistory history = new DiscussionHistory();
-                            history.setMaxChars(0);
-
-                            muc.join(getCurContact().getJabberId(), "", history,
-                                    SmackConfiguration.getDefaultPacketReplyTimeout());
-
-                            registerMuc(muc, group.getJabberId(),
-                                    Group.STATUS_ACTIVE);
-                        } catch (XMPPException e) {
-                            Log.e(getClass().getSimpleName(), "Failed rejoining "
-                                    + group.getJabberId(), e);
-                        } catch (SmackException.NotConnectedException e) {
-                            e.printStackTrace();
-                        } catch (SmackException.NoResponseException e) {
-                            e.printStackTrace();
+                        Group group = new Group();
+                        Cursor cursor = databaseHelper.query(
+                                "SELECT * FROM " + group.getTableName(), null);
+                        if (!xmppConnection.isConnected()) {
+                            SystemClock.sleep(100);
                         }
+                        while (cursor.moveToNext()) {
+                            group = new Group(cursor);
+                            if (Group.STATUS_INACTIVE.equals(group.getStatus()))
+                                continue;
+                            String groupId = group.getJabberId() + "@"
+                                    + CONFERENCE_SERVER;
+                            MultiUserChatManager mucMgr = MultiUserChatManager.getInstanceFor(xmppConnection);
+                            MultiUserChat muc = mucMgr.getMultiUserChat(groupId);
+                            try {
+                                //sudah sampi sini
+                                DiscussionHistory history = new DiscussionHistory();
+                                history.setMaxChars(0);
 
+                                muc.join(getCurContact().getJabberId(), "", history,
+                                        SmackConfiguration.getDefaultPacketReplyTimeout());
+
+                                registerMuc(muc, group.getJabberId(),
+                                        Group.STATUS_ACTIVE);
+                            } catch (XMPPException e) {
+                                Log.e(getClass().getSimpleName(), "Failed rejoining "
+                                        + group.getJabberId(), e);
+                            } catch (SmackException.NotConnectedException e) {
+                                e.printStackTrace();
+                            } catch (SmackException.NoResponseException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                        cursor.close();
                     }
-                    cursor.close();
                 }
 
                 connectionHelperStarted = false;

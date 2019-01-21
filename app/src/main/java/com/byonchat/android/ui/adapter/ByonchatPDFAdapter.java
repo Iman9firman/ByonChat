@@ -95,7 +95,7 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ((ByonchatPDFViewHolder) viewHolder).vTimestamp.setText(item.timestamp);
             ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.subtitle));
 
-            ((ByonchatPDFViewHolder) viewHolder).vBtLoves.setOnClickListener(view -> {
+            ((ByonchatPDFViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
                 if (onPreviewItemClickListener != null) {
                     onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i));
                 }

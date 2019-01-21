@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -19,6 +20,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.byonchat.android.DialogFormChildMainNew;
+import com.byonchat.android.DialogFormChildRequestDoc;
+import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.data.model.File;
@@ -184,7 +188,10 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         }, new OnRequestItemClickListener() {
             @Override
             public void onItemClick(View view, int position, File item) {
-                Toast.makeText(activity, "Type your code here........................", Toast.LENGTH_SHORT).show();
+                FragmentManager fm = activity.getSupportFragmentManager();
+                DialogFormChildRequestDoc testDialog = DialogFormChildRequestDoc.newInstance(username, idRoomTab,item.title,item.description);
+                testDialog.setRetainInstance(true);
+                testDialog.show(fm, "Dialog");
             }
         });
 

@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -107,6 +108,8 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
+
+    public static String TAG = MainByonchatRoomBaseActivity.class.getName() + " not running";
 
     public static String FRAGMENT_ROOM_ABOUT = "fragment_room_about";
     public static String FRAGMENT_ROOM_MY_PICTURE = "fragment_room_my_picture";
@@ -211,9 +214,12 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         try {
             onSetStatusBarColor();
             setContentView(getResourceLayout());
+            onLoadConfig(savedInstanceState);
+            onLoadToolbar();
             onLoadView();
             onViewReady(savedInstanceState);
         } catch (Exception e) {
+            Log.w(TAG, e.toString());
             finish();
             Toast.makeText(this, R.string.str_not_able_open_room, Toast.LENGTH_SHORT).show();
         }
@@ -229,7 +235,11 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     protected abstract int getResourceLayout();
 
+    protected abstract void onLoadConfig(Bundle savedInstanceState);
+
     protected abstract void onLoadView();
+
+    protected abstract void onLoadToolbar();
 
     protected void applyConfig() {
         position = listItem != null ? listItem.id : getIntent().getExtras().getInt(EXTRA_POSITION, 0);
@@ -249,9 +259,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     }
 
     protected void onViewReady(Bundle savedInstanceState) {
-        resolveChatRoom(savedInstanceState);
-
-        applyConfig();
     }
 
     protected void resolveSearchBar() {
@@ -315,7 +322,8 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         vToolbar.setBackgroundColor(Color.parseColor("#" + color));
         vToolbar.setTitleTextColor(Color.parseColor("#" + colorText));
         vToolbarTitle.setTextColor(Color.parseColor("#" + colorText));
-        vImgToolbarBack.setColorFilter(Color.parseColor("#" + colorText));
+
+        vImgToolbarBack.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_IN);
 
         vToolbarBack.setOnClickListener(v -> onBackPressed());
         vToolbarTitle.setText(title);

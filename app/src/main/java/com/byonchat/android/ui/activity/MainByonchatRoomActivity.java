@@ -34,6 +34,18 @@ public class MainByonchatRoomActivity extends MainByonchatRoomBaseActivity {
     }
 
     @Override
+    protected void onLoadConfig(Bundle savedInstanceState) {
+        resolveChatRoom(savedInstanceState);
+
+        applyConfig();
+    }
+
+    @Override
+    protected void onLoadToolbar() {
+
+    }
+
+    @Override
     protected void onLoadView() {
         vToolbar = getToolbar();
         vToolbarBack = getToolbarBack();

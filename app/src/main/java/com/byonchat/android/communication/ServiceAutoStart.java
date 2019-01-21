@@ -20,7 +20,7 @@ public class ServiceAutoStart extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.w("summerparadise", "Auto " + intent.getAction());
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Utility.scheduleJob(context);
         } else {
             UploadService mUploadService = new UploadService();

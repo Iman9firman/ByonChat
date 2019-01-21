@@ -305,7 +305,7 @@ public class MainActivityNew extends MainBaseActivityNew {
     @SuppressWarnings("WrongConstant")
     protected void resolveView() {
         try {
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 Utility.scheduleJob(this);
             } else {
                 mUploadService = new UploadService();

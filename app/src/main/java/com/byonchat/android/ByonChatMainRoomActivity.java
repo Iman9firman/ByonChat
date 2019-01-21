@@ -34,6 +34,7 @@ import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.ItemListMemberCard;
 import com.byonchat.android.local.Byonchat;
@@ -90,12 +91,31 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
     }
 
     @Override
+    protected void onLoadToolbar() {
+        vAppbar = getAppBar();
+        vToolbar = getToolbar();
+
+        if (color.equalsIgnoreCase("FFFFFF") && colorText.equalsIgnoreCase("000000")) {
+            View lytToolbarDark = getLayoutInflater().inflate(R.layout.toolbar_custom_dark, vAppbar);
+            Toolbar toolbarDark = lytToolbarDark.findViewById(R.id.toolbar);
+            vAppbar.removeView(vToolbar);
+        }
+    }
+
+    @Override
+    protected void onLoadConfig(Bundle savedInstanceState) {
+        resolveChatRoom(savedInstanceState);
+
+        applyConfig();
+    }
+
+    @Override
     protected void onLoadView() {
+        vAppbar = getAppBar();
         vToolbar = getToolbar();
         vToolbarBack = getToolbarBack();
         vImgToolbarBack = getImgToolbarBack();
         vToolbarTitle = getToolbarTitle();
-        vAppbar = getAppBar();
         vSearchView = getMaterialSearchView();
         vContainerFragment = getFrameFragment();
         vFloatingButton = getFloatingButton();

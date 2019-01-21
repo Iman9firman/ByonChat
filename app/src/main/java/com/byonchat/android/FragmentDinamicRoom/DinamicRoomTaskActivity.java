@@ -252,6 +252,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     EditText et[];
     TextView tp[];
     RadioGroup rg[];
+    ArrayList<String> banyakDropdown;
     ArrayList<ArrayList<String>> stringAPI;
     Map<Integer, String> idFormChildParent = new HashMap<Integer, String>();
     Map<Integer, String> hashMapOcrKTP = new HashMap<Integer, String>();
@@ -466,7 +467,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
         getSupportActionBar().setTitle(title);
-        Log.w("haskdi", idTab + ":::" + title);
 
 
         Cursor cursor = db.getSingleRoomDetailForm(username, idTab);
@@ -479,7 +479,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
             JSONObject jO = null;
             try {
-                Log.w("habibi", conBefore);
                 jO = new JSONObject(conBefore);
                 content = jO.getString("aa");
                 dbMaster = jO.getString("bb");
@@ -573,12 +572,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 LinearLayout masterlinearValue = (LinearLayout) findViewById(R.id.linearValue);
                 masterlinearValue.setVisibility(View.VISIBLE);
 
-                Log.w("kami2", idDetail);
 
                 Cursor cursorValue = db.getSingleRoomDetailFormWithFlag(idDetail, username, idTab, "value");
                 if (cursorValue.getCount() > 0) {
                     final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
-                    Log.w("hasi", contentValue);
 
                     JSONArray jsonArray = null;
                     try {
@@ -592,7 +589,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             JSONArray joContent = oContent2.getJSONArray("value_detail");
                             String bc_user = oContent.getString("bc_user");
 
-                            Log.w("magiv", magic.get(0).toString());
 
                             JSONObject oUser = new JSONObject(bc_user);
 
@@ -704,7 +700,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 final String value = joContent.getJSONObject(i).getString("value").toString();
                                 final String type = joContent.getJSONObject(i).getString("type").toString();
                                 final String idValue = joContent.getJSONObject(i).getString("id").toString();
-                                Log.w("juba", idValue);
 
 // TODO: 08/11/18 jadi nnti listchild dimasukin ke dalem array untuk ambil data dari parennya
                                 if (type.equalsIgnoreCase("dropdown_views")) {
@@ -824,11 +819,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     ListView lv = (ListView) line.findViewById(R.id.listOrder);
                                     TextView tQty = null;
                                     TextView tPrice = null;
-                                    Log.w("kasam", iidd);
                                     if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632") || iidd.equalsIgnoreCase("2021")
                                             || (Integer.valueOf(iidd) >= 2092)) {
                                         line = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout_value, null);
-                                        Log.w("kasam1", iidd);
                                         if (Integer.valueOf(iidd) >= 2092) {
                                             TextView nama = (TextView) line.findViewById(R.id.nama);
                                             nama.setVisibility(View.GONE);
@@ -837,7 +830,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         lv = (ListView) line.findViewById(R.id.listOrder);
                                         addCild = (Button) line.findViewById(R.id.btn_add_cild);
                                     } else {
-                                        Log.w("kasam2", iidd);
                                         tQty = (TextView) line.findViewById(R.id.total_detail_order);
                                         tPrice = (TextView) line.findViewById(R.id.total_price_order);
                                     }
@@ -858,7 +850,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     JSONArray jsonarray = new JSONArray(value);
 
                                     if (Integer.valueOf(iidd) >= 2092) {
-                                        Log.w("kasam3", iidd);
                                         for (int aaa = 0; aaa < jsonarray.length(); aaa++) {
                                             JSONObject jsonobject = jsonarray.getJSONObject(aaa);
                                             String urutan = jsonobject.getString("urutan");
@@ -866,13 +857,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             String decsUntuk = "";
                                             String priceUntuk = "";
                                             String data = jsonobject.getString("data");
-                                            Log.w("bajuri", data);
 
                                             JSONArray jsonarrayChild = new JSONArray(data);
-                                            Log.w("bajuri2as", jsonarrayChild.length() + "");
                                             boolean image = false;
                                             for (int bbb = 0; bbb < jsonarrayChild.length(); bbb++) {
-                                                Log.w("bajuri1", "satu");
                                                 final String key = jsonarrayChild.getJSONObject(bbb).getString("key").toString();
                                                 final String val = jsonarrayChild.getJSONObject(bbb).getString("value").toString();
                                                 final String typ = jsonarrayChild.getJSONObject(bbb).getString("type").toString();
@@ -882,11 +870,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 }
 
 
-                                                Log.w("kosasohg", key + "::" + val + "::" + typ + "::" + lab);
-
                                                 String valUs = "";
                                                 if (Message.isJSONValid(val)) {
-                                                    Log.w("bajuri2", "satu");
                                                     JSONObject jObject = null;
                                                     try {
                                                         jObject = new JSONObject(val);
@@ -899,7 +884,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         }
 
                                                     } catch (JSONException e) {
-                                                        Log.w("bajuri2a", "satu");
                                                         e.printStackTrace();
                                                     }
 
@@ -908,10 +892,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 if (valUs.length() == 0) {
 
                                                     titleUntuk += lab + " : " + val + "\n";
-                                                    Log.w("bajuri2b", titleUntuk);
                                                 } else {
                                                     titleUntuk += lab + "\n" + valUs;
-                                                    Log.w("bajuri2b", titleUntuk);
                                                 }
 
 
@@ -919,11 +901,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     image = true;
                                                 }
                                             }
-
-                                            Log.w("cucuc", String.valueOf(image));
-
                                             if (image) {
-                                                Log.w("bajuri3", "satu");
                                                 JSONArray jsonarrayChild2 = new JSONArray(data);
                                                 for (int bbb = 0; bbb < jsonarrayChild.length(); bbb++) {
                                                     String key = jsonarrayChild2.getJSONObject(bbb).getString("key").toString();
@@ -950,9 +928,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     }
                                                 }
                                             } else {
-                                                Log.w("bajuri4", iidd);
                                                 if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209") || iidd.equalsIgnoreCase("2397")) {
-                                                    Log.w("haihi", data);
 
                                                     JSONArray jsonarrayChild2 = new JSONArray(data);
                                                     JSONObject ks0 = jsonarrayChild2.getJSONObject(0);
@@ -979,7 +955,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         }
 
                                     } else {
-                                        Log.w("kasam4", iidd);
                                         for (int aaa = 0; aaa < jsonarray.length(); aaa++) {
                                             JSONObject jsonobject = jsonarray.getJSONObject(aaa);
                                             String urutan = jsonobject.getString("urutan");
@@ -1015,7 +990,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                                 if (jsA != null) {
                                                     if (typ.equalsIgnoreCase("distance_estimation") || typ.equalsIgnoreCase("dropdown_dinamis") || typ.equalsIgnoreCase("new_dropdown_dinamis") || typ.equalsIgnoreCase("ocr") || typ.equalsIgnoreCase("upload_document")) {
-                                                        Log.w("vava", val);
                                                         if (iidd.equalsIgnoreCase("1643")) {
                                                             titleUntuk = jsonResultType(val, "Nama");
                                                         } else {
@@ -1096,7 +1070,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                             if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632")) {
                                                 rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, ""));
-                                                Log.w("laga", "2");
                                             } else if (iidd.equalsIgnoreCase("1113")) {
                                                 int nilai = 0;
                                                 try {
@@ -1104,16 +1077,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 } catch (Exception e) {
                                                     nilai = 0;
                                                 }
-                                                Log.w("laga", "3");
                                                 rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, String.valueOf(nilai)));
                                             } else {
 
                                                 if (priceUntuk.equalsIgnoreCase("standart") && !fotoUntuk.equalsIgnoreCase("")) {
                                                     priceUntuk = fotoUntuk;
                                                 }
-
-                                                Log.w("laga", "4" + "==" + titleUntuk + "==" + decsUntuk + "==" + priceUntuk);
-
                                                 rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, priceUntuk));
                                             }
                                         }
@@ -1141,8 +1110,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 } else if (mfc.getPrice().equalsIgnoreCase("standart")) {
                                                     sini.add("standart");
                                                 } else {
-                                                    Log.w("toyin", mfc.getDetail() + "<->" + Integer.valueOf(mfc.getPrice().replace(".", "")) * Integer.valueOf(mfc.getDetail()));
-
                                                     if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209") || iidd.equalsIgnoreCase("2397")) {
                                                         totalQ += Integer.valueOf(mfc.getDetail());
                                                         temp += Float.valueOf(mfc.getPrice()) * Integer.valueOf(mfc.getDetail());
@@ -1163,7 +1130,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
                                         }
 
-                                        Log.w("toyin2", totalP + "::" + totalQ);
                                         if (totalQ > 0 && totalP > 0) {
                                             String totalHarga = new Validations().getInstance(context).numberToCurency(totalP + "");
                                             tQty.setText(totalQ + "");
@@ -1173,10 +1139,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     }
 
                                     if (sini.size() > 0) {
-                                        Log.w("bisa", "1");
-
                                         if (sini.get(0).toString().equalsIgnoreCase("image")) {
-                                            Log.w("bisa", "2");
                                             line = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout_value, null);
                                             lv = (ListView) line.findViewById(R.id.listOrder);
                                             TextView nama = (TextView) line.findViewById(R.id.nama);
@@ -1210,7 +1173,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             });
 
                                         } else {
-                                            Log.w("bisa", "3");
                                             line = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout_value, null);
                                             lv = (ListView) line.findViewById(R.id.listOrder);
 
@@ -1246,13 +1208,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                                     } else {
-                                        Log.w("bisaS1", iidd);
                                         if (Integer.valueOf(iidd) >= 2092 && Integer.valueOf(iidd) != 2207 && Integer.valueOf(iidd) != 2206 && Integer.valueOf(iidd) != 2209 && Integer.valueOf(iidd) != 2397) {
-                                            Log.w("bisaS2", "3");
                                             final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "multiple", false);
                                             lv.setAdapter(adapter);
                                         } else {
-                                            Log.w("bisaS3", "3");
                                             final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "value", false);
                                             lv.setAdapter(adapter);
                                         }
@@ -1614,25 +1573,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         e.printStackTrace();
                     }
                 } else {
-                    Log.w("hahaCke", fromList);
 
                     if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
                         if (username != null) {
                             if (fromList.equalsIgnoreCase("hide")) {
-                                Log.w("1", "satu");
                                 new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
                             } else if (fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
-                                Log.w("2", "satu");
                                 if (!idDetail.equalsIgnoreCase("")) {
-                                    Log.w("3", "satu");
                                     String[] ff = idDetail.split("\\|");
                                     if (ff.length == 2) {
-                                        Log.w("4Satu", username + "::" + idTab + "::" + idDetail);
                                         new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail);
                                     }
                                 }
                             } else {
-                                Log.w("5", "satu");
                                 new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
                             }
                         } else {
@@ -1713,8 +1666,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     }
                 }
 
-                Log.w("ini", content);
-
                 final JSONArray jsonArray = new JSONArray(content);
                 if (jsonArray.length() == 0) {
 
@@ -1729,6 +1680,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 tp = new TextView[jsonArray.length()];
                 rat = new RatingBar[jsonArray.length()];
                 rg = new RadioGroup[jsonArray.length()];
+                banyakDropdown = new ArrayList<String>();
                 stringAPI = new ArrayList<ArrayList<String>>();
                 linearEstimasi = new LinearLayout[jsonArray.length()];
                 imageView = new ImageView[jsonArray.length()];
@@ -1753,8 +1705,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     if (jsonArray.getJSONObject(i).has("dropdown_view_parents")) {
                         dropdownViewId = jsonArray.getJSONObject(i).getJSONArray("dropdown_view_parents");
                     }
-
-                    Log.w("asd:" + count, label + "--" + type);
 
                     if (type.equalsIgnoreCase("preview_document")) {
 
@@ -1834,7 +1784,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                         final String isi = jsonArray.getJSONObject(i).getString("dropdown_views").toString();
-                        Log.w("sarinim", isi);
 
                         final JSONArray jsonArrays = new JSONArray(isi);
 
@@ -2036,7 +1985,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         });
 
                         String jsonData = jsonArray.getJSONObject(i).getString("attach_api");
-                        Log.w("siapa11", jsonData);
                         JSONArray ja = null;
                         try {
                             ja = new JSONArray(jsonData);
@@ -2045,7 +1993,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
                         if (ja != null) {
-                            Log.w("siapa", "sssa");
 
                             if (ja.length() == 0) {
                                 Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
@@ -2096,16 +2043,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                             } else {
-                                Log.w("banib1", value);
-
                                 valueFile.setText(value);
                                 ArrayList<String> banker = new ArrayList<String>();
-                                Log.w("bans", jsonPosCode(idListTask, String.valueOf(count), type, String.valueOf(i), value));
 
                                 banker.add(0, jsonPosCode(idListTask, String.valueOf(count), type, String.valueOf(i), value));
                                 for (int ii = 0; ii < ja.length(); ii++) {
                                     banker.add(ii + 1, ja.getString(ii));
-                                    Log.w("banib2", ii + 1 + "::" + ja.getString(ii));
                                 }
 
                                 stringAPI.add(banker);
@@ -2264,7 +2207,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                         if (idListTask.equalsIgnoreCase("65128")) {
-                            Log.w("igni", "satu");
 
                             linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout, null);
                             TableRow tableLayout = (TableRow) linearEstimasi[count].findViewById(R.id.tableRow2);
@@ -2415,20 +2357,17 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "", false);
                                 lv.setAdapter(adapter);
 
-                                Log.w("end2", jsonArrayMaster.toString());
 
                                 if (jsonArrayMaster.length() > 0) {
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                                     if (cEdit.getCount() > 0) {
 
                                         String contentValue = jsonArrayMaster.toString();
-                                        Log.w("end3", contentValue);
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
                                     } else {
 
                                         String contentValue = jsonArrayMaster.toString();
-                                        Log.w("end4", contentValue);
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, contentValue, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                         db.insertRoomsDetail(orderModel);
                                     }
@@ -2513,7 +2452,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
 
                         } else if (idListTask.equalsIgnoreCase("63837") || idListTask.equalsIgnoreCase("64305") || idListTask.equalsIgnoreCase("64306") || idListTask.equalsIgnoreCase("64307") || idListTask.equalsIgnoreCase("64308")) {
-                            Log.w("igni", "dua");
                             linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout, null);
 
                             Button addCild = (Button) linearEstimasi[count].findViewById(R.id.btn_add_cild);
@@ -2626,7 +2564,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         jsonArrayHUHU.put(objVV);
                                     }
 
-                                    Log.w("sedi", decsUntuk + "::" + tambahan);
                                     rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk + tambahan, ""));
                                     objData.put("data", jsonArrayHUHU);
                                     jsonArrayMaster.put(objData);
@@ -2706,9 +2643,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 e.printStackTrace();
                             }
                         } else {
-                            Log.w("ignis", "tiga");
-                            Log.w("igniTIga", formChild);
-
                             JSONArray jsonArrayCild = new JSONArray(formChild);
 
                             boolean perhitungan = false;
@@ -2737,8 +2671,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
 
                             if (perhitungan) {
-
-                                Log.w("igni", "empat");
                                 linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.from_cild_layout, null);
 
                                 Button addCild = (Button) linearEstimasi[count].findViewById(R.id.btn_add_cild);
@@ -2829,10 +2761,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
 
                                             if (jsA != null) {
-                                                Log.w("slasa1", "1");
                                                 if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
                                                     try {
-                                                        Log.w("slasa2", "1");
                                                         objVV.put("key", list.get(u).getFlag_tab());
                                                         JSONObject jObject = null;
                                                         try {
@@ -2854,7 +2784,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     }
 
                                                 } else {
-                                                    Log.w("slasa3", "1");
                                                     try {
                                                         for (int ic = 0; ic < jsA.length(); ic++) {
                                                             final String icC = jsA.getJSONObject(ic).getString("c").toString();
@@ -2919,8 +2848,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         decsUntuk = list.get(2).getContent();
                                                         priceUntuk = jObject.get("AVE").toString();
 
-                                                        Log.w("arash", idchildDetail + ":::" + tPP + ":::" + decsUntuk + ":::" + priceUntuk);
-
                                                         rowItems.add(new ModelFormChild(idchildDetail, tPP, decsUntuk, priceUntuk));
 
                                                     } catch (JSONException e) {
@@ -2937,9 +2864,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         objData.put("data", jsonArrayHUHU);
                                         jsonArrayMaster.put(objData);
                                     }
-
-                                    Log.w("slasa77", jsonArrayMaster.toString());
-
 
                                     Integer totalQ = 0;
                                     Double totalP = 0.0;
@@ -3045,7 +2969,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 FragmentManager fm = getSupportFragmentManager();
 
                                                 if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
-                                                    Log.w("kausar", item.getId());
 
                                                     DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
                                                     testDialog.setRetainInstance(true);
@@ -3065,8 +2988,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 }
                             } else {
                                 //
-
-                                Log.w("igni", "lima" + idListTask);
 
                                 linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout, null);
                                 TableRow tableLayout = (TableRow) linearEstimasi[count].findViewById(R.id.tableRow2);
@@ -3174,11 +3095,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown")) {
                                                     titleName.setText(list.get(u).getFlag_tab());
                                                     titleUntuk = list.get(u).getContent();
-                                                    Log.w("lama1", titleUntuk);
                                                 } else {
-                                                    Log.w("lama1a", titleUntuk);
                                                     decsUntuk = list.get(u).getContent();
-                                                    Log.w("lama2a", decsUntuk);
                                                     if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
                                                         priceUntuk = list.get(u).getContent();
                                                     }
@@ -3404,8 +3322,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
 
-
-                        Log.w("inaft", count + "--" + label);
 
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
@@ -5341,7 +5257,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("dropdown_form")) {
-                        Log.w("idListTask", idListTask);
                         if (idListTask.equalsIgnoreCase("66989")) {
                             TextView textView = new TextView(DinamicRoomTaskActivity.this);
                             if (required.equalsIgnoreCase("1")) {
@@ -5406,7 +5321,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         RelativeLayout relativeLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.expandable_listview, null);
                                         expandableListView[count] = (ExpandableListView) relativeLayout.findViewById(R.id.expandableView);
 
-                                        Log.w("coba", count + "");
 
                                         final ExpandableListAdapter expandableListAdapter = new ExpandableListAdapter(this, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(idListTask, type, String.valueOf(finalI5)), name);
                                         expandableListView[count].setAdapter(expandableListAdapter);
@@ -5444,9 +5358,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
                                         finish();
                                     }
-
-                                    Log.w("sabu", url);
-
                                     finish();
                                     Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                     intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
@@ -5479,7 +5390,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     JSONObject jObjectFormula = null;
                                     try {
-                                        Log.w("badaui2", Formulamaster);
                                         List<String> expandableListTitle = new ArrayList<String>();
                                         HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
 
@@ -5578,11 +5488,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
                                             css.close();
                                         } else {
-                                            Log.w("lauas", "111");
 
                                         }
 
-                                        Log.w("kamgi", Integer.valueOf(valueForms.get(0).toString()) + "");
                                         ExpandableListAdapter listAdapter = new ExpandableListAdapter(activity, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()), valueForms.get(3).toString());
                                         expandableListView[Integer.valueOf(valueForms.get(0).toString())].setAdapter(listAdapter);
                                         setListViewHeightBasedOnChildren(expandableListView[Integer.valueOf(valueForms.get(0).toString())]);
@@ -5657,7 +5565,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         RelativeLayout relativeLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.expandable_listview, null);
                                         expandableListView[count] = (ExpandableListView) relativeLayout.findViewById(R.id.expandableView);
 
-                                        Log.w("coba", count + "");
 
                                         final ExpandableListAdapter expandableListAdapter = new ExpandableListAdapter(this, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(idListTask, type, String.valueOf(finalI5)), name);
                                         expandableListView[count].setAdapter(expandableListAdapter);
@@ -5695,8 +5602,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         finish();
                                     }
 
-                                    Log.w("sabu", url);
-
                                     finish();
                                     Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                     intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
@@ -5719,6 +5624,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                     } else if (type.equalsIgnoreCase("new_dropdown_dinamis")) {
+
+                        banyakDropdown.add("1");
 
                         String foro = jsonArray.getJSONObject(i).getString("formula").toString();
 
@@ -5744,7 +5651,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
 
-                        Log.w("in1", String.valueOf(count));
 
                         if (jObjects != null) {
                             TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -5758,7 +5664,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                             params1.setMargins(30, 10, 30, 0);
                             valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                            Log.w("malee", String.valueOf(linearLayout.getChildCount()));
 
                             linearLayout.addView(textView, params1);
 
@@ -5828,7 +5733,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     final Cursor c = mDB.getWritableDatabase().query(true, q, aass, qw, new String[]{customersId}, null, null, null, null);
 
-                                    Log.w("Seo", aass.length + "");
 
                                     HashMap<String, String> hashMapss = new HashMap<>();
                                     final ArrayList<String> spinnerArray = new ArrayList<String>();
@@ -5843,14 +5747,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 String column2 = c.getString(1);
                                                 hashMapss.put(column1, column2);
                                             }
-                                            Log.w("suis", column1);
                                             spinnerArray.add(column1);
                                         } while (c.moveToNext());
                                     }
                                     c.close();
 
-
-                                    Log.w("lalal", hashMapss.size() + "");
 
                                     if (hashMapss.size() > 0) {
                                         outerMap.put(count, hashMapss);
@@ -5877,7 +5778,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                                     if (cursorCild.getCount() > 0) {
 
-                                        Log.w("bubu", cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
 
                                         try {
                                             JSONObject jsonObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
@@ -5896,7 +5796,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     }
 
                                     if (hashMapss.size() > 0) {
-                                        Log.w("sya", "2");
 
                                         newSpinner[count].setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                             @Override
@@ -5953,7 +5852,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                         });
                                     } else {
-                                        Log.w("sya", "1");
 
                                         newSpinner[count].setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                             @Override
@@ -6038,7 +5936,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             linearEstimasi[count].setLayoutParams(params2);
                             valSetOne.add(String.valueOf(linearLayout.getChildCount()));
 
-                            Log.w("malem", String.valueOf(linearLayout.getChildCount()));
 
                             linearLayout.addView(linearEstimasi[count]);
 
@@ -6317,7 +6214,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             } else {
                                                 customersId = spinner.getSelectedItem().toString();
                                                 if (kolom.size() > 1) {
-                                                    Log.w("aaa", "21");
                                                     final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
                                                     linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1, counts - 1);
 
@@ -6412,7 +6308,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         finish();
                                     }
                                     finish();
-                                    Log.w("abasd", url);
 
                                     Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                     intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
@@ -8312,7 +8207,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 value.get(2).toString().equalsIgnoreCase("phone_number") ||
                                                 value.get(2).toString().equalsIgnoreCase("currency")) {
                                             String aa = value.get(0).toString();
-                                            Log.w("Hii", et.length + "--" + Integer.valueOf(aa));
                                             et[Integer.valueOf(aa)].setError("required");
                                             berhenti = true;
                                         } else if (value.get(2).toString().equalsIgnoreCase("attach_api")) {
@@ -8545,8 +8439,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
                             db.updateDetailRoomWithFlagContentParent(orderModel);
 
-                            Log.w("cete", idDetail + "::" + username + "::" + idTab);
-
                             new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(DinamicRoomTaskActivity.this, idDetail, username, idTab);
                         } else
 
@@ -8567,7 +8459,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         {
             if (username != null) {
                 if (fromList.equalsIgnoreCase("hide")) {
-                    Log.w("kasmia", GETTABDETAILPULL + "::" + username + "::" + idTab + "::" + idDetail);
                     new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
                 } else if (fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
                     if (!idDetail.equalsIgnoreCase("")) {
@@ -8617,7 +8508,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             if (notlp.matches("0(.*)")) {
                 notlp = notlp.replace("0", "62");
                 cekProvider = notlp.substring(0, 5);
-                Log.w("Cek oi", cekProvider);
                 for (int i = 0; i < telkomsel.length; i++) {
                     if (cekProvider.equalsIgnoreCase(telkomsel[i])) {
                         hasil = "TELKOMSEL";
@@ -8645,7 +8535,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 }
             } else if (notlp.matches("62(.*)")) {
                 cekProvider = notlp.substring(0, 5);
-                Log.w("Cek oi", cekProvider);
                 for (int i = 0; i < telkomsel.length; i++) {
                     if (cekProvider.equalsIgnoreCase(telkomsel[i])) {
                         hasil = "TELKOMSEL";
@@ -8832,6 +8721,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         String column1 = c.getString(0);
                         spinnerArray.add(column1);
                         if (!showSpinner) {
+
                             customersId = column1;
 
 
@@ -9066,15 +8956,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         try {
             obj.put("aa", a);
             obj.put("bb", b);
-            Log.w("adabdi1", c);
 
             if (!c.equalsIgnoreCase("")) {
-                Log.w("adabdi2", c);
                 obj.put("cc", c);
             }
 
             if (!d.equalsIgnoreCase("")) {
-                Log.w("adabdi2", d);
                 obj.put("dd", d);
             }
 
@@ -9301,27 +9188,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         if (username != null) {
             linearLayout.setVisibility(View.GONE);
             if (fromList.equalsIgnoreCase("hide")) {
-                Log.w("oncom1", new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL);
 
                 new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
             } else if (fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
                 if (!idDetail.equalsIgnoreCase("")) {
                     String[] ff = idDetail.split("\\|");
                     if (ff.length == 2) {
-                        Log.w("oncom2", new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE);
                         new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail);
                     } else {
-                        Log.w("oncom3", new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL);
                         new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
                     }
                 } else {
                     if (fromList.equalsIgnoreCase("showMultiple")) {
-                        Log.w("oncom4", new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL);
                         new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
                     }
                 }
             } else {
-                Log.w("oncom5", new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL);
                 new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
             }
         } else {
@@ -9441,7 +9323,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             if (resultCode == RESULT_OK) {
                 Uri selectedUri = data.getData();
                 String selectedImagePath = ImageFilePath.getPath(getApplicationContext(), selectedUri);
-                Log.w("data", selectedImagePath);
 
                 if (decodeFile(selectedImagePath)) {
                     final File f = new File(selectedImagePath);
@@ -10082,8 +9963,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         if (va.get(2).equalsIgnoreCase("radio")) {
 
-                            Log.w("kasar", lala);
-
                             int radio_button_Id = 0;
                             if (lala.contains("L")) {
                                 radio_button_Id = rg[Integer.valueOf(va.get(0).toString())].getChildAt(0).getId();
@@ -10113,7 +9992,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     public String getNIKKTP(String text) {
         String[] array = text.split("\n");
         boolean error = true;
-        Log.w("ALL", text);
         for (int oi = 0; oi < array.length; oi++) {
             if (array[oi].matches(": (.*)")) {
                 array[oi] = array[oi].replace(": ", "");
@@ -10122,12 +10000,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 array[oi] = array[oi].replace(":", "");
             }
             if (array[oi].matches("[0-9](.*)[0-9]")) {
-                Log.w("Here", array[oi] + " whats -> " + array[oi].length());
                 if (!array[oi].contains("-")) {
                     if (array[oi].length() > 10) {
                         String NIK = array[oi];
                         error = false;
-                        Log.w("error 4", error + "");
                         if (NIK.contains(",")) {
                             NIK = NIK.replace(",", "");
                         }
@@ -10385,7 +10261,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     }
 
     public void yourActivityMethod(AddChildFotoExModel ahla) {
-        Log.w("masd", "ada");
         //mainan disini
         valueIdValue = ahla;
 
@@ -10531,7 +10406,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             db.insertRoomsDetail(orderModel);
                         }
 
-                        Log.w("IK : ", content);
 
                         String ccc = jsonDuaObject(content, attachment, api_officers, jsonObject.toString());
                         if (include_assignto.equalsIgnoreCase("0")) {
@@ -10940,7 +10814,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         dumpCusId = customersId;
 
                         db.removeRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMasterForm), "child_detail");
-
                         finish();
                         Intent aa = getIntent();
                         aa.putExtra("idTask", idDetail);
@@ -10951,7 +10824,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 if (!dumpCusId.equalsIgnoreCase("")) {
 
                     db.removeRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMasterForm), "child_detail");
-
                     finish();
                     Intent aa = getIntent();
                     aa.putExtra("idTask", idDetail);
@@ -11079,7 +10951,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         @Override
         protected MyTaskParams doInBackground(MyTaskParams... urls) {
             MyTaskParams aaa = new MyTaskParams(urls[0].getTextView(), urls[0].getProgress(), urls[0].getUrl());
-            Log.w("disini", aaa.getUrl());
 
             if (aaa.getUrl().startsWith("http")) {
                 aa = GET(aaa.getUrl());
@@ -11190,22 +11061,21 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         if (dumpCusId.equalsIgnoreCase("")) {
                             dumpCusId = customersId;
                         } else {
-                            if (dumpCusId != customersId) {
-                                dumpCusId = customersId;
-
-                                db.removeRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMasterForm), "child_detail");
-
-                                finish();
-                                Intent aa = getIntent();
-                                aa.putExtra("idTask", idDetail);
-                                startActivity(getIntent());
+                            if (banyakDropdown.size() == 1) {
+                                if (dumpCusId != customersId) {
+                                    dumpCusId = customersId;
+                                    db.removeRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMasterForm), "child_detail");
+                                    finish();
+                                    Intent aa = getIntent();
+                                    aa.putExtra("idTask", idDetail);
+                                    startActivity(getIntent());
+                                }
                             }
                         }
                     } else {
                         if (!dumpCusId.equalsIgnoreCase("")) {
 
                             db.removeRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMasterForm), "child_detail");
-
                             finish();
                             Intent aa = getIntent();
                             aa.putExtra("idTask", idDetail);
@@ -11231,7 +11101,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         JSONObject jObjectFormula = null;
                         try {
 
-                            Log.w("jua", Formulamaster);
 
                             jObjectFormula = new JSONObject(Formulamaster);
                             String data = jObjectFormula.getString("data");
@@ -11259,9 +11128,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 spinnerArray.add("--Please Select--");
                             }
 
-                            Log.w("susu", c.getCount() + "");
-
-
                             if (c.moveToFirst()) {
                                 do {
                                     String column1 = c.getString(0);
@@ -11269,7 +11135,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         String column2 = c.getString(1);
                                         hashMapss.put(column1, column2);
                                     }
-                                    Log.w("suis", column1);
                                     spinnerArray.add(column1);
                                 } while (c.moveToNext());
                             }
@@ -11285,14 +11150,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()));
                             if (cursorCild.getCount() > 0) {
 
-                                Log.w("bubffu", cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
 
                                 try {
                                     JSONObject jsonObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
 
                                     String titl = jsonObject.getString(value.get(2).toString()).split("\n\nKode")[0];
-                                    Log.w("ss", titl);
-
 
                                     int spinnerPosition = spinnerArrayAdapter.getPosition(titl);
                                     if (spinnerPosition < 0) {
@@ -11359,7 +11221,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             if (mDB.getWritableDatabase() != null) {
 
                                 final Cursor c = mDB.getWritableDatabase().query(true, from, aass, where, new String[]{customersId}, null, null, null, null);
-                                Log.w("mem", c.getCount() + "");
 
                                 if (c.moveToFirst()) {
                                     String titleOld = "";
@@ -11698,7 +11559,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
 
             totalHeight += groupItem.getMeasuredHeight();
-            Log.w("nyonaaa", totalHeight + "");
             if (((listView.isGroupExpanded(i)) && (i != group))
                     || ((!listView.isGroupExpanded(i)) && (i == group))) {
                 for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
@@ -11707,7 +11567,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     View listItem = layoutInflater.inflate(R.layout.expandable_cild, null);
                     listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
                     totalHeight += listItem.getMeasuredHeight();
-                    Log.w("nyonqqq", listItem.getMeasuredHeight() + "");
                 }
             }
         }
@@ -11790,7 +11649,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);
-                    Log.w("hasil", data);
                     DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(context);
                     dataBaseHelper.createUserTable("room", data, username, idTab);
 

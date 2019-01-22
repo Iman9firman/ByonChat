@@ -18,6 +18,8 @@ import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.squareup.picasso.Target;
 
+import me.gujun.android.taggroup.TagGroup;
+
 public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
         View.OnLongClickListener {
 
@@ -27,6 +29,7 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
     public TextView vName, vTimestamp, vTxtStatusMsg;
     public TextView vTxtRequest;
     public View vView;
+    public TagGroup vTagGroup;
     public carbon.widget.LinearLayout vFramePhoto;
 
     protected Drawable selectionBackground;
@@ -51,6 +54,7 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
         vLayoutComment = (LinearLayout) view.findViewById(R.id.layoutComment);
         vBtComment = (LinearLayout) view.findViewById(R.id.btComment);
         vView = (View) view.findViewById(R.id.view);
+        vTagGroup = (TagGroup) view.findViewById(R.id.tag_group);
         vTxtRequest = (TextView) view.findViewById(R.id.text_btn_comment);
         vFramePhoto = (carbon.widget.LinearLayout) view.findViewById(R.id.frame_photo);
 

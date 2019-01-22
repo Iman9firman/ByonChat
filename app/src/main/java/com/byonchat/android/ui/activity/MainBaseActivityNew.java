@@ -561,6 +561,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         Byonchat.getRoomsDB().close();
 
         if (botArrayListist.size() > 0) {
+            vBtnToolbarSearch.setVisibility(View.VISIBLE);
 
             Manhera.getInstance()
                     .get()
@@ -576,6 +577,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
             resolveToolbar(botArrayListist.get(0));
         } else {
+            vBtnToolbarSearch.setVisibility(View.GONE);
+
             Manhera.getInstance()
                     .get()
                     .load(R.drawable.logo_byon)

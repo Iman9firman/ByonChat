@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.byonchat.android.R;
@@ -26,6 +27,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import me.gujun.android.taggroup.TagGroup;
 
 public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
@@ -91,6 +94,8 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             showFileImage(viewHolder, item.url);
+            showTagView(viewHolder);
+
 
             ((ByonchatPDFViewHolder) viewHolder).vTimestamp.setText(item.timestamp);
             ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.subtitle));
@@ -110,12 +115,30 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private void showFileImage(RecyclerView.ViewHolder viewHolder, String thumbnail) {
-//        Glide.with(context).load(thumbnail)
-//                .asBitmap()
-//                .dontAnimate()
-//                .error(R.drawable.no_image)
-//                .into(((ByonchatPDFViewHolder) viewHolder).vIconView);
         Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/public/list_attachment/icon-pdf.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatPDFViewHolder) viewHolder).vIconView);
+    }
+
+    private String[] getTagView() {
+        List<String> tagList = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            String tag = "String " + i;
+            tagList.add(tag);
+        }
+
+        return tagList.toArray(new String[]{});
+    }
+
+    private void showTagView(RecyclerView.ViewHolder viewHolder) {
+        String[] tags = /*getTagView()*/ null;
+
+        if (tags != null && tags.length > 0) {
+            ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setTags(tags);
+        }
+
+        ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setOnTagClickListener(s -> {
+            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+        });
     }
 
     public List<File> getData() {

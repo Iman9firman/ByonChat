@@ -81,8 +81,9 @@
                     android:id="@+id/layoutComment"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin3"
-                    android:orientation="vertical">
+                    android:layout_marginTop="@dimen/margin4"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/margin4">
 
                     <LinearLayout
                         android:id="@+id/btComment"
@@ -180,8 +181,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:lines="2"
-                        android:maxLines="2"
                         android:paddingTop="@dimen/oto_feed_item_margin"
                         android:paddingRight="@dimen/oto_feed_item_margin"
                         android:text="Description : "
@@ -192,15 +191,26 @@
                         android:id="@+id/txtStatusMsg"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:lines="2"
-                        android:maxLines="2"
+                        android:ellipsize="end"
                         android:paddingTop="@dimen/oto_feed_item_margin"
                         android:paddingRight="@dimen/oto_feed_item_margin"
+                        android:singleLine="true"
                         android:text="Highend Monoshock "
                         android:textColor="@color/description"
                         android:textSize="@dimen/oto_feed_item_profile_status" />
                 </LinearLayout>
 
+                <me.gujun.android.taggroup.TagGroup
+                    android:id="@+id/tag_group"
+                    style="@style/TagGroup.Beauty_Red"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin5"
+                    android:layout_marginBottom="@dimen/margin5"
+                    app:atg_borderColor="@color/orange_300"
+                    app:atg_horizontalPadding="@dimen/margin5"
+                    app:atg_horizontalSpacing="@dimen/margin5"
+                    app:atg_textColor="@color/orange_300"
+                    app:atg_textSize="8sp" />
             </LinearLayout>
         </LinearLayout>
 

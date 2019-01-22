@@ -519,7 +519,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 } else if (category.equalsIgnoreCase("18")) {
                     //TIME=WATCH
                     show = true;
-                    mFragment = FragmentWebView.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, false, MainByonchatRoomBaseActivity.this);
+                    mFragment = FragmentWebView.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak + "?bc_user=" + Byonchat.getMessengerHelper().getMyContact().getJabberId() + "&username=" + username, username, id_rooms_tab, color, false, MainByonchatRoomBaseActivity.this);
                 } else if (category.equalsIgnoreCase("19")) {
                     show = true;
                     mFragment = ByonchatPDFFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);

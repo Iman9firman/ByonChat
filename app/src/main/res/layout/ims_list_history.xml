@@ -5,6 +5,7 @@
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ims_chat_list_background_color"
     tools:ignore="RtlHardcoded">
 
     <RelativeLayout
@@ -85,4 +86,18 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/appbar" />
     </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button_create_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/carbon_padding"
+        android:background="#005982"
+        android:src="@drawable/ic_pencil_white"
+        android:textColor="@color/white"
+        app:carbon_cornerRadius="28dp"
+        app:carbon_elevation="6dp"
+        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior" />
+
 </android.support.design.widget.CoordinatorLayout>

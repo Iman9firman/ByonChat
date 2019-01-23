@@ -10,6 +10,7 @@ import android.util.Log;
 import com.byonchat.android.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MessengerDatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "messenger.db";
@@ -38,7 +39,7 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
         Group group = null;
         Cursor cursor = instance.query(
                 context.getString(R.string.sql_group_by_jid),
-                new String[] { jabberId });
+                new String[]{jabberId});
         if (cursor.moveToNext()) {
             group = new Group(cursor);
         }
@@ -46,12 +47,12 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
         return group;
     }
 
-    public String[] getAllJabberId(){
-        Cursor cursor = instance.query(context.getString(R.string.sql_all_jid),null);
+    public String[] getAllJabberId() {
+        Cursor cursor = instance.query(context.getString(R.string.sql_all_jid), null);
         cursor.moveToFirst();
         ArrayList<String> jid = new ArrayList<String>();
 
-        while(!cursor.isAfterLast()){
+        while (!cursor.isAfterLast()) {
             jid.add(cursor.getString(cursor.getColumnIndex("jid")));
             cursor.moveToNext();
         }
@@ -68,7 +69,7 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
                 String jid = cursor.getString(cursor.getColumnIndex(Contact.JABBER_ID));
                 String nam = cursor.getString(cursor.getColumnIndex(Contact.NAME));
                 String sta = cursor.getString(cursor.getColumnIndex(Contact.STATUS));
-                contact.add(new Contact(nam,jid,sta));
+                contact.add(new Contact(nam, jid, sta));
             } while (cursor.moveToNext());
         }
         return contact;
@@ -78,7 +79,7 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
         Contact contact = null;
         Cursor cursor = instance.query(
                 context.getString(R.string.sql_contact_by_jid),
-                new String[] { jabberId });
+                new String[]{jabberId});
         if (cursor.moveToNext()) {
             contact = new Contact(cursor);
         }
@@ -90,8 +91,8 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
         boolean contact = false;
         Cursor cursor = instance.query(
                 context.getString(R.string.sql_contact_by_jid),
-                new String[] { jabberId });
-        if (cursor.getCount()>0) {
+                new String[]{jabberId});
+        if (cursor.getCount() > 0) {
             contact = true;
         }
         cursor.close();
@@ -112,9 +113,20 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
         return myContact;
     }
 
+    public List<Contact> getAllContact() {
+        List<Contact> temp = new ArrayList<Contact>();
+        Cursor cursor = instance.query("SELECT * FROM contacts WHERE _id>1", null);
+        while (cursor.moveToNext()) {
+            Contact contact = new Contact(cursor);
+            temp.add(contact);
+        }
+        cursor.close();
+        return temp;
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * android.database.sqlite.SQLiteOpenHelper#onCreate(android.database.sqlite
      * .SQLiteDatabase)
@@ -153,19 +165,19 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
 
         getDatabase().execSQL(
                 context.getString(R.string.sql_insert_configuration),
-                new String[] { Configuration.LAST_CONTACT_REFRESHED, "0" });
+                new String[]{Configuration.LAST_CONTACT_REFRESHED, "0"});
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * android.database.sqlite.SQLiteOpenHelper#onUpgrade(android.database.sqlite
      * .SQLiteDatabase, int, int)
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion < newVersion){
+        if (oldVersion < newVersion) {
             db.execSQL(context.getString(R.string.sql_altertable_contact));
         }
     }
@@ -187,28 +199,28 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
 
     public void updateData(Data data) {
         getDatabase().update(data.getTableName(), data.getContentValues(),
-                "_id=?", new String[] { String.valueOf(data.getId()) });
+                "_id=?", new String[]{String.valueOf(data.getId())});
     }
 
     public void deleteData(Data data) {
-        if(data.getTableName().equalsIgnoreCase(Message.TABLE_NAME)){
-            FilesURLDatabaseHelper fdb=  new FilesURLDatabaseHelper(context);
+        if (data.getTableName().equalsIgnoreCase(Message.TABLE_NAME)) {
+            FilesURLDatabaseHelper fdb = new FilesURLDatabaseHelper(context);
             fdb.open();
             fdb.deleteFile(String.valueOf(data.getId()));
             fdb.close();
         }
         getDatabase().delete(data.getTableName(), "_id=?",
-                new String[] { String.valueOf(data.getId()) });
+                new String[]{String.valueOf(data.getId())});
     }
 
     public int deleteRows(String tableName, String whereCond, String[] args) {
-        if(tableName.equalsIgnoreCase(Message.TABLE_NAME)){
+        if (tableName.equalsIgnoreCase(Message.TABLE_NAME)) {
             String SQL_SELECT_MESSAGES = "SELECT _id FROM "
                     + Message.TABLE_NAME + " WHERE " + Message.DESTINATION + "=? OR "
-                    + Message.SOURCE+ "=?" ;
+                    + Message.SOURCE + "=?";
             Cursor cursor = query(SQL_SELECT_MESSAGES, args);
-            if(cursor.getCount()>0) {
-                FilesURLDatabaseHelper fdb=  new FilesURLDatabaseHelper(context);
+            if (cursor.getCount() > 0) {
+                FilesURLDatabaseHelper fdb = new FilesURLDatabaseHelper(context);
                 fdb.open();
                 while (cursor.moveToNext()) {
                     fdb.deleteFile(cursor.getString(cursor.getColumnIndex("_id")));

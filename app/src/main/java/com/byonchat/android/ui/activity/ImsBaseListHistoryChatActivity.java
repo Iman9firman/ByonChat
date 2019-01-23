@@ -1,6 +1,6 @@
 package com.byonchat.android.ui.activity;
 
-import android.app.Activity;
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -13,13 +13,13 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
@@ -38,7 +39,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.R;
@@ -58,7 +61,6 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.ThrowProfileService;
 import com.byonchat.android.utils.Validations;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -117,6 +119,15 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
 
     @NonNull
     protected ImageView vImgToolbarBack;
+
+    @NonNull
+    protected FloatingActionButton vBtnCreateMessage;
+
+    @NonNull
+    protected ScrollView vScrollView;
+
+    @NonNull
+    protected NestedScrollView vNestedScroll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,7 +188,8 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         vToolbar.setBackgroundColor(Color.parseColor("#" + mColor));
         vToolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
         vToolbarTitle.setTextColor(Color.parseColor("#" + mColorText));
-        vImgToolbarBack.setColorFilter(Color.parseColor("#" + mColorText));
+
+        vImgToolbarBack.setColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_IN);
 
         vToolbarBack.setOnClickListener(v -> {
             if (vSearchView.isSearchOpen()) {
@@ -225,8 +237,11 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                 } else {
                     resolveOriginView(true);
                 }
-                mAdapter.getFilter().filter(query);
-                mMessageAdapter.getFilter().filter(query);
+                if (iconItemList.size() > 0)
+                    mAdapter.getFilter().filter(query);
+
+                if (messageItemList.size() > 0)
+                    mMessageAdapter.getFilter().filter(query);
                 return true;
             }
 
@@ -240,8 +255,11 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                 } else {
                     resolveOriginView(true);
                 }
-                mAdapter.getFilter().filter(query);
-                mMessageAdapter.getFilter().filter(query);
+                if (iconItemList.size() > 0)
+                    mAdapter.getFilter().filter(query);
+
+                if (messageItemList.size() > 0)
+                    mMessageAdapter.getFilter().filter(query);
                 return true;
             }
         });
@@ -457,10 +475,39 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
 
     protected void hideViews() {
         vFrameSearch.animate().translationY(-vFrameSearch.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+
+        vBtnCreateMessage.hide();
     }
 
     protected void showViews() {
         vFrameSearch.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+
+        vBtnCreateMessage.show();
+    }
+
+    protected void resolveCreateMessage() {
+        onScroll();
+
+        vBtnCreateMessage.setOnClickListener(v -> {
+            Intent intent = SelectMessageContactActivity.generateIntent(this, mColor, mColorText);
+            startActivity(intent);
+        });
+    }
+
+    @TargetApi(23)
+    protected void onScroll() {
+//        vNestedScroll.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+//            @Override
+//            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+//
+//                if (scrollY > oldScrollY) {
+//                    hideViews();
+//                }
+//                if (scrollY < oldScrollY) {
+//                    showViews();
+//                }
+//            }
+//        });
     }
 
     protected void adapterSelected(IconItem item) {
@@ -874,6 +921,12 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
     protected abstract SearchView getSearchView();
 
     @NonNull
+    protected abstract ScrollView getScrollView();
+
+    @NonNull
+    protected abstract NestedScrollView getNestedScrollView();
+
+    @NonNull
     protected abstract FrameLayout getFrameChatLists();
 
     @NonNull
@@ -887,6 +940,9 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
 
     @NonNull
     protected abstract RelativeLayout getToolbarBack();
+
+    @NonNull
+    protected abstract FloatingActionButton getFloatingButtonCreateMsg();
 
     @NonNull
     protected abstract ImageView getImgToolbarBack();

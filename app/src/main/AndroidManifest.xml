@@ -173,6 +173,11 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ui.activity.SelectMessageContactActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.activity.MainByonchatRoomActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"

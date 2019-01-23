@@ -356,7 +356,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        startTimer();
+//        startTimer();
 
         Contact contact = databaseHelper.getMyContact();
         if (contact != null) {

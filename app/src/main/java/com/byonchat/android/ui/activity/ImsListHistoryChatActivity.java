@@ -7,15 +7,17 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.byonchat.android.R;
@@ -24,7 +26,6 @@ import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.otaliastudios.cameraview.Frame;
 
 public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
 
@@ -54,6 +55,9 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
         vListHistoryFind = getListHistoryFind();
         vSearchEdt = getSearchView();
         vFrameSearch = getFrameSearch();
+        vBtnCreateMessage = getFloatingButtonCreateMsg();
+        vScrollView = getScrollView();
+        vNestedScroll = getNestedScrollView();
     }
 
     @Override
@@ -65,6 +69,7 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
         resolveListHistoryFind();
         resolveSearchView();
         resolveMaterialSearchView();
+        resolveCreateMessage();
     }
 
     @Override
@@ -159,6 +164,24 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
     @Override
     protected LinearLayout getFrameSearch() {
         return (LinearLayout) findViewById(R.id.frame_search);
+    }
+
+    @NonNull
+    @Override
+    protected FloatingActionButton getFloatingButtonCreateMsg() {
+        return (FloatingActionButton) findViewById(R.id.button_create_message);
+    }
+
+    @NonNull
+    @Override
+    protected ScrollView getScrollView() {
+        return (ScrollView) findViewById(R.id.scrollview);
+    }
+
+    @NonNull
+    @Override
+    protected NestedScrollView getNestedScrollView() {
+        return (NestedScrollView) findViewById(R.id.nested_scroll);
     }
 
     @NonNull

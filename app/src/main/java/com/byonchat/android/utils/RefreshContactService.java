@@ -64,11 +64,11 @@ public class RefreshContactService extends Service implements ServiceConnection 
     private static String REQUEST_CONTACT_URL = "https://"
             + MessengerConnectionService.UTIL_SERVER + "/v1/users/friends";
     private static String REQUEST_STATUS_URL = "https://"
-            + MessengerConnectionService.F_SERVER+ "/temantemanku.php";
+            + MessengerConnectionService.F_SERVER + "/temantemanku.php";
     private MessengerDatabaseHelper messengerHelper;
     private MessengerConnectionService.MessengerConnectionBinder binder;
     private static final String SQL_SELECT_CONTACTS = "SELECT * FROM "
-            + Contact.TABLE_NAME + " WHERE _id > 1 order by lower("+ Contact.NAME+")";
+            + Contact.TABLE_NAME + " WHERE _id > 1 order by lower(" + Contact.NAME + ")";
     Context context;
     TimeLineDB timeLineDB;
 
@@ -91,7 +91,7 @@ public class RefreshContactService extends Service implements ServiceConnection 
         if (!MessengerConnectionService.started) {
             MessengerConnectionService.startService(this);
         }
-        context= this;
+        context = this;
         new ContactRefreshHandler(true).start();
         getApplicationContext().bindService(
                 new Intent(this, MessengerConnectionService.class), this,
@@ -109,7 +109,7 @@ public class RefreshContactService extends Service implements ServiceConnection 
         final HttpParams params = httpclient.getParams();
         HttpResponse response;
         private JSONObject jObject;
-        private String jsonResult ="";
+        private String jsonResult = "";
         JSONArray menuitemArray;
         private Context mContext;
         private String content = null;
@@ -138,10 +138,10 @@ public class RefreshContactService extends Service implements ServiceConnection 
                 nameValuePairs.add(new BasicNameValuePair("key", key[0]));
                 String name = "";
                 HashMap<Long, Contact> dbMap = loadContactFromDb();
-                for ( Map.Entry<Long, Contact> entry : dbMap.entrySet()) {
-                    name += entry.getKey()+",";
+                for (Map.Entry<Long, Contact> entry : dbMap.entrySet()) {
+                    name += entry.getKey() + ",";
                 }
-                nameValuePairs.add(new BasicNameValuePair("temanteman", name.substring(0,name.length()-1)));
+                nameValuePairs.add(new BasicNameValuePair("temanteman", name.substring(0, name.length() - 1)));
 
                 HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
                 HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
@@ -164,15 +164,14 @@ public class RefreshContactService extends Service implements ServiceConnection 
                     jObject = new JSONObject(content);
 
                     JSONArray menuitemArray = jObject.getJSONArray("status");
-                    for (int i = 0; i < menuitemArray.length(); i++)
-                    {
+                    for (int i = 0; i < menuitemArray.length(); i++) {
                         String number = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("userid").toString()));
                         String status = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("status").toString()));
                         Contact contact = messengerHelper.getContact(number);
                         contact.setChangeProfile(1);
-                        if(status.isEmpty()){
+                        if (status.isEmpty()) {
                             contact.setStatus(null);
-                        }else{
+                        } else {
                             contact.setStatus(status);
                         }
                         messengerHelper.updateData(contact);
@@ -234,7 +233,7 @@ public class RefreshContactService extends Service implements ServiceConnection 
                 }
 
             } catch (ClientProtocolException e) {
-                content =  e.getMessage();
+                content = e.getMessage();
                 error = true;
             } catch (IOException e) {
                 content = e.getMessage();
@@ -250,17 +249,18 @@ public class RefreshContactService extends Service implements ServiceConnection 
         }
 
         protected void onPostExecute(String content) {
+            Log.w("hasilnyaapa", content);
             if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
+                if (content.contains("invalid_key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                         String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
-                           // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        }else{
+                        if (key.equalsIgnoreCase("null")) {
+                            // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                        } else {
                             new searchThemeRequest(mContext).execute(key);
                         }
-                    }else{
-                    //    Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    } else {
+                        //    Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
                 }
             } else {
@@ -558,18 +558,19 @@ public class RefreshContactService extends Service implements ServiceConnection 
                         Configuration.LAST_CONTACT_REFRESHED,
                         String.valueOf(System.currentTimeMillis()));
             }
-            if(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())){
+            if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
                 String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
-                if (key.equalsIgnoreCase("null")){
-                  //  Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                }else{
+                if (key.equalsIgnoreCase("null")) {
+                    //  Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                } else {
                     new searchThemeRequest(getApplicationContext()).execute(key);
                 }
-            }else{
-              //  Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+            } else {
+                //  Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
             }
         }
     }
+
     private HashMap<Long, Contact> loadContactFromDb() {
         Contact contact = new Contact();
         Cursor cursor = messengerHelper.query(SQL_SELECT_CONTACTS, null);
@@ -613,7 +614,7 @@ public class RefreshContactService extends Service implements ServiceConnection 
                 mnumber = mnumber.replaceFirst("\\+", "");
             }
 
-            if(messengerHelper.getMyContact()!=null){
+            if (messengerHelper.getMyContact() != null) {
                 if (messengerHelper.getMyContact().getJabberId().equals(mnumber))
                     continue;
             }

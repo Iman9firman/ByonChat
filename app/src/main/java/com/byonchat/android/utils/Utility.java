@@ -31,6 +31,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Random;
 
 public class Utility {
 
@@ -209,10 +210,19 @@ public class Utility {
         return hasil;
     }
 
+    public static int generateRandomInt() {
+        final int min = 1;
+        final int max = 9999999;
+        final int random = new Random().nextInt((max - min) + 1) + min;
+
+        return random;
+    }
+
     @TargetApi(23)
     public static void scheduleJob(Context context) {
         ComponentName serviceComponent = new ComponentName(context, MyJobService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(123123, serviceComponent);
+//        JobInfo.Builder builder = new JobInfo.Builder(123123, serviceComponent);
+        JobInfo.Builder builder = new JobInfo.Builder(generateRandomInt(), serviceComponent);
         builder.setMinimumLatency(1 * 1000); // wait at least
         builder.setOverrideDeadline(3 * 1000); // maximum delay
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network

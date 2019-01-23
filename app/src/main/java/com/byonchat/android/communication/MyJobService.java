@@ -15,6 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.byonchat.android.R;
+import com.byonchat.android.utils.Utility;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
@@ -77,7 +78,8 @@ public class MyJobService extends JobService {
         JobScheduler mJobScheduler = (JobScheduler) getApplicationContext()
                 .getSystemService(JOB_SCHEDULER_SERVICE);
         JobInfo.Builder mJobBuilder =
-                new JobInfo.Builder(543534,
+//                new JobInfo.Builder(543534,
+                new JobInfo.Builder(Utility.generateRandomInt(),
                         new ComponentName(getPackageName(),
                                 MyJobService.class.getName()));
 
@@ -117,9 +119,7 @@ public class MyJobService extends JobService {
                             .build();
                     startForeground(101, notification);
 
-                    if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-                        MessengerConnectionService.startService(context);
-                    }
+                    MessengerConnectionService.startService(context);
                 }
             } catch (Exception e) {
                 Log.w("datapusat", e.toString());

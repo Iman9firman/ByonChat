@@ -28,11 +28,8 @@
 
             <ImageView
                 android:id="@+id/img_toolbar_back"
-                style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Title"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:backgroundTint="@color/white"
-                android:tint="@color/white"
                 app:srcCompat="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
         </RelativeLayout>

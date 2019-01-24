@@ -325,7 +325,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         vToolbar.setTitleTextColor(Color.parseColor("#" + colorText));
         vToolbarTitle.setTextColor(Color.parseColor("#" + colorText));
 
-        vImgToolbarBack.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_IN);
+        Drawable mDrawable = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        mDrawable.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_ATOP);
+        vImgToolbarBack.setImageDrawable(mDrawable);
 
         vToolbarBack.setOnClickListener(v -> onBackPressed());
         vToolbarTitle.setText(title);

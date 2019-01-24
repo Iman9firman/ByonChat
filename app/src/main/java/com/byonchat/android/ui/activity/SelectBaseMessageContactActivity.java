@@ -255,8 +255,7 @@ public abstract class SelectBaseMessageContactActivity extends AppCompatActivity
 
             HashMap<Long, Contact> osMap = loadContactFromOs();
             if (osMap.size() == 0) {
-                Log.w("kesinidong?", "delete all contact");
-//                messengerHelper.execSql(getString(R.string.delete_all_contacts), null);
+                messengerHelper.execSql(getString(R.string.delete_all_contacts), null);
             }
             StringBuilder sbuffer = new StringBuilder();
             sbuffer.append(messengerHelper.getMyContact().getJabberId())

@@ -180,10 +180,6 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        /*FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#a4a4a4"));
-        vToolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        vToolbar.setTitleTextColor(getResources().getColor(R.color.ims_chat_list_primary_color));*/
-
         FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
         vToolbar.setBackgroundColor(Color.parseColor("#" + mColor));
         vToolbar.setTitleTextColor(Color.parseColor("#" + mColorText));

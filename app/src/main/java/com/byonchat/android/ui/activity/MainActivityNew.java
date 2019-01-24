@@ -315,7 +315,8 @@ public class MainActivityNew extends MainBaseActivityNew {
                     startService(mServiceIntent);
                 }
 
-                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 5555555,
+//                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 5555555,
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), Utility.generateRandomInt(),
                         mServiceIntent, 0);
                 int alarmType = AlarmManager.ELAPSED_REALTIME;
                 final int FIFTEEN_SEC_MILLIS = 15000;

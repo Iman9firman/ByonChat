@@ -103,6 +103,14 @@ public class SelectMessageContactActivity extends SelectBaseMessageContactActivi
         openConversation(view, chat);
     }
 
+
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(broadcastHandler);
+        super.onPause();
+    }
+
     @Override
     public void counting(int yzou) {
 

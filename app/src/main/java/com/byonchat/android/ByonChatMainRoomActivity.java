@@ -43,11 +43,16 @@ import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.Utility;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,7 +87,26 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
         intent.putExtra(ByonChatMainRoomActivity.EXTRA_STATUS, status);
         intent.putExtra(ByonChatMainRoomActivity.EXTRA_NAME, name);
         intent.putExtra(ByonChatMainRoomActivity.EXTRA_ICON, icon);
+        intent.putExtra(ByonChatMainRoomActivity.EXTRA_VALUE, generatePayload());
         return intent;
+    }
+
+    protected String generatePayload() {
+        List value = (List) Constants.map.get(position);
+
+        if (value.size() > 0) {
+            Gson gson = new Gson();
+            JsonObject jObj = new JsonObject();
+            JsonArray jArr = new JsonArray();
+            for (int i = 0; i < value.size(); i++) {
+                jArr.add(new JsonPrimitive(value.get(i).toString()));
+            }
+            jObj.add("payload", jArr);
+
+            return gson.toJson(jObj);
+        }
+
+        return "";
     }
 
     @Override

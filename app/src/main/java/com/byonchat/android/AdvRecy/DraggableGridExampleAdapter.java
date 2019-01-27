@@ -2,11 +2,12 @@ package com.byonchat.android.AdvRecy;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -21,6 +22,7 @@ import android.widget.Filterable;
 
 import com.byonchat.android.Manhera.Manhera;
 import com.byonchat.android.R;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.viewholder.MyViewHolder;
@@ -45,9 +47,6 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
     private int room_id;
 
     protected Fonts fonts;
-
-    private MainDbHelper database;
-    private SQLiteDatabase db;
 
     protected OnItemClickListener itemClickListener;
     protected OnLongItemClickListener longItemClickListener;
@@ -101,8 +100,8 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
         holder.mTextView.setSelected(true);
 
         Manhera.getInstance().get()
-                .load(im.iconName.equalsIgnoreCase(null)
-                        || im.iconName.equalsIgnoreCase("null") ? im.iconTest : im.iconName)
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
                 .placeholder(R.drawable.logo_byon)
                 .into(holder.mImageView);
 
@@ -138,11 +137,12 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
         positionList.add(toPosition, movedPosition);
 
         Gson gson = new Gson();
-        String inputString = gson.toJson(positionList);
+        String value = gson.toJson(filterList);
 
-        System.out.println("Input String : " + inputString);
-
-        insertData(room_id, inputString);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(Constants.EXTRA_TAB_MOVEMENT, value);
+        editor.apply();
     }
 
     @Override
@@ -202,20 +202,6 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
 
             }
         };
-    }
-
-    public void insertData(int room_id, String position) {
-
-        database = new MainDbHelper(context);
-        db = database.getWritableDatabase();
-
-        ContentValues cv = new ContentValues();
-        cv.put(MainDbHelper.TAB_ROOM_ID, room_id);
-        cv.put(MainDbHelper.TAB_POSITION, position);
-
-        db.delete(MainDbHelper.TABLE_ITEM, null, null);
-        long id = db.insert(MainDbHelper.TABLE_ITEM, null, cv);
-        db.close();
     }
 
     public List<ItemMain> getData() {

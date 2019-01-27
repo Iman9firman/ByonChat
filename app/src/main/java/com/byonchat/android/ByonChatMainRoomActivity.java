@@ -513,7 +513,7 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        String category = listItem != null ? listItem.category : getIntent().getExtras().getString(EXTRA_CATEGORY);
+        String category = listItem != null ? listItem.category_tab : getIntent().getExtras().getString(EXTRA_CATEGORY);
         String include_pull = listItem != null ? listItem.include_pull : getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);
         if (category.equalsIgnoreCase("4")) {
             if (include_pull.equalsIgnoreCase("4") || include_pull.equalsIgnoreCase("5") || include_pull.equalsIgnoreCase("6")) {

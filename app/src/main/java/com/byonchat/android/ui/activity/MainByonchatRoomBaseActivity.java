@@ -249,8 +249,8 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         color = listItem != null ? listItem.color : getIntent().getExtras().getString(EXTRA_COLOR);
         colorText = listItem != null ? listItem.colorText : getIntent().getExtras().getString(EXTRA_COLORTEXT);
         targetURL = listItem != null ? listItem.targetURL : getIntent().getExtras().getString(EXTRA_TARGETURL);
-        category = listItem != null ? listItem.category : getIntent().getExtras().getString(EXTRA_CATEGORY);
-        title = listItem != null ? listItem.title : getIntent().getExtras().getString(EXTRA_TITLE);
+        category = listItem != null ? listItem.category_tab : getIntent().getExtras().getString(EXTRA_CATEGORY);
+        title = listItem != null ? listItem.tab_name : getIntent().getExtras().getString(EXTRA_TITLE);
         url_tembak = listItem != null ? listItem.url_tembak : getIntent().getExtras().getString(EXTRA_URL_TEMBAK);
         id_rooms_tab = listItem != null ? listItem.id_rooms_tab : getIntent().getExtras().getString(EXTRA_ID_ROOMS_TAB);
         include_pull = listItem != null ? listItem.include_pull : getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);

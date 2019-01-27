@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
@@ -20,6 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -1150,15 +1152,10 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                     Toast.makeText(mContext, content, Toast.LENGTH_LONG).show();
                 }
             } else {
-
                 resolveValidation();
 
                 roomsDB.open();
                 boolean isActived = true;
-                ArrayList<ContactBot> botArrayListist = roomsDB.retrieveRooms("2");
-                /*if (botArrayListist.size() > 0) {
-                    isActived = false;
-                }*/
                 ContactBot contactBot = new ContactBot("", name, desc, realname, link, type, isActived, json);
                 roomsDB.insertRooms(contactBot);
                 roomsDB.close();
@@ -1169,11 +1166,6 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
                 Toast.makeText(NewSearchRoomActivity.this, realname + " has been added to selected rooms", Toast.LENGTH_SHORT).show();
                 finish();
-                /*Intent intent = new Intent(NewSearchRoomActivity.this, MainActivityNew.class);
-                intent.putExtra(ConversationActivity.KEY_JABBER_ID, name);
-                intent.putExtra(ConversationActivity.KEY_TITLE, path);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);*/
 
                 Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), name, path);
                 startActivity(ii);

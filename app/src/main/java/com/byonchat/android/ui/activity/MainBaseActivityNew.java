@@ -53,6 +53,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -630,6 +631,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         adapter.setOnItemClickListener((view, position) -> {
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
+        });
+
+        adapter.setOnLongItemClickListener((view, position) -> {
+            showToastTab(adapter.getData().get(position).tab_name);
         });
     }
 
@@ -1477,19 +1482,30 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected Intent generateShortcutIntent() {
         ArrayList<ContactBot> contactBots = new ArrayList<>();
-
-        ContactBot contactBot = new ContactBot();
-        contactBot = contactBotsShortcut.get(0);
-        contactBots.add(contactBot);
-
         Gson gson = new Gson();
+
+        ContactBot contactBot = contactBotsShortcut.get(0);
+        contactBots.add(contactBot);
 
         Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
         intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
         intent.putExtra(Constants.EXTRA_ROOM, gson.toJson(contactBots));
+        intent.putExtra(Constants.EXTRA_TAB_MOVEMENT, gson.toJson(itemList));
         intent.putExtra(ConversationActivity.KEY_TITLE, contactBotsShortcut.get(0).targetUrl);
         intent.setAction(Intent.ACTION_MAIN);
 
         return intent;
+    }
+
+    protected void showToastTab(String args) {
+        Toast toast = new Toast(this);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.custom_toast, null);
+        TextView text = (TextView) view.findViewById(R.id.message);
+        text.setText(args);
+        toast.setView(view);
+        toast.setGravity(Gravity.TOP, 0, 100);
+        toast.show();
     }
 }

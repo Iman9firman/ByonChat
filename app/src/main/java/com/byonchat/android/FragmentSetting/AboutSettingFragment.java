@@ -90,8 +90,9 @@ public class AboutSettingFragment extends Fragment {
         btnCekUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Toast.makeText(getContext(), "Sorry, Under Maintenance...", Toast.LENGTH_LONG).show();
                 task = new searchRequest(getContext());
-                task.execute(getString(R.string.app_version));
+                task.execute(getString(R.string.app_version), getString(R.string.app_company));
             }
         });
 
@@ -147,6 +148,7 @@ public class AboutSettingFragment extends Fragment {
 
                 nameValuePairs.add(new BasicNameValuePair("username", messengerHelper.getMyContact().getJabberId()));
                 nameValuePairs.add(new BasicNameValuePair("version", key[0]));
+                nameValuePairs.add(new BasicNameValuePair("company", key[1]));
 
                 HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
                 HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);

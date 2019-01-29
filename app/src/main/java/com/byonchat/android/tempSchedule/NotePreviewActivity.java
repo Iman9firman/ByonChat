@@ -215,11 +215,14 @@ public class NotePreviewActivity extends AppCompatActivity {
         while (c.moveToNext()){
             List<String> nampan2 = new ArrayList<>();
             String id_detail = c.getString(0);
+            String title = null;
             String lokasi = null;
             String keterangan = null;
+            String ket_tambah = null;
             String startTime = null;
             String endTime = null;
             String alasan = null;
+            String no_spk = null;
             String value = c.getString(1);
             String status = c.getString(2);
             String warna = c.getString(3);
@@ -232,27 +235,35 @@ public class NotePreviewActivity extends AppCompatActivity {
                 for (int j = 0 ; j <listItem3.size() ; j++){
                     String flag_tab = listItem3.get(j).getFlag_tab();
                     String cnt = listItem3.get(j).getContent();
-                    if (flag_tab.equalsIgnoreCase("jam_mulai")){
+                    if (flag_tab.equalsIgnoreCase("keterangan")){
+                        keterangan = cnt;
+                    } else if (flag_tab.equalsIgnoreCase("rencana_k")){
+                        title = cnt;
+                    } else if (flag_tab.equalsIgnoreCase("lokasi")){
+                        lokasi = cnt;
+                    } else if (flag_tab.equalsIgnoreCase("detail_lokasi")){
+                        ket_tambah = cnt;
+                    } else if (flag_tab.equalsIgnoreCase("jam_mulai")){
                         startTime = cnt;
                     } else if (flag_tab.equalsIgnoreCase("jam_selesai")){
                         endTime = cnt;
-                    } else if (flag_tab.equalsIgnoreCase("lokasi")){
-                        lokasi = cnt;
-                    } else if (flag_tab.equalsIgnoreCase("keterangan")){
-                        keterangan = cnt;
+                    } else if (flag_tab.equalsIgnoreCase("no_spk")){
+                        no_spk = cnt;
                     } else if (flag_tab.equalsIgnoreCase("alasan")){
                         alasan = cnt;
                     }
                 }
-                n = new Note(lokasi,startTime,endTime,keterangan,alasan,id_detail,status,false,warna);
+                n = new Note(title,lokasi,ket_tambah,startTime,endTime,keterangan,no_spk,alasan,id_detail,status,false,warna);
             } else {
                 /*
-                0 = lokasi
+                0 = title
                 1 = detail lokasi
-                2 = jam mulai
-                3 = jam selesai
-                4 = keterangan
-                5 = alasan
+                2 = keterangan tambahan
+                3 = jam mulai
+                4 = jam selesai
+                5 = job desk
+                6 = no spk
+                7 = alasan
                 */
                 try {
                     JSONArray arrayValue = new JSONArray(value);
@@ -262,7 +273,7 @@ public class NotePreviewActivity extends AppCompatActivity {
                         nampan2.add(values);
                     }
                     if (selected_date.equalsIgnoreCase(startDate)) {
-                        n = new Note(nampan2.get(0), nampan2.get(2), nampan2.get(3), nampan2.get(4), nampan2.get(5), id_detail, status,true,warna);
+                        n = new Note(nampan2.get(0), nampan2.get(1), nampan2.get(2), nampan2.get(3), nampan2.get(4),nampan2.get(5),nampan2.get(6),nampan2.get(7), id_detail, status,true,warna);
                     }
 
                 } catch (JSONException e){}

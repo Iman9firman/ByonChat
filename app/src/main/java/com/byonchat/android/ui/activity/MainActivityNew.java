@@ -125,6 +125,12 @@ public class MainActivityNew extends MainBaseActivityNew {
     protected void onSetupRoom() {
         if (getIntent().getExtras() != null) {
             if (getIntent().hasExtra(Constants.EXTRA_ROOM)) {
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(Constants.EXTRA_TAB_MOVEMENT, getIntent().getStringExtra(Constants.EXTRA_TAB_MOVEMENT));
+                editor.apply();
+
                 ContactBot item = new ContactBot();
                 try {
                     username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
@@ -207,11 +213,6 @@ public class MainActivityNew extends MainBaseActivityNew {
                 username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
                 targetURL = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
             }
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.clear();
-            editor.commit();
         }
     }
 
@@ -307,6 +308,10 @@ public class MainActivityNew extends MainBaseActivityNew {
         adapter.setOnItemClickListener((view, position) -> {
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
+        });
+
+        adapter.setOnLongItemClickListener((view, position) -> {
+            showToastTab(adapter.getData().get(position).tab_name);
         });
 
         resolveNavHeader();

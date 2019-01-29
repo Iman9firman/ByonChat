@@ -1167,6 +1167,11 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                 Toast.makeText(NewSearchRoomActivity.this, realname + " has been added to selected rooms", Toast.LENGTH_SHORT).show();
                 finish();
 
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                editor.commit();
+
                 Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), name, path);
                 startActivity(ii);
 

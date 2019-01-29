@@ -27,6 +27,7 @@ import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.viewholder.MyViewHolder;
 import com.byonchat.android.utils.Fonts;
+import com.byonchat.android.utils.Utility;
 import com.google.gson.Gson;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
@@ -91,10 +92,10 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
                 spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 holder.mTextView.setText(spannable);
             } else {
-                holder.mTextView.setText(im.getTitle());
+                holder.mTextView.setText(Utility.capitalizer(im.getTitle()));
             }
         } else {
-            holder.mTextView.setText(im.getTitle());
+            holder.mTextView.setText(Utility.capitalizer(im.getTitle()));
         }
 
         holder.mTextView.setSelected(true);

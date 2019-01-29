@@ -218,6 +218,21 @@ public class RoomsDB extends SQLiteOpenHelper {
         }
     }
 
+    public void updateActiveRoomsManual(ContactBot contactBot) {
+        try {
+            ContentValues vc = new ContentValues();
+            vc.put(ROOMS_ISACTIVE, "0");
+            getDatabase().update(ROOMS_TABLE, vc, null, null);
+
+            ContentValues cv = new ContentValues();
+            cv.put(ROOMS_ISACTIVE, "1");
+            getDatabase().update(ROOMS_TABLE, cv, ROOMS_NAME + "=?", new String[]{contactBot.getName()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+    }
+
     public ArrayList<ContactBot> retrieveRooms(String type, boolean isActive) throws SQLException {
         String isActived = "0";
         if (isActive)

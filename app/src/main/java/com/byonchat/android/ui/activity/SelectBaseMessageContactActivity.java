@@ -1,5 +1,6 @@
 package com.byonchat.android.ui.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,6 +62,7 @@ public abstract class SelectBaseMessageContactActivity extends AppCompatActivity
     protected String REQUEST_CONTACT_URL = "https://" + MessengerConnectionService.UTIL_SERVER + "/v1/users/friends";
     protected String SQL_SELECT_CONTACTS = "SELECT * FROM " + Contact.TABLE_NAME + " WHERE _id > 1 order by lower(" + Contact.NAME + ")";
 
+    public static Activity activity;
     protected ArrayList<Contact> contactList = new ArrayList<>();
     protected List<Contact> contacts = new ArrayList<Contact>();
 
@@ -100,6 +103,8 @@ public abstract class SelectBaseMessageContactActivity extends AppCompatActivity
     protected abstract void onLoadView();
 
     protected void applyChatConfig() {
+        activity = SelectBaseMessageContactActivity.this;
+
         if (messengerHelper == null) {
             messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
         }
@@ -127,16 +132,28 @@ public abstract class SelectBaseMessageContactActivity extends AppCompatActivity
 
     protected void resolveToolbar() {
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         toolbarTitle.setText("Pilih kontak");
         toolbarSub.setText(contactList.size() + " kontak");
 
         FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
-//        toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
-//        toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+        toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
+        toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+        toolbar.setSubtitleTextColor(Color.parseColor("#" + mColorText));
 
-        backBtn.setColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_IN);
-        reload.setColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_IN);
+        toolbarTitle.setTextColor(Color.parseColor("#" + mColorText));
+        toolbarSub.setTextColor(Color.parseColor("#" + mColorText));
+
+        Drawable mBackDrawable = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        mBackDrawable.setColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_ATOP);
+        backBtn.setImageDrawable(mBackDrawable);
+
+        Drawable mReloadDrawable = getResources().getDrawable(R.drawable.ico_refresh);
+        mReloadDrawable.setColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_ATOP);
+        reload.setImageDrawable(mReloadDrawable);
     }
 
     protected void resolveView() {
@@ -255,8 +272,7 @@ public abstract class SelectBaseMessageContactActivity extends AppCompatActivity
 
             HashMap<Long, Contact> osMap = loadContactFromOs();
             if (osMap.size() == 0) {
-                Log.w("kesinidong?", "delete all contact");
-//                messengerHelper.execSql(getString(R.string.delete_all_contacts), null);
+                messengerHelper.execSql(getString(R.string.delete_all_contacts), null);
             }
             StringBuilder sbuffer = new StringBuilder();
             sbuffer.append(messengerHelper.getMyContact().getJabberId())

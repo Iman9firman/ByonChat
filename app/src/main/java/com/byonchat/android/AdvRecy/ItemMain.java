@@ -5,8 +5,8 @@ import android.os.Parcelable;
 
 public class ItemMain implements Parcelable {
     public int id;
-    public String category;
-    public String title;
+    public String category_tab;
+    public String tab_name;
     public String url_tembak;
     public String username;
     public String id_rooms_tab;
@@ -18,16 +18,16 @@ public class ItemMain implements Parcelable {
     public String status;
     public String name;
     public String icon;
-    public String iconName;
+    public String icon_name;
     public int iconTest;
 
-    public ItemMain(int id, String category, String title, String url_tembak,
+    public ItemMain(int id, String category_tab, String tab_name, String url_tembak,
                     String include_pull, String username, String id_rooms_tab,
                     String color, String colorText, String targetURL, String include_latlong,
-                    String status, String name, String icon, String iconName) {
+                    String status, String name, String icon, String icon_name) {
         this.id = id;
-        this.category = category;
-        this.title = title;
+        this.category_tab = category_tab;
+        this.tab_name = tab_name;
         this.url_tembak = url_tembak;
         this.include_pull = include_pull;
         this.username = username;
@@ -39,7 +39,7 @@ public class ItemMain implements Parcelable {
         this.status = status;
         this.name = name;
         this.icon = icon;
-        this.iconName = iconName;
+        this.icon_name = icon_name;
     }
 
     public int getId() {
@@ -51,11 +51,11 @@ public class ItemMain implements Parcelable {
     }
 
     public String getTitle() {
-        return title;
+        return tab_name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTitle(String tab_name) {
+        this.tab_name = tab_name;
     }
 
     @Override
@@ -66,8 +66,8 @@ public class ItemMain implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeInt(id);
-        parcel.writeString(category);
-        parcel.writeString(title);
+        parcel.writeString(category_tab);
+        parcel.writeString(tab_name);
         parcel.writeString(url_tembak);
         parcel.writeString(username);
         parcel.writeString(id_rooms_tab);
@@ -79,14 +79,14 @@ public class ItemMain implements Parcelable {
         parcel.writeString(status);
         parcel.writeString(name);
         parcel.writeString(icon);
-        parcel.writeString(iconName);
+        parcel.writeString(icon_name);
         parcel.writeInt(iconTest);
     }
 
     protected ItemMain(Parcel in) {
         id = in.readInt();
-        category = in.readString();
-        title = in.readString();
+        category_tab = in.readString();
+        tab_name = in.readString();
         url_tembak = in.readString();
         username = in.readString();
         id_rooms_tab = in.readString();
@@ -98,7 +98,7 @@ public class ItemMain implements Parcelable {
         status = in.readString();
         name = in.readString();
         icon = in.readString();
-        iconName = in.readString();
+        icon_name = in.readString();
         iconTest = in.readInt();
     }
 

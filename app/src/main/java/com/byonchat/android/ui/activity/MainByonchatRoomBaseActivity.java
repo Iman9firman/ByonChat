@@ -146,6 +146,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     public static final String EXTRA_STATUS = "extra_status";
     public static final String EXTRA_NAME = "extra_name";
     public static final String EXTRA_ICON = "extra_icon";
+    public static final String EXTRA_VALUE = "extra_value";
     public static final String KEY_POSITION = "extra_key_position";
 
     protected ItemMain listItem;
@@ -168,6 +169,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected String status;
     protected String name;
     protected String icon;
+    protected String payload;
 
     protected boolean isSearchView = false;
     protected static float positionFromRight = 1;
@@ -247,8 +249,8 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         color = listItem != null ? listItem.color : getIntent().getExtras().getString(EXTRA_COLOR);
         colorText = listItem != null ? listItem.colorText : getIntent().getExtras().getString(EXTRA_COLORTEXT);
         targetURL = listItem != null ? listItem.targetURL : getIntent().getExtras().getString(EXTRA_TARGETURL);
-        category = listItem != null ? listItem.category : getIntent().getExtras().getString(EXTRA_CATEGORY);
-        title = listItem != null ? listItem.title : getIntent().getExtras().getString(EXTRA_TITLE);
+        category = listItem != null ? listItem.category_tab : getIntent().getExtras().getString(EXTRA_CATEGORY);
+        title = listItem != null ? listItem.tab_name : getIntent().getExtras().getString(EXTRA_TITLE);
         url_tembak = listItem != null ? listItem.url_tembak : getIntent().getExtras().getString(EXTRA_URL_TEMBAK);
         id_rooms_tab = listItem != null ? listItem.id_rooms_tab : getIntent().getExtras().getString(EXTRA_ID_ROOMS_TAB);
         include_pull = listItem != null ? listItem.include_pull : getIntent().getExtras().getString(EXTRA_INCLUDE_PULL);
@@ -323,7 +325,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         vToolbar.setTitleTextColor(Color.parseColor("#" + colorText));
         vToolbarTitle.setTextColor(Color.parseColor("#" + colorText));
 
-        vImgToolbarBack.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_IN);
+        Drawable mDrawable = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        mDrawable.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_ATOP);
+        vImgToolbarBack.setImageDrawable(mDrawable);
 
         vToolbarBack.setOnClickListener(v -> onBackPressed());
         vToolbarTitle.setText(title);
@@ -831,6 +835,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
             status = getIntent().getExtras().getString(EXTRA_STATUS);
             name = getIntent().getExtras().getString(EXTRA_NAME);
             icon = getIntent().getExtras().getString(EXTRA_ICON);
+            payload = getIntent().getExtras().getString(EXTRA_VALUE);
 
             if (username == null && savedInstanceState != null) {
                 username = savedInstanceState.getString(ConversationActivity.KEY_JABBER_ID);
@@ -848,6 +853,20 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 status = savedInstanceState.getString(EXTRA_STATUS);
                 name = savedInstanceState.getString(EXTRA_NAME);
                 icon = savedInstanceState.getString(EXTRA_ICON);
+                payload = savedInstanceState.getString(EXTRA_VALUE);
+            }
+
+            try {
+                List<String> valSetOne = new ArrayList<String>();
+
+                JSONObject jsonObject = new JSONObject(payload);
+                JSONArray jsonArray = new JSONArray(jsonObject.getString("payload"));
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    valSetOne.add(jsonArray.getString(i));
+                }
+                Constants.map.put(position, valSetOne);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
             if (username == null) {
@@ -877,6 +896,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
             outState.putString(ByonChatMainRoomActivity.EXTRA_STATUS, status);
             outState.putString(ByonChatMainRoomActivity.EXTRA_NAME, name);
             outState.putString(ByonChatMainRoomActivity.EXTRA_ICON, icon);
+            outState.putString(ByonChatMainRoomActivity.EXTRA_VALUE, payload);
         }
     }
 }

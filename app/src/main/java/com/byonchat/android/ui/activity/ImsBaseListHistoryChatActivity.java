@@ -16,8 +16,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -180,16 +182,14 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        /*FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#a4a4a4"));
-        vToolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        vToolbar.setTitleTextColor(getResources().getColor(R.color.ims_chat_list_primary_color));*/
-
         FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
         vToolbar.setBackgroundColor(Color.parseColor("#" + mColor));
         vToolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
         vToolbarTitle.setTextColor(Color.parseColor("#" + mColorText));
 
-        vImgToolbarBack.setColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_IN);
+        Drawable mDrawable = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        mDrawable.setColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_ATOP);
+        vImgToolbarBack.setImageDrawable(mDrawable);
 
         vToolbarBack.setOnClickListener(v -> {
             if (vSearchView.isSearchOpen()) {

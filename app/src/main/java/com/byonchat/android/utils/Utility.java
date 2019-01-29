@@ -232,12 +232,17 @@ public class Utility {
         jobScheduler.schedule(builder.build());
     }
 
-    public boolean isColorDark(int color) {
-        double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
-        if (darkness < 0.5) {
-            return false;
-        } else {
-            return true;
+    public static String capitalizer(String word) {
+        String[] words = word.split(" ");
+        StringBuilder sb = new StringBuilder();
+        if (words[0].length() > 0) {
+            sb.append(Character.toUpperCase(words[0].charAt(0)) + words[0].subSequence(1, words[0].length()).toString());
+            for (int i = 1; i < words.length; i++) {
+                sb.append(" ");
+                sb.append(Character.toUpperCase(words[i].charAt(0)) + words[i].subSequence(1, words[i].length()).toString());
+            }
         }
+        return sb.toString();
+
     }
 }

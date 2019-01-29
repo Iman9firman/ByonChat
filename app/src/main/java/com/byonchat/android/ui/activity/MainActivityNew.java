@@ -15,6 +15,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
@@ -34,6 +35,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -64,11 +66,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
-import com.byonchat.android.AdvRecy.MainDbHelper;
 import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.FinalizingActivity;
 import com.byonchat.android.LoadContactScreen;
+import com.byonchat.android.LoadingGetTabRoomActivity;
 import com.byonchat.android.MainActivity;
 import com.byonchat.android.MainSettingActivity;
 import com.byonchat.android.NewSearchRoomActivity;
@@ -83,6 +85,7 @@ import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.Contact;
+import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.Skin;
@@ -101,6 +104,10 @@ import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropM
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,6 +120,41 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected int getResourceLayout() {
         return R.layout.main_activity_new;
+    }
+
+    protected void onSetupRoom() {
+        if (getIntent().getExtras() != null) {
+            if (getIntent().hasExtra(Constants.EXTRA_ROOM)) {
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString(Constants.EXTRA_TAB_MOVEMENT, getIntent().getStringExtra(Constants.EXTRA_TAB_MOVEMENT));
+                editor.apply();
+
+                ContactBot item = new ContactBot();
+                try {
+                    username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
+                    targetURL = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+                    JSONArray jsonArray = new JSONArray(getIntent().getStringExtra(Constants.EXTRA_ROOM));
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        item.id = jsonObject.getString("id");
+                        item.desc = jsonObject.getString("desc");
+                        item.link = jsonObject.getString("link");
+                        item.name = jsonObject.getString("name");
+                        item.realname = jsonObject.getString("realname");
+                        item.targetUrl = jsonObject.getString("targetUrl");
+                        item.type = jsonObject.getString("type");
+                    }
+
+                    Byonchat.getRoomsDB().open();
+                    Byonchat.getRoomsDB().updateActiveRoomsManual(item);
+                    Byonchat.getRoomsDB().close();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -156,7 +198,7 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         super.onViewReady(savedInstanceState);
-        resolveRoomConfig(savedInstanceState);
+        resolveRoomConfig();
 
         resolveView();
         resolveAnimation();
@@ -164,11 +206,13 @@ public class MainActivityNew extends MainBaseActivityNew {
         resolveOpenRooms();
     }
 
-    protected void resolveRoomConfig(Bundle savedInstanceState) {
+    protected void resolveRoomConfig() {
         if (getIntent() != null) {
-            success = getIntent().getStringExtra("success");
-            username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
-            targetURL = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+            if (!getIntent().hasExtra(Constants.EXTRA_ROOM)) {
+                success = getIntent().getStringExtra("success");
+                username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
+                targetURL = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+            }
         }
     }
 
@@ -266,6 +310,10 @@ public class MainActivityNew extends MainBaseActivityNew {
             startActivity(intent);
         });
 
+        adapter.setOnLongItemClickListener((view, position) -> {
+            showToastTab(adapter.getData().get(position).tab_name);
+        });
+
         resolveNavHeader();
         resolveListRooms();
         resolveOpenRooms();
@@ -315,7 +363,8 @@ public class MainActivityNew extends MainBaseActivityNew {
                     startService(mServiceIntent);
                 }
 
-                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 5555555,
+//                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 5555555,
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), Utility.generateRandomInt(),
                         mServiceIntent, 0);
                 int alarmType = AlarmManager.ELAPSED_REALTIME;
                 final int FIFTEEN_SEC_MILLIS = 15000;
@@ -433,6 +482,9 @@ public class MainActivityNew extends MainBaseActivityNew {
                             break;
                         case R.id.nav_item_refresh:
                             RefreshRoom();
+                            break;
+                        case R.id.nav_item_create_shortcut:
+                            createShortcut();
                             break;
                         case R.id.nav_item_legal:
                             Byonchat.getRoomsDB().open();
@@ -631,15 +683,5 @@ public class MainActivityNew extends MainBaseActivityNew {
 
         }
         Toast.makeText(this, "Shortcut Created", Toast.LENGTH_SHORT).show();
-    }
-
-    private void resetGridPosition() {
-        sqLiteDatabase = database.getWritableDatabase();
-        sqLiteDatabase.delete(MainDbHelper.TABLE_ITEM, null, null);
-        sqLiteDatabase.close();
-
-        recreate();
-
-        Toast.makeText(getBaseContext(), "Grid position has been reset", Toast.LENGTH_LONG).show();
     }
 }

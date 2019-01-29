@@ -28,6 +28,9 @@
             android:id="@+id/nav_item_refresh"
             android:title="Refresh Room" />
         <item
+            android:id="@+id/nav_item_create_shortcut"
+            android:title="Create Shorcut" />
+        <item
             android:id="@+id/nav_item_legal"
             android:title="Legal" />
     </group>

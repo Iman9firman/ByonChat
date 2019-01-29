@@ -11,6 +11,9 @@ public class ContactBot {
     public boolean isActive;
     public String targetUrl;
 
+    public ContactBot() {
+    }
+
     public ContactBot(String name, String desc, String realname, String link, String type) {
         this.name = name;
         this.desc = desc;

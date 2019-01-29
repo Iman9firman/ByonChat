@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
@@ -33,6 +34,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -51,6 +53,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +73,6 @@ import android.widget.Toast;
 import com.andremion.counterfab.CounterFab;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
-import com.byonchat.android.AdvRecy.MainDbHelper;
 import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.ListSelectedBotFragment;
@@ -255,6 +257,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected ArrayList<ContactBot> botArrayLististPrimary = new ArrayList<ContactBot>();
     protected ArrayList<ContactBot> botArrayListist = new ArrayList<ContactBot>();
+    protected ArrayList<ContactBot> contactBotsShortcut = new ArrayList<ContactBot>();
     protected List<String> numbers = new ArrayList<>();
 
     protected BroadcastHandler broadcastHandler = new BroadcastHandler();
@@ -276,13 +279,13 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected String color;
     protected String colorText;
     protected String colorForeground;
+    protected String extra_tab = "";
     protected int logo;
     protected int background;
     protected int room_id;
     protected String roomid = "";
     protected int i = 0;
 
-    protected MainDbHelper database;
     protected SQLiteDatabase sqLiteDatabase;
 
     @Override
@@ -296,6 +299,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         super.onCreate(savedInstanceState);
         onSetStatusBarColor();
         setContentView(getResourceLayout());
+        onSetupRoom();
         onLoadView();
         onViewReady(savedInstanceState);
     }
@@ -312,14 +316,16 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected abstract void onLoadView();
 
-    protected void applyChatConfig() {
-        database = new MainDbHelper(getBaseContext());
+    protected abstract void onSetupRoom();
 
+    protected void applyChatConfig() {
         assistant = new LocationAssistant(this, this, LocationAssistant.Accuracy.HIGH, 5000, false);
         assistant.setVerbose(true);
 
         if (getIntent().getExtras() != null) {
-            success = getIntent().getStringExtra("success");
+            if (!getIntent().hasExtra(Constants.EXTRA_ROOM)) {
+                success = getIntent().getStringExtra("success");
+            }
         }
 
         image_url = "";
@@ -460,6 +466,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_three).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_refresh).setVisible(isTrue);
+        nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
     }
 
@@ -475,6 +482,11 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
         vListRooms.setClickable(true);
         vListRooms.setOnItemClickListener((a, v, position, id) -> {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.clear();
+            editor.commit();
+
             drawerLayout.closeDrawer(Gravity.START);
 
             ContactBot item = botArrayListist.get(position);
@@ -484,46 +496,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
             resolveNavHeader();
             refreshList();
-                /*if (Message.isJSONValid(botArrayListist.get(position).getDesc())){
-                    JSONObject jObject = null;
-                    try {
-                        jObject = new JSONObject(botArrayListist.get(position).getDesc());
-                        String desc = jObject.getString("desc");
-                        String classs = jObject.getString("apps");
-                        final String url = jObject.getString("url");
-
-                        boolean isAppInstalled = appInstalledOrNot(classs);
-
-                        if(isAppInstalled) {
-                            Intent LaunchIntent = context.getPackageManager()
-                                    .getLaunchIntentForPackage(classs);
-                            startActivity(LaunchIntent);
-                        } else {
-                            AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
-                            alertbox.setMessage("Please Install the Plug-in first ");
-                            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    openWebPage(url);
-                                }
-
-                            });
-                            alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                }
-                            });
-                            alertbox.show();
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-                    Intent intent = new Intent(context, ByonChatMainRoomActivity.class);
-                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }*/
-
         });
 
         vListRooms.setOnItemLongClickListener((parent, view, position, id) -> {
@@ -660,6 +632,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        adapter.setOnLongItemClickListener((view, position) -> {
+            showToastTab(adapter.getData().get(position).tab_name);
+        });
     }
 
     protected void resolveListTabRooms(ContactBot item, Cursor sdf) {
@@ -719,6 +695,14 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             Log.w("aKaK", content);
             itemList.clear();
             positionList.clear();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs != null) {
+                extra_tab = prefs.getString(Constants.EXTRA_TAB_MOVEMENT, "");
+                if (!extra_tab.equalsIgnoreCase("")) {
+                    jsonArray = new JSONArray(extra_tab);
+                }
+            }
+
             for (int i = 0; i < jsonArray.length(); i++) {
                 String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
                 String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
@@ -730,6 +714,16 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 String icon_name = "";
                 if (jsonArray.getJSONObject(i).has("icon_name")) {
                     icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
+                }
+
+                if (!extra_tab.equalsIgnoreCase("")) {
+                    username = jsonArray.getJSONObject(i).getString("username");
+                    color = jsonArray.getJSONObject(i).getString("color");
+                    colorText = jsonArray.getJSONObject(i).getString("colorText");
+                    targetURL = jsonArray.getJSONObject(i).getString("targetURL");
+                    name = jsonArray.getJSONObject(i).getString("name");
+                    icon = jsonArray.getJSONObject(i).getString("icon");
+                    icon_name = jsonArray.getJSONObject(i).getString("icon_name");
                 }
 
                 ItemMain itemMain = new ItemMain(i, category, title, url_tembak, include_pull,
@@ -1400,5 +1394,118 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @Override
     public void onError(LocationAssistant.ErrorType type, String message) {
 
+    }
+
+    protected void createShortcut() {
+        Byonchat.getRoomsDB().open();
+        contactBotsShortcut = Byonchat.getRoomsDB().retrieveRooms("2", true);
+        Byonchat.getRoomsDB().close();
+
+        if (contactBotsShortcut.size() > 0) {
+            Cursor cur = Byonchat.getBotListDB().getSingleRoom(contactBotsShortcut.get(0).name);
+
+            if (cur.getCount() > 0) {
+                String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
+                String icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
+                String username = Byonchat.getMessengerHelper().getMyContact().getJabberId();
+
+                final Dialog dialogConfirmation;
+                dialogConfirmation = DialogUtil.customDialogConversationConfirmation(this);
+                dialogConfirmation.show();
+
+                TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
+                TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
+                txtConfirmation.setText(contactBotsShortcut.get(0).realname + " Shortcut");
+                descConfirmation.setVisibility(View.VISIBLE);
+                descConfirmation.setText("Are you sure you want to create shortcut for "
+                        + contactBotsShortcut.get(0).realname + "?");
+
+                Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
+                Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+                btnNo.setText("Cancel");
+                btnNo.setOnClickListener(v -> {
+                    dialogConfirmation.dismiss();
+                });
+
+                btnYes.setOnClickListener(v -> {
+                    dialogConfirmation.dismiss();
+                    Picasso.with(MainBaseActivityNew.this)
+                            .load(icon)
+                            .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                            .transform(new RoundedCornersTransformation(30, 0, RoundedCornersTransformation.CornerType.ALL))
+                            .into(new Target() {
+                                @Override
+                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                    if (bitmap != null) {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(MainBaseActivityNew.this, name);
+                                            mShortcutInfoBuilder.setShortLabel(name);
+                                            mShortcutInfoBuilder.setLongLabel(name);
+                                            mShortcutInfoBuilder.setIcon(Icon.createWithBitmap(bitmap));
+                                            mShortcutInfoBuilder.setIntent(generateShortcutIntent());
+
+                                            ShortcutInfo mShortcutInfo = mShortcutInfoBuilder.build();
+                                            ShortcutManager mShortcutManager = getSystemService(ShortcutManager.class);
+                                            mShortcutManager.requestPinShortcut(mShortcutInfo, null);
+                                        } else {
+                                            Intent addIntent = new Intent();
+                                            addIntent
+                                                    .putExtra(Intent.EXTRA_SHORTCUT_INTENT, generateShortcutIntent());
+                                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+                                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+
+                                            addIntent
+                                                    .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                                            addIntent.putExtra("duplicate", false);  //may it's already there so   don't duplicate
+                                            getApplicationContext().sendBroadcast(addIntent);
+
+                                        }
+                                        finish();
+                                        Toast.makeText(MainBaseActivityNew.this, "Shortcut Created", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onBitmapFailed(Drawable errorDrawable) {
+                                    Toast.makeText(MainBaseActivityNew.this, "Create Shortcut failed", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                    Toast.makeText(MainBaseActivityNew.this, "Please Wait", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                });
+            }
+        }
+    }
+
+    protected Intent generateShortcutIntent() {
+        ArrayList<ContactBot> contactBots = new ArrayList<>();
+        Gson gson = new Gson();
+
+        ContactBot contactBot = contactBotsShortcut.get(0);
+        contactBots.add(contactBot);
+
+        Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
+        intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+        intent.putExtra(Constants.EXTRA_ROOM, gson.toJson(contactBots));
+        intent.putExtra(Constants.EXTRA_TAB_MOVEMENT, gson.toJson(itemList));
+        intent.putExtra(ConversationActivity.KEY_TITLE, contactBotsShortcut.get(0).targetUrl);
+        intent.setAction(Intent.ACTION_MAIN);
+
+        return intent;
+    }
+
+    protected void showToastTab(String args) {
+        Toast toast = new Toast(this);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.custom_toast, null);
+        TextView text = (TextView) view.findViewById(R.id.message);
+        text.setText(args);
+        toast.setView(view);
+        toast.setGravity(Gravity.TOP, 0, 100);
+        toast.show();
     }
 }

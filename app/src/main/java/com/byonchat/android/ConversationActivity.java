@@ -115,6 +115,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.provider.TimeLineDB;
 import com.byonchat.android.ui.activity.ImsBaseListHistoryChatActivity;
+import com.byonchat.android.ui.activity.SelectBaseMessageContactActivity;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.HttpHelper;
@@ -454,6 +455,10 @@ public class ConversationActivity extends AppCompatActivity implements
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
         resolveChatRoom(state);
         instance = this;
+
+        if (SelectBaseMessageContactActivity.activity != null) {
+            SelectBaseMessageContactActivity.activity.finish();
+        }
        /*material desgin ga ada cek version
        if (!new Validations().getInstance(getApplicationContext()).getContentValidation(16).equalsIgnoreCase(getResources().getString(R.string.version))) {
             finish();
@@ -529,6 +534,8 @@ public class ConversationActivity extends AppCompatActivity implements
         progressRadio = (ProgressBar) findViewById(R.id.progressRadio);
         buttonNext = (Button) findViewById(R.id.buttonNext);
         progresVdopia = (ProgressBar) findViewById(R.id.progresVdopia);
+
+        resolveToolbar();
 
         IntervalDB db = new IntervalDB(this);
         db.open();
@@ -945,6 +952,10 @@ public class ConversationActivity extends AppCompatActivity implements
 
         if (itemFind != null) {
         }
+    }
+
+    protected void resolveToolbar() {
+
     }
 
     private String createAKA(String aa, String bb) {
@@ -2178,7 +2189,7 @@ public class ConversationActivity extends AppCompatActivity implements
                 }
 
             } else if
-                    (requestCode == REQ_MEME) {
+            (requestCode == REQ_MEME) {
                 if (decodeFile(cameraFileOutput)) {
                     Intent intent = new Intent(getApplicationContext(), PhotoSortrActivity.class);
                     String jabberId = destination.getJabberId();

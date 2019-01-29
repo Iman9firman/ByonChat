@@ -32,19 +32,26 @@ import com.byonchat.android.ConversationGroupActivity;
 import com.byonchat.android.MainActivity;
 import com.byonchat.android.MemberDetailActivity;
 import com.byonchat.android.R;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.UploadService;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadgeException;
 import me.leolin.shortcutbadger.ShortcutBadger;
@@ -127,9 +134,9 @@ public class NotificationReceiver extends BroadcastReceiver {
                                 String aaa = b;
                                 String bbb = (jsonObject.getString("include_latlong"));
                                 String ccc = (jsonObject.getString("url_tembak"));
-                                String ddd = (jsonObject.getString("category_tab"));
+                                String category = (jsonObject.getString("category_tab"));
                                 String ddds = (jsonObject.getString("id_rooms_tab"));
-                                String eee = (jsonObject.getString("include_pull"));
+                                String include_pull = (jsonObject.getString("include_pull"));
                                 String fff = (jsonObject.getString("tab_name"));
                                 String hhh = (jsonObject.getString("status"));
                                 String iii = h;
@@ -140,21 +147,79 @@ public class NotificationReceiver extends BroadcastReceiver {
                                 String lll = jsonObject1.getString("e");
                                 String mmm = c;
 
+                                List<String> valSetOne = new ArrayList<String>();
+
+                                if (category.equalsIgnoreCase("4")) {
+                                    if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
+                                        valSetOne.add(mmm);
+                                        valSetOne.add(aaa);
+                                        valSetOne.add(ddds);
+                                        valSetOne.add(jjj);
+                                        valSetOne.add(bbb);
+                                        valSetOne.add("hide");
+                                    } else if (include_pull.equalsIgnoreCase("0")) {
+                                        valSetOne.add(mmm);
+                                        valSetOne.add(aaa);
+                                        valSetOne.add(ddds);
+                                        valSetOne.add(jjj);
+                                        valSetOne.add(bbb);
+                                        valSetOne.add("show");
+                                    } else if (include_pull.equalsIgnoreCase("2")) {
+                                    } else if (include_pull.equalsIgnoreCase("4") || include_pull.equalsIgnoreCase("5")) {
+                                        valSetOne.add(mmm);
+                                        valSetOne.add(aaa);
+                                        valSetOne.add(ddds);
+                                        valSetOne.add(jjj);
+                                        valSetOne.add(bbb);
+                                        valSetOne.add("hideMultiple");
+                                    } else if (include_pull.equalsIgnoreCase("6")) {
+                                        valSetOne.add(mmm);
+                                        valSetOne.add(aaa);
+                                        valSetOne.add(ddds);
+                                        valSetOne.add(jjj);
+                                        valSetOne.add(bbb);
+                                        valSetOne.add("showMultiple");
+                                    } else if (include_pull.equalsIgnoreCase("7")) {
+                                        valSetOne.add(mmm);
+                                        valSetOne.add(aaa);
+                                        valSetOne.add(ddds);
+                                        valSetOne.add(jjj);
+                                        valSetOne.add(bbb);
+                                        valSetOne.add("hideMultiple");
+                                    }
+                                } else if (category.equalsIgnoreCase("11")) {
+                                    valSetOne.add("pos");
+                                    valSetOne.add(aaa);
+                                    valSetOne.add(ddds);
+                                    valSetOne.add(jjj);
+                                    valSetOne.add(bbb);
+                                    valSetOne.add("show");
+                                    valSetOne.add(ccc);
+                                } else if (category.equalsIgnoreCase("15")) {
+                                    valSetOne.add("btube");
+                                    valSetOne.add(aaa);
+                                    valSetOne.add(ddds);
+                                    valSetOne.add(jjj);
+                                    valSetOne.add(bbb);
+                                    valSetOne.add("showvideo");
+                                    valSetOne.add(ccc);
+                                }
+
                                 destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, aaa);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_POSITION, iss);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_COLOR, jjj);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_COLORTEXT, kkk);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_TARGETURL, lll);
-                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_CATEGORY, ddd);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_CATEGORY, category);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_TITLE, fff);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_URL_TEMBAK, ccc);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_ID_ROOMS_TAB, ddds);
-                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_PULL, eee);
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_PULL, include_pull);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_INCLUDE_LATLONG, bbb);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_STATUS, hhh);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_NAME, mmm);
                                 destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_ICON, iii);
-
+                                destIntent.putExtra(ByonChatMainRoomActivity.EXTRA_VALUE, generatePayload(valSetOne));
                             }
                         }
 
@@ -479,6 +544,22 @@ public class NotificationReceiver extends BroadcastReceiver {
             }
         }
 
+    }
+
+    protected String generatePayload(List value) {
+        if (value.size() > 0) {
+            Gson gson = new Gson();
+            JsonObject jObj = new JsonObject();
+            JsonArray jArr = new JsonArray();
+            for (int i = 0; i < value.size(); i++) {
+                jArr.add(new JsonPrimitive(value.get(i).toString()));
+            }
+            jObj.add("payload", jArr);
+
+            return gson.toJson(jObj);
+        }
+
+        return "";
     }
 
     protected void sendSMSMessage(String content) {

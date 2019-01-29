@@ -96,6 +96,7 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
 import com.byonchat.android.widget.BadgeView;
+import com.eightbitlab.supportrenderscriptblur.SupportRenderScriptBlur;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
@@ -181,7 +182,8 @@ public class MainActivityNew extends MainBaseActivityNew {
         vToolbarSearchText = findViewById(R.id.text_toolbar_title);
 
         card_menu_main = findViewById(R.id.card_nav_main);
-//        blurView = findViewById(R.id.blurView);
+        vBlurView = findViewById(R.id.blurView);
+        vBlurTopBackground = findViewById(R.id.blur_top_background);
         fab_menu_1 = findViewById(R.id.fab_menu_1_main);
         fab_menu_2 = findViewById(R.id.fab_menu_2_main);
 //        fab_menu_3 = findViewById(R.id.fab_menu_3_main);
@@ -510,6 +512,18 @@ public class MainActivityNew extends MainBaseActivityNew {
                 Glide.with(this).load(background).into(backgroundImage);
             }
 
+            final Drawable windowBackground = getWindow().getDecorView().getBackground();
+            vBlurView.setupWith(root_view)
+                    .setFrameClearDrawable(windowBackground)
+                    .setBlurAlgorithm(new SupportRenderScriptBlur(this))
+                    .setBlurRadius(radius)
+                    .setHasFixedTransformationMatrix(true);
+//            vBlurTopBackground.setupWith(root_view)
+//                    .setFrameClearDrawable(windowBackground)
+//                    .setBlurAlgorithm(new SupportRenderScriptBlur(this))
+//                    .setBlurRadius(0.1f)
+//                    .setHasFixedTransformationMatrix(true);
+
             //appbar
             appBarLayout.addOnOffsetChangedListener((appBarLayout, i) -> {
                 if (Math.abs(i) - appBarLayout.getTotalScrollRange() == 0) {
@@ -564,13 +578,6 @@ public class MainActivityNew extends MainBaseActivityNew {
             vBtnToolbarSearch.setOnClickListener(v -> {
                 searchView.showSearch(true);
             });
-
-            final Drawable windowBackground = getWindow().getDecorView().getBackground();
-//            blurView.setupWith(root_view)
-//                    .setFrameClearDrawable(windowBackground)
-//                    .setBlurAlgorithm(new SupportRenderScriptBlur(this))
-//                    .setBlurRadius(radius)
-//                    .setHasFixedTransformationMatrix(true);
 
             searchView.setHint("Search ...");
             searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {

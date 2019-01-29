@@ -148,6 +148,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import eightbitlab.com.blurview.BlurView;
 import jp.wasabeef.blurry.Blurry;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 //import me.leolin.shortcutbadger.ShortcutBadger;
@@ -224,6 +225,12 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected CardView card_menu_main;
 
     @NonNull
+    protected BlurView vBlurView;
+
+    @NonNull
+    protected BlurView vBlurTopBackground;
+
+    @NonNull
     protected ImageButton but_search_main;
 
     @NonNull
@@ -268,7 +275,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     public static Activity mActivity;
     protected boolean isVisible = false;
-    protected float radius = 5f;
+    protected float radius = 3f;
     protected String protect = "";
     protected String targetURL = "";
     protected String success;

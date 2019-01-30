@@ -48,6 +48,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -518,13 +519,9 @@ public class MainActivityNew extends MainBaseActivityNew {
                     .setBlurAlgorithm(new SupportRenderScriptBlur(this))
                     .setBlurRadius(radius)
                     .setHasFixedTransformationMatrix(true);
-//            vBlurTopBackground.setupWith(root_view)
-//                    .setFrameClearDrawable(windowBackground)
-//                    .setBlurAlgorithm(new SupportRenderScriptBlur(this))
-//                    .setBlurRadius(0.1f)
-//                    .setHasFixedTransformationMatrix(true);
 
-            //appbar
+            vBlurTopBackground.setBlurRadius(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics()));
+
             appBarLayout.addOnOffsetChangedListener((appBarLayout, i) -> {
                 if (Math.abs(i) - appBarLayout.getTotalScrollRange() == 0) {
                     card_search_main.setVisibility(View.GONE);
@@ -539,6 +536,11 @@ public class MainActivityNew extends MainBaseActivityNew {
                     }*/
                     invalidateOptionsMenu();
                 }
+
+                float logic1 = Math.abs(i) - appBarLayout.getTotalScrollRange();
+                float logic2 = (logic1 / appBarLayout.getTotalScrollRange());
+                float pusing = 1 - (logic2 * -1);
+                vBlurTopBackground.setAlpha(pusing);
             });
 
             vBtnAddRooms.setOnClickListener(v -> {

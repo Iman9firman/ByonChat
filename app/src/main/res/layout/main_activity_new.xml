@@ -58,21 +58,11 @@
                     android:src="@drawable/byonchat_room"
                     android:tag="CURVED_CONTAINER">
 
-                    <eightbitlab.com.blurview.BlurView
+                    <com.github.mmin18.widget.RealtimeBlurView
                         android:id="@+id/blur_top_background"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        android:background="@null"
-                        android:elevation="4dp"
-                        app:blurOverlayColor="@color/ims_blur_background">
-                        <!--app:blurOverlayColor="#10ffffff"-->
+                        android:layout_height="match_parent" />
 
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal"
-                            android:padding="@dimen/margin10"></RelativeLayout>
-                    </eightbitlab.com.blurview.BlurView>
                 </com.byonchat.android.curved.CurvedContainer>
 
                 <ImageView

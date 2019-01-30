@@ -110,6 +110,7 @@ import com.byonchat.android.utils.UtilsPD;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.BadgeView;
+import com.github.mmin18.widget.RealtimeBlurView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
@@ -228,7 +229,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected BlurView vBlurView;
 
     @NonNull
-    protected BlurView vBlurTopBackground;
+    protected RealtimeBlurView vBlurTopBackground;
 
     @NonNull
     protected ImageButton but_search_main;

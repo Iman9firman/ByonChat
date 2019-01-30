@@ -240,6 +240,7 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
             FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + mColor)));
         }
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_keyboard_arrow_left_black_35dp);
     }
 
     @Override

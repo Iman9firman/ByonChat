@@ -1,4 +1,5 @@
-<android.support.v7.widget.Toolbar
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
@@ -7,10 +8,7 @@
     app:contentInsetLeft="0dp"
     app:contentInsetStart="0dp"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
     <LinearLayout
         android:id="@+id/layout_back_button"
@@ -20,11 +18,11 @@
         android:gravity="center_vertical">
 
         <ImageView
-            android:layout_marginLeft="@dimen/margin5"
-            android:layout_marginRight="@dimen/margin3"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_arrow_back_white" />
+            android:layout_marginLeft="@dimen/margin5"
+            android:layout_marginRight="@dimen/margin3"
+            app:srcCompat="@drawable/ic_keyboard_arrow_left_black_35dp" />
 
         <!--<ImageView
             android:id="@+id/logo_toolbar"
@@ -33,11 +31,11 @@
             android:src="@drawable/ic_att_gallery" />-->
 
         <ImageView
-            android:transitionName="@string/activity_image_trans"
             android:id="@+id/logo_toolbar"
             android:layout_width="@dimen/margin40"
             android:layout_height="@dimen/margin40"
-            android:src="@drawable/ic_no_photo" />
+            android:src="@drawable/ic_no_photo"
+            android:transitionName="@string/activity_image_trans" />
 
         <FrameLayout
             android:id="@+id/frameLayoutPicasso"
@@ -80,10 +78,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:text="ByonChat"
         android:singleLine="true"
+        android:text="ByonChat"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textColor="@android:color/white"
-        />
+        android:textColor="@android:color/white" />
 
 </android.support.v7.widget.Toolbar>

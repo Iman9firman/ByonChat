@@ -87,18 +87,11 @@ public class LoginISS extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("HttpClient", "success! response: " + response);
+//                        Log.e("HttpClient", "success! response: " + response);
+//                        Toast.makeText(LoginISS.this,response,Toast.LENGTH_LONG).show();
 
-                        Toast.makeText(LoginISS.this,response,Toast.LENGTH_LONG).show();
                         pd.dismiss();
                         parseJSON(response);
-                        finish();
-
-                        Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
-                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                        intent.putExtra("success", "oke");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getApplicationContext().startActivity(intent);
                     }
                 },
                 new Response.ErrorListener() {
@@ -191,6 +184,18 @@ public class LoginISS extends AppCompatActivity {
         }
 
         db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
+
+
+        if(sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
+            Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
+            intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+            intent.putExtra("success", "oke");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(intent);
+            finish();
+        }else{
+            Toast.makeText(LoginISS.this,"Username dan password anda salah",Toast.LENGTH_SHORT).show();
+        }
     }
 
 

@@ -203,6 +203,71 @@ public class Validations {
         return error;
     }
 
+    public int setTimeValidationISS(int id){
+        int error = 0;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        String time_str = dateFormat.format(cal.getTime());
+        String[] s = time_str.split(" ");
+
+        int year_sys = Integer.parseInt(s[0].split("/")[0]);
+        int month_sys = Integer.parseInt(s[0].split("/")[1]);
+        int day_sys = Integer.parseInt(s[0].split("/")[2]);
+        int hour_sys = Integer.parseInt(s[1].split(":")[0]);
+        int min_sys = Integer.parseInt(s[1].split(":")[1]);
+
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(id);
+        if (cursor.getCount() > 0) {
+            String time_strDB = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+            String[] sDB = time_strDB.split(" ");
+            int year_sysDB = Integer.parseInt(sDB[0].split("/")[0]);
+            int month_sysDB = Integer.parseInt(sDB[0].split("/")[1]);
+            int day_sysDB = Integer.parseInt(sDB[0].split("/")[2]);
+            int hour_sysDB = Integer.parseInt(sDB[1].split(":")[0]);
+            int min_sysDB = Integer.parseInt(sDB[1].split(":")[1]);
+
+            if (year_sysDB == year_sys) {
+                if (month_sysDB == month_sys) {
+                    if (day_sysDB == day_sys) {
+                        if (hour_sysDB == hour_sys) {
+                            if ((min_sys - min_sysDB) > 5) {
+                                error = 1;
+                                db.deleteContact(id);
+                            } else {
+                                error = 0;
+                            }
+                        } else {
+                            error = 1;
+                            db.deleteContact(id);
+                        }
+                    } else {
+                        error = 1;
+                        db.deleteContact(id);
+                    }
+                } else {
+                    error = 1;
+                    db.deleteContact(id);
+                }
+            } else {
+                error = 1;
+                db.deleteContact(id);
+            }
+        } else {
+            Interval interval = new Interval();
+            interval.setId(id);
+            interval.setTime(time_str);
+            db.createContact(interval);
+            error = 1;
+        }
+
+        db.close();
+
+        return error;
+    }
+
 
     public void setTimebyId(int id) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

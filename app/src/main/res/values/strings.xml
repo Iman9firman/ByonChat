@@ -65,6 +65,12 @@
     <string name="sql_group_by_jid">SELECT * FROM groups WHERE jid=?;</string>
     <string name="sql_message_by_packetid">SELECT * FROM messages WHERE packet_id=?;</string>
     <string name="sql_all_jid">SELECT * FROM contacts;</string>
+    <string name="sql_insert_log_iss">INSERT INTO user (URI_TOKEN, STATUS, USERNAME, EMPLOYEE_NAME,  EMPLOYEE_EMAIL,  EMPLOYEE_NIK,
+                            EMPLOYEE_JT,  EMPLOYEE_MULTICOST,  EMPLOYEE_PHONE,  EMPLOYEE_PHOTOS,  ATASAN_1_USERNAME,
+                            ATASAN_1_EMAIL,  ATASAN_1_NIK,  ATASAN_1_JT,  ATASAN_1_NAMA,  ATASAN_1_PHONE,  DIVISION_CODE,
+                            DIVISION_NAME,  DEPARTEMEN_CODE,  DEPARTEMEN_NAME,  ATASAN_2_USERNAME,  ATASAN_2_EMAIL,
+                            ATASAN_2_NIK,  ATASAN_2_JT,  ATASAN_2_NAMA,  ATASAN_2_PHONE,  LIST_APPROVE_ROLE1,  LIST_APPROVE_ROLE2,
+                            LIST_REQ_ROLE,  MY_ROLE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)</string>
 
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_home</item>

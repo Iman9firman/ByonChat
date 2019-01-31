@@ -4582,11 +4582,17 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 public void onClick(View view) {
                                     dummyIdDate = Integer.parseInt(idListTask);
 
-                                    OCRCapture.Builder(DinamicRoomTaskActivity.this)
-                                            .setUseFlash(false)
-                                            .setAutoFocus(true)
-                                            .buildWithRequestCode(CAMERA_SCAN_TEXT);
-
+                                    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                        return;
+                                    }
+                                    CameraActivity.Builder start = new CameraActivity.Builder(activity, CAMERA_SCAN_TEXT);
+                                    start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                                    start.setCameraFace(CameraActivity.CAMERA_REAR);
+                                    start.setFlashMode(CameraActivity.FLASH_OFF);
+                                    start.setQuality(CameraActivity.MEDIUM);
+                                    start.setRatio(CameraActivity.RATIO_4_3);
+                                    start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
+                                    new Camera(start.build()).lauchCamera();
                                 }
                             });
 
@@ -9687,24 +9693,54 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
         } else if (requestCode == CAMERA_SCAN_TEXT) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                try {
-                    String text = data.getStringExtra(TextBlockObject);
-                    List value = (List) hashMap.get(dummyIdDate);
-                    String lala = getNIKKTP(text);
-                    et[Integer.valueOf(value.get(0).toString())].setText(lala);
-                    int pos = 0;
-                    if (et[Integer.valueOf(value.get(0).toString())].length() > 1) {
-                        pos = et[Integer.valueOf(value.get(0).toString())].length() - 1;
+            if (resultCode == CommonStatusCodes.SUCCESS_CACHE) {
+                String returnString = data.getStringExtra("PICTURE");
+                if (decodeFile(returnString)) {
+                    final File f = new File(returnString);
+                    if (f.exists()) {
+                        FileInputStream inputStream = null;
+                        try {
+                            inputStream = new FileInputStream(f);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+                        result = MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 1200,
+                                900);
+
+                        String text = OCRCapture.Builder(this).getTextFromBitmap(result);
+                        Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+                        try {
+                            List value = (List) hashMap.get(dummyIdDate);
+                            String lala = getNIKKTP(text);
+                            et[Integer.valueOf(value.get(0).toString())].setText(lala);
+                            int pos = 0;
+                            if (et[Integer.valueOf(value.get(0).toString())].length() > 1) {
+                                pos = et[Integer.valueOf(value.get(0).toString())].length() - 1;
+                            }
+
+                            et[Integer.valueOf(value.get(0).toString())].setSelection(pos);
+                            String urlString = "https://infopemilu.kpu.go.id/pilkada2018/pemilih/dps/1/hasil-cari/resultDps.json?nik=" + lala
+                                    + "&nama=&namaPropinsi=&namaKabKota=&namaKecamatan=&namaKelurahan=&notificationType=";
+
+                            new getJSONeKtp(urlString).execute();
+                        } catch (Exception e) {
+
+                        }
+
+                        SimpleDateFormat dateFormatNew = new SimpleDateFormat(
+                                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+                        long date = System.currentTimeMillis();
+                        String dateString = dateFormatNew.format(date);
+
+                        saveToInternalStorage(result, dateString);
+
+                        f.delete();
                     }
 
-                    et[Integer.valueOf(value.get(0).toString())].setSelection(pos);
-                    String urlString = "https://infopemilu.kpu.go.id/pilkada2018/pemilih/dps/1/hasil-cari/resultDps.json?nik=" + lala
-                            + "&nama=&namaPropinsi=&namaKabKota=&namaKecamatan=&namaKelurahan=&notificationType=";
-
-                    new getJSONeKtp(urlString).execute();
-                } catch (Exception e) {
-
+                } else {
+                    Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(this, " We Can't found Your NIK, Please retry scanning process or Input your NIK manually ", Toast.LENGTH_SHORT).show();
@@ -11800,6 +11836,31 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             }
         }
 
+    }
+
+    private String saveToInternalStorage(Bitmap bitmapImage,String name){
+
+        File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "ByonchatKTP");
+        // Create imageDir
+        File mypath=new File(directory,"KTP-"+name+".jpg");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return directory.getAbsolutePath();
     }
 
 }

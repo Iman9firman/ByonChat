@@ -301,6 +301,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected int i = 0;
 
     protected SQLiteDatabase sqLiteDatabase;
+    protected static int TAG_CODE_PERMISSION_LOCATION = 77;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -946,16 +947,16 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 }
             }
 
+        }if (new Validations().getInstance(getApplicationContext()).setTimeValidationISS(26) == 1) {
             if (title.equalsIgnoreCase("ISS INDONESIA")) {
                 if (success == null) {
-                    Toast.makeText(this, "ISS INDONESIA", Toast.LENGTH_SHORT).show();
                     Intent a = new Intent(getApplicationContext(), LoginISS.class);
                     a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                     a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
                     startActivity(a);
+                    finish();
                 }
             }
-
         }
     }
 

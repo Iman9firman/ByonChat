@@ -354,6 +354,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
             toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
             toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
         }
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_keyboard_arrow_left_black_35dp);
     }
 
     public void openWebPage(String url) {

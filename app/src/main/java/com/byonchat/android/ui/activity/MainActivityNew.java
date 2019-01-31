@@ -52,6 +52,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -176,6 +177,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         searchView = findViewById(R.id.search_view_main);
         backdropBlur = findViewById(R.id.backdropblur);
         vImgBlur = findViewById(R.id.bg_blur);
+        vSwipeRefresh = findViewById(R.id.swipe_refresh);
 
         root_view = findViewById(R.id.main_group);
         drawerLayout = findViewById(R.id.drawer_main);
@@ -247,6 +249,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         unregisterReceiver(broadcastHandler);
         assistant.stop();
         numbers.clear();
+        appBarLayout.removeOnOffsetChangedListener(this);
         super.onPause();
     }
 
@@ -268,6 +271,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                 .cancel(NotificationReceiver.NOTIFY_ID_CARD);
         addShortcutBadger(getApplicationContext());
 
+        resolveAppBar();
         resolveValidationLogin();
         resolveToolbarExpanded();
         resolveNavHeader();
@@ -542,28 +546,8 @@ public class MainActivityNew extends MainBaseActivityNew {
                     .setBlurAlgorithm(new SupportRenderScriptBlur(this))
                     .setBlurRadius(radius)
                     .setHasFixedTransformationMatrix(true);
-//            vBlurTopBackground.setupWith(root_view)
-//                    .setFrameClearDrawable(windowBackground)
-//                    .setBlurAlgorithm(new SupportRenderScriptBlur(this))
-//                    .setBlurRadius(0.1f)
-//                    .setHasFixedTransformationMatrix(true);
 
-            //appbar
-            appBarLayout.addOnOffsetChangedListener((appBarLayout, i) -> {
-                if (Math.abs(i) - appBarLayout.getTotalScrollRange() == 0) {
-                    card_search_main.setVisibility(View.GONE);
-                    isVisible = true;
-                    invalidateOptionsMenu();
-                } else {
-                    card_search_main.setVisibility(View.GONE);
-                    isVisible = true;
-                    /*if (searchView.isSearchOpen()) {
-                        searchView.closeSearch();
-                        tb.setVisibility(View.VISIBLE);
-                    }*/
-                    invalidateOptionsMenu();
-                }
-            });
+            vBlurTopBackground.setBlurRadius(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics()));
 
             vBtnAddRooms.setOnClickListener(v -> {
                 Intent intent = new Intent(getApplicationContext(), NewSearchRoomActivity.class);
@@ -637,6 +621,30 @@ public class MainActivityNew extends MainBaseActivityNew {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+        if (Math.abs(i) - appBarLayout.getTotalScrollRange() == 0) {
+            card_search_main.setVisibility(View.GONE);
+            isVisible = true;
+            invalidateOptionsMenu();
+        } else {
+            card_search_main.setVisibility(View.GONE);
+            isVisible = true;
+                    /*if (searchView.isSearchOpen()) {
+                        searchView.closeSearch();
+                        tb.setVisibility(View.VISIBLE);
+                    }*/
+            invalidateOptionsMenu();
+        }
+
+        float logic1 = Math.abs(i) - appBarLayout.getTotalScrollRange();
+        float logic2 = (logic1 / appBarLayout.getTotalScrollRange());
+        float pusing = 1 - (logic2 * -1);
+        vBlurTopBackground.setAlpha(pusing);
+
+        vSwipeRefresh.setEnabled(i == 0);
     }
 
     @Override

@@ -696,6 +696,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ISSActivity.Reliever.CheckInActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity"/>
 
     </application>
 

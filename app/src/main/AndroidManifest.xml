@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.byonchat.android">
+    package="com.byonchat.android"> <!-- OCR Library -->
+    <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary" />
 
     <uses-feature
         android:name="android.hardware.bluetooth"
@@ -81,9 +82,6 @@
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
-
-    <!-- OCR Library -->
-    <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary" />
 
     <permission-group
         android:name="android.permission-group.LOCATION"
@@ -396,9 +394,11 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs" />
 
-        <!--// test key
+        <!--
+        // test key
         AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo
-        AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo-->
+        AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo
+        -->
         <!--
            API debug
            android:value="AIzaSyC9uE41626BAiFV-eFvvfwu2guhsX3cxMo" />
@@ -685,19 +685,23 @@
         <activity
             android:name=".RequestPasscodeRoomActivity"
             android:label="@string/title_activity_request_passcode_room"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-
-        <activity android:name=".personalRoom.utils.CloudStorageActivity"></activity>
-        <activity android:name=".tempSchedule.NotePreviewActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".personalRoom.utils.CloudStorageActivity" />
+        <activity android:name=".tempSchedule.NotePreviewActivity" />
         <activity android:name=".LoginISS" />
-        <activity android:name=".ISSActivity.Reliever.SubmitRequestActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ISSActivity.Reliever.CheckOutActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ISSActivity.Reliever.CheckInActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity"/>
-
+        <activity
+            android:name=".ISSActivity.Reliever.SubmitRequestActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ISSActivity.Reliever.CheckOutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ISSActivity.Reliever.CheckInActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
+        <activity android:name=".tabRequest.RelieverListActivity" />
+        <activity android:name=".tabRequest.MapsViewActivity" />
+        <activity android:name=".tabRequest.RelieverDetailActivity"></activity>
     </application>
 
 </manifest>

@@ -116,6 +116,7 @@ import com.byonchat.android.provider.DatabaseKodePos;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.tabRequest.RelieverListActivity;
 import com.byonchat.android.tempSchedule.MyEventDatabase;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
@@ -8490,11 +8491,20 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
         String error = "";
         long totalSize = 0;
 
+        //sementara
+        String lat = "-6.1919114";
+        String lng = "106.7536443";
+        String pekerjaan = "262";
+        String jumlah = "3";
+        String jam_mulai = "15:00";
+        String jam_selesai = "17:00";
+        String tgl_mulai = "2019-01-30";
+        String tgl_selesai = "2019-01-31";
+
         @Override
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
-            postData(params[0]);
-            return null;
+            return postData(params[0]);
         }
 
         @Override
@@ -8503,12 +8513,21 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
         }
 
         protected void onPostExecute(String result) {
+            progressDialog.dismiss();
+            Intent goToList = new Intent(DinamicRoomSearchTaskActivity.this,RelieverListActivity.class);
+            goToList.putExtra(RelieverListActivity.XTRA_RELIEVER_JSON,result);
+            goToList.putExtra(RelieverListActivity.XTRA_DETAILS_JSON,"detailsnya");
+            goToList.putExtra(RelieverListActivity.XTRA_LATITUDE,lat);
+            goToList.putExtra(RelieverListActivity.XTRA_LONGITUDE,lng);
+            goToList.putExtra(RelieverListActivity.XTRA_MAX,jumlah);
+            startActivity(goToList);
+            finish();
         }
 
         protected void onProgressUpdate(Integer... progress) {
         }
 
-        public void postData(String valueIWantToSend) {
+        public String postData(String valueIWantToSend) {
             // Create a new HttpClient and Post Header
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(valueIWantToSend);
@@ -8525,14 +8544,14 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
 
 
                 ContentType contentType = ContentType.create("multipart/form-data");
-                entity.addPart("lat", new StringBody("-6.1919114"));
-                entity.addPart("long", new StringBody("106.7536443"));
-                entity.addPart("pekerjaan", new StringBody("262"));
-                entity.addPart("jumlah", new StringBody("5"));
-                entity.addPart("jam_mulai", new StringBody("15:00"));
-                entity.addPart("jam_selesai", new StringBody("17:00"));
-                entity.addPart("tgl_mulai", new StringBody("2019-01-30"));
-                entity.addPart("tgl_selesai", new StringBody("2019-01-31"));
+                entity.addPart("lat", new StringBody(lat));
+                entity.addPart("long", new StringBody(lng));
+                entity.addPart("pekerjaan", new StringBody(pekerjaan));
+                entity.addPart("jumlah", new StringBody(jumlah));
+                entity.addPart("jam_mulai", new StringBody(jam_mulai));
+                entity.addPart("jam_selesai", new StringBody(jam_selesai));
+                entity.addPart("tgl_mulai", new StringBody(tgl_mulai));
+                entity.addPart("tgl_selesai", new StringBody(tgl_selesai));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);
@@ -8550,14 +8569,19 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
                     try {
                         // TODO: 31/01/19 dari sini kirim ke activity baru zarfan
                         JSONObject jsonObject = new JSONObject(data);
-                        if (jsonObject.getString("message").equalsIgnoreCase("succes")){
+                        if (jsonObject.getString("messages").equalsIgnoreCase("succes")){
                             JSONArray jsonArray = new JSONArray(jsonObject.getString("datas"));
+                            Log.w("tabu", "datas : "+jsonArray.toString());
 
+                            return jsonArray.toString();
 
                         }
-` `
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        return null;
+                    } catch (Exception e){
+                        e.printStackTrace();
+                        return null;
                     }
 
 
@@ -8566,10 +8590,14 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
                 }
 
             } catch (ClientProtocolException e) {
-
+                return null;
             } catch (IOException e) {
-
+                return null;
+            } catch (Exception e){
+                return null;
             }
+
+            return null;
         }
     }
 

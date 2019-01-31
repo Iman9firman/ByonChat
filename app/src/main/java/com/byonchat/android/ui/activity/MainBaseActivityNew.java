@@ -45,6 +45,7 @@ import android.support.multidex.MultiDex;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -157,7 +158,8 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL;
 import static com.byonchat.android.helpers.Constants.URL_LAPOR_SELECTED;
 
-public abstract class MainBaseActivityNew extends AppCompatActivity implements LocationAssistant.Listener {
+public abstract class MainBaseActivityNew extends AppCompatActivity implements LocationAssistant.Listener,
+        AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener {
 
 //    @NonNull
 //    protected BadgeView bv1;
@@ -245,6 +247,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     @NonNull
     protected RecyclerView recyclerView;
+
+    @NonNull
+    protected SwipeRefreshLayout vSwipeRefresh;
 
     protected UploadService mUploadService;
     protected Intent mServiceIntent;
@@ -473,7 +478,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_two).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_three).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_refresh).setVisible(isTrue);
+        nav_Menu.findItem(R.id.nav_item_refresh).setVisible(false);
         nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
     }
@@ -897,6 +902,13 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         }
     }
 
+    protected void resolveAppBar() {
+        vSwipeRefresh.setProgressViewOffset(false, 100, 200);
+
+        appBarLayout.addOnOffsetChangedListener(this);
+        vSwipeRefresh.setOnRefreshListener(this);
+    }
+
     protected void resolveValidationLogin() {
         if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(25) == 1) {
             if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("1")) {
@@ -974,6 +986,14 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 animation();
 
             }
+        }, 500);
+    }
+
+    @Override
+    public void onRefresh() {
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            RefreshRoom();
         }, 500);
     }
 
@@ -1300,6 +1320,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void RefreshRoom() {
+        vSwipeRefresh.setRefreshing(false);
         Byonchat.getRoomsDB().open();
         botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
         Byonchat.getRoomsDB().close();

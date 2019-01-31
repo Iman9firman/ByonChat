@@ -90,6 +90,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.byonchat.android.CaptureSignature;
+import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.DialogFormChildMain;
 import com.byonchat.android.DialogFormChildMainKompetitor;
 import com.byonchat.android.DialogFormChildMainLemindo;
@@ -105,12 +106,15 @@ import com.byonchat.android.adapter.ExpandableListAdapter;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.AttachmentAdapter;
+import com.byonchat.android.list.IconItem;
 import com.byonchat.android.list.utilLoadImage.ImageLoaderLarge;
 import com.byonchat.android.location.ActivityDirection;
 import com.byonchat.android.model.AddChildFotoExModel;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.provider.BotListDB;
+import com.byonchat.android.provider.ChatParty;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.DataBaseHelper;
@@ -1706,7 +1710,107 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         dropdownViewId = jsonArray.getJSONObject(i).getJSONArray("dropdown_view_parents");
                     }
 
-                    if (type.equalsIgnoreCase("preview_document")) {
+                    if (type.equalsIgnoreCase("call_chat")) {
+                        Log.w("kamar2", "madni");
+
+                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+
+                        final List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
+
+                        linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.call_chat_layout, null);
+                        linearEstimasi[count].setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(linearEstimasi[count]);
+
+                        ImageView btnCall = (ImageView) linearEstimasi[count].findViewById(R.id.btnCall);
+                        ImageView btnChat = (ImageView) linearEstimasi[count].findViewById(R.id.btnChat);
+                        TextView orText = (TextView) linearEstimasi[count].findViewById(R.id.textOr);
+                        String formulas = jsonArray.getJSONObject(i).getString("formula").toString();
+                        JSONObject jjs = new JSONObject(formulas);
+
+                        if (jjs.has("call")) {
+
+                            btnCall.setVisibility(View.VISIBLE);
+                            btnCall.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                    try {
+                                        callIntent.setData(Uri.parse("tel:+" + jjs.getString("call")));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    startActivity(callIntent);
+                                }
+                            });
+
+                        }
+                        if (jjs.has("chat")) {
+
+                            btnChat.setVisibility(View.VISIBLE);
+                            btnChat.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    ChatParty sample = null;
+                                    try {
+                                        sample = new Contact("", jjs.getString("chat"), "");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    IconItem item = null;
+                                    try {
+                                        item = new IconItem(jjs.getString("chat"), "", "", "", sample);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    if (item.getJabberId().equalsIgnoreCase("")) {
+                                    } else {
+                                        Intent intent = new Intent(getApplicationContext(), ConversationActivity.class);
+                                        String jabberId = item.getJabberId();
+                                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+                                        intent.putExtra(Constants.EXTRA_ITEM, item);
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
+
+                        }
+
+                        if (jjs.has("call") && jjs.has("chat")) {
+                            orText.setVisibility(View.VISIBLE);
+                        }
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                        lolosReq.add(idListTask);
+
+
+                    } else if (type.equalsIgnoreCase("preview_document")) {
 
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -1850,19 +1954,23 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             for (int ia = 0; ia < sss.size(); ia++) {
                                                 udah.add(sss.get(ia));
                                                 List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
-                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                    lolosReq.remove(sss.get(ia));
-                                                    linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                                if (value != null) {
+                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                        lolosReq.remove(sss.get(ia));
+                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                                    }
                                                 }
                                             }
                                         } else {
                                             //false
                                             for (int ia = 0; ia < sss.size(); ia++) {
                                                 List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
-                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                    if (!udah.contains(sss.get(ia))) {
-                                                        lolosReq.add(sss.get(ia));
-                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                if (value != null) {
+                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                        if (!udah.contains(sss.get(ia))) {
+                                                            lolosReq.add(sss.get(ia));
+                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -11838,11 +11946,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     }
 
-    private String saveToInternalStorage(Bitmap bitmapImage,String name){
+    private String saveToInternalStorage(Bitmap bitmapImage, String name) {
 
         File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "ByonchatKTP");
         // Create imageDir
-        File mypath=new File(directory,"KTP-"+name+".jpg");
+        File mypath = new File(directory, "KTP-" + name + ".jpg");
         if (!directory.exists()) {
             directory.mkdirs();
         }

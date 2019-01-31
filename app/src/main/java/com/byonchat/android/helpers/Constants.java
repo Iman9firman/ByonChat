@@ -75,5 +75,14 @@ public class Constants extends AppCompatActivity {
     public static String URL_LAPOR_SELECTED = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/selectapop.php";
 
     public static Map<Integer, List<String>> map = new HashMap<Integer, List<String>>();
+
+    public interface ACTION {
+        public static String STARTFOREGROUND_ACTION = "com.byonchat.android.action.startforeground";
+        public static String STOPFOREGROUND_ACTION = "com.byonchat.android.action.stopforeground";
+    }
+
+    public interface NOTIFICATION_ID {
+        public static int FOREGROUND_SERVICE = 101;
+    }
 }
 

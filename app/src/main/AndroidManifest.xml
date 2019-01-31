@@ -334,6 +334,7 @@
         </service>
         <service
             android:name=".communication.MyJobService"
+            android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE">
             <intent-filter>
@@ -690,12 +691,15 @@
         <activity android:name=".personalRoom.utils.CloudStorageActivity"></activity>
         <activity android:name=".tempSchedule.NotePreviewActivity"></activity>
         <activity android:name=".LoginISS" />
-        <activity android:name=".ISSActivity.Reliever.SubmitRequestActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ISSActivity.Reliever.CheckOutActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ISSActivity.Reliever.CheckInActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ISSActivity.Reliever.SubmitRequestActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ISSActivity.Reliever.CheckOutActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ISSActivity.Reliever.CheckInActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
     </application>
 

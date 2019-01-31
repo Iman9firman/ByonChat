@@ -30,7 +30,7 @@ public class ServiceAutoStart extends BroadcastReceiver {
                 context.startService(mServiceIntent);
             }
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 5555555,
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 898989,
                     mServiceIntent, 0);
             int alarmType = AlarmManager.ELAPSED_REALTIME;
             final int FIFTEEN_SEC_MILLIS = 15000;

@@ -272,7 +272,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             .getName() + ".refreshBadger";
     protected static final String ACTION_REFRESH_NOTIF = MainBaseActivityNew.class
             .getName() + ".refreshNotif";
-
+    protected static int TAG_CODE_PERMISSION_LOCATION = 77;
+    
     public static Activity mActivity;
     protected boolean isVisible = false;
     protected float radius = 3f;

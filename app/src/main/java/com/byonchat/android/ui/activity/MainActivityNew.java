@@ -52,6 +52,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -100,6 +101,7 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
 import com.byonchat.android.widget.BadgeView;
+import com.eightbitlab.supportrenderscriptblur.SupportRenderScriptBlur;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
@@ -175,6 +177,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         searchView = findViewById(R.id.search_view_main);
         backdropBlur = findViewById(R.id.backdropblur);
         vImgBlur = findViewById(R.id.bg_blur);
+        vSwipeRefresh = findViewById(R.id.swipe_refresh);
 
         root_view = findViewById(R.id.main_group);
         drawerLayout = findViewById(R.id.drawer_main);
@@ -185,7 +188,8 @@ public class MainActivityNew extends MainBaseActivityNew {
         vToolbarSearchText = findViewById(R.id.text_toolbar_title);
 
         card_menu_main = findViewById(R.id.card_nav_main);
-//        blurView = findViewById(R.id.blurView);
+        vBlurView = findViewById(R.id.blurView);
+        vBlurTopBackground = findViewById(R.id.blur_top_background);
         fab_menu_1 = findViewById(R.id.fab_menu_1_main);
         fab_menu_2 = findViewById(R.id.fab_menu_2_main);
 //        fab_menu_3 = findViewById(R.id.fab_menu_3_main);
@@ -219,7 +223,7 @@ public class MainActivityNew extends MainBaseActivityNew {
             }
         }
 
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
         } else {
@@ -236,13 +240,16 @@ public class MainActivityNew extends MainBaseActivityNew {
                 startActivity(onGPS);
             }
         } catch (Exception e){}
+
     }
+
 
     @Override
     protected void onPause() {
         unregisterReceiver(broadcastHandler);
         assistant.stop();
         numbers.clear();
+        appBarLayout.removeOnOffsetChangedListener(this);
         super.onPause();
     }
 
@@ -264,6 +271,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                 .cancel(NotificationReceiver.NOTIFY_ID_CARD);
         addShortcutBadger(getApplicationContext());
 
+        resolveAppBar();
         resolveValidationLogin();
         resolveToolbarExpanded();
         resolveNavHeader();
@@ -532,22 +540,14 @@ public class MainActivityNew extends MainBaseActivityNew {
                 Glide.with(this).load(background).into(backgroundImage);
             }
 
-            //appbar
-            appBarLayout.addOnOffsetChangedListener((appBarLayout, i) -> {
-                if (Math.abs(i) - appBarLayout.getTotalScrollRange() == 0) {
-                    card_search_main.setVisibility(View.GONE);
-                    isVisible = true;
-                    invalidateOptionsMenu();
-                } else {
-                    card_search_main.setVisibility(View.GONE);
-                    isVisible = true;
-                    /*if (searchView.isSearchOpen()) {
-                        searchView.closeSearch();
-                        tb.setVisibility(View.VISIBLE);
-                    }*/
-                    invalidateOptionsMenu();
-                }
-            });
+            final Drawable windowBackground = getWindow().getDecorView().getBackground();
+            vBlurView.setupWith(root_view)
+                    .setFrameClearDrawable(windowBackground)
+                    .setBlurAlgorithm(new SupportRenderScriptBlur(this))
+                    .setBlurRadius(radius)
+                    .setHasFixedTransformationMatrix(true);
+
+            vBlurTopBackground.setBlurRadius(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics()));
 
             vBtnAddRooms.setOnClickListener(v -> {
                 Intent intent = new Intent(getApplicationContext(), NewSearchRoomActivity.class);
@@ -587,13 +587,6 @@ public class MainActivityNew extends MainBaseActivityNew {
                 searchView.showSearch(true);
             });
 
-            final Drawable windowBackground = getWindow().getDecorView().getBackground();
-//            blurView.setupWith(root_view)
-//                    .setFrameClearDrawable(windowBackground)
-//                    .setBlurAlgorithm(new SupportRenderScriptBlur(this))
-//                    .setBlurRadius(radius)
-//                    .setHasFixedTransformationMatrix(true);
-
             searchView.setHint("Search ...");
             searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
                 @Override
@@ -628,6 +621,30 @@ public class MainActivityNew extends MainBaseActivityNew {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+        if (Math.abs(i) - appBarLayout.getTotalScrollRange() == 0) {
+            card_search_main.setVisibility(View.GONE);
+            isVisible = true;
+            invalidateOptionsMenu();
+        } else {
+            card_search_main.setVisibility(View.GONE);
+            isVisible = true;
+                    /*if (searchView.isSearchOpen()) {
+                        searchView.closeSearch();
+                        tb.setVisibility(View.VISIBLE);
+                    }*/
+            invalidateOptionsMenu();
+        }
+
+        float logic1 = Math.abs(i) - appBarLayout.getTotalScrollRange();
+        float logic2 = (logic1 / appBarLayout.getTotalScrollRange());
+        float pusing = 1 - (logic2 * -1);
+        vBlurTopBackground.setAlpha(pusing);
+
+        vSwipeRefresh.setEnabled(i == 0);
     }
 
     @Override

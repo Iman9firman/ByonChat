@@ -91,7 +91,6 @@ public class AllAboutUploadTask {
         idTab = _idTab;
         taskCompleted.onTaskProses("proses");
 
-        Log.w("ia2UU", idDetail + ":::" + username + ":::" + idTab);
 
         Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "utility", "");
 
@@ -306,7 +305,6 @@ public class AllAboutUploadTask {
                     }
                 }
             } else {
-                Log.w("baaa", jsonResultType(list.get(u).getFlag_content(), "b"));
 
                 if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("form_child")) {
                     try {
@@ -414,7 +412,6 @@ public class AllAboutUploadTask {
 
         public void postData(String valueIWantToSend, final String usr, final String idr, final String idDetail) {
             // Create a new HttpClient and Post Header
-            Log.w("Chats", usr + "<>" + idr + "<>" + idDetail);
             prosesUpload.add("ada");
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(valueIWantToSend);
@@ -425,7 +422,6 @@ public class AllAboutUploadTask {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("asslams", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
@@ -518,7 +514,6 @@ public class AllAboutUploadTask {
                 if (fromList.equalsIgnoreCase("hide") || fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
 
                     if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
-                        Log.w("byy", idDetail);
                         String[] ff = idDetail.split("\\|");
                         if (ff.length == 2) {
                             entity.addPart("parent_id", new StringBody(ff[1]));
@@ -548,7 +543,6 @@ public class AllAboutUploadTask {
                     String content = "";
 
                     String cc = list.get(u).getContent();
-                    Log.w("cinta", cc);
 
                     if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah")) {
                         cc = jsoncreateC(list.get(u).getContent());
@@ -701,8 +695,6 @@ public class AllAboutUploadTask {
                     jsonObject.put("type", jsonArrayType);
                     jsonObject.put("date", jsonArrayDate);
 
-                    Log.w("harlem", jsonObject.toString());
-
                     try {
                         File root = new File(Environment.getExternalStorageDirectory(), "ByonChat_Upload");
                         if (!root.exists()) {
@@ -732,15 +724,12 @@ public class AllAboutUploadTask {
                 HttpEntity r_entity = response.getEntity();
 
                 int statusCode = response.getStatusLine().getStatusCode();
-                Log.w("kask", statusCode + "");
                 if (statusCode == 200) {
-                    Log.w("berhasil", "hore");
                     if (gpxfile.exists()) {
                         gpxfile.delete();
                     }
 
                     final String data = EntityUtils.toString(r_entity);
-                    Log.w("harr", data);
 
                     if (data.equalsIgnoreCase("0")) {
                         long date = System.currentTimeMillis();
@@ -767,7 +756,6 @@ public class AllAboutUploadTask {
 
                     }
                 } else {
-                    Log.w("gagal", "hore");
                     if (gpxfile.exists()) {
                         gpxfile.delete();
                     }
@@ -782,7 +770,6 @@ public class AllAboutUploadTask {
                 }
 
             } catch (ClientProtocolException e) {
-                Log.w("gagal1", e.toString());
                 if (gpxfile.exists()) {
                     gpxfile.delete();
                 }

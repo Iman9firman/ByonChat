@@ -75,7 +75,7 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
     public void onBindViewHolder(@NonNull MyHolder holder, int pos) {
         Note note = noteList.get(pos);
 
-        holder.lokasi.setText(note.getLokasi());
+        holder.lokasi.setText(note.getTitle());
         holder.keterangan.setText(note.getKeterangan());
         holder.startTime.setText(note.getStartTime());
         holder.endTime.setText(note.getEndTime());
@@ -135,7 +135,7 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
         TextView dAlasan = dialogView.findViewById(R.id.tv_alasan_dnote);
         TextView dStatus = dialogView.findViewById(R.id.tv_status_dnote);
 
-        dLokasi.setText(note.getLokasi());
+        dLokasi.setText(note.getTitle() );
         dJam.setText(note.getStartTime()+" - "+note.getEndTime());
         dKet.setText(note.getKeterangan());
         dAlasan.setText(note.getAlasan());

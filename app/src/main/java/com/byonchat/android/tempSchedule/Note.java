@@ -1,22 +1,28 @@
 package com.byonchat.android.tempSchedule;
 
 public class Note {
+    private String title;
     private String lokasi;
-    private String keterangan;
-    private String alasan;
+    private String ket_tambah;
     private String startTime;
     private String endTime;
+    private String keterangan;
+    private String no_spk;
+    private String alasan;
     private String id_detail;
     private String status;
     private String warna;
     private boolean isSubmit = false;
 
-    public Note (String lokasi, String startTime, String endTime ,String keterangan,String alasan, String id_detail , String status , boolean isSubmit , String warna){
+    public Note (String title,String lokasi,String ket_tambah, String startTime, String endTime ,String keterangan,String no_spk,String alasan, String id_detail , String status , boolean isSubmit , String warna){
+        this.title = title;
         this.lokasi = lokasi;
         this.keterangan = keterangan;
         this.alasan = alasan;
+        this.ket_tambah = ket_tambah;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.no_spk = no_spk;
         this.id_detail = id_detail;
         this.status = status;
         this.isSubmit = isSubmit;
@@ -93,5 +99,29 @@ public class Note {
 
     public void setWarna(String warna) {
         this.warna = warna;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getKet_tambah() {
+        return ket_tambah;
+    }
+
+    public void setKet_tambah(String ket_tambah) {
+        this.ket_tambah = ket_tambah;
+    }
+
+    public String getNo_spk() {
+        return no_spk;
+    }
+
+    public void setNo_spk(String no_spk) {
+        this.no_spk = no_spk;
     }
 }

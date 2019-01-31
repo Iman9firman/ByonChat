@@ -301,7 +301,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected int i = 0;
 
     protected SQLiteDatabase sqLiteDatabase;
-    protected static int TAG_CODE_PERMISSION_LOCATION = 77;
 
     @Override
     protected void attachBaseContext(Context base) {

@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byonchat.android.AdvRecy.ItemMain;
+import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
@@ -321,6 +322,71 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 
         return null;
     }
+
+    public String idLoofSearch(ContentRoom contentRoomFind) {
+        List value = (List) Constants.map.get(position);
+        if (value != null) {
+            String statusBaru = "";
+            ArrayList<ContentRoom> listItem = new ArrayList<>();
+            ArrayList<RoomsDetail> listItem2;
+            listItem2 = Byonchat.getBotListDB().allRoomDetailFormWithFlag("", value.get(1).toString(), value.get(2).toString(), "parent");
+            for (RoomsDetail aa : listItem2) {
+
+                ArrayList<RoomsDetail> listItem3 = Byonchat.getBotListDB().allRoomDetailFormWithFlag(aa.getId(), value.get(1).toString(), value.get(2).toString(), "list");
+                for (RoomsDetail ii : listItem3) {
+                    if (ii.getFlag_content().equalsIgnoreCase("1")) {
+                        Log.w("2abub", ii.getContent());
+                        JSONObject jO = null;
+                        try {
+                            jO = new JSONObject(ii.getContent());
+                            statusBaru = jO.getString("bb");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                String date = "";
+                date = aa.getContent();
+                ContentRoom contentRoom = new ContentRoom(aa.getId(), "", date, "", "", "", "");
+                listItem.add(contentRoom);
+            }
+
+            Collections.sort(listItem, (e1, e2) -> {
+                Date satu = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e1.getTime()));
+                Date dua = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e2.getTime()));
+                if (satu.compareTo(dua) > 0) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            });
+
+            if (value.size() > 1) {
+                try {
+                    Intent intent = new Intent(getApplicationContext(), DinamicRoomSearchTaskActivity.class);
+                    intent.putExtra("tt", value.get(0).toString());
+                    intent.putExtra("uu", value.get(1).toString());
+                    intent.putExtra("ii", value.get(2).toString());
+                    intent.putExtra("idTask", contentRoomFind.getIdHex());
+                    intent.putExtra("col", value.get(3).toString());
+                    intent.putExtra("ll", value.get(4).toString());
+                    intent.putExtra("from", value.get(5).toString());
+                    if (!statusBaru.equalsIgnoreCase("")) {
+                        intent.putExtra("isReject", statusBaru);
+                    }
+
+
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     protected void createShortcut() {
         final Dialog dialogConfirmation;

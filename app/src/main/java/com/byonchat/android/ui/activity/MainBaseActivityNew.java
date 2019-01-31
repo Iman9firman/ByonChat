@@ -858,7 +858,18 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 } else if (category.equalsIgnoreCase("18")) {
                     itemMain.iconTest = R.drawable.ic_room_name_card;
                     Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("20")) {
+                    itemMain.iconTest = R.drawable.ic_room_task;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("fabSearch");
+                    Constants.map.put(i, valSetOne);
                 }
+
 
                 itemList.add(i, itemMain);
                 positionList.add(i, title);

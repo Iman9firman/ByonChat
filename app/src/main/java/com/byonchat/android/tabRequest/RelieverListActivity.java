@@ -1,0 +1,15 @@
+package com.byonchat.android.tabRequest;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+import com.byonchat.android.R;
+
+public class RelieverListActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_reliever_list);
+    }
+}

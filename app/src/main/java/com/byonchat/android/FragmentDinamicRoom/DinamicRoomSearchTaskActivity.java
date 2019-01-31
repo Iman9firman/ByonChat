@@ -1871,14 +1871,10 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
                                     }
 
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
-                                    if (cEdit.getCount() > 0)
-
-                                    {
+                                    if (cEdit.getCount() > 0) {
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
-                                    } else
-
-                                    {
+                                    } else {
                                         if (String.valueOf(spinnerArray.get(myPosition)).length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
@@ -8069,6 +8065,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
 
                 LinearLayout btnRel = (LinearLayout) getLayoutInflater().inflate(R.layout.button_submit_form, null);
                 b = (Button) btnRel.findViewById(R.id.btn_submit);
+                b.setText("Search");
                 final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.setMargins(5, 15, 0, 0);
                 btnRel.setLayoutParams(params);
@@ -8221,9 +8218,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
                         }
 
 
-                        if (!linkGetAsignTo.equalsIgnoreCase(""))
-
-                        {
+                        if (!linkGetAsignTo.equalsIgnoreCase("")) {
                             if (linearLayout.getChildAt(linearLayout.getChildCount() - 2).getVisibility() == View.VISIBLE) {
                                 Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
                                 if (cursorCild.getCount() == 0) {
@@ -8244,9 +8239,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
 
                         }
 
-                        if (includeStatus)
-
-                        {
+                        if (includeStatus) {
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "includeStatus", "");
                             if (cEdit.getCount() == 0) {
                                 b.setEnabled(true);
@@ -8265,9 +8258,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
 
                         }
 
-                        if (berhenti)
-
-                        {
+                        if (berhenti) {
                             b.setEnabled(true);
                             if (errorReq.size() > 0) {
                                 final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomSearchTaskActivity.this);
@@ -8286,9 +8277,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
                                 alertbox.show();
                             }
                             return;
-                        } else
-
-                        {
+                        } else {
                             int nom = 0;
                             for (ArrayList<String> innerList : stringAPI) {
                                 String param = "";
@@ -8363,9 +8352,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
                         }
 
 
-                        if (latLong.equalsIgnoreCase("1"))
-
-                        {
+                        if (latLong.equalsIgnoreCase("1")) {
                             gps = new GPSTracker(DinamicRoomSearchTaskActivity.this);
                             if (!gps.canGetLocation()) {
                                 startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), REQ_LOCATION_SETTING);
@@ -8431,19 +8418,23 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
                         }
 
 
-                        if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context))
-
-                        {
+                        if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
                             long date = System.currentTimeMillis();
                             String dateString = hourFormat.format(date);
-                            RoomsDetail orderModel = new  RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
                             db.updateDetailRoomWithFlagContentParent(orderModel);
                             // TODO: 1/30/19 ganti api mas gandhi
-                            String API_ISS_GET_RELIEVER = "/bc_voucher_client/webservice/list_api/api_get_realiver_iss.php";
-//                            new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(DinamicRoomSearchTaskActivity.this, idDetail, username, idTab);
-                        } else
 
-                        {
+                            String API_ISS_GET_RELIEVER = "/bc_voucher_client/webservice/list_api/api_get_realiver_iss.php";
+                            showProgressDialogWithTitle();
+
+                            new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + API_ISS_GET_RELIEVER);
+
+
+                            //kirim Ke gandi
+//                            new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(DinamicRoomSearchTaskActivity.this, idDetail, username, idTab);
+
+                        } else {
                             long date = System.currentTimeMillis();
                             String dateString = hourFormat.format(date);
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "3", null, "parent");
@@ -8455,9 +8446,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
                 });
             }
 
-        } else
-
-        {
+        } else {
             if (username != null) {
                 if (fromList.equalsIgnoreCase("hide")) {
                     new DinamicRoomSearchTaskActivity.Refresh(DinamicRoomSearchTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
@@ -8486,9 +8475,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
 
         if (
 
-                getCurrentFocus() != null)
-
-        {
+                getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
@@ -8496,6 +8483,96 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity implements 
         focusOnView();
 
     }
+
+
+    private class posTask extends AsyncTask<String, Integer, String> {
+
+        String error = "";
+        long totalSize = 0;
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        protected void onPostExecute(String result) {
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+        public void postData(String valueIWantToSend) {
+            // Create a new HttpClient and Post Header
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(valueIWantToSend);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+
+                ContentType contentType = ContentType.create("multipart/form-data");
+                entity.addPart("lat", new StringBody("-6.1919114"));
+                entity.addPart("long", new StringBody("106.7536443"));
+                entity.addPart("pekerjaan", new StringBody("262"));
+                entity.addPart("jumlah", new StringBody("5"));
+                entity.addPart("jam_mulai", new StringBody("15:00"));
+                entity.addPart("jam_selesai", new StringBody("17:00"));
+                entity.addPart("tgl_mulai", new StringBody("2019-01-30"));
+                entity.addPart("tgl_selesai", new StringBody("2019-01-31"));
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                Log.w("tabu", statusCode + "");
+                if (statusCode == 200) {
+
+                    final String data = EntityUtils.toString(r_entity);
+                    Log.w("tabu", data);
+                    //{"messages":"succes","datas":[{"id_officer":"1956","id_client":"117","name":"Yozia Josephine","telp_number":"6285719845956","last_lat":"-6.18950319","last_long":"106.76643372","distance":"1.4389605798435736","rating":"1.5"}]}
+                    try {
+                        // TODO: 31/01/19 dari sini kirim ke activity baru zarfan
+                        JSONObject jsonObject = new JSONObject(data);
+                        if (jsonObject.getString("message").equalsIgnoreCase("succes")){
+                            JSONArray jsonArray = new JSONArray(jsonObject.getString("datas"));
+
+
+                        }
+` `
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else {
+                    error = "Tolong periksa koneksi internet.1";
+                }
+
+            } catch (ClientProtocolException e) {
+
+            } catch (IOException e) {
+
+            }
+        }
+    }
+
 
     private static String test_Nom(String notlp) {
         String cekProvider;

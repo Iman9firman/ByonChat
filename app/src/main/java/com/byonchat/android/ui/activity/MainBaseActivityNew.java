@@ -279,7 +279,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected static final String ACTION_REFRESH_NOTIF = MainBaseActivityNew.class
             .getName() + ".refreshNotif";
     protected static int TAG_CODE_PERMISSION_LOCATION = 77;
-    
+
     public static Activity mActivity;
     protected boolean isVisible = false;
     protected float radius = 3f;
@@ -957,7 +957,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 }
             }
 
-        }if (new Validations().getInstance(getApplicationContext()).setTimeValidationISS(26) == 1) {
+        }/*if (new Validations().getInstance(getApplicationContext()).setTimeValidationISS(26) == 1) {
             if (title.equalsIgnoreCase("ISS INDONESIA")) {
                 if (success == null) {
                     Intent a = new Intent(getApplicationContext(), LoginISS.class);
@@ -967,7 +967,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     finish();
                 }
             }
-        }
+        }*/
     }
 
     protected void resolveToolbarExpanded() {

@@ -39,6 +39,7 @@ import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.UploadService;
+import com.byonchat.android.utils.Utility;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -55,6 +56,7 @@ import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadgeException;
 import me.leolin.shortcutbadger.ShortcutBadger;
+import okhttp3.internal.Util;
 
 public class NotificationReceiver extends BroadcastReceiver {
     public static final int NOTIFY_ID = 2001;
@@ -233,7 +235,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
                 destIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, vo.getSource());
-                builder.setContentIntent(PendingIntent.getActivity(context, 0,
+                builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
                         destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
                 NotificationManager mgr = (NotificationManager) context
@@ -292,7 +294,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     destIntent.putExtra(ConversationGroupActivity.EXTRA_KEY_STICKY, "0");
                     destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, vo.getSource());
                 }
-                builder.setContentIntent(PendingIntent.getActivity(context, 0,
+                builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
                         destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
                 NotificationManager mgr = (NotificationManager) context
@@ -383,7 +385,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                             Intent destIntent = new Intent(context, ByonChatMainRoomActivity.class);
                             destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, realname);
                             destIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                            builder.setContentIntent(PendingIntent.getActivity(context, 0,
+                            builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
                                     destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                             NotificationManager mgr = (NotificationManager) context
                                     .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -411,7 +413,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                             Intent destIntent = new Intent(context, ByonChatMainRoomActivity.class);
                             destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                             destIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                            builder.setContentIntent(PendingIntent.getActivity(context, 0,
+                            builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
                                     destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                             NotificationManager mgr = (NotificationManager) context
                                     .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -440,7 +442,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     Log.w("sudah", "7");
                     builder.setContentTitle("Success");
                     builder.setContentText(name);
-                    builder.setContentIntent(PendingIntent.getActivity(context, 0,
+                    builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
                             null, PendingIntent.FLAG_UPDATE_CURRENT));
                     NotificationManager mgr = (NotificationManager) context
                             .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -470,7 +472,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 Intent destIntent = new Intent(context, ByonChatMainRoomActivity.class);
                 destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, isinya[1]);
                 destIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                builder.setContentIntent(PendingIntent.getActivity(context, 0,
+                builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
                         destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
                 NotificationManager mgr = (NotificationManager) context
                         .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -572,7 +574,7 @@ public class NotificationReceiver extends BroadcastReceiver {
             smsManager.sendTextMessage(phoneNo, null, message, null, null);*/
             SmsManager sms = SmsManager.getDefault();
             String sent = "android.telephony.SmsManager.STATUS_ON_ICC_SENT";
-            PendingIntent piSent = PendingIntent.getBroadcast(ctx, 0, new Intent(sent), 0);
+            PendingIntent piSent = PendingIntent.getBroadcast(ctx, Utility.generateRandomInt(), new Intent(sent), 0);
 
             sms.sendTextMessage(phoneNo, null, message, piSent, null);
 

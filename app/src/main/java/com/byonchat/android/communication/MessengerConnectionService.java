@@ -2,6 +2,9 @@ package com.byonchat.android.communication;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -16,6 +19,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -31,7 +35,9 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
 import android.text.Html;
 import android.util.Log;
@@ -45,6 +51,7 @@ import com.byonchat.android.ConversationGroupActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.application.Application;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.ItemListMemberCard;
 import com.byonchat.android.provider.BlockListDB;
 import com.byonchat.android.provider.BotListDB;
@@ -66,6 +73,7 @@ import com.byonchat.android.provider.Skin;
 import com.byonchat.android.provider.TimeLine;
 import com.byonchat.android.provider.TimeLineDB;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
+import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.GetRealNameRoom;
@@ -332,6 +340,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     private static final String PICASSO_CACHE = "byonchat-cache";
     PicassoOwnCache cache;
     String tanggal, flag;
+    NotificationManager mNotificationManager;
 
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 0;
@@ -387,12 +396,60 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             started = true;
         }
 
+        Log.i("DEWA", "Received Start Foreground Intent ");
+        Intent notificationIntent = new Intent(this, MainActivityNew.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.logo_byon);
+
+        String channelId = "";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            channelId = createNotificationChannel("ByonChat", "Connected");
+//
+//            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), channelId);
+//            Notification notification = notificationBuilder.setOngoing(true)
+//                    .setContentTitle("ByonChat")
+//                    .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "Not Connected")
+//                    .setSmallIcon(R.drawable.logo_byon)
+////                        .setLargeIcon(
+////                                Bitmap.createScaledBitmap(icon, 128, 128, false))
+//                    .setContentIntent(pendingIntent)
+//                    .setOngoing(true)
+//                    .build();
+//            startForeground(101,
+//                    notification);
+        } else {
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setContentTitle("ByonChat")
+                    .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "No Connectivity")
+                    .setSmallIcon(R.drawable.logo_byon)
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true).build();
+            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
+                    notification);
+        }
+
         if (scheduleTaskExecutor == null) {
             scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
             scheduleTaskExecutor.scheduleAtFixedRate(new MessengerConnectionTask(this), 0, 1, TimeUnit.SECONDS);
         }
 
         return START_STICKY;
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private String createNotificationChannel(String channelId, String channelName) {
+        NotificationChannel chan = new NotificationChannel(channelId,
+                channelName, NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.createNotificationChannel(chan);
+        return channelId;
     }
 
     private class MessengerConnectionTask implements Runnable {
@@ -1918,8 +1975,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
         AlarmManager alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
         Intent i = new Intent(this, MessengerConnectionService.class);
-        i.putExtra(UploadService.ACTION, "startService");
-        PendingIntent pendingIntent = PendingIntent.getService(this, 5555555, i, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(this, Utility.generateRandomInt(), i, 0);
         alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1, pendingIntent);
 
 //        Intent broadcastIntent = new Intent("com.byonchat.android.utils.ConnectionChangeReceiver");

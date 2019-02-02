@@ -222,7 +222,7 @@ public class Utility {
     public static void scheduleJob(Context context) {
         ComponentName serviceComponent = new ComponentName(context, MyJobService.class);
 //        JobInfo.Builder builder = new JobInfo.Builder(123123, serviceComponent);
-        JobInfo.Builder builder = new JobInfo.Builder(generateRandomInt(), serviceComponent);
+        JobInfo.Builder builder = new JobInfo.Builder(898989, serviceComponent);
         builder.setMinimumLatency(1 * 1000); // wait at least
         builder.setOverrideDeadline(3 * 1000); // maximum delay
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network

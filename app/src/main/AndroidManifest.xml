@@ -332,6 +332,7 @@
         </service>
         <service
             android:name=".communication.MyJobService"
+            android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE">
             <intent-filter>
@@ -698,10 +699,14 @@
         <activity
             android:name=".ISSActivity.Reliever.CheckInActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+<<<<<<< HEAD
         <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
         <activity android:name=".tabRequest.RelieverListActivity" />
         <activity android:name=".tabRequest.MapsViewActivity" />
         <activity android:name=".tabRequest.RelieverDetailActivity"></activity>
+=======
+
+>>>>>>> ff384edebeca096d80053c35678add50db567fbb
     </application>
 
 </manifest>

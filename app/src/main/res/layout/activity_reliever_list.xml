@@ -43,6 +43,16 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_detail_relieverList"/>
 
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="120dp"
+            android:text="Submit"
+            android:textAllCaps="false"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_detail_relieverList" />
+
         <TextView
             android:id="@+id/text_maxSelect_relieverList"
             android:layout_width="wrap_content"
@@ -103,6 +113,7 @@
             android:layout_height="match_parent"/>
 
     </android.support.constraint.ConstraintLayout>
+
 
 
 </android.support.constraint.ConstraintLayout>

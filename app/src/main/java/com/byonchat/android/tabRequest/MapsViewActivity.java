@@ -1,5 +1,9 @@
 package com.byonchat.android.tabRequest;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,6 +11,7 @@ import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -16,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
+import com.byonchat.android.createMeme.FilteringImage;
 
 import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
@@ -44,7 +50,7 @@ public class MapsViewActivity extends AppCompatActivity {
 
     GeoPoint locationPoint = null;
     MyLocationNewOverlay locOverlay = null;
-    Double LAT,LNG;
+    Double LAT, LNG;
     int flagOsm = 0;
     String jsonReliever;
     ArrayList<Reliever> relieverList;
@@ -59,17 +65,46 @@ public class MapsViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_osm_maps);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("MAP");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#022B96")));
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#022B96"));
+
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        getSupportActionBar().setTitle("Location");
-
-        flagOsm = getIntent().getIntExtra("FLAG_OSM",0);
+        flagOsm = getIntent().getIntExtra("FLAG_OSM", 0);
 
         mapFunction();
     }
 
-    public void mapFunction(){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                final AlertDialog.Builder alertbox = new AlertDialog.Builder(MapsViewActivity.this);
+                alertbox.setMessage("Are you sure you want to exit?");
+                alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        onBackPressed();
+                    }
+                });
+                alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+                alertbox.show();
+
+
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void mapFunction() {
 
         mapView = (MapView) findViewById(R.id.map_detail);
         OnlineTileSourceBase tileSourceBase = new XYTileSource("MyOSM",
@@ -89,16 +124,18 @@ public class MapsViewActivity extends AppCompatActivity {
         rotationGestureOverlay.setEnabled(true);
         mapView.getOverlays().add(rotationGestureOverlay);
 
-        if (flagOsm != 888){
+        if (flagOsm != 888) {
             jsonReliever = getIntent().getStringExtra(RelieverListActivity.XTRA_RELIEVER_JSON);
             LAT = Double.valueOf(getIntent().getStringExtra(RelieverListActivity.XTRA_LATITUDE));
             LNG = Double.valueOf(getIntent().getStringExtra(RelieverListActivity.XTRA_LONGITUDE));
 
-            relieverList = RelieverListActivity.getList(jsonReliever,relieverList);
-            locationPoint = new GeoPoint(LAT,LNG);
+            Log.w("disini1",LAT+"");
+            Log.w("disini2",LNG+"");
+            relieverList = RelieverListActivity.getList(jsonReliever, relieverList);
+            locationPoint = new GeoPoint(LAT, LNG);
             mapController.setCenter(locationPoint);
 
-            AccuracyOverlay accuracyOverlay = new AccuracyOverlay(locationPoint,5000);
+            AccuracyOverlay accuracyOverlay = new AccuracyOverlay(locationPoint, 5000);
             Marker marker = new Marker(mapView);
             marker.setPosition(locationPoint);
             mapView.getOverlays().add(accuracyOverlay);
@@ -106,11 +143,11 @@ public class MapsViewActivity extends AppCompatActivity {
 
             //reliever
             DecimalFormat df = new DecimalFormat("#.00");
-            for (int a = 0 ; a < relieverList.size() ; a ++){
+            for (int a = 0; a < relieverList.size(); a++) {
                 Marker m = new Marker(mapView);
-                m.setPosition(new GeoPoint(Double.valueOf(relieverList.get(a).getRelieverLastLat()),Double.valueOf(relieverList.get(a).getRelieverLastLng())));
+                m.setPosition(new GeoPoint(Double.valueOf(relieverList.get(a).getRelieverLastLat()), Double.valueOf(relieverList.get(a).getRelieverLastLng())));
                 m.setIcon(getResources().getDrawable(R.drawable.person));
-                m.setTitle(relieverList.get(a).getRelieverName()+"\n"+df.format(Float.valueOf(relieverList.get(a).getRelieverDistance()))+" km");
+                m.setTitle(relieverList.get(a).getRelieverName() + "\n" + df.format(Float.valueOf(relieverList.get(a).getRelieverDistance())) + " km");
                 mapView.getOverlays().add(m);
             }
             //reliever over
@@ -120,11 +157,10 @@ public class MapsViewActivity extends AppCompatActivity {
             ORSRoadManager roadManager = new ORSRoadManager(this);
             roadManager.setService(API_KEY);
 
-            wayPoints.add(new GeoPoint(-6.207304,106.787733));
-            wayPoints.add(new GeoPoint(-6.197709,106.760676));
+            wayPoints.add(new GeoPoint(-6.207304, 106.787733));
+            wayPoints.add(new GeoPoint(-6.197709, 106.760676));
 
             Road road = roadManager.getRoad(wayPoints);
-            Log.w("ivana","Distance : "+road.mLength+" , Duration : "+road.mDuration);
             Polyline roadOverlays = RoadManager.buildRoadOverlay(road);
             roadOverlays.setWidth(10f);
 
@@ -134,8 +170,8 @@ public class MapsViewActivity extends AppCompatActivity {
             Marker m = new Marker(mapView);
 
             runnable = () -> {
-                getLocation(m,mapController,queue);
-                handler.postDelayed(runnable,3000);
+                getLocation(m, mapController, queue);
+                handler.postDelayed(runnable, 3000);
             };
             handler.post(runnable);
         }
@@ -144,17 +180,18 @@ public class MapsViewActivity extends AppCompatActivity {
         provider.addLocationSource(LocationManager.GPS_PROVIDER);
     }
 
-    private void getLocation(Marker m , IMapController mapController , RequestQueue queue){
+    private void getLocation(Marker m, IMapController mapController, RequestQueue queue) {
         StringRequest postRequest = new StringRequest(Request.Method.POST, "https://bb.byonchat.com/luar/tanya_lokasi.php",
                 response -> {
                     try {
                         JSONObject jObj = new JSONObject(response);
-                        GeoPoint nowLoc = new GeoPoint(Double.valueOf(jObj.getString("lat")),Double.valueOf(jObj.getString("long")));
+                        GeoPoint nowLoc = new GeoPoint(Double.valueOf(jObj.getString("lat")), Double.valueOf(jObj.getString("long")));
                         m.setPosition(nowLoc);
                         mapView.getOverlays().add(m);
                         mapView.invalidate();
                         mapController.setCenter(nowLoc);
-                    } catch (Exception e){}
+                    } catch (Exception e) {
+                    }
                 },
                 error -> {
                     // error
@@ -162,8 +199,7 @@ public class MapsViewActivity extends AppCompatActivity {
                 }
         ) {
             @Override
-            protected Map<String, String> getParams()
-            {
+            protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("user", "628589111111");
                 return params;
@@ -182,6 +218,6 @@ public class MapsViewActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mapView.onResume();
-        Configuration.getInstance().load(this,PreferenceManager.getDefaultSharedPreferences(this));
+        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
     }
 }

@@ -49,7 +49,11 @@ public class Constants extends AppCompatActivity {
     public static final String EXTRA_TEXT_JUMLAH_COMMENT = "text_jumlah_comment";
     public static final String EXTRA_TEXT_CONTENT_COMMENT = "text_content_comment";
     public static final String EXTRA_TAB_MOVEMENT = "extra_tab_movement";
+    public static final String EXTRA_GRID_SIZE = "extra_grid_size";
     public static final String EXTRA_ROOM = "EXTRA_ROOM";
+
+    public static final String EXTRA_GRID_SIZE_THREE = "extra_grid_size_three";
+    public static final String EXTRA_GRID_SIZE_FOUR = "extra_grid_size_four";
 
     protected static final String[] CAMERA_PERMISSION = {
             "android.permission.CAMERA",

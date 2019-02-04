@@ -147,6 +147,7 @@
                                     android:padding="@dimen/margin10"
                                     android:tint="@color/white"
                                     app:srcCompat="@drawable/baseline_search_24" />
+
                             </LinearLayout>
 
                         </RelativeLayout>

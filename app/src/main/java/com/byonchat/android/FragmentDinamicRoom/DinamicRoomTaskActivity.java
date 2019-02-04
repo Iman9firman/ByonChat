@@ -11838,11 +11838,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     }
 
-    private String saveToInternalStorage(Bitmap bitmapImage,String name){
+    private String saveToInternalStorage(Bitmap bitmapImage, String name) {
 
         File directory = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "ByonchatKTP");
         // Create imageDir
-        File mypath=new File(directory,"KTP-"+name+".jpg");
+        File mypath = new File(directory, "KTP-" + name + ".jpg");
         if (!directory.exists()) {
             directory.mkdirs();
         }

@@ -141,6 +141,7 @@ public class ConversationAdapter extends BaseAdapter {
     @Override
     public Object getItem(int position) {
         return items.get(position);
+
     }
 
     @Override

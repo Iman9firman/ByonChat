@@ -254,9 +254,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @NonNull
     protected SwipeRefreshLayout vSwipeRefresh;
 
-    protected UploadService mUploadService;
-    protected Intent mServiceIntent;
-
     protected RecyclerView.LayoutManager layoutManager;
     protected RecyclerViewDragDropManager recyclerViewDragDropManager;
     protected ProgressDialog progressDialog;
@@ -270,6 +267,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected DraggableGridExampleAdapter adapter;
     protected BotAdapter mAdapterRoomList;
     protected RecyclerView.Adapter wrappedAdapter;
+
+    protected UploadService mUploadService;
+    protected Intent mServiceIntent;
 
     protected ArrayList<ContactBot> botArrayLististPrimary = new ArrayList<ContactBot>();
     protected ArrayList<ContactBot> botArrayListist = new ArrayList<ContactBot>();

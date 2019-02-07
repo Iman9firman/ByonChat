@@ -95,6 +95,7 @@ public class MyJobService extends JobService {
         mJobScheduler.schedule(mJobBuilder.build());
     }
 
+    @RequiresApi(26)
     private class BackgroundThreadStart implements Runnable {
 
         Context context;
@@ -122,7 +123,7 @@ public class MyJobService extends JobService {
 
                     Intent intentStart = new Intent(context, UploadService.class);
                     intentStart.putExtra(UploadService.ACTION, "startService");
-                    context.startService(intentStart);
+                    context.startForegroundService(intentStart);
                 }
             } catch (Exception e) {
                 Log.w("datapusat", e.toString());

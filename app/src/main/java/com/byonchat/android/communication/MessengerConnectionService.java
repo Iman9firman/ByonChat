@@ -1,6 +1,7 @@
 package com.byonchat.android.communication;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -8,6 +9,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -396,47 +398,10 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             started = true;
         }
 
-        Log.i("DEWA", "Received Start Foreground Intent ");
-        Intent notificationIntent = new Intent(this, MainActivityNew.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
-
-        Bitmap icon = BitmapFactory.decodeResource(getResources(),
-                R.drawable.logo_byon);
-
-        String channelId = "";
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            channelId = createNotificationChannel("ByonChat", "Connected");
-//
-//            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), channelId);
-//            Notification notification = notificationBuilder.setOngoing(true)
-//                    .setContentTitle("ByonChat")
-//                    .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "Not Connected")
-//                    .setSmallIcon(R.drawable.logo_byon)
-////                        .setLargeIcon(
-////                                Bitmap.createScaledBitmap(icon, 128, 128, false))
-//                    .setContentIntent(pendingIntent)
-//                    .setOngoing(true)
-//                    .build();
-//            startForeground(101,
-//                    notification);
-        } else {
-            Notification notification = new NotificationCompat.Builder(this)
-                    .setContentTitle("ByonChat")
-                    .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "No Connectivity")
-                    .setSmallIcon(R.drawable.logo_byon)
-                    .setContentIntent(pendingIntent)
-                    .setOngoing(true).build();
-            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                    notification);
-        }
-
-        if (scheduleTaskExecutor == null) {
-            scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
-            scheduleTaskExecutor.scheduleAtFixedRate(new MessengerConnectionTask(this), 0, 1, TimeUnit.SECONDS);
-        }
+//        if (scheduleTaskExecutor == null) {
+//            scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
+//            scheduleTaskExecutor.scheduleAtFixedRate(new MessengerConnectionTask(this), 0, 1, TimeUnit.SECONDS);
+//        }
 
         return START_STICKY;
     }
@@ -460,9 +425,43 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         }
 
         public void run() {
-            Intent i = new Intent(context, UploadService.class);
-            i.putExtra(UploadService.ACTION, "startService");
-            context.startService(i);
+            Log.i("DEWA", "Received Start Foreground Intent ");
+            Intent notificationIntent = new Intent(context, MainActivityNew.class);
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                    notificationIntent, 0);
+
+            Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.logo_byon);
+            String channelId = "";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                channelId = createNotificationChannel("ByonChat", "Connected");
+
+                mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                int notifyID = 101;
+                NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(context, channelId)
+                        .setContentTitle("New Message")
+                        .setSmallIcon(R.drawable.logo_byon)
+                        .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "No Connectivity");
+
+                mNotificationManager.notify(
+                        notifyID,
+                        mNotifyBuilder.build());
+            } else {
+                mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                int notifyID = 101;
+                NotificationCompat.Builder mNotifyBuilder = new NotificationCompat.Builder(context)
+                        .setContentTitle("New Message")
+                        .setSmallIcon(R.drawable.logo_byon)
+                        .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "No Connectivity");
+
+                mNotificationManager.notify(
+                        notifyID,
+                        mNotifyBuilder.build());
+            }
         }
     }
 
@@ -1834,6 +1833,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
 
         private void sendMessage(Message vo, Map<String, String> properties) throws SmackException {
+            Log.w("kirim pesan", vo.getMessage());
             vo.setStatus(Message.STATUS_INPROGRESS);
             String action = "";
             vo.setSendDate(new Date());
@@ -1940,11 +1940,52 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     public void onTaskRemoved(Intent rootIntent) {
         stopSelf();
 
-        Intent intent = new Intent(getApplicationContext(), MessengerConnectionService.class);
-        intent.putExtra(UploadService.ACTION, "startService");
-        PendingIntent pendingIntent = PendingIntent.getService(this, 5555555, intent, PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Utility.scheduleJob(this);
+        } else {
+            MessengerConnectionService mUploadService = new MessengerConnectionService();
+            Intent mServiceIntent = new Intent(this, mUploadService.getClass());
+            if (!isMyServiceRunning(mUploadService.getClass())) {
+                this.startService(mServiceIntent);
+            }
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 898989,
+                    mServiceIntent, 0);
+            int alarmType = AlarmManager.ELAPSED_REALTIME;
+            final int FIFTEEN_SEC_MILLIS = 15000;
+            AlarmManager alarmManager = (AlarmManager)
+                    this.getSystemService(this.ALARM_SERVICE);
+            alarmManager.setRepeating(alarmType, SystemClock.elapsedRealtime() + FIFTEEN_SEC_MILLIS,
+                    FIFTEEN_SEC_MILLIS, pendingIntent);
+
+            ComponentName receiver = new ComponentName(this, MyBroadcastReceiver.class);
+            PackageManager pm = this.getPackageManager();
+
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+        }
+
+//
+//        Intent intent = new Intent(getApplicationContext(), MessengerConnectionService.class);
+//        intent.putExtra(UploadService.ACTION, "startService");
+//        PendingIntent pendingIntent = PendingIntent.getService(this, 5555555, intent, PendingIntent.FLAG_ONE_SHOT);
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
+    }
+
+    protected boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i(MainActivityNew.class.getName(), "isMyServiceRunning? " + true + "");
+                return true;
+            }
+        }
+
+        Log.i(MainActivityNew.class.getName(), "isMyServiceRunning? " + false + "");
+        return false;
     }
 
     @Override

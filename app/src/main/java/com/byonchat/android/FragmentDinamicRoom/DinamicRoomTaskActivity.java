@@ -3357,7 +3357,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             if (ada.size() == 0) {
                                                 String alau = "0";
                                                 if (title.equalsIgnoreCase("SPK")){
-                                                    alau = "80";
+                                                    alau = "75";
                                                 }
 
                                                 DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(Integer.valueOf(alau)).getTop()));
@@ -3397,7 +3397,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             if (ada.size() == 0) {
                                                 String alau = "0";
                                                 if (title.equalsIgnoreCase("SPK")){
-                                                    alau = "80";
+                                                    alau = "75";
                                                 }
 
                                                 DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(Integer.valueOf(alau)).getTop()));

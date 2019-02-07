@@ -23,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
 import com.byonchat.android.createMeme.FilteringImage;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.Road;
@@ -40,6 +41,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,7 @@ public class MapsViewActivity extends AppCompatActivity {
     Double LAT, LNG;
     int flagOsm = 0;
     String jsonReliever;
+    String posisiAwal, numberBC;
     ArrayList<Reliever> relieverList;
     MapView mapView;
     ArrayList<GeoPoint> wayPoints = new ArrayList<>();
@@ -75,6 +78,8 @@ public class MapsViewActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         flagOsm = getIntent().getIntExtra("FLAG_OSM", 0);
+        posisiAwal = getIntent().getStringExtra("POSISI_AWAL");
+        numberBC = getIntent().getStringExtra("NOMER_BC");
 
         mapFunction();
     }
@@ -118,7 +123,7 @@ public class MapsViewActivity extends AppCompatActivity {
         mapView.setMultiTouchControls(true);
 
         IMapController mapController = mapView.getController();
-        mapController.setZoom(14);
+        mapController.setZoom(10);
 
         RotationGestureOverlay rotationGestureOverlay = new RotationGestureOverlay(this, mapView);
         rotationGestureOverlay.setEnabled(true);
@@ -129,13 +134,11 @@ public class MapsViewActivity extends AppCompatActivity {
             LAT = Double.valueOf(getIntent().getStringExtra(RelieverListActivity.XTRA_LATITUDE));
             LNG = Double.valueOf(getIntent().getStringExtra(RelieverListActivity.XTRA_LONGITUDE));
 
-            Log.w("disini1",LAT+"");
-            Log.w("disini2",LNG+"");
-            relieverList = RelieverListActivity.getList(jsonReliever, relieverList);
+            relieverList = getListNew(jsonReliever, relieverList);
             locationPoint = new GeoPoint(LAT, LNG);
             mapController.setCenter(locationPoint);
 
-            AccuracyOverlay accuracyOverlay = new AccuracyOverlay(locationPoint, 5000);
+            AccuracyOverlay accuracyOverlay = new AccuracyOverlay(locationPoint, 20000);
             Marker marker = new Marker(mapView);
             marker.setPosition(locationPoint);
             mapView.getOverlays().add(accuracyOverlay);
@@ -154,24 +157,10 @@ public class MapsViewActivity extends AppCompatActivity {
         } else {
 
             RequestQueue queue = Volley.newRequestQueue(this);
-            ORSRoadManager roadManager = new ORSRoadManager(this);
-            roadManager.setService(API_KEY);
-
-            wayPoints.add(new GeoPoint(-6.207304, 106.787733));
-            wayPoints.add(new GeoPoint(-6.197709, 106.760676));
-
-            Road road = roadManager.getRoad(wayPoints);
-            Polyline roadOverlays = RoadManager.buildRoadOverlay(road);
-            roadOverlays.setWidth(10f);
-
-            mapView.getOverlays().add(roadOverlays);
-
             handler = new Handler();
-            Marker m = new Marker(mapView);
-
             runnable = () -> {
-                getLocation(m, mapController, queue);
-                handler.postDelayed(runnable, 3000);
+                getLocation(mapController, queue);
+                handler.postDelayed(runnable, 10000);
             };
             handler.post(runnable);
         }
@@ -180,13 +169,60 @@ public class MapsViewActivity extends AppCompatActivity {
         provider.addLocationSource(LocationManager.GPS_PROVIDER);
     }
 
-    private void getLocation(Marker m, IMapController mapController, RequestQueue queue) {
+    public static ArrayList<Reliever> getListNew(String jsonresult, ArrayList<Reliever> relievers) {
+        relievers = new ArrayList<>();
+        try {
+            JSONArray result = new JSONArray(jsonresult);
+            for (int i = 0; i < result.length(); i++) {
+                JSONObject relieverJson = result.getJSONObject(i);
+                Reliever reliever = new Reliever(
+                        relieverJson.getString("id_request_detail"),
+                        "",
+                        relieverJson.getString("nama"),
+                        relieverJson.getString("hp"),
+                        relieverJson.getString("lat"),
+                        relieverJson.getString("long"),
+                        relieverJson.getString("jarak"),
+                        relieverJson.getString("rating"),
+                        false
+                );
+                relievers.add(reliever);
+            }
+            Collections.sort(relievers);
+            return relievers;
+        } catch (Exception e) {
+
+        }
+        return relievers;
+    }
+
+    private void getLocation(IMapController mapController, RequestQueue queue) {
         StringRequest postRequest = new StringRequest(Request.Method.POST, "https://bb.byonchat.com/luar/tanya_lokasi.php",
                 response -> {
                     try {
                         JSONObject jObj = new JSONObject(response);
                         GeoPoint nowLoc = new GeoPoint(Double.valueOf(jObj.getString("lat")), Double.valueOf(jObj.getString("long")));
+                        String[] laa = posisiAwal.split(":");
+                        // TODO: 06/02/19 posisi pertama
+                        wayPoints.add(new GeoPoint(Double.valueOf(jObj.getString("lat")), Double.valueOf(jObj.getString("long"))));
+
+                        wayPoints.add(new GeoPoint(Double.parseDouble(laa[0]), Double.parseDouble(laa[1])));
+                        ORSRoadManager roadManager = new ORSRoadManager(this);
+                        roadManager.setService(API_KEY);
+                        Road road = roadManager.getRoad(wayPoints);
+                        //road.mDuration
+                        Polyline roadOverlays = RoadManager.buildRoadOverlay(road);
+                        roadOverlays.setWidth(10f);
+
+                        mapView.getOverlays().add(roadOverlays);
+
+
+                        Marker m = new Marker(mapView);
+
+
                         m.setPosition(nowLoc);
+
+                        m.setTitle(((int) road.mDuration / 60) + " Menit");
                         mapView.getOverlays().add(m);
                         mapView.invalidate();
                         mapController.setCenter(nowLoc);
@@ -201,7 +237,7 @@ public class MapsViewActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("user", "628589111111");
+                params.put("user", numberBC);
                 return params;
             }
         };

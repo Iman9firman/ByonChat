@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -53,6 +54,11 @@ public class LoginISS extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_for_iss_room);
 
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.iss_default));
+            getWindow().setStatusBarColor(getResources().getColor(R.color.iss_default));
+        }
+
         final Intent inti = getIntent();
 
         username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
@@ -60,9 +66,9 @@ public class LoginISS extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
 
         Button erwgv = (Button) findViewById(R.id.loginBtn);
-        EditText userID = (EditText) findViewById(R.id.login_userid) ;
-        EditText passID = (EditText) findViewById(R.id.login_password) ;
-        EditText accID = (EditText) findViewById(R.id.login_acc) ;
+        EditText userID = (EditText) findViewById(R.id.login_userid);
+        EditText passID = (EditText) findViewById(R.id.login_password);
+        EditText accID = (EditText) findViewById(R.id.login_acc);
 
         userID.setText("TESTING");
         passID.setText("Testing1234");
@@ -80,7 +86,7 @@ public class LoginISS extends AppCompatActivity {
     }
 
 
-    public void goVerif(String user, String pass, String acc){
+    public void goVerif(String user, String pass, String acc) {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest sr = new StringRequest(Request.Method.GET, "https://issapi.dataon.com/sfapi/index.cfm?endpoint=/issid_SF_EO_cekuser/TESTING/BYONCHAT",
@@ -90,6 +96,7 @@ public class LoginISS extends AppCompatActivity {
 //                        Log.e("HttpClient", "success! response: " + response);
 //                        Toast.makeText(LoginISS.this,response,Toast.LENGTH_LONG).show();
 
+                        Log.w("khiatan", response);
                         pd.dismiss();
                         parseJSON(response);
                     }
@@ -101,15 +108,14 @@ public class LoginISS extends AppCompatActivity {
                         Log.e("HttpClient", "error: " + error.toString());
                         Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();*/
                     }
-                })
-        {
+                }) {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("X-SFAPI-UserName",user);
-                params.put("X-SFAPI-UserPass",pass);
-                params.put("X-SFAPI-Account",acc);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-SFAPI-UserName", user);
+                params.put("X-SFAPI-UserPass", pass);
+                params.put("X-SFAPI-Account", acc);
                 return params;
             }
         };
@@ -128,19 +134,19 @@ public class LoginISS extends AppCompatActivity {
             public void retry(VolleyError error) throws VolleyError {
                 pd.dismiss();
                 Log.e("HttpClient", "error: " + error.toString());
-                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
             }
         });
         queue.add(sr);
     }
 
-    private void parseJSON(String result){
+    private void parseJSON(String result) {
         String[] dataLOG = new String[0];
         try {
             JSONObject start = new JSONObject(result);
             sukses = start.getString("MESSAGE");
             String token = start.getString("URITOKENS");
-            String status = start.get("STATUS")+"";
+            String status = start.get("STATUS") + "";
             JSONArray data = start.getJSONArray("RESULT");
             JSONObject jsonObject = data.getJSONObject(0);
             String USERNAME = jsonObject.getString("USER_NAME");
@@ -171,14 +177,14 @@ public class LoginISS extends AppCompatActivity {
             String LIST_APPROVE_ROLE2 = jsonObject.getString("LIST_APPROVER_ROLE2");
             String LIST_REQ_ROLE = jsonObject.getString("LIST_REQUESTER_ROLE");
             String MY_ROLE = jsonObject.getString("MYROLE");
-            
-            dataLOG = new String[]{token, status,USERNAME,EMPLOYEE_NAME, EMPLOYEE_EMAIL,  EMPLOYEE_NIK,
-                    EMPLOYEE_JT,  EMPLOYEE_MULTICOST,  EMPLOYEE_PHONE,  EMPLOYEE_PHOTOS,  ATASAN_1_USERNAME,
-                    ATASAN_1_EMAIL,  ATASAN_1_NIK,  ATASAN_1_JT,  ATASAN_1_NAMA,  ATASAN_1_PHONE,  DIVISION_CODE,
-                    DIVISION_NAME,  DEPARTEMEN_CODE,  DEPARTEMEN_NAME,  ATASAN_2_USERNAME,  ATASAN_2_EMAIL,
-                    ATASAN_2_NIK,  ATASAN_2_JT,  ATASAN_2_NAMA,  ATASAN_2_PHONE,  LIST_APPROVE_ROLE1,  LIST_APPROVE_ROLE2,
-                    LIST_REQ_ROLE,  MY_ROLE};
-            
+
+            dataLOG = new String[]{token, status, USERNAME, EMPLOYEE_NAME, EMPLOYEE_EMAIL, EMPLOYEE_NIK,
+                    EMPLOYEE_JT, EMPLOYEE_MULTICOST, EMPLOYEE_PHONE, EMPLOYEE_PHOTOS, ATASAN_1_USERNAME,
+                    ATASAN_1_EMAIL, ATASAN_1_NIK, ATASAN_1_JT, ATASAN_1_NAMA, ATASAN_1_PHONE, DIVISION_CODE,
+                    DIVISION_NAME, DEPARTEMEN_CODE, DEPARTEMEN_NAME, ATASAN_2_USERNAME, ATASAN_2_EMAIL,
+                    ATASAN_2_NIK, ATASAN_2_JT, ATASAN_2_NAMA, ATASAN_2_PHONE, LIST_APPROVE_ROLE1, LIST_APPROVE_ROLE2,
+                    LIST_REQ_ROLE, MY_ROLE};
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -186,15 +192,15 @@ public class LoginISS extends AppCompatActivity {
         db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
 
 
-        if(sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
+        if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
             Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
             intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
             intent.putExtra("success", "oke");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getApplicationContext().startActivity(intent);
             finish();
-        }else{
-            Toast.makeText(LoginISS.this,"Username dan password anda salah",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(LoginISS.this, "Username dan password anda salah", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -205,9 +211,9 @@ public class LoginISS extends AppCompatActivity {
         try {
             HttpClient httpclient = new DefaultHttpClient();
             HttpGet request = new HttpGet(url);
-            request.setHeader("X-SFAPI-UserName",user);
-            request.setHeader("X-SFAPI-UserPass",pass);
-            request.setHeader("X-SFAPI-Account",acc);
+            request.setHeader("X-SFAPI-UserName", user);
+            request.setHeader("X-SFAPI-UserPass", pass);
+            request.setHeader("X-SFAPI-Account", acc);
 
             HttpResponse httpResponse = httpclient.execute(request);
             inputStream = httpResponse.getEntity().getContent();

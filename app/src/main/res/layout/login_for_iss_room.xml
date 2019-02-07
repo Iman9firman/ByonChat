@@ -4,7 +4,7 @@
     android:id="@+id/all_background"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/colorPrimary"
+    android:background="#022b95"
     android:padding="20dp">
 
 
@@ -37,10 +37,10 @@
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin10"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/margin20"
             android:paddingLeft="@dimen/margin20"
-            android:paddingRight="@dimen/margin20"
             android:paddingTop="@dimen/margin20"
+            android:paddingRight="@dimen/margin20"
+            android:paddingBottom="@dimen/margin20"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <ImageView
@@ -48,7 +48,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/img_dialog" />
+                app:srcCompat="@drawable/ic_iss" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/etUsrIDLayout"

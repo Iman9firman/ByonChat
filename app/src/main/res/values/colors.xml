@@ -39,6 +39,7 @@
     <color name="colorAcent">#006b9c</color>
     <color name="bg_voucher">#2a2a2a</color>
     <color name="accent_500">#f80900</color>
+    <color name="yelow">#FFDE3B</color>
     <color name="accent_700">#b80900</color>
     <integer-array name="contacts_text_background_colors">
         <item>0xFF9C27B0</item>
@@ -213,6 +214,7 @@
     <color name="ims_search_rounded_color">#ededed</color>
     <color name="ims_blur_background">#689E9E9E</color>
     <color name="ims_blur_list_background">#a3ffffff</color>
+    <color name="iss_default">#022b95</color>
 
     <array name="array_dot_active">
         <item>@color/dot_light_screen1</item>

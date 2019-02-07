@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin10"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/header_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:text="Facility Services, Cleaning Service, 28 Jan 2019 jam 10:00 - 28 Jan 2019 jam 14:00, 5 orang"
+            android:textColor="@color/byonchat_secondary_text"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/header_img_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/header_name"
+            android:layout_alignParentRight="true"
+            android:padding="5dp"
+            android:src="@android:drawable/ic_menu_more" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/header_img_arrow"
+            android:background="@color/byonchat_divider" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/frame_total"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin5"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/child_button_cancel_approve"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="right"
+            android:layout_marginBottom="@dimen/margin15"
+            android:background="@drawable/oval_btn_room"
+            android:drawableRight="@drawable/ic_loc_btn_drawable"
+            android:drawablePadding="@dimen/margin5"
+            android:drawableTint="@color/red"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="View Maps"
+            android:textAllCaps="false"
+            android:textColor="@drawable/selector_txt_blue_white"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max. selected :"
+                android:textColor="@color/byonchat_primary_text"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:textColor="@color/byonchat_primary_text"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/header_img_arrow"
+            android:layout_marginTop="@dimen/margin5"
+            android:background="@color/byonchat_divider" />
+    </LinearLayout>
+
+</LinearLayout>

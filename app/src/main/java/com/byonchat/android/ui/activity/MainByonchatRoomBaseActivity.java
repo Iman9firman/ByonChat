@@ -538,7 +538,18 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     valSetOne.add(include_latlong);
                     show = true;
                     valSetOne.add("fabSearch");
-                    mFragment = FragmentRoomSearchMultiTask.newInstance(title, url_tembak, username, id_rooms_tab, color, include_latlong, MainByonchatRoomBaseActivity.this, "showMultiple");
+                    mFragment = FragmentRoomSearchMultiTask.newInstance(title, "https://bb.byonchat.com/ApiReliever/index.php/Request/list", username, id_rooms_tab, color, include_latlong, MainByonchatRoomBaseActivity.this, "showMultiple");
+                } else if (category.equalsIgnoreCase("21")) {
+                    //reliever
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(id_rooms_tab);
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    show = true;
+                    valSetOne.add("hide");
+                    mFragment = FragmentRoomSearchMultiTask.newInstance(title, "https://bb.byonchat.com/ApiReliever/index.php/Jobcall", username, id_rooms_tab, color, include_latlong, MainByonchatRoomBaseActivity.this, "showMultiple");
                 }
 
                 if (status.equalsIgnoreCase("1") && show) {
@@ -614,11 +625,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 } else if (value.get(5).toString().equalsIgnoreCase("fabSearch")) {
                     vFloatingButton.show();
                     Intent intent = new Intent(getApplicationContext(), DinamicRoomSearchTaskActivity.class);
-                    /*String action = value.get(0).toString();
-                    if (action.equalsIgnoreCase("pos")) {
-                        intent = new Intent(getApplicationContext(), RoomPOSdetail.class);
-                        intent.putExtra("urlTembak", value.get(6).toString());
-                    }*/
                     intent.putExtra("tt", value.get(0).toString());
                     if (value.size() > 1) {
                         intent.putExtra("uu", value.get(1).toString());

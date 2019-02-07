@@ -863,25 +863,44 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 String attachment = jsonRootObject.getString("attachment");
                                 String content = jsonRootObject.getString("data");
                                 String include_assignto = jsonRootObject.getString("include_assignto");
-                                String include_status_task = "0";
+
+                                JSONObject jsonObject = new JSONObject();
                                 if (data.contains("include_status_task")) {
-                                    include_status_task = jsonRootObject.getString("include_status_task");
+                                    String include_status_task = jsonRootObject.getString("include_status_task");
+                                    jsonObject.put("status_task", include_status_task);
                                 }
 
 
+                                if (jsonRootObject.has("label_status_approve")) {
+                                    String label_status_approve = jsonRootObject.getString("label_status_approve");
+                                    jsonObject.put("approve", label_status_approve);
+                                }
+
+                                if (jsonRootObject.has("label_status_reject")) {
+                                    String label_status_reject = jsonRootObject.getString("label_status_reject");
+                                    jsonObject.put("reject", label_status_reject);
+                                }
+
+                                if (jsonRootObject.has("label_status_done")) {
+                                    String label_status_done = jsonRootObject.getString("label_status_done");
+                                    jsonObject.put("done", label_status_done);
+                                }
+
                                 String api_officers = jsonRootObject.getString("api_officers");
+
 
                                 BotListDB db = BotListDB.getInstance(context);
                                 db.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from);
+
                                 RoomsDetail orderModel = new RoomsDetail(getId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
                                 db.insertRoomsDetail(orderModel);
 
 
                                 Log.w("IK : ", content);
 
-                                String ccc = jsonDuaObjectW(content, attachment, api_officers, include_status_task);
+                                String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString());
                                 if (include_assignto.equalsIgnoreCase("0")) {
-                                    ccc = jsonDuaObjectW(content, attachment, "", include_status_task);
+                                    ccc = jsonDuaObjectW(content, attachment, "", jsonObject.toString());
                                 }
 
 

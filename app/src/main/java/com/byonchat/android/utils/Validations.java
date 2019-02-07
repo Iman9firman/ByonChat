@@ -203,7 +203,7 @@ public class Validations {
         return error;
     }
 
-    public int setTimeValidationISS(int id){
+    public int setTimeValidationISS(int id) {
         int error = 0;
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -220,7 +220,9 @@ public class Validations {
         IntervalDB db = new IntervalDB(context);
         db.open();
         Cursor cursor = db.getSingleContact(id);
+        Log.w("iim", "1");
         if (cursor.getCount() > 0) {
+            Log.w("iim", "2");
             String time_strDB = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
             String[] sDB = time_strDB.split(" ");
             int year_sysDB = Integer.parseInt(sDB[0].split("/")[0]);
@@ -230,32 +232,43 @@ public class Validations {
             int min_sysDB = Integer.parseInt(sDB[1].split(":")[1]);
 
             if (year_sysDB == year_sys) {
+                Log.w("iim", "3");
                 if (month_sysDB == month_sys) {
+                    Log.w("iim", "4");
                     if (day_sysDB == day_sys) {
+                        Log.w("iim", "5");
                         if (hour_sysDB == hour_sys) {
+                            Log.w("iim", "6");
                             if ((min_sys - min_sysDB) > 5) {
+                                Log.w("iim", "7");
                                 error = 1;
                                 db.deleteContact(id);
                             } else {
+                                Log.w("iim", "8");
                                 error = 0;
                             }
                         } else {
+                            Log.w("iim", "9");
                             error = 1;
                             db.deleteContact(id);
                         }
                     } else {
+                        Log.w("iim", "10");
                         error = 1;
                         db.deleteContact(id);
                     }
                 } else {
+                    Log.w("iim", "11");
                     error = 1;
                     db.deleteContact(id);
                 }
             } else {
+                Log.w("iim", "12");
                 error = 1;
                 db.deleteContact(id);
             }
         } else {
+            Log.w("iim", "13");
             Interval interval = new Interval();
             interval.setId(id);
             interval.setTime(time_str);

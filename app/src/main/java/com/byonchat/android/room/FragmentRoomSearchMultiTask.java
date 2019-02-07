@@ -3,7 +3,10 @@ package com.byonchat.android.room;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,17 +14,27 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicListTaskAdapter;
+import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
+import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
+import com.byonchat.android.ISSActivity.Reliever.CheckInActivity;
+import com.byonchat.android.ISSActivity.Reliever.CheckOutActivity;
+import com.byonchat.android.ISSActivity.Reliever.SubmitRequestActivity;
+import com.byonchat.android.ISSActivity.Requester.ByonchatMallKelapaGadingActivity;
 import com.byonchat.android.R;
+import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContentRoom;
@@ -79,7 +92,7 @@ public class FragmentRoomSearchMultiTask extends Fragment {
     Contact contact;
     private MessengerDatabaseHelper dbhelper;
     private SwipeRefreshLayout swipeRefreshLayout;
-    FragmentRoomSearchMultiTask.requestTask requestTask;
+    requestTask requestTask;
     ArrayList<ContentRoom> listItem;
     ArrayList<RoomsDetail> listItem2;
 
@@ -187,8 +200,57 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                 new DinamicListTaskAdapter.MyClickListener() {
                     @Override
                     public void onItemClick(int position, View v) {
-                        /*((ByonChatMainRoomActivity) mContext).idLoof(position);*/
-                        ((ByonChatMainRoomActivity) mContext).idLoofSearch((ContentRoom) myadapter.getData().get(position));
+                        if (!linkTembak.equalsIgnoreCase("https://bb.byonchat.com/ApiReliever/index.php/Request/list")) {
+                            if (myadapter.getData().get(position).getStatus().equalsIgnoreCase("New") ||
+                                    myadapter.getData().get(position).getStatus().equalsIgnoreCase("CheckIn") ||
+                                    myadapter.getData().get(position).getStatus().equalsIgnoreCase("CheckOut")) {
+                                Intent intent = new Intent(getContext(), SubmitRequestActivity.class);
+                                intent.putExtra("tt", title);
+                                intent.putExtra("uu", username);
+                                intent.putExtra("ii", idTab);
+                                intent.putExtra("idRequest", myadapter.getData().get(position).getId());
+                                intent.putExtra("content", myadapter.getData().get(position).getAttach());
+                                intent.putExtra("status", myadapter.getData().get(position).getStatus());
+                                intent.putExtra("col", color);
+                                intent.putExtra("ll", latLong);
+                                startActivity(intent);
+
+                            } else {
+
+                                final AlertDialog.Builder alertbox = new AlertDialog.Builder(getContext());
+                                alertbox.setTitle("Job Call");
+                                alertbox.setMessage("Waiting " + myadapter.getData().get(position).getStatus() + " Requester " + myadapter.getData().get(position).getMetode());
+                                alertbox.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                    }
+                                });
+                                alertbox.show();
+
+
+                            }
+                        } else {
+                            if (myadapter.getData().get(position).getStatus().equalsIgnoreCase("Close")) {
+                                final AlertDialog.Builder alertbox = new AlertDialog.Builder(getContext());
+                                alertbox.setTitle("Search Reliever");
+                                alertbox.setMessage("CLose");
+                                alertbox.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                    }
+                                });
+                                alertbox.show();
+                            } else {
+                                Intent intent4 = new Intent(getContext(), ByonchatMallKelapaGadingActivity.class);
+                                intent4.putExtra(Constants.EXTRA_COLOR, "006b9c");
+                                intent4.putExtra(Constants.EXTRA_COLORTEXT, "004a6d");
+                                intent4.putExtra(Constants.EXTRA_ITEM, myadapter.getData().get(position).getIdHex() + "");
+                                intent4.putExtra(Constants.EXTRA_ROOM, myadapter.getData().get(position).getMetode() + "");
+                                startActivity(intent4);
+
+                            }
+                        }
+
 
                     }
                 });
@@ -226,145 +288,13 @@ public class FragmentRoomSearchMultiTask extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshList();
         requestKey();
-    }
-
-    private String JsonToStringKey(String title) {
-        if (Message.isJSONValid(title)) {
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(title);
-                Iterator<String> keys = jsonObject.keys();
-                title = jsonObject.get(keys.next()).toString();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return title;
-    }
-
-    public String abs(String ctn, String type) {
-        Log.w("hasilABS", type + "::" + ctn);
-        String content = ctn;
-        if (type != null) {
-            if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
-                Random random = new SecureRandom();
-                char[] result = new char[6];
-                char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-                for (int i = 0; i < result.length; i++) {
-                    int randomCharIndex = random.nextInt(CHARSET_AZ_09.length);
-                    result[i] = CHARSET_AZ_09[randomCharIndex];
-                }
-                content = "IMG_" + new String(result);
-            } else if (type.equalsIgnoreCase("map")) {
-                String[] latlong = content.split(
-                        Message.LOCATION_DELIMITER);
-                if (latlong.length > 4) {
-                    String text = "<u><b>" + (String) latlong[2] + "</b></u><br/>";
-                    content = text + latlong[3];
-                }
-            } else if (type.equalsIgnoreCase("form_child")) {
-                content = "";
-            } else if (type.equalsIgnoreCase("dropdown_form")) {
-                content = "";
-            } else if (type.equalsIgnoreCase("input_kodepos")) {
-                content = jsonResultType(content, "a");
-            } else if (type.equalsIgnoreCase("dropdown_wilayah")) {
-                content = jsonResultType(content, "b") + " , " + jsonResultType(content, "c") + " , " + jsonResultType(content, "d") + " , " + jsonResultType(content, "e") + " , " + jsonResultType(content, "a");
-            } else if (type.equalsIgnoreCase("checkbox")) {
-                if (!content.startsWith("[")) {
-                    content = "[" + content + "]";
-                }
-                JSONArray jsA = null;
-                try {
-                    jsA = new JSONArray(content);
-                    if (jsA.length() > 0) {
-                        content = jsA.getJSONObject(0).getString("c").toString();
-                    }
-                } catch (JSONException e) {
-                    content = "";
-                    e.printStackTrace();
-                }
-            } else if (type.equalsIgnoreCase("image_load")) {
-                content = "image load";
-            } else if (type.equalsIgnoreCase("ocr")) {
-                JSONObject jsonObject = null;
-                try {
-                    jsonObject = new JSONObject(content);
-                    Iterator<String> keys = jsonObject.keys();
-                    String aa = jsonObject.get(keys.next()).toString();
-                    content = aa;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    content = "ocr";
-                }
-            } else if (type.equalsIgnoreCase("dropdown_dinamis") || type.equalsIgnoreCase("new_dropdown_dinamis") || type.equalsIgnoreCase("master_data")) {
-                JSONObject jsonObject = null;
-                try {
-                    jsonObject = new JSONObject(content);
-
-                    if (content.contains("Name")) {
-                        content = jsonObject.getString("Name");
-                    } else if (content.contains("Nama")) {
-                        content = jsonObject.getString("Nama");
-                    } else {
-                        Iterator<String> keys = jsonObject.keys();
-                        final String ke = keys.next();
-                        if (ke.contains("ID")) {
-                            String bodre = content.replace("{", "").replace("\"", "");
-                            String bodre2 = bodre.substring(0, bodre.indexOf(":"));
-                            if (!bodre2.contains("ID")) {
-                                content = jsonObject.getString(bodre2);
-                            } else {
-                                content = jsonObject.get(keys.next()).toString();
-                            }
-                        } else {
-                            content = jsonObject.get(keys.next()).toString();
-                        }
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    content = "";
-                }
-            } else if (type.equalsIgnoreCase("upload_document")) {
-                content = jsonResultType(content, "a");
-            } else if (type.equalsIgnoreCase("signature")) {
-                content = "signature";
-            } else if (type.equalsIgnoreCase("distance_estimation")) {
-                content = jsonResultType(content, "d");
-            } else if (type.equalsIgnoreCase("rate")) {
-
-            } else if (type.equalsIgnoreCase("form_isian")) {
-                content = "";
-            } else if (type.equalsIgnoreCase("remaining_budget")) {
-                content = "";
-            } else if (type.equalsIgnoreCase("null")) {
-                content = "--";
-            }
-        } else {
-            content = "-";
-        }
-
-        return content;
     }
 
 
     private void requestKey() {
-        RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-            @Override
-            public void onTaskDone(String key) {
-                if (key.equalsIgnoreCase("null")) {
-                    swipeRefreshLayout.setRefreshing(false);
-                } else {
-                    requestTask = new FragmentRoomSearchMultiTask.requestTask(mContext.getApplicationContext());
-                    requestTask.execute(key);
-                }
-            }
-        }, getActivity());
-
-        testAsyncTask.execute();
+        requestTask = new FragmentRoomSearchMultiTask.requestTask(mContext.getApplicationContext());
+        requestTask.execute("kosong");
     }
 
     class requestTask extends AsyncTask<String, Void, String> {
@@ -398,9 +328,8 @@ public class FragmentRoomSearchMultiTask extends Fragment {
 
                 MessengerDatabaseHelper dbhelper = MessengerDatabaseHelper.getInstance(getActivity());
 
-                nameValuePairs.add(new BasicNameValuePair("username_room", username));
-                nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", idTab));
                 nameValuePairs.add(new BasicNameValuePair("bc_user", dbhelper.getMyContact().getJabberId()));
+
                 HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
                 HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
                 ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
@@ -413,100 +342,10 @@ public class FragmentRoomSearchMultiTask extends Fragment {
 
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-
-
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     response.getEntity().writeTo(out);
                     out.close();
                     content = out.toString();
-                    Log.w("kasus", content);
-                    JSONObject result = new JSONObject(content.toString());
-
-                    JSONArray menuitemArray = result.getJSONArray("list_pull");
-                    ArrayList<String> parent = new ArrayList<String>();
-                    ArrayList<String> cont = new ArrayList<String>();
-
-                    for (int i = 0; i < menuitemArray.length(); i++) {
-                        if (i % 2 == 0) {
-                            parent.add(menuitemArray.getJSONObject(i).toString());
-                        } else {
-                            cont.add(menuitemArray.getJSONObject(i).toString());
-                        }
-                    }
-
-                    List<RoomsDetail> cuc = botListDB.allRoomDetailFormWithFlag("", username, idTab, "parent");
-
-                    if (cont.size() == parent.size()) {
-                        for (int i = 0; i < parent.size(); i++) {
-                            JSONObject oParent = new JSONObject(parent.get(i));
-                            JSONObject oContent = new JSONObject(cont.get(i));
-                            JSONArray joContent = oContent.getJSONArray("value_detail");
-                            String id = oParent.getString("id");
-                            String parent_id = oParent.getString("parent_id");
-                            String date = oParent.getString("add_date");
-                            String bc_user = oParent.getString("bc_user");
-                            String is_reject = "";
-                            String report_status = "4";
-                            if (oParent.has("is_reject")) {
-                                is_reject = oParent.getString("is_reject");
-                            }
-                            if (oParent.has("report_status")) {
-                                report_status = oParent.getString("report_status");
-                            }
-
-                            Log.w("subami1", report_status);
-                            Log.w("subami2", is_reject);
-
-                            Cursor cursorParent = botListDB.getSingleRoomDetailFormWithFlag(id + "|" + parent_id, username, idTab, "parent");
-
-                            if (cursorParent.getCount() == 0) {
-                                RoomsDetail orderModel = new RoomsDetail(id + "|" + parent_id, idTab, username, date, report_status, "", "parent");
-                                botListDB.insertRoomsDetail(orderModel);
-                                if (joContent.length() == 1) {
-                                    RoomsDetail orderModelTitle211 = new RoomsDetail(id + "|" + parent_id, idTab, username, joContent.getJSONObject(0).getString("value").toString(), "1", joContent.getJSONObject(0).getString("type").toString(), "list");
-                                    RoomsDetail orderModelTitle2 = new RoomsDetail(id + "|" + parent_id, idTab, username, jsonDuaObject(va(orderModelTitle211), is_reject), "1", joContent.getJSONObject(0).getString("type").toString(), "list");
-                                    botListDB.insertRoomsDetail(orderModelTitle2);
-                                } else if (joContent.length() > 1) {
-                                    RoomsDetail orderModelTitle21a = new RoomsDetail(id + "|" + parent_id, idTab, username, joContent.getJSONObject(0).getString("value").toString(), "1", joContent.getJSONObject(0).getString("type").toString(), "list");
-                                    RoomsDetail orderModelTitle21 = new RoomsDetail(id + "|" + parent_id, idTab, username, jsonDuaObject(va(orderModelTitle21a), is_reject), "1", joContent.getJSONObject(0).getString("type").toString(), "list");
-                                    botListDB.insertRoomsDetail(orderModelTitle21);
-                                    RoomsDetail orderModelTitle2a = new RoomsDetail(id + "|" + parent_id, idTab, username, joContent.getJSONObject(0).getString("value").toString(), "2", joContent.getJSONObject(1).getString("type").toString(), "list");
-                                    RoomsDetail orderModelTitle2 = new RoomsDetail(id + "|" + parent_id, idTab, username, jsonDuaObject(va(orderModelTitle2a), is_reject), "2", joContent.getJSONObject(1).getString("type").toString(), "list");
-                                    botListDB.insertRoomsDetail(orderModelTitle2);
-                                }
-                            }
-                        }
-
-                        for (RoomsDetail roomsDetail : cuc) {
-                            boolean deelte = true;
-                            for (int i = 0; i < parent.size(); i++) {
-                                JSONObject oParent = new JSONObject(parent.get(i));
-                                JSONObject oContent = new JSONObject(cont.get(i));
-                                JSONArray joContent = oContent.getJSONArray("value_detail");
-                                String id = oParent.getString("id");
-                                String parent_id = oParent.getString("parent_id");
-                                String date = oParent.getString("add_date");
-                                String bc_user = oParent.getString("bc_user");
-                                if (roomsDetail.getId() != null || !roomsDetail.getId().equalsIgnoreCase("")) {
-                                    String[] ff = roomsDetail.getId().split("\\|");
-                                    if (ff.length == 2) {
-                                        if (roomsDetail.getId().equalsIgnoreCase(id + "|" + parent_id)) {
-                                            deelte = false;
-                                        }
-                                    } else {
-                                        deelte = false;
-                                    }
-                                }
-                            }
-                            if (deelte) {
-                                String[] ff = roomsDetail.getId().split("\\|");
-                                if (ff.length == 2) {
-                                    botListDB.deleteDetailRoomWithFlagContent(roomsDetail);
-                                }
-                            }
-                        }
-                    }
-
                 } else {
                     error = true;
                     content = statusLine.getReasonPhrase();
@@ -532,6 +371,7 @@ public class FragmentRoomSearchMultiTask extends Fragment {
         }
 
         protected void onPostExecute(String content) {
+            Log.w("hasil", content);
             swipeRefreshLayout.setRefreshing(false);
             if (error) {
                 if (content != null) {
@@ -539,437 +379,107 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                         if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                             requestKey();
                         } else {
-                            Log.w("sekitar", "ur");
-
-                            refreshList();
                             swipeRefreshLayout.setRefreshing(false);
                             Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        refreshList();
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
             } else {
-                swipeRefreshLayout.setRefreshing(false);
-                refreshList();
-            }
-        }
-    }
-
-    public String jsonResultType(String json, String type) {
-        String hasil = "";
-        JSONObject jObject = null;
-        try {
-            jObject = new JSONObject(json);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            hasil = "";
-        }
-        if (jObject != null) {
-            try {
-                hasil = jObject.getString(type);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                hasil = "";
-            }
-        }
-
-        return hasil;
-    }
-
-    public String va(RoomsDetail roomsDetail) {
-        String content = roomsDetail.getContent();
-        Log.w("type2", roomsDetail.getFlag_tab() + "::" + content);
-        if (roomsDetail.getFlag_tab().equalsIgnoreCase("rear_camera") || roomsDetail.getFlag_tab().equalsIgnoreCase("front_camera")) {
-            Random random = new SecureRandom();
-            char[] result = new char[6];
-            char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-            for (int i = 0; i < result.length; i++) {
-                int randomCharIndex = random.nextInt(CHARSET_AZ_09.length);
-                result[i] = CHARSET_AZ_09[randomCharIndex];
-            }
-            content = "IMG_" + new String(result);
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("map")) {
-            String[] latlong = content.split(
-                    Message.LOCATION_DELIMITER);
-            if (latlong.length > 4) {
-                String text = "<u><b>" + (String) latlong[2] + "</b></u><br/>";
-                content = text + latlong[3];
-            }
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("input_kodepos")) {
-            content = jsonResultType(content, "a");
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("dropdown_wilayah")) {
-            content = jsonResultType(content, "b") + " , " + jsonResultType(content, "c") + " , " + jsonResultType(content, "d") + " , " + jsonResultType(content, "e") + " , " + jsonResultType(content, "a");
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("checkbox")) {
-            if (!content.startsWith("[")) {
-                content = "[" + content + "]";
-            }
-            JSONArray jsA = null;
-            try {
-                jsA = new JSONArray(content);
-                if (jsA.length() > 0) {
-                    content = jsA.getJSONObject(0).getString("c").toString();
-                }
-            } catch (JSONException e) {
-                content = "";
-                e.printStackTrace();
-            }
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("image_load")) {
-            content = "image load";
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("ocr")) {
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(content);
-                Iterator<String> keys = jsonObject.keys();
-                String aa = jsonObject.get(keys.next()).toString();
-                content = aa;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                content = "ocr";
-            }
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("dropdown_dinamis") || jsonResultType(roomsDetail.getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis")) {
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(content);
-                Iterator<String> keys = jsonObject.keys();
-                String aa = jsonObject.get(keys.next()).toString();
-                content = aa;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                content = "";
-            }
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("upload_document")) {
-            content = jsonResultType(content, "a");
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("signature")) {
-            content = "signature";
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("distance_estimation")) {
-            content = jsonResultType(content, "d");
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("rate")) {
-
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("dropdown_form")) {
-            content = "";
-        } else if (roomsDetail.getFlag_tab().equalsIgnoreCase("remaining_budget")) {
-            content = "";
-        }
-
-
-        return content;
-    }
-
-    public void refreshList() {
-        if (listItem != null) {
-            if (listItem.size() > 0) {
                 listItem.clear();
-            }
-        }
-
-
-        listItem2 = botListDB.allRoomDetailFormWithFlag("", username, idTab, "parent");
-        Log.w("subasa : " + title, listItem2.size() + "");
-//coba disini hampir bisa
-        int b = 0;
-
-        for (RoomsDetail aa : listItem2) {
-            b++;
-            ArrayList<RoomsDetail> listItem3 = botListDB.allRoomDetailFormWithFlag(aa.getId(), username, idTab, "list");
-            String title = "";
-            String desc = "";
-            String date = "";
-            String status = "";
-            String statusBaru = "";
-
-            if (listItem3.size() == 1) {
-                RoomsDetail roomsDetail = listItem3.get(0);
-                JSONObject jO = null;
-                try {
-                    jO = new JSONObject(roomsDetail.getContent());
-                    String content = "";
-                    if (jO.has("aa")) {
-                        content = jO.getString("aa");
-                    }
-
-                    if (jO.has("bb")) {
-                        statusBaru = jO.getString("bb");
-                    }
-
-                    title = abs(content, roomsDetail.getFlag_tab());
-
-                } catch (JSONException e) {
-                    title = abs(roomsDetail.getContent(), roomsDetail.getFlag_tab());
-                    e.printStackTrace();
-                }
-
-
-            } else if (listItem3.size() == 2) {
-
-                RoomsDetail roomsDetail1 = listItem3.get(0);
-                RoomsDetail roomsDetail2 = listItem3.get(1);
-
-                if (roomsDetail1.getFlag_content().equalsIgnoreCase("1")) {
-                    JSONObject jO = null;
+// TODO: 03/02/19 buat validasi waktu kirim lokasi terkini
+                // 1 menit kalau idle, 3 detik kalau sedang confirm
+                // mati jika checkin
+                // on jika checkout
+                if (!linkTembak.equalsIgnoreCase("https://bb.byonchat.com/ApiReliever/index.php/Request/list")) {
                     try {
-                        jO = new JSONObject(roomsDetail1.getContent());
-                        String content = "";
-                        if (jO.has("aa")) {
-                            content = jO.getString("aa");
+                        JSONArray jsonArray = new JSONArray(content);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            String id = jsonArray.getJSONObject(i).getString("id");
+                            String kode_jjt = jsonArray.getJSONObject(i).getString("kode_jjt");
+                            String nama_jjt = jsonArray.getJSONObject(i).getString("nama_jjt");
+                            String status_request = jsonArray.getJSONObject(i).getString("status_request");
+                            String pekerjaan = jsonArray.getJSONObject(i).getString("pekerjaan");
+                            String sub_pekerjaan = jsonArray.getJSONObject(i).getString("sub_pekerjaan");
+                            String waktu_mulai = jsonArray.getJSONObject(i).getString("waktu_mulai");
+                            String waktu_selesai = jsonArray.getJSONObject(i).getString("waktu_selesai");
+                            String status_request_detail = jsonArray.getJSONObject(i).getString("status_request_detail");
+                            String lat_lokasi = jsonArray.getJSONObject(i).getString("lat_lokasi");
+                            String long_lokasi = jsonArray.getJSONObject(i).getString("long_lokasi");
+                            String requester_hp = jsonArray.getJSONObject(i).getString("requester_hp");
+                            String requester_nama = jsonArray.getJSONObject(i).getString("requester_nama");
+
+                            String status = "New";
+
+                            if (status_request_detail.equalsIgnoreCase("1")) {
+                                status = "CheckIn";
+                            } else if (status_request_detail.equalsIgnoreCase("2")) {
+                                status = "Confirm Checkin";
+                            } else if (status_request_detail.equalsIgnoreCase("3")) {
+                                status = "CheckOut";
+                            } else if (status_request_detail.equalsIgnoreCase("4")) {
+                                status = "Confirm Check Out";
+                            } else if (status_request_detail.equalsIgnoreCase("5")) {
+                                status = "Cancel";
+                            }
+
+                            ContentRoom contentRoom = new ContentRoom(id, nama_jjt, waktu_mulai, pekerjaan + "," + waktu_mulai + " - " + waktu_selesai, jsonArray.getJSONObject(i).toString(), status, requester_nama);
+
+                            listItem.add(contentRoom);
                         }
 
-                        if (jO.has("bb")) {
-                            statusBaru = jO.getString("bb");
-                        }
-
-                        title = abs(content, roomsDetail1.getFlag_tab());
 
                     } catch (JSONException e) {
-                        title = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
                         e.printStackTrace();
                     }
-
-                    desc = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
-
                 } else {
-                    JSONObject jO = null;
+                    Log.w("kasmis", content);
                     try {
-                        jO = new JSONObject(roomsDetail2.getContent());
-                        String content = "";
-                        if (jO.has("aa")) {
-                            content = jO.getString("aa");
+                        JSONObject jsp = new JSONObject(content);
+                        JSONArray jsonArray = jsonArray = new JSONArray(jsp.getString("data"));
+                        String status = "";
+                        if (jsp.getString("status").equalsIgnoreCase("1")) {
+                            status = "Open";
+                        } else if (jsp.getString("status").equalsIgnoreCase("2")) {
+                            status = "Close";
+                        } else if (jsp.getString("status").equalsIgnoreCase("3")) {
+                            status = "Not Found";
                         }
 
-                        if (jO.has("bb")) {
-                            statusBaru = jO.getString("bb");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+
+                            String id_request = jsonArray.getJSONObject(i).getString("id_request");
+                            String nama_jjt = jsonArray.getJSONObject(i).getString("nama_jjt");
+                            String request_status = jsonArray.getJSONObject(i).getString("request_status");
+                            String nama_pekerjaan = jsonArray.getJSONObject(i).getString("nama_pekerjaan");
+                            String create_at = jsonArray.getJSONObject(i).getString("create_at");
+                            String jjt_lat = jsonArray.getJSONObject(i).getString("jjt_lat");
+                            String jjt_long = jsonArray.getJSONObject(i).getString("jjt_long");
+
+                            Log.w("kasmisss", id_request);
+                            ContentRoom contentRoom = new ContentRoom(id_request, nama_jjt, create_at, nama_pekerjaan, jsonArray.getJSONObject(i).toString(), status, jjt_lat + ":" + jjt_long);
+
+                            listItem.add(contentRoom);
                         }
 
-                        title = abs(content, roomsDetail2.getFlag_tab());
 
                     } catch (JSONException e) {
-                        title = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
                         e.printStackTrace();
                     }
-
-                    desc = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
                 }
-            }
-
-            date = aa.getContent();
-            status = aa.getFlag_content();
-
-            if (!statusBaru.equalsIgnoreCase("")) {
-                if (statusBaru.equalsIgnoreCase("true")) {
-                    status = "Reject";
-                }
-            }
 
 
-            String titLes = Message.parsedMessageText(JsonToStringKey(title));
-            if (titLes.contains("https")) {
-                titLes = desc;
-                desc = "";
-            }
+                Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
+                myadapter.notifyDataSetChanged();
 
-            ContentRoom contentRoom = new ContentRoom(aa.getId(), titLes, date, desc, "", status, "");
-
-            if (aa.getId().contains("|")) {
-                if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-                    new FragmentRoomSearchMultiTask.Refresh(getActivity()).execute(aa.getId(), username, idTab);
-                }
-            }
-
-            if (!status.equalsIgnoreCase("11")) {
-                if (!listItem.equals(contentRoom)) {
-                    listItem.add(contentRoom);
-                }
-            }
-
-
-        }
-
-        Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
-        myadapter.notifyDataSetChanged();
-    }
-
-
-    private class Refresh extends AsyncTask<String, String, String> {
-        private Context context;
-
-        public Refresh(Activity activity) {
-            context = activity;
-        }
-
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            postData(params[0], params[1], params[2]);
-            return null;
-        }
-
-        protected void onPostExecute(String result) {
-
-        }
-
-        protected void onProgressUpdate(String... string) {
-        }
-
-        public void postData(String getId, String usr, String idTab) {
-
-
-            //aa.getId(), username, idTab, "value"
-            // Create a new HttpClient and Post Header
-
-            Cursor cursorValue = BotListDB.getInstance(getContext()).getSingleRoomDetailFormWithFlag(getId, usr, idTab, "value");
-            if (cursorValue.getCount() == 0) {
-                if (username != null) {
-
-                    try {
-                        HttpParams httpParameters = new BasicHttpParams();
-                        HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
-                        HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                        HttpClient httpclient = new DefaultHttpClient(httpParameters);
-                        HttpPost httppost = new HttpPost(new ValidationsKey().getInstance(getContext()).getTargetUrl(usr) + GETTABDETAILPULLMULTIPLE);
-
-                        // Add your data
-                        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-                        nameValuePairs.add(new BasicNameValuePair("username_room", usr));
-                        nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", idTab));
-
-                        if (getId != null || !getId.equalsIgnoreCase("")) {
-                            String[] ff = getId.split("\\|");
-                            if (ff.length == 2) {
-                                nameValuePairs.add(new BasicNameValuePair("parent_id", ff[1]));
-                                nameValuePairs.add(new BasicNameValuePair("id_list_push", ff[0]));
-                            }
-                        }
-
-                        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-                        // Execute HTTP Post Request
-                        HttpResponse response = httpclient.execute(httppost);
-                        int status = response.getStatusLine().getStatusCode();
-                        if (status == 200) {
-                            HttpEntity entity = response.getEntity();
-                            String data = EntityUtils.toString(entity);
-                            Log.w("bersama", data);
-
-                            try {
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                                Calendar cal = Calendar.getInstance();
-                                String time_str = dateFormat.format(cal.getTime());
-                                JSONObject jsonRootObject = new JSONObject(data);
-                                String username = jsonRootObject.getString("username_room");
-                                String id_rooms_tab = jsonRootObject.getString("id_rooms_tab");
-                                String attachment = jsonRootObject.getString("attachment");
-                                String content = jsonRootObject.getString("data");
-                                String include_assignto = jsonRootObject.getString("include_assignto");
-                                String include_status_task = "0";
-                                if (data.contains("include_status_task")) {
-                                    include_status_task = jsonRootObject.getString("include_status_task");
-                                }
-
-
-                                String api_officers = jsonRootObject.getString("api_officers");
-
-                                BotListDB db = BotListDB.getInstance(context);
-                                db.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from);
-                                RoomsDetail orderModel = new RoomsDetail(getId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
-                                db.insertRoomsDetail(orderModel);
-
-
-                                Log.w("IK : ", content);
-
-                                String ccc = jsonDuaObjectW(content, attachment, api_officers, include_status_task);
-                                if (include_assignto.equalsIgnoreCase("0")) {
-                                    ccc = jsonDuaObjectW(content, attachment, "", include_status_task);
-                                }
-
-
-                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
-                                db.insertRoomsDetail(orderModel2);
-
-
-                                   /* mContext.runOnUiThread(new Runnable() {
-                                        public void run() {
-                                            Toast.makeText(mContext, "Success Download Value", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });*/
-
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                    } catch (ConnectTimeoutException e) {
-                        e.printStackTrace();
-                    } catch (ClientProtocolException e) {
-                        // TODO Auto-generated catch block
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                    }
-
-                    // new Refresh(getActivity()).execute(new ValidationsKey().getInstance(getContext()).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, aa.getId());
-                }
-            }
-
-
-        }
-    }
-
-    private String jsonDuaObjectW(String a, String b, String c, String d) {
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("aa", a);
-            obj.put("bb", b);
-            Log.w("adabdi1", c);
-
-            if (!c.equalsIgnoreCase("")) {
-                Log.w("adabdi2", c);
-                obj.put("cc", c);
-            }
-
-            if (!d.equalsIgnoreCase("")) {
-                Log.w("adabdi2", d);
-                obj.put("dd", d);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return obj.toString();
-    }
-
-
-    static class Sortiran implements Comparator<ContentRoom> {
-
-        @Override
-        public int compare(ContentRoom e1, ContentRoom e2) {
-            Date satu = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e1.getTime()));
-            Date dua = Utility.convertStringToDate(Utility.parseDateToddMMyyyy(e2.getTime()));
-            if (satu.compareTo(dua) > 0) {
-                return -1;
-            } else {
-                return 1;
+                swipeRefreshLayout.setRefreshing(false);
             }
         }
     }
 
-    private String jsonDuaObject(String a, String b) {
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("aa", a);
-            obj.put("bb", b);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return obj.toString();
-    }
 
     public void onActionSearch(String args) {
         myadapter.getFilter().filter(args);

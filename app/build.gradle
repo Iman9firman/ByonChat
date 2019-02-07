@@ -235,5 +235,10 @@ dependencies {
     //OpenStreetMap
     compile 'org.osmdroid:osmdroid-android:6.0.3'
     compile 'com.github.MKergall:osmbonuspack:6.5.3'
+
+    compile 'com.github.BlackBoxVision:material-wheel-view:v0.0.1'
+
+    compile 'com.mindorks:placeholderview:0.7.1'
+    compile 'com.stepstone.apprating:app-rating:2.3.0'
 }
 apply plugin: 'com.google.gms.google-services'

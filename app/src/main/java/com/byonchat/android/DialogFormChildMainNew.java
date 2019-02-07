@@ -88,6 +88,8 @@ public class DialogFormChildMainNew extends DialogFragment {
     String idTab = "";
     String idchildDetail = "";
     String FormulaMaster = "";
+    String posisi = "";
+
     String labelAlert = "";
     //sementara
     String customersId = "";
@@ -98,8 +100,8 @@ public class DialogFormChildMainNew extends DialogFragment {
     String hargaDasarUSD = "0";
     Button mProceed, mCancel;
 
-    public static DialogFormChildMainNew newInstance(String content, String title, String dbMaster, String idDetail, String username, String idTab, String idListTaskMaster, String idChildDetail, String customersId, Activity activity) {
-        Log.w("masudk2", content);
+    public static DialogFormChildMainNew newInstance(String content, String title, String dbMaster, String idDetail, String username, String idTab, String idListTaskMaster, String idChildDetail, String customersId, Activity activity, String posisi) {
+        Log.w("masudk2", posisi);
         DialogFormChildMainNew f = new DialogFormChildMainNew();
         Bundle args = new Bundle();
         args.putString("title", title);
@@ -111,6 +113,7 @@ public class DialogFormChildMainNew extends DialogFragment {
         args.putString("idTab", idTab);
         args.putString("idChildDetail", idChildDetail);
         args.putString("customersId", customersId);
+        args.putString("posisi", posisi);
         f.setArguments(args);
 
         return f;
@@ -136,6 +139,8 @@ public class DialogFormChildMainNew extends DialogFragment {
         if (botListDB == null) {
             botListDB = BotListDB.getInstance(getContext());
         }
+
+        Log.e("errorslow serror", posisi);
         try {
             JSONArray jsonArrayCild = new JSONArray(content);
 
@@ -1166,8 +1171,10 @@ public class DialogFormChildMainNew extends DialogFragment {
                             if (getDialog() != null) {
                                 getDialog().dismiss();
                             }
+                            Log.w("posisi", posisi);
                             mCancel.setText("save");
                             Intent newIntent = new Intent("refreshForm");
+                            newIntent.putExtra("posisi", posisi);
                             getActivity().sendBroadcast(newIntent);
                         }
 
@@ -1263,7 +1270,9 @@ public class DialogFormChildMainNew extends DialogFragment {
                             getDialog().dismiss();
                         }
                         mCancel.setText("save");
+                        Log.w("posisi", posisi);
                         Intent newIntent = new Intent("refreshForm");
+                        newIntent.putExtra("posisi", posisi);
                         getActivity().sendBroadcast(newIntent);
                     }
                 }
@@ -1290,6 +1299,7 @@ public class DialogFormChildMainNew extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         delete();
                         Intent newIntent = new Intent("refreshForm");
+                        newIntent.putExtra("posisi", posisi);
                         getActivity().sendBroadcast(newIntent);
                         dialog.dismiss();
 
@@ -1447,6 +1457,7 @@ public class DialogFormChildMainNew extends DialogFragment {
         idListTaskMaster = getArguments().getString("idListTaskMaster");
         idchildDetail = getArguments().getString("idChildDetail");
         customersId = getArguments().getString("customersId");
+        posisi = getArguments().getString("posisi");
 
 
     }

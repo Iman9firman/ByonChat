@@ -1,4 +1,5 @@
 <resources>
+    <string name="hallo">hallo</string>
     <string name="app_name">ByonChat</string>
     <string name="app_version">2.3.1</string>
     <string name="app_company">imperial</string>

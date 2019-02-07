@@ -868,6 +868,16 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     valSetOne.add(include_latlong);
                     valSetOne.add("fabSearch");
                     Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("21")) {
+                    itemMain.iconTest = R.drawable.ic_room_task;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 }
 
 
@@ -957,9 +967,25 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 }
             }
 
-        }/*if (new Validations().getInstance(getApplicationContext()).setTimeValidationISS(26) == 1) {
+        }
+/*
+        if (title.equalsIgnoreCase("ISS INDONESIA")) {
+            Log.w("salah3", "sat2");
+            if (success == null) {
+                Log.w("salah4", "satu");
+                Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                startActivity(a);
+                finish();
+            }
+        }*/
+        if (new Validations().getInstance(getApplicationContext()).setTimeValidationISS(26) == 1) {
+            Log.w("salah3", "satu1");
             if (title.equalsIgnoreCase("ISS INDONESIA")) {
+                Log.w("salah3", "sat2");
                 if (success == null) {
+                    Log.w("salah4", "satu");
                     Intent a = new Intent(getApplicationContext(), LoginISS.class);
                     a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                     a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
@@ -967,7 +993,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     finish();
                 }
             }
-        }*/
+        } else {
+            Log.w("salah5", "satu1");
+        }
     }
 
     protected void resolveToolbarExpanded() {

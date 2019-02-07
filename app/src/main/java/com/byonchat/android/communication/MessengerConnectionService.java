@@ -2077,7 +2077,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     }
 
     public void onMessageReceived(final Message vo/*,String aaa*/) {
-        Log.w("supaya", "satu");
+        Log.w("alhamdulillah", "supaya satu");
 
         ArrayList<String> listblock = new ArrayList<String>();
 
@@ -2387,12 +2387,15 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                 name = contact.getName();
             }
         }
-
+        Boolean insert = true;
         if (send) {
             if (vo.getType().equalsIgnoreCase(Message.TYPE_TEXT) && vo.getMessage().startsWith("bc://")) {
                 String regex = "[0-9]+";
                 if (!name.matches(regex)) {
                     String room[] = vo.getMessage().split("//");
+                    if (room[1].equalsIgnoreCase("1_277091610admin")) {
+                        insert = false;
+                    }
                     if (room.length == 4) {
                         try {
                             JSONArray jsonArrays = new JSONArray(room[3]);
@@ -2468,9 +2471,11 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                 }
             }
 
-
-            databaseHelper.insertData(vo);
-            if (vo.getType().equalsIgnoreCase(Message.TYPE_TEXT) || vo.getType().equalsIgnoreCase(Message.TYPE_LOC) || vo.getType().equalsIgnoreCase(Message.TYPE_BROADCAST)) {
+            if (insert)
+                databaseHelper.insertData(vo);
+            if (vo.getType().equalsIgnoreCase(Message.TYPE_TEXT) ||
+                    vo.getType().equalsIgnoreCase(Message.TYPE_LOC) ||
+                    vo.getType().equalsIgnoreCase(Message.TYPE_BROADCAST)) {
                 if (vo.getSource().equals("askhonda_bot")) {
                     String source = null, isi_msg = null;
                     try {

@@ -188,6 +188,9 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         vToolbarTitle.setTextColor(Color.parseColor("#" + mColorText));
 
         Drawable mDrawable = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_black_24dp);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            mDrawable = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left24);
+        }
         mDrawable.setColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_ATOP);
         vImgToolbarBack.setImageDrawable(mDrawable);
 

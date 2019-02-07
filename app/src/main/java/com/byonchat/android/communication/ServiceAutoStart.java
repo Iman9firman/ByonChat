@@ -46,6 +46,7 @@ public class ServiceAutoStart extends BroadcastReceiver {
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                     PackageManager.DONT_KILL_APP);
         }
+
     }
 
     protected boolean isMyServiceRunning(Context context, Class<?> serviceClass) {

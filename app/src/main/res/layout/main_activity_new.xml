@@ -147,6 +147,7 @@
                                     android:padding="@dimen/margin10"
                                     android:tint="@color/white"
                                     app:srcCompat="@drawable/baseline_search_24" />
+
                             </LinearLayout>
 
                         </RelativeLayout>
@@ -186,10 +187,15 @@
                     android:textSize="16sp" />
             </RelativeLayout>
 
+            <!--<include-->
+            <!--layout="@layout/custom_home_grid"-->
+            <!--android:visibility="gone" />-->
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_main"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="-100dp"
                 android:paddingLeft="18dp"
                 android:paddingTop="24dp"

@@ -56,6 +56,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -67,6 +69,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -251,9 +254,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @NonNull
     protected SwipeRefreshLayout vSwipeRefresh;
 
-    protected UploadService mUploadService;
-    protected Intent mServiceIntent;
-
     protected RecyclerView.LayoutManager layoutManager;
     protected RecyclerViewDragDropManager recyclerViewDragDropManager;
     protected ProgressDialog progressDialog;
@@ -267,6 +267,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected DraggableGridExampleAdapter adapter;
     protected BotAdapter mAdapterRoomList;
     protected RecyclerView.Adapter wrappedAdapter;
+
+    protected UploadService mUploadService;
+    protected Intent mServiceIntent;
 
     protected ArrayList<ContactBot> botArrayLististPrimary = new ArrayList<ContactBot>();
     protected ArrayList<ContactBot> botArrayListist = new ArrayList<ContactBot>();
@@ -294,6 +297,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected String colorText;
     protected String colorForeground;
     protected String extra_tab = "";
+    protected String extra_grid_size = "";
+    protected int resourceAdapterId;
     protected int logo;
     protected int background;
     protected int room_id;
@@ -481,6 +486,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_refresh).setVisible(false);
         nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
+        nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
     }
 
@@ -590,10 +596,32 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void resolveRecyclerView() {
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs != null) {
+            extra_grid_size = prefs.getString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_THREE);
+            if (extra_grid_size.equalsIgnoreCase(Constants.EXTRA_GRID_SIZE_THREE)) {
+                resourceAdapterId = R.layout.list_grid_item;
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+                } else {
+                    layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
+                }
+            } else {
+                resourceAdapterId = R.layout.list_grid_item_four;
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    layoutManager = new GridLayoutManager(this, 4, RecyclerView.VERTICAL, false);
+                } else {
+                    layoutManager = new GridLayoutManager(this, 7, RecyclerView.VERTICAL, false);
+                }
+            }
         } else {
-            layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
+            resourceAdapterId = R.layout.list_grid_item;
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+            } else {
+                layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
+            }
         }
 
         recyclerViewDragDropManager = new RecyclerViewDragDropManager();
@@ -631,7 +659,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         });
 
 
-        final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, room_id, positionList);
+        final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, resourceAdapterId, room_id, positionList);
         adapter = myItemAdapter;
         wrappedAdapter = recyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
         GeneralItemAnimator animator = new DraggableItemAnimator();
@@ -968,6 +996,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             }
 
         }
+<<<<<<< HEAD
 /*
         if (title.equalsIgnoreCase("ISS INDONESIA")) {
             Log.w("salah3", "sat2");
@@ -982,6 +1011,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         }*/
         if (new Validations().getInstance(getApplicationContext()).setTimeValidationISS(26) == 1) {
             Log.w("salah3", "satu1");
+=======
+        if (new Validations().getInstance(getApplicationContext()).setTimeValidationISS(26) == 1) {
+>>>>>>> master
             if (title.equalsIgnoreCase("ISS INDONESIA")) {
                 Log.w("salah3", "sat2");
                 if (success == null) {
@@ -1576,5 +1608,40 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         toast.setView(view);
         toast.setGravity(Gravity.TOP, 0, 100);
         toast.show();
+    }
+
+    protected void changeGridSize() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        new AlertDialog.Builder(this)
+                .setItems(R.array.dialog_grid_size, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            editor.putString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_THREE);
+                            editor.apply();
+                            break;
+                        case 1:
+                            editor.putString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_FOUR);
+                            editor.apply();
+                            break;
+                    }
+
+                    resolveRecyclerView();
+                    onHomeRefresh();
+                })
+                .show();
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    protected void onHomeRefresh() {
+        resolveAppBar();
+        resolveValidationLogin();
+        resolveToolbarExpanded();
+        resolveNavHeader();
+        resolveListRooms();
+        resolveOpenRooms();
+        resolveRefreshGrid();
     }
 }

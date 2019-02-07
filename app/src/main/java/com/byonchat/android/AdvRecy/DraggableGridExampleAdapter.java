@@ -45,6 +45,7 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
     private List<ItemMain> filterList;
     private List<String> positionList;
     private String charString;
+    private int resourceId;
     private int room_id;
 
     protected Fonts fonts;
@@ -52,11 +53,12 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
     protected OnItemClickListener itemClickListener;
     protected OnLongItemClickListener longItemClickListener;
 
-    public DraggableGridExampleAdapter(Context context, List<ItemMain> itemList, int room_id, List<String> positionList) {
+    public DraggableGridExampleAdapter(Context context, List<ItemMain> itemList, int resourceId, int room_id, List<String> positionList) {
         setHasStableIds(true);
 
         this.context = context;
         this.itemList = itemList;
+        this.resourceId = resourceId;
         this.filterList = itemList;
         this.room_id = room_id;
         this.positionList = positionList;
@@ -73,7 +75,7 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View v = inflater.inflate(R.layout.list_grid_item, parent, false);
+        View v = inflater.inflate(resourceId, parent, false);
         return new MyViewHolder(v, itemClickListener, longItemClickListener);
     }
 

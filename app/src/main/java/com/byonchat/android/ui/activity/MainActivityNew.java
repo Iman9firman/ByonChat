@@ -272,23 +272,38 @@ public class MainActivityNew extends MainBaseActivityNew {
                 .cancel(NotificationReceiver.NOTIFY_ID_CARD);
         addShortcutBadger(getApplicationContext());
 
-        resolveAppBar();
-        resolveValidationLogin();
-        resolveToolbarExpanded();
-        resolveNavHeader();
-        resolveListRooms();
-        resolveOpenRooms();
-        resolveRefreshGrid();
+        onHomeRefresh();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs != null) {
+            extra_grid_size = prefs.getString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_THREE);
+            if (extra_grid_size.equalsIgnoreCase(Constants.EXTRA_GRID_SIZE_THREE)) {
+                resourceAdapterId = R.layout.list_grid_item;
+                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
+                } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+                }
+            } else {
+                resourceAdapterId = R.layout.list_grid_item_four;
+                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    layoutManager = new GridLayoutManager(this, 7, RecyclerView.VERTICAL, false);
+                } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    layoutManager = new GridLayoutManager(this, 4, RecyclerView.VERTICAL, false);
+                }
+            }
+        } else {
+            resourceAdapterId = R.layout.list_grid_item;
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
+            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+            }
         }
 
         recyclerViewDragDropManager = new RecyclerViewDragDropManager();
@@ -324,8 +339,7 @@ public class MainActivityNew extends MainBaseActivityNew {
             }
         });
 
-
-        final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, room_id, positionList);
+        final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, resourceAdapterId, room_id, positionList);
         adapter = myItemAdapter;
         wrappedAdapter = recyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
         GeneralItemAnimator animator = new DraggableItemAnimator();
@@ -515,6 +529,9 @@ public class MainActivityNew extends MainBaseActivityNew {
                             break;
                         case R.id.nav_item_create_shortcut:
                             createShortcut();
+                            break;
+                        case R.id.nav_item_grid_size:
+                            changeGridSize();
                             break;
                         case R.id.nav_item_legal:
                             Byonchat.getRoomsDB().open();

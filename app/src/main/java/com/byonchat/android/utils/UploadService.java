@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,11 +15,13 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,6 +33,7 @@ import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.config.Utils;
 import com.byonchat.android.config.WsConfig;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseHelper;
@@ -43,6 +48,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.provider.SubmitingRoomDB;
+import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.videotrimmer.interfaces.ConvertTaskCompleted;
 import com.byonchat.android.videotrimmer.utils.RequestConvertTask;
 import com.byonchat.android.videotrimmer.videocompressor.MediaController;
@@ -139,6 +145,7 @@ public class UploadService extends IntentService {
     public final static String URL_CEK_APPLY = "https://" + MessengerConnectionService.HTTP_SERVER + "/themes/boleh.php";
     public final static String URL_LAPOR_OFFERS = "https://" + MessengerConnectionService.HTTP_SERVER + "/offers/lapor.php";
     private MessengerDatabaseHelper messengerHelper;
+    NotificationManager mNotificationManager;
 
     public static final SimpleDateFormat hourFormat = new SimpleDateFormat(
             "HH:mm:ss dd/MM/yyyy", Locale.getDefault());
@@ -163,12 +170,56 @@ public class UploadService extends IntentService {
     String caption = "";
     private final Handler mHandler = new Handler();
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private String createNotificationChannel(String channelId, String channelName) {
+        NotificationChannel chan = new NotificationChannel(channelId,
+                channelName, NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.createNotificationChannel(chan);
+        return channelId;
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     @Override
     protected void onHandleIntent(Intent intent) {
-        serviceIntent = new Intent(this, UploadService.class);
 
+        Log.i("DEWA", "Received Start Foreground Intent ");
+        Intent notificationIntent = new Intent(this, MainActivityNew.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
 
-        notificationManager = (NotificationManager) getApplicationContext().getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.logo_byon);
+
+        String channelId = "";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            channelId = createNotificationChannel("ByonChat", "Connected");
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
+            Notification notification = notificationBuilder.setOngoing(true)
+                    .setContentTitle("ByonChat")
+                    .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "No Connectivity")
+                    .setSmallIcon(R.drawable.logo_byon)
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true)
+                    .build();
+            startForeground(101,
+                    notification);
+        } else {
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setContentTitle("ByonChat")
+                    .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "No Connectivity")
+                    .setSmallIcon(R.drawable.logo_byon)
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true).build();
+            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
+                    notification);
+        }
+
         Message vo = intent.getParcelableExtra(UploadService.KEY_MESSAGE);
 
         String action = intent.getStringExtra(UploadService.ACTION);
@@ -1123,9 +1174,7 @@ public class UploadService extends IntentService {
         ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, username, idTab, "cild");
         ArrayList<String> listUpload = new ArrayList<>();
         for (
-                int u = 0; u < list.size(); u++)
-
-        {
+                int u = 0; u < list.size(); u++) {
             JSONArray jsA = null;
             String content = "";
 
@@ -1182,9 +1231,7 @@ public class UploadService extends IntentService {
 
         }
 
-        if (listUpload.size() == 0)
-
-        {
+        if (listUpload.size() == 0) {
             if (fromList.equalsIgnoreCase("show")) {
                 new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail, fromList, customersId, includeStatus, isReject, idNotif);
             } else if (fromList.equalsIgnoreCase("hide")) {
@@ -1199,9 +1246,7 @@ public class UploadService extends IntentService {
                     }
                 }
             }
-        } else
-
-        {
+        } else {
             uploadFileChild(context, "looping", idDetail, username, idTab, fromList, customersId, includeStatus, isReject, idNotif);
         }
     }

@@ -25,6 +25,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
@@ -47,12 +48,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,6 +64,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -201,6 +205,44 @@ public class MainActivityNew extends MainBaseActivityNew {
         vNavLogo = headerview.findViewById(R.id.nav_logo);
         vNavTitle = headerview.findViewById(R.id.nav_title);
         vBtnOpenRooms = headerview.findViewById(R.id.nav_button_open_room);
+
+        vConstraintFiveOne = findViewById(R.id.constraint_item_grid_five_one);
+        vConstraintFiveTwo = findViewById(R.id.constraint_item_grid_five_four);
+        vConstraintFiveThree = findViewById(R.id.constraint_item_grid_five_five);
+
+//        LinearLayout.LayoutParams constraintFive = new LinearLayout.LayoutParams(vConstraintFiveOne.getWidth(),
+//                vConstraintFiveOne.getHeight());
+//        vConstraintFiveTwo.setLayoutParams(constraintFive);
+//        vConstraintFiveThree.setLayoutParams(constraintFive);
+
+        vFrameTabOne = findViewById(R.id.frame_tab_one);
+        vFrameTabTwo = findViewById(R.id.frame_tab_two);
+        vFrameTabThree = findViewById(R.id.frame_tab_three);
+        vFrameTabFour = findViewById(R.id.frame_tab_four);
+
+        vLogoItemGridOne = findViewById(R.id.logo_item_grid_one);
+        vTitleItemGridOne = findViewById(R.id.title_item_grid_one);
+
+        vLogoItemGridTwoOne = findViewById(R.id.logo_item_grid_two_one);
+        vTitleItemGridTwoOne = findViewById(R.id.title_item_grid_two_one);
+        vLogoItemGridTwoTwo = findViewById(R.id.logo_item_grid_two_two);
+        vTitleItemGridTwoTwo = findViewById(R.id.title_item_grid_two_two);
+
+        vLogoItemGridThreeOne = findViewById(R.id.logo_item_grid_three_one);
+        vTitleItemGridThreeOne = findViewById(R.id.title_item_grid_three_one);
+        vLogoItemGridThreeTwo = findViewById(R.id.logo_item_grid_three_two);
+        vTitleItemGridThreeTwo = findViewById(R.id.title_item_grid_three_two);
+        vLogoItemGridThreeThree = findViewById(R.id.logo_item_grid_three_three);
+        vTitleItemGridThreeThree = findViewById(R.id.title_item_grid_three_three);
+
+        vLogoItemGridFourOne = findViewById(R.id.logo_item_grid_four_one);
+        vTitleItemGridFourOne = findViewById(R.id.title_item_grid_four_one);
+        vLogoItemGridFourTwo = findViewById(R.id.logo_item_grid_four_two);
+        vTitleItemGridFourTwo = findViewById(R.id.title_item_grid_four_two);
+        vLogoItemGridFourThree = findViewById(R.id.logo_item_grid_four_three);
+        vTitleItemGridFourThree = findViewById(R.id.title_item_grid_four_three);
+        vLogoItemGridFourFour = findViewById(R.id.logo_item_grid_four_four);
+        vTitleItemGridFourFour = findViewById(R.id.title_item_grid_four_four);
     }
 
     @Override
@@ -273,6 +315,8 @@ public class MainActivityNew extends MainBaseActivityNew {
         addShortcutBadger(getApplicationContext());
 
         onHomeRefresh();
+
+        recyclerView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -398,7 +442,7 @@ public class MainActivityNew extends MainBaseActivityNew {
     @SuppressWarnings("WrongConstant")
     protected void resolveView() {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Utility.scheduleJob(this);
             } else {
                 mUploadService = new UploadService();

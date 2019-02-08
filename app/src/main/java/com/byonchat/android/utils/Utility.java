@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -220,6 +221,7 @@ public class Utility {
 
     @TargetApi(23)
     public static void scheduleJob(Context context) {
+        Log.d("HIDUP", "scheduleJob activity");
         ComponentName serviceComponent = new ComponentName(context, MyJobService.class);
 //        JobInfo.Builder builder = new JobInfo.Builder(123123, serviceComponent);
         JobInfo.Builder builder = new JobInfo.Builder(898989, serviceComponent);

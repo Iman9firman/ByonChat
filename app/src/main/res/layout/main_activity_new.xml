@@ -187,9 +187,17 @@
                     android:textSize="16sp" />
             </RelativeLayout>
 
-            <!--<include-->
-            <!--layout="@layout/custom_home_grid"-->
-            <!--android:visibility="gone" />-->
+            <include layout="@layout/custom_home_grid_one" />
+
+            <include layout="@layout/custom_home_grid_two" />
+
+            <include layout="@layout/custom_home_grid_three" />
+
+            <include layout="@layout/custom_home_grid_four" />
+
+            <include layout="@layout/custom_home_grid_five" />
+
+            <include layout="@layout/custom_home_grid_six" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_main"

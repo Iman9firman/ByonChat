@@ -390,6 +390,8 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         super.onStartCommand(intent, flags, startId);
 //        startTimer();
 
+        Log.d("HIDUP", "onStartCommand MessengerConnectionService");
+
         Contact contact = databaseHelper.getMyContact();
         if (contact != null) {
             xmppOpen();
@@ -2064,6 +2066,11 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     public static void startService(Context context) {
         Intent iservice = new Intent(context, MessengerConnectionService.class);
         context.startService(iservice);
+    }
+
+    public static void stopService(Context context) {
+        Intent iservice = new Intent(context, MessengerConnectionService.class);
+        context.stopService(iservice);
     }
 
     public void onMessageProcessed(Message vo, String action) {

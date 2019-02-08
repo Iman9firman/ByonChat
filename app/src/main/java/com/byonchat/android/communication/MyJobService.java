@@ -35,8 +35,10 @@ public class MyJobService extends JobService {
     NotificationManager mNotificationManager;
     Thread thread = null;
 
+    @RequiresApi(26)
     @Override
     public boolean onStartJob(JobParameters params) {
+        Log.d("HIDUP", "onStartJob MyJobService");
 
         thread = new Thread(new BackgroundThreadStart(this));
 

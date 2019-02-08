@@ -184,8 +184,6 @@ public class UploadService extends IntentService {
     @RequiresApi(Build.VERSION_CODES.O)
     @Override
     protected void onHandleIntent(Intent intent) {
-
-        Log.i("DEWA", "Received Start Foreground Intent ");
         Intent notificationIntent = new Intent(this, MainActivityNew.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -223,6 +221,7 @@ public class UploadService extends IntentService {
         Message vo = intent.getParcelableExtra(UploadService.KEY_MESSAGE);
 
         String action = intent.getStringExtra(UploadService.ACTION);
+        Log.d("HIDUP", "onHandleIntent UploadService " + action);
 
         if (messengerHelper == null) {
             messengerHelper = MessengerDatabaseHelper.getInstance(this);

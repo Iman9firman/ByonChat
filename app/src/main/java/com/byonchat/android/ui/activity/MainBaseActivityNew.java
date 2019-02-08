@@ -36,6 +36,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -45,6 +46,7 @@ import android.support.multidex.MultiDex;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -253,6 +255,84 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     @NonNull
     protected SwipeRefreshLayout vSwipeRefresh;
+
+    @NonNull
+    protected NestedScrollView vFrameTabOne;
+    @NonNull
+    protected NestedScrollView vFrameTabTwo;
+    @NonNull
+    protected NestedScrollView vFrameTabThree;
+    @NonNull
+    protected NestedScrollView vFrameTabFour;
+
+    protected ConstraintLayout vConstraintFiveOne;
+    protected ConstraintLayout vConstraintFiveTwo;
+    protected ConstraintLayout vConstraintFiveThree;
+
+    @NonNull
+    protected ImageView vLogoItemGridOne;
+    @NonNull
+    protected TextView vTitleItemGridOne;
+
+    @NonNull
+    protected ImageView vLogoItemGridTwoOne;
+    @NonNull
+    protected TextView vTitleItemGridTwoOne;
+    @NonNull
+    protected ImageView vLogoItemGridTwoTwo;
+    @NonNull
+    protected TextView vTitleItemGridTwoTwo;
+
+    @NonNull
+    protected ImageView vLogoItemGridThreeOne;
+    @NonNull
+    protected TextView vTitleItemGridThreeOne;
+    @NonNull
+    protected ImageView vLogoItemGridThreeTwo;
+    @NonNull
+    protected TextView vTitleItemGridThreeTwo;
+    @NonNull
+    protected ImageView vLogoItemGridThreeThree;
+    @NonNull
+    protected TextView vTitleItemGridThreeThree;
+
+    @NonNull
+    protected ImageView vLogoItemGridFourOne;
+    @NonNull
+    protected TextView vTitleItemGridFourOne;
+    @NonNull
+    protected ImageView vLogoItemGridFourTwo;
+    @NonNull
+    protected TextView vTitleItemGridFourTwo;
+    @NonNull
+    protected ImageView vLogoItemGridFourThree;
+    @NonNull
+    protected TextView vTitleItemGridFourThree;
+    @NonNull
+    protected ImageView vLogoItemGridFourFour;
+    @NonNull
+    protected TextView vTitleItemGridFourFour;
+
+    @NonNull
+    protected ImageView vLogoItemGridFiveOne;
+    @NonNull
+    protected TextView vTitleItemGridFiveOne;
+    @NonNull
+    protected ImageView vLogoItemGridFiveTwo;
+    @NonNull
+    protected TextView vTitleItemGridFiveTwo;
+    @NonNull
+    protected ImageView vLogoItemGridFiveThree;
+    @NonNull
+    protected TextView vTitleItemGridFiveThree;
+    @NonNull
+    protected ImageView vLogoItemGridFiveFour;
+    @NonNull
+    protected TextView vTitleItemGridFiveFour;
+    @NonNull
+    protected ImageView vLogoItemGridFiveFive;
+    @NonNull
+    protected TextView vTitleItemGridFiveFive;
 
     protected RecyclerView.LayoutManager layoutManager;
     protected RecyclerViewDragDropManager recyclerViewDragDropManager;

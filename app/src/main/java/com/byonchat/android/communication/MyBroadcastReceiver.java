@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.SystemClock;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.byonchat.android.helpers.Constants;
@@ -21,6 +22,7 @@ import java.util.Date;
 public class MyBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("HIDUP", "onReceive MyBroadcastReceiver");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Utility.scheduleJob(context);

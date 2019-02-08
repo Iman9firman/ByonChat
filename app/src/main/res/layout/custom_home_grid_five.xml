@@ -1,0 +1,441 @@
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frame_tab_five"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="-100dp"
+    android:visibility="gone"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/main_activity_new">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/constraint_item_grid_five_one"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
+                        android:layout_margin="@dimen/margin5">
+
+                        <android.support.v7.widget.CardView
+                            android:id="@+id/cardview"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_margin="8dp"
+                            app:cardCornerRadius="25dp"
+                            app:cardElevation="3dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintDimensionRatio="1"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <android.support.constraint.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="top">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginTop="@dimen/margin10"
+                                    android:layout_marginBottom="@dimen/margin10"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <ImageView
+                                        android:id="@+id/logo_item_grid_five_one"
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        android:src="@drawable/ic_room_about" />
+
+                                    <TextView
+                                        android:id="@+id/title_item_grid_five_one"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal|top"
+                                        android:layout_marginLeft="@dimen/margin3"
+                                        android:layout_marginTop="@dimen/margin5"
+                                        android:layout_marginRight="@dimen/margin3"
+                                        android:ellipsize="end"
+                                        android:fadingEdge="horizontal"
+                                        android:maxLines="2"
+                                        android:paddingLeft="10dp"
+                                        android:paddingRight="10dp"
+                                        android:scrollHorizontally="true"
+                                        android:text="asdfasdfasd asdfasdf asdfasdfsf"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/byonchat_primary_text"
+                                        android:textSize="14sp"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintLeft_toLeftOf="parent"
+                                        app:layout_constraintRight_toRightOf="parent" />
+                                </LinearLayout>
+
+                            </android.support.constraint.ConstraintLayout>
+
+                        </android.support.v7.widget.CardView>
+
+                    </android.support.constraint.ConstraintLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <android.support.constraint.ConstraintLayout
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
+                        android:layout_margin="@dimen/margin5">
+
+                        <android.support.v7.widget.CardView
+                            android:id="@+id/cardview1"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_margin="8dp"
+                            app:cardCornerRadius="25dp"
+                            app:cardElevation="3dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintDimensionRatio="1"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <android.support.constraint.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="top">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginTop="@dimen/margin10"
+                                    android:layout_marginBottom="@dimen/margin10"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <ImageView
+                                        android:id="@+id/logo_item_grid_five_two"
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        android:src="@drawable/ic_room_about" />
+
+                                    <TextView
+                                        android:id="@+id/title_item_grid_five_two"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal|top"
+                                        android:layout_marginLeft="@dimen/margin3"
+                                        android:layout_marginTop="@dimen/margin5"
+                                        android:layout_marginRight="@dimen/margin3"
+                                        android:ellipsize="end"
+                                        android:fadingEdge="horizontal"
+                                        android:maxLines="2"
+                                        android:paddingLeft="10dp"
+                                        android:paddingRight="10dp"
+                                        android:scrollHorizontally="true"
+                                        android:text="asdfasdfasd asdfasdf asdfasdfsf"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/byonchat_primary_text"
+                                        android:textSize="14sp"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintLeft_toLeftOf="parent"
+                                        app:layout_constraintRight_toRightOf="parent" />
+                                </LinearLayout>
+
+                            </android.support.constraint.ConstraintLayout>
+
+                        </android.support.v7.widget.CardView>
+
+                    </android.support.constraint.ConstraintLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <android.support.constraint.ConstraintLayout
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
+                        android:layout_margin="@dimen/margin5">
+
+                        <android.support.v7.widget.CardView
+                            android:id="@+id/cardview2"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_margin="8dp"
+                            app:cardCornerRadius="25dp"
+                            app:cardElevation="3dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintDimensionRatio="1"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <android.support.constraint.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="top">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginTop="@dimen/margin10"
+                                    android:layout_marginBottom="@dimen/margin10"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <ImageView
+                                        android:id="@+id/logo_item_grid_five_three"
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        android:src="@drawable/ic_room_about" />
+
+                                    <TextView
+                                        android:id="@+id/title_item_grid_five_three"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal|top"
+                                        android:layout_marginLeft="@dimen/margin3"
+                                        android:layout_marginTop="@dimen/margin5"
+                                        android:layout_marginRight="@dimen/margin3"
+                                        android:ellipsize="end"
+                                        android:fadingEdge="horizontal"
+                                        android:maxLines="2"
+                                        android:paddingLeft="10dp"
+                                        android:paddingRight="10dp"
+                                        android:scrollHorizontally="true"
+                                        android:text="asdfasdfasd asdfasdf asdfasdfsf"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/byonchat_primary_text"
+                                        android:textSize="14sp"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintLeft_toLeftOf="parent"
+                                        app:layout_constraintRight_toRightOf="parent" />
+                                </LinearLayout>
+
+                            </android.support.constraint.ConstraintLayout>
+
+                        </android.support.v7.widget.CardView>
+
+                    </android.support.constraint.ConstraintLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:gravity="end">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <android.support.constraint.ConstraintLayout
+                            android:id="@+id/constraint_item_grid_five_four"
+                            android:layout_width="match_parent"
+                            android:layout_height="110dp"
+                            android:layout_margin="@dimen/margin5">
+
+                            <android.support.v7.widget.CardView
+                                android:id="@+id/cardview3"
+                                android:layout_width="0dp"
+                                android:layout_height="0dp"
+                                android:layout_margin="8dp"
+                                app:cardCornerRadius="25dp"
+                                app:cardElevation="3dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintDimensionRatio="1"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <android.support.constraint.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="top">
+
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="0dp"
+                                        android:layout_marginTop="@dimen/margin10"
+                                        android:layout_marginBottom="@dimen/margin10"
+                                        android:orientation="vertical"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintLeft_toLeftOf="parent"
+                                        app:layout_constraintRight_toRightOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent">
+
+                                        <ImageView
+                                            android:id="@+id/logo_item_grid_five_four"
+                                            android:layout_width="50dp"
+                                            android:layout_height="50dp"
+                                            android:layout_gravity="center"
+                                            android:layout_weight="1"
+                                            android:scaleType="fitCenter"
+                                            android:src="@drawable/ic_room_about" />
+
+                                        <TextView
+                                            android:id="@+id/title_item_grid_five_four"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center_horizontal|top"
+                                            android:layout_marginLeft="@dimen/margin3"
+                                            android:layout_marginTop="@dimen/margin5"
+                                            android:layout_marginRight="@dimen/margin3"
+                                            android:ellipsize="end"
+                                            android:fadingEdge="horizontal"
+                                            android:maxLines="2"
+                                            android:paddingLeft="10dp"
+                                            android:paddingRight="10dp"
+                                            android:scrollHorizontally="true"
+                                            android:text="asdfasdfasd asdfasdf asdfasdfsf"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/byonchat_primary_text"
+                                            android:textSize="14sp"
+                                            app:layout_constraintBottom_toBottomOf="parent"
+                                            app:layout_constraintLeft_toLeftOf="parent"
+                                            app:layout_constraintRight_toRightOf="parent" />
+                                    </LinearLayout>
+
+                                </android.support.constraint.ConstraintLayout>
+
+                            </android.support.v7.widget.CardView>
+
+                        </android.support.constraint.ConstraintLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/constraint_item_grid_five_five"
+                        android:layout_width="wrap_content"
+                        android:layout_height="110dp"
+                        android:layout_margin="@dimen/margin5">
+
+                        <android.support.v7.widget.CardView
+                            android:id="@+id/cardview4"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_margin="8dp"
+                            app:cardCornerRadius="25dp"
+                            app:cardElevation="3dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintDimensionRatio="1"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <android.support.constraint.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="top">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginTop="@dimen/margin10"
+                                    android:layout_marginBottom="@dimen/margin10"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <ImageView
+                                        android:id="@+id/logo_item_grid_five_five"
+                                        android:layout_width="50dp"
+                                        android:layout_height="50dp"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        android:src="@drawable/ic_room_about" />
+
+                                    <TextView
+                                        android:id="@+id/title_item_grid_five_five"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal|top"
+                                        android:layout_marginLeft="@dimen/margin3"
+                                        android:layout_marginTop="@dimen/margin5"
+                                        android:layout_marginRight="@dimen/margin3"
+                                        android:ellipsize="end"
+                                        android:fadingEdge="horizontal"
+                                        android:maxLines="2"
+                                        android:paddingLeft="10dp"
+                                        android:paddingRight="10dp"
+                                        android:scrollHorizontally="true"
+                                        android:text="asdfasdfasd asdfasdf asdfasdfsf"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/byonchat_primary_text"
+                                        android:textSize="14sp"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintLeft_toLeftOf="parent"
+                                        app:layout_constraintRight_toRightOf="parent" />
+                                </LinearLayout>
+
+                            </android.support.constraint.ConstraintLayout>
+
+                        </android.support.v7.widget.CardView>
+
+                    </android.support.constraint.ConstraintLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

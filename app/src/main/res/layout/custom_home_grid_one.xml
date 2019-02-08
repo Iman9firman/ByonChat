@@ -1,9 +1,11 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frame_tab_one"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="-100dp"
+    android:visibility="gone"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/main_activity_new">
 
@@ -46,7 +48,7 @@
                         app:layout_constraintTop_toTopOf="parent">
 
                         <ImageView
-                            android:id="@+id/logo_item_grid"
+                            android:id="@+id/logo_item_grid_one"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:layout_gravity="center"
@@ -55,7 +57,7 @@
                             android:src="@drawable/ic_room_about" />
 
                         <TextView
-                            android:id="@+id/title_item_grid"
+                            android:id="@+id/title_item_grid_one"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal|top"

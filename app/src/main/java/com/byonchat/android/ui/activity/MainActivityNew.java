@@ -315,8 +315,6 @@ public class MainActivityNew extends MainBaseActivityNew {
         addShortcutBadger(getApplicationContext());
 
         onHomeRefresh();
-
-        recyclerView.setVisibility(View.INVISIBLE);
     }
 
     @Override

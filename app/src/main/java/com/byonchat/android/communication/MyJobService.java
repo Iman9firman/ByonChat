@@ -86,7 +86,7 @@ public class MyJobService extends JobService {
                         new ComponentName(getPackageName(),
                                 MyJobService.class.getName()));
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mJobBuilder
                     .setMinimumLatency(1 * 1000) //YOUR_TIME_INTERVAL
                     .setOverrideDeadline(3 * 1000) // maximum delay

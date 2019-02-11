@@ -194,7 +194,7 @@ public class UploadService extends IntentService {
                 R.drawable.logo_byon);
 
         String channelId = "";
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             channelId = createNotificationChannel("ByonChat", "Connected");
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);

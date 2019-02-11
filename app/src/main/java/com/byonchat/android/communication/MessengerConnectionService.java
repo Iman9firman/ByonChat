@@ -1931,7 +1931,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         Log.d("HIDUP", "OnTaskRemoved MessengerConnectionService");
         stopSelf();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Utility.scheduleJob(this);
         } else {
             MessengerConnectionService mUploadService = new MessengerConnectionService();

@@ -24,7 +24,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("HIDUP", "onReceive MyBroadcastReceiver");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Utility.scheduleJob(context);
         } else {
             UploadService mUploadService = new UploadService();

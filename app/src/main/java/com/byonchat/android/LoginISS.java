@@ -71,8 +71,8 @@ public class LoginISS extends AppCompatActivity {
         EditText passID = (EditText) findViewById(R.id.login_password);
         EditText accID = (EditText) findViewById(R.id.login_acc);
 
-       /* userID.setText("TESTING");
-        passID.setText("Testing1234");*/
+        userID.setText("TESTING");
+        passID.setText("Testing1234");
         accID.setText("issid");
 
         erwgv.setOnClickListener(new View.OnClickListener() {

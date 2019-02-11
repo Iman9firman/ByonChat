@@ -215,7 +215,7 @@ public class Validations {
             db.deleteContact(id);
         }
         Interval interval = new Interval();
-        interval.setId(1);
+        interval.setId(id);
         interval.setTime(time_str);
         db.createContact(interval);
         db.close();

@@ -248,19 +248,16 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                         vList.addView(new ChildRatingRecyclerView(RequesterBaseRatingActivity.this, j, data, new ChildRatingRecyclerView.OnItemClickListener() {
                             @Override
                             public void onItemClick(int position, MkgServices data) {
-                                //cek masih salah2
 
                                 List<MkgServices> selected = new ArrayList<>();
-                                List<MkgServices> unSelected = new ArrayList<>();
                                 int size = items.size();
                                 for (int i = size - 1; i >= 0; i--) {
                                     if (items.get(i).id.equalsIgnoreCase(data.id)) {
-                                        items.get(i).isChecked = data.isChecked;
+                                        items.get(i).isChecked = !data.isChecked();
                                     }
-                                    unSelected.add(items.get(i));
-
+                                    selected.add(items.get(i));
                                 }
-                                unSelectedItems = getSelectedList(unSelected);
+                                unSelectedItems = getSelectedList(selected);
                             }
                         }));
                     }
@@ -277,10 +274,11 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
         List<MkgServices> selectedContacts = new ArrayList<>();
         int size = items.size();
         for (int i = size - 1; i >= 0; i--) {
-            if (!items.get(i).isChecked()) {
+            if (items.get(i).isChecked()) {
                 selectedContacts.add(items.get(i));
             }
         }
+
         return selectedContacts;
     }
 
@@ -299,10 +297,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
             Map<String, String> params = new HashMap<>();
             params.put("id_request_detail", idRequest);
             params.put("id", pilih.substring(0, pilih.length() - 1));
-            Log.w("kap", pilih.substring(0, pilih.length() - 1));
             getDetail("https://bb.byonchat.com/ApiReliever/index.php/Request/submit_reliever", params);
-
-
         } else {
             Toast.makeText(RequesterBaseRatingActivity.this, "Tolong Pilih Reliever.", Toast.LENGTH_SHORT).show();
         }

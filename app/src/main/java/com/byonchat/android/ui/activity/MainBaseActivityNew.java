@@ -1001,9 +1001,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         if (loginIss) {
             if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(26) == 1) {
                 if (title.equalsIgnoreCase("ISS INDONESIA")) {
-                    Log.w("salah3", "sat2");
                     if (success == null) {
-                        Log.w("salah4", "satu");
                         Intent a = new Intent(getApplicationContext(), LoginISS.class);
                         a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                         a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
@@ -1011,8 +1009,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                         finish();
                     }
                 }
-            } else {
-                Log.w("salah5", "satu1");
             }
         }
 

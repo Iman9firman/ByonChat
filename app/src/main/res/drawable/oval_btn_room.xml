@@ -1,30 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-<item android:state_pressed="true">
-    <shape >
-        <solid android:color="@color/softBlue2" />
-        <corners
-            android:radius="@dimen/margin20" />
-        <padding
-            android:bottom="5dip"
-            android:left="10dip"
-            android:right="10dip"
-            android:top="5dip" />
-    </shape>
-</item>
-<item >
-    <shape >
-        <solid android:color="@color/softBlue3" />
-        <corners
-            android:radius="@dimen/margin20" />
-        <padding
-            android:bottom="5dip"
-            android:left="10dip"
-            android:right="10dip"
-            android:top="5dip" />
-        <stroke android:width="@dimen/margin2" android:color="@color/softBlue2"/>
-    </shape>
-</item>
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/softBlue2" />
+            <corners android:radius="@dimen/margin20" />
+            <padding android:bottom="5dip" android:left="10dip" android:right="10dip" android:top="5dip" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <solid android:color="@color/softBlue3" />
+            <corners android:radius="@dimen/margin20" />
+            <padding android:bottom="5dip" android:left="10dip" android:right="10dip" android:top="5dip" />
+            <stroke android:width="@dimen/margin2" android:color="@color/softBlue2" />
+        </shape>
+    </item>
 
 </selector>

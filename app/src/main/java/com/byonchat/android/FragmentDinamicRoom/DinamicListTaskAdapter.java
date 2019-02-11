@@ -12,6 +12,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -204,12 +205,14 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
 
             if (String.valueOf(mDatasetFind.get(position).getContent()).equalsIgnoreCase("") || String.valueOf(mDatasetFind.get(position).getContent()) == null) {
+                Log.w("coba2", "kana");
                 ((DataObjectHolder) holder).label.setVisibility(View.INVISIBLE);
                 ((DataObjectHolder) holder).textInfo.setVisibility(View.INVISIBLE);
                 ((DataObjectHolder) holder).titleCenter.setVisibility(View.VISIBLE);
 
                 setFindedText(((DataObjectHolder) holder).titleCenter, displayName);
             } else {
+                Log.w("coba3", "kana");
                 setFindedText(((DataObjectHolder) holder).label, displayName);
 
                 JSONObject jObject = null;
@@ -220,6 +223,7 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 }
 
                 if (jObject != null) {
+                    Log.w("coba4", "kana");
                     ((DataObjectHolder) holder).label.setVisibility(View.VISIBLE);
                     ((DataObjectHolder) holder).titleCenter.setVisibility(View.INVISIBLE);
 
@@ -227,6 +231,11 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                     setFindedText(((DataObjectHolder) holder).textInfo, content);
                 } else {
+                    String content = mDatasetFind.get(position).getContent();
+                    Log.w("kasmaid", content);
+                    ((DataObjectHolder) holder).textInfo.setVisibility(View.VISIBLE);
+
+                    setFindedText(((DataObjectHolder) holder).textInfo, content);
 
                 }
             }

@@ -5,14 +5,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class UserDB  extends SQLiteOpenHelper {
+import com.byonchat.android.provider.BotListDB;
+
+public class UserDB extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "Userlogin.db";
     public static final String TABLE_ISS = "user";
 
     private SQLiteDatabase database;
-
+    private static UserDB instance;
     public static final String URI_TOKEN = "URI_TOKEN";
     public static final String STATUS = "STATUS";
     public static final String USERNAME = "USERNAME";
@@ -44,7 +46,7 @@ public class UserDB  extends SQLiteOpenHelper {
     public static final String LIST_APPROVE_ROLE2 = "LIST_APPROVE_ROLE2";
     public static final String MY_ROLE = "MY_ROLE";
 
-    private String CREATE_EVENT_TABLE = "CREATE TABLE "+ TABLE_ISS + " (" +
+    private String CREATE_EVENT_TABLE = "CREATE TABLE " + TABLE_ISS + " (" +
             URI_TOKEN + " TEXT, " +
             STATUS + " TEXT, " +
             USERNAME + " TEXT, " +
@@ -79,8 +81,8 @@ public class UserDB  extends SQLiteOpenHelper {
 
     private String DROP_USER_TABLE = "DROP TABLE IF EXISTS " + TABLE_ISS;
 
-    public UserDB(Context context){
-        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+    public UserDB(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -103,6 +105,16 @@ public class UserDB  extends SQLiteOpenHelper {
         return database;
     }
 
+    public synchronized static UserDB getInstance(
+            Context context) {
+        if (instance == null) {
+            instance = new UserDB(
+                    context);
+        }
+        return instance;
+    }
+
+
     public Cursor query(String rawQuery, String[] args) {
         return getDatabase().rawQuery(rawQuery, args);
     }
@@ -114,4 +126,18 @@ public class UserDB  extends SQLiteOpenHelper {
             getDatabase().execSQL(sql, args);
         }
     }
+
+    public Cursor getSingle() {
+        Cursor cursor = getDatabase().query(TABLE_ISS, new String[]
+                {
+                        EMPLOYEE_MULTICOST,
+                }, null, null, null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        return cursor;
+    }
+
+
 }

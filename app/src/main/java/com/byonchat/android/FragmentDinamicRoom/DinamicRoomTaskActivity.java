@@ -90,6 +90,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.byonchat.android.CaptureSignature;
+import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.DialogFormChildMain;
 import com.byonchat.android.DialogFormChildMainKompetitor;
 import com.byonchat.android.DialogFormChildMainLemindo;
@@ -105,12 +106,15 @@ import com.byonchat.android.adapter.ExpandableListAdapter;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.AttachmentAdapter;
+import com.byonchat.android.list.IconItem;
 import com.byonchat.android.list.utilLoadImage.ImageLoaderLarge;
 import com.byonchat.android.location.ActivityDirection;
 import com.byonchat.android.model.AddChildFotoExModel;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.provider.BotListDB;
+import com.byonchat.android.provider.ChatParty;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.DataBaseHelper;
@@ -366,6 +370,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         super.onResume();
 
         if (idTab.equalsIgnoreCase("2644")) {
+            //tab mandiri testing
             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
             PhoneStateListener callStateListener = new PhoneStateListener() {
@@ -472,6 +477,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         Cursor cursor = db.getSingleRoomDetailForm(username, idTab);
         if (cursor.getCount() > 0) {
             /*getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(context).headerCostume(getWindow(), "#" + color));*/
+
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + color)));
             FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + color));
             final String conBefore = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
@@ -710,7 +716,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     JSONObject jObject = new JSONObject(value);
                                     String vl = jObject.getString("value");
-                                    dropdownViewIdParent = jObject.getString("dropdown_view_id");
+                                    if (jObject.has("dropdown_view_id")) {
+                                        dropdownViewIdParent = jObject.getString("dropdown_view_id");
+                                    }
 
                                     TextView etV = (TextView) new TextView(context);
                                     etV.setTextIsSelectable(true);
@@ -1571,6 +1579,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.w("honda", e.toString());
+
                     }
                 } else {
 
@@ -1705,8 +1715,110 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     if (jsonArray.getJSONObject(i).has("dropdown_view_parents")) {
                         dropdownViewId = jsonArray.getJSONObject(i).getJSONArray("dropdown_view_parents");
                     }
+                    Log.w("typenya", type);
+                    Log.w("content", content);
 
-                    if (type.equalsIgnoreCase("preview_document")) {
+                    if (type.equalsIgnoreCase("call_chat")) {
+                        Log.w("kamar2", "madni");
+
+                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+
+                        final List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(String.valueOf(count));
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
+
+                        linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.call_chat_layout, null);
+                        linearEstimasi[count].setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(linearEstimasi[count]);
+
+                        ImageView btnCall = (ImageView) linearEstimasi[count].findViewById(R.id.btnCall);
+                        ImageView btnChat = (ImageView) linearEstimasi[count].findViewById(R.id.btnChat);
+                        TextView orText = (TextView) linearEstimasi[count].findViewById(R.id.textOr);
+                        String formulas = jsonArray.getJSONObject(i).getString("formula").toString();
+                        JSONObject jjs = new JSONObject(formulas);
+
+                        if (jjs.has("call")) {
+
+                            btnCall.setVisibility(View.VISIBLE);
+                            btnCall.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                    try {
+                                        callIntent.setData(Uri.parse("tel:+" + jjs.getString("call")));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    startActivity(callIntent);
+                                }
+                            });
+
+                        }
+                        if (jjs.has("chat")) {
+
+                            btnChat.setVisibility(View.VISIBLE);
+                            btnChat.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    ChatParty sample = null;
+                                    try {
+                                        sample = new Contact("", jjs.getString("chat"), "");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    IconItem item = null;
+                                    try {
+                                        item = new IconItem(jjs.getString("chat"), "", "", "", sample);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    if (item.getJabberId().equalsIgnoreCase("")) {
+                                    } else {
+                                        Intent intent = new Intent(getApplicationContext(), ConversationActivity.class);
+                                        String jabberId = item.getJabberId();
+                                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+                                        intent.putExtra(Constants.EXTRA_ITEM, item);
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
+
+                        }
+
+                        if (jjs.has("call") && jjs.has("chat")) {
+                            orText.setVisibility(View.VISIBLE);
+                        }
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                        lolosReq.add(idListTask);
+
+
+                    } else if (type.equalsIgnoreCase("preview_document")) {
 
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -1850,19 +1962,23 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             for (int ia = 0; ia < sss.size(); ia++) {
                                                 udah.add(sss.get(ia));
                                                 List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
-                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                    lolosReq.remove(sss.get(ia));
-                                                    linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                                if (value != null) {
+                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                        lolosReq.remove(sss.get(ia));
+                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                                    }
                                                 }
                                             }
                                         } else {
                                             //false
                                             for (int ia = 0; ia < sss.size(); ia++) {
                                                 List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
-                                                for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                    if (!udah.contains(sss.get(ia))) {
-                                                        lolosReq.add(sss.get(ia));
-                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                if (value != null) {
+                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                        if (!udah.contains(sss.get(ia))) {
+                                                            lolosReq.add(sss.get(ia));
+                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -2396,7 +2512,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         }
 
                                         if (ada.size() == 0) {
-                                            DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
+                                            String alau = "0";
+                                            if (title.equalsIgnoreCase("SPK")) {
+                                                alau = "80";
+                                            }
+
+                                            DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(Integer.valueOf(alau)).getTop()));
                                             testDialog.setRetainInstance(true);
                                             testDialog.show(fm, "Dialog");
                                         } else {
@@ -2432,7 +2553,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                                         if (ada.size() == 0) {
-                                            DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
+                                            String alau = "0";
+                                            if (title.equalsIgnoreCase("SPK")) {
+                                                alau = "80";
+                                            }
+
+                                            DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(Integer.valueOf(alau)).getTop()));
+
                                             testDialog.setRetainInstance(true);
                                             testDialog.show(fm, "Dialog");
                                         } else {
@@ -2912,7 +3039,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         public void onClick(View v) {
                                             if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
                                                 FragmentManager fm = getSupportFragmentManager();
-                                                DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
+                                                DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(0).getTop()));
                                                 testDialog.setRetainInstance(true);
                                                 testDialog.show(fm, "Dialog");
                                             } else {
@@ -2966,7 +3093,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                                 if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
 
-                                                    DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
+                                                    DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(0).getTop()));
                                                     testDialog.setRetainInstance(true);
                                                     testDialog.show(fm, "Dialog");
 
@@ -3232,7 +3359,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
 
                                             if (ada.size() == 0) {
-                                                DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this);
+                                                String alau = "0";
+                                                if (title.equalsIgnoreCase("SPK")) {
+                                                    alau = "78";
+                                                }
+
+                                                DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(Integer.valueOf(alau)).getTop()));
                                                 testDialog.setRetainInstance(true);
                                                 testDialog.show(fm, "Dialog");
                                             } else {
@@ -3267,7 +3399,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                                             if (ada.size() == 0) {
-                                                DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this);
+                                                String alau = "0";
+                                                if (title.equalsIgnoreCase("SPK")) {
+                                                    alau = "77";
+                                                }
+
+                                                DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(Integer.valueOf(alau)).getTop()));
                                                 testDialog.setRetainInstance(true);
                                                 testDialog.show(fm, "Dialog");
                                             } else {
@@ -3370,7 +3507,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 }
 
                                 et[count].setText(valUEParent);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, valUEParent, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
                             }
                         }
@@ -8037,6 +8174,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             }
 
 
+            Log.w("ini", includeStatus + "");
+
             if (includeStatus) {
 
                 final ArrayList<String> spinnerArray = new ArrayList<String>();
@@ -8695,7 +8834,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         new Handler().post(new Runnable() {
             @Override
             public void run() {
-                mainScrooll.scrollTo(0, linearLayout.getTop());
+                String pos = "0";
+                if (getIntent().getStringExtra("posisi") != null) {
+                    pos = getIntent().getStringExtra("posisi");
+                    Log.e("sunnguh errorslow", pos);
+                }
+                mainScrooll.scrollTo(0, linearLayout.getTop() + Integer.valueOf(pos));
             }
         });
     }
@@ -10564,6 +10708,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             ccc = jsonDuaObject(content, attachment, "", jsonObject.toString());
                         }
 
+                        Log.w("setelahRefresh", ccc);
 
                         RoomsDetail orderModel = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
                         db.insertRoomsDetail(orderModel);
@@ -11182,7 +11327,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 finish();
                 Intent aa = getIntent();
                 aa.putExtra("idTask", idDetail);
-                startActivity(getIntent());
+                aa.putExtra("posisi", intent.getStringExtra("posisi"));
+                startActivity(aa);
+
             } else if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {
                 if (latLong.equalsIgnoreCase("1")) {
                     Toast.makeText(context, "GPS harus tetap aktif", Toast.LENGTH_LONG).show();

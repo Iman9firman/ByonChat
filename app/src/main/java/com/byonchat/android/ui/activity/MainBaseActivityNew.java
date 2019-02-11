@@ -384,6 +384,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected int room_id;
     protected String roomid = "";
     protected int i = 0;
+    Boolean loginIss = false;
 
     protected SQLiteDatabase sqLiteDatabase;
 
@@ -966,7 +967,29 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 } else if (category.equalsIgnoreCase("18")) {
                     itemMain.iconTest = R.drawable.ic_room_name_card;
                     Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("20")) {
+                    loginIss = true;
+                    itemMain.iconTest = R.drawable.ic_room_task;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("fabSearch");
+                    Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("21")) {
+                    itemMain.iconTest = R.drawable.ic_room_task;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 }
+
 
                 itemList.add(i, itemMain);
                 positionList.add(i, title);
@@ -1055,17 +1078,20 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             }
 
         }
-        if (new Validations().getInstance(getApplicationContext()).setTimeValidationISS(26) == 1) {
-            if (title.equalsIgnoreCase("ISS INDONESIA")) {
-                if (success == null) {
-                    Intent a = new Intent(getApplicationContext(), LoginISS.class);
-                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
-                    startActivity(a);
-                    finish();
+        if (loginIss) {
+            if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(26) == 1) {
+                if (title.equalsIgnoreCase("ISS INDONESIA")) {
+                    if (success == null) {
+                        Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                        a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                        a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                        startActivity(a);
+                        finish();
+                    }
                 }
             }
         }
+
     }
 
     protected void resolveToolbarExpanded() {

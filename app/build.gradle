@@ -18,6 +18,9 @@ android {
         renderscriptTargetApi 28
         renderscriptSupportModeEnabled true
         vectorDrawables.useSupportLibrary true
+        buildConfigField "String", "ZHAR_SER", "\"https://api.openrouteservice.org/directions?api_key=\""
+        buildConfigField "String", "ZHAR_VI", "\"&coordinates=\""
+        buildConfigField "String", "ZHAR_CE", "\"&profile=driving-car&preference=recommended&geometry_format=encodedpolyline&options=%7B%22avoid_features%22:%22tollways%22%7D\""
 
 //        jackOptions {
 //            enabled true
@@ -228,5 +231,14 @@ dependencies {
     //Test Schedule
     compile 'com.applandeo:material-calendar-view:1.0.1'
     compile 'com.android.support:appcompat-v7:28.0.0'
+
+    //OpenStreetMap
+    compile 'org.osmdroid:osmdroid-android:6.0.3'
+    compile 'com.github.MKergall:osmbonuspack:6.5.3'
+
+    compile 'com.github.BlackBoxVision:material-wheel-view:v0.0.1'
+
+    compile 'com.mindorks:placeholderview:0.7.1'
+    compile 'com.stepstone.apprating:app-rating:2.3.0'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -1,86 +1,87 @@
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativelay"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:id="@+id/relativelay"
-    android:paddingTop="@dimen/margin10"
-    android:paddingBottom="@dimen/margin10"
-    android:paddingRight="@dimen/margin10"
-    android:paddingLeft="@dimen/margin10"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
     android:descendantFocusability="blocksDescendants"
     android:focusable="true"
-    android:clickable="true"
-    android:background="?android:attr/selectableItemBackground"
-        >
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/margin10"
+    android:paddingTop="@dimen/margin10"
+    android:paddingRight="@dimen/margin10"
+    android:paddingBottom="@dimen/margin10">
+
     <com.byonchat.android.adapter.CircularContactView
         android:id="@+id/imageText"
         android:layout_width="@dimen/margin50"
         android:layout_height="@dimen/margin50"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/titleText"
-        android:layout_marginLeft="@dimen/margin5"
+        style="@style/TextMediumBlack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin5"
         android:layout_toLeftOf="@+id/dateInfo"
         android:layout_toRightOf="@id/imageText"
-        android:singleLine="true"
-        style="@style/TextMediumBlack" />
+        android:singleLine="true" />
 
     <com.rockerhieu.emojicon.EmojiconTextView
         android:id="@+id/textInfo"
+        style="@style/TextLightGray"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/TextLightGray"
-        android:singleLine="true"
-        android:gravity="center_vertical"
-        android:layout_alignBottom="@+id/imageText"
         android:layout_below="@+id/titleText"
-        android:layout_alignRight="@+id/titleText"
-        android:layout_alignEnd="@+id/titleText"
-        android:layout_toLeftOf="@+id/imageText"
+        android:layout_alignStart="@+id/titleText"
         android:layout_alignLeft="@+id/titleText"
-        android:layout_alignStart="@+id/titleText" />
+        android:layout_alignEnd="@+id/titleText"
+        android:layout_alignRight="@+id/titleText"
+        android:layout_alignBottom="@+id/imageText"
+        android:layout_toLeftOf="@+id/imageText"
+        android:gravity="center_vertical"
+        android:singleLine="true" />
 
 
     <TextView
         android:id="@id/dateInfo"
+        style="@style/TextRegularGraySmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
         android:paddingRight="5dp"
-        android:text="12/03/2013"
-        style="@style/TextRegularGraySmall"/>
+        android:text="12/03/2013" />
 
 
     <TextView
         android:id="@+id/statusTxt"
-        android:layout_width="@dimen/margin50"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:background="@drawable/status_work"
-        android:text="New"
-        android:textColor="@android:color/white"
-        android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_below="@+id/titleText"
+        android:layout_alignEnd="@id/dateInfo"
         android:layout_alignRight="@id/dateInfo"
-        android:layout_alignEnd="@id/dateInfo" />
+        android:background="@drawable/status_work"
+        android:gravity="center_horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/white" />
 
-        <TextView
-            android:visibility="gone"
-            android:layout_marginLeft="@dimen/margin5"
-            android:layout_marginRight="@dimen/margin5"
-            android:id="@+id/titleCenter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Medium Text Center"
-            style="@style/TextMediumBlack"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/statusTxt"
-            android:layout_toRightOf="@+id/imageText"
-            android:layout_toEndOf="@+id/imageText"
-            android:layout_toStartOf="@+id/statusTxt" />
+    <TextView
+        android:id="@+id/titleCenter"
+        style="@style/TextMediumBlack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/margin5"
+        android:layout_marginRight="@dimen/margin5"
+        android:layout_toStartOf="@+id/statusTxt"
+        android:layout_toLeftOf="@+id/statusTxt"
+        android:layout_toEndOf="@+id/imageText"
+        android:layout_toRightOf="@+id/imageText"
+        android:text="Medium Text Center"
+        android:visibility="gone" />
 
-    </RelativeLayout>
+</RelativeLayout>

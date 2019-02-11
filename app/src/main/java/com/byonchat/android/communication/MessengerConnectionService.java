@@ -1546,24 +1546,18 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         TimerTask LocTimerTask = new TimerTask() {
             @Override
             public void run() {
-                Log.i("vEK yahoo 3s", "count start");
                 if (locSpyChange != null) {
-                    Log.i("No reason yohaho", "Lat: " + locSpyChange.getLatitude() + " Long: " + locSpyChange.getLongitude());
-                    Log.i("Cek on yores", onLoc + "");
-                    //if (onLoc == true) {
                     try {
                         String url = "https://bb.byonchat.com/luar/lapor_lokasi.php";
                         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                                 new Response.Listener<String>() {
                                     @Override
                                     public void onResponse(String response) {
-                                        Log.w("cari2", response);
                                     }
                                 },
                                 new Response.ErrorListener() {
                                     @Override
                                     public void onErrorResponse(VolleyError error) {
-                                        Log.w("cari3", "Jowh");
                                     }
                                 }
                         ) {
@@ -1580,17 +1574,11 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                         Application.getInstance().addToRequestQueue(postRequest);
 
                     } catch (Exception e) {
-                        Log.w("kardus", e.getMessage());
                     }
-
-                    Log.i("No reason yores", "Lat: " + locSpyChange.getLatitude() + " Long: " + locSpyChange.getLongitude());
-
-                    // }
                 }
             }
         };
-        LocTimer.schedule(LocTimerTask, 3000, 3000);
-
+        LocTimer.schedule(LocTimerTask, 60000, 60000);
     }
 
     //This will handle the broadcast

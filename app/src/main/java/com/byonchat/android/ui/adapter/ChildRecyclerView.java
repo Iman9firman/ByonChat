@@ -108,7 +108,7 @@ public class ChildRecyclerView implements RatingDialogListener {
                     Map<String, String> params = new HashMap<>();
                     params.put("id", data.id);
                     params.put("status", "5");
-                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params);
+                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
 
                 }
             });
@@ -133,7 +133,7 @@ public class ChildRecyclerView implements RatingDialogListener {
                     params.put("id", data.id);
                     params.put("status", "3");
 
-                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params);
+                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
 
                 }
             });
@@ -150,19 +150,6 @@ public class ChildRecyclerView implements RatingDialogListener {
             child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
                 public void onClick(android.view.View v) {
-
-                    Log.w("hahai", data.id);
-                    Map<String, String> params = new HashMap<>();
-                    params.put("id", data.id);
-                    params.put("status", "6");
-                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params);
-
-                    Map<String, String> paramsLog = new HashMap<>();
-                    paramsLog.put("id", data.id);
-                    paramsLog.put("rating", "2");
-                    paramsLog.put("note", "Bagus");
-
-                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/Rating/reliever", paramsLog);
 
                     new AppRatingDialog.Builder()
                             .setPositiveButtonText("Submit")
@@ -183,6 +170,19 @@ public class ChildRecyclerView implements RatingDialogListener {
                             .show();
 
 
+                    Map<String, String> paramsLog = new HashMap<>();
+                    paramsLog.put("id", data.id);
+                    paramsLog.put("rating", "2");
+                    paramsLog.put("note", "Bagus");
+
+                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/Rating/reliever", paramsLog, false);
+
+                    Map<String, String> params = new HashMap<>();
+                    params.put("id", data.id);
+                    params.put("status", "6");
+                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
+
+
                 }
             });
         } else if (data.child_status.equalsIgnoreCase("5")) {
@@ -196,9 +196,13 @@ public class ChildRecyclerView implements RatingDialogListener {
                     Map<String, String> params = new HashMap<>();
                     params.put("id", data.id);
                     params.put("status", "5");
-                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params);
+                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
                 }
             });
+        } else if (data.child_status.equalsIgnoreCase("6")) {
+            status = "Done";
+            child_bayangan.setVisibility(android.view.View.GONE);
+            child_btn_cancel_approve.setVisibility(android.view.View.GONE);
         } else {
             child_bayangan.setVisibility(android.view.View.GONE);
             child_btn_cancel_approve.setVisibility(android.view.View.GONE);
@@ -210,7 +214,7 @@ public class ChildRecyclerView implements RatingDialogListener {
     }
 
 
-    private void getDetail(String Url, Map<String, String> params2) {
+    private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
         ProgressDialog rdialog = new ProgressDialog(mContext);
         rdialog.setMessage("Loading...");
         rdialog.show();
@@ -220,9 +224,12 @@ public class ChildRecyclerView implements RatingDialogListener {
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
-                    Toast.makeText(mContext, "sukses", Toast.LENGTH_SHORT).show();
-                    ByonchatBaseMallKelapaGadingActivity ss = (ByonchatBaseMallKelapaGadingActivity) mContext;
-                    ss.finish();
+                    if (hide) {
+                        Toast.makeText(mContext, "sukses", Toast.LENGTH_SHORT).show();
+                        ByonchatBaseMallKelapaGadingActivity ss = (ByonchatBaseMallKelapaGadingActivity) mContext;
+                        ss.finish();
+                    }
+
                 },
                 error -> rdialog.dismiss()
         ) {

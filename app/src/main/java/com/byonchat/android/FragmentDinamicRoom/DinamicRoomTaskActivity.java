@@ -716,7 +716,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     JSONObject jObject = new JSONObject(value);
                                     String vl = jObject.getString("value");
-                                    dropdownViewIdParent = jObject.getString("dropdown_view_id");
+                                    if (jObject.has("dropdown_view_id")) {
+                                        dropdownViewIdParent = jObject.getString("dropdown_view_id");
+                                    }
 
                                     TextView etV = (TextView) new TextView(context);
                                     etV.setTextIsSelectable(true);
@@ -1577,6 +1579,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.w("honda", e.toString());
+
                     }
                 } else {
 
@@ -2509,7 +2513,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                         if (ada.size() == 0) {
                                             String alau = "0";
-                                            if (title.equalsIgnoreCase("SPK")){
+                                            if (title.equalsIgnoreCase("SPK")) {
                                                 alau = "80";
                                             }
 
@@ -2550,7 +2554,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                         if (ada.size() == 0) {
                                             String alau = "0";
-                                            if (title.equalsIgnoreCase("SPK")){
+                                            if (title.equalsIgnoreCase("SPK")) {
                                                 alau = "80";
                                             }
 
@@ -3356,8 +3360,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                             if (ada.size() == 0) {
                                                 String alau = "0";
-                                                if (title.equalsIgnoreCase("SPK")){
-                                                    alau = "75";
+                                                if (title.equalsIgnoreCase("SPK")) {
+                                                    alau = "78";
                                                 }
 
                                                 DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(Integer.valueOf(alau)).getTop()));
@@ -3396,8 +3400,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                             if (ada.size() == 0) {
                                                 String alau = "0";
-                                                if (title.equalsIgnoreCase("SPK")){
-                                                    alau = "75";
+                                                if (title.equalsIgnoreCase("SPK")) {
+                                                    alau = "77";
                                                 }
 
                                                 DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, item.getId(), customersId, DinamicRoomTaskActivity.this, String.valueOf(linearLayout.getChildAt(Integer.valueOf(alau)).getTop()));
@@ -8833,7 +8837,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 String pos = "0";
                 if (getIntent().getStringExtra("posisi") != null) {
                     pos = getIntent().getStringExtra("posisi");
-                    Log.e("sunnguh errorslow",pos);
+                    Log.e("sunnguh errorslow", pos);
                 }
                 mainScrooll.scrollTo(0, linearLayout.getTop() + Integer.valueOf(pos));
             }

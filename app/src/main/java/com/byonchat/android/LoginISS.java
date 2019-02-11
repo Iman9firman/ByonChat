@@ -25,6 +25,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.utils.Validations;
 import com.google.android.gms.vision.L;
 
 import org.apache.http.HttpResponse;
@@ -70,8 +71,8 @@ public class LoginISS extends AppCompatActivity {
         EditText passID = (EditText) findViewById(R.id.login_password);
         EditText accID = (EditText) findViewById(R.id.login_acc);
 
-        userID.setText("TESTING");
-        passID.setText("Testing1234");
+       /* userID.setText("TESTING");
+        passID.setText("Testing1234");*/
         accID.setText("issid");
 
         erwgv.setOnClickListener(new View.OnClickListener() {
@@ -95,8 +96,6 @@ public class LoginISS extends AppCompatActivity {
                     public void onResponse(String response) {
 //                        Log.e("HttpClient", "success! response: " + response);
 //                        Toast.makeText(LoginISS.this,response,Toast.LENGTH_LONG).show();
-
-                        Log.w("khiatan", response);
                         pd.dismiss();
                         parseJSON(response);
                     }
@@ -193,6 +192,7 @@ public class LoginISS extends AppCompatActivity {
 
 
         if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
+            new Validations().getInstance(getApplicationContext()).setTimebyId(26);
             Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
             intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
             intent.putExtra("success", "oke");

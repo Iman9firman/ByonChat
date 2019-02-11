@@ -107,7 +107,8 @@ public class MyJobService extends JobService {
         @Override
         public void run() {
             try {
-                if (!MessengerConnectionService.started) {
+               /*disimpan dlu
+               if (!MessengerConnectionService.started) {
                     String channelId = "";
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         channelId = createNotificationChannel("ByonChat", "Connected");
@@ -124,7 +125,7 @@ public class MyJobService extends JobService {
                     Intent intentStart = new Intent(context, UploadService.class);
                     intentStart.putExtra(UploadService.ACTION, "startService");
                     context.startForegroundService(intentStart);
-                }
+                }*/
             } catch (Exception e) {
                 Log.w("datapusat", e.toString());
             }

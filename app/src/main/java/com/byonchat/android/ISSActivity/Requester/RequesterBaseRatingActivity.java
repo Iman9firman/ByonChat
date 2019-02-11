@@ -1,5 +1,6 @@
 package com.byonchat.android.ISSActivity.Requester;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -22,6 +23,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.data.model.MkgServices;
@@ -37,12 +43,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class RequesterBaseRatingActivity extends AppCompatActivity implements ActionMode.Callback {
 
     protected ActionMode actionMode;
-    protected String mColor, mColorText, itemData;
+    protected String mColor, mColorText, itemData, idRequest;
 
     protected ArrayList<MkgServices> items = new ArrayList<>();
     protected List<MkgServices> unSelectedItems = new ArrayList<>();
@@ -207,7 +215,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
                     vList.addView(new HeaderRatingRecyclerView(RequesterBaseRatingActivity.this, jsonArraySatu.getJSONObject(i).getString("nama_jjt") + " "
                             + jsonArrayDua.getJSONObject(ia).getString("nama_pekerjaan"), jsonArraySatu.getJSONObject(i).getString("jjt_lat") + ":" + jsonArraySatu.getJSONObject(i).getString("jjt_long"), jsonArrayDua.getJSONObject(ia).getString("request_detail")));
-
+                    idRequest = jsonArraySatu.getJSONObject(ia).getString("id_request");
                     JSONArray jsonArrayTiga = new JSONArray(jsonArrayDua.getJSONObject(ia).getString("request_detail"));
                     for (int j = 0; j < jsonArrayTiga.length(); j++) {
                         JSONObject jOb = jsonArrayTiga.getJSONObject(j);
@@ -240,12 +248,14 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                         vList.addView(new ChildRatingRecyclerView(RequesterBaseRatingActivity.this, j, data, new ChildRatingRecyclerView.OnItemClickListener() {
                             @Override
                             public void onItemClick(int position, MkgServices data) {
+                                //cek masih salah2
+
                                 List<MkgServices> selected = new ArrayList<>();
                                 List<MkgServices> unSelected = new ArrayList<>();
                                 int size = items.size();
                                 for (int i = size - 1; i >= 0; i--) {
                                     if (items.get(i).id.equalsIgnoreCase(data.id)) {
-                                        items.get(i).isChecked = !data.isChecked;
+                                        items.get(i).isChecked = data.isChecked;
                                     }
                                     unSelected.add(items.get(i));
 
@@ -276,15 +286,54 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
     protected void onListChecked(List<MkgServices> items) {
         int total = items.size();
-        Toast.makeText(this, total + "", Toast.LENGTH_SHORT).show();
         String sasa = "";
         for (int i = 0; i < items.size(); i++) {
             sasa += i + ",";
-            Log.w("kepoah", items.get(i).id + " -- " + items.get(i).child_name);
         }
-        finish();
-        //sasa.subString(0,sasa.)
+        String pilih = "";
+        for (MkgServices is : items) {
+            pilih += is.id + ",";
+        }
+
+        if (items.size() != 0) {
+            Map<String, String> params = new HashMap<>();
+            params.put("id_request_detail", idRequest);
+            params.put("id", pilih.substring(0, pilih.length() - 1));
+            Log.w("kap", pilih.substring(0, pilih.length() - 1));
+            getDetail("https://bb.byonchat.com/ApiReliever/index.php/Request/submit_reliever", params);
+
+
+        } else {
+            Toast.makeText(RequesterBaseRatingActivity.this, "Tolong Pilih Reliever.", Toast.LENGTH_SHORT).show();
+        }
+
     }
+
+
+    private void getDetail(String Url, Map<String, String> params2) {
+        ProgressDialog rdialog = new ProgressDialog(RequesterBaseRatingActivity.this);
+        rdialog.setMessage("Loading...");
+        rdialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(RequesterBaseRatingActivity.this);
+
+        StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                response -> {
+                    rdialog.dismiss();
+                    finish();
+                },
+                error -> rdialog.dismiss()
+        ) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                return params2;
+            }
+        };
+        queue.add(sr);
+    }
+
 
     protected void hideViews() {
     }

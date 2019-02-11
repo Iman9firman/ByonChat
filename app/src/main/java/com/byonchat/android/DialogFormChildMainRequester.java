@@ -242,6 +242,37 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
             dismiss();
         }
         if (v == add) {
+            if (subNamenya.length() == 0) {
+                Toast.makeText(getContext(), "Harap Pilih Posisi", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (subIdnya.length() == 0) {
+                Toast.makeText(getContext(), "Harap Pilih Sub Posisi", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (valueAwal.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Harap masukan jam mulai kerja", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (valueAkhir.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Harap masukan jam akhir kerja", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (jumlah.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Harap masukan Jumlah", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (keterangan.getText().toString().length() == 0) {
+                Toast.makeText(getContext(), "Harap isi Keterangan", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
             JSONObject jsonObject = new JSONObject();
 
             try {
@@ -270,7 +301,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
 
                 @Override
                 public void userCanceled() {
-                    Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
                 }
             });
             calendarDialog.show();
@@ -286,7 +317,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
 
                 @Override
                 public void userCanceled() {
-                    Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
                 }
             });
             calendarDialog.show();

@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -106,6 +107,7 @@ public class FragmentRoomSearchMultiTask extends Fragment {
     private Activity mContext;
     BotListDB botListDB;
     LinearLayoutManager llm;
+    Runnable runnable;
 
     public FragmentRoomSearchMultiTask(Activity ctx) {
         mContext = ctx;
@@ -242,8 +244,8 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                                 alertbox.show();
                             } else {
                                 Intent intent4 = new Intent(getContext(), ByonchatMallKelapaGadingActivity.class);
-                                intent4.putExtra(Constants.EXTRA_COLOR, "006b9c");
-                                intent4.putExtra(Constants.EXTRA_COLORTEXT, "004a6d");
+                                intent4.putExtra(Constants.EXTRA_COLOR, "022b95");
+                                intent4.putExtra(Constants.EXTRA_COLORTEXT, "ffffff");
                                 intent4.putExtra(Constants.EXTRA_ITEM, myadapter.getData().get(position).getIdHex() + "");
                                 intent4.putExtra(Constants.EXTRA_ROOM, myadapter.getData().get(position).getMetode() + "");
                                 startActivity(intent4);
@@ -288,7 +290,13 @@ public class FragmentRoomSearchMultiTask extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        requestKey();
+        Handler handler = new Handler();
+        runnable = () -> {
+            requestKey();
+            handler.postDelayed(runnable, 40000);
+        };
+        handler.post(runnable);
+
     }
 
 
@@ -436,7 +444,6 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                         e.printStackTrace();
                     }
                 } else {
-                    Log.w("kasmis", content);
                     try {
                         JSONObject jsp = new JSONObject(content);
                         JSONArray jsonArray = jsonArray = new JSONArray(jsp.getString("data"));
@@ -459,7 +466,6 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                             String jjt_lat = jsonArray.getJSONObject(i).getString("jjt_lat");
                             String jjt_long = jsonArray.getJSONObject(i).getString("jjt_long");
 
-                            Log.w("kasmisss", id_request);
                             ContentRoom contentRoom = new ContentRoom(id_request, nama_jjt, create_at, nama_pekerjaan, jsonArray.getJSONObject(i).toString(), status, jjt_lat + ":" + jjt_long);
 
                             listItem.add(contentRoom);

@@ -304,6 +304,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected int room_id;
     protected String roomid = "";
     protected int i = 0;
+    Boolean loginIss = false;
 
     protected SQLiteDatabase sqLiteDatabase;
 
@@ -887,6 +888,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     itemMain.iconTest = R.drawable.ic_room_name_card;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("20")) {
+                    loginIss = true;
                     itemMain.iconTest = R.drawable.ic_room_task;
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add(title);
@@ -996,21 +998,24 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             }
 
         }
-        if (new Validations().getInstance(getApplicationContext()).setTimeValidationISS(26) == 1) {
-            if (title.equalsIgnoreCase("ISS INDONESIA")) {
-                Log.w("salah3", "sat2");
-                if (success == null) {
-                    Log.w("salah4", "satu");
-                    Intent a = new Intent(getApplicationContext(), LoginISS.class);
-                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
-                    startActivity(a);
-                    finish();
+        if (loginIss) {
+            if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(26) == 1) {
+                if (title.equalsIgnoreCase("ISS INDONESIA")) {
+                    Log.w("salah3", "sat2");
+                    if (success == null) {
+                        Log.w("salah4", "satu");
+                        Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                        a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                        a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                        startActivity(a);
+                        finish();
+                    }
                 }
+            } else {
+                Log.w("salah5", "satu1");
             }
-        } else {
-            Log.w("salah5", "satu1");
         }
+
     }
 
     protected void resolveToolbarExpanded() {

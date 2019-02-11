@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -21,9 +22,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,6 +73,8 @@ public class SubmitRequestActivity extends AppCompatActivity {
     private ImageView icon, back;
     private FrameLayout emblem;
     private Toolbar toolbar;
+    EditText etNote;
+    RatingBar rating;
     private TextView tittle;
     Double latitude;
     Double longitude;
@@ -88,6 +93,13 @@ public class SubmitRequestActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#022b95")));
 
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(Color.parseColor("#022b95"));
+        }
+
         status = getIntent().getStringExtra("status");
 
         if (status.equalsIgnoreCase("New")) {
@@ -96,7 +108,7 @@ public class SubmitRequestActivity extends AppCompatActivity {
             layout_checkin.setVisibility(View.GONE);
             layout_checkout.setVisibility(View.GONE);
             btnSubmitCek.setVisibility(View.GONE);
-            textSubmit.setText("Mohon kedatangannya, jika berhalangan hadir di mohon konfirmasi ke pengawas yang bersangkutan atau HRD.");
+            textSubmit.setVisibility(View.GONE);
             btnDirection.setText("Direction ");
         } else if (getIntent().getStringExtra("status").equalsIgnoreCase("CheckIn")) {
             layout_confirm.setVisibility(View.VISIBLE);
@@ -106,6 +118,7 @@ public class SubmitRequestActivity extends AppCompatActivity {
             btnSubmitCek.setVisibility(View.VISIBLE);
             textSubmit.setText("Jika sudah sampai mohon menghubungi requester anda dengan melakukan chatting atau telepon");
             textCheckin.setText("Klik tombol Check In dibawah ini");
+            textSubmit.setVisibility(View.GONE);
             btnCheckIn.setText("Check In");
         } else if (getIntent().getStringExtra("status").equalsIgnoreCase("CheckOut")) {
             btnDirection.setVisibility(View.GONE);
@@ -114,20 +127,17 @@ public class SubmitRequestActivity extends AppCompatActivity {
             layout_checkin.setVisibility(View.VISIBLE);
             layout_checkout.setVisibility(View.VISIBLE);
             btnSubmitCek.setVisibility(View.VISIBLE);
-            textSubmit.setText("Hubungi Requester anda jika pekerjaan sudah selesai dengan melakukan");
-            textCheckin.setText("Klik tombol Check Out dibawah ini");
+            textSubmit.setText("Jika sudah selesai mohon menghubungi requester anda dengan melakukan chatting atau telepon");
+            textSubmit.setVisibility(View.GONE);
             btnCheckIn.setText("Check Out");
         }
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = this.getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(Color.parseColor("#FF6100"));
-        }
+
     }
 
     private void prepareObject() {
+        etNote = (EditText) findViewById(R.id.etNote);
+        rating = (RatingBar) findViewById(R.id.rating);
         textSubmit = (TextView) findViewById(R.id.kata2);
         txtPlace = (TextView) findViewById(R.id.idTempat);
         txtTMulai = (TextView) findViewById(R.id.idTmulai);
@@ -310,7 +320,7 @@ public class SubmitRequestActivity extends AppCompatActivity {
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-            
+
             if (getIntent().getStringExtra("status").equalsIgnoreCase("CheckOut")) {
                 new PostUpdateRating(SubmitRequestActivity.this).execute("https://bb.byonchat.com/ApiReliever/index.php/Rating/requester", id);
 
@@ -446,8 +456,8 @@ public class SubmitRequestActivity extends AppCompatActivity {
                 } else if (getIntent().getStringExtra("status").equalsIgnoreCase("CheckIn")) {
                     nameValuePairs.add(new BasicNameValuePair("status", "2"));
                 } else if (getIntent().getStringExtra("status").equalsIgnoreCase("CheckOut")) {
-                    nameValuePairs.add(new BasicNameValuePair("rating", "4"));
-                    nameValuePairs.add(new BasicNameValuePair("note", "Saya juga"));
+                    nameValuePairs.add(new BasicNameValuePair("rating", rating.getRating() + ""));
+                    nameValuePairs.add(new BasicNameValuePair("note", etNote.getText().toString()));
 
                 }
 

@@ -172,14 +172,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="20dp"
                 android:orientation="vertical">
 
                 <Button
                     android:id="@+id/btnConfirm"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="35dp"
                     android:background="@drawable/button_background"
-                    android:text="Confirm"
+                    android:text="Konfirmasi"
                     android:textAllCaps="false" />
 
                 <TextView
@@ -187,7 +188,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="10dp"
-                    android:text="or"
+                    android:text="Atau"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -224,7 +225,7 @@
                         android:layout_gravity="center"
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
-                        android:text="or"
+                        android:text="Atau"
                         android:textSize="15sp" />
 
                     <ImageView
@@ -268,6 +269,7 @@
                         style="@style/Widget.AppCompat.RatingBar.Indicator"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:isIndicator="false"
                         android:numStars="5"
                         android:progressBackgroundTint="@color/grey"
@@ -323,7 +325,7 @@
                 <Button
                     android:id="@+id/btnCheckIn"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="35dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/button_background"

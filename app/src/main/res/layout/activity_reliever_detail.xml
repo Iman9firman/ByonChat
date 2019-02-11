@@ -9,14 +9,15 @@
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/image_detailReliever"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/wallpaper"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         app:civ_border_color="#EEEEEE"
+        android:layout_marginTop="@dimen/margin20"
         app:civ_border_width="4dp"
         app:civ_shadow="true"
         app:civ_shadow_radius="10"
         app:civ_shadow_color="#8BC34A"
+        android:src="@drawable/bg_profile"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
@@ -36,6 +37,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/margin20"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rating_detailReliever"
@@ -47,6 +49,7 @@
             android:layout_height="wrap_content"
             android:text="Nama"
             android:layout_margin="4dp"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -62,7 +65,7 @@
             android:id="@+id/text_name_real_detailReliever"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Zharfan"
+            android:text=""
             android:layout_margin="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_name"/>
@@ -72,6 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tanggal Lahir"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_margin="4dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_name_real_detailReliever"/>
@@ -88,7 +92,7 @@
             android:id="@+id/text_birthDate_real_detailReliever"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Jakarta , 1 Januari 2000"
+            android:text=""
             android:layout_margin="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_birthDate"/>
@@ -98,6 +102,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Alamat"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_margin="4dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_birthDate_real_detailReliever"/>
@@ -114,7 +119,7 @@
             android:id="@+id/text_address_real_detailReliever"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Jl. Cilobak Raya no.59 , Depok"
+            android:text=""
             android:layout_margin="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_address"/>
@@ -124,6 +129,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Pengalaman Kerja"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_margin="4dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_address_real_detailReliever"/>
@@ -140,7 +146,7 @@
             android:id="@+id/text_jobExp_real_detailReliever"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1 Tahun"
+            android:text=""
             android:layout_margin="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider_jobExp"/>

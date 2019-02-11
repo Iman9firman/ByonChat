@@ -106,6 +106,7 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
                                         String distance = jOb.getString("jarak");
                                         String status = jOb.getString("status");
                                         String totalKerja = jOb.getString("total_kerja");
+                                        String id_reliever = jOb.getString("id_reliever");
                                         String contact = jOb.getString("hp");
                                         String location = latlongR;
 
@@ -116,6 +117,8 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
                                         data.child_status = status;
                                         data.child_contact = contact;
                                         data.child_location = location;
+                                        data.total_kerja = totalKerja;
+                                        data.id_reliever = id_reliever;
 
                                         vList.addView(new ChildRecyclerView(ByonchatBaseMallKelapaGadingActivity.this, data));
                                     }

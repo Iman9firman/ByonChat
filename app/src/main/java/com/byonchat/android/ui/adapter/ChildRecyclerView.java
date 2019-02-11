@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -19,6 +20,7 @@ import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingAc
 import com.byonchat.android.R;
 import com.byonchat.android.data.model.MkgServices;
 import com.byonchat.android.tabRequest.MapsViewActivity;
+import com.byonchat.android.tabRequest.RelieverDetailActivity;
 import com.byonchat.android.tabRequest.RelieverListActivity;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
@@ -70,6 +72,15 @@ public class ChildRecyclerView implements RatingDialogListener {
 
     @Resolve
     private void onResolve() {
+        child_img_contact.setOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View v) {
+                Log.w("masu22k", "euy");
+                Intent goToDetail = new Intent(mContext, RelieverDetailActivity.class);
+                goToDetail.putExtra("IDRELIEVER", data.id_reliever);
+                mContext.startActivity(goToDetail);
+            }
+        });
 
         child_btn_cancel_approve.setOnClickListener(v -> {
 
@@ -103,7 +114,7 @@ public class ChildRecyclerView implements RatingDialogListener {
             });
 
         } else if (data.child_status.equalsIgnoreCase("1")) {
-            status = "Checkin";
+            status = "Waiting Checkin";
             child_bayangan.setVisibility(android.view.View.VISIBLE);
             child_bayangan.setText("Approve");
             child_btn_cancel_approve.setVisibility(android.view.View.GONE);
@@ -127,7 +138,7 @@ public class ChildRecyclerView implements RatingDialogListener {
                 }
             });
         } else if (data.child_status.equalsIgnoreCase("3")) {
-            status = "CheckOut";
+            status = "Waiting CheckOut";
             child_bayangan.setVisibility(android.view.View.VISIBLE);
             child_bayangan.setText("Approve");
             child_btn_cancel_approve.setVisibility(android.view.View.GONE);
@@ -146,11 +157,9 @@ public class ChildRecyclerView implements RatingDialogListener {
                     params.put("status", "6");
                     getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params);
 
-                    /*nameValuePairs.add(new BasicNameValuePair("rating", "4"));
-                    nameValuePairs.add(new BasicNameValuePair("note", "Saya juga"));*/
-
                     Map<String, String> paramsLog = new HashMap<>();
-                    paramsLog.put("rating", "5");
+                    paramsLog.put("id", data.id);
+                    paramsLog.put("rating", "2");
                     paramsLog.put("note", "Bagus");
 
                     getDetail("https://bb.byonchat.com/ApiReliever/index.php/Rating/reliever", paramsLog);
@@ -193,8 +202,6 @@ public class ChildRecyclerView implements RatingDialogListener {
         } else {
             child_bayangan.setVisibility(android.view.View.GONE);
             child_btn_cancel_approve.setVisibility(android.view.View.GONE);
-
-
         }
 
         child_text_status.setText(status);
@@ -213,8 +220,9 @@ public class ChildRecyclerView implements RatingDialogListener {
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
-                    Log.w("hasilny", response);
-
+                    Toast.makeText(mContext, "sukses", Toast.LENGTH_SHORT).show();
+                    ByonchatBaseMallKelapaGadingActivity ss = (ByonchatBaseMallKelapaGadingActivity) mContext;
+                    ss.finish();
                 },
                 error -> rdialog.dismiss()
         ) {

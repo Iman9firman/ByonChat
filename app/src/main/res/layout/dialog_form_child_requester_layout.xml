@@ -56,7 +56,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/margin5"
-                    android:text="Pekerjaan"
+                    android:text="Posisi"
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/grayList" />
 
@@ -73,7 +73,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/margin5"
-                    android:text="Sub Pekerjaan"
+                    android:text="Sub Posisi"
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/grayList" />
 

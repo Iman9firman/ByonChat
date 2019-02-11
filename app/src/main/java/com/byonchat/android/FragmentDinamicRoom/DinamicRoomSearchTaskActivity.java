@@ -1,9 +1,13 @@
 package com.byonchat.android.FragmentDinamicRoom;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,7 +17,10 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,6 +45,7 @@ import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.tabRequest.MapsViewActivity;
 import com.byonchat.android.widget.CalendarDialog;
 import com.itextpdf.text.pdf.parser.Line;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
@@ -79,6 +87,14 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dinamic_room_task_search);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Request Reliever");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#022b95")));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(Color.parseColor("#022b95"));
+        }
 
         listRequest = (LinearLayout) findViewById(R.id.listRequest);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
@@ -164,6 +180,17 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
                     getSubPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Request", params);
 
+                    /*JSONObject jsonObject = new JSONObject("{\"status\":\"1\",\"message\":\"succes\",\"data\":[{\"id_request\":\"51\",\"request_status\":\"0\",\"kode_jjt\":\"ISS-01349O0002\",\"nama_jjt\":\"Cleaner Jakarta - GRAHA ISS\",\"jjt_lat\":\"-6.2799206\",\"jjt_long\":\"106.712887\",\"sub_request\":[{\"id_sub_request\":\"58\",\"nama_pekerjaan\":\"Cleaner\",\"request_detail\":[{\"id_request_detail\":\"28\",\"rating\":5,\"nama\":\"Aziz\",\"id_reliever\":\"193\",\"jarak\":10.607576386624,\"lat\":\"-6.19751692\",\"long\":\"106.76124573\",\"hp\":\"6285322226666\",\"status\":\"0\",\"total_kerja\":0},{\"id_request_detail\":\"29\",\"rating\":5,\"nama\":\"Iman(Byonchat)\",\"id_reliever\":\"194\",\"jarak\":0.10827069351829,\"lat\":\"-6.27945089\",\"long\":\"106.71374512\",\"hp\":\"62858922221\",\"status\":\"0\",\"total_kerja\":0}]}]}]}");
+                    if (jsonObject.has("data")) {
+                        Intent intent5 = new Intent(getApplicationContext(), RequesterRatingActivity.class);
+                        intent5.putExtra(Constants.EXTRA_COLOR, "022B96");
+                        intent5.putExtra(Constants.EXTRA_COLORTEXT, "ffffff");
+                        JSONArray jsonArrays = new JSONArray(jsonObject.getString("data"));
+                        intent5.putExtra(Constants.EXTRA_ITEM, jsonArrays.toString());
+                        startActivity(intent5);
+                        finish();
+                    }*/
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -225,10 +252,13 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
+                    Log.w("kampret", response);
+
                     rdialog.dismiss();
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         if (jsonObject.has("data")) {
+                            //{"status":"1","message":"succes","data":[{"id_request":"51","request_status":"0","kode_jjt":"ISS-01349O0002","nama_jjt":"Cleaner Jakarta - GRAHA ISS","jjt_lat":"-6.2799206","jjt_long":"106.712887","sub_request":[{"id_sub_request":"58","nama_pekerjaan":"Cleaner","request_detail":[{"id_request_detail":"28","rating":5,"nama":"Aziz","id_reliever":"193","jarak":10.607576386624,"lat":"-6.19751692","long":"106.76124573","hp":"6285322226666","status":"0","total_kerja":0},{"id_request_detail":"29","rating":5,"nama":"Iman(Byonchat)","id_reliever":"194","jarak":0.10827069351829,"lat":"-6.27945089","long":"106.71374512","hp":"62858922221","status":"0","total_kerja":0}]}]}]}
                             Intent intent5 = new Intent(getApplicationContext(), RequesterRatingActivity.class);
                             intent5.putExtra(Constants.EXTRA_COLOR, "006b9c");
                             intent5.putExtra(Constants.EXTRA_COLORTEXT, "004a6d");
@@ -238,9 +268,9 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                             finish();
                         } else {
                             Toast.makeText(DinamicRoomSearchTaskActivity.this, "Not Found", Toast.LENGTH_SHORT).show();
-                            Intent callIntent = new Intent(Intent.ACTION_CALL);
+                          /*  Intent callIntent = new Intent(Intent.ACTION_CALL);
                             callIntent.setData(Uri.parse("tel:+6285891307575"));
-                            startActivity(callIntent);
+                            startActivity(callIntent);*/
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -258,6 +288,31 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
             }
         };
         queue.add(sr);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomSearchTaskActivity.this);
+                alertbox.setMessage("Are you sure you want to exit?");
+                alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        onBackPressed();
+                    }
+                });
+                alertbox.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+                alertbox.show();
+
+
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 

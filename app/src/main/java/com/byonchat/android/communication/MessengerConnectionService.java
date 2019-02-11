@@ -1940,6 +1940,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
+        Log.d("HIDUP", "OnTaskRemoved MessengerConnectionService");
         stopSelf();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -1967,13 +1968,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                     PackageManager.DONT_KILL_APP);
         }
-
-//
-//        Intent intent = new Intent(getApplicationContext(), MessengerConnectionService.class);
-//        intent.putExtra(UploadService.ACTION, "startService");
-//        PendingIntent pendingIntent = PendingIntent.getService(this, 5555555, intent, PendingIntent.FLAG_ONE_SHOT);
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
     }
 
     protected boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -2016,13 +2010,13 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             e.printStackTrace();
         }
 
-        AlarmManager alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
-        Intent i = new Intent(this, MessengerConnectionService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, Utility.generateRandomInt(), i, 0);
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1, pendingIntent);
+//        AlarmManager alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
+//        Intent i = new Intent(this, MessengerConnectionService.class);
+//        PendingIntent pendingIntent = PendingIntent.getService(this, Utility.generateRandomInt(), i, 0);
+//        alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1, pendingIntent);
 
-//        Intent broadcastIntent = new Intent("com.byonchat.android.utils.ConnectionChangeReceiver");
-//        sendBroadcast(broadcastIntent);
+        Intent broadcastIntent = new Intent("com.byonchat.android.utils.ConnectionChangeReceiver");
+        sendBroadcast(broadcastIntent);
 
         if (mLocationManager != null) {
             for (int loc = 0; loc < mLocationListeners.length; loc++) {
@@ -5365,6 +5359,7 @@ Log.w("every",co.getJabberId());
         public void connectionClosed() {
             // Log.w(getClass().getSimpleName(), "connection closed. reconnecting...");
             sendBroadcast(ACTION_DISCONNECTED);
+            new ConnectionHelper().start();
             /*xmppOpen();*/
         }
 

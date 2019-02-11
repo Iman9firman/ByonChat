@@ -47,7 +47,7 @@ public class MyJobService extends JobService {
         }
 
         jobFinished(params, false);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             scheduleRefresh();
 
         appendLog(new Date().toString() + " : " + "Job running");
@@ -109,24 +109,22 @@ public class MyJobService extends JobService {
         @Override
         public void run() {
             try {
-                if (!MessengerConnectionService.started) {
-                    String channelId = "";
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        channelId = createNotificationChannel("ByonChat", "Connected");
-                    }
-
-                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId);
-                    Notification notification = notificationBuilder.setOngoing(true)
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setPriority(PRIORITY_MIN)
-                            .setCategory(Notification.CATEGORY_SERVICE)
-                            .build();
-                    startForeground(101, notification);
-
-                    Intent intentStart = new Intent(context, UploadService.class);
-                    intentStart.putExtra(UploadService.ACTION, "startService");
-                    context.startForegroundService(intentStart);
+                String channelId = "";
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    channelId = createNotificationChannel("ByonChat", "Connected");
                 }
+
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId);
+                Notification notification = notificationBuilder.setOngoing(true)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setPriority(PRIORITY_MIN)
+                        .setCategory(Notification.CATEGORY_SERVICE)
+                        .build();
+                startForeground(101, notification);
+
+                Intent intentStart = new Intent(context, UploadService.class);
+                intentStart.putExtra(UploadService.ACTION, "startService");
+                context.startForegroundService(intentStart);
             } catch (Exception e) {
                 Log.w("datapusat", e.toString());
             }

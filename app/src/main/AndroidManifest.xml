@@ -335,12 +335,8 @@
         <service
             android:name=".communication.MyJobService"
             android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"></service>
         <service
             android:name=".communication.JobIntentNotificationService"
             android:permission="android.permission.BIND_JOB_SERVICE" />

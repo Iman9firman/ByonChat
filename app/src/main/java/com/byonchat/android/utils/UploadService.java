@@ -207,15 +207,6 @@ public class UploadService extends IntentService {
                     .build();
             startForeground(101,
                     notification);
-        } else {
-            Notification notification = new NotificationCompat.Builder(this)
-                    .setContentTitle("ByonChat")
-                    .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "No Connectivity")
-                    .setSmallIcon(R.drawable.logo_byon)
-                    .setContentIntent(pendingIntent)
-                    .setOngoing(true).build();
-            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE,
-                    notification);
         }
 
         Message vo = intent.getParcelableExtra(UploadService.KEY_MESSAGE);

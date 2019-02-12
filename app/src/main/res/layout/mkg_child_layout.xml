@@ -77,24 +77,14 @@
 
             <Button
                 android:id="@+id/child_button_cancel_approve"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@drawable/oval_btn_room"
-                android:padding="5dp"
+                style="@style/btn_submit_v11"
                 android:text="Approve"
-                android:textAllCaps="false"
-                android:textColor="@drawable/selector_txt_blue_white"
-                android:textSize="14sp" />
+                 />
 
             <Button
                 android:id="@+id/child_bayangan"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@drawable/oval_btn_room_reverse"
-                android:padding="5dp"
+                style="@style/btn_submit_v11_f"
                 android:text="Approve"
-                android:textAllCaps="false"
-                android:textColor="@color/grayDark"
                 android:textSize="14sp" />
 
         </LinearLayout>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -52,17 +52,19 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingBottom="@dimen/margin50"
                 android:weightSum="1">
+
                 <CalendarView
                     android:id="@+id/calendarView1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"/>
+                    android:layout_margin="4dp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:orientation="horizontal">
+
                     <io.blackbox_vision.wheelview.view.WheelView
                         android:id="@+id/hour"
                         android:layout_width="100dp"
@@ -75,6 +77,7 @@
                         app:lineColor="@color/colorPrimary"
                         app:textSize="25sp"
                         app:topBottomTextColor="#ffafafaf" />
+
                     <TextView
                         android:id="@+id/text_divider"
                         android:layout_width="wrap_content"
@@ -82,6 +85,7 @@
                         android:gravity="center"
                         android:text=":"
                         android:textSize="16sp" />
+
                     <io.blackbox_vision.wheelview.view.WheelView
                         android:id="@+id/minutes"
                         android:layout_width="100dp"
@@ -107,28 +111,14 @@
 
                 <Button
                     android:id="@+id/btn_set"
-                    android:layout_width="@dimen/margin100"
-                    android:layout_height="@dimen/margin30"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="@dimen/margin20"
-                    android:background="@drawable/oval_btn_room"
-                    android:padding="5dp"
-                    android:text="Ok"
-                    android:textAllCaps="false"
-                    android:textColor="@drawable/selector_txt_blue_white"
-                    android:textSize="14sp" />
+                    style="@style/btn_submit_v111"
+                    android:text="Ok" />
 
                 <Button
+                    android:layout_marginLeft="@dimen/margin10"
                     android:id="@+id/btn_cancel"
-                    android:layout_width="@dimen/margin100"
-                    android:layout_height="@dimen/margin30"
-                    android:layout_gravity="center"
-                    android:background="@drawable/oval_btn_room"
-                    android:padding="5dp"
-                    android:text="Cancel"
-                    android:textAllCaps="false"
-                    android:textColor="@drawable/selector_txt_blue_white"
-                    android:textSize="14sp" />
+                    style="@style/btn_submit_v111"
+                    android:text="Cancel" />
             </LinearLayout>
 
 

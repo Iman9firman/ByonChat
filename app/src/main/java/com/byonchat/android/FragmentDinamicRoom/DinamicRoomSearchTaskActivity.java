@@ -67,6 +67,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
     ArrayList<String> keperluan = new ArrayList<>();
     ArrayList<String> dua = new ArrayList<>();
     SearchableSpinner spinner;
+    View line_bottom;
 
 
     @Override
@@ -99,6 +100,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         listRequest = (LinearLayout) findViewById(R.id.listRequest);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
         spinner = (SearchableSpinner) findViewById(R.id.spinner);
+        line_bottom = (View) findViewById(R.id.line_bottom);
 
         Button btnAddCild = (Button) findViewById(R.id.btn_add_cild);
 
@@ -212,11 +214,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
             TextView textDesc = linearEstimasi.findViewById(R.id.textDesc);
 
             Button btnModify = linearEstimasi.findViewById(R.id.btnModify);
-            btnModify.setVisibility(View.GONE);
             Button btnCancel = linearEstimasi.findViewById(R.id.btnCancel);
-            btnCancel.setText("DELETE");
-            btnCancel.setVisibility(View.VISIBLE);
-
 
             int finalIa = ia;
             btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -224,6 +222,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     keperluan.remove(finalIa);
                     listRequest.removeViewAt(finalIa);
+
                 }
             });
 
@@ -240,6 +239,9 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
             ia++;
         }
 
+        if (listRequest.getChildCount() > 0) {
+            line_bottom.setVisibility(View.VISIBLE);
+        }
 
     }
 

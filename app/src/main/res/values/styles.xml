@@ -1,5 +1,38 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+
+    <style name="btn_submit_v1">
+        <item name="android:background">@drawable/new_btn_room_lv_s</item>
+        <item name="android:textColor">@drawable/selector_txt_white_blue</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/margin35</item>
+    </style>
+
+    <style name="btn_submit_v11">
+        <item name="android:background">@drawable/new_btn_room_lv_s</item>
+        <item name="android:textColor">@drawable/selector_txt_white_blue</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_width">@dimen/margin100</item>
+        <item name="android:layout_height">@dimen/margin35</item>
+    </style>
+    <style name="btn_submit_v11_f">
+        <item name="android:background">@drawable/new_btn_room_lv_s_f</item>
+        <item name="android:textColor">@drawable/selector_txt_white_blue</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_width">@dimen/margin100</item>
+        <item name="android:layout_height">@dimen/margin35</item>
+    </style>
+
+    <style name="btn_submit_v111">
+        <item name="android:background">@drawable/new_btn_room_lv_ss</item>
+        <item name="android:textColor">@drawable/selector_txt_blue_white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_width">@dimen/margin100</item>
+        <item name="android:layout_height">@dimen/margin35</item>
+    </style>
+
+
     <style name="verticalTextStyle" parent="android:Widget.TextView">
         <item name="android:padding">20dp</item>
         <item name="android:textSize">16sp</item>

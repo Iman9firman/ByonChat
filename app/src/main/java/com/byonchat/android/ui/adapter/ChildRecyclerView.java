@@ -72,6 +72,50 @@ public class ChildRecyclerView implements RatingDialogListener {
 
     @Resolve
     private void onResolve() {
+
+     /*dummy
+       child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View v) {
+
+                new AppRatingDialog.Builder()
+                        .setPositiveButtonText("Submit")
+                        .setNegativeButtonText("Cancel")
+                        .setNoteDescriptions(Arrays.asList("Very Bad", "Bad", "Good", "Very Good", "Excellent !!!"))
+                        .setDefaultRating(3)
+                        .setTitle("Rate this Reliever")
+                        .setDescription("Please select some stars and give your feedback")
+                        .setCommentInputEnabled(true)
+                        .setStarColor(R.color.yelow)
+                        .setTitleTextColor(R.color.black_alpha_50)
+                        .setDescriptionTextColor(R.color.black_alpha_50)
+                        .setHint("Please write your comment here ...")
+                        .setCommentBackgroundColor(R.color.grayList)
+                        .setCancelable(false)
+                        .setCanceledOnTouchOutside(false)
+                        .create((FragmentActivity) mContext)
+                        .show();
+
+
+              *//*  Map<String, String> paramsLog = new HashMap<>();
+                paramsLog.put("id", data.id);
+                paramsLog.put("rating", "2");
+                paramsLog.put("note", "Bagus");
+
+                getDetail("https://bb.byonchat.com/ApiReliever/index.php/Rating/reliever", paramsLog, false);
+
+                Map<String, String> params = new HashMap<>();
+                params.put("id", data.id);
+                params.put("status", "6");
+                getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
+*//*
+
+            }
+        });*/
+
+
+         //disini coyy
+
         child_img_contact.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {

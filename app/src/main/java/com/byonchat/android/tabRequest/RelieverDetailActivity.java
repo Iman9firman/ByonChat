@@ -40,7 +40,7 @@ public class RelieverDetailActivity extends AppCompatActivity {
 
     CircularImageView image_detailReliever;
     RatingBar rating_detailReliever;
-    TextView text_name_real_detailReliever, text_birthDate_real_detailReliever, text_address_real_detailReliever, text_jobExp_real_detailReliever;
+    TextView text_name_real_detailReliever, text_birthDate_real_detailReliever, text_address_real_detailReliever, text_jobExp_real_detailReliever, text_nik_detailreleiver;
 
 
     @Override
@@ -63,6 +63,7 @@ public class RelieverDetailActivity extends AppCompatActivity {
         text_birthDate_real_detailReliever = (TextView) findViewById(R.id.text_birthDate_real_detailReliever);
         text_address_real_detailReliever = (TextView) findViewById(R.id.text_address_real_detailReliever);
         text_jobExp_real_detailReliever = (TextView) findViewById(R.id.text_jobExp_real_detailReliever);
+        text_nik_detailreleiver = (TextView) findViewById(R.id.text_nik_detailReliever);
 
 
         String aa = getIntent().getStringExtra("IDRELIEVER");
@@ -109,6 +110,7 @@ public class RelieverDetailActivity extends AppCompatActivity {
                                 text_birthDate_real_detailReliever.setText(ttl);
                                 text_address_real_detailReliever.setText("");
                                 text_jobExp_real_detailReliever.setText("Sejak " + join_date);
+                                text_nik_detailreleiver.setText(nik);
 
                             }
                         }

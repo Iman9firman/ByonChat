@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -27,6 +29,9 @@ public class ChildRatingRecyclerView {
     @View(R.id.child_distance)
     TextView child_text_distance;
 
+    @View(R.id.child_total)
+    TextView child_text_total;
+
     private Context mContext;
     private MkgServices data;
     private int position;
@@ -47,6 +52,11 @@ public class ChildRatingRecyclerView {
         child_rating.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.orange_300)));
         child_text_name.setText(data.child_name);
         child_text_distance.setText(data.child_distance);
+        if(data.total_kerja.equalsIgnoreCase("0")){
+            child_text_total.setText("pekerja baru");
+        }else {
+            child_text_total.setText(data.total_kerja + " X bekerja");
+        }
     }
 
     @Click(R.id.child_checkbox)

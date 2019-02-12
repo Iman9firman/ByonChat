@@ -241,6 +241,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                         data.child_contact = contact;
                         data.child_location = location;
                         data.child_rating = rating;
+                        data.total_kerja = total;
                         data.isChecked = false;
 
                         items.add(data);

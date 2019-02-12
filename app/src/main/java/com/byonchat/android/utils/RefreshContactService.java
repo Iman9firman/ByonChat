@@ -249,7 +249,6 @@ public class RefreshContactService extends Service implements ServiceConnection 
         }
 
         protected void onPostExecute(String content) {
-            Log.w("hasilnyaapa", content);
             if (error) {
                 if (content.contains("invalid_key")) {
                     if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {

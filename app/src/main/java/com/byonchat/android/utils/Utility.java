@@ -219,14 +219,13 @@ public class Utility {
         return random;
     }
 
+
     @TargetApi(23)
     public static void scheduleJob(Context context) {
-        Log.d("HIDUP", "scheduleJob activity");
         ComponentName serviceComponent = new ComponentName(context, MyJobService.class);
-//        JobInfo.Builder builder = new JobInfo.Builder(123123, serviceComponent);
         JobInfo.Builder builder = new JobInfo.Builder(898989, serviceComponent);
-        builder.setMinimumLatency(1 * 1000); // wait at least
-        builder.setOverrideDeadline(3 * 1000); // maximum delay
+        builder.setMinimumLatency(60 * 1000); // wait at least
+        builder.setOverrideDeadline(2 * 60 * 1000); // maximum delay
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
         builder.setRequiresDeviceIdle(true); // device should be idle
         builder.setRequiresCharging(false); // we don't care if the device is charging or not

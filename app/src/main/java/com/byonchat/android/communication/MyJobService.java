@@ -38,14 +38,10 @@ public class MyJobService extends JobService {
     @RequiresApi(26)
     @Override
     public boolean onStartJob(JobParameters params) {
-        Log.d("HIDUP", "onStartJob MyJobService");
-
         thread = new Thread(new BackgroundThreadStart(this));
-
         if (thread != null) {
             thread.start();
         }
-
         jobFinished(params, false);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             scheduleRefresh();
@@ -86,10 +82,11 @@ public class MyJobService extends JobService {
                         new ComponentName(getPackageName(),
                                 MyJobService.class.getName()));
 
+
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mJobBuilder
-                    .setMinimumLatency(1 * 1000) //YOUR_TIME_INTERVAL
-                    .setOverrideDeadline(3 * 1000) // maximum delay
+                    .setMinimumLatency(60 * 1000) //YOUR_TIME_INTERVAL
+                    .setOverrideDeadline(2 * 60 * 1000) // maximum delay
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED) // require unmetered network
                     .setRequiresDeviceIdle(true) // device should be idle
                     .setRequiresCharging(false); // we don't care if the device is charging or not

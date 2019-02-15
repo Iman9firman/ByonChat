@@ -1,5 +1,6 @@
 package com.byonchat.android.ISSActivity.Requester;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -19,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -34,19 +36,24 @@ import com.byonchat.android.ui.adapter.ChildRecyclerView;
 import com.byonchat.android.ui.adapter.HeaderRecyclerView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mindorks.placeholderview.ExpandablePlaceHolderView;
+import com.stepstone.apprating.AppRatingDialog;
+import com.stepstone.apprating.listener.RatingDialogListener;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActivity implements ActionMode.Callback {
+public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActivity implements ActionMode.Callback, RatingDialogListener {
 
     protected ActionMode actionMode;
     protected String mColor, mColorText, idRequse, latlongR;
+    String idRequest;
 
     @NonNull
     protected AppBarLayout vAppBar;
@@ -290,4 +297,82 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
         outState.putString(Constants.EXTRA_ITEM, idRequse);
         outState.putString(Constants.EXTRA_ROOM, latlongR);
     }
+
+    public void setRating(String aa) {
+        idRequest = aa;
+        new AppRatingDialog.Builder()
+                .setPositiveButtonText("Submit")
+                .setNegativeButtonText("Cancel")
+                .setNoteDescriptions(Arrays.asList("Very Bad", "Bad", "Good", "Very Good", "Excellent !!!"))
+                .setDefaultRating(2)
+                .setTitle("Rate this Reliever")
+                .setDescription("Please select some stars and give your feedback")
+                .setCommentInputEnabled(true)
+                .setStarColor(R.color.yelow)
+                .setTitleTextColor(R.color.black_alpha_50)
+                .setDescriptionTextColor(R.color.black_alpha_50)
+                .setHint("Please write your comment here ...")
+                .setCancelable(false)
+                .setCanceledOnTouchOutside(false)
+                .create(this)
+                .show();
+    }
+
+    @Override
+    public void onNegativeButtonClicked() {
+
+    }
+
+    @Override
+    public void onNeutralButtonClicked() {
+
+    }
+
+    @Override
+    public void onPositiveButtonClicked(int i, @NotNull String s) {
+        String id = idRequest;
+        Log.w("sambo", id);
+        Map<String, String> paramsLog = new HashMap<>();
+        paramsLog.put("id", id);
+        paramsLog.put("rating", i + "");
+        paramsLog.put("note", s);
+
+        getDetail(id, "https://bb.byonchat.com/ApiReliever/index.php/Rating/reliever", paramsLog, true);
+    }
+
+    private void getDetail(String id, String Url, Map<String, String> params2, Boolean hide) {
+        ProgressDialog rdialog = new ProgressDialog(ByonchatBaseMallKelapaGadingActivity.this);
+        rdialog.setMessage("Loading...");
+        rdialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(ByonchatBaseMallKelapaGadingActivity.this);
+
+        StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                response -> {
+                    rdialog.dismiss();
+                    if (hide) {
+                        Log.w("kabut", id);
+                        Map<String, String> params = new HashMap<>();
+                        params.put("id", id);
+                        params.put("status", "6");
+                        getDetail(id, "https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, false);
+                    } else {
+                        Toast.makeText(ByonchatBaseMallKelapaGadingActivity.this, "sukses", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+
+                },
+                error -> rdialog.dismiss()
+        ) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                return params2;
+            }
+        };
+        queue.add(sr);
+    }
+
+
 }

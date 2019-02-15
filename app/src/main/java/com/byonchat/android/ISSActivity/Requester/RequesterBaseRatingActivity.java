@@ -54,6 +54,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
     protected ArrayList<MkgServices> items = new ArrayList<>();
     protected List<MkgServices> unSelectedItems = new ArrayList<>();
+    protected List<String> maxSelected = new ArrayList<>();
 
     @NonNull
     protected AppBarLayout vAppBar;
@@ -78,6 +79,8 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
     @NonNull
     protected Button vBtnSubmit;
+
+    boolean lanjut = true;
 
 
     @Override
@@ -157,53 +160,6 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
         vToolbarTitle.setText("Search Reliever");
     }
 
-    /*protected void resolveListHistory() {
-        vList.removeAllViews();
-
-        try {
-            JSONArray jsonArraySatu = new JSONArray(itemData);
-            for (int i = 0; i < jsonArraySatu.length(); i++) {
-                JSONArray jsonArrayDua = new JSONArray(jsonArraySatu.getJSONObject(i).getString("sub_request"));
-                for (int ia = 0; ia < jsonArrayDua.length(); ia++) {
-
-                    vList.addView(new HeaderRatingRecyclerView(RequesterBaseRatingActivity.this, jsonArraySatu.getJSONObject(i).getString("nama_jjt") + " "
-                            + jsonArrayDua.getJSONObject(ia).getString("nama_pekerjaan"), jsonArraySatu.getJSONObject(i).getString("jjt_lat") + ":" + jsonArraySatu.getJSONObject(i).getString("jjt_long"), jsonArrayDua.getJSONObject(ia).getString("request_detail")));
-
-                    JSONArray jsonArrayTiga = new JSONArray(jsonArrayDua.getJSONObject(ia).getString("request_detail"));
-                    for (int j = 0; j < jsonArrayTiga.length(); j++) {
-                        JSONObject jOb = jsonArrayTiga.getJSONObject(j);
-                        String id = jOb.getString("id_request_detail");
-                        String name = jOb.getString("nama");
-                        String distance = jOb.getString("jarak");
-                        String total = jOb.getString("total_kerja");
-                        String status = jOb.getString("status");
-                        String contact = jOb.getString("hp");
-                        String location = jOb.getString("lat") + ":" + jOb.getString("long");
-                        String rating = jOb.getString("rating");
-
-                        int titik = distance.length() - distance.indexOf(".");
-                        if (titik > 4) {
-                            titik = 4;
-                        }
-                        MkgServices data = new MkgServices();
-                        data.id = id;
-                        data.child_name = name;
-                        data.child_distance = distance.substring(0, distance.indexOf(".") + titik) + " KM";
-                        data.child_status = status;
-                        data.child_contact = contact;
-                        data.child_location = location;
-                        data.child_rating = rating;
-                        vList.addView(new ChildRatingRecyclerView(RequesterBaseRatingActivity.this, data));
-                    }
-                }
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-*/
     protected void resolveListHistory() {
         vList.removeAllViews();
 
@@ -214,9 +170,23 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                 for (int ia = 0; ia < jsonArrayDua.length(); ia++) {
 
                     vList.addView(new HeaderRatingRecyclerView(RequesterBaseRatingActivity.this, jsonArraySatu.getJSONObject(i).getString("nama_jjt") + " "
-                            + jsonArrayDua.getJSONObject(ia).getString("nama_pekerjaan"), jsonArraySatu.getJSONObject(i).getString("jjt_lat") + ":" + jsonArraySatu.getJSONObject(i).getString("jjt_long"), jsonArrayDua.getJSONObject(ia).getString("request_detail")));
+                            + jsonArrayDua.getJSONObject(ia).getString("nama_pekerjaan"), jsonArraySatu.getJSONObject(i).getString("jjt_lat") + ":" + jsonArraySatu.getJSONObject(i).getString("jjt_long"), jsonArrayDua.getJSONObject(ia).getString("request_detail"), jsonArrayDua.getJSONObject(ia).getString("jumlah")));
+
+                    maxSelected.add(ia, jsonArrayDua.getJSONObject(ia).getString("jumlah"));
+
                     idRequest = jsonArraySatu.getJSONObject(ia).getString("id_request");
+
                     JSONArray jsonArrayTiga = new JSONArray(jsonArrayDua.getJSONObject(ia).getString("request_detail"));
+
+                    if (jsonArrayTiga.length() > 0) {
+                        lanjut = true;
+                    } else {
+                        Map<String, String> paramss = new HashMap<>();
+                        paramss.put("id_sub_request", jsonArrayDua.getJSONObject(ia).getString("id_sub_request"));
+                        paramss.put("jumlah", jsonArrayDua.getJSONObject(ia).getString("jumlah"));
+                        requestByParony("https://bb.byonchat.com/ApiReliever/index.php/Request/req_reliever", paramss);
+                    }
+
                     for (int j = 0; j < jsonArrayTiga.length(); j++) {
                         JSONObject jOb = jsonArrayTiga.getJSONObject(j);
                         String id = jOb.getString("id_request_detail");
@@ -232,6 +202,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                         if (titik > 4) {
                             titik = 4;
                         }
+
                         MkgServices data = new MkgServices();
                         data.header_id = ia;
                         data.id = id;
@@ -246,10 +217,10 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
                         items.add(data);
 
-                        vList.addView(new ChildRatingRecyclerView(RequesterBaseRatingActivity.this, j, data, new ChildRatingRecyclerView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(int position, MkgServices data) {
+                        vList.addView(new ChildRatingRecyclerView(RequesterBaseRatingActivity.this, j, data, new ChildRatingRecyclerView.OnCheckedChangeListener() {
 
+                            @Override
+                            public void onItemClick(int position, MkgServices data, Boolean check) {
                                 List<MkgServices> selected = new ArrayList<>();
                                 int size = items.size();
                                 for (int i = size - 1; i >= 0; i--) {
@@ -264,11 +235,22 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                     }
                 }
             }
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getCountCheck(int idHeader) {
+        int jjs = 0;
+        for (MkgServices is : unSelectedItems) {
+            if (is.header_id == idHeader) {
+                jjs++;
+            }
+        }
+        if (jjs == Integer.valueOf(maxSelected.get(idHeader))) {
+            return jjs;
+        }
+        return 0;
     }
 
     public List<MkgServices> getSelectedList(List<MkgServices> items) {
@@ -279,30 +261,54 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                 selectedContacts.add(items.get(i));
             }
         }
-
         return selectedContacts;
     }
 
     protected void onListChecked(List<MkgServices> items) {
-        int total = items.size();
-        String sasa = "";
-        for (int i = 0; i < items.size(); i++) {
-            sasa += i + ",";
-        }
-        String pilih = "";
-        for (MkgServices is : items) {
-            pilih += is.id + ",";
-        }
 
-        if (items.size() != 0) {
+        int total = items.size();
+        if (total == 0) {
+            if (lanjut) {
+                Toast.makeText(RequesterBaseRatingActivity.this, "Tolong Pilih Reliever.", Toast.LENGTH_SHORT).show();
+            } else {
+                finish();
+            }
+        } else {
+
+            String pilih = "";
+            for (MkgServices is : items) {
+                pilih += is.id + ",";
+            }
+
             Map<String, String> params = new HashMap<>();
             params.put("id_request_detail", idRequest);
             params.put("id", pilih.substring(0, pilih.length() - 1));
             getDetail("https://bb.byonchat.com/ApiReliever/index.php/Request/submit_reliever", params);
-        } else {
-            Toast.makeText(RequesterBaseRatingActivity.this, "Tolong Pilih Reliever.", Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private void requestByParony(String Url, Map<String, String> params2) {
+        ProgressDialog rdialog = new ProgressDialog(RequesterBaseRatingActivity.this);
+        rdialog.setMessage("Request Manual...");
+        rdialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(RequesterBaseRatingActivity.this);
+
+        StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                response -> {
+                    Toast.makeText(getApplicationContext(), "Sukses", Toast.LENGTH_SHORT).show();
+                    rdialog.dismiss();
+                },
+                error -> rdialog.dismiss()
+        ) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                return params2;
+            }
+        };
+        queue.add(sr);
     }
 
 

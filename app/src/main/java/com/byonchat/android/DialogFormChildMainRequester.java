@@ -124,16 +124,25 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
                     dialog.dismiss();
                     try {
                         JSONArray jsonArray = new JSONArray(response);
+                        spinnerArraySub.add("-Pilih sub posisi-");
+                        SubPekerjaan sPs = new SubPekerjaan("0", "0");
+                        subPekerjaans.add(sPs);
+
                         for (int i = 0; i < jsonArray.length(); i++) {
                             String id = jsonArray.getJSONObject(i).getString("id");
                             String namaPekerjaan = jsonArray.getJSONObject(i).getString("nama_pekerjaan");
 
                             SubPekerjaan sP = new SubPekerjaan(id, namaPekerjaan);
+
                             spinnerArraySub.add(namaPekerjaan);
                             subPekerjaans.add(sP);
-                        }
-                        spinnerArraySubAdapter.notifyDataSetChanged();
 
+                            subIdnya = "";
+                            subNamenya = "";
+                        }
+
+                        spinnerArraySubAdapter.notifyDataSetChanged();
+                        spinnerSub.setSelection(0);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -220,6 +229,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
         spinnerSub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.w("gamungkin2", subPekerjaans.get(position).getId());
                 subIdnya = subPekerjaans.get(position).getId();
                 subNamenya = subPekerjaans.get(position).getNamaPekerjaan();
             }
@@ -274,7 +284,8 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
 
 
             JSONObject jsonObject = new JSONObject();
-
+            Log.w("gamungkin", subIdnya);
+            Log.w("gamungkin", subIdnya);
             try {
                 jsonObject.put("pekerjaan", pekerjaanNamenya);
                 jsonObject.put("subPekerjaa", subNamenya);

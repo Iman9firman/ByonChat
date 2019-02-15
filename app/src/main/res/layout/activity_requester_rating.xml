@@ -91,16 +91,9 @@
 
     <Button
         android:id="@+id/button_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        style="@style/btn_submit_v1"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/margin15"
-        android:background="@drawable/oval_btn_room"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="Submit"
-        android:textAllCaps="false"
-        android:textColor="@drawable/selector_txt_blue_white"
-        android:textSize="14sp" />
+        android:layout_margin="@dimen/margin15"
+        android:text="SUBMIT" />
 </RelativeLayout>

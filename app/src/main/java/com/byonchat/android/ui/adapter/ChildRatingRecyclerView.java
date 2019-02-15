@@ -8,8 +8,12 @@ import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingActivity;
+import com.byonchat.android.ISSActivity.Requester.RequesterBaseRatingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.data.model.MkgServices;
 import com.mindorks.placeholderview.annotations.Click;
@@ -32,17 +36,20 @@ public class ChildRatingRecyclerView {
     @View(R.id.child_total)
     TextView child_text_total;
 
+    @View(R.id.child_checkbox)
+    CheckBox child_checkbox;
+
     private Context mContext;
     private MkgServices data;
     private int position;
 
-    private OnItemClickListener itemClickListener;
+    private OnCheckedChangeListener itemClickListener;
 
-    public ChildRatingRecyclerView(Context mContext, int position, MkgServices data, OnItemClickListener itemClickListener) {
+    public ChildRatingRecyclerView(RequesterBaseRatingActivity mContext, int j, MkgServices data, OnCheckedChangeListener checkedChangeListener) {
         this.mContext = mContext;
         this.data = data;
         this.position = position;
-        this.itemClickListener = itemClickListener;
+        this.itemClickListener = checkedChangeListener;
     }
 
     @RequiresApi(21)
@@ -52,21 +59,33 @@ public class ChildRatingRecyclerView {
         child_rating.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.orange_300)));
         child_text_name.setText(data.child_name);
         child_text_distance.setText(data.child_distance);
-        if(data.total_kerja.equalsIgnoreCase("0")){
+        if (data.total_kerja.equalsIgnoreCase("0")) {
             child_text_total.setText("pekerja baru");
-        }else {
-            child_text_total.setText(data.total_kerja + " X bekerja");
+        } else {
+            child_text_total.setText(data.total_kerja + " x bekerja");
         }
+
+        child_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                int jjsss = ((RequesterBaseRatingActivity) mContext).getCountCheck(data.header_id);
+                if (jjsss > 0 && isChecked) {
+                    Toast.makeText(mContext, "Hanya dapat memilih " + jjsss + " reliever.", Toast.LENGTH_SHORT).show();
+                    buttonView.setChecked(false);
+                } else {
+                    if (itemClickListener != null) {
+                        itemClickListener.onItemClick(position, data, isChecked);
+                    }
+                }
+
+
+            }
+        });
+
     }
 
-    @Click(R.id.child_checkbox)
-    public void onItemClick() {
-        if (itemClickListener != null) {
-            itemClickListener.onItemClick(position, data);
-        }
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(int position, MkgServices data);
+    public interface OnCheckedChangeListener {
+        void onItemClick(int position, MkgServices data, Boolean check);
     }
 }

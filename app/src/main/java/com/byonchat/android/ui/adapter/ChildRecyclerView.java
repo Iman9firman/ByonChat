@@ -3,8 +3,6 @@ package com.byonchat.android.ui.adapter;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,31 +13,20 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
 import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.data.model.MkgServices;
 import com.byonchat.android.tabRequest.MapsViewActivity;
 import com.byonchat.android.tabRequest.RelieverDetailActivity;
-import com.byonchat.android.tabRequest.RelieverListActivity;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
-import com.stepstone.apprating.AppRatingDialog;
-import com.stepstone.apprating.listener.RatingDialogListener;
 
-import org.apache.http.message.BasicNameValuePair;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 @Layout(R.layout.mkg_child_layout)
-public class ChildRecyclerView implements RatingDialogListener {
+public class ChildRecyclerView {
 
     @View(R.id.child_name)
     TextView child_text_name;
@@ -73,53 +60,9 @@ public class ChildRecyclerView implements RatingDialogListener {
     @Resolve
     private void onResolve() {
 
-     /*dummy
-       child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View v) {
-
-                new AppRatingDialog.Builder()
-                        .setPositiveButtonText("Submit")
-                        .setNegativeButtonText("Cancel")
-                        .setNoteDescriptions(Arrays.asList("Very Bad", "Bad", "Good", "Very Good", "Excellent !!!"))
-                        .setDefaultRating(3)
-                        .setTitle("Rate this Reliever")
-                        .setDescription("Please select some stars and give your feedback")
-                        .setCommentInputEnabled(true)
-                        .setStarColor(R.color.yelow)
-                        .setTitleTextColor(R.color.black_alpha_50)
-                        .setDescriptionTextColor(R.color.black_alpha_50)
-                        .setHint("Please write your comment here ...")
-                        .setCommentBackgroundColor(R.color.grayList)
-                        .setCancelable(false)
-                        .setCanceledOnTouchOutside(false)
-                        .create((FragmentActivity) mContext)
-                        .show();
-
-
-              *//*  Map<String, String> paramsLog = new HashMap<>();
-                paramsLog.put("id", data.id);
-                paramsLog.put("rating", "2");
-                paramsLog.put("note", "Bagus");
-
-                getDetail("https://bb.byonchat.com/ApiReliever/index.php/Rating/reliever", paramsLog, false);
-
-                Map<String, String> params = new HashMap<>();
-                params.put("id", data.id);
-                params.put("status", "6");
-                getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
-*//*
-
-            }
-        });*/
-
-
-         //disini coyy
-
         child_img_contact.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
-                Log.w("masu22k", "euy");
                 Intent goToDetail = new Intent(mContext, RelieverDetailActivity.class);
                 goToDetail.putExtra("IDRELIEVER", data.id_reliever);
                 mContext.startActivity(goToDetail);
@@ -171,8 +114,6 @@ public class ChildRecyclerView implements RatingDialogListener {
             child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
                 public void onClick(android.view.View v) {
-                    Log.w("hahai", data.id);
-
                     Map<String, String> params = new HashMap<>();
                     params.put("id", data.id);
                     params.put("status", "3");
@@ -195,36 +136,7 @@ public class ChildRecyclerView implements RatingDialogListener {
                 @Override
                 public void onClick(android.view.View v) {
 
-                    new AppRatingDialog.Builder()
-                            .setPositiveButtonText("Submit")
-                            .setNegativeButtonText("Cancel")
-                            .setNoteDescriptions(Arrays.asList("Very Bad", "Bad", "Good", "Very Good", "Excellent !!!"))
-                            .setDefaultRating(2)
-                            .setTitle("Rate this Reliever")
-                            .setDescription("Please select some stars and give your feedback")
-                            .setCommentInputEnabled(true)
-                            .setStarColor(R.color.yelow)
-                            .setTitleTextColor(R.color.black_alpha_50)
-                            .setDescriptionTextColor(R.color.black_alpha_50)
-                            .setHint("Please write your comment here ...")
-                            .setCommentBackgroundColor(R.color.grayList)
-                            .setCancelable(false)
-                            .setCanceledOnTouchOutside(false)
-                            .create((FragmentActivity) mContext)
-                            .show();
-
-
-                    Map<String, String> paramsLog = new HashMap<>();
-                    paramsLog.put("id", data.id);
-                    paramsLog.put("rating", "2");
-                    paramsLog.put("note", "Bagus");
-
-                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/Rating/reliever", paramsLog, false);
-
-                    Map<String, String> params = new HashMap<>();
-                    params.put("id", data.id);
-                    params.put("status", "6");
-                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
+                    ((ByonchatBaseMallKelapaGadingActivity) mContext).setRating(data.id);
 
 
                 }
@@ -236,7 +148,6 @@ public class ChildRecyclerView implements RatingDialogListener {
             child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
                 public void onClick(android.view.View v) {
-                    Log.w("hahai", data.id);
                     Map<String, String> params = new HashMap<>();
                     params.put("id", data.id);
                     params.put("status", "5");
@@ -287,18 +198,4 @@ public class ChildRecyclerView implements RatingDialogListener {
         queue.add(sr);
     }
 
-    @Override
-    public void onNegativeButtonClicked() {
-
-    }
-
-    @Override
-    public void onNeutralButtonClicked() {
-
-    }
-
-    @Override
-    public void onPositiveButtonClicked(int i, @NotNull String s) {
-        Log.w("bau", "amis");
-    }
 }

@@ -16,6 +16,7 @@
         android:foreground="?selectableItemBackground"
         android:paddingTop="5dp">
 
+
         <TextView
             android:id="@+id/child_name"
             android:layout_width="wrap_content"
@@ -71,6 +72,16 @@
             android:layout_alignParentRight="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
             tools:text="1.15km" />
+
+        <RelativeLayout
+            android:id="@+id/clicked"
+            android:layout_alignStart="@+id/child_name"
+            android:layout_alignEnd="@+id/child_rating"
+            android:layout_alignBottom="@+id/child_distance"
+            android:layout_alignTop="@+id/child_name"
+            android:layout_centerVertical="true"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent" />
 
         <View
             android:layout_width="match_parent"

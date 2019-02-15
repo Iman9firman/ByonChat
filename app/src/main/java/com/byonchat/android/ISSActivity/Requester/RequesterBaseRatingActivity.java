@@ -191,6 +191,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                         JSONObject jOb = jsonArrayTiga.getJSONObject(j);
                         String id = jOb.getString("id_request_detail");
                         String name = jOb.getString("nama");
+                        String id_reliever = jOb.getString("id_reliever");
                         String distance = jOb.getString("jarak");
                         String total = jOb.getString("total_kerja");
                         String status = jOb.getString("status");
@@ -206,6 +207,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                         MkgServices data = new MkgServices();
                         data.header_id = ia;
                         data.id = id;
+                        data.id_reliever = id_reliever;
                         data.child_name = name;
                         data.child_distance = distance.substring(0, distance.indexOf(".") + titik) + " KM";
                         data.child_status = status;
@@ -265,7 +267,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
     }
 
     protected void onListChecked(List<MkgServices> items) {
-
+        Toast.makeText(RequesterBaseRatingActivity.this, "Tolong Pilih Reliever."+items.size(), Toast.LENGTH_SHORT).show();
         int total = items.size();
         if (total == 0) {
             if (lanjut) {

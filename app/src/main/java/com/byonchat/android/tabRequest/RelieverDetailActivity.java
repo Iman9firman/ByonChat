@@ -22,6 +22,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingActivity;
 import com.byonchat.android.R;
+import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.data.model.MkgServices;
 import com.byonchat.android.ui.adapter.ChildRecyclerView;
 import com.byonchat.android.ui.adapter.HeaderRecyclerView;
@@ -72,6 +73,10 @@ public class RelieverDetailActivity extends AppCompatActivity {
             params.put("id", aa);
             getDetail("https://bb.byonchat.com/ApiReliever/index.php/Reliever/detail", params);
 
+        }else{
+            Map<String, String> params = new HashMap<>();
+            params.put("id", 204+"");
+            getDetail("https://bb.byonchat.com/ApiReliever/index.php/Reliever/detail", params);
         }
     }
 
@@ -89,11 +94,15 @@ public class RelieverDetailActivity extends AppCompatActivity {
                     rdialog.dismiss();
                     try {
                         JSONObject jsonObject = new JSONObject(response);
-                        JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
-                        if (jsonArray.length() > 0) {
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jOb = jsonArray.getJSONObject(i);
-                                String noHp = jOb.getString("no_hp");
+
+                        Log.w("Hihfioegh nututr", jsonObject+"");
+//                        JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
+//                        if (jsonArray.length() > 0) {
+//                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jOb = jsonObject.getJSONObject("data");
+//                                JSONObject jOb = jsonArray.getJSONObject(i);
+                                String noHp = jOb.getString("bc_user");
+                                float rating = Float.valueOf(jOb.getString("rating"));
                                 String email = jOb.getString("email");
                                 String nama = jOb.getString("nama");
                                 String foto = jOb.getString("foto");
@@ -102,8 +111,9 @@ public class RelieverDetailActivity extends AppCompatActivity {
                                 String join_date = jOb.getString("join_date");
 
                                 if (foto.equalsIgnoreCase("-") || foto.equalsIgnoreCase("")) {
-                                    foto = "https://cdn.pixabay.com/photo/2017/02/23/13/05/profile-2092113_1280.png";
+                                    foto =  "https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + noHp + ".jpg";
                                 }
+
                                 Picasso.with(RelieverDetailActivity.this.getApplicationContext()).load(foto).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(image_detailReliever);
 
                                 text_name_real_detailReliever.setText(nama);
@@ -111,9 +121,10 @@ public class RelieverDetailActivity extends AppCompatActivity {
                                 text_address_real_detailReliever.setText("");
                                 text_jobExp_real_detailReliever.setText("Sejak " + join_date);
                                 text_nik_detailreleiver.setText(nik);
+                                rating_detailReliever.setRating(rating);
 
-                            }
-                        }
+//                            }
+//                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

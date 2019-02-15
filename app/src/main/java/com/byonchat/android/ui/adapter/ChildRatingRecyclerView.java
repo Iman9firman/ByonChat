@@ -1,6 +1,7 @@
 package com.byonchat.android.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -16,6 +17,7 @@ import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingAc
 import com.byonchat.android.ISSActivity.Requester.RequesterBaseRatingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.data.model.MkgServices;
+import com.byonchat.android.tabRequest.RelieverDetailActivity;
 import com.mindorks.placeholderview.annotations.Click;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
@@ -38,6 +40,9 @@ public class ChildRatingRecyclerView {
 
     @View(R.id.child_checkbox)
     CheckBox child_checkbox;
+
+    @View(R.id.clicked)
+    RelativeLayout frame_content;
 
     private Context mContext;
     private MkgServices data;
@@ -80,6 +85,15 @@ public class ChildRatingRecyclerView {
                 }
 
 
+            }
+        });
+
+        frame_content.setOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View v) {
+                Intent goToDetail = new Intent(mContext, RelieverDetailActivity.class);
+                goToDetail.putExtra("IDRELIEVER", data.id_reliever);
+                mContext.startActivity(goToDetail);
             }
         });
 

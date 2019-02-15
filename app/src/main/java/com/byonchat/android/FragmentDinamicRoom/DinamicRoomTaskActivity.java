@@ -1866,11 +1866,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valueFile.setText(valueP);
 
                         final int finalI25 = i;
+                        String finalLabel4 = label;
                         btnOption.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(context, DownloadFileByonchat.class);
                                 intent.putExtra("path", urlP);
+                                intent.putExtra("nama_file", finalLabel4);
                                 startActivity(intent);
                             }
                         });

@@ -158,9 +158,12 @@ public class ChildRecyclerView {
             status = "Done";
             child_bayangan.setVisibility(android.view.View.GONE);
             child_btn_cancel_approve.setVisibility(android.view.View.GONE);
+            child_img_location.setVisibility(android.view.View.GONE);
+
         } else {
             child_bayangan.setVisibility(android.view.View.GONE);
             child_btn_cancel_approve.setVisibility(android.view.View.GONE);
+            child_img_location.setVisibility(android.view.View.GONE);
         }
 
         child_text_status.setText(status);

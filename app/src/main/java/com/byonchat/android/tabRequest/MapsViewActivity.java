@@ -169,6 +169,12 @@ public class MapsViewActivity extends AppCompatActivity {
         provider.addLocationSource(LocationManager.GPS_PROVIDER);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runnable);
+    }
+
     public static ArrayList<Reliever> getListNew(String jsonresult, ArrayList<Reliever> relievers) {
         relievers = new ArrayList<>();
         try {
@@ -222,7 +228,9 @@ public class MapsViewActivity extends AppCompatActivity {
 
                         m.setPosition(nowLoc);
 
-                        m.setTitle(((int) road.mDuration / 60) + " Menit");
+                        int waktu = (int) road.mDuration;
+
+                        m.setTitle(((waktu + 600) / 60) + " Menit");
                         mapView.getOverlays().add(m);
                         mapView.invalidate();
                         mapController.setCenter(nowLoc);

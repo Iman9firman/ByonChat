@@ -4,23 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".tabRequest.RelieverDetailActivity"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:context=".tabRequest.RelieverDetailActivity">
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/image_detailReliever"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        app:civ_border_color="#EEEEEE"
         android:layout_marginTop="@dimen/margin20"
+        android:src="@drawable/bg_profile"
+        app:civ_border_color="#EEEEEE"
         app:civ_border_width="4dp"
         app:civ_shadow="true"
-        app:civ_shadow_radius="10"
         app:civ_shadow_color="#8BC34A"
-        android:src="@drawable/bg_profile"
-        app:layout_constraintTop_toTopOf="parent"
+        app:civ_shadow_radius="10"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RatingBar
         android:id="@+id/rating_detailReliever"
@@ -29,56 +29,53 @@
         android:layout_margin="4dp"
         android:isIndicator="true"
         android:stepSize=".5"
-        android:rating="3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_detailReliever"/>
+        app:layout_constraintTop_toBottomOf="@id/image_detailReliever" />
 
     <TextView
         android:id="@+id/text_name_real_detailReliever"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="John Doe"
-        android:textSize="26dp"
-        android:textAllCaps="true"
-        android:textStyle="bold"
-        android:layout_margin="4dp"
         style="@style/Base.TextAppearance.AppCompat.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rating_detailReliever"/>
+        app:layout_constraintTop_toBottomOf="@id/rating_detailReliever" />
 
     <TextView
         android:id="@+id/text_nik_detailReliever"
+        style="@style/Base.TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="lorem ipsum"
-        android:textSize="20dp"
         android:layout_margin="4dp"
-        style="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_name_real_detailReliever"/>
+        app:layout_constraintTop_toBottomOf="@id/text_name_real_detailReliever" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/margin20"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_nik_detailReliever"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/text_nik_detailReliever">
 
 
         <TextView
             android:id="@+id/text_birthDate_detailReliever"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tanggal Lahir"
             android:layout_margin="4dp"
-            style="@style/Base.TextAppearance.AppCompat.Medium"
+            android:text="Tanggal Lahir"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:id="@+id/divider_birthDate"
@@ -86,26 +83,26 @@
             android:layout_height="2dp"
             android:background="@android:color/darker_gray"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_birthDate_detailReliever"/>
+            app:layout_constraintTop_toBottomOf="@id/text_birthDate_detailReliever" />
 
         <TextView
             android:id="@+id/text_birthDate_real_detailReliever"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
             android:layout_margin="8dp"
+            android:text=""
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider_birthDate"/>
+            app:layout_constraintTop_toBottomOf="@id/divider_birthDate" />
 
         <TextView
             android:id="@+id/text_address_detailReliever"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Alamat"
-            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_margin="4dp"
+            android:text="Alamat"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_birthDate_real_detailReliever"/>
+            app:layout_constraintTop_toBottomOf="@id/text_birthDate_real_detailReliever" />
 
         <View
             android:id="@+id/divider_address"
@@ -113,26 +110,26 @@
             android:layout_height="2dp"
             android:background="@android:color/darker_gray"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_address_detailReliever"/>
+            app:layout_constraintTop_toBottomOf="@id/text_address_detailReliever" />
 
         <TextView
             android:id="@+id/text_address_real_detailReliever"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
             android:layout_margin="8dp"
+            android:text=""
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider_address"/>
+            app:layout_constraintTop_toBottomOf="@id/divider_address" />
 
         <TextView
             android:id="@+id/text_jobExp_detailReliever"
+            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pengalaman Kerja"
-            style="@style/Base.TextAppearance.AppCompat.Medium"
             android:layout_margin="4dp"
+            android:text="Pengalaman Kerja"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_address_real_detailReliever"/>
+            app:layout_constraintTop_toBottomOf="@id/text_address_real_detailReliever" />
 
         <View
             android:id="@+id/divider_jobExp"
@@ -140,16 +137,16 @@
             android:layout_height="2dp"
             android:background="@android:color/darker_gray"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_jobExp_detailReliever"/>
+            app:layout_constraintTop_toBottomOf="@id/text_jobExp_detailReliever" />
 
         <TextView
             android:id="@+id/text_jobExp_real_detailReliever"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
             android:layout_margin="8dp"
+            android:text=""
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider_jobExp"/>
+            app:layout_constraintTop_toBottomOf="@id/divider_jobExp" />
 
     </android.support.constraint.ConstraintLayout>
 

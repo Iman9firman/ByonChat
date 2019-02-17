@@ -64,7 +64,7 @@ public class ChildRatingRecyclerView {
         child_rating.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.orange_300)));
         child_text_name.setText(data.child_name);
         child_text_distance.setText(data.child_distance);
-        if (data.total_kerja.equalsIgnoreCase("0")) {
+        if (data.total_kerja.equalsIgnoreCase("0") || data.total_kerja.equalsIgnoreCase("")) {
             child_text_total.setText("pekerja baru");
         } else {
             child_text_total.setText(data.total_kerja + " x bekerja");

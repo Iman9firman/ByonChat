@@ -24,13 +24,13 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="2dp"
+            android:layout_toStartOf="@+id/child_rating"
             android:layout_toLeftOf="@+id/rating"
             android:ellipsize="end"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/byonchat_primary_text"
-            tools:text="Your Name" />
+            android:textColor="@color/byonchat_primary_text" />
 
         <TextView
             android:id="@+id/child_distance"
@@ -68,20 +68,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/child_rating"
-            android:layout_marginEnd="45dp"
             android:layout_alignParentRight="true"
+            android:layout_marginEnd="45dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             tools:text="1.15km" />
 
         <RelativeLayout
             android:id="@+id/clicked"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_alignStart="@+id/child_name"
+            android:layout_alignTop="@+id/child_name"
             android:layout_alignEnd="@+id/child_rating"
             android:layout_alignBottom="@+id/child_distance"
-            android:layout_alignTop="@+id/child_name"
-            android:layout_centerVertical="true"
-            android:layout_height="fill_parent"
-            android:layout_width="fill_parent" />
+            android:layout_centerVertical="true" />
 
         <View
             android:layout_width="match_parent"

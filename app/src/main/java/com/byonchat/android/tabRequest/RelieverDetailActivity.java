@@ -14,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -73,10 +74,9 @@ public class RelieverDetailActivity extends AppCompatActivity {
             params.put("id", aa);
             getDetail("https://bb.byonchat.com/ApiReliever/index.php/Reliever/detail", params);
 
-        }else{
-            Map<String, String> params = new HashMap<>();
-            params.put("id", 204+"");
-            getDetail("https://bb.byonchat.com/ApiReliever/index.php/Reliever/detail", params);
+        } else {
+            Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -92,45 +92,55 @@ public class RelieverDetailActivity extends AppCompatActivity {
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
+                    Log.w("nupo", response + "");
                     try {
                         JSONObject jsonObject = new JSONObject(response);
 
-                        Log.w("Hihfioegh nututr", jsonObject+"");
+                        Log.w("nututr", jsonObject + "");
 //                        JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
 //                        if (jsonArray.length() > 0) {
 //                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject jOb = jsonObject.getJSONObject("data");
+                        JSONObject jOb = jsonObject.getJSONObject("data");
 //                                JSONObject jOb = jsonArray.getJSONObject(i);
-                                String noHp = jOb.getString("bc_user");
-                                float rating = Float.valueOf(jOb.getString("rating"));
-                                String email = jOb.getString("email");
-                                String nama = jOb.getString("nama");
-                                String foto = jOb.getString("foto");
-                                String ttl = jOb.getString("ttl");
-                                String nik = jOb.getString("nik");
-                                String join_date = jOb.getString("join_date");
+                        String noHp = jOb.getString("bc_user");
+                        String rat = jOb.getString("rating");
+                        float rating = 0;
+                        if (!rat.equalsIgnoreCase("")) {
+                            rating = Float.valueOf(jOb.getString("rating"));
+                        }
 
-                                if (foto.equalsIgnoreCase("-") || foto.equalsIgnoreCase("")) {
-                                    foto =  "https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + noHp + ".jpg";
-                                }
+                        String email = jOb.getString("email");
+                        String nama = jOb.getString("nama");
+                        String foto = jOb.getString("foto");
+                        String ttl = jOb.getString("ttl");
+                        String nik = jOb.getString("nik");
+                        String alamat = jOb.getString("alamat");
+                        String join_date = jOb.getString("join_date");
 
-                                Picasso.with(RelieverDetailActivity.this.getApplicationContext()).load(foto).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(image_detailReliever);
+                        if (foto.equalsIgnoreCase("-") || foto.equalsIgnoreCase("")) {
+                            foto = "https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + noHp + ".jpg";
+                        }
 
-                                text_name_real_detailReliever.setText(nama);
-                                text_birthDate_real_detailReliever.setText(ttl);
-                                text_address_real_detailReliever.setText("");
-                                text_jobExp_real_detailReliever.setText("Sejak " + join_date);
-                                text_nik_detailreleiver.setText(nik);
-                                rating_detailReliever.setRating(rating);
+                        Picasso.with(RelieverDetailActivity.this.getApplicationContext()).load(foto).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(image_detailReliever);
 
-//                            }
-//                        }
+                        text_name_real_detailReliever.setText(nama);
+                        text_birthDate_real_detailReliever.setText(ttl);
+                        text_address_real_detailReliever.setText(alamat);
+                        text_jobExp_real_detailReliever.setText("Sejak " + join_date);
+                        text_nik_detailreleiver.setText(nik);
+                        rating_detailReliever.setRating(rating);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.w("nupo2", e + "");
+                        Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
+                        finish();
                     }
 
                 },
                 error -> {
+                    Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
+                    finish();
                     rdialog.dismiss();
                 }
         ) {

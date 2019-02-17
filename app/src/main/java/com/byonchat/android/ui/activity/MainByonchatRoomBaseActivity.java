@@ -554,6 +554,17 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     show = true;
                     valSetOne.add("hide");
                     mFragment = FragmentRoomSearchMultiTask.newInstance(title, "https://bb.byonchat.com/ApiReliever/index.php/Jobcall", username, id_rooms_tab, color, include_latlong, MainByonchatRoomBaseActivity.this, "showMultiple");
+                } else if (category.equalsIgnoreCase("22")) {
+                    //reliever
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(id_rooms_tab);
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    show = true;
+                    valSetOne.add("hide");
+                    mFragment = FragmentRoomSearchMultiTask.newInstance(title, "https://bb.byonchat.com/ApiReliever/index.php/Request/close_list", username, id_rooms_tab, color, include_latlong, MainByonchatRoomBaseActivity.this, "showMultiple");
                 }
 
                 if (status.equalsIgnoreCase("1") && show) {

@@ -108,6 +108,7 @@ public class FragmentRoomSearchMultiTask extends Fragment {
     BotListDB botListDB;
     LinearLayoutManager llm;
     Runnable runnable;
+    Handler handler = new Handler();
 
     public FragmentRoomSearchMultiTask(Activity ctx) {
         mContext = ctx;
@@ -202,7 +203,35 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                 new DinamicListTaskAdapter.MyClickListener() {
                     @Override
                     public void onItemClick(int position, View v) {
-                        if (!linkTembak.equalsIgnoreCase("https://bb.byonchat.com/ApiReliever/index.php/Request/list")) {
+                        if (linkTembak.equalsIgnoreCase("https://bb.byonchat.com/ApiReliever/index.php/Request/list")) {
+                            if (myadapter.getData().get(position).getStatus().equalsIgnoreCase("Close")) {
+                                final AlertDialog.Builder alertbox = new AlertDialog.Builder(getContext());
+                                alertbox.setTitle("Search Reliever");
+                                alertbox.setMessage("CLose");
+                                alertbox.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                    }
+                                });
+                                alertbox.show();
+                            } else {
+                                Intent intent4 = new Intent(getContext(), ByonchatMallKelapaGadingActivity.class);
+                                intent4.putExtra(Constants.EXTRA_COLOR, "022b95");
+                                intent4.putExtra(Constants.EXTRA_COLORTEXT, "ffffff");
+                                intent4.putExtra(Constants.EXTRA_ITEM, myadapter.getData().get(position).getIdHex() + "");
+                                intent4.putExtra(Constants.EXTRA_ROOM, myadapter.getData().get(position).getMetode() + "");
+                                startActivity(intent4);
+
+                            }
+
+                        } else if (linkTembak.equalsIgnoreCase("https://bb.byonchat.com/ApiReliever/index.php/Request/close_list")) {
+                            Intent intent4 = new Intent(getContext(), ByonchatMallKelapaGadingActivity.class);
+                            intent4.putExtra(Constants.EXTRA_COLOR, "022b95");
+                            intent4.putExtra(Constants.EXTRA_COLORTEXT, "ffffff");
+                            intent4.putExtra(Constants.EXTRA_ITEM, myadapter.getData().get(position).getIdHex() + "");
+                            intent4.putExtra(Constants.EXTRA_ROOM, myadapter.getData().get(position).getMetode() + "");
+                            startActivity(intent4);
+                        } else {
                             if (myadapter.getData().get(position).getStatus().equalsIgnoreCase("New") ||
                                     myadapter.getData().get(position).getStatus().equalsIgnoreCase("CheckIn") ||
                                     myadapter.getData().get(position).getStatus().equalsIgnoreCase("CheckOut")) {
@@ -229,26 +258,6 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                                 });
                                 alertbox.show();
 
-
-                            }
-                        } else {
-                            if (myadapter.getData().get(position).getStatus().equalsIgnoreCase("Close")) {
-                                final AlertDialog.Builder alertbox = new AlertDialog.Builder(getContext());
-                                alertbox.setTitle("Search Reliever");
-                                alertbox.setMessage("CLose");
-                                alertbox.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface arg0, int arg1) {
-
-                                    }
-                                });
-                                alertbox.show();
-                            } else {
-                                Intent intent4 = new Intent(getContext(), ByonchatMallKelapaGadingActivity.class);
-                                intent4.putExtra(Constants.EXTRA_COLOR, "022b95");
-                                intent4.putExtra(Constants.EXTRA_COLORTEXT, "ffffff");
-                                intent4.putExtra(Constants.EXTRA_ITEM, myadapter.getData().get(position).getIdHex() + "");
-                                intent4.putExtra(Constants.EXTRA_ROOM, myadapter.getData().get(position).getMetode() + "");
-                                startActivity(intent4);
 
                             }
                         }
@@ -290,7 +299,7 @@ public class FragmentRoomSearchMultiTask extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Handler handler = new Handler();
+
         runnable = () -> {
             requestKey();
             handler.postDelayed(runnable, 40000);
@@ -299,6 +308,11 @@ public class FragmentRoomSearchMultiTask extends Fragment {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(runnable);
+    }
 
     private void requestKey() {
         requestTask = new FragmentRoomSearchMultiTask.requestTask(mContext.getApplicationContext());
@@ -402,7 +416,64 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                 // 1 menit kalau idle, 3 detik kalau sedang confirm
                 // mati jika checkin
                 // on jika checkout
-                if (!linkTembak.equalsIgnoreCase("https://bb.byonchat.com/ApiReliever/index.php/Request/list")) {
+                if (linkTembak.equalsIgnoreCase("https://bb.byonchat.com/ApiReliever/index.php/Request/list")) {
+                    try {
+                        JSONObject jsp = new JSONObject(content);
+                        JSONArray jsonArray = jsonArray = new JSONArray(jsp.getString("data"));
+                        String status = "";
+                        if (jsp.getString("status").equalsIgnoreCase("1")) {
+                            status = "Open";
+                        } else if (jsp.getString("status").equalsIgnoreCase("2")) {
+                            status = "Close";
+                        } else if (jsp.getString("status").equalsIgnoreCase("3")) {
+                            status = "Not Found";
+                        }
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+
+                            String id_request = jsonArray.getJSONObject(i).getString("id_request");
+                            String nama_jjt = jsonArray.getJSONObject(i).getString("nama_jjt");
+                            String request_status = jsonArray.getJSONObject(i).getString("request_status");
+                            String nama_pekerjaan = jsonArray.getJSONObject(i).getString("nama_pekerjaan");
+                            String create_at = jsonArray.getJSONObject(i).getString("create_at");
+                            String jjt_lat = jsonArray.getJSONObject(i).getString("jjt_lat");
+                            String jjt_long = jsonArray.getJSONObject(i).getString("jjt_long");
+
+                            ContentRoom contentRoom = new ContentRoom(id_request, nama_jjt, create_at, nama_pekerjaan, jsonArray.getJSONObject(i).toString(), status, jjt_lat + ":" + jjt_long);
+
+                            listItem.add(contentRoom);
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else if (linkTembak.equalsIgnoreCase("https://bb.byonchat.com/ApiReliever/index.php/Request/close_list")) {
+                    try {
+                        JSONObject jsp = new JSONObject(content);
+                        JSONArray jsonArray = jsonArray = new JSONArray(jsp.getString("data"));
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+
+                            String id_request = jsonArray.getJSONObject(i).getString("id_request");
+                            String nama_jjt = jsonArray.getJSONObject(i).getString("nama_jjt");
+                            String nama_pekerjaan = jsonArray.getJSONObject(i).getString("nama_pekerjaan");
+                            String create_at = jsonArray.getJSONObject(i).getString("create_at");
+                            String jjt_lat = jsonArray.getJSONObject(i).getString("jjt_lat");
+                            String jjt_long = jsonArray.getJSONObject(i).getString("jjt_long");
+
+                            ContentRoom contentRoom = new ContentRoom(id_request, nama_jjt, create_at, nama_pekerjaan, jsonArray.getJSONObject(i).toString(), "done", jjt_lat + ":" + jjt_long);
+
+                            listItem.add(contentRoom);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
                     try {
                         JSONArray jsonArray = new JSONArray(content);
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -435,38 +506,6 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                             }
 
                             ContentRoom contentRoom = new ContentRoom(id, nama_jjt, waktu_mulai, pekerjaan + "," + waktu_mulai + " - " + waktu_selesai, jsonArray.getJSONObject(i).toString(), status, requester_nama);
-
-                            listItem.add(contentRoom);
-                        }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    try {
-                        JSONObject jsp = new JSONObject(content);
-                        JSONArray jsonArray = jsonArray = new JSONArray(jsp.getString("data"));
-                        String status = "";
-                        if (jsp.getString("status").equalsIgnoreCase("1")) {
-                            status = "Open";
-                        } else if (jsp.getString("status").equalsIgnoreCase("2")) {
-                            status = "Close";
-                        } else if (jsp.getString("status").equalsIgnoreCase("3")) {
-                            status = "Not Found";
-                        }
-
-                        for (int i = 0; i < jsonArray.length(); i++) {
-
-                            String id_request = jsonArray.getJSONObject(i).getString("id_request");
-                            String nama_jjt = jsonArray.getJSONObject(i).getString("nama_jjt");
-                            String request_status = jsonArray.getJSONObject(i).getString("request_status");
-                            String nama_pekerjaan = jsonArray.getJSONObject(i).getString("nama_pekerjaan");
-                            String create_at = jsonArray.getJSONObject(i).getString("create_at");
-                            String jjt_lat = jsonArray.getJSONObject(i).getString("jjt_lat");
-                            String jjt_long = jsonArray.getJSONObject(i).getString("jjt_long");
-
-                            ContentRoom contentRoom = new ContentRoom(id_request, nama_jjt, create_at, nama_pekerjaan, jsonArray.getJSONObject(i).toString(), status, jjt_lat + ":" + jjt_long);
 
                             listItem.add(contentRoom);
                         }

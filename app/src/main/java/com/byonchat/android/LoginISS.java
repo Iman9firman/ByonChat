@@ -72,8 +72,12 @@ public class LoginISS extends AppCompatActivity {
         EditText accID = (EditText) findViewById(R.id.login_acc);
 
         accID.setText("issid");
-      //  userID.setText("1701793");
-      //  passID.setText("Pass1701793");
+       /* userID.setText("1701793");
+        passID.setText("Pass1701793");*/
+
+        userID.setText("TESTING");
+        passID.setText("Testing1234");
+
 
         erwgv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,24 +188,27 @@ public class LoginISS extends AppCompatActivity {
                     ATASAN_2_NIK, ATASAN_2_JT, ATASAN_2_NAMA, ATASAN_2_PHONE, LIST_APPROVE_ROLE1, LIST_APPROVE_ROLE2,
                     LIST_REQ_ROLE, MY_ROLE};
 
+            db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
+
+
+            if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
+                new Validations().getInstance(getApplicationContext()).setTimebyId(26);
+                Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
+                intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                intent.putExtra("success", "oke");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getApplicationContext().startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(LoginISS.this, "Username dan password anda salah", Toast.LENGTH_LONG).show();
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(LoginISS.this, "Terjadi Kesalah di Server ISS. Terimakasih", Toast.LENGTH_LONG).show();
         }
 
-        db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
 
-
-        if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
-            new Validations().getInstance(getApplicationContext()).setTimebyId(26);
-            Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
-            intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-            intent.putExtra("success", "oke");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplicationContext().startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(LoginISS.this, "Username dan password anda salah", Toast.LENGTH_SHORT).show();
-        }
     }
 
 

@@ -40,12 +40,14 @@ import com.byonchat.android.DialogFormChildMainRequester;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.ISSActivity.Requester.RequesterRatingActivity;
 import com.byonchat.android.R;
+import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.tabRequest.MapsViewActivity;
+import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.CalendarDialog;
 import com.itextpdf.text.pdf.parser.Line;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
@@ -109,8 +111,6 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         if (cursor.getCount() > 0) {
             String content = cursor.getString(cursor.getColumnIndexOrThrow(UserDB.EMPLOYEE_MULTICOST));
 
-            Log.w("hallo", content);
-
             ArrayList<String> spinnerArray = new ArrayList<String>();
             String[] arr = content.split(",");
 
@@ -143,7 +143,6 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
                     @Override
                     public void userCanceled() {
-                        Toast.makeText(getApplicationContext(), "Canceled", Toast.LENGTH_SHORT).show();
                     }
                 });
                 dialogFormChildMainRequester.show();
@@ -155,104 +154,43 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    if (!keperluan.isEmpty()) {
-                        JSONArray jsonArray = new JSONArray();
-                        for (String kk : keperluan) {
-                            JSONObject joo = new JSONObject(kk);
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("id_pekerjaan", joo.getString("idSub"));
-                            jsonObject.put("mulai", joo.getString("jadwalMulai"));
-                            jsonObject.put("selesai", joo.getString("jadwalAkhir"));
-                            jsonObject.put("jumlah", joo.getString("jumlah"));
+                if (NetworkInternetConnectionStatus.getInstance(DinamicRoomSearchTaskActivity.this).isOnline(DinamicRoomSearchTaskActivity.this)) {
+                    try {
+                        if (!keperluan.isEmpty()) {
+                            JSONArray jsonArray = new JSONArray();
+                            for (String kk : keperluan) {
+                                JSONObject joo = new JSONObject(kk);
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("id_pekerjaan", joo.getString("idSub"));
+                                jsonObject.put("mulai", joo.getString("jadwalMulai"));
+                                jsonObject.put("selesai", joo.getString("jadwalAkhir"));
+                                jsonObject.put("jumlah", joo.getString("jumlah"));
 
-                            jsonArray.put(jsonObject);
+                                jsonArray.put(jsonObject);
+                            }
+                            MessengerDatabaseHelper messengerHelper = null;
+                            if (messengerHelper == null) {
+                                messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+                            }
+
+                            Contact contact = messengerHelper.getMyContact();
+                            Map<String, String> params = new HashMap<>();
+                            params.put("jjt", dua.get(spinner.getSelectedItemPosition()));
+                            params.put("data", jsonArray.toString());
+                            params.put("bc_user", contact.getJabberId());
+
+                            getSubPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Request", params);
+
+                        } else {
+                            Toast.makeText(DinamicRoomSearchTaskActivity.this, "Harap pilih reliever yang dibutuhkan", Toast.LENGTH_SHORT).show();
                         }
-                        MessengerDatabaseHelper messengerHelper = null;
-                        if (messengerHelper == null) {
-                            messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
-                        }
 
-                        Contact contact = messengerHelper.getMyContact();
-                        Map<String, String> params = new HashMap<>();
-                        params.put("jjt", dua.get(spinner.getSelectedItemPosition()));
-                        Log.w("kasam1", dua.get(spinner.getSelectedItemPosition()));
-                        Log.w("kasam2", jsonArray.toString());
-                        Log.w("bc_user", contact.getJabberId());
-                        params.put("data", jsonArray.toString());
-                        params.put("bc_user", contact.getJabberId());
-
-                        getSubPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Request", params);
-                    } else {
-                        Toast.makeText(DinamicRoomSearchTaskActivity.this, "Harap pilih reliever yang dibutuhkan", Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                    /*String ada = "{\n" +
-                            "  \"status\": \"1\",\n" +
-                            "  \"message\": \"succes\",\n" +
-                            "  \"data\": [\n" +
-                            "    {\n" +
-                            "      \"id_request\": \"51\",\n" +
-                            "      \"request_status\": \"0\",\n" +
-                            "      \"kode_jjt\": \"ISS-01349O0002\",\n" +
-                            "      \"nama_jjt\": \"Cleaner Jakarta - GRAHA ISS\",\n" +
-                            "      \"jjt_lat\": \"-6.2799206\",\n" +
-                            "      \"jjt_long\": \"106.712887\",\n" +
-                            "      \"sub_request\": [\n" +
-                            "        {\n" +
-                            "          \"id_sub_request\": \"58\",\n" +
-                            "          \"jumlah\": \"2\",\n" +
-                            "          \"nama_pekerjaan\": \"Cleaner\",\n" +
-                            "          \"request_detail\": [\n" +
-                            "            {\n" +
-                            "              \"id_request_detail\": \"28\",\n" +
-                            "              \"rating\": 5,\n" +
-                            "              \"nama\": \"Aziz\",\n" +
-                            "              \"id_reliever\": \"193\",\n" +
-                            "              \"jarak\": 10.607576386624,\n" +
-                            "              \"lat\": \"-6.19751692\",\n" +
-                            "              \"long\": \"106.76124573\",\n" +
-                            "              \"hp\": \"6285322226666\",\n" +
-                            "              \"status\": \"0\",\n" +
-                            "              \"total_kerja\": 0\n" +
-                            "            },\n" +
-                            "            {\n" +
-                            "              \"id_request_detail\": \"29\",\n" +
-                            "              \"rating\": 5,\n" +
-                            "              \"nama\": \"Iman(Byonchat)\",\n" +
-                            "              \"id_reliever\": \"194\",\n" +
-                            "              \"jarak\": 0.10827069351829,\n" +
-                            "              \"lat\": \"-6.27945089\",\n" +
-                            "              \"long\": \"106.71374512\",\n" +
-                            "              \"hp\": \"62858922221\",\n" +
-                            "              \"status\": \"0\",\n" +
-                            "              \"total_kerja\": 0\n" +
-                            "            }\n" +
-                            "          ]\n" +
-                            "        },{\n" +
-                            "          \"id_sub_request\": \"10\",\n" +
-                            "          \"jumlah\": \"2\",\n" +
-                            "          \"nama_pekerjaan\": \"WOW\",\n" +
-                            "          \"request_detail\": [\n" +
-                            "          ]\n" +
-                            "        }\n" +
-                            "      ]\n" +
-                            "    }\n" +
-                            "  ]\n" +
-                            "}";
-
-                    JSONObject jsonObject = new JSONObject(ada);
-                    if (jsonObject.has("data")) {
-                        Intent intent5 = new Intent(getApplicationContext(), RequesterRatingActivity.class);
-                        intent5.putExtra(Constants.EXTRA_COLOR, "022B96");
-                        intent5.putExtra(Constants.EXTRA_COLORTEXT, "ffffff");
-                        JSONArray jsonArrays = new JSONArray(jsonObject.getString("data"));
-                        intent5.putExtra(Constants.EXTRA_ITEM, jsonArrays.toString());
-                        startActivity(intent5);
-                        finish();
-                    }*/
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } else {
+                    Toast.makeText(DinamicRoomSearchTaskActivity.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
 
 
@@ -325,10 +263,14 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                         startActivity(intent5);
                         finish();
                     } catch (JSONException e) {
+                        Toast.makeText(getApplicationContext(), "Terjadi kesalahan pada sistem , Harap ulangi beberapa saat", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
                 },
-                error -> rdialog.dismiss()
+                error -> {
+                    rdialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
+                }
         ) {
 
             @Override
@@ -365,77 +307,4 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
 }
-
-
-
-/*
-
-contoh
- */
-/* String ada = "{\n" +
-                            "  \"status\": \"1\",\n" +
-                            "  \"message\": \"succes\",\n" +
-                            "  \"data\": [\n" +
-                            "    {\n" +
-                            "      \"id_request\": \"51\",\n" +
-                            "      \"request_status\": \"0\",\n" +
-                            "      \"kode_jjt\": \"ISS-01349O0002\",\n" +
-                            "      \"nama_jjt\": \"Cleaner Jakarta - GRAHA ISS\",\n" +
-                            "      \"jjt_lat\": \"-6.2799206\",\n" +
-                            "      \"jjt_long\": \"106.712887\",\n" +
-                            "      \"sub_request\": [\n" +
-                            "        {\n" +
-                            "          \"id_sub_request\": \"58\",\n" +
-                            "          \"jumlah\": \"2\",\n" +
-                            "          \"nama_pekerjaan\": \"Cleaner\",\n" +
-                            "          \"request_detail\": [\n" +
-                            "            {\n" +
-                            "              \"id_request_detail\": \"28\",\n" +
-                            "              \"rating\": 5,\n" +
-                            "              \"nama\": \"Aziz\",\n" +
-                            "              \"id_reliever\": \"193\",\n" +
-                            "              \"jarak\": 10.607576386624,\n" +
-                            "              \"lat\": \"-6.19751692\",\n" +
-                            "              \"long\": \"106.76124573\",\n" +
-                            "              \"hp\": \"6285322226666\",\n" +
-                            "              \"status\": \"0\",\n" +
-                            "              \"total_kerja\": 0\n" +
-                            "            },\n" +
-                            "            {\n" +
-                            "              \"id_request_detail\": \"29\",\n" +
-                            "              \"rating\": 5,\n" +
-                            "              \"nama\": \"Iman(Byonchat)\",\n" +
-                            "              \"id_reliever\": \"194\",\n" +
-                            "              \"jarak\": 0.10827069351829,\n" +
-                            "              \"lat\": \"-6.27945089\",\n" +
-                            "              \"long\": \"106.71374512\",\n" +
-                            "              \"hp\": \"62858922221\",\n" +
-                            "              \"status\": \"0\",\n" +
-                            "              \"total_kerja\": 0\n" +
-                            "            }\n" +
-                            "          ]\n" +
-                            "        },{\n" +
-                            "          \"id_sub_request\": \"10\",\n" +
-                            "          \"jumlah\": \"2\",\n" +
-                            "          \"nama_pekerjaan\": \"WOW\",\n" +
-                            "          \"request_detail\": [\n" +
-                            "          ]\n" +
-                            "        }\n" +
-                            "      ]\n" +
-                            "    }\n" +
-                            "  ]\n" +
-                            "}";
-
-                    JSONObject jsonObject = new JSONObject(ada);
-                    if (jsonObject.has("data")) {
-                        Intent intent5 = new Intent(getApplicationContext(), RequesterRatingActivity.class);
-                        intent5.putExtra(Constants.EXTRA_COLOR, "022B96");
-                        intent5.putExtra(Constants.EXTRA_COLORTEXT, "ffffff");
-                        JSONArray jsonArrays = new JSONArray(jsonObject.getString("data"));
-                        intent5.putExtra(Constants.EXTRA_ITEM, jsonArrays.toString());
-                        startActivity(intent5);
-                        finish();
-                    }*/
-

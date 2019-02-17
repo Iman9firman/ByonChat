@@ -34,6 +34,7 @@ import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.IconItem;
 import com.byonchat.android.ui.adapter.ChildRecyclerView;
 import com.byonchat.android.ui.adapter.HeaderRecyclerView;
+import com.byonchat.android.ui.adapter.NotifikasinoresultView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mindorks.placeholderview.ExpandablePlaceHolderView;
 import com.stepstone.apprating.AppRatingDialog;
@@ -92,9 +93,6 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     Log.w("hasilny", response);
-
-                    // {"status":1,"message":"succes","data":[{"id_sub_request":"9","nama_pekerjaan":"Cashier","request_detail":[{"id_request_detail":"4","rating":5,"nama":"samsul","jarak":11859.919182259,"lat":"-6.1953407","long":"106.7647243","hp":"62858922221","status":"0","total_kerja":0}]}]}
-
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
@@ -129,6 +127,8 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
 
                                         vList.addView(new ChildRecyclerView(ByonchatBaseMallKelapaGadingActivity.this, data));
                                     }
+                                } else {
+                                    vList.addView(new NotifikasinoresultView(ByonchatBaseMallKelapaGadingActivity.this, "Waiting for Resources (HO)"));
                                 }
                             }
                         }

@@ -144,6 +144,10 @@ public class ChildRecyclerView {
         } else if (data.child_status.equalsIgnoreCase("5")) {
             status = "Cancel";
             child_bayangan.setVisibility(android.view.View.GONE);
+            child_btn_cancel_approve.setVisibility(android.view.View.GONE);
+            child_img_location.setVisibility(android.view.View.GONE);
+
+          /*  child_bayangan.setVisibility(android.view.View.GONE);
             child_btn_cancel_approve.setEnabled(true);
             child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
@@ -153,7 +157,7 @@ public class ChildRecyclerView {
                     params.put("status", "5");
                     getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
                 }
-            });
+            });*/
         } else if (data.child_status.equalsIgnoreCase("6")) {
             status = "Done";
             child_bayangan.setVisibility(android.view.View.GONE);

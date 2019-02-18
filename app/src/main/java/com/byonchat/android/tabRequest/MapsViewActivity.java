@@ -172,7 +172,9 @@ public class MapsViewActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(runnable);
+        if (handler != null) {
+            handler.removeCallbacks(runnable);
+        }
     }
 
     public static ArrayList<Reliever> getListNew(String jsonresult, ArrayList<Reliever> relievers) {

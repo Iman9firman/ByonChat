@@ -1430,6 +1430,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         public void onClick(View v) {
                                             Intent intent = new Intent(context, DownloadFileByonchat.class);
                                             intent.putExtra("path", cc);
+                                            intent.putExtra("nama_file", valueFile.getText().toString());
                                             startActivity(intent);
                                         }
                                     });

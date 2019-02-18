@@ -194,11 +194,17 @@ public class DownloadFileByonchat extends AppCompatActivity {
 
         File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
 
-        NAME_FILE = DOWNLOAD_PATH.toString().substring(DOWNLOAD_PATH.toString().lastIndexOf('/'), DOWNLOAD_PATH.toString().length());
+        NAME_FILE = DOWNLOAD_PATH.substring(DOWNLOAD_PATH.lastIndexOf('/'), DOWNLOAD_PATH.length());
 
         String extension = NAME_FILE.substring(NAME_FILE.lastIndexOf("."));
 
-        NEW_NAME_FILE = getIntent().getStringExtra("nama_file")+extension;
+        if (getIntent().getStringExtra("nama_file") != null) {
+            NEW_NAME_FILE = getIntent().getStringExtra("nama_file") + extension;
+        } else {
+            NEW_NAME_FILE = NAME_FILE;
+        }
+
+
         File oldFile = new File(oldFolder, NEW_NAME_FILE);
         if (oldFile.exists()) {
             finish();

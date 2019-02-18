@@ -84,7 +84,6 @@ import com.byonchat.android.utils.GetRealNameRoom;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ImageLoadingUtils;
 import com.byonchat.android.utils.MediaProcessingUtil;
-import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.PicassoOwnCache;
 import com.byonchat.android.utils.RefreshContactService;
 import com.byonchat.android.utils.RequestKeyTask;

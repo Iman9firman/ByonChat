@@ -4,17 +4,25 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -33,8 +41,10 @@ import com.byonchat.android.personalRoom.NoteCommentActivity;
 import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.byonchat.android.personalRoom.model.NewsFeedItem;
 import com.byonchat.android.provider.BotListDB;
+import com.byonchat.android.provider.ContentRoom;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.OnLoadMoreListener;
+import com.byonchat.android.utils.Utility;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -46,19 +56,22 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
  * Created by lukma on 3/7/2016.
  */
-public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
     private static final String URL_SAVE_LOVES = "https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/proses/list_note_like.php";
     private static final String URL_SAVE_DISLIKE = "https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/proses/list_note_dislike.php";
     private List<NewsFeedItem> feedItems;
+    private List<NewsFeedItem> feedItemFinds;
     private NewsFeedListAdapterNew adapter;
     ImageLoader imageLoader;
     Context mContext;
     private static final String TAG = NewsFeedListAdapterNew.class.getSimpleName();
+    private String charString;
     /**/
     private final int VIEW_REFRESH = 2;
     private final int VIEW_ITEM = 1;
@@ -76,6 +89,7 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
         }
         this.mContext = activity;
         feedItems = feedItem;
+        feedItemFinds = feedItem;
 
         if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
 
@@ -108,7 +122,7 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        return feedItems.get(position) != null ? VIEW_ITEM : VIEW_PROG;
+        return feedItemFinds.get(position) != null ? VIEW_ITEM : VIEW_PROG;
     }
 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -127,6 +141,29 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
         return fHolder;
     }
 
+    public List<NewsFeedItem> getData() {
+        feedItems = feedItemFinds;
+        return feedItemFinds;
+    }
+
+    protected void setFindedText(TextView view, String args) {
+        if (charString != null && !charString.isEmpty()) {
+            int startPos = args.toLowerCase(Locale.getDefault()).indexOf(charString.toLowerCase(Locale.getDefault()));
+            int endPos = startPos + charString.length();
+
+            if (startPos != -1) {
+                Spannable spannable = new SpannableString(args);
+                ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                view.setText(spannable);
+            } else {
+                view.setText(args);
+            }
+        } else {
+            view.setText(args);
+        }
+    }
 
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int i) {
         if (db == null) {
@@ -134,11 +171,34 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         if (holder instanceof FeedItemsHolderNews) {
-            final NewsFeedItem item = feedItems.get(i);
+            final NewsFeedItem item = feedItemFinds.get(i);
 
-            ((FeedItemsHolderNews) holder).name.setText(item.getTitle());
-            ((FeedItemsHolderNews) holder).timestamp.setText("Updates on : " + item.getTimeStamp());
-            ((FeedItemsHolderNews) holder).txtStatusMsg.setText(parsedMessageBody(Html.fromHtml(item.getStatus()).toString(), 100));
+            /*String title = item.getTitle();
+
+            if (charString != null && !charString.isEmpty()) {
+                int startPos = title.toLowerCase(Locale.getDefault()).indexOf(charString.toLowerCase(Locale.getDefault()));
+                int endPos = startPos + charString.length();
+
+                if (startPos != -1) {
+                    Spannable spannable = new SpannableString(title);
+                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    ((FeedItemsHolderNews) holder).name.setText(spannable);
+                } else {
+                    ((FeedItemsHolderNews) holder).name.setText(title);
+                }
+            } else {
+                ((FeedItemsHolderNews) holder).name.setText(title);
+            }*/
+
+            setFindedText(((FeedItemsHolderNews) holder).name, item.getTitle());
+            setFindedText(((FeedItemsHolderNews) holder).timestamp, item.getTimeStamp());
+            setFindedText(((FeedItemsHolderNews) holder).txtStatusMsg, parsedMessageBody(Html.fromHtml(item.getStatus()).toString(), 100));
+
+//            ((FeedItemsHolderNews) holder).name.setText(item.getTitle());
+//            ((FeedItemsHolderNews) holder).timestamp.setText("Updates on : " + item.getTimeStamp());
+//            ((FeedItemsHolderNews) holder).txtStatusMsg.setText(parsedMessageBody(Html.fromHtml(item.getStatus()).toString(), 100));
 
             ((FeedItemsHolderNews) holder).totalComments.setText(item.getJumlahComment());
             ((FeedItemsHolderNews) holder).totalLoves.setVisibility(View.GONE);
@@ -238,18 +298,21 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public int getItemCount() {
-        return feedItems == null ? 0 : feedItems.size();
+        return feedItemFinds == null ? 0 : feedItemFinds.size();
     }
 
     public NewsFeedListAdapterNew(Activity context) {
         feedItems = new ArrayList<>();
+        feedItemFinds = new ArrayList<>();
         mContext = context;
     }
 
     public void setData(List<NewsFeedItem> photoList) {
         feedItems.clear();
+        feedItemFinds.clear();
         feedItems.addAll(photoList);
-        this.notifyItemRangeInserted(0, feedItems.size() - 1);
+        feedItemFinds.addAll(photoList);
+        this.notifyItemRangeInserted(0, feedItemFinds.size() - 1);
     }
 
     public String parsedMessageBody(String message, int maxLen) {
@@ -426,4 +489,37 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults();
+                charString = constraint.toString().toLowerCase(Locale.getDefault());
+
+                if (charString.isEmpty()) {
+                    results.values = feedItems;
+                    results.count = feedItems.size();
+                } else {
+                    List<NewsFeedItem> filteredData = new ArrayList<>();
+                    for (NewsFeedItem row : feedItems) {
+                        if (row.getTitle().toString().toLowerCase(Locale.getDefault()).contains(charString)
+                                || row.getTimeStamp().toString().toLowerCase(Locale.getDefault()).contains(charString)
+                                || parsedMessageBody(Html.fromHtml(row.getStatus()).toString(), 100).toLowerCase(Locale.getDefault()).contains(charString)) {
+                            filteredData.add(row);
+                        }
+                    }
+                    results.values = filteredData;
+                    results.count = filteredData.size();
+                }
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                feedItemFinds = (ArrayList<NewsFeedItem>) results.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
 }

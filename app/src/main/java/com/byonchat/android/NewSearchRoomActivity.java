@@ -1173,6 +1173,9 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                 editor.clear();
                 editor.commit();
 
+                editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                editor.apply();
+
                 Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), name, path);
                 startActivity(ii);
 

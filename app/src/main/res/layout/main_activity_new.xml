@@ -191,13 +191,17 @@
 
             <include layout="@layout/custom_home_grid_two" />
 
-            <include layout="@layout/custom_home_grid_three" />
+            <!--<include layout="@layout/custom_home_grid_three" />-->
 
             <include layout="@layout/custom_home_grid_four" />
 
-            <include layout="@layout/custom_home_grid_five" />
+            <!--<include layout="@layout/custom_home_grid_five" />-->
 
-            <include layout="@layout/custom_home_grid_six" />
+            <!--<include layout="@layout/custom_home_grid_six" />-->
+
+            <!--<include layout="@layout/custom_home_grid_seven" />-->
+
+            <include layout="@layout/custom_home_grid_nine" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_main"

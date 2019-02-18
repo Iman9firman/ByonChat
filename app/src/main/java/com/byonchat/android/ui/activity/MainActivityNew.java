@@ -92,6 +92,7 @@ import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.MyBroadcastReceiver;
 import com.byonchat.android.communication.MyJobService;
 import com.byonchat.android.communication.NotificationReceiver;
+import com.byonchat.android.communication.WhatsAppJobService;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
 import com.byonchat.android.local.Byonchat;
@@ -104,6 +105,7 @@ import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.DialogUtil;
+import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
 import com.byonchat.android.widget.BadgeView;
@@ -220,8 +222,47 @@ public class MainActivityNew extends MainBaseActivityNew {
 
         vFrameTabOne = findViewById(R.id.frame_tab_one);
         vFrameTabTwo = findViewById(R.id.frame_tab_two);
-        vFrameTabThree = findViewById(R.id.frame_tab_three);
+//        vFrameTabThree = findViewById(R.id.frame_tab_three);
         vFrameTabFour = findViewById(R.id.frame_tab_four);
+//        vFrameTabFive = findViewById(R.id.frame_tab_five);
+//        vFrameTabSix = findViewById(R.id.frame_tab_six);
+//        vFrameTabSeven = findViewById(R.id.frame_tab_seven);
+//        vFrameTabEight = findViewById(R.id.frame_tab_eight);
+        vFrameTabNine = findViewById(R.id.frame_tab_nine);
+
+        vFrameGridNineThree = findViewById(R.id.frame_grid_nine_three);
+        vFrameGridNineSix = findViewById(R.id.frame_grid_nine_six);
+        vFrameGridNineNine = findViewById(R.id.frame_grid_nine_nine);
+
+        vFrameGridNineNineOne = findViewById(R.id.frame_grid_nine_nine_one);
+        vFrameGridNineNineTwo = findViewById(R.id.frame_grid_nine_nine_two);
+        vFrameGridNineNineThree = findViewById(R.id.frame_grid_nine_nine_three);
+        vFrameGridNineNineFour = findViewById(R.id.frame_grid_nine_nine_four);
+        vFrameGridNineNineFive = findViewById(R.id.frame_grid_nine_nine_five);
+        vFrameGridNineNineSix = findViewById(R.id.frame_grid_nine_nine_six);
+        vFrameGridNineNineSeven = findViewById(R.id.frame_grid_nine_nine_seven);
+        vFrameGridNineNineEight = findViewById(R.id.frame_grid_nine_nine_eight);
+        vFrameGridNineNineNine = findViewById(R.id.frame_grid_nine_nine_nine);
+
+        vFrameClickTabOne = findViewById(R.id.frame_click_tab_one);
+
+        vFrameClickTabTwoOne = findViewById(R.id.frame_click_tab_two_one);
+        vFrameClickTabTwoTwo = findViewById(R.id.frame_click_tab_two_two);
+
+        vFrameClickTabFourOne = findViewById(R.id.frame_click_tab_four_one);
+        vFrameClickTabFourTwo = findViewById(R.id.frame_click_tab_four_two);
+        vFrameClickTabFourThree = findViewById(R.id.frame_click_tab_four_three);
+        vFrameClickTabFourFour = findViewById(R.id.frame_click_tab_four_four);
+
+        vFrameClickTabNineOne = findViewById(R.id.frame_click_tab_nine_one);
+        vFrameClickTabNineTwo = findViewById(R.id.frame_click_tab_nine_two);
+        vFrameClickTabNineThree = findViewById(R.id.frame_click_tab_nine_three);
+        vFrameClickTabNineFour = findViewById(R.id.frame_click_tab_nine_four);
+        vFrameClickTabNineFive = findViewById(R.id.frame_click_tab_nine_five);
+        vFrameClickTabNineSix = findViewById(R.id.frame_click_tab_nine_six);
+        vFrameClickTabNineSeven = findViewById(R.id.frame_click_tab_nine_seven);
+        vFrameClickTabNineEight = findViewById(R.id.frame_click_tab_nine_eight);
+        vFrameClickTabNineNine = findViewById(R.id.frame_click_tab_nine_nine);
 
         vLogoItemGridOne = findViewById(R.id.logo_item_grid_one);
         vTitleItemGridOne = findViewById(R.id.title_item_grid_one);
@@ -231,12 +272,12 @@ public class MainActivityNew extends MainBaseActivityNew {
         vLogoItemGridTwoTwo = findViewById(R.id.logo_item_grid_two_two);
         vTitleItemGridTwoTwo = findViewById(R.id.title_item_grid_two_two);
 
-        vLogoItemGridThreeOne = findViewById(R.id.logo_item_grid_three_one);
+        /*vLogoItemGridThreeOne = findViewById(R.id.logo_item_grid_three_one);
         vTitleItemGridThreeOne = findViewById(R.id.title_item_grid_three_one);
         vLogoItemGridThreeTwo = findViewById(R.id.logo_item_grid_three_two);
         vTitleItemGridThreeTwo = findViewById(R.id.title_item_grid_three_two);
         vLogoItemGridThreeThree = findViewById(R.id.logo_item_grid_three_three);
-        vTitleItemGridThreeThree = findViewById(R.id.title_item_grid_three_three);
+        vTitleItemGridThreeThree = findViewById(R.id.title_item_grid_three_three);*/
 
         vLogoItemGridFourOne = findViewById(R.id.logo_item_grid_four_one);
         vTitleItemGridFourOne = findViewById(R.id.title_item_grid_four_one);
@@ -246,8 +287,61 @@ public class MainActivityNew extends MainBaseActivityNew {
         vTitleItemGridFourThree = findViewById(R.id.title_item_grid_four_three);
         vLogoItemGridFourFour = findViewById(R.id.logo_item_grid_four_four);
         vTitleItemGridFourFour = findViewById(R.id.title_item_grid_four_four);
+
+        /*vLogoItemGridFiveOne = findViewById(R.id.logo_item_grid_five_one);
+        vTitleItemGridFiveOne = findViewById(R.id.title_item_grid_four_one);
+        vLogoItemGridFiveTwo = findViewById(R.id.logo_item_grid_five_two);
+        vTitleItemGridFiveTwo = findViewById(R.id.title_item_grid_four_two);
+        vLogoItemGridFiveThree = findViewById(R.id.logo_item_grid_five_three);
+        vTitleItemGridFiveThree = findViewById(R.id.title_item_grid_four_three);
+        vLogoItemGridFiveFour = findViewById(R.id.logo_item_grid_five_four);
+        vTitleItemGridFiveFour = findViewById(R.id.title_item_grid_four_four);
+
+        vLogoItemGridFiveOne = findViewById(R.id.logo_item_grid_five_one);
+        vTitleItemGridFiveOne = findViewById(R.id.title_item_grid_five_one);
+        vLogoItemGridFiveTwo = findViewById(R.id.logo_item_grid_five_two);
+        vTitleItemGridFiveTwo = findViewById(R.id.title_item_grid_five_two);
+        vLogoItemGridFiveThree = findViewById(R.id.logo_item_grid_five_three);
+        vTitleItemGridFiveThree = findViewById(R.id.title_item_grid_five_three);
+        vLogoItemGridFiveFour = findViewById(R.id.logo_item_grid_five_four);
+        vTitleItemGridFiveFour = findViewById(R.id.title_item_grid_five_four);
+        vLogoItemGridFiveFive = findViewById(R.id.logo_item_grid_five_five);
+        vTitleItemGridFiveFive = findViewById(R.id.title_item_grid_five_five);
+
+        vLogoItemGridSixOne = findViewById(R.id.logo_item_grid_six_one);
+        vTitleItemGridSixOne = findViewById(R.id.title_item_grid_six_one);
+        vLogoItemGridSixTwo = findViewById(R.id.logo_item_grid_six_two);
+        vTitleItemGridSixTwo = findViewById(R.id.title_item_grid_six_two);
+        vLogoItemGridSixThree = findViewById(R.id.logo_item_grid_six_three);
+        vTitleItemGridSixThree = findViewById(R.id.title_item_grid_six_three);
+        vLogoItemGridSixFour = findViewById(R.id.logo_item_grid_six_four);
+        vTitleItemGridSixFour = findViewById(R.id.title_item_grid_six_four);
+        vLogoItemGridSixFive = findViewById(R.id.logo_item_grid_six_five);
+        vTitleItemGridSixFive = findViewById(R.id.title_item_grid_six_five);
+        vLogoItemGridSixSix = findViewById(R.id.logo_item_grid_six_six);
+        vTitleItemGridSixSix = findViewById(R.id.title_item_grid_six_six);*/
+
+        vLogoItemGridNineOne = findViewById(R.id.logo_item_grid_nine_one);
+        vTitleItemGridNineOne = findViewById(R.id.title_item_grid_nine_one);
+        vLogoItemGridNineTwo = findViewById(R.id.logo_item_grid_nine_two);
+        vTitleItemGridNineTwo = findViewById(R.id.title_item_grid_nine_two);
+        vLogoItemGridNineThree = findViewById(R.id.logo_item_grid_nine_three);
+        vTitleItemGridNineThree = findViewById(R.id.title_item_grid_nine_three);
+        vLogoItemGridNineFour = findViewById(R.id.logo_item_grid_nine_four);
+        vTitleItemGridNineFour = findViewById(R.id.title_item_grid_nine_four);
+        vLogoItemGridNineFive = findViewById(R.id.logo_item_grid_nine_five);
+        vTitleItemGridNineFive = findViewById(R.id.title_item_grid_nine_five);
+        vLogoItemGridNineSix = findViewById(R.id.logo_item_grid_nine_six);
+        vTitleItemGridNineSix = findViewById(R.id.title_item_grid_nine_six);
+        vLogoItemGridNineSeven = findViewById(R.id.logo_item_grid_nine_seven);
+        vTitleItemGridNineSeven = findViewById(R.id.title_item_grid_nine_seven);
+        vLogoItemGridNineEight = findViewById(R.id.logo_item_grid_nine_eight);
+        vTitleItemGridNineEight = findViewById(R.id.title_item_grid_nine_eight);
+        vLogoItemGridNineNine = findViewById(R.id.logo_item_grid_nine_nine);
+        vTitleItemGridNineNine = findViewById(R.id.title_item_grid_nine_nine);
     }
 
+    @RequiresApi(23)
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         super.onViewReady(savedInstanceState);
@@ -444,7 +538,64 @@ public class MainActivityNew extends MainBaseActivityNew {
     @SuppressWarnings("WrongConstant")
     protected void resolveView() {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                if (prefs != null) {
+                    if (prefs.getString(Constants.EXTRA_SERVICE_PERMISSION, "false").equalsIgnoreCase("true")) {
+
+                    } else {
+                        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                        ComponentName componentName = new ComponentName(MainActivityNew.this, WhatsAppJobService.class);
+                        JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                                .setPeriodic(TimeUnit.MINUTES.toMillis(1))
+                                .build();
+
+                        PermanentLoggerUtil.logMessage(MainActivityNew.this, "Scheduling recurring job");
+                        jobScheduler.schedule(jobInfo);
+
+                        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                        if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                            Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                            intent.setData(Uri.parse("package:" + getPackageName()));
+                            startActivity(intent);
+                        }
+
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                        editor.apply();
+                    }
+                } else {
+                    JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                    ComponentName componentName = new ComponentName(MainActivityNew.this, WhatsAppJobService.class);
+                    JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                            .setPeriodic(TimeUnit.MINUTES.toMillis(1))
+                            .build();
+
+                    PermanentLoggerUtil.logMessage(MainActivityNew.this, "Scheduling recurring job");
+                    jobScheduler.schedule(jobInfo);
+
+                    PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                    if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                        Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(intent);
+                    }
+
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                    editor.apply();
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 Utility.scheduleJob(this);
             } else {
                 mUploadService = new UploadService();
@@ -580,12 +731,15 @@ public class MainActivityNew extends MainBaseActivityNew {
                             changeGridSize();
                             break;
                         case R.id.nav_item_legal:
-                            Byonchat.getRoomsDB().open();
+                            /*Byonchat.getRoomsDB().open();
                             Byonchat.getRoomsDB().deleteRooms();
                             Byonchat.getRoomsDB().close();
                             resolveNavHeader();
                             resolveListRooms();
-                            resolveOpenRooms();
+                            resolveOpenRooms();*/
+
+                            Intent intent1 = TestWhatsappLogActivity.generateIntent(this);
+                            startActivity(intent1);
 
                             break;
                     }

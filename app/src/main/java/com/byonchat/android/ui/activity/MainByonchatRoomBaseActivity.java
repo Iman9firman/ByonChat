@@ -260,6 +260,8 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         status = listItem != null ? listItem.status : getIntent().getExtras().getString(EXTRA_STATUS);
         name = listItem != null ? listItem.name : getIntent().getExtras().getString(EXTRA_NAME);
         icon = listItem != null ? listItem.icon : getIntent().getExtras().getString(EXTRA_ICON);
+
+        Log.w("ggggg", id_rooms_tab + " -- " + category + " -- " + include_pull);
     }
 
     protected void onViewReady(Bundle savedInstanceState) {
@@ -292,6 +294,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     } else if (mFragment instanceof ByonchatPDFFragment) {
                         ByonchatPDFFragment fragment = (ByonchatPDFFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
+                    } else if (mFragment instanceof FragmentMyNewsNew) {
+                        FragmentMyNewsNew fragment = (FragmentMyNewsNew) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
                     }
                 }
 
@@ -308,6 +313,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                         fragment.onActionSearch(s.toString());
                     } else if (mFragment instanceof ByonchatPDFFragment) {
                         ByonchatPDFFragment fragment = (ByonchatPDFFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                        fragment.onActionSearch(s.toString());
+                    } else if (mFragment instanceof FragmentMyNewsNew) {
+                        FragmentMyNewsNew fragment = (FragmentMyNewsNew) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
                     }
                 }
@@ -358,6 +366,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 } else if (mFragment instanceof FragmentRoomTaskWater) {
                     FragmentRoomTaskWater fragment = (FragmentRoomTaskWater) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                     fragment.onActionSearch(query);
+                } else if (mFragment instanceof FragmentMyNewsNew) {
+                    FragmentMyNewsNew fragment = (FragmentMyNewsNew) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                    fragment.onActionSearch(query);
                 }
                 return true;
             }
@@ -376,6 +387,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     fragment.onActionSearch(query);
                 } else if (mFragment instanceof FragmentRoomTaskWater) {
                     FragmentRoomTaskWater fragment = (FragmentRoomTaskWater) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                    fragment.onActionSearch(query);
+                } else if (mFragment instanceof FragmentMyNewsNew) {
+                    FragmentMyNewsNew fragment = (FragmentMyNewsNew) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                     fragment.onActionSearch(query);
                 }
                 return true;

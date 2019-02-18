@@ -42,10 +42,12 @@
         android:name="android.permission.LOCATION_HARDWARE"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <permission
         android:name="com.byonchat.android.permission.MAPS_RECEIVE"
@@ -97,11 +99,11 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver android:name=".communication.ServiceAutoStart">
+        <!--<receiver android:name=".communication.ServiceAutoStart">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
         <receiver
             android:name=".utils.ConnectionChangeReceiver"
             android:enabled="true"
@@ -162,6 +164,11 @@
         </activity>
         <activity
             android:name=".ui.activity.ImsListHistoryChatActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activity.TestWhatsappLogActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -322,6 +329,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_acount_setting" />
 
+        <service
+            android:name=".communication.WhatsAppJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <service android:name=".communication.MessengerConnectionService" />
         <service android:name=".utils.RefreshContactService" />
         <service android:name=".utils.StreamService" />
@@ -338,6 +349,15 @@
         <service
             android:name=".communication.JobIntentNotificationService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver
+            android:name=".communication.DeviceIdleReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.os.action.DEVICE_IDLE_MODE_CHANGED" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".communication.MyBroadcastReceiver"

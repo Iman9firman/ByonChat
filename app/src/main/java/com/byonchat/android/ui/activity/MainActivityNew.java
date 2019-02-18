@@ -34,12 +34,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -90,6 +92,7 @@ import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.MyBroadcastReceiver;
 import com.byonchat.android.communication.MyJobService;
 import com.byonchat.android.communication.NotificationReceiver;
+import com.byonchat.android.communication.WhatsAppJobService;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
 import com.byonchat.android.local.Byonchat;
@@ -102,6 +105,7 @@ import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.DialogUtil;
+import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
 import com.byonchat.android.widget.BadgeView;
@@ -122,6 +126,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.internal.Util;
 
@@ -245,6 +250,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         vTitleItemGridFourFour = findViewById(R.id.title_item_grid_four_four);
     }
 
+    @RequiresApi(23)
     @Override
     protected void onViewReady(Bundle savedInstanceState) {
         super.onViewReady(savedInstanceState);
@@ -437,10 +443,75 @@ public class MainActivityNew extends MainBaseActivityNew {
         return false;
     }
 
+    @RequiresApi(23)
     @SuppressWarnings("WrongConstant")
     protected void resolveView() {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent intentStart = new Intent(this, UploadService.class);
+            intentStart.putExtra(UploadService.ACTION, "startService");
+            startService(intentStart);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs != null) {
+                if (prefs.getString(Constants.EXTRA_SERVICE_PERMISSION, "false").equalsIgnoreCase("true")) {
+
+                } else {
+                    JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//            jobScheduler.cancel(1);
+//            PermanentLoggerUtil.logMessage(MainActivityNew.this, "Cancelling recurring jobscheduler job");
+                    ComponentName componentName = new ComponentName(MainActivityNew.this, WhatsAppJobService.class);
+                    JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                            .setPeriodic(TimeUnit.MINUTES.toMillis(1))
+                            .build();
+
+                    PermanentLoggerUtil.logMessage(MainActivityNew.this, "Scheduling recurring job");
+                    jobScheduler.schedule(jobInfo);
+
+                    PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                    if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                        Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(intent);
+                    }
+
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                    editor.apply();
+                }
+            } else {
+                JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//            jobScheduler.cancel(1);
+//            PermanentLoggerUtil.logMessage(MainActivityNew.this, "Cancelling recurring jobscheduler job");
+                ComponentName componentName = new ComponentName(MainActivityNew.this, WhatsAppJobService.class);
+                JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                        .setPeriodic(TimeUnit.MINUTES.toMillis(1))
+                        .build();
+
+                PermanentLoggerUtil.logMessage(MainActivityNew.this, "Scheduling recurring job");
+                jobScheduler.schedule(jobInfo);
+
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                    Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+                }
+
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                editor.apply();
+            }
+//            refreshLogs();
+
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Utility.scheduleJob(this);
             } else {
                 mUploadService = new UploadService();
@@ -465,7 +536,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                 pm.setComponentEnabledSetting(receiver,
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                         PackageManager.DONT_KILL_APP);
-            }
+            }*/
 
             IntervalDB db = new IntervalDB(getApplicationContext());
             db.open();
@@ -576,12 +647,16 @@ public class MainActivityNew extends MainBaseActivityNew {
                             changeGridSize();
                             break;
                         case R.id.nav_item_legal:
-                            Byonchat.getRoomsDB().open();
+                            /*Byonchat.getRoomsDB().open();
                             Byonchat.getRoomsDB().deleteRooms();
                             Byonchat.getRoomsDB().close();
                             resolveNavHeader();
                             resolveListRooms();
-                            resolveOpenRooms();
+                            resolveOpenRooms();*/
+
+                            Intent intent1 = TestWhatsappLogActivity.generateIntent(this);
+                            startActivity(intent1);
+
                             break;
                     }
                     return true;

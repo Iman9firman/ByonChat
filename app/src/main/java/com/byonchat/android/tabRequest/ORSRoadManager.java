@@ -77,7 +77,6 @@ public class ORSRoadManager extends RoadManager {
             b.append(geoPointAsLonLatString(p));
         }
         b.append(n );
-        Log.w("ivana", "url : "+b.toString());
         return b.toString();
     }
 

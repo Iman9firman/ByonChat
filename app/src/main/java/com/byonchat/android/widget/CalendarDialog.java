@@ -50,7 +50,7 @@ public class CalendarDialog extends Dialog implements View.OnClickListener {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         today = format.format(calendarView1.getDate());
-
+        calendarView1.setMinDate(calendarView1.getDate());
         calendarView1.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {

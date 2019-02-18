@@ -51,6 +51,7 @@ public class Constants extends AppCompatActivity {
     public static final String EXTRA_TAB_MOVEMENT = "extra_tab_movement";
     public static final String EXTRA_GRID_SIZE = "extra_grid_size";
     public static final String EXTRA_ROOM = "EXTRA_ROOM";
+    public static final String EXTRA_SERVICE_PERMISSION = "extra_service_permission";
 
     public static final String EXTRA_GRID_SIZE_THREE = "extra_grid_size_three";
     public static final String EXTRA_GRID_SIZE_FOUR = "extra_grid_size_four";

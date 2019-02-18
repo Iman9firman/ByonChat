@@ -304,15 +304,12 @@ public class NotePreviewActivity extends AppCompatActivity {
             Date curDate = f.parse(currentDate);
             Date evDate = f.parse(eventDate);
 
-            if (evDate.before(curDate)) {
-                if (currentDate.equalsIgnoreCase(eventDate)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
+            if(evDate.after(curDate)){
                 return true;
+            }else {
+                return false;
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

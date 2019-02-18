@@ -468,4 +468,8 @@ public class FragmentMyNewsNew extends Fragment {
         }
     }
 
+    public void onActionSearch(String args) {
+        adapter.getFilter().filter(args);
+    }
+
 }

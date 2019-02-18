@@ -43,7 +43,7 @@ public class MyJobService extends JobService {
             thread.start();
         }
         jobFinished(params, false);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             scheduleRefresh();
 
         appendLog(new Date().toString() + " : " + "Job running");
@@ -83,7 +83,7 @@ public class MyJobService extends JobService {
                                 MyJobService.class.getName()));
 
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mJobBuilder
                     .setMinimumLatency(1 * 1000) //YOUR_TIME_INTERVAL
                     .setOverrideDeadline(3 * 1000) // maximum delay
@@ -109,19 +109,23 @@ public class MyJobService extends JobService {
                 String channelId = "";
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     channelId = createNotificationChannel("ByonChat", "Connected");
+
+                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId);
+                    Notification notification = notificationBuilder.setOngoing(true)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setPriority(PRIORITY_MIN)
+                            .setCategory(Notification.CATEGORY_SERVICE)
+                            .build();
+                    startForeground(101, notification);
+
+                    Intent intentStart = new Intent(context, UploadService.class);
+                    intentStart.putExtra(UploadService.ACTION, "startService");
+                    context.startForegroundService(intentStart);
+                } else {
+                    Intent intentStart = new Intent(context, UploadService.class);
+                    intentStart.putExtra(UploadService.ACTION, "startService");
+                    context.startService(intentStart);
                 }
-
-                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId);
-                Notification notification = notificationBuilder.setOngoing(true)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setPriority(PRIORITY_MIN)
-                        .setCategory(Notification.CATEGORY_SERVICE)
-                        .build();
-                startForeground(101, notification);
-
-                Intent intentStart = new Intent(context, UploadService.class);
-                intentStart.putExtra(UploadService.ACTION, "startService");
-                context.startForegroundService(intentStart);
             } catch (Exception e) {
                 Log.w("datapusat", e.toString());
             }

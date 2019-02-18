@@ -106,6 +106,7 @@ import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.BlurBuilder;
 import com.byonchat.android.utils.DialogUtil;
+import com.byonchat.android.utils.Fonts;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.LocationAssistant;
 import com.byonchat.android.utils.RequestKeyTask;
@@ -260,14 +261,58 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected NestedScrollView vFrameTabOne;
     @NonNull
     protected NestedScrollView vFrameTabTwo;
-    @NonNull
-    protected NestedScrollView vFrameTabThree;
+    /*@NonNull
+    protected NestedScrollView vFrameTabThree;*/
     @NonNull
     protected NestedScrollView vFrameTabFour;
+    /*@NonNull
+    protected NestedScrollView vFrameTabFive;
+    @NonNull
+    protected NestedScrollView vFrameTabSix;
+    @NonNull
+    protected NestedScrollView vFrameTabSeven;
+    @NonNull
+    protected NestedScrollView vFrameTabEight;*/
+    @NonNull
+    protected NestedScrollView vFrameTabNine;
 
     protected ConstraintLayout vConstraintFiveOne;
     protected ConstraintLayout vConstraintFiveTwo;
     protected ConstraintLayout vConstraintFiveThree;
+
+    protected LinearLayout vFrameGridNineThree;
+    protected LinearLayout vFrameGridNineSix;
+    protected LinearLayout vFrameGridNineNine;
+
+    protected LinearLayout vFrameGridNineNineOne;
+    protected LinearLayout vFrameGridNineNineTwo;
+    protected LinearLayout vFrameGridNineNineThree;
+    protected LinearLayout vFrameGridNineNineFour;
+    protected LinearLayout vFrameGridNineNineFive;
+    protected LinearLayout vFrameGridNineNineSix;
+    protected LinearLayout vFrameGridNineNineSeven;
+    protected LinearLayout vFrameGridNineNineEight;
+    protected LinearLayout vFrameGridNineNineNine;
+
+    protected ConstraintLayout vFrameClickTabOne;
+
+    protected LinearLayout vFrameClickTabTwoOne;
+    protected LinearLayout vFrameClickTabTwoTwo;
+
+    protected ConstraintLayout vFrameClickTabFourOne;
+    protected ConstraintLayout vFrameClickTabFourTwo;
+    protected ConstraintLayout vFrameClickTabFourThree;
+    protected ConstraintLayout vFrameClickTabFourFour;
+
+    protected ConstraintLayout vFrameClickTabNineOne;
+    protected ConstraintLayout vFrameClickTabNineTwo;
+    protected ConstraintLayout vFrameClickTabNineThree;
+    protected ConstraintLayout vFrameClickTabNineFour;
+    protected ConstraintLayout vFrameClickTabNineFive;
+    protected ConstraintLayout vFrameClickTabNineSix;
+    protected ConstraintLayout vFrameClickTabNineSeven;
+    protected ConstraintLayout vFrameClickTabNineEight;
+    protected ConstraintLayout vFrameClickTabNineNine;
 
     @NonNull
     protected ImageView vLogoItemGridOne;
@@ -283,7 +328,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @NonNull
     protected TextView vTitleItemGridTwoTwo;
 
-    @NonNull
+    /*@NonNull
     protected ImageView vLogoItemGridThreeOne;
     @NonNull
     protected TextView vTitleItemGridThreeOne;
@@ -294,7 +339,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @NonNull
     protected ImageView vLogoItemGridThreeThree;
     @NonNull
-    protected TextView vTitleItemGridThreeThree;
+    protected TextView vTitleItemGridThreeThree;*/
 
     @NonNull
     protected ImageView vLogoItemGridFourOne;
@@ -313,7 +358,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @NonNull
     protected TextView vTitleItemGridFourFour;
 
-    @NonNull
+    /*@NonNull
     protected ImageView vLogoItemGridFiveOne;
     @NonNull
     protected TextView vTitleItemGridFiveOne;
@@ -334,15 +379,112 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @NonNull
     protected TextView vTitleItemGridFiveFive;
 
+    @NonNull
+    protected ImageView vLogoItemGridSixOne;
+    @NonNull
+    protected TextView vTitleItemGridSixOne;
+    @NonNull
+    protected ImageView vLogoItemGridSixTwo;
+    @NonNull
+    protected TextView vTitleItemGridSixTwo;
+    @NonNull
+    protected ImageView vLogoItemGridSixThree;
+    @NonNull
+    protected TextView vTitleItemGridSixThree;
+    @NonNull
+    protected ImageView vLogoItemGridSixFour;
+    @NonNull
+    protected TextView vTitleItemGridSixFour;
+    @NonNull
+    protected ImageView vLogoItemGridSixFive;
+    @NonNull
+    protected TextView vTitleItemGridSixFive;
+    @NonNull
+    protected ImageView vLogoItemGridSixSix;
+    @NonNull
+    protected TextView vTitleItemGridSixSix;
+
+    @NonNull
+    protected ImageView vLogoItemGridEightOne;
+    @NonNull
+    protected TextView vTitleItemGridEightOne;
+    @NonNull
+    protected ImageView vLogoItemGridEightTwo;
+    @NonNull
+    protected TextView vTitleItemGridEightTwo;
+    @NonNull
+    protected ImageView vLogoItemGridEightThree;
+    @NonNull
+    protected TextView vTitleItemGridEightThree;
+    @NonNull
+    protected ImageView vLogoItemGridEightFour;
+    @NonNull
+    protected TextView vTitleItemGridEightFour;
+    @NonNull
+    protected ImageView vLogoItemGridEightFive;
+    @NonNull
+    protected TextView vTitleItemGridEightFive;
+    @NonNull
+    protected ImageView vLogoItemGridEightSix;
+    @NonNull
+    protected TextView vTitleItemGridEightSix;
+    @NonNull
+    protected ImageView vLogoItemGridEightSeven;
+    @NonNull
+    protected TextView vTitleItemGridEightSeven;
+    @NonNull
+    protected ImageView vLogoItemGridEightEight;
+    @NonNull
+    protected TextView vTitleItemGridEightEight;*/
+
+    @NonNull
+    protected ImageView vLogoItemGridNineOne;
+    @NonNull
+    protected TextView vTitleItemGridNineOne;
+    @NonNull
+    protected ImageView vLogoItemGridNineTwo;
+    @NonNull
+    protected TextView vTitleItemGridNineTwo;
+    @NonNull
+    protected ImageView vLogoItemGridNineThree;
+    @NonNull
+    protected TextView vTitleItemGridNineThree;
+    @NonNull
+    protected ImageView vLogoItemGridNineFour;
+    @NonNull
+    protected TextView vTitleItemGridNineFour;
+    @NonNull
+    protected ImageView vLogoItemGridNineFive;
+    @NonNull
+    protected TextView vTitleItemGridNineFive;
+    @NonNull
+    protected ImageView vLogoItemGridNineSix;
+    @NonNull
+    protected TextView vTitleItemGridNineSix;
+    @NonNull
+    protected ImageView vLogoItemGridNineSeven;
+    @NonNull
+    protected TextView vTitleItemGridNineSeven;
+    @NonNull
+    protected ImageView vLogoItemGridNineEight;
+    @NonNull
+    protected TextView vTitleItemGridNineEight;
+    @NonNull
+    protected ImageView vLogoItemGridNineNine;
+    @NonNull
+    protected TextView vTitleItemGridNineNine;
+
     protected RecyclerView.LayoutManager layoutManager;
     protected RecyclerViewDragDropManager recyclerViewDragDropManager;
     protected ProgressDialog progressDialog;
+    protected boolean isRecyclerViewShowed = true;
 
     protected List<ItemMain> itemList = new ArrayList<>();
     protected List<String> positionList = new ArrayList<>();
 
     protected LaporSelectedRoom laporSelectedRoom;
     protected LocationAssistant assistant;
+    protected Fonts fonts = new Fonts();
 
     protected DraggableGridExampleAdapter adapter;
     protected BotAdapter mAdapterRoomList;
@@ -532,6 +674,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 vBtnOpenRooms.setVisibility(View.INVISIBLE);
                 card_search_main.setVisibility(View.INVISIBLE);
                 recyclerView.setVisibility(View.INVISIBLE);
+
+                isRecyclerViewShowed = false;
             }
         }
     }
@@ -546,6 +690,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected void resolveRefreshGrid() {
         adapter.getFilter().filter("");
+    }
+
+    protected void resolveShowRecyclerView() {
+        recyclerView.setVisibility(isRecyclerViewShowed ? View.VISIBLE : View.INVISIBLE);
     }
 
     protected void roomsOpened() {
@@ -826,6 +974,20 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 }
             }
 
+            if (jsonArray.length() == 1) {
+                isRecyclerViewShowed = false;
+                vFrameTabOne.setVisibility(View.VISIBLE);
+            } else if (jsonArray.length() == 2) {
+                vFrameTabTwo.setVisibility(View.VISIBLE);
+                isRecyclerViewShowed = false;
+            } else if (jsonArray.length() == 4) {
+                vFrameTabFour.setVisibility(View.VISIBLE);
+                isRecyclerViewShowed = false;
+            } else if (jsonArray.length() == 3 || jsonArray.length() > 4 && jsonArray.length() <= 8) {
+                vFrameTabNine.setVisibility(View.VISIBLE);
+                isRecyclerViewShowed = false;
+            }
+
             for (int i = 0; i < jsonArray.length(); i++) {
                 String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
                 String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
@@ -1000,9 +1162,131 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     Constants.map.put(i, valSetOne);
                 }
 
-
                 itemList.add(i, itemMain);
                 positionList.add(i, title);
+
+                if (jsonArray.length() == 1) {
+                    resolveOneGrid(itemList);
+                } else if (jsonArray.length() == 2) {
+                    Log.w(";lkj", "masuksini");
+                    if (i == 0)
+                        resolveTwoGridOne(itemList, i);
+                    else
+                        resolveTwoGridTwo(itemList, i);
+                } else if (jsonArray.length() == 3) {
+                    vFrameGridNineThree.setVisibility(View.VISIBLE);
+
+                    if (i == 0)
+                        resolveNineGridOne(itemList, i);
+                    else if (i == 1)
+                        resolveNineGridTwo(itemList, i);
+                    else if (i == 2)
+                        resolveNineGridThree(itemList, i);
+                } else if (jsonArray.length() == 4) {
+                    if (i == 0)
+                        resolveFourGridOne(itemList, i);
+                    else if (i == 1)
+                        resolveFourGridTwo(itemList, i);
+                    else if (i == 2)
+                        resolveFourGridThree(itemList, i);
+                    else if (i == 3)
+                        resolveFourGridFour(itemList, i);
+                } else if (jsonArray.length() > 4 && jsonArray.length() <= 8) {
+                    if (jsonArray.length() == 5) {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridSix(itemList, i);
+                    } else if (jsonArray.length() == 6) {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridFive(itemList, i);
+                        else if (i == 5)
+                            resolveNineGridSix(itemList, i);
+                    } else if (jsonArray.length() == 7) {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+                        vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridFive(itemList, i);
+                        else if (i == 5)
+                            resolveNineGridSix(itemList, i);
+                        else if (i == 6)
+                            resolveNineGridEight(itemList, i);
+                    } else if (jsonArray.length() == 8) {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+                        vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridFive(itemList, i);
+                        else if (i == 5)
+                            resolveNineGridSix(itemList, i);
+                        else if (i == 6)
+                            resolveNineGridSeven(itemList, i);
+                        else if (i == 7)
+                            resolveNineGridNine(itemList, i);
+                    } else {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+                        vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridFive(itemList, i);
+                        else if (i == 5)
+                            resolveNineGridSix(itemList, i);
+                        else if (i == 6)
+                            resolveNineGridSeven(itemList, i);
+                        else if (i == 7)
+                            resolveNineGridEight(itemList, i);
+                        else if (i == 8)
+                            resolveNineGridNine(itemList, i);
+                    }
+                }
             }
             Constants.map.put(jsonArray.length(), null);
         } catch (JSONException e) {
@@ -1470,27 +1754,29 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         Byonchat.getRoomsDB().open();
         botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
         Byonchat.getRoomsDB().close();
-        try {
-            JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
-            String targetURL = jObj.getString("path");
+        if (botArrayListist.size() > 0) {
+            try {
+                JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+                String targetURL = jObj.getString("path");
 
-            AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
-            alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
-            alertbox.setMessage("Are you sure you want to Refresh?");
-            alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
-                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                    finish();
-                    Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                    startActivity(ii);
-                } else {
-                    Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
-                }
-            });
-            alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
-            });
-            alertbox.show();
-        } catch (JSONException e) {
-            e.printStackTrace();
+                AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
+                alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
+                alertbox.setMessage("Are you sure you want to Refresh?");
+                alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
+                    if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                        finish();
+                        Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                        startActivity(ii);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
+                });
+                alertbox.show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1717,5 +2003,328 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         resolveListRooms();
         resolveOpenRooms();
         resolveRefreshGrid();
+        resolveShowRecyclerView();
+    }
+
+    protected void resolveOneGrid(List<ItemMain> itemList) {
+        ItemMain im = itemList.get(0);
+
+        vTitleItemGridOne.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridOne);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridOne, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabOne.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(0));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveTwoGridOne(List<ItemMain> itemList, int position) {
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridTwoOne.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridTwoOne);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridTwoOne, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabTwoOne.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveTwoGridTwo(List<ItemMain> itemList, int position) {
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridTwoTwo.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridTwoTwo);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridTwoTwo, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabTwoTwo.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveFourGridOne(List<ItemMain> itemList, int position) {
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridFourOne.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridFourOne);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourOne, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabFourOne.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveFourGridTwo(List<ItemMain> itemList, int position) {
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridFourTwo.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridFourTwo);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourTwo, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabFourTwo.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveFourGridThree(List<ItemMain> itemList, int position) {
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridFourThree.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridFourThree);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourThree, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabFourThree.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveFourGridFour(List<ItemMain> itemList, int position) {
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridFourFour.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridFourFour);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourFour, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabFourFour.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveNineGridOne(List<ItemMain> itemList, int position) {
+        vFrameGridNineNineOne.setVisibility(View.VISIBLE);
+
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridNineOne.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridNineOne);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineOne, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabNineOne.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveNineGridTwo(List<ItemMain> itemList, int position) {
+        vFrameGridNineNineTwo.setVisibility(View.VISIBLE);
+
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridNineTwo.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridNineTwo);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineTwo, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabNineTwo.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveNineGridThree(List<ItemMain> itemList, int position) {
+        vFrameGridNineNineThree.setVisibility(View.VISIBLE);
+
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridNineThree.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridNineThree);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineThree, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabNineThree.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveNineGridFour(List<ItemMain> itemList, int position) {
+        vFrameGridNineNineFour.setVisibility(View.VISIBLE);
+
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridNineFour.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridNineFour);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineFour, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabNineFour.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveNineGridFive(List<ItemMain> itemList, int position) {
+        vFrameGridNineNineFive.setVisibility(View.VISIBLE);
+
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridNineFive.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridNineFive);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineFive, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabNineFive.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveNineGridSix(List<ItemMain> itemList, int position) {
+        vFrameGridNineNineSix.setVisibility(View.VISIBLE);
+
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridNineSix.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridNineSix);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineSix, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabNineSix.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveNineGridSeven(List<ItemMain> itemList, int position) {
+        vFrameGridNineNineSeven.setVisibility(View.VISIBLE);
+
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridNineSeven.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridNineSeven);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineSeven, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabNineSeven.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveNineGridEight(List<ItemMain> itemList, int position) {
+        vFrameGridNineNineEight.setVisibility(View.VISIBLE);
+
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridNineEight.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridNineEight);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineEight, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabNineEight.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
+    }
+
+    protected void resolveNineGridNine(List<ItemMain> itemList, int position) {
+        vFrameGridNineNineNine.setVisibility(View.VISIBLE);
+
+        ItemMain im = itemList.get(position);
+
+        vTitleItemGridNineNine.setText(Utility.capitalizer(im.getTitle()));
+
+        Manhera.getInstance().get()
+                .load(im.icon_name.equalsIgnoreCase(null)
+                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                .placeholder(R.drawable.logo_byon)
+                .into(vLogoItemGridNineNine);
+
+        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineNine, Fonts.FONT_ROBOTO_BOLD);
+
+        vFrameClickTabNineNine.setOnClickListener(v -> {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        });
     }
 }

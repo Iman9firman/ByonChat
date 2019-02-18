@@ -418,7 +418,7 @@ public class RelieverListActivity extends AppCompatActivity {
             Collections.sort(relievers);
             return relievers;
         } catch (Exception e) {
-            Log.w("ivana", "Error : " + e.getMessage());
+            e.printStackTrace();
 
         }
         return relievers;

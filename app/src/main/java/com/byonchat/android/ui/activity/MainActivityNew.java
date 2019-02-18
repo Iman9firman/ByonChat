@@ -34,12 +34,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -122,6 +124,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.internal.Util;
 
@@ -437,6 +440,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         return false;
     }
 
+    @RequiresApi(23)
     @SuppressWarnings("WrongConstant")
     protected void resolveView() {
         try {
@@ -582,6 +586,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                             resolveNavHeader();
                             resolveListRooms();
                             resolveOpenRooms();
+
                             break;
                     }
                     return true;

@@ -1470,27 +1470,29 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         Byonchat.getRoomsDB().open();
         botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
         Byonchat.getRoomsDB().close();
-        try {
-            JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
-            String targetURL = jObj.getString("path");
+        if (botArrayListist.size() > 0) {
+            try {
+                JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+                String targetURL = jObj.getString("path");
 
-            AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
-            alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
-            alertbox.setMessage("Are you sure you want to Refresh?");
-            alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
-                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                    finish();
-                    Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                    startActivity(ii);
-                } else {
-                    Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
-                }
-            });
-            alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
-            });
-            alertbox.show();
-        } catch (JSONException e) {
-            e.printStackTrace();
+                AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
+                alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
+                alertbox.setMessage("Are you sure you want to Refresh?");
+                alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
+                    if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                        finish();
+                        Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                        startActivity(ii);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
+                });
+                alertbox.show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

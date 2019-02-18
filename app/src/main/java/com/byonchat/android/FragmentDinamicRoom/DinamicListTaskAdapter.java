@@ -184,6 +184,8 @@ public class DinamicListTaskAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         mDrawableLetf.setColorFilter(Color.CYAN, PorterDuff.Mode.SRC_ATOP);
                     } else if (String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("failed") || String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("3")) {
                         mDrawableLetf.setColorFilter(Color.MAGENTA, PorterDuff.Mode.SRC_ATOP);
+                    } else if (String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("done") || String.valueOf(mDatasetFind.get(position).getStatus()).equalsIgnoreCase("2")) {
+                        mDrawableLetf.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
                     } else {
                         if (sts.equalsIgnoreCase("Reject")) {
                             mDrawableLetf.setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);

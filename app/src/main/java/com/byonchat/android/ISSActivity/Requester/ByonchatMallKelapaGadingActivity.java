@@ -22,6 +22,7 @@ import com.mindorks.placeholderview.ExpandablePlaceHolderView;
 
 public class ByonchatMallKelapaGadingActivity extends ByonchatBaseMallKelapaGadingActivity {
     Runnable runnable;
+    Handler handler = new Handler();
 
     public static Intent generateIntent(Context context, String color, String colorText, String it, String ro) {
         Intent intent = new Intent(context, ImsListHistoryChatActivity.class);
@@ -54,7 +55,7 @@ public class ByonchatMallKelapaGadingActivity extends ByonchatBaseMallKelapaGadi
 
         resolveToolbar();
         //resolveListHistory();
-        Handler handler = new Handler();
+
         runnable = () -> {
             Log.w("selsai", "11");
             resolveListHistory();
@@ -63,6 +64,12 @@ public class ByonchatMallKelapaGadingActivity extends ByonchatBaseMallKelapaGadi
         handler.post(runnable);
 
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runnable);
     }
 
     @Override

@@ -16,6 +16,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.utils.Validations;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -180,6 +181,10 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         cursor.close();
 
                         Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
+                        //logout iss
+                        
+                        new Validations().getInstance(getApplicationContext()).removeById(26);
+                        new Validations().getInstance(getApplicationContext()).removeById(25);
 
                         Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
                         intent.putExtra(ConversationActivity.KEY_JABBER_ID, usr);

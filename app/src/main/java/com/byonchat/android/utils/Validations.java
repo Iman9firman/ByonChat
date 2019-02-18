@@ -172,7 +172,7 @@ public class Validations {
                 if (month_sysDB == month_sys) {
                     if (day_sysDB == day_sys) {
                         if (hour_sysDB == hour_sys) {
-                            if ((min_sys - min_sysDB) > 5) {
+                            if ((min_sys - min_sysDB) > 15) {
                                 error = 1;
                             } else {
                                 error = 0;
@@ -235,6 +235,16 @@ public class Validations {
         interval.setId(1);
         interval.setTime(time_str);
         db.createContact(interval);
+        db.close();
+    }
+
+    public void removeById(int id) {
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(id);
+        if (cursor.getCount() > 0) {
+            db.deleteContact(id);
+        }
         db.close();
     }
 

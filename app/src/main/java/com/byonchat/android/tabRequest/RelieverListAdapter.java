@@ -55,6 +55,7 @@ public class RelieverListAdapter extends RecyclerView.Adapter<RelieverListAdapte
                 context.startActivity(goToDetail);
             }
         });
+
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton checkboxView, boolean isChecked) {
@@ -70,6 +71,7 @@ public class RelieverListAdapter extends RecyclerView.Adapter<RelieverListAdapte
                 }
             }
         });
+
 
     }
 

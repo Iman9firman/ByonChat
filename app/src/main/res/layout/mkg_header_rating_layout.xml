@@ -41,33 +41,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin5"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <Button
-            android:id="@+id/child_button_cancel_approve"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_gravity="right"
-            android:layout_marginBottom="@dimen/margin15"
-            android:background="@drawable/oval_btn_room"
-            android:drawableRight="@drawable/ic_loc_btn_drawable"
-            android:drawablePadding="@dimen/margin5"
-            android:drawableTint="@color/red"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="View Maps"
-            android:textAllCaps="false"
-            android:textColor="@drawable/selector_txt_blue_white"
-            android:textSize="14sp" />
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin10"
             android:orientation="horizontal">
 
             <TextView
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Max. selected :"
@@ -75,7 +57,7 @@
                 android:textSize="16sp" />
 
             <TextView
-                android:visibility="gone"
+                android:id="@+id/jumlahReq"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="5"
@@ -83,12 +65,20 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <View
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/header_img_arrow"
-            android:layout_marginTop="@dimen/margin5"
-            android:background="@color/byonchat_divider" />
-    </LinearLayout>
+            android:layout_height="wrap_content">
 
+            <Button
+                android:id="@+id/child_button_cancel_approve"
+                style="@style/btn_submit_v11"
+                android:layout_alignParentRight="true"
+                android:drawableRight="@drawable/btn_map_ico"
+                android:drawablePadding="@dimen/margin5"
+                android:gravity="center"
+                android:paddingRight="5dp"
+                android:text="Maps"
+                android:textAllCaps="false" />
+        </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

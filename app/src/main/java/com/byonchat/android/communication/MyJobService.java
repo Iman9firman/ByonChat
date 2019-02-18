@@ -85,8 +85,8 @@ public class MyJobService extends JobService {
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mJobBuilder
-                    .setMinimumLatency(60 * 1000) //YOUR_TIME_INTERVAL
-                    .setOverrideDeadline(2 * 60 * 1000) // maximum delay
+                    .setMinimumLatency(1 * 1000) //YOUR_TIME_INTERVAL
+                    .setOverrideDeadline(3 * 1000) // maximum delay
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED) // require unmetered network
                     .setRequiresDeviceIdle(true) // device should be idle
                     .setRequiresCharging(false); // we don't care if the device is charging or not

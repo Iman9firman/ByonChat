@@ -43,14 +43,19 @@ public class HeaderRatingRecyclerView {
     @View(R.id.child_button_cancel_approve)
     Button child_button_cancel_approve;
 
-    private Context mContext;
-    private String headerName, lat, relieverDetail;
+    @View(R.id.jumlahReq)
+    TextView totalReq;
 
-    public HeaderRatingRecyclerView(Context context, String headerName, String latlong, String _relieverDetail) {
+    private Context mContext;
+    private String headerName, lat, relieverDetail, totals;
+
+    public HeaderRatingRecyclerView(Context context, String headerName, String latlong, String _relieverDetail, String total) {
         this.mContext = context;
         this.headerName = headerName;
         this.lat = latlong;
         this.relieverDetail = _relieverDetail;
+        this.relieverDetail = _relieverDetail;
+        this.totals = total;
 
 
     }
@@ -58,6 +63,7 @@ public class HeaderRatingRecyclerView {
     @Resolve
     private void onResolve() {
         header_name.setText(headerName);
+        totalReq.setText(totals);
         child_button_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {

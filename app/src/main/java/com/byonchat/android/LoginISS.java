@@ -65,15 +65,19 @@ public class LoginISS extends AppCompatActivity {
         username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
         dbHelper = new UserDB(this);
         db = dbHelper.getWritableDatabase();
-
+        db.delete("user", null, null);
         Button erwgv = (Button) findViewById(R.id.loginBtn);
         EditText userID = (EditText) findViewById(R.id.login_userid);
         EditText passID = (EditText) findViewById(R.id.login_password);
         EditText accID = (EditText) findViewById(R.id.login_acc);
 
+        accID.setText("issid");
+       /* userID.setText("1701793");
+        passID.setText("Pass1701793");*/
+
         userID.setText("TESTING");
         passID.setText("Testing1234");
-        accID.setText("issid");
+
 
         erwgv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,11 +94,11 @@ public class LoginISS extends AppCompatActivity {
     public void goVerif(String user, String pass, String acc) {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        StringRequest sr = new StringRequest(Request.Method.GET, "https://issapi.dataon.com/sfapi/index.cfm?endpoint=/issid_SF_EO_cekuser/TESTING/BYONCHAT",
+        StringRequest sr = new StringRequest(Request.Method.GET, "https://issapi.dataon.com/sfapi/index.cfm?endpoint=/issid_SF_EO_cekuser/" + user + "/BYONCHAT",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-//                        Log.e("HttpClient", "success! response: " + response);
+                        Log.e("HttpClient", "success! response: " + response);
 //                        Toast.makeText(LoginISS.this,response,Toast.LENGTH_LONG).show();
                         pd.dismiss();
                         parseJSON(response);
@@ -184,24 +188,27 @@ public class LoginISS extends AppCompatActivity {
                     ATASAN_2_NIK, ATASAN_2_JT, ATASAN_2_NAMA, ATASAN_2_PHONE, LIST_APPROVE_ROLE1, LIST_APPROVE_ROLE2,
                     LIST_REQ_ROLE, MY_ROLE};
 
+            db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
+
+
+            if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
+                new Validations().getInstance(getApplicationContext()).setTimebyId(26);
+                Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
+                intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                intent.putExtra("success", "oke");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getApplicationContext().startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(LoginISS.this, "Username dan password anda salah", Toast.LENGTH_LONG).show();
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(LoginISS.this, "Terjadi Kesalah di Server ISS. Terimakasih", Toast.LENGTH_LONG).show();
         }
 
-        db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
 
-
-        if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
-            new Validations().getInstance(getApplicationContext()).setTimebyId(26);
-            Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
-            intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-            intent.putExtra("success", "oke");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getApplicationContext().startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(LoginISS.this, "Username dan password anda salah", Toast.LENGTH_SHORT).show();
-        }
     }
 
 

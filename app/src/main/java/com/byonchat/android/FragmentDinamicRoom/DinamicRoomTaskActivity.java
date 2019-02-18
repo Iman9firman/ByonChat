@@ -184,8 +184,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
+import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -322,6 +324,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     String startDate;
     String dropdownViewIdParent;
     Boolean call = false;
+    boolean validateTime = false;
+    JSONArray ar = new JSONArray();
 
     static {
         attCameraItems = new ArrayList<AttachmentAdapter.AttachmentMenuItem>();
@@ -8362,7 +8366,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         b.setEnabled(false);
                         boolean berhenti = false;
 
-
                         List<String> errorReq = new ArrayList<String>();
                         for (Integer key : hashMap.keySet()) {
                             List<String> value = hashMap.get(key);
@@ -8381,7 +8384,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                                 if (value.get(1).toString().equalsIgnoreCase("1") && !lolos) {
-
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
                                     if (cEdit.getCount() > 0) {
                                         if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
@@ -8479,6 +8481,18 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     et[Integer.valueOf(aa)].setError("Email not valid");
                                                 }
 
+                                            } else if(value.get(2).toString().equalsIgnoreCase("time")){
+                                                String aa = value.get(3).toString();
+                                                try {
+                                                    JSONObject rt = new JSONObject();
+                                                    rt.put("id",aa);
+                                                    rt.put("jam",cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT))+"");
+                                                    ar.put(rt);
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                validateTime = true;
                                             }
                                         }
                                     } else {
@@ -8541,6 +8555,46 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 return;
                             }
 
+                        }
+
+                        if (validateTime){
+                            if(ar != null){
+                                if(ar.length() == 2){
+                                    String jamMulai = null;
+                                    String jamSlsai = null;
+                                    for(int o = 0; o < ar.length(); o++){
+                                        try {
+                                            String idtem = ar.getJSONObject(o).getString("id");
+                                            if(idtem.equalsIgnoreCase("jam_selesai")){
+                                                jamSlsai = ar.getJSONObject(o).getString("jam");
+                                            }else{
+                                                jamMulai = ar.getJSONObject(o).getString("jam");
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    if(jamMulai != null) {
+                                        if(jamSlsai != null) {
+                                            if (checkTime(jamMulai, jamSlsai, idDetail) != true) {
+                                                ar = new JSONArray();
+                                                final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
+                                                alertbox.setTitle("Error Input");
+                                                alertbox.setMessage("Sudah terdapat aktifitas pada jam tersebut" + "\n");
+                                                alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface arg0, int arg1) {
+                                                        b.setEnabled(true);
+                                                    }
+                                                });
+
+                                                alertbox.show();
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         if (berhenti) {
@@ -12012,4 +12066,60 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         return directory.getAbsolutePath();
     }
 
+    private boolean checkTime(String stTime,String enTime,String idDetail){
+        boolean bisa = false;
+        try {
+            List<String> starts = new ArrayList<>();
+            List<String> ends = new ArrayList<>();
+            Date stDate,enDate;
+            SimpleDateFormat f = new SimpleDateFormat("HH:mm");
+
+            MyEventDatabase eventDatabase = new MyEventDatabase(getApplicationContext());
+            SQLiteDatabase db = eventDatabase.getReadableDatabase();
+            String[] args = {startDate, idTab, idDetail};
+            Cursor c = db.rawQuery("SELECT value_event FROM event" + " WHERE startDate_event = ? AND id_tab_event = ? AND id_detail_event != ?", args);
+            while (c.moveToNext()){
+                String value = c.getString(0);
+                if (value != null && !value.equalsIgnoreCase("")){
+                    JSONArray arrayValue = new JSONArray(value);
+                    JSONObject startObj = arrayValue.getJSONObject(3);
+                    JSONObject endObj = arrayValue.getJSONObject(4);
+
+                    starts.add(startObj.getString("value"));
+                    ends.add(endObj.getString("value"));
+                }
+            }
+            stDate = f.parse(stTime);
+            enDate = f.parse(enTime);
+
+            if (stDate.before(enDate)){
+                if (starts.size()>0|ends.size()>0){
+                    for (int i = 0; i<starts.size();i++){
+                        Date strt = f.parse(starts.get(i));
+                        if (stDate.before(strt)){
+                            if (enDate.before(strt)){
+                                bisa = true;
+                            } else {
+                                bisa = false;
+                            }
+                        } else {
+                            Date ed = f.parse(ends.get(i));
+                            if (ed.before(stDate)){
+                                bisa = true;
+                            } else {
+                                bisa = false;
+                            }
+                        }
+                    }
+                } else {
+                    bisa = true;
+                }
+            } else {
+                bisa = false;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return bisa;
+    }
 }

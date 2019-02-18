@@ -716,7 +716,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_refresh).setVisible(false);
         nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_legal).setVisible(isTrue);
+        nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
     }
 
     protected void refreshList() {

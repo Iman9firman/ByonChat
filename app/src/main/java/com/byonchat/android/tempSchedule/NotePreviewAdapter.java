@@ -1,5 +1,6 @@
 package com.byonchat.android.tempSchedule;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,6 +36,7 @@ import java.util.Date;
 
 public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
 
+    Activity activity;
     private ArrayList<Note> noteList;
     private Context c;
     AlertDialog.Builder dialog;
@@ -51,7 +53,8 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
     private String calendar;
     private String startDate;
 
-    public NotePreviewAdapter (Context c, ArrayList<Note> noteList,String title,String username,String idTab,String color,String latLong,String from,String calendar,String startDate){
+    public NotePreviewAdapter (Activity activity , Context c, ArrayList<Note> noteList, String title, String username, String idTab, String color, String latLong, String from, String calendar, String startDate){
+        this.activity = activity;
         this.c = c;
         this.noteList = noteList;
         this.title = title;
@@ -95,7 +98,8 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
                 if (!note.isSubmit()){
                     if (!checkDate(startDate)){
 
-                        dialogEvent(note);
+//                        dialogEvent(note);
+                        new NoteDetailDialog(activity,note).show();
 
                     } else {
                         Intent intent = new Intent(c, DinamicRoomTaskActivity.class);
@@ -111,7 +115,8 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
                         c.startActivity(intent);
                     }
                 } else {
-                    dialogEvent(note);
+//                    dialogEvent(note);
+                    new NoteDetailDialog(activity,note).show();
                 }
 
             }
@@ -122,30 +127,6 @@ public class NotePreviewAdapter extends RecyclerView.Adapter<MyHolder> {
     @Override
     public int getItemCount() {
         return noteList.size();
-    }
-    private void dialogEvent(Note note){
-        dialog = new AlertDialog.Builder(c);
-        dialogView = LayoutInflater.from(c).inflate(R.layout.note_dialog_layout,null);
-        dialog.setView(dialogView);
-        dialog.setCancelable(true);
-
-        TextView dLokasi = dialogView.findViewById(R.id.tv_lokasi_dnote);
-        TextView dJam = dialogView.findViewById(R.id.tv_waktu_dnote);
-        TextView dKet = dialogView.findViewById(R.id.tv_ket_dnote);
-        TextView dAlasan = dialogView.findViewById(R.id.tv_alasan_dnote);
-        TextView dStatus = dialogView.findViewById(R.id.tv_status_dnote);
-
-        dLokasi.setText(note.getTitle() );
-        dJam.setText(note.getStartTime()+" - "+note.getEndTime());
-        dKet.setText(note.getKeterangan());
-        dAlasan.setText(note.getAlasan());
-        dStatus.setText("Status : "+note.getStatus());
-        dialog.setNegativeButton("CLOSE", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-            }
-        });
-        dialog.show();
     }
     private boolean checkDate(String eventDate){
         Calendar cal = Calendar.getInstance();

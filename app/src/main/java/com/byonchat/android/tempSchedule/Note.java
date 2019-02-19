@@ -13,8 +13,9 @@ public class Note {
     private String status;
     private String warna;
     private boolean isSubmit = false;
+    private String ket_status;
 
-    public Note (String title,String lokasi,String ket_tambah, String startTime, String endTime ,String keterangan,String no_spk,String alasan, String id_detail , String status , boolean isSubmit , String warna){
+    public Note (String title,String lokasi,String ket_tambah, String startTime, String endTime ,String keterangan,String no_spk,String alasan, String id_detail , String status , boolean isSubmit , String warna , String ket_status){
         this.title = title;
         this.lokasi = lokasi;
         this.keterangan = keterangan;
@@ -27,6 +28,7 @@ public class Note {
         this.status = status;
         this.isSubmit = isSubmit;
         this.warna = warna;
+        this.ket_status = ket_status;
     }
 
     public String getLokasi() {
@@ -123,5 +125,13 @@ public class Note {
 
     public void setNo_spk(String no_spk) {
         this.no_spk = no_spk;
+    }
+
+    public String getKet_status() {
+        return ket_status;
+    }
+
+    public void setKet_status(String ket_status) {
+        this.ket_status = ket_status;
     }
 }

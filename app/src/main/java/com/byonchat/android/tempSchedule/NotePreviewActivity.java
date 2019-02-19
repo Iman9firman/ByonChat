@@ -154,7 +154,7 @@ public class NotePreviewActivity extends AppCompatActivity {
                 intent.putExtra("idTask", id_detail);
                 intent.putExtra("clndr", calendar);
                 intent.putExtra("strtdt", startDate);
-                generateDB(startDate, id_detail, idTab, "", "Draft", "#" + color, 0);
+                generateDB(startDate, id_detail, idTab, "", "Draft", "#" + color, 0,"");
                 startActivity(intent);
             }
         });
@@ -166,7 +166,7 @@ public class NotePreviewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         recyclerView.addItemDecoration(divider);
 
-        adapter = new NotePreviewAdapter(NotePreviewActivity.this, getInside(content), title, username, idTab, color, latLong, from, calendar, startDate);
+        adapter = new NotePreviewAdapter(this,NotePreviewActivity.this, getInside(content), title, username, idTab, color, latLong, from, calendar, startDate);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -208,8 +208,9 @@ public class NotePreviewActivity extends AppCompatActivity {
                 String id = joKedua.getString("id");
                 String status = joKedua.getString("report_status");
                 String warna = joKedua.getString("bg_status");
+                String ket = joKedua.getString("keterangan");
 
-                generateDB(dateFormat(selected_date), id, idTab, jaKedua.toString(), status, warna, 1);
+                generateDB(dateFormat(selected_date), id, idTab, jaKedua.toString(), status, warna, 1,ket);
 
 //{"id":"3","value":[{"label":"Title","type":"text","value":"sobari"},{"label":"Lokasi","type":"map","value":"-6.197442500000001%3B106.76115234374996%3B6%C2%B011%2750.8%22S+106%C2%B045%2740.1%22E%3BJalan+Meruya+Utara+Blok+Lameo+No.24F%2C+RT.1%2FRW.5%2C+Meruya+Utara%2C+Kembangan%2C+Kota+Jakarta+Barat%2C+Daerah+Khusus+Ibukota+Jakarta+11620%2C+Indonesia%3B+%3B"},{"label":"Jam mulai","type":"time","value":"18:11"},{"label":"Jam Selesai","type":"time","value":"18:11"},{"label":"Keterangan","type":"textarea","value":"ruuull"}],"report_status":"Waiting","bg_status":"#80ce81","selected_date":"2019-01-29","created_at":"2019-01-29 18:11:24"}:<>:[{"label":"Title","type":"text","value":"sobari"},{"label":"Lokasi","type":"map","value":"-6.197442500000001%3B106.76115234374996%3B6%C2%B011%2750.8%22S+106%C2%B045%2740.1%22E%3BJalan+Meruya+Utara+Blok+Lameo+No.24F%2C+RT.1%2FRW.5%2C+Meruya+Utara%2C+Kembangan%2C+Kota+Jakarta+Barat%2C+Daerah+Khusus+Ibukota+Jakarta+11620%2C+Indonesia%3B+%3B"},{"label":"Jam mulai","type":"time","value":"18:11"},{"label":"Jam Selesai","type":"time","value":"18:11"},{"label":"Keterangan","type":"textarea","value":"ruuull"}]
             }
@@ -220,7 +221,7 @@ public class NotePreviewActivity extends AppCompatActivity {
         eventDatabase = new MyEventDatabase(getApplicationContext());
         db = eventDatabase.getReadableDatabase();
         String[] args = {startDate, idTab};
-        Cursor c = db.rawQuery("SELECT id_detail_event,value_event,status_event,warna_event,startDate_event FROM event" + " WHERE startDate_event = ? AND id_tab_event = ? ", args);
+        Cursor c = db.rawQuery("SELECT id_detail_event,value_event,status_event,warna_event,startDate_event,keterangan_event FROM event" + " WHERE startDate_event = ? AND id_tab_event = ? ", args);
 
         while (c.moveToNext()) {
 
@@ -236,6 +237,7 @@ public class NotePreviewActivity extends AppCompatActivity {
             String status = c.getString(2);
             String warna = c.getString(3);
             String selected_date = c.getString(4);
+            String ket_status = c.getString(5);
 
             listItem3 = botListDB.allRoomDetailFormWithFlag(id_detail, username, idTab, "cild");
             Note n = null;
@@ -255,19 +257,20 @@ public class NotePreviewActivity extends AppCompatActivity {
                         endTime = cnt;
                     }
                 }
-                n = new Note(title, lokasi, "", startTime, endTime, keterangan, "", "", id_detail, status, false, warna);
+                n = new Note(title, lokasi, "", startTime, endTime, keterangan, "", "", id_detail, status, false, warna,ket_status);
             } else {
 
-             /*   0 = title
-                1 = detail lokasi
-                2 = keterangan tambahan
-                3 = jam mulai
-                4 = jam selesai
-                5 = job desk
+             /*   0 = job desk
+                1 = title
+                2 = lokasi
+                3 = ket tambahan
+                4 = jam mulai
+                5 = jam selesai
                 6 = no spk
                 7 = alasan*/
 
                 try {
+                    Log.w("ivana",value);
                     JSONArray arrayValue = new JSONArray(value);
                     for (int iv = 0; iv < arrayValue.length(); iv++) {
                         JSONObject a = arrayValue.getJSONObject(iv);
@@ -277,9 +280,9 @@ public class NotePreviewActivity extends AppCompatActivity {
 
                     if (selected_date.equalsIgnoreCase(startDate)) {
                         if (nampan2.size() == 5) {
-                            n = new Note(nampan2.get(0), nampan2.get(1), "", nampan2.get(2), nampan2.get(3), nampan2.get(4), "", "", id_detail, status, true, warna);
+                            n = new Note(nampan2.get(1), nampan2.get(2), "", nampan2.get(4), nampan2.get(5), nampan2.get(0), "", "", id_detail, status, true, warna,ket_status);
                         } else {
-                            n = new Note(nampan2.get(0), nampan2.get(1), nampan2.get(2), nampan2.get(3), nampan2.get(4), nampan2.get(5), nampan2.get(6), nampan2.get(7), id_detail, status, true, warna);
+                            n = new Note(nampan2.get(1), nampan2.get(2), nampan2.get(3), nampan2.get(4), nampan2.get(5), nampan2.get(0), nampan2.get(6), nampan2.get(7), id_detail, status, true, warna,ket_status);
                         }
 
 
@@ -332,7 +335,7 @@ public class NotePreviewActivity extends AppCompatActivity {
         return resRandom;
     }
 
-    private void generateDB(String date, String id_detail, String id_tab, String value, String status, String warna, int isSubmit) {
+    private void generateDB(String date, String id_detail, String id_tab, String value, String status, String warna, int isSubmit,String keterangan) {
         eventDatabase = new MyEventDatabase(getApplicationContext());
         db = eventDatabase.getWritableDatabase();
 
@@ -344,6 +347,7 @@ public class NotePreviewActivity extends AppCompatActivity {
         v.put(MyEventDatabase.EVENT_VALUE, value);
         v.put(MyEventDatabase.EVENT_WARNA, warna);
         v.put(MyEventDatabase.EVENT_ISSUBMIT, isSubmit);
+        v.put(MyEventDatabase.EVENT_KETERANGAN, keterangan);
 
         long id = db.insert(MyEventDatabase.TABLE_EVENT, null, v);
         db.close();

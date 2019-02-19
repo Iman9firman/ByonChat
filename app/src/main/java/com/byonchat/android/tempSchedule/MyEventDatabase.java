@@ -17,6 +17,7 @@ public class MyEventDatabase extends SQLiteOpenHelper {
     public static final String EVENT_VALUE = "value_event";
     public static final String EVENT_WARNA = "warna_event";
     public static final String EVENT_ISSUBMIT = "issubmit_event";
+    public static final String EVENT_KETERANGAN = "keterangan_event";
 //    public static final String EVENT_END_DATE = "endDate_event";
 //    public static final String EVENT_START_TIME = "startTime_event";
 //    public static final String EVENT_END_TIME = "endTime_event";
@@ -34,7 +35,8 @@ public class MyEventDatabase extends SQLiteOpenHelper {
             EVENT_STATUS + " TEXT, " +
             EVENT_VALUE + " TEXT, " +
             EVENT_WARNA + " TEXT, " +
-            EVENT_ISSUBMIT + " INTEGER DEFAULT 0"+
+            EVENT_ISSUBMIT + " INTEGER DEFAULT 0,"+
+            EVENT_KETERANGAN + " TEXT " +
             /*EVENT_END_DATE + " TEXT, " +
             EVENT_START_TIME + " TEXT, " +
             EVENT_END_TIME + " TEXT, " +

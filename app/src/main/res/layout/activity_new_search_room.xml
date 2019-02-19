@@ -130,9 +130,7 @@
                         android:layout_height="24dp"
                         android:layout_alignParentRight="true"
                         android:background="@drawable/ic_refresh_black_18dp"
-                        android:backgroundTint="?attr/colorControlNormal"
-                        android:padding="10dp"
-                        android:tint="?attr/colorControlNormal" />
+                        android:padding="10dp" />
                 </RelativeLayout>
 
                 <ScrollView

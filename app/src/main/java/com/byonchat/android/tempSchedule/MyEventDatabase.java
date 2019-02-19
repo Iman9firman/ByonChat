@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class MyEventDatabase extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "MyEvent.db";
     public static final String TABLE_EVENT = "event";
 
@@ -27,7 +27,7 @@ public class MyEventDatabase extends SQLiteOpenHelper {
 //    public static final String EVENT_UPDATED_DATE = "updatedDate_event";
 
 
-    private String CREATE_EVENT_TABLE = "CREATE TABLE "+ TABLE_EVENT + " (" +
+    private String CREATE_EVENT_TABLE = "CREATE TABLE " + TABLE_EVENT + " (" +
             EVENT_ID + " INTEGER PRIMARY KEY, " +
             EVENT_ID_DETAIL + " TEXT, " +
             EVENT_ID_TAB + " TEXT, " +
@@ -35,7 +35,7 @@ public class MyEventDatabase extends SQLiteOpenHelper {
             EVENT_STATUS + " TEXT, " +
             EVENT_VALUE + " TEXT, " +
             EVENT_WARNA + " TEXT, " +
-            EVENT_ISSUBMIT + " INTEGER DEFAULT 0,"+
+            EVENT_ISSUBMIT + " INTEGER DEFAULT 0," +
             EVENT_KETERANGAN + " TEXT " +
             /*EVENT_END_DATE + " TEXT, " +
             EVENT_START_TIME + " TEXT, " +
@@ -48,8 +48,8 @@ public class MyEventDatabase extends SQLiteOpenHelper {
 
     private String DROP_USER_TABLE = "DROP TABLE IF EXISTS " + TABLE_EVENT;
 
-    public MyEventDatabase(Context context){
-        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+    public MyEventDatabase(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
@@ -59,6 +59,9 @@ public class MyEventDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVer, int newVer) {
+        if (newVer > oldVer) {
+            db.execSQL("ALTER TABLE " + TABLE_EVENT + " ADD COLUMN " + EVENT_KETERANGAN + " TEXT");
+        }
         db.execSQL(DROP_USER_TABLE);
         onCreate(db);
     }

@@ -1496,29 +1496,32 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         EditText etV = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
                                         etV.setFocusable(false);
                                         etV.setFocusableInTouchMode(false);
+
                                         String valueMap = "";
                                         try {
                                             valueMap = URLDecoder.decode(value, "UTF-8");
                                         } catch (UnsupportedEncodingException e) {
                                             e.printStackTrace();
-                                            Log.w("Hau1", e.toString());
                                         }
 
                                         if (valueMap.contains("%20")) {
-//                                            -6.1819431;106.475138;Sindang;Sono,;Tangerang,;Banten,;Indonesia
-                                            String[] latlong = valueMap.split("%20");
 
+                                            try {
+                                                valueMap = URLDecoder.decode(valueMap, "UTF-8");
+                                            } catch (UnsupportedEncodingException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            String[] latlong = valueMap.split(" ");
 
                                             if (latlong.length > 4) {
-                                                etV.setText(Html.fromHtml(valueMap.substring(latlong[0].length() + latlong[1].length(), valueMap.length())));
+                                                etV.setText(Html.fromHtml(valueMap.substring(latlong[0].length() + latlong[1].length() + 2, valueMap.length())));
                                             }
 
                                             final String finalValueMap = valueMap;
                                             etV.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    String[] latlong = finalValueMap.split(
-                                                            Message.LOCATION_DELIMITER);
 
                                                     if (latlong.length > 3) {
                                                         Uri gmmIntentUri = null;
@@ -5998,7 +6001,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         Contact contact = messengerHelper.getMyContact();
 
-                        SpinnerCustomAdapter spinnerArrayAdapter = new SpinnerCustomAdapter(this,android.R.layout.simple_spinner_item,downloadForm,contact.getJabberId(),spinnerArray);
+                        SpinnerCustomAdapter spinnerArrayAdapter = new SpinnerCustomAdapter(this, android.R.layout.simple_spinner_item, downloadForm, contact.getJabberId(), spinnerArray);
                         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinner.setAdapter(spinnerArrayAdapter);
                         params2.setMargins(30, 10, 30, 40);

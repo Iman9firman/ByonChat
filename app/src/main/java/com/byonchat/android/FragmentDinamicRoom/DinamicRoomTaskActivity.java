@@ -2333,6 +2333,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("form_child")) {
+                        boolean spk = false;
 
                         final String formChild = jsonArray.getJSONObject(i).getString("form_child").toString();
                         String asal = "";
@@ -3356,8 +3357,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
                                         }
 
+                                        if(idListTaskMasterForm.equalsIgnoreCase("66900")){
+                                            spk = true;
+                                        }
 
-                                        rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk));
+                                        rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk,spk));
                                         objData.put("data", jsonArrayHUHU);
 
                                         jsonArrayMaster.put(objData);

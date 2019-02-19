@@ -4,15 +4,22 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
@@ -27,14 +34,18 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.Icon;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
@@ -90,8 +101,10 @@ import com.byonchat.android.Manhera.Manhera;
 import com.byonchat.android.R;
 import com.byonchat.android.RequestPasscodeRoomActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.communication.MyBroadcastReceiver;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
+import com.byonchat.android.communication.WhatsAppJobService;
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.curved.CurvedImageView;
 import com.byonchat.android.helpers.Constants;
@@ -109,6 +122,7 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.Fonts;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.LocationAssistant;
+import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
 import com.byonchat.android.utils.UploadService;
@@ -155,6 +169,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import eightbitlab.com.blurview.BlurView;
 import jp.wasabeef.blurry.Blurry;
@@ -974,20 +989,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 }
             }
 
-            if (jsonArray.length() == 1) {
-                isRecyclerViewShowed = false;
-                vFrameTabOne.setVisibility(View.VISIBLE);
-            } else if (jsonArray.length() == 2) {
-                vFrameTabTwo.setVisibility(View.VISIBLE);
-                isRecyclerViewShowed = false;
-            } else if (jsonArray.length() == 4) {
-                vFrameTabFour.setVisibility(View.VISIBLE);
-                isRecyclerViewShowed = false;
-            } else if (jsonArray.length() == 3 || jsonArray.length() > 4 && jsonArray.length() <= 8) {
-                vFrameTabNine.setVisibility(View.VISIBLE);
-                isRecyclerViewShowed = false;
-            }
-
             for (int i = 0; i < jsonArray.length(); i++) {
                 String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
                 String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
@@ -1289,6 +1290,45 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 }
             }
             Constants.map.put(jsonArray.length(), null);
+
+            if (jsonArray.length() == 1) {
+                isRecyclerViewShowed = false;
+                vFrameTabOne.setVisibility(View.VISIBLE);
+                vFrameTabTwo.setVisibility(View.GONE);
+                vFrameTabFour.setVisibility(View.GONE);
+                vFrameTabNine.setVisibility(View.GONE);
+
+                recyclerView.setVisibility(View.INVISIBLE);
+            } else if (jsonArray.length() == 2) {
+                vFrameTabOne.setVisibility(View.GONE);
+                vFrameTabTwo.setVisibility(View.VISIBLE);
+                vFrameTabFour.setVisibility(View.GONE);
+                vFrameTabNine.setVisibility(View.GONE);
+                isRecyclerViewShowed = false;
+                recyclerView.setVisibility(View.INVISIBLE);
+            } else if (jsonArray.length() == 4) {
+                vFrameTabOne.setVisibility(View.GONE);
+                vFrameTabTwo.setVisibility(View.GONE);
+                vFrameTabFour.setVisibility(View.VISIBLE);
+                vFrameTabNine.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.INVISIBLE);
+                isRecyclerViewShowed = false;
+            } else if (jsonArray.length() == 3 || jsonArray.length() > 4 && jsonArray.length() <= 8) {
+                vFrameTabOne.setVisibility(View.GONE);
+                vFrameTabTwo.setVisibility(View.GONE);
+                vFrameTabFour.setVisibility(View.GONE);
+                vFrameTabNine.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
+                isRecyclerViewShowed = false;
+            } else {
+                vFrameTabOne.setVisibility(View.GONE);
+                vFrameTabTwo.setVisibility(View.GONE);
+                vFrameTabFour.setVisibility(View.GONE);
+                vFrameTabNine.setVisibility(View.GONE);
+                isRecyclerViewShowed = true;
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
             Log.w("menahanIS", e.getMessage());
@@ -1417,6 +1457,20 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
             }
         }, 500);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if (requestCode == TAG_CODE_PERMISSION_LOCATION) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                resolveServices();
+            } else {
+                Toast.makeText(getApplicationContext(), "This application need permission!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -1764,7 +1818,14 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 alertbox.setMessage("Are you sure you want to Refresh?");
                 alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
                     if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                        editor.apply();
+
                         finish();
+
                         Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
                         startActivity(ii);
                     } else {
@@ -2326,5 +2387,105 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+    }
+
+    protected void resolveServices() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs != null) {
+                if (prefs.getString(Constants.EXTRA_SERVICE_PERMISSION, "false").equalsIgnoreCase("true")) {
+
+                } else {
+                    JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                    ComponentName componentName = new ComponentName(MainBaseActivityNew.this, WhatsAppJobService.class);
+                    JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                            .setPeriodic(TimeUnit.MINUTES.toMillis(1))
+                            .build();
+
+                    PermanentLoggerUtil.logMessage(MainBaseActivityNew.this, "Scheduling recurring job");
+                    jobScheduler.schedule(jobInfo);
+
+                    PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                    if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                        Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(intent);
+                    }
+
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                    editor.apply();
+                }
+            } else {
+                JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                ComponentName componentName = new ComponentName(MainBaseActivityNew.this, WhatsAppJobService.class);
+                JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                        .setPeriodic(TimeUnit.MINUTES.toMillis(1))
+                        .build();
+
+                PermanentLoggerUtil.logMessage(MainBaseActivityNew.this, "Scheduling recurring job");
+                jobScheduler.schedule(jobInfo);
+
+                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                    Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+                }
+
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                editor.apply();
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Utility.scheduleJob(this);
+        } else {
+            mUploadService = new UploadService();
+            mServiceIntent = new Intent(this, mUploadService.getClass());
+            mServiceIntent.putExtra(UploadService.ACTION, "startService");
+            if (!isMyServiceRunning(mUploadService.getClass())) {
+                startService(mServiceIntent);
+            }
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 898989,
+                    mServiceIntent, 0);
+            int alarmType = AlarmManager.ELAPSED_REALTIME;
+            final int FIFTEEN_SEC_MILLIS = 8000;
+            AlarmManager alarmManager = (AlarmManager)
+                    getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+            alarmManager.setInexactRepeating(alarmType, SystemClock.elapsedRealtime() + FIFTEEN_SEC_MILLIS,
+                    FIFTEEN_SEC_MILLIS, pendingIntent);
+
+            ComponentName receiver = new ComponentName(getApplicationContext(), MyBroadcastReceiver.class);
+            PackageManager pm = getApplicationContext().getPackageManager();
+
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+        }
+    }
+
+    protected boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i(MainActivityNew.class.getName(), "isMyServiceRunning? " + true + "");
+                return true;
+            }
+        }
+
+        Log.i(MainActivityNew.class.getName(), "isMyServiceRunning? " + false + "");
+        return false;
     }
 }

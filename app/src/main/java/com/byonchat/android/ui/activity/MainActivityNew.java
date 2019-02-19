@@ -365,14 +365,20 @@ public class MainActivityNew extends MainBaseActivityNew {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
 
         } else {
             ActivityCompat.requestPermissions(this, new String[]{
                             Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.WRITE_CONTACTS},
+                            Manifest.permission.WRITE_CONTACTS,
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.CALL_PHONE,
+                            Manifest.permission.RECEIVE_SMS},
                     TAG_CODE_PERMISSION_LOCATION);
         }
 
@@ -524,106 +530,14 @@ public class MainActivityNew extends MainBaseActivityNew {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    protected boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.i(MainActivityNew.class.getName(), "isMyServiceRunning? " + true + "");
-                return true;
-            }
-        }
-
-        Log.i(MainActivityNew.class.getName(), "isMyServiceRunning? " + false + "");
-        return false;
-    }
-
     @RequiresApi(23)
     @SuppressWarnings("WrongConstant")
     protected void resolveView() {
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                if (prefs != null) {
-                    if (prefs.getString(Constants.EXTRA_SERVICE_PERMISSION, "false").equalsIgnoreCase("true")) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
 
-                    } else {
-                        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                        ComponentName componentName = new ComponentName(MainActivityNew.this, WhatsAppJobService.class);
-                        JobInfo jobInfo = new JobInfo.Builder(1, componentName)
-                                .setPeriodic(TimeUnit.MINUTES.toMillis(1))
-                                .build();
-
-                        PermanentLoggerUtil.logMessage(MainActivityNew.this, "Scheduling recurring job");
-                        jobScheduler.schedule(jobInfo);
-
-                        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                        if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
-                            Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                            startActivity(intent);
-                        } else {
-                            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                            intent.setData(Uri.parse("package:" + getPackageName()));
-                            startActivity(intent);
-                        }
-
-                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
-                        editor.apply();
-                    }
-                } else {
-                    JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                    ComponentName componentName = new ComponentName(MainActivityNew.this, WhatsAppJobService.class);
-                    JobInfo jobInfo = new JobInfo.Builder(1, componentName)
-                            .setPeriodic(TimeUnit.MINUTES.toMillis(1))
-                            .build();
-
-                    PermanentLoggerUtil.logMessage(MainActivityNew.this, "Scheduling recurring job");
-                    jobScheduler.schedule(jobInfo);
-
-                    PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                    if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
-                        Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                        startActivity(intent);
-                    } else {
-                        Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                        intent.setData(Uri.parse("package:" + getPackageName()));
-                        startActivity(intent);
-                    }
-
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
-                    editor.apply();
-                }
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Utility.scheduleJob(this);
-            } else {
-                mUploadService = new UploadService();
-                mServiceIntent = new Intent(this, mUploadService.getClass());
-                mServiceIntent.putExtra(UploadService.ACTION, "startService");
-                if (!isMyServiceRunning(mUploadService.getClass())) {
-                    startService(mServiceIntent);
-                }
-
-                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 898989,
-                        mServiceIntent, 0);
-                int alarmType = AlarmManager.ELAPSED_REALTIME;
-                final int FIFTEEN_SEC_MILLIS = 8000;
-                AlarmManager alarmManager = (AlarmManager)
-                        getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-                alarmManager.setInexactRepeating(alarmType, SystemClock.elapsedRealtime() + FIFTEEN_SEC_MILLIS,
-                        FIFTEEN_SEC_MILLIS, pendingIntent);
-
-                ComponentName receiver = new ComponentName(getApplicationContext(), MyBroadcastReceiver.class);
-                PackageManager pm = getApplicationContext().getPackageManager();
-
-                pm.setComponentEnabledSetting(receiver,
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                        PackageManager.DONT_KILL_APP);
+                resolveServices();
             }
 
             IntervalDB db = new IntervalDB(getApplicationContext());

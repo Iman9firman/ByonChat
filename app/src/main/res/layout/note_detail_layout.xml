@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible">
+
+        <FrameLayout
+            android:id="@+id/linear_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/margin1"
+            android:background="@drawable/dialog_voucher_title_rounded"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/black" />
+        </FrameLayout>
+    </RelativeLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:padding="16dp">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guide_ndd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".1" />
+
+        <TextView
+            android:id="@+id/tv_status_ndd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Approve"
+            android:textColor="@android:color/white"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/status_work"
+            android:padding="2dp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:layout_margin="4dp"/>
+
+        <TextView
+            android:id="@+id/tv_jobdesk_ndd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kunjungan Kerja"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_status_ndd"
+            android:layout_margin="16dp"/>
+
+        <TextView
+            android:id="@+id/tv_title_ndd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title :"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_jobdesk_ndd"
+            android:layout_margin="4dp"/>
+
+        <TextView
+            android:id="@+id/tv_title_value_ndd"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent=".8"
+            android:layout_height="wrap_content"
+            android:text="Canvassing"
+            android:textSize="16sp"
+            android:padding="4dp"
+            android:background="@drawable/backgroud_conversation"
+            app:layout_constraintLeft_toRightOf="@id/guide_ndd"
+            app:layout_constraintTop_toBottomOf="@id/tv_title_ndd"
+            android:layout_margin="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_time_ndd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time :"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title_value_ndd"
+            android:layout_margin="4dp"/>
+
+        <TextView
+            android:id="@+id/tv_time_value_ndd"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent=".8"
+            android:layout_height="wrap_content"
+            android:text="08:00 - 09:00"
+            android:textSize="16sp"
+            android:padding="4dp"
+            android:background="@drawable/backgroud_conversation"
+            app:layout_constraintLeft_toRightOf="@id/guide_ndd"
+            app:layout_constraintTop_toBottomOf="@id/tv_time_ndd"
+            android:layout_margin="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_reason_ndd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alasan :"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_time_value_ndd"
+            android:layout_margin="4dp"/>
+
+        <TextView
+            android:id="@+id/tv_reason_value_ndd"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent=".8"
+            android:layout_height="wrap_content"
+            android:text="Reason doing the job"
+            android:textSize="16sp"
+            android:padding="4dp"
+            android:background="@drawable/backgroud_conversation"
+            app:layout_constraintLeft_toRightOf="@id/guide_ndd"
+            app:layout_constraintTop_toBottomOf="@id/tv_reason_ndd"
+            android:layout_margin="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_ket_ndd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Keterangan :"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_reason_value_ndd"
+            android:layout_margin="4dp"/>
+
+        <TextView
+            android:id="@+id/tv_ket_value_ndd"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent=".8"
+            android:layout_height="wrap_content"
+            android:text="keterangan boleh dilakukan"
+            android:textSize="16sp"
+            android:padding="4dp"
+            android:background="@drawable/backgroud_conversation"
+            app:layout_constraintLeft_toRightOf="@id/guide_ndd"
+            app:layout_constraintTop_toBottomOf="@id/tv_ket_ndd"
+            android:layout_margin="8dp"/>
+
+        <Button
+            android:id="@+id/but_ndd"
+            android:layout_width="@dimen/margin100"
+            android:layout_height="@dimen/margin30"
+            android:padding="5dp"
+            android:text="Close"
+            android:background="@drawable/oval_btn_room"
+            android:textAllCaps="false"
+            app:layout_constraintTop_toBottomOf="@id/tv_ket_value_ndd"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_margin="16dp"
+            android:textColor="@drawable/selector_txt_blue_white"
+            android:textSize="14sp"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

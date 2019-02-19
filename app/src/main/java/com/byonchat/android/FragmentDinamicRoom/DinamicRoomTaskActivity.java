@@ -133,6 +133,7 @@ import com.byonchat.android.utils.Utility;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.ContactsCompletionView;
+import com.byonchat.android.widget.SpinnerCustomAdapter;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -5976,24 +5977,28 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         String downloadForm = jsonArray.getJSONObject(i).getString("formula").toString();
                         String resutll = "[{\"spk\":\"081491060200030\"},{\"spk\":\"081491060200030\"}]";
                         final ArrayList<String> spinnerArray = new ArrayList<String>();
-
-                        spinnerArray.add("--Please Select--");
-
-                        if (resutll.length() > 0) {
+                        spinnerArray.add("test");
+                        /*if (resutll.length() > 0) {
                             final JSONArray jsonArrays = new JSONArray(resutll);
 
                             for (int ia = 0; ia < jsonArrays.length(); ia++) {
                                 String l = jsonArrays.getJSONObject(ia).getString("spk").toString();
                                 spinnerArray.add(l);
                             }
-                        }
-
+                        }*/
 
                         SearchableSpinner spinner = new SearchableSpinner(this);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                             spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
                         }
-                        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                        MessengerDatabaseHelper messengerHelper = null;
+                        if (messengerHelper == null) {
+                            messengerHelper = MessengerDatabaseHelper.getInstance(context);
+                        }
+
+                        Contact contact = messengerHelper.getMyContact();
+
+                        SpinnerCustomAdapter spinnerArrayAdapter = new SpinnerCustomAdapter(this,android.R.layout.simple_spinner_item,downloadForm,contact.getJabberId(),spinnerArray);
                         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinner.setAdapter(spinnerArrayAdapter);
                         params2.setMargins(30, 10, 30, 40);
@@ -6042,14 +6047,14 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
                                     if (cEdit.getCount() > 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
                                     } else {
-                                        if (String.valueOf(spinnerArray.get(myPosition)).length() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                        if (String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)).length() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                         }
                                     }
@@ -12269,8 +12274,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 String value = c.getString(0);
                 if (value != null && !value.equalsIgnoreCase("")) {
                     JSONArray arrayValue = new JSONArray(value);
-                    JSONObject startObj = arrayValue.getJSONObject(3);
-                    JSONObject endObj = arrayValue.getJSONObject(4);
+                    JSONObject startObj = arrayValue.getJSONObject(4);
+                    JSONObject endObj = arrayValue.getJSONObject(5);
 
                     starts.add(startObj.getString("value"));
                     ends.add(endObj.getString("value"));

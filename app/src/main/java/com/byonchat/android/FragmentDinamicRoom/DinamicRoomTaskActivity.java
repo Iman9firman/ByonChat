@@ -1776,8 +1776,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     if (jsonArray.getJSONObject(i).has("dropdown_view_parents")) {
                         dropdownViewId = jsonArray.getJSONObject(i).getJSONArray("dropdown_view_parents");
                     }
-                    Log.w("typenya", type);
-                    Log.w("content", content);
 
                     if (type.equalsIgnoreCase("call_chat")) {
                         Log.w("kamar2", "madni");
@@ -1881,7 +1879,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                     } else if (type.equalsIgnoreCase("preview_document")) {
 
-
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
                             label += "<font size=\"3\" color=\"red\">*</font>";
@@ -1920,11 +1917,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         String urlP = jObject.getString("url");
                         String valueP = jObject.getString("value");
 
-
                         final Button btnOption = (Button) linearEstimasi[count].findViewById(R.id.btn_browse);
                         btnOption.setText("Open");
                         final TextView valueFile = (TextView) linearEstimasi[count].findViewById(R.id.value);
                         valueFile.setText(valueP);
+                        if (urlP.equalsIgnoreCase("https://bb.byonchat.com/bc_voucher_client/public/list_task/document_preview/Document_27122018_164006_dyhW8uilXa.pdf")) {
+                            valueFile.setText(getOficer("lokasi").replace(" ", "_") + ".pdf");
+                        }
 
                         final int finalI25 = i;
                         String finalLabel4 = label;
@@ -1932,8 +1931,17 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(context, DownloadFileByonchat.class);
-                                intent.putExtra("path", urlP);
-                                intent.putExtra("nama_file", finalLabel4);
+                                if (urlP.equalsIgnoreCase("https://bb.byonchat.com/bc_voucher_client/public/list_task/document_preview/Document_27122018_164006_dyhW8uilXa.pdf")) {
+                                    String urlPaa = "https://bb.byonchat.com/bc_voucher_client/public/list_task/document_preview/";
+
+                                    intent.putExtra("path", urlPaa + getOficer("lokasi").replace(" ", "_") + ".pdf");
+                                    intent.putExtra("nama_file", getOficer("lokasi").replace(" ", "_") + ".pdf");
+                                } else {
+                                    intent.putExtra("path", urlP);
+                                    intent.putExtra("nama_file", finalLabel4);
+                                }
+
+
                                 startActivity(intent);
                             }
                         });
@@ -3357,11 +3365,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
                                         }
 
-                                        if(idListTaskMasterForm.equalsIgnoreCase("66900")){
+                                        if (idListTaskMasterForm.equalsIgnoreCase("66900")) {
                                             spk = true;
                                         }
 
-                                        rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk,spk));
+                                        rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk, spk));
                                         objData.put("data", jsonArrayHUHU);
 
                                         jsonArrayMaster.put(objData);
@@ -11979,6 +11987,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         Cursor cur = db.getSingleRoom(username);
         if (cur.getCount() > 0) {
             final String officer = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "d");
+            Log.w("kaming", officer);
             JSONObject jsonOfficer = null;
             try {
                 jsonOfficer = new JSONObject(officer);

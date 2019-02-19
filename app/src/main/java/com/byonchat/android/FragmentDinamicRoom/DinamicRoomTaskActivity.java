@@ -710,581 +710,560 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 final String value = joContent.getJSONObject(i).getString("value").toString();
                                 final String type = joContent.getJSONObject(i).getString("type").toString();
                                 final String idValue = joContent.getJSONObject(i).getString("id").toString();
+                                if (showParentView(joContent, idValue, label)) {
 
-// TODO: 08/11/18 jadi nnti listchild dimasukin ke dalem array untuk ambil data dari parennya
-                                if (type.equalsIgnoreCase("dropdown_views")) {
-                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
-                                    textV.setText(Html.fromHtml(label));
-                                    textV.setTextSize(17);
-                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
+                                    if (type.equalsIgnoreCase("dropdown_views")) {
+                                        TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                        textV.setText(Html.fromHtml(label));
+                                        textV.setTextSize(17);
+                                        textV.setLayoutParams(new TableRow.LayoutParams(0));
 
-                                    JSONObject jObject = new JSONObject(value);
-                                    String vl = jObject.getString("value");
-                                    if (jObject.has("dropdown_view_id")) {
-                                        dropdownViewIdParent = jObject.getString("dropdown_view_id");
-                                    }
+                                        JSONObject jObject = new JSONObject(value);
+                                        Log.w("valuePairs", value);
 
-                                    TextView etV = (TextView) new TextView(context);
-                                    etV.setTextIsSelectable(true);
-                                    etV.setText(Html.fromHtml(vl));
-                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params11.setMargins(10, 10, 30, 0);
-                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params22.setMargins(50, 10, 30, 30);
-                                    linearValue.addView(textV, params11);
-                                    linearValue.addView(line, params11);
-                                    linearValue.addView(etV, params22);
+                                        String vl = jObject.getString("value");
 
-
-                                } else if (type.equalsIgnoreCase("attach_api")) {
-
-                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
-                                    textV.setText(Html.fromHtml(label));
-                                    textV.setTextSize(17);
-                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
-
-
-                                    LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.api_text_layout_form, null);
-                                    //final TextView valueFile = (TextView) linearLayout.findViewById(R.id.value);
-                                    HtmlTextView htmlTextView = (HtmlTextView) linearLayout.findViewById(R.id.value);
-                                    htmlTextView.setTextIsSelectable(true);
-
-                                    AVLoadingIndicatorView progress = (AVLoadingIndicatorView) linearLayout.findViewById(R.id.loader_progress);
-
-                                    if (!value.equalsIgnoreCase("")) {
-                                        SaveMedia saveMedia = new SaveMedia();
-                                        if (value.startsWith("Rp.")) {
-                                            saveMedia.execute(new MyTaskParams(htmlTextView, progress, value));
-                                        } else {
-                                            saveMedia.execute(new MyTaskParams(htmlTextView, progress, value.replace(" ", "%")));
+                                        if (jObject.has("dropdown_view_id")) {
+                                            dropdownViewIdParent = jObject.getString("dropdown_view_id");
                                         }
 
-                                    }
-
-                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params11.setMargins(10, 10, 30, 0);
-                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params22.setMargins(50, 10, 30, 30);
-                                    linearValue.addView(textV, params11);
-                                    linearValue.addView(linearLayout, params22);
-
-                                } else if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera") || type.equalsIgnoreCase("signature")) {
-                                    TextView textView = new TextView(DinamicRoomTaskActivity.this);
-                                    textView.setText(Html.fromHtml(label));
-                                    textView.setTextSize(17);
-                                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params2.setMargins(10, 10, 30, 0);
-                                    textView.setLayoutParams(params2);
-                                    linearValue.addView(textView);
-                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-                                    linearValue.addView(line, params2);
-                                    LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.image_loader_layout_form, null);
-
-                                    final ImageView imageView = (ImageView) linearLayout.findViewById(R.id.value);
-                                    final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) linearLayout.findViewById(R.id.loader_progress);
-
-                                    /*new DownloadImageFromInternet(imageView).execute(value);*/
-
-                                  /*  ImageLoaderLarge imgBarcode = new ImageLoaderLarge(context, false);
-                                    imgBarcode.DisplayImage(value, imageView);
-*/
-                                    Picasso.with(context).load(value).into(imageView);
-
-                                    imageView.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-
-                                            Intent intent = new Intent(context, ZoomImageViewActivity.class);
-                                            intent.putExtra(ZoomImageViewActivity.KEY_FILE, value);
-                                            startActivity(intent);
-                                        }
-                                    });
-
-
-                                    int width = getWindowManager().getDefaultDisplay().getWidth();
-                                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
-                                    params.setMargins(5, 15, 0, 30);
-
-                                    linearLayout.setLayoutParams(params);
-                                    linearValue.addView(linearLayout);
-
-                                } else if (type.equalsIgnoreCase("form_child")) {
-
-
-                                    JSONObject nn = new JSONObject(joContent.getJSONObject(i).toString());
-
-                                    idFormChildParent.put(Integer.valueOf(nn.getString("id")), joContent.getJSONObject(i).toString());
-
-                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
-                                    textV.setText(Html.fromHtml(label));
-                                    textV.setTextSize(17);
-                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
-
-                                    String[] ff = idDetail.split("\\|");
-                                    String iidd = "";
-                                    if (ff.length == 2) {
-                                        iidd = ff[1];
-                                    }
-                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.from_cild_layout_value, null);
-                                    Button addCild = (Button) line.findViewById(R.id.btn_add_cild);
-                                    ListView lv = (ListView) line.findViewById(R.id.listOrder);
-                                    TextView tQty = null;
-                                    TextView tPrice = null;
-                                    if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632") || iidd.equalsIgnoreCase("2021")
-                                            || (Integer.valueOf(iidd) >= 2092)) {
-                                        line = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout_value, null);
-                                        if (Integer.valueOf(iidd) >= 2092) {
-                                            TextView nama = (TextView) line.findViewById(R.id.nama);
-                                            nama.setVisibility(View.GONE);
-                                        }
-
-                                        lv = (ListView) line.findViewById(R.id.listOrder);
-                                        addCild = (Button) line.findViewById(R.id.btn_add_cild);
-                                    } else {
-                                        tQty = (TextView) line.findViewById(R.id.total_detail_order);
-                                        tPrice = (TextView) line.findViewById(R.id.total_price_order);
-                                    }
-
-                                    lv.setOnTouchListener(new View.OnTouchListener() {
-                                        // Setting on Touch Listener for handling the touch inside ScrollView
-                                        @Override
-                                        public boolean onTouch(View v, MotionEvent event) {
-                                            v.getParent().requestDisallowInterceptTouchEvent(true);
-                                            return false;
-                                        }
-                                    });
-
-                                    addCild.setVisibility(View.GONE);
-
-                                    final ArrayList<ModelFormChild> rowItems = new ArrayList<ModelFormChild>();
-                                    final ArrayList<String> labelDialog = new ArrayList<String>();
-                                    JSONArray jsonarray = new JSONArray(value);
-
-                                    if (Integer.valueOf(iidd) >= 2092) {
-                                        for (int aaa = 0; aaa < jsonarray.length(); aaa++) {
-                                            JSONObject jsonobject = jsonarray.getJSONObject(aaa);
-                                            String urutan = jsonobject.getString("urutan");
-                                            String titleUntuk = "";
-                                            String decsUntuk = "";
-                                            String priceUntuk = "";
-                                            String data = jsonobject.getString("data");
-
-                                            JSONArray jsonarrayChild = new JSONArray(data);
-                                            boolean image = false;
-                                            for (int bbb = 0; bbb < jsonarrayChild.length(); bbb++) {
-                                                final String key = jsonarrayChild.getJSONObject(bbb).getString("key").toString();
-                                                final String val = jsonarrayChild.getJSONObject(bbb).getString("value").toString();
-                                                final String typ = jsonarrayChild.getJSONObject(bbb).getString("type").toString();
-                                                String lab = "";
-                                                if (jsonarrayChild.getJSONObject(bbb).has("label")) {
-                                                    lab = jsonarrayChild.getJSONObject(bbb).getString("label").toString();
-                                                }
-
-
-                                                String valUs = "";
-                                                if (Message.isJSONValid(val)) {
-                                                    JSONObject jObject = null;
-                                                    try {
-                                                        jObject = new JSONObject(val);
-
-                                                        Iterator<String> keys = jObject.keys();
-                                                        while (keys.hasNext()) {
-                                                            String keyValue = (String) keys.next();
-                                                            String valueString = jObject.getString(keyValue);
-                                                            valUs += keyValue + " : " + valueString + "\n";
-                                                        }
-
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-                                                }
-
-                                                if (valUs.length() == 0) {
-
-                                                    titleUntuk += lab + " : " + val + "\n";
-                                                } else {
-                                                    titleUntuk += lab + "\n" + valUs;
-                                                }
-
-
-                                                if (typ.equalsIgnoreCase("front_camera") || typ.equalsIgnoreCase("rear_camera")) {
-                                                    image = true;
-                                                }
-                                            }
-                                            if (image) {
-                                                JSONArray jsonarrayChild2 = new JSONArray(data);
-                                                for (int bbb = 0; bbb < jsonarrayChild.length(); bbb++) {
-                                                    String key = jsonarrayChild2.getJSONObject(bbb).getString("key").toString();
-                                                    String val = jsonarrayChild2.getJSONObject(bbb).getString("value").toString();
-                                                    String typ = jsonarrayChild2.getJSONObject(bbb).getString("type").toString();
-
-                                                    if (typ.equalsIgnoreCase("front_camera") || typ.equalsIgnoreCase("rear_camera")) {
-                                                        titleUntuk = val;
-                                                        priceUntuk = "image";
-                                                        labelDialog.add(0, key);
-                                                    }
-
-                                                    if (typ.equalsIgnoreCase("dropdown")) {
-                                                        titleUntuk = val;
-                                                        priceUntuk = "standart";
-                                                        labelDialog.add(0, key);
-                                                    }
-
-                                                    if (typ.equalsIgnoreCase("textarea")) {
-                                                        decsUntuk = val;
-                                                        if (labelDialog.size() > 1) {
-                                                            labelDialog.add(1, key);
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209") || iidd.equalsIgnoreCase("2397")) {
-
-                                                    JSONArray jsonarrayChild2 = new JSONArray(data);
-                                                    JSONObject ks0 = jsonarrayChild2.getJSONObject(0);
-                                                    JSONObject ks1 = jsonarrayChild2.getJSONObject(1);
-                                                    JSONObject ks2 = jsonarrayChild2.getJSONObject(2);
-
-                                                    JSONObject alas = ks1.getJSONObject("value");
-                                                    titleUntuk = alas.getString("Part ID") + " " + alas.getString("Nama Part") + "(" + ks0.getString("value") + ")";
-                                                    decsUntuk = ks2.getString("value");
-                                                    priceUntuk = alas.getString("AVE");
-
-
-                                                    line = (LinearLayout) getLayoutInflater().inflate(R.layout.from_cild_layout_value, null);
-                                                    lv = (ListView) line.findViewById(R.id.listOrder);
-                                                    addCild = (Button) line.findViewById(R.id.btn_add_cild);
-                                                    tQty = (TextView) line.findViewById(R.id.total_detail_order);
-                                                    tPrice = (TextView) line.findViewById(R.id.total_price_order);
-                                                    addCild.setVisibility(View.GONE);
-                                                }
-
-                                            }
-
-                                            rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, priceUntuk));
-                                        }
-
-                                    } else {
-                                        for (int aaa = 0; aaa < jsonarray.length(); aaa++) {
-                                            JSONObject jsonobject = jsonarray.getJSONObject(aaa);
-                                            String urutan = jsonobject.getString("urutan");
-                                            String titleUntuk = "";
-                                            String fotoUntuk = "";
-                                            String decsUntuk = "";
-                                            String priceUntuk = "";
-                                            String data = jsonobject.getString("data");
-                                            JSONArray jsonarrayChild = new JSONArray(data);
-                                            for (int bbb = 0; bbb < jsonarrayChild.length(); bbb++) {
-                                                final String key = jsonarrayChild.getJSONObject(bbb).getString("key").toString();
-                                                final String val = jsonarrayChild.getJSONObject(bbb).getString("value").toString();
-                                                final String typ = jsonarrayChild.getJSONObject(bbb).getString("type").toString();
-
-                                                JSONArray jsA = null;
-                                                String contentS = "";
-
-                                                String cc = val;
-                                                if (typ.equalsIgnoreCase("input_kodepos") || typ.equalsIgnoreCase("dropdown_wilayah")) {
-                                                    cc = jsoncreateC(val);
-                                                }
-
-                                                try {
-                                                    if (cc.startsWith("{")) {
-                                                        if (!cc.startsWith("[")) {
-                                                            cc = "[" + cc + "]";
-                                                        }
-                                                        jsA = new JSONArray(cc);
-                                                    }
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                if (jsA != null) {
-                                                    if (typ.equalsIgnoreCase("distance_estimation") || typ.equalsIgnoreCase("dropdown_dinamis") || typ.equalsIgnoreCase("new_dropdown_dinamis") || typ.equalsIgnoreCase("ocr") || typ.equalsIgnoreCase("upload_document")) {
-                                                        if (iidd.equalsIgnoreCase("1643")) {
-                                                            titleUntuk = jsonResultType(val, "Nama");
-                                                        } else {
-                                                            titleUntuk = jsonResultType(val, "Name Detail");
-                                                            if (titleUntuk.equalsIgnoreCase("")) {
-                                                                titleUntuk = jsonResultType(val, "SKU");
-                                                            }
-                                                            if (titleUntuk.equalsIgnoreCase("")) {
-                                                                titleUntuk = jsonResultType(val, "Nama");
-                                                            }
-                                                            if (titleUntuk.equalsIgnoreCase("")) {
-                                                                titleUntuk = jsonResultType(val, "Nama Siswa");
-                                                            }
-                                                        }
-
-                                                        fotoUntuk = jsonResultType(val, "Foto Siswa");
-
-                                                    } else {
-                                                        try {
-                                                            for (int ic = 0; ic < jsA.length(); ic++) {
-                                                                final String icC = jsA.getJSONObject(ic).getString("c").toString();
-                                                                contentS += icC + "|";
-                                                            }
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    }
-                                                } else {
-                                                    if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632")) {
-                                                        decsUntuk = val;
-                                                        priceUntuk = "";
-                                                    } else {
-                                                        if (idListTaskMasterForm.equalsIgnoreCase("62483")) {
-                                                            if (key.equalsIgnoreCase("qty")) {
-                                                                decsUntuk = val;
-                                                            } else if (key.equalsIgnoreCase("total")) {
-                                                                priceUntuk = val;
-                                                            }
-                                                        } else {
-
-                                                            if (typ.equalsIgnoreCase("number") || typ.equalsIgnoreCase("currency")) {
-                                                                decsUntuk = val;
-                                                                labelDialog.add(1, key);
-                                                            } else if (typ.equalsIgnoreCase("formula")) {
-                                                                priceUntuk = val;
-                                                            }
-
-                                                            if (typ.equalsIgnoreCase("front_camera") || typ.equalsIgnoreCase("rear_camera")) {
-                                                                titleUntuk = val;
-                                                                priceUntuk = "image";
-                                                                labelDialog.add(0, key);
-                                                            }
-
-                                                            if (typ.equalsIgnoreCase("dropdown")) {
-                                                                titleUntuk = val;
-                                                                decsUntuk = val;
-
-                                                                priceUntuk = "standart";
-                                                                labelDialog.add(0, key);
-                                                            }
-
-                                                            if (typ.equalsIgnoreCase("textarea")) {
-                                                                decsUntuk = val;
-                                                                if (labelDialog.size() > 1) {
-                                                                    labelDialog.add(1, key);
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-
-                                                }
-                                            }
-
-                                            if (ff.length == 2) {
-                                                iidd = ff[1];
-                                            }
-
-                                            if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632")) {
-                                                rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, ""));
-                                            } else if (iidd.equalsIgnoreCase("1113")) {
-                                                int nilai = 0;
-                                                try {
-                                                    nilai = Integer.valueOf(priceUntuk != null ? priceUntuk.replace(".", "") : "0") / Integer.valueOf(decsUntuk != null ? decsUntuk.replace(".", "") : "0");
-                                                } catch (Exception e) {
-                                                    nilai = 0;
-                                                }
-                                                rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, String.valueOf(nilai)));
-                                            } else {
-
-                                                if (priceUntuk.equalsIgnoreCase("standart") && !fotoUntuk.equalsIgnoreCase("")) {
-                                                    priceUntuk = fotoUntuk;
-                                                }
-                                                rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, priceUntuk));
-                                            }
-                                        }
-                                    }
-
-
-                                    if (ff.length == 2) {
-                                        iidd = ff[1];
-                                    }
-
-                                    ArrayList<String> sini = new ArrayList();
-
-                                    if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632")) {
-
-                                    } else {
-                                        Integer totalQ = 0;
-                                        Integer totalP = 0;
-                                        Double temp = 0.0;
-                                        for (ModelFormChild mfc : rowItems) {
-                                            try {
-                                                if (mfc.getTitle().contains(".jpg")) {
-                                                    sini.add("image");
-                                                } else if (mfc.getPrice().equalsIgnoreCase("image")) {
-                                                    sini.add("image");
-                                                } else if (mfc.getPrice().equalsIgnoreCase("standart")) {
-                                                    sini.add("standart");
-                                                } else {
-                                                    if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209") || iidd.equalsIgnoreCase("2397")) {
-                                                        totalQ += Integer.valueOf(mfc.getDetail());
-                                                        temp += Float.valueOf(mfc.getPrice()) * Integer.valueOf(mfc.getDetail());
-
-                                                        tQty.setText(totalQ + "");
-                                                        String totalHarga = new Validations().getInstance(context).numberToCurency(temp + "");
-                                                        tPrice.setText(totalHarga);
-
-                                                    } else {
-                                                        totalQ += Integer.valueOf(mfc.getDetail());
-                                                        totalP += Integer.valueOf(mfc.getPrice().replace(".", "")) * Integer.valueOf(mfc.getDetail());
-                                                    }
-
-                                                }
-
-                                            } catch (Exception e) {
-
-                                            }
-                                        }
-
-                                        if (totalQ > 0 && totalP > 0) {
-                                            String totalHarga = new Validations().getInstance(context).numberToCurency(totalP + "");
-                                            tQty.setText(totalQ + "");
-                                            tPrice.setText(totalHarga);
-                                        }
-
-                                    }
-
-                                    if (sini.size() > 0) {
-                                        if (sini.get(0).toString().equalsIgnoreCase("image")) {
-                                            line = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout_value, null);
-                                            lv = (ListView) line.findViewById(R.id.listOrder);
-                                            TextView nama = (TextView) line.findViewById(R.id.nama);
-                                            addCild = (Button) line.findViewById(R.id.btn_add_cild);
-                                            addCild.setVisibility(View.GONE);
-                                            nama.setVisibility(View.GONE);
-
-                                            lv.setOnTouchListener(new View.OnTouchListener() {
-                                                // Setting on Touch Listener for handling the touch inside ScrollView
-                                                @Override
-                                                public boolean onTouch(View v, MotionEvent event) {
-                                                    v.getParent().requestDisallowInterceptTouchEvent(true);
-                                                    return false;
-                                                }
-                                            });
-
-                                            final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "value", true);
-                                            lv.setAdapter(adapter);
-                                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                @Override
-                                                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                                                    ModelFormChild modelFormChild = rowItems.get(position);
-                                                    if (labelDialog.size() == 1) {
-                                                        DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", labelDialog.get(0) != null ? labelDialog.get(0) : "").show();
-                                                    } else if (labelDialog.size() > 1) {
-                                                        DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), labelDialog.get(1) != null ? labelDialog.get(1) : "", labelDialog.get(0) != null ? labelDialog.get(0) : "").show();
-                                                    } else {
-                                                        DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", "").show();
-                                                    }
-                                                }
-                                            });
-
-                                        } else {
-                                            line = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout_value, null);
-                                            lv = (ListView) line.findViewById(R.id.listOrder);
-
-                                            lv.setOnTouchListener(new View.OnTouchListener() {
-                                                // Setting on Touch Listener for handling the touch inside ScrollView
-                                                @Override
-                                                public boolean onTouch(View v, MotionEvent event) {
-                                                    v.getParent().requestDisallowInterceptTouchEvent(true);
-                                                    return false;
-                                                }
-                                            });
-
-                                            addCild = (Button) line.findViewById(R.id.btn_add_cild);
-                                            addCild.setVisibility(View.GONE);
-                                            TextView nama = (TextView) line.findViewById(R.id.nama);
-                                            nama.setVisibility(View.GONE);
-
-                                            final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "value", false);
-                                            lv.setAdapter(adapter);
-                                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                @Override
-                                                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                                                    if (labelDialog.size() > 1) {
-                                                        ModelFormChild modelFormChild = rowItems.get(position);
-                                                        DialogUtil.generateAlertDialogLeftBOBO(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), labelDialog.get(0) != null ? labelDialog.get(0) : "", labelDialog.get(1) != null ? labelDialog.get(1) : "", modelFormChild.getPrice()).show();
-                                                    } else {
-                                                        ModelFormChild modelFormChild = rowItems.get(position);
-                                                        DialogUtil.generateAlertDialogLeftNoImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", "Nama").show();
-                                                    }
-                                                }
-                                            });
-                                        }
-
-
-                                    } else {
-                                        if (Integer.valueOf(iidd) >= 2092 && Integer.valueOf(iidd) != 2207 && Integer.valueOf(iidd) != 2206 && Integer.valueOf(iidd) != 2209 && Integer.valueOf(iidd) != 2397) {
-                                            final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "multiple", false);
-                                            lv.setAdapter(adapter);
-                                        } else {
-                                            final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "value", false);
-                                            lv.setAdapter(adapter);
-                                        }
-
-
-                                        if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632")) {
-                                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                @Override
-                                                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                                                    ModelFormChild modelFormChild = rowItems.get(position);
-                                                    DialogUtil.generateAlertDialogLeft(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail()).show();
-                                                }
-                                            });
-                                        }
-                                    }
-
-
-                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params11.setMargins(20, 10, 30, 0);
-                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params22.setMargins(20, 10, 30, 30);
-                                    linearValue.addView(textV, params11);
-                                    LinearLayout lineview = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-                                    linearValue.addView(lineview, params11);
-                                    linearValue.addView(line, params22);
-
-                                } else if (type.equalsIgnoreCase("input_kodepos") || type.equalsIgnoreCase("dropdown_wilayah")) {
-                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
-                                    textV.setText(Html.fromHtml(label));
-                                    textV.setTextSize(17);
-                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
-
-
-                                    TextView etV = (TextView) new TextView(context);
-                                    etV.setTextIsSelectable(true);
-
-                                    String aa = "Kode Pos = " + jsonResultType(value, "a") + "\nProvinsi = " + jsonResultType(value, "b") + "\nKota/Kab. = " + jsonResultType(value, "c") + "\nKecamatan = " + jsonResultType(value, "d") + "\nKelurahan = " + jsonResultType(value, "e");
-                                    etV.setText(aa);
-
-                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params11.setMargins(10, 10, 30, 0);
-                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params22.setMargins(50, 10, 30, 30);
-                                    linearValue.addView(textV, params11);
-                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-                                    linearValue.addView(line, params11);
-                                    linearValue.addView(etV, params22);
-
-                                } else if (type.equalsIgnoreCase("dropdown_dinamis") || type.equalsIgnoreCase("new_dropdown_dinamis") || type.equalsIgnoreCase("master_data")) {
-
-
-                                    if (!value.equalsIgnoreCase("-")) {
+                                        TextView etV = (TextView) new TextView(context);
+                                        etV.setTextIsSelectable(true);
+                                        etV.setText(Html.fromHtml(vl));
+                                        LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                        LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params11.setMargins(10, 10, 30, 0);
+                                        LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params22.setMargins(50, 10, 30, 30);
+                                        linearValue.addView(textV, params11);
+                                        linearValue.addView(line, params11);
+                                        linearValue.addView(etV, params22);
+
+
+                                    } else if (type.equalsIgnoreCase("attach_api")) {
 
                                         TextView textV = new TextView(DinamicRoomTaskActivity.this);
                                         textV.setText(Html.fromHtml(label));
                                         textV.setTextSize(17);
                                         textV.setLayoutParams(new TableRow.LayoutParams(0));
 
-                                        JSONObject jsonObject = new JSONObject(value);
-                                        Iterator<String> keys = jsonObject.keys();
 
+                                        LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.api_text_layout_form, null);
+                                        //final TextView valueFile = (TextView) linearLayout.findViewById(R.id.value);
+                                        HtmlTextView htmlTextView = (HtmlTextView) linearLayout.findViewById(R.id.value);
+                                        htmlTextView.setTextIsSelectable(true);
+
+                                        AVLoadingIndicatorView progress = (AVLoadingIndicatorView) linearLayout.findViewById(R.id.loader_progress);
+
+                                        if (!value.equalsIgnoreCase("")) {
+                                            SaveMedia saveMedia = new SaveMedia();
+                                            if (value.startsWith("Rp.")) {
+                                                saveMedia.execute(new MyTaskParams(htmlTextView, progress, value));
+                                            } else {
+                                                saveMedia.execute(new MyTaskParams(htmlTextView, progress, value.replace(" ", "%")));
+                                            }
+
+                                        }
+
+
+                                        LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params11.setMargins(10, 10, 30, 0);
+                                        LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params22.setMargins(50, 10, 30, 30);
+                                        linearValue.addView(textV, params11);
+                                        linearValue.addView(linearLayout, params22);
+
+
+                                    } else if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera") || type.equalsIgnoreCase("signature")) {
+                                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                                        textView.setText(Html.fromHtml(label));
+                                        textView.setTextSize(17);
+                                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params2.setMargins(10, 10, 30, 0);
+                                        textView.setLayoutParams(params2);
+                                        linearValue.addView(textView);
+                                        LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                        linearValue.addView(line, params2);
+                                        LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.image_loader_layout_form, null);
+
+                                        final ImageView imageView = (ImageView) linearLayout.findViewById(R.id.value);
+                                        final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) linearLayout.findViewById(R.id.loader_progress);
+
+                                        Picasso.with(context).load(value).into(imageView);
+
+                                        imageView.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+
+                                                Intent intent = new Intent(context, ZoomImageViewActivity.class);
+                                                intent.putExtra(ZoomImageViewActivity.KEY_FILE, value);
+                                                startActivity(intent);
+                                            }
+                                        });
+
+
+                                        int width = getWindowManager().getDefaultDisplay().getWidth();
+                                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
+                                        params.setMargins(5, 15, 0, 30);
+
+                                        linearLayout.setLayoutParams(params);
+                                        linearValue.addView(linearLayout);
+
+
+                                    } else if (type.equalsIgnoreCase("form_child")) {
+
+
+                                        JSONObject nn = new JSONObject(joContent.getJSONObject(i).toString());
+
+                                        idFormChildParent.put(Integer.valueOf(nn.getString("id")), joContent.getJSONObject(i).toString());
+
+                                        TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                        textV.setText(Html.fromHtml(label));
+                                        textV.setTextSize(17);
+                                        textV.setLayoutParams(new TableRow.LayoutParams(0));
+
+                                        String[] ff = idDetail.split("\\|");
+                                        String iidd = "";
+                                        if (ff.length == 2) {
+                                            iidd = ff[1];
+                                        }
+                                        LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.from_cild_layout_value, null);
+                                        Button addCild = (Button) line.findViewById(R.id.btn_add_cild);
+                                        ListView lv = (ListView) line.findViewById(R.id.listOrder);
+                                        TextView tQty = null;
+                                        TextView tPrice = null;
+                                        if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632") || iidd.equalsIgnoreCase("2021")
+                                                || (Integer.valueOf(iidd) >= 2092)) {
+                                            line = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout_value, null);
+                                            if (Integer.valueOf(iidd) >= 2092) {
+                                                TextView nama = (TextView) line.findViewById(R.id.nama);
+                                                nama.setVisibility(View.GONE);
+                                            }
+
+                                            lv = (ListView) line.findViewById(R.id.listOrder);
+                                            addCild = (Button) line.findViewById(R.id.btn_add_cild);
+                                        } else {
+                                            tQty = (TextView) line.findViewById(R.id.total_detail_order);
+                                            tPrice = (TextView) line.findViewById(R.id.total_price_order);
+                                        }
+
+                                        lv.setOnTouchListener(new View.OnTouchListener() {
+                                            // Setting on Touch Listener for handling the touch inside ScrollView
+                                            @Override
+                                            public boolean onTouch(View v, MotionEvent event) {
+                                                v.getParent().requestDisallowInterceptTouchEvent(true);
+                                                return false;
+                                            }
+                                        });
+
+                                        addCild.setVisibility(View.GONE);
+
+                                        final ArrayList<ModelFormChild> rowItems = new ArrayList<ModelFormChild>();
+                                        final ArrayList<String> labelDialog = new ArrayList<String>();
+                                        JSONArray jsonarray = new JSONArray(value);
+
+                                        if (Integer.valueOf(iidd) >= 2092) {
+                                            for (int aaa = 0; aaa < jsonarray.length(); aaa++) {
+                                                JSONObject jsonobject = jsonarray.getJSONObject(aaa);
+                                                String urutan = jsonobject.getString("urutan");
+                                                String titleUntuk = "";
+                                                String decsUntuk = "";
+                                                String priceUntuk = "";
+                                                String data = jsonobject.getString("data");
+
+                                                JSONArray jsonarrayChild = new JSONArray(data);
+                                                boolean image = false;
+                                                for (int bbb = 0; bbb < jsonarrayChild.length(); bbb++) {
+                                                    final String key = jsonarrayChild.getJSONObject(bbb).getString("key").toString();
+                                                    final String val = jsonarrayChild.getJSONObject(bbb).getString("value").toString();
+                                                    final String typ = jsonarrayChild.getJSONObject(bbb).getString("type").toString();
+                                                    String lab = "";
+                                                    if (jsonarrayChild.getJSONObject(bbb).has("label")) {
+                                                        lab = jsonarrayChild.getJSONObject(bbb).getString("label").toString();
+                                                    }
+
+
+                                                    String valUs = "";
+                                                    if (Message.isJSONValid(val)) {
+                                                        JSONObject jObject = null;
+                                                        try {
+                                                            jObject = new JSONObject(val);
+
+                                                            Iterator<String> keys = jObject.keys();
+                                                            while (keys.hasNext()) {
+                                                                String keyValue = (String) keys.next();
+                                                                String valueString = jObject.getString(keyValue);
+                                                                valUs += keyValue + " : " + valueString + "\n";
+                                                            }
+
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+
+                                                    }
+
+                                                    if (valUs.length() == 0) {
+
+                                                        titleUntuk += lab + " : " + val + "\n";
+                                                    } else {
+                                                        titleUntuk += lab + "\n" + valUs;
+                                                    }
+
+
+                                                    if (typ.equalsIgnoreCase("front_camera") || typ.equalsIgnoreCase("rear_camera")) {
+                                                        image = true;
+                                                    }
+                                                }
+                                                if (image) {
+                                                    JSONArray jsonarrayChild2 = new JSONArray(data);
+                                                    for (int bbb = 0; bbb < jsonarrayChild.length(); bbb++) {
+                                                        String key = jsonarrayChild2.getJSONObject(bbb).getString("key").toString();
+                                                        String val = jsonarrayChild2.getJSONObject(bbb).getString("value").toString();
+                                                        String typ = jsonarrayChild2.getJSONObject(bbb).getString("type").toString();
+
+                                                        if (typ.equalsIgnoreCase("front_camera") || typ.equalsIgnoreCase("rear_camera")) {
+                                                            titleUntuk = val;
+                                                            priceUntuk = "image";
+                                                            labelDialog.add(0, key);
+                                                        }
+
+                                                        if (typ.equalsIgnoreCase("dropdown")) {
+                                                            titleUntuk = val;
+                                                            priceUntuk = "standart";
+                                                            labelDialog.add(0, key);
+                                                        }
+
+                                                        if (typ.equalsIgnoreCase("textarea")) {
+                                                            decsUntuk = val;
+                                                            if (labelDialog.size() > 1) {
+                                                                labelDialog.add(1, key);
+                                                            }
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209") || iidd.equalsIgnoreCase("2397")) {
+
+                                                        JSONArray jsonarrayChild2 = new JSONArray(data);
+                                                        JSONObject ks0 = jsonarrayChild2.getJSONObject(0);
+                                                        JSONObject ks1 = jsonarrayChild2.getJSONObject(1);
+                                                        JSONObject ks2 = jsonarrayChild2.getJSONObject(2);
+
+                                                        JSONObject alas = ks1.getJSONObject("value");
+                                                        titleUntuk = alas.getString("Part ID") + " " + alas.getString("Nama Part") + "(" + ks0.getString("value") + ")";
+                                                        decsUntuk = ks2.getString("value");
+                                                        priceUntuk = alas.getString("AVE");
+
+
+                                                        line = (LinearLayout) getLayoutInflater().inflate(R.layout.from_cild_layout_value, null);
+                                                        lv = (ListView) line.findViewById(R.id.listOrder);
+                                                        addCild = (Button) line.findViewById(R.id.btn_add_cild);
+                                                        tQty = (TextView) line.findViewById(R.id.total_detail_order);
+                                                        tPrice = (TextView) line.findViewById(R.id.total_price_order);
+                                                        addCild.setVisibility(View.GONE);
+                                                    }
+
+                                                }
+
+                                                rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, priceUntuk));
+                                            }
+
+                                        } else {
+                                            for (int aaa = 0; aaa < jsonarray.length(); aaa++) {
+                                                JSONObject jsonobject = jsonarray.getJSONObject(aaa);
+                                                String urutan = jsonobject.getString("urutan");
+                                                String titleUntuk = "";
+                                                String fotoUntuk = "";
+                                                String decsUntuk = "";
+                                                String priceUntuk = "";
+                                                String data = jsonobject.getString("data");
+                                                JSONArray jsonarrayChild = new JSONArray(data);
+                                                for (int bbb = 0; bbb < jsonarrayChild.length(); bbb++) {
+                                                    final String key = jsonarrayChild.getJSONObject(bbb).getString("key").toString();
+                                                    final String val = jsonarrayChild.getJSONObject(bbb).getString("value").toString();
+                                                    final String typ = jsonarrayChild.getJSONObject(bbb).getString("type").toString();
+
+                                                    JSONArray jsA = null;
+                                                    String contentS = "";
+
+                                                    String cc = val;
+                                                    if (typ.equalsIgnoreCase("input_kodepos") || typ.equalsIgnoreCase("dropdown_wilayah")) {
+                                                        cc = jsoncreateC(val);
+                                                    }
+
+                                                    try {
+                                                        if (cc.startsWith("{")) {
+                                                            if (!cc.startsWith("[")) {
+                                                                cc = "[" + cc + "]";
+                                                            }
+                                                            jsA = new JSONArray(cc);
+                                                        }
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    if (jsA != null) {
+                                                        if (typ.equalsIgnoreCase("distance_estimation") || typ.equalsIgnoreCase("dropdown_dinamis") || typ.equalsIgnoreCase("new_dropdown_dinamis") || typ.equalsIgnoreCase("ocr") || typ.equalsIgnoreCase("upload_document")) {
+                                                            if (iidd.equalsIgnoreCase("1643")) {
+                                                                titleUntuk = jsonResultType(val, "Nama");
+                                                            } else {
+                                                                titleUntuk = jsonResultType(val, "Name Detail");
+                                                                if (titleUntuk.equalsIgnoreCase("")) {
+                                                                    titleUntuk = jsonResultType(val, "SKU");
+                                                                }
+                                                                if (titleUntuk.equalsIgnoreCase("")) {
+                                                                    titleUntuk = jsonResultType(val, "Nama");
+                                                                }
+                                                                if (titleUntuk.equalsIgnoreCase("")) {
+                                                                    titleUntuk = jsonResultType(val, "Nama Siswa");
+                                                                }
+                                                            }
+
+                                                            fotoUntuk = jsonResultType(val, "Foto Siswa");
+
+                                                        } else {
+                                                            try {
+                                                                for (int ic = 0; ic < jsA.length(); ic++) {
+                                                                    final String icC = jsA.getJSONObject(ic).getString("c").toString();
+                                                                    contentS += icC + "|";
+                                                                }
+                                                            } catch (JSONException e) {
+                                                                e.printStackTrace();
+                                                            }
+
+                                                        }
+                                                    } else {
+                                                        if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632")) {
+                                                            decsUntuk = val;
+                                                            priceUntuk = "";
+                                                        } else {
+                                                            if (idListTaskMasterForm.equalsIgnoreCase("62483")) {
+                                                                if (key.equalsIgnoreCase("qty")) {
+                                                                    decsUntuk = val;
+                                                                } else if (key.equalsIgnoreCase("total")) {
+                                                                    priceUntuk = val;
+                                                                }
+                                                            } else {
+
+                                                                if (typ.equalsIgnoreCase("number") || typ.equalsIgnoreCase("currency")) {
+                                                                    decsUntuk = val;
+                                                                    labelDialog.add(1, key);
+                                                                } else if (typ.equalsIgnoreCase("formula")) {
+                                                                    priceUntuk = val;
+                                                                }
+
+                                                                if (typ.equalsIgnoreCase("front_camera") || typ.equalsIgnoreCase("rear_camera")) {
+                                                                    titleUntuk = val;
+                                                                    priceUntuk = "image";
+                                                                    labelDialog.add(0, key);
+                                                                }
+
+                                                                if (typ.equalsIgnoreCase("dropdown")) {
+                                                                    titleUntuk = val;
+                                                                    decsUntuk = val;
+
+                                                                    priceUntuk = "standart";
+                                                                    labelDialog.add(0, key);
+                                                                }
+
+                                                                if (typ.equalsIgnoreCase("textarea")) {
+                                                                    decsUntuk = val;
+                                                                    if (labelDialog.size() > 1) {
+                                                                        labelDialog.add(1, key);
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+
+                                                if (ff.length == 2) {
+                                                    iidd = ff[1];
+                                                }
+
+                                                if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632")) {
+                                                    rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, ""));
+                                                } else if (iidd.equalsIgnoreCase("1113")) {
+                                                    int nilai = 0;
+                                                    try {
+                                                        nilai = Integer.valueOf(priceUntuk != null ? priceUntuk.replace(".", "") : "0") / Integer.valueOf(decsUntuk != null ? decsUntuk.replace(".", "") : "0");
+                                                    } catch (Exception e) {
+                                                        nilai = 0;
+                                                    }
+                                                    rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, String.valueOf(nilai)));
+                                                } else {
+
+                                                    if (priceUntuk.equalsIgnoreCase("standart") && !fotoUntuk.equalsIgnoreCase("")) {
+                                                        priceUntuk = fotoUntuk;
+                                                    }
+                                                    rowItems.add(new ModelFormChild(urutan, titleUntuk, decsUntuk, priceUntuk));
+                                                }
+                                            }
+                                        }
+
+
+                                        if (ff.length == 2) {
+                                            iidd = ff[1];
+                                        }
+
+                                        ArrayList<String> sini = new ArrayList();
+
+                                        if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632")) {
+
+                                        } else {
+                                            Integer totalQ = 0;
+                                            Integer totalP = 0;
+                                            Double temp = 0.0;
+                                            for (ModelFormChild mfc : rowItems) {
+                                                try {
+                                                    if (mfc.getTitle().contains(".jpg")) {
+                                                        sini.add("image");
+                                                    } else if (mfc.getPrice().equalsIgnoreCase("image")) {
+                                                        sini.add("image");
+                                                    } else if (mfc.getPrice().equalsIgnoreCase("standart")) {
+                                                        sini.add("standart");
+                                                    } else {
+                                                        if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209") || iidd.equalsIgnoreCase("2397")) {
+                                                            totalQ += Integer.valueOf(mfc.getDetail());
+                                                            temp += Float.valueOf(mfc.getPrice()) * Integer.valueOf(mfc.getDetail());
+
+                                                            tQty.setText(totalQ + "");
+                                                            String totalHarga = new Validations().getInstance(context).numberToCurency(temp + "");
+                                                            tPrice.setText(totalHarga);
+
+                                                        } else {
+                                                            totalQ += Integer.valueOf(mfc.getDetail());
+                                                            totalP += Integer.valueOf(mfc.getPrice().replace(".", "")) * Integer.valueOf(mfc.getDetail());
+                                                        }
+
+                                                    }
+
+                                                } catch (Exception e) {
+
+                                                }
+                                            }
+
+                                            if (totalQ > 0 && totalP > 0) {
+                                                String totalHarga = new Validations().getInstance(context).numberToCurency(totalP + "");
+                                                tQty.setText(totalQ + "");
+                                                tPrice.setText(totalHarga);
+                                            }
+
+                                        }
+
+                                        if (sini.size() > 0) {
+                                            if (sini.get(0).toString().equalsIgnoreCase("image")) {
+                                                line = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout_value, null);
+                                                lv = (ListView) line.findViewById(R.id.listOrder);
+                                                TextView nama = (TextView) line.findViewById(R.id.nama);
+                                                addCild = (Button) line.findViewById(R.id.btn_add_cild);
+                                                addCild.setVisibility(View.GONE);
+                                                nama.setVisibility(View.GONE);
+
+                                                lv.setOnTouchListener(new View.OnTouchListener() {
+                                                    // Setting on Touch Listener for handling the touch inside ScrollView
+                                                    @Override
+                                                    public boolean onTouch(View v, MotionEvent event) {
+                                                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                                                        return false;
+                                                    }
+                                                });
+
+                                                final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "value", true);
+                                                lv.setAdapter(adapter);
+                                                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                    @Override
+                                                    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                                                        ModelFormChild modelFormChild = rowItems.get(position);
+                                                        if (labelDialog.size() == 1) {
+                                                            DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", labelDialog.get(0) != null ? labelDialog.get(0) : "").show();
+                                                        } else if (labelDialog.size() > 1) {
+                                                            DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), labelDialog.get(1) != null ? labelDialog.get(1) : "", labelDialog.get(0) != null ? labelDialog.get(0) : "").show();
+                                                        } else {
+                                                            DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", "").show();
+                                                        }
+                                                    }
+                                                });
+
+                                            } else {
+                                                line = (LinearLayout) getLayoutInflater().inflate(R.layout.form_cild_two_layout_value, null);
+                                                lv = (ListView) line.findViewById(R.id.listOrder);
+
+                                                lv.setOnTouchListener(new View.OnTouchListener() {
+                                                    // Setting on Touch Listener for handling the touch inside ScrollView
+                                                    @Override
+                                                    public boolean onTouch(View v, MotionEvent event) {
+                                                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                                                        return false;
+                                                    }
+                                                });
+
+                                                addCild = (Button) line.findViewById(R.id.btn_add_cild);
+                                                addCild.setVisibility(View.GONE);
+                                                TextView nama = (TextView) line.findViewById(R.id.nama);
+                                                nama.setVisibility(View.GONE);
+
+                                                final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "value", false);
+                                                lv.setAdapter(adapter);
+                                                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                    @Override
+                                                    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                                                        if (labelDialog.size() > 1) {
+                                                            ModelFormChild modelFormChild = rowItems.get(position);
+                                                            DialogUtil.generateAlertDialogLeftBOBO(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), labelDialog.get(0) != null ? labelDialog.get(0) : "", labelDialog.get(1) != null ? labelDialog.get(1) : "", modelFormChild.getPrice()).show();
+                                                        } else {
+                                                            ModelFormChild modelFormChild = rowItems.get(position);
+                                                            DialogUtil.generateAlertDialogLeftNoImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", "Nama").show();
+                                                        }
+                                                    }
+                                                });
+                                            }
+
+
+                                        } else {
+                                            if (Integer.valueOf(iidd) >= 2092 && Integer.valueOf(iidd) != 2207 && Integer.valueOf(iidd) != 2206 && Integer.valueOf(iidd) != 2209 && Integer.valueOf(iidd) != 2397) {
+                                                final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "multiple", false);
+                                                lv.setAdapter(adapter);
+                                            } else {
+                                                final FormChildAdapter adapter = new FormChildAdapter(context, rowItems, "value", false);
+                                                lv.setAdapter(adapter);
+                                            }
+
+
+                                            if (iidd.equalsIgnoreCase("1643") || iidd.equalsIgnoreCase("1628") || iidd.equalsIgnoreCase("1632")) {
+                                                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                    @Override
+                                                    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                                                        ModelFormChild modelFormChild = rowItems.get(position);
+                                                        DialogUtil.generateAlertDialogLeft(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail()).show();
+                                                    }
+                                                });
+                                            }
+                                        }
+
+
+                                        LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params11.setMargins(20, 10, 30, 0);
+                                        LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params22.setMargins(20, 10, 30, 30);
+                                        linearValue.addView(textV, params11);
+                                        LinearLayout lineview = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                        linearValue.addView(lineview, params11);
+                                        linearValue.addView(line, params22);
+
+
+                                    } else if (type.equalsIgnoreCase("input_kodepos") || type.equalsIgnoreCase("dropdown_wilayah")) {
+                                        TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                        textV.setText(Html.fromHtml(label));
+                                        textV.setTextSize(17);
+                                        textV.setLayoutParams(new TableRow.LayoutParams(0));
+
+
+                                        TextView etV = (TextView) new TextView(context);
+                                        etV.setTextIsSelectable(true);
+
+                                        String aa = "Kode Pos = " + jsonResultType(value, "a") + "\nProvinsi = " + jsonResultType(value, "b") + "\nKota/Kab. = " + jsonResultType(value, "c") + "\nKecamatan = " + jsonResultType(value, "d") + "\nKelurahan = " + jsonResultType(value, "e");
+                                        etV.setText(aa);
 
                                         LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                         params11.setMargins(10, 10, 30, 0);
@@ -1293,293 +1272,366 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         linearValue.addView(textV, params11);
                                         LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
                                         linearValue.addView(line, params11);
+                                        linearValue.addView(etV, params22);
 
-                                        List<String> keysList = new ArrayList<String>();
-                                        while (keys.hasNext()) {
-                                            keysList.add(keys.next());
-                                        }
+                                    } else if (type.equalsIgnoreCase("dropdown_dinamis") || type.equalsIgnoreCase("new_dropdown_dinamis") || type.equalsIgnoreCase("master_data")) {
 
-                                        String longi = null, lanti = null;
-                                        for (String aa : keysList) {
-                                            if (jsonObject.getString(aa).startsWith("https://bb.byonchat.com/") && jsonObject.getString(aa).endsWith(".png")) {
-                                                TextView etV = (TextView) new TextView(context);
-                                                etV.setTextIsSelectable(true);
-                                                etV.setText(String.valueOf(aa));
-                                                linearValue.addView(etV, params22);
 
-                                                LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.image_loader_layout_form, null);
-                                                final ImageView imageView = (ImageView) linearLayout.findViewById(R.id.value);
-                                                Picasso.with(context).load(jsonObject.getString(aa)).into(imageView);
-                                                final String abab = jsonObject.getString(aa);
-                                                linearValue.addView(linearLayout, params22);
+                                        if (!value.equalsIgnoreCase("-")) {
+
+                                            TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                            textV.setText(Html.fromHtml(label));
+                                            textV.setTextSize(17);
+                                            textV.setLayoutParams(new TableRow.LayoutParams(0));
+
+                                            JSONObject jsonObject = new JSONObject(value);
+                                            Iterator<String> keys = jsonObject.keys();
+
+
+                                            LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            params11.setMargins(10, 10, 30, 0);
+                                            LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            params22.setMargins(50, 10, 30, 30);
+                                            linearValue.addView(textV, params11);
+                                            LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                            linearValue.addView(line, params11);
+
+                                            List<String> keysList = new ArrayList<String>();
+                                            while (keys.hasNext()) {
+                                                keysList.add(keys.next());
+                                            }
+
+                                            String longi = null, lanti = null;
+                                            for (String aa : keysList) {
+                                                if (jsonObject.getString(aa).startsWith("https://bb.byonchat.com/") && jsonObject.getString(aa).endsWith(".png")) {
+                                                    TextView etV = (TextView) new TextView(context);
+                                                    etV.setTextIsSelectable(true);
+                                                    etV.setText(String.valueOf(aa));
+                                                    linearValue.addView(etV, params22);
+
+                                                    LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.image_loader_layout_form, null);
+                                                    final ImageView imageView = (ImageView) linearLayout.findViewById(R.id.value);
+                                                    Picasso.with(context).load(jsonObject.getString(aa)).into(imageView);
+                                                    final String abab = jsonObject.getString(aa);
+                                                    linearValue.addView(linearLayout, params22);
+                                                    imageView.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+
+                                                            Intent intent = new Intent(context, ZoomImageViewActivity.class);
+                                                            intent.putExtra(ZoomImageViewActivity.KEY_FILE, abab);
+                                                            startActivity(intent);
+                                                        }
+                                                    });
+
+
+                                                } else {
+                                                    TextView etV = (TextView) new TextView(context);
+                                                    etV.setTextIsSelectable(true);
+                                                    etV.setText(String.valueOf(aa) + " = " + jsonObject.getString(aa));
+                                                    linearValue.addView(etV, params22);
+
+                                                }
+
+                                                if (String.valueOf(aa).equalsIgnoreCase("Longitude")) {
+                                                    longi = jsonObject.getString(aa);
+                                                } else if (String.valueOf(aa).equalsIgnoreCase("Latitude")) {
+                                                    lanti = jsonObject.getString(aa);
+                                                }
+                                            }
+
+
+                                            if (longi != null && lanti != null) {
+                                                final Double l1 = Double.parseDouble(lanti);
+                                                final Double l2 = Double.parseDouble(longi);
+
+                                                ImageView imageView = new ImageView(this);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                                    imageView.setImageDrawable(getDrawable(R.drawable.ic_att_location));
+                                                } else {
+                                                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_att_location));
+                                                }
+
+
                                                 imageView.setOnClickListener(new View.OnClickListener() {
                                                     @Override
-                                                    public void onClick(View view) {
+                                                    public void onClick(View v) {
+                                                        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + l1 + ","
+                                                                + l2 + "(" + "Location" + ")");
 
-                                                        Intent intent = new Intent(context, ZoomImageViewActivity.class);
-                                                        intent.putExtra(ZoomImageViewActivity.KEY_FILE, abab);
-                                                        startActivity(intent);
+                                                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                                        mapIntent.setPackage("com.google.android.apps.maps");
+                                                        startActivity(mapIntent);
                                                     }
                                                 });
 
-
-                                            } else {
-                                                TextView etV = (TextView) new TextView(context);
-                                                etV.setTextIsSelectable(true);
-                                                etV.setText(String.valueOf(aa) + " = " + jsonObject.getString(aa));
-                                                linearValue.addView(etV, params22);
-
-                                            }
-
-                                            if (String.valueOf(aa).equalsIgnoreCase("Longitude")) {
-                                                longi = jsonObject.getString(aa);
-                                            } else if (String.valueOf(aa).equalsIgnoreCase("Latitude")) {
-                                                lanti = jsonObject.getString(aa);
+                                                TextView textMap = new TextView(DinamicRoomTaskActivity.this);
+                                                textMap.setText("Location");
+                                                textMap.setTextSize(18);
+                                                textMap.setLayoutParams(new TableRow.LayoutParams(0));
+                                                linearValue.addView(textMap, params11);
+                                                LinearLayout line2 = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                                linearValue.addView(line2, params11);
+                                                int width = getWindowManager().getDefaultDisplay().getWidth();
+                                                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 5);
+                                                params.setMargins(5, 15, 0, 30);
+                                                imageView.setLayoutParams(params);
+                                                linearValue.addView(imageView);
                                             }
                                         }
 
 
-                                        if (longi != null && lanti != null) {
-                                            final Double l1 = Double.parseDouble(lanti);
-                                            final Double l2 = Double.parseDouble(longi);
+                                    } else if (type.equalsIgnoreCase("checkbox")) {
 
-                                            ImageView imageView = new ImageView(this);
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                                imageView.setImageDrawable(getDrawable(R.drawable.ic_att_location));
-                                            } else {
-                                                imageView.setImageDrawable(getResources().getDrawable(R.drawable.ic_att_location));
+                                        TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                        textV.setText(Html.fromHtml(label));
+                                        textV.setTextSize(17);
+                                        textV.setLayoutParams(new TableRow.LayoutParams(0));
+
+
+                                        TextView etV = new TextView(context);
+                                        etV.setTextIsSelectable(true);
+
+                                        String aa = "";
+                                        JSONArray jsA = new JSONArray(value);
+                                        for (int ic = 0; ic < jsA.length(); ic++) {
+                                            aa += "• " + jsA.getString(ic);
+                                            if (ic < jsA.length() - 1) {
+                                                aa += "\n";
+                                            }
+                                        }
+                                        etV.setText(aa);
+
+                                        LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+
+                                        LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params11.setMargins(10, 10, 30, 0);
+                                        LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params22.setMargins(50, 10, 30, 30);
+                                        linearValue.addView(textV, params11);
+                                        linearValue.addView(line, params11);
+                                        linearValue.addView(etV, params22);
+
+                                    } else if (type.equalsIgnoreCase("upload_document")) {
+                                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                                        textView.setText(Html.fromHtml(label));
+                                        textView.setTextSize(17);
+                                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params2.setMargins(30, 10, 30, 0);
+                                        textView.setLayoutParams(params2);
+                                        linearValue.addView(textView);
+
+                                        LinearLayout lilin = (LinearLayout) getLayoutInflater().inflate(R.layout.upload_doc_layout, null);
+                                        lilin.setLayoutParams(params2);
+                                        linearValue.addView(lilin);
+
+                                        final Button btnOption = (Button) lilin.findViewById(R.id.btn_browse);
+                                        final TextView valueFile = (TextView) lilin.findViewById(R.id.value);
+
+                                        valueFile.setText(value.substring(value.toString().lastIndexOf('/'), value.toString().length()));
+                                        btnOption.setText("View");
+                                        final String cc = value;
+                                        btnOption.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent intent = new Intent(context, DownloadFileByonchat.class);
+                                                intent.putExtra("path", cc);
+                                                intent.putExtra("nama_file", valueFile.getText().toString());
+                                                startActivity(intent);
+                                            }
+                                        });
+
+                                    } else if (type.equalsIgnoreCase("distance_estimation")) {
+                                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                                        textView.setText(Html.fromHtml(label));
+                                        textView.setTextSize(17);
+                                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params2.setMargins(30, 10, 30, 0);
+                                        params3.setMargins(30, 10, 30, 30);
+                                        textView.setLayoutParams(params2);
+                                        linearValue.addView(textView);
+
+                                        LinearLayout linearEstimasi = (LinearLayout) getLayoutInflater().inflate(R.layout.estimation_layout, null);
+                                        linearEstimasi.setLayoutParams(params2);
+                                        linearValue.addView(linearEstimasi);
+
+
+                                        TextView start = (TextView) linearEstimasi.findViewById(R.id.valuePickup);
+                                        TextView end = (TextView) linearEstimasi.findViewById(R.id.valueEnd);
+                                        TextView jarak = (TextView) linearEstimasi.findViewById(R.id.valueJarak);
+
+
+                                        final String[] latlongS = jsonResultType(value, "s").split(
+                                                Message.LOCATION_DELIMITER);
+                                        if (latlongS.length > 4) {
+                                            String text = "<u><b>" + (String) latlongS[2] + "</b></u><br/>";
+                                            start.setText(Html.fromHtml(text + latlongS[3]));
+                                        }
+
+                                        final String[] latlongE = jsonResultType(value, "e").split(
+                                                Message.LOCATION_DELIMITER);
+                                        if (latlongE.length > 4) {
+                                            String text = "<u><b>" + (String) latlongE[2] + "</b></u><br/>";
+                                            end.setText(Html.fromHtml(text + latlongE[3]));
+                                        }
+                                        jarak.setText(jsonResultType(value, "d"));
+
+                                        linearEstimasi.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent intent = new Intent(Intent.ACTION_VIEW,
+                                                        Uri.parse("http://maps.google.com/maps?saddr=" +/*latlongS[0].toString()+","+latlongS[1].toString()*/latlongS[2] + "&daddr=" +/*latlongE[0].toString()+","+latlongE[1].toString()*/latlongE[2]));
+                                                startActivity(intent);
+                                            }
+                                        });
+
+                                    } else if (type.equalsIgnoreCase("map")) {
+                                        TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                        textV.setText(Html.fromHtml(label));
+                                        textV.setTextSize(17);
+                                        textV.setLayoutParams(new TableRow.LayoutParams(0));
+
+                                        EditText etV = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+                                        etV.setFocusable(false);
+                                        etV.setFocusableInTouchMode(false);
+                                        String valueMap = "";
+                                        try {
+                                            valueMap = URLDecoder.decode(value, "UTF-8");
+                                        } catch (UnsupportedEncodingException e) {
+                                            e.printStackTrace();
+                                            Log.w("Hau1", e.toString());
+                                        }
+
+                                        if (valueMap.contains("%20")) {
+//                                            -6.1819431;106.475138;Sindang;Sono,;Tangerang,;Banten,;Indonesia
+                                            String[] latlong = valueMap.split("%20");
+
+
+                                            if (latlong.length > 4) {
+                                                etV.setText(Html.fromHtml(valueMap.substring(latlong[0].length() + latlong[1].length(), valueMap.length())));
                                             }
 
-
-                                            imageView.setOnClickListener(new View.OnClickListener() {
+                                            final String finalValueMap = valueMap;
+                                            etV.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + l1 + ","
-                                                            + l2 + "(" + "Location" + ")");
+                                                    String[] latlong = finalValueMap.split(
+                                                            Message.LOCATION_DELIMITER);
 
-                                                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                                                    mapIntent.setPackage("com.google.android.apps.maps");
-                                                    startActivity(mapIntent);
+                                                    if (latlong.length > 3) {
+                                                        Uri gmmIntentUri = null;
+                                                        if (latlong[3].equalsIgnoreCase("")) {
+                                                            gmmIntentUri = Uri.parse("geo:0,0?q=" + Double
+                                                                    .parseDouble(latlong[0]) + ","
+                                                                    + Double.parseDouble(latlong[1]) + "(" + "You" + ")");
+                                                        } else {
+                                                            String loc = latlong[2] + "+,+" + latlong[3];
+                                                            gmmIntentUri = Uri.parse("geo:0,0?q=" + Double.parseDouble(latlong[0]) + ","
+                                                                    + Double.parseDouble(latlong[1]) + "(" + loc + ")");
+                                                        }
+
+                                                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                                        mapIntent.setPackage("com.google.android.apps.maps");
+                                                        startActivity(mapIntent);
+                                                    }
                                                 }
                                             });
 
-                                            TextView textMap = new TextView(DinamicRoomTaskActivity.this);
-                                            textMap.setText("Location");
-                                            textMap.setTextSize(18);
-                                            textMap.setLayoutParams(new TableRow.LayoutParams(0));
-                                            linearValue.addView(textMap, params11);
-                                            LinearLayout line2 = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-                                            linearValue.addView(line2, params11);
-                                            int width = getWindowManager().getDefaultDisplay().getWidth();
-                                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 5);
-                                            params.setMargins(5, 15, 0, 30);
-                                            imageView.setLayoutParams(params);
-                                            linearValue.addView(imageView);
-                                        }
-                                    }
+                                            LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            params11.setMargins(20, 10, 30, 0);
+                                            LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            params22.setMargins(20, 10, 30, 30);
+                                            linearValue.addView(textV, params11);
+                                            linearValue.addView(etV, params22);
 
+                                        } else {
 
-                                } else if (type.equalsIgnoreCase("checkbox")) {
-
-                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
-                                    textV.setText(Html.fromHtml(label));
-                                    textV.setTextSize(17);
-                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
-
-
-                                    TextView etV = new TextView(context);
-                                    etV.setTextIsSelectable(true);
-
-                                    String aa = "";
-                                    JSONArray jsA = new JSONArray(value);
-                                    for (int ic = 0; ic < jsA.length(); ic++) {
-                                        aa += "• " + jsA.getString(ic);
-                                        if (ic < jsA.length() - 1) {
-                                            aa += "\n";
-                                        }
-                                    }
-                                    etV.setText(aa);
-
-                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-
-                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params11.setMargins(10, 10, 30, 0);
-                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params22.setMargins(50, 10, 30, 30);
-                                    linearValue.addView(textV, params11);
-                                    linearValue.addView(line, params11);
-                                    linearValue.addView(etV, params22);
-
-                                } else if (type.equalsIgnoreCase("upload_document")) {
-                                    TextView textView = new TextView(DinamicRoomTaskActivity.this);
-                                    textView.setText(Html.fromHtml(label));
-                                    textView.setTextSize(17);
-                                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params2.setMargins(30, 10, 30, 0);
-                                    textView.setLayoutParams(params2);
-                                    linearValue.addView(textView);
-
-                                    LinearLayout lilin = (LinearLayout) getLayoutInflater().inflate(R.layout.upload_doc_layout, null);
-                                    lilin.setLayoutParams(params2);
-                                    linearValue.addView(lilin);
-
-                                    final Button btnOption = (Button) lilin.findViewById(R.id.btn_browse);
-                                    final TextView valueFile = (TextView) lilin.findViewById(R.id.value);
-
-                                    valueFile.setText(value.substring(value.toString().lastIndexOf('/'), value.toString().length()));
-                                    btnOption.setText("View");
-                                    final String cc = value;
-                                    btnOption.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent intent = new Intent(context, DownloadFileByonchat.class);
-                                            intent.putExtra("path", cc);
-                                            intent.putExtra("nama_file", valueFile.getText().toString());
-                                            startActivity(intent);
-                                        }
-                                    });
-
-                                } else if (type.equalsIgnoreCase("distance_estimation")) {
-                                    TextView textView = new TextView(DinamicRoomTaskActivity.this);
-                                    textView.setText(Html.fromHtml(label));
-                                    textView.setTextSize(17);
-                                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params2.setMargins(30, 10, 30, 0);
-                                    params3.setMargins(30, 10, 30, 30);
-                                    textView.setLayoutParams(params2);
-                                    linearValue.addView(textView);
-
-                                    LinearLayout linearEstimasi = (LinearLayout) getLayoutInflater().inflate(R.layout.estimation_layout, null);
-                                    linearEstimasi.setLayoutParams(params2);
-                                    linearValue.addView(linearEstimasi);
-
-
-                                    TextView start = (TextView) linearEstimasi.findViewById(R.id.valuePickup);
-                                    TextView end = (TextView) linearEstimasi.findViewById(R.id.valueEnd);
-                                    TextView jarak = (TextView) linearEstimasi.findViewById(R.id.valueJarak);
-
-
-                                    final String[] latlongS = jsonResultType(value, "s").split(
-                                            Message.LOCATION_DELIMITER);
-                                    if (latlongS.length > 4) {
-                                        String text = "<u><b>" + (String) latlongS[2] + "</b></u><br/>";
-                                        start.setText(Html.fromHtml(text + latlongS[3]));
-                                    }
-
-                                    final String[] latlongE = jsonResultType(value, "e").split(
-                                            Message.LOCATION_DELIMITER);
-                                    if (latlongE.length > 4) {
-                                        String text = "<u><b>" + (String) latlongE[2] + "</b></u><br/>";
-                                        end.setText(Html.fromHtml(text + latlongE[3]));
-                                    }
-                                    jarak.setText(jsonResultType(value, "d"));
-
-                                    linearEstimasi.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent intent = new Intent(Intent.ACTION_VIEW,
-                                                    Uri.parse("http://maps.google.com/maps?saddr=" +/*latlongS[0].toString()+","+latlongS[1].toString()*/latlongS[2] + "&daddr=" +/*latlongE[0].toString()+","+latlongE[1].toString()*/latlongE[2]));
-                                            startActivity(intent);
-                                        }
-                                    });
-
-                                } else if (type.equalsIgnoreCase("map")) {
-                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
-                                    textV.setText(Html.fromHtml(label));
-                                    textV.setTextSize(17);
-                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
-
-                                    EditText etV = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
-                                    etV.setFocusable(false);
-                                    etV.setFocusableInTouchMode(false);
-                                    String valueMap = "";
-                                    try {
-                                        valueMap = URLDecoder.decode(value, "UTF-8");
-                                    } catch (UnsupportedEncodingException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    String[] latlong = valueMap.split(
-                                            Message.LOCATION_DELIMITER);
-                                    if (latlong.length > 4) {
-                                        etV.setText(Html.fromHtml(latlong[3]));
-                                    }
-
-                                    final String finalValueMap = valueMap;
-                                    etV.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            String[] latlong = finalValueMap.split(
+                                            String[] latlong = valueMap.split(
                                                     Message.LOCATION_DELIMITER);
 
-                                            if (latlong.length > 3) {
-                                                Uri gmmIntentUri = null;
-                                                if (latlong[3].equalsIgnoreCase("")) {
-                                                    gmmIntentUri = Uri.parse("geo:0,0?q=" + Double
-                                                            .parseDouble(latlong[0]) + ","
-                                                            + Double.parseDouble(latlong[1]) + "(" + "You" + ")");
-                                                } else {
-                                                    String loc = latlong[2] + "+,+" + latlong[3];
-                                                    gmmIntentUri = Uri.parse("geo:0,0?q=" + Double.parseDouble(latlong[0]) + ","
-                                                            + Double.parseDouble(latlong[1]) + "(" + loc + ")");
-                                                }
+                                            Log.w("Hau3", latlong.length + "");
 
-                                                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                                                mapIntent.setPackage("com.google.android.apps.maps");
-                                                startActivity(mapIntent);
+                                            if (latlong.length > 4) {
+                                                etV.setText(Html.fromHtml(latlong[3]));
                                             }
+
+                                            final String finalValueMap = valueMap;
+                                            etV.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    String[] latlong = finalValueMap.split(
+                                                            Message.LOCATION_DELIMITER);
+
+                                                    if (latlong.length > 3) {
+                                                        Uri gmmIntentUri = null;
+                                                        if (latlong[3].equalsIgnoreCase("")) {
+                                                            gmmIntentUri = Uri.parse("geo:0,0?q=" + Double
+                                                                    .parseDouble(latlong[0]) + ","
+                                                                    + Double.parseDouble(latlong[1]) + "(" + "You" + ")");
+                                                        } else {
+                                                            String loc = latlong[2] + "+,+" + latlong[3];
+                                                            gmmIntentUri = Uri.parse("geo:0,0?q=" + Double.parseDouble(latlong[0]) + ","
+                                                                    + Double.parseDouble(latlong[1]) + "(" + loc + ")");
+                                                        }
+
+                                                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                                        mapIntent.setPackage("com.google.android.apps.maps");
+                                                        startActivity(mapIntent);
+                                                    }
+                                                }
+                                            });
+
+                                            LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            params11.setMargins(20, 10, 30, 0);
+                                            LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                            params22.setMargins(20, 10, 30, 30);
+                                            linearValue.addView(textV, params11);
+                                            linearValue.addView(etV, params22);
+
                                         }
-                                    });
 
-                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params11.setMargins(20, 10, 30, 0);
-                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params22.setMargins(20, 10, 30, 30);
-                                    linearValue.addView(textV, params11);
-                                    linearValue.addView(etV, params22);
+                                    } else if (type.equalsIgnoreCase("number")) {
 
-                                } else if (type.equalsIgnoreCase("number")) {
-
-                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
-                                    textV.setText(Html.fromHtml(label));
-                                    textV.setTextSize(17);
-                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
+                                        TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                        textV.setText(Html.fromHtml(label));
+                                        textV.setTextSize(17);
+                                        textV.setLayoutParams(new TableRow.LayoutParams(0));
 
 
-                                    TextView etV = (TextView) new TextView(context);
-                                    etV.setTextIsSelectable(true);
-                                    etV.setText(Html.fromHtml(value));
-                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params11.setMargins(10, 10, 30, 0);
-                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params22.setMargins(50, 10, 30, 30);
-                                    if (!idTab.equalsIgnoreCase("2644")) {
+                                        TextView etV = (TextView) new TextView(context);
+                                        etV.setTextIsSelectable(true);
+                                        etV.setText(Html.fromHtml(value));
+                                        LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                        LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params11.setMargins(10, 10, 30, 0);
+                                        LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params22.setMargins(50, 10, 30, 30);
+                                        if (!idTab.equalsIgnoreCase("2644")) {
+                                            linearValue.addView(textV, params11);
+                                            linearValue.addView(line, params11);
+                                            linearValue.addView(etV, params22);
+                                        }
+                                    } else {
+                                        TextView textV = new TextView(DinamicRoomTaskActivity.this);
+                                        textV.setText(Html.fromHtml(label));
+                                        textV.setTextSize(17);
+                                        textV.setLayoutParams(new TableRow.LayoutParams(0));
+
+
+                                        TextView etV = (TextView) new TextView(context);
+                                        etV.setTextIsSelectable(true);
+                                        etV.setText(Html.fromHtml(value));
+                                        LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
+                                        LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params11.setMargins(10, 10, 30, 0);
+                                        LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                        params22.setMargins(50, 10, 30, 30);
                                         linearValue.addView(textV, params11);
                                         linearValue.addView(line, params11);
                                         linearValue.addView(etV, params22);
                                     }
-                                } else {
-                                    TextView textV = new TextView(DinamicRoomTaskActivity.this);
-                                    textV.setText(Html.fromHtml(label));
-                                    textV.setTextSize(17);
-                                    textV.setLayoutParams(new TableRow.LayoutParams(0));
-
-
-                                    TextView etV = (TextView) new TextView(context);
-                                    etV.setTextIsSelectable(true);
-                                    etV.setText(Html.fromHtml(value));
-                                    LinearLayout line = (LinearLayout) getLayoutInflater().inflate(R.layout.line_horizontal, null);
-                                    LinearLayout.LayoutParams params11 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params11.setMargins(10, 10, 30, 0);
-                                    LinearLayout.LayoutParams params22 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                    params22.setMargins(50, 10, 30, 30);
-                                    linearValue.addView(textV, params11);
-                                    linearValue.addView(line, params11);
-                                    linearValue.addView(etV, params22);
                                 }
-
                             }
                         }
                     } catch (JSONException e) {
@@ -12256,5 +12308,36 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             e.printStackTrace();
         }
         return bisa;
+    }
+
+
+    private boolean showParentView(JSONArray joContent, String idValue, String labelSS) {
+        boolean show = true;
+
+        try {
+            for (int sangar = 0; sangar < joContent.length(); sangar++) {
+                final String sangarType = joContent.getJSONObject(sangar).getString("type").toString();
+                String sangarValue = joContent.getJSONObject(sangar).getString("value").toString();
+
+                if (sangarType.equalsIgnoreCase("dropdown_views")) {
+                    JSONObject jsso = new JSONObject(sangarValue);
+                    if (jsso.has("pairs")) {
+                        JSONObject jObjecValuet = new JSONObject(sangarValue);
+                        JSONArray jsonArray1 = new JSONArray(jObjecValuet.getString("pairs"));
+                        for (int iii = 0; iii < jsonArray1.length(); iii++) {
+                            if (jsonArray1.get(iii).toString().equalsIgnoreCase(idValue)) {
+                                show = false;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.w("sama", e.toString());
+
+        }
+
+
+        return show;
     }
 }

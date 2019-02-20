@@ -83,15 +83,15 @@ public class ActivationCodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        FilteringImage.headerColor(getWindow(),ActivationCodeActivity.this,getResources().getColor(R.color.colorPrimary));
+        FilteringImage.headerColor(getWindow(), ActivationCodeActivity.this, getResources().getColor(R.color.colorPrimary));
         if (!isNetworkConnectionAvailable()) {
             setContentView(R.layout.custom_information);
             ((TextView) findViewById(R.id.customInformationText))
                     .setText(R.string.registration_no_internet);
         } else {
             setContentView(R.layout.registration_activation_code);
-            textTimer=  (TextView) findViewById(R.id.textTimer);
-            textTimeRemaning=  (TextView) findViewById(R.id.textTimeRemaning);
+            textTimer = (TextView) findViewById(R.id.textTimer);
+            textTimeRemaning = (TextView) findViewById(R.id.textTimeRemaning);
             buttonResend = (Button) findViewById(R.id.activationButtonResend);
             textResend = (TextView) findViewById(R.id.textResend);
 
@@ -101,8 +101,8 @@ public class ActivationCodeActivity extends AppCompatActivity {
             IntervalDB db = new IntervalDB(getApplicationContext());
             db.open();
             Cursor cursor = db.getSingleContact(12);
-            if(cursor.getCount()>0) {
-               number = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+            if (cursor.getCount() > 0) {
+                number = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
             }
             cursor.close();
             db.close();
@@ -182,7 +182,7 @@ public class ActivationCodeActivity extends AppCompatActivity {
 
     }
 
-    public void setTimer(){
+    public void setTimer() {
         new CountDownTimer(300000, 1000) {//300000 5 menit
             public void onTick(long millisUntilFinished) {
                 String FORMAT = "%02d:%02d";
@@ -214,33 +214,33 @@ public class ActivationCodeActivity extends AppCompatActivity {
         textActivationCode.setText(codeAuto);
         code = codeAuto;
         if (!code.equals("")) {
-           new ActivationRequestHelper().execute();
+            new ActivationRequestHelper().execute();
         }
     }
 
     private void doStartActivity(Class theClass) {
-       if(theClass.equals(LoadContactScreen.class)){
-             IntervalDB db = new IntervalDB(getApplicationContext());
-             db.open();
-             Cursor cursor = db.getSingleContact(12);
-             if(cursor.getCount()>0) {
-                 db.deleteContact(12);
-             }
-             cursor.close();
-             Interval interval = new Interval();
-             interval.setId(12);
-             interval.setTime("settingUp");
-             db.createContact(interval);
-             db.close();
-        }else{
-              IntervalDB db = new IntervalDB(getApplicationContext());
-              db.open();
-              Cursor cursor = db.getSingleContact(12);
-              if(cursor.getCount()>0) {
-                  db.deleteContact(12);
-              }
-              cursor.close();
-              db.close();
+        if (theClass.equals(LoadContactScreen.class)) {
+            IntervalDB db = new IntervalDB(getApplicationContext());
+            db.open();
+            Cursor cursor = db.getSingleContact(12);
+            if (cursor.getCount() > 0) {
+                db.deleteContact(12);
+            }
+            cursor.close();
+            Interval interval = new Interval();
+            interval.setId(12);
+            interval.setTime("settingUp");
+            db.createContact(interval);
+            db.close();
+        } else {
+            IntervalDB db = new IntervalDB(getApplicationContext());
+            db.open();
+            Cursor cursor = db.getSingleContact(12);
+            if (cursor.getCount() > 0) {
+                db.deleteContact(12);
+            }
+            cursor.close();
+            db.close();
         }
 
 
@@ -250,7 +250,7 @@ public class ActivationCodeActivity extends AppCompatActivity {
     }
 
     private void onActivationSuccess() {
-       doStartActivity(LoadContactScreen.class);
+        doStartActivity(LoadContactScreen.class);
     }
 
     private void showErrorDialog(String message) {
@@ -279,22 +279,22 @@ public class ActivationCodeActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub
 
-            if(intent.getAction().equals(SMS_RECEIVED)){
+            if (intent.getAction().equals(SMS_RECEIVED)) {
                 Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
                 SmsMessage[] msgs = null;
-                if (bundle != null){
-                    try{
+                if (bundle != null) {
+                    try {
                         Object[] pdus = (Object[]) bundle.get("pdus");
                         msgs = new SmsMessage[pdus.length];
-                        for(int i=0; i<msgs.length; i++) {
+                        for (int i = 0; i < msgs.length; i++) {
                             msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                             String msgBody = msgs[i].getMessageBody();
                             int start = msgBody.indexOf(":") + 2;
                             if (isInteger(msgBody.substring(start, start + 6))) {
-                              confirmActivation(msgBody.substring(start, start + 6));
+                                confirmActivation(msgBody.substring(start, start + 6));
                             }
                         }
-                    }catch(Exception e){
+                    } catch (Exception e) {
 //                            Log.d("Exception caught",e.getMessage());
                     }
                 }
@@ -305,17 +305,17 @@ public class ActivationCodeActivity extends AppCompatActivity {
     }
 
     public static boolean isInteger(String s) {
-        return isInteger(s,10);
+        return isInteger(s, 10);
     }
 
     public static boolean isInteger(String s, int radix) {
-        if(s.isEmpty()) return false;
-        for(int i = 0; i < s.length(); i++) {
-            if(i == 0 && s.charAt(i) == '-') {
-                if(s.length() == 1) return false;
+        if (s.isEmpty()) return false;
+        for (int i = 0; i < s.length(); i++) {
+            if (i == 0 && s.charAt(i) == '-') {
+                if (s.length() == 1) return false;
                 else continue;
             }
-            if(Character.digit(s.charAt(i), radix) < 0) return false;
+            if (Character.digit(s.charAt(i), radix) < 0) return false;
         }
         return true;
     }
@@ -339,12 +339,12 @@ public class ActivationCodeActivity extends AppCompatActivity {
                 HttpPost post = new HttpPost(REGISTRATION_URL);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = httpClient.execute(post);
-                publishProgress(new Integer[] { Integer.valueOf(response
-                        .getStatusLine().getStatusCode()) });
+                publishProgress(new Integer[]{Integer.valueOf(response
+                        .getStatusLine().getStatusCode())});
             } catch (Exception e) {
                 Log.e(getLocalClassName(), "Error requesting activation code: "
                         + e.getMessage(), e);
-                publishProgress(new Integer[] { Integer.valueOf(0) });
+                publishProgress(new Integer[]{Integer.valueOf(0)});
             }
             return null;
         }
@@ -423,7 +423,7 @@ public class ActivationCodeActivity extends AppCompatActivity {
                     } catch (IOException e) {
                     }
             }
-            publishProgress(new Integer[] { Integer.valueOf(result) });
+            publishProgress(new Integer[]{Integer.valueOf(result)});
             return null;
         }
 

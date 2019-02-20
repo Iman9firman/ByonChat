@@ -347,7 +347,7 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
                             // using app
                             if (!osMap.get(curAppFriendNumber).equals(
                                     contact.getName())
-                            ) {
+                                    ) {
                                 contact.setName(cOS.getName());
                                 // Comment the following line for SMS bridge
                                 // feature:

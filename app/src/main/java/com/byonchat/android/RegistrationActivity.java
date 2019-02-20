@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.provider.Country;
@@ -87,8 +88,8 @@ public class RegistrationActivity extends AppCompatActivity implements
     private Handler mUiHandler = new Handler();
     private final static int ALL_PERMISSIONS_RESULT = 107;
     private ArrayList<String> permissionsToRequest;
-    private ArrayList<String>  permissionsRejected;
- //   private SharedPreferences sharedPreferences;
+    private ArrayList<String> permissionsRejected;
+    //   private SharedPreferences sharedPreferences;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -129,12 +130,12 @@ public class RegistrationActivity extends AppCompatActivity implements
         } else {
             Cursor cursor = db.getSingleContact(12);
             if (cursor.getCount() > 0) {
-                if(cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)).equalsIgnoreCase("settingUp")){
+                if (cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)).equalsIgnoreCase("settingUp")) {
                     Intent intent = new Intent(this, LoadContactScreen.class);
                     intent.putExtra(KEY_REGISTER_MSISDN, number);
                     startActivity(intent);
                     finish();
-                }else {
+                } else {
                     Intent intent = new Intent(this, ActivationCodeActivity.class);
                     intent.putExtra(KEY_REGISTER_MSISDN, number);
                     startActivity(intent);
@@ -162,9 +163,9 @@ public class RegistrationActivity extends AppCompatActivity implements
                 final Animation fadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_sort);
                 imageEarth.startAnimation(sunRise);
 
-                LinearLayout layout = (LinearLayout)findViewById(R.id.image_layout);
-                LinearLayout layoutAnim = (LinearLayout)findViewById(R.id.image_layout_Anim);
-                LinearLayout layoutWe = (LinearLayout)findViewById(R.id.Img_we_connect);
+                LinearLayout layout = (LinearLayout) findViewById(R.id.image_layout);
+                LinearLayout layoutAnim = (LinearLayout) findViewById(R.id.image_layout_Anim);
+                LinearLayout layoutWe = (LinearLayout) findViewById(R.id.Img_we_connect);
                 ImageView logo = new ImageView(this);
                 logo.setImageResource(R.mipmap.ic_launcher);
                 ImageView animatedByonchat = new ImageView(this);
@@ -172,7 +173,7 @@ public class RegistrationActivity extends AppCompatActivity implements
                 ImageView weByonchat = new ImageView(this);
                 weByonchat.setImageResource(R.drawable.we_connect);
 
-                AnimationDrawable frameAnimation = (AnimationDrawable)animatedByonchat.getDrawable();
+                AnimationDrawable frameAnimation = (AnimationDrawable) animatedByonchat.getDrawable();
                 frameAnimation.setCallback(animatedByonchat);
                 frameAnimation.setVisible(true, true);
                 frameAnimation.start();
@@ -180,7 +181,8 @@ public class RegistrationActivity extends AppCompatActivity implements
                 int orgWidth = logo.getDrawable().getIntrinsicWidth();
                 int orgHeight = logo.getDrawable().getIntrinsicHeight();
                 int newWidth = (int) (getWindowManager().getDefaultDisplay().getWidth() / 4);
-                if(orgWidth==orgHeight) newWidth = (int) (getWindowManager().getDefaultDisplay().getWidth() / 5);
+                if (orgWidth == orgHeight)
+                    newWidth = (int) (getWindowManager().getDefaultDisplay().getWidth() / 5);
                 int newHeight = (int) Math.floor((orgHeight * newWidth) / orgWidth);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                         newWidth, newHeight);
@@ -190,7 +192,8 @@ public class RegistrationActivity extends AppCompatActivity implements
                 int orgWidthAnim = animatedByonchat.getDrawable().getIntrinsicWidth();
                 int orgHeightAnim = animatedByonchat.getDrawable().getIntrinsicHeight();
                 int newWidthAnim = (int) (getWindowManager().getDefaultDisplay().getWidth() / 2);
-                if(orgWidthAnim==orgHeightAnim) newWidthAnim = (int) (getWindowManager().getDefaultDisplay().getWidth() / 3);
+                if (orgWidthAnim == orgHeightAnim)
+                    newWidthAnim = (int) (getWindowManager().getDefaultDisplay().getWidth() / 3);
                 int newHeightAnim = (int) Math.floor((orgHeightAnim * newWidthAnim) / orgWidthAnim);
                 LinearLayout.LayoutParams paramsAnim = new LinearLayout.LayoutParams(
                         newWidthAnim, newHeightAnim);
@@ -200,7 +203,8 @@ public class RegistrationActivity extends AppCompatActivity implements
                 int orgWidthWe = weByonchat.getDrawable().getIntrinsicWidth();
                 int orgHeightWe = weByonchat.getDrawable().getIntrinsicHeight();
                 int newWidthWe = (int) (getWindowManager().getDefaultDisplay().getWidth() / 1.5);
-                if(orgWidthWe==orgHeightWe) newWidthWe = (int) (getWindowManager().getDefaultDisplay().getWidth() / 2);
+                if (orgWidthWe == orgHeightWe)
+                    newWidthWe = (int) (getWindowManager().getDefaultDisplay().getWidth() / 2);
                 int newHeightWe = (int) Math.floor((orgHeightWe * newWidthWe) / orgWidthWe);
                 LinearLayout.LayoutParams paramsWe = new LinearLayout.LayoutParams(
                         newWidthWe, newHeightWe);
@@ -314,25 +318,25 @@ public class RegistrationActivity extends AppCompatActivity implements
         }
     }
 
-    private void getCodeCountry(){
-        Intent intent = new Intent(this,  CountryListSelectorActivity.class);
+    private void getCodeCountry() {
+        Intent intent = new Intent(this, CountryListSelectorActivity.class);
         intent.putExtra(KEY_REGISTER_MSISDN, number);
         startActivity(intent);
     }
 
 
-    public String GetCountryZipCode(){
-        String CountryID="";
-        String CountryZipCode="";
+    public String GetCountryZipCode() {
+        String CountryID = "";
+        String CountryZipCode = "";
 
         TelephonyManager manager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
         //getNetworkCountryIso
-        CountryID= manager.getSimCountryIso().toUpperCase();
-        String[] rl=this.getResources().getStringArray(R.array.CountryCodes);
-        for(int i=0;i<rl.length;i++){
-            String[] g=rl[i].split(",");
-            if(g[1].trim().equals(CountryID.trim())){
-                CountryZipCode=g[0];
+        CountryID = manager.getSimCountryIso().toUpperCase();
+        String[] rl = this.getResources().getStringArray(R.array.CountryCodes);
+        for (int i = 0; i < rl.length; i++) {
+            String[] g = rl[i].split(",");
+            if (g[1].trim().equals(CountryID.trim())) {
+                CountryZipCode = g[0];
                 break;
             }
         }
@@ -344,17 +348,17 @@ public class RegistrationActivity extends AppCompatActivity implements
         String codeNumber = textCodeContry.getText().toString();
         Boolean validcode = false;
 
-        for(String a : Country.code){
-            if(a.replaceFirst("\\+","").equalsIgnoreCase(codeNumber)){
+        for (String a : Country.code) {
+            if (a.replaceFirst("\\+", "").equalsIgnoreCase(codeNumber)) {
                 validcode = true;
                 break;
             }
         }
 
-        if(validcode){
+        if (validcode) {
             String pnum = textPhoneNumber.getText().toString();
             number = codeNumber;
-            if(pnum.length()>0){
+            if (pnum.length() > 0) {
                 if (pnum.startsWith("0")) {
                     number += pnum.substring(1, pnum.length());
                 } else {
@@ -391,11 +395,11 @@ public class RegistrationActivity extends AppCompatActivity implements
                         dialogConfirmation.dismiss();
                     }
                 });
-            }else{
+            } else {
                 textPhoneNumber.setError(getResources().getString(R.string.error_invalid_number));
             }
 
-        }else{
+        } else {
             showRegistrationError(getResources().getString(R.string.error_invalid_code));
         }
     }
@@ -451,12 +455,12 @@ public class RegistrationActivity extends AppCompatActivity implements
 
                 HttpResponse response = httpClient.execute(post);
 
-                publishProgress(new Integer[] { Integer.valueOf(response
-                        .getStatusLine().getStatusCode()) });
+                publishProgress(new Integer[]{Integer.valueOf(response
+                        .getStatusLine().getStatusCode())});
             } catch (Exception e) {
                 Log.e(getLocalClassName(), "Error requesting activation code: "
                         + e.getMessage(), e);
-                publishProgress(new Integer[] { Integer.valueOf(0) });
+                publishProgress(new Integer[]{Integer.valueOf(0)});
             }
             return null;
         }
@@ -466,7 +470,7 @@ public class RegistrationActivity extends AppCompatActivity implements
             pdialog.dismiss();
             if (values[0].intValue() == 202) {
                 Cursor cursor = db.getSingleContact(12);
-                if (cursor.getCount()>0) {
+                if (cursor.getCount() > 0) {
                     db.deleteContact(12);
                 }
                 Interval interval = new Interval();
@@ -486,6 +490,7 @@ public class RegistrationActivity extends AppCompatActivity implements
      * permission you requested. For the purpose of this example I am showing a "success" header
      * when the user accepts the permission and a snackbar when the user declines it.  In your application
      * you will want to handle the accept/decline in a way that makes sense.
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
@@ -493,28 +498,38 @@ public class RegistrationActivity extends AppCompatActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
-        switch (requestCode){
+        switch (requestCode) {
             case ALL_PERMISSIONS_RESULT:
                 boolean someAccepted = false;
                 boolean someRejected = false;
-                for(String perms : permissionsToRequest){
-                    if(hasPermission(perms)){
+                for (String perms : permissionsToRequest) {
+                    if (hasPermission(perms)) {
                         someAccepted = true;
-                    }else{
+                    } else {
                         someRejected = true;
                         permissionsRejected.add(perms);
                     }
                 }
 
-                if(permissionsRejected.size()>0){
+                if (permissionsRejected.size() > 0) {
                     someRejected = true;
                 }
 
-                if(someAccepted){
-                  //  permissionSuccess.setVisibility(View.VISIBLE);
+                if (someAccepted) {
+                    //  permissionSuccess.setVisibility(View.VISIBLE);
+                    someRejected = false;
                 }
-                if(someRejected){
-                 //   makePostRequestSnack();
+                if (someRejected) {
+                    //   makePostRequestSnack();
+                    permissionsRejected.clear();
+                    someRejected = false;
+
+                    Toast.makeText(this, getString(R.string.permission_request_title), Toast.LENGTH_SHORT).show();
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(() -> {
+                        cekPermision();
+                    }, 2 * 1000);
                 }
                 break;
         }
@@ -522,15 +537,15 @@ public class RegistrationActivity extends AppCompatActivity implements
     }
 
 
-
-    private void cekPermision(){
+    private void cekPermision() {
         ArrayList<String> permissions = new ArrayList<>();
         int resultCode = 0;
         permissions.add(ACCESS_FINE_LOCATION);
         permissions.add(ACCESS_COARSE_LOCATION);
         permissions.add(CAMERA);
         permissions.add(READ_CONTACTS);
-        permissions.add(RECORD_AUDIO);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            permissions.add(RECORD_AUDIO);
         permissions.add(CALL_PHONE);
         permissions.add(WRITE_EXTERNAL_STORAGE);
         permissions.add(SEND_SMS);
@@ -538,16 +553,17 @@ public class RegistrationActivity extends AppCompatActivity implements
         permissionsToRequest = findUnAskedPermissions(permissions);
         permissionsRejected = findRejectedPermissions(permissions);
 
-        if(permissionsToRequest.size()>0){//we need to ask for permissions
+        if (permissionsToRequest.size() > 0) {//we need to ask for permissions
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), resultCode);
             }
         }
     }
+
     private boolean hasPermission(String permission) {
         if (canMakeSmores()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                return(checkSelfPermission(permission)== PackageManager.PERMISSION_GRANTED);
+                return (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
             }
         }
         return true;
@@ -556,7 +572,7 @@ public class RegistrationActivity extends AppCompatActivity implements
     private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted) {
         ArrayList<String> result = new ArrayList<String>();
         for (String perm : wanted) {
-                result.add(perm);
+            result.add(perm);
         }
 
         return result;
@@ -565,15 +581,14 @@ public class RegistrationActivity extends AppCompatActivity implements
     private ArrayList<String> findRejectedPermissions(ArrayList<String> wanted) {
         ArrayList<String> result = new ArrayList<String>();
         for (String perm : wanted) {
-                result.add(perm);
+            result.add(perm);
         }
         return result;
     }
 
     private boolean canMakeSmores() {
-        return(Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1);
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
-
 
 
 }

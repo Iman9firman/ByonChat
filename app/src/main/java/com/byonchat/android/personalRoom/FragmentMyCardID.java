@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.byonchat.android.DownloadFileByonchat;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
@@ -352,6 +353,16 @@ public class FragmentMyCardID extends Fragment {
                         intentd.putExtra("path", file_kartu);
                         intentd.putExtra("nama_file",title);
                         mContext.startActivity(intentd);
+                    }
+                });
+
+                imCard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, DownloadFileByonchat.class);
+                        intent.putExtra("path", file_kartu);
+                        intent.putExtra("nama_file",title+"_idcard");
+                        mContext.startActivity(intent);
                     }
                 });
             }

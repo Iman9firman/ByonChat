@@ -12275,7 +12275,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     }
 
     private boolean checkTime(String stTime, String enTime, String idDetail) {
-        boolean bisa = false;
+        boolean loop = false;
+        boolean bisa = true;
         try {
             List<String> starts = new ArrayList<>();
             List<String> ends = new ArrayList<>();
@@ -12284,8 +12285,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
             MyEventDatabase eventDatabase = new MyEventDatabase(getApplicationContext());
             SQLiteDatabase db = eventDatabase.getReadableDatabase();
-            String[] args = {startDate, idTab, idDetail};
-            Cursor c = db.rawQuery("SELECT value_event FROM event" + " WHERE startDate_event = ? AND id_tab_event = ? AND id_detail_event != ?", args);
+            String[] args = {startDate, idTab, idDetail, "Reject"};
+            Cursor c = db.rawQuery("SELECT value_event FROM event" + " WHERE startDate_event = ? AND id_tab_event = ? AND id_detail_event != ? AND status_event != ?", args);
             while (c.moveToNext()) {
                 String value = c.getString(0);
                 if (value != null && !value.equalsIgnoreCase("")) {
@@ -12306,29 +12307,35 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         Date strt = f.parse(starts.get(i));
                         if (stDate.before(strt)) {
                             if (enDate.before(strt)) {
-                                bisa = true;
+                                loop = true;
                             } else {
+                                loop = false;
                                 bisa = false;
                             }
                         } else {
                             Date ed = f.parse(ends.get(i));
                             if (ed.before(stDate)) {
-                                bisa = true;
+                                loop = true;
                             } else {
+                                loop = false;
                                 bisa = false;
                             }
                         }
                     }
                 } else {
-                    bisa = true;
+                    loop = true;
                 }
             } else {
+                loop = false;
                 bisa = false;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return bisa;
+        if (!bisa) {
+            loop = false;
+        }
+        return loop;
     }
 
 

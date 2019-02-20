@@ -95,7 +95,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         if (vo != null) {
             Log.w("sudah", "1");
             Log.w("sudah1", vo.getMessage());
-            bc:
 //1_277091610admin//2595//8;List Pengiriman Mobil
             if (vo.getMessage().startsWith("bc://")) {
 

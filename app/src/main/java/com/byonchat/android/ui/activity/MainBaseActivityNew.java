@@ -733,15 +733,17 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
 
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
-        try {
-            JSONArray jsonArray = new JSONArray(content);
-            if (jsonArray.length() < 9)
-                nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(false);
-            else
-                nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(isTrue);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (cur.getCount() > 0) {
+            String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+            try {
+                JSONArray jsonArray = new JSONArray(content);
+                if (jsonArray.length() < 9)
+                    nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(false);
+                else
+                    nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(isTrue);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -240,5 +240,8 @@ dependencies {
 
     compile 'com.mindorks:placeholderview:0.7.1'
     compile 'com.stepstone.apprating:app-rating:2.3.0'
+
+    //QR Code
+    compile 'com.github.kenglxn.QRGen:android:2.5.0'
 }
 apply plugin: 'com.google.gms.google-services'

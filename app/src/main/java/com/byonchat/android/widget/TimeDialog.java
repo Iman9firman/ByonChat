@@ -3,6 +3,7 @@ package com.byonchat.android.widget;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -27,7 +28,7 @@ public class TimeDialog extends Dialog implements View.OnClickListener {
     MyTimeDialogListener listener;
     String title;
 
-    public TimeDialog(Activity activity , String title){
+    public TimeDialog(Activity activity, String title) {
         super(activity);
         this.title = title;
     }
@@ -44,8 +45,8 @@ public class TimeDialog extends Dialog implements View.OnClickListener {
         butCancel = (Button) findViewById(R.id.btn_cancel_td);
         butSubmit = (Button) findViewById(R.id.btn_set_td);
 
-        if (title != null){
-            textTitle.setText(title);
+        if (title != null) {
+            textTitle.setText(Html.fromHtml(title));
         }
         SimpleDateFormat hour = new SimpleDateFormat("HH");
         SimpleDateFormat minute = new SimpleDateFormat("mm");

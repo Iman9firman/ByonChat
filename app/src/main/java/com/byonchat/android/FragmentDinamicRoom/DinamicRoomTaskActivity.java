@@ -134,6 +134,7 @@ import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.ContactsCompletionView;
 import com.byonchat.android.widget.SpinnerCustomAdapter;
+import com.byonchat.android.widget.TimeDialog;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -272,7 +273,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     HashMap<Integer, HashMap<String, String>> outerMap = new HashMap<Integer, HashMap<String, String>>();
     HashMap<Integer, HashMap<String, ArrayList<String>>> newDropdownViews = new HashMap<Integer, HashMap<String, ArrayList<String>>>();
     ArrayList<String> lolosReq = new ArrayList<>();
-
+    LinearLayout btnSUMBIT;
     AddChildFotoExModel valueIdValue;
     Integer count;
     boolean showButton = true;
@@ -454,6 +455,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         if (db == null) {
             db = BotListDB.getInstance(context);
         }
+
+        btnSUMBIT = (LinearLayout) getLayoutInflater().inflate(R.layout.button_submit_form, null);
 
         username = getIntent().getStringExtra("uu");
         idTab = getIntent().getStringExtra("ii");
@@ -1936,6 +1939,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     intent.putExtra("path", urlPaa + getOficer("lokasi").replace(" ", "_") + ".pdf");
                                     intent.putExtra("nama_file", getOficer("lokasi").replace(" ", "_") + ".pdf");
+                                    intent.putExtra("remove", "true");
+
                                 } else {
                                     intent.putExtra("path", urlP);
                                     intent.putExtra("nama_file", finalLabel4);
@@ -4147,37 +4152,56 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         btnOption.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (finalLabel3.length() > 0) {
-                                    dummyFlagDate = finalLabel3;
-                                    dummyFormulaDate = formula;
-
-                                }
-
-                                dummyCalendar = Calendar.getInstance();
-                                dummyIdDate = Integer.parseInt(idListTask);
-
-                                mYear = dummyCalendar.get(Calendar.YEAR);
-                                mMonth = dummyCalendar.get(Calendar.MONTH);
-                                mDay = dummyCalendar.get(Calendar.DAY_OF_MONTH);
-
-                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI2)));
-                                if (cEdit.getCount() == 0) {
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI2)), name, "cild");
-                                    db.insertRoomsDetail(orderModel);
-                                }
 
                                 if (type.equalsIgnoreCase("time")) {
-                                    showDialog(TIME_DIALOG_ID);
+                                    TimeDialog timeDialog = new TimeDialog(DinamicRoomTaskActivity.this, finalLabel2);
+                                    timeDialog.setListener(new TimeDialog.MyTimeDialogListener() {
+                                        @Override
+                                        public void userSelectedAValue(String value) {
+                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI2)));
+                                            if (cEdit.getCount() == 0) {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(finalI2)), name, "cild");
+                                                db.insertRoomsDetail(orderModel);
+                                            } else {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(finalI2)), name, "cild");
+                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                            }
+                                            valueFile.setText(value);
+
+                                        }
+
+                                        @Override
+                                        public void userCanceled() {
+                                            Toast.makeText(getBaseContext(), "Canceled", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    timeDialog.show();
+
                                 } else {
-                                    // showDialog(DATE_DIALOG_ID);
+                                    if (finalLabel3.length() > 0) {
+                                        dummyFlagDate = finalLabel3;
+                                        dummyFormulaDate = formula;
+
+                                    }
+
+                                    dummyCalendar = Calendar.getInstance();
+                                    dummyIdDate = Integer.parseInt(idListTask);
+
+                                    mYear = dummyCalendar.get(Calendar.YEAR);
+                                    mMonth = dummyCalendar.get(Calendar.MONTH);
+                                    mDay = dummyCalendar.get(Calendar.DAY_OF_MONTH);
+
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI2)));
+                                    if (cEdit.getCount() == 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI2)), name, "cild");
+                                        db.insertRoomsDetail(orderModel);
+                                    }
+
                                     showDialog(Integer.valueOf(String.valueOf(DATE_DIALOG_ID) + finalLabel3));
+                                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                                 }
-
-                                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
                             }
                         });
-
 
                     } else if (type.equalsIgnoreCase("phone_number")) {
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -8313,7 +8337,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         textView.setText(Html.fromHtml(label));
                         textView.setTextSize(15);
                         List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add("");
+                        valSetOne.add(String.valueOf(count));
                         valSetOne.add("");
                         valSetOne.add(type);
                         valSetOne.add(name);
@@ -8401,6 +8425,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     spinnerArray.add(labelReject);
                 } else if (typeStatus.equalsIgnoreCase("3")) {
                     spinnerArray.add(labelDone);
+                } else if (typeStatus.equalsIgnoreCase("4")) {
+                    spinnerArray.add(labelDone);
                 } else {
                     spinnerArray.add(labelReject);
                 }
@@ -8431,6 +8457,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 
+
                         if (!linkGetAsignTo.equalsIgnoreCase("")) {
                             if (!spinnerArray.get(position).equals(labelApprove)) {
                                 linearLayout.getChildAt(linearLayout.getChildCount() - 2).setVisibility(View.GONE);
@@ -8441,6 +8468,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                         if (!spinnerArray.get(position).equals("--Please Select--")) {
+                            if (spinnerArray.get(position).equalsIgnoreCase("suspect")) {
+                                btnSUMBIT.setVisibility(View.INVISIBLE);
+                            } else {
+                                btnSUMBIT.setVisibility(View.VISIBLE);
+                            }
+
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "includeStatus", "");
                             if (cEdit.getCount() > 0) {
 
@@ -8455,6 +8488,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", "", "", "includeStatus");
                             db.deleteDetailRoomWithFlagContentNew(orderModel);
                         }
+
                     }
 
                     @Override
@@ -8560,12 +8594,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
             if (showButton) {
 
-                LinearLayout btnRel = (LinearLayout) getLayoutInflater().inflate(R.layout.button_submit_form, null);
-                b = (Button) btnRel.findViewById(R.id.btn_submit);
+
+                b = (Button) btnSUMBIT.findViewById(R.id.btn_submit);
+
                 final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.setMargins(5, 15, 0, 0);
-                btnRel.setLayoutParams(params);
-                linearLayout.addView(btnRel);
+                btnSUMBIT.setLayoutParams(params);
+                linearLayout.addView(btnSUMBIT);
 
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -12180,7 +12215,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 Toast.makeText(context, error, Toast.LENGTH_LONG).show();
             } else {
                 startActivity(getIntent());
-                Toast.makeText(context, "Form success download.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Form success download2.", Toast.LENGTH_SHORT).show();
             }
 
         }

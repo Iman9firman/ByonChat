@@ -207,30 +207,37 @@ public class DownloadFileByonchat extends AppCompatActivity {
 
         File oldFile = new File(oldFolder, NEW_NAME_FILE);
         if (oldFile.exists()) {
-            finish();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (getIntent().getStringExtra("remove") == null) {
+                finish();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
-                intent.setData(uri);
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivity(intent);
+                    Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
+                    intent.setData(uri);
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(intent);
 
+                } else {
+
+                    MimeTypeMap map = MimeTypeMap.getSingleton();
+                    String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
+                    String type = map.getMimeTypeFromExtension(ext);
+                    if (type == null)
+                        type = "*/*";
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    Uri data = Uri.fromFile(oldFile);
+                    intent.setDataAndType(data, type);
+                    startActivity(intent);
+                }
             } else {
-
-                MimeTypeMap map = MimeTypeMap.getSingleton();
-                String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-                String type = map.getMimeTypeFromExtension(ext);
-                if (type == null)
-                    type = "*/*";
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                Uri data = Uri.fromFile(oldFile);
-                intent.setDataAndType(data, type);
-                startActivity(intent);
+                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                DownloadFile mDatabaseOpenTask = new DownloadFile();
+                mDatabaseOpenTask.execute(new Context[]{this});
             }
-
-
         } else {
             if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();

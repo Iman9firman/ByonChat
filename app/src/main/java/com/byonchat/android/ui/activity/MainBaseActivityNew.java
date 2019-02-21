@@ -730,8 +730,21 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_refresh).setVisible(false);
         nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
+
+        Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
+        if (cur.getCount() > 0) {
+            String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+            try {
+                JSONArray jsonArray = new JSONArray(content);
+                if (jsonArray.length() < 9)
+                    nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(false);
+                else
+                    nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(isTrue);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     protected void refreshList() {
@@ -1468,7 +1481,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
                 resolveServices();
             } else {
-                Toast.makeText(getApplicationContext(), "This application need permission!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.permission_request_title), Toast.LENGTH_SHORT).show();
             }
         }
     }

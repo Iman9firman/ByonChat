@@ -247,7 +247,7 @@ public class NotePreviewActivity extends AppCompatActivity {
                     String cnt = listItem3.get(j).getContent();
                     if (flag_tab.equalsIgnoreCase("keterangan")) {
                         keterangan = cnt;
-                    } else if (flag_tab.equalsIgnoreCase("title")) {
+                    } else if (flag_tab.equalsIgnoreCase("rencana_k")) {
                         title = cnt;
                     } else if (flag_tab.equalsIgnoreCase("lokasi")) {
                         lokasi = cnt;
@@ -270,7 +270,6 @@ public class NotePreviewActivity extends AppCompatActivity {
                 7 = alasan*/
 
                 try {
-                    Log.w("ivana",value);
                     JSONArray arrayValue = new JSONArray(value);
                     for (int iv = 0; iv < arrayValue.length(); iv++) {
                         JSONObject a = arrayValue.getJSONObject(iv);

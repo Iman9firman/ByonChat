@@ -6489,6 +6489,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             ArrayList<String> title = new ArrayList<>();
 
                             JSONArray jsonData = jObject.getJSONArray("data");
+
                             try {
                                 for (int ii = 0; ii < jsonData.length(); ii++) {
                                     JSONObject oContent = new JSONObject(jsonData.getString(ii));
@@ -8708,6 +8709,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 if (value.get(1).toString().equalsIgnoreCase("1") && !lolos) {
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
                                     if (cEdit.getCount() > 0) {
+
                                         if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
                                             if (value.get(2).toString().equalsIgnoreCase("text") ||
                                                     value.get(2).toString().equalsIgnoreCase("textarea") ||
@@ -8815,6 +8817,33 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 }
 
                                                 validateTime = true;
+                                            } else if (value.get(2).toString().equalsIgnoreCase("new_dropdown_dinamis")){
+                                                try {
+                                                    // TODO: 2/22/19 hapus dari database data json sebelumnya
+                                                    JSONObject valueObj = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                                                    if (!valueObj.has("Model")){
+                                                        berhenti = true;
+                                                        errorReq.add("Model");
+                                                    }
+                                                    if (!valueObj.has("Type")){
+                                                        berhenti = true;
+                                                        errorReq.add("Type");
+                                                    }
+                                                    if (!valueObj.has("Price Type")){
+                                                        berhenti = true;
+                                                        errorReq.add("Price Type");
+                                                    }
+                                                    if (!valueObj.has("Price")){
+                                                        berhenti = true;
+                                                        errorReq.add("Price");
+                                                    }
+                                                    if (!valueObj.has("Kode")){
+                                                        berhenti = true;
+                                                        errorReq.add("Kode");
+                                                    }
+                                                } catch (Exception e){
+                                                    e.printStackTrace();
+                                                }
                                             }
                                         }
                                     } else {

@@ -495,10 +495,17 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             JSONObject jO = null;
             try {
                 jO = new JSONObject(conBefore);
-                
-                if (!jO.getString("ver").equalsIgnoreCase(context.getResources().getString(R.string.app_version)) || !jO.has("ver")){
+
+                if (!jO.has("ver")) {
                     refreshMethod();
+                    return;
+                } else {
+                    if (!jO.getString("ver").equalsIgnoreCase(context.getResources().getString(R.string.app_version))) {
+                        refreshMethod();
+                        return;
+                    }
                 }
+
 
                 content = jO.getString("aa");
                 dbMaster = jO.getString("bb");
@@ -8335,7 +8342,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
-                    } else if(type.equalsIgnoreCase("qr_generate")) {
+                    } else if (type.equalsIgnoreCase("qr_generate")) {
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
@@ -8485,7 +8492,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             }
 
 
-            Log.w("ini", includeStatus + "");
+            Log.w("iSayani", includeStatus + "");
 
             if (includeStatus) {
 
@@ -8530,6 +8537,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+
+                        Log.w("kadal", spinnerArray.get(position));
 
 
                         if (!linkGetAsignTo.equalsIgnoreCase("")) {
@@ -9090,6 +9099,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
                     }
                 });
+            } else {
+                btnSUMBIT.setVisibility(View.GONE);
             }
 
         } else {
@@ -9109,7 +9120,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     }
 
-    private void refreshMethod(){
+    private void refreshMethod() {
 
         if (username != null) {
             if (fromList.equalsIgnoreCase("hide")) {
@@ -9610,7 +9621,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 obj.put("dd", d);
             }
 
-            obj.put("ver",ver);
+            obj.put("ver", ver);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -11084,9 +11095,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
 
-                        String ccc = jsonDuaObject(content, attachment, api_officers, jsonObject.toString(),context.getResources().getString(R.string.app_version));
+                        String ccc = jsonDuaObject(content, attachment, api_officers, jsonObject.toString(), context.getResources().getString(R.string.app_version));
                         if (include_assignto.equalsIgnoreCase("0")) {
-                            ccc = jsonDuaObject(content, attachment, "", jsonObject.toString(),context.getResources().getString(R.string.app_version));
+                            ccc = jsonDuaObject(content, attachment, "", jsonObject.toString(), context.getResources().getString(R.string.app_version));
                         }
 
                         Log.w("setelahRefresh", ccc);

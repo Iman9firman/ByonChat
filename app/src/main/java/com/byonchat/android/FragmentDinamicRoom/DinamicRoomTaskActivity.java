@@ -126,6 +126,7 @@ import com.byonchat.android.tempSchedule.MyEventDatabase;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.GPSTracker;
+import com.byonchat.android.utils.GenerateQR;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.LocationAssistant;
 import com.byonchat.android.utils.MediaProcessingUtil;
@@ -494,6 +495,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             JSONObject jO = null;
             try {
                 jO = new JSONObject(conBefore);
+                
+                if (!jO.getString("ver").equalsIgnoreCase(context.getResources().getString(R.string.app_version)) || !jO.has("ver")){
+                    refreshMethod();
+                }
+
                 content = jO.getString("aa");
                 dbMaster = jO.getString("bb");
 
@@ -8328,6 +8334,74 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                    } else if(type.equalsIgnoreCase("qr_generate")) {
+
+                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add("");
+                        valSetOne.add("");
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+                        String downloadForm = jsonArray.getJSONObject(i).getString("value");
+                        String strParams = jsonArray.getJSONObject(i).getString("formula");
+
+                        LinearLayout imgLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.image_loader_layout_form, null);
+                        int width = getWindowManager().getDefaultDisplay().getWidth();
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
+                        params.setMargins(5, 15, 0, 0);
+                        final ImageView imageView = (ImageView) imgLayout.findViewById(R.id.value);
+                        imageView.setLayoutParams(params);
+                        final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) imgLayout.findViewById(R.id.loader_progress);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(imgLayout);
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                        MessengerDatabaseHelper messengerHelper = null;
+                        if (messengerHelper == null) {
+                            messengerHelper = MessengerDatabaseHelper.getInstance(context);
+                        }
+
+                        HashMap<String, String> data = new HashMap<>();
+                        Contact contact = messengerHelper.getMyContact();
+                        if (strParams.equalsIgnoreCase("bc_user")) {
+                            data.put(strParams, contact.getJabberId());
+                        } else if (strParams.equalsIgnoreCase("spk")) {
+                            data.put(strParams, "073021050200045");
+                        }
+
+                        new GenerateQR(downloadForm, data, new GenerateQR.GenerateQRListener() {
+                            @Override
+                            public void onSuccess(Bitmap qrBitmap) {
+                                imageView.setImageBitmap(qrBitmap);
+                            }
+
+                            @Override
+                            public void onFailure(String errorMsg) {
+                                Toast.makeText(getBaseContext(), errorMsg, Toast.LENGTH_SHORT).show();
+                                progress.setVisibility(View.INVISIBLE);
+                            }
+                        });
                     } else if (type.equalsIgnoreCase("image_load")) {
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -9019,28 +9093,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             }
 
         } else {
-            if (username != null) {
-                if (fromList.equalsIgnoreCase("hide")) {
-                    new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
-                } else if (fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
-                    if (!idDetail.equalsIgnoreCase("")) {
-                        String[] ff = idDetail.split("\\|");
-                        if (ff.length == 2) {
-                            new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail);
-                        } else {
-                            new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
-                        }
-                    } else {
-                        if (fromList.equalsIgnoreCase("showMultiple")) {
-                            new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
-                        }
-                    }
-                } else {
-                    new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
-                }
-            } else {
-                finish();
-            }
+
+            refreshMethod();
 
         }
 
@@ -9052,6 +9106,33 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         }
 
         focusOnView();
+
+    }
+
+    private void refreshMethod(){
+
+        if (username != null) {
+            if (fromList.equalsIgnoreCase("hide")) {
+                new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
+            } else if (fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
+                if (!idDetail.equalsIgnoreCase("")) {
+                    String[] ff = idDetail.split("\\|");
+                    if (ff.length == 2) {
+                        new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail);
+                    } else {
+                        new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
+                    }
+                } else {
+                    if (fromList.equalsIgnoreCase("showMultiple")) {
+                        new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
+                    }
+                }
+            } else {
+                new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
+            }
+        } else {
+            finish();
+        }
 
     }
 
@@ -9515,7 +9596,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     }
 
 
-    private String jsonDuaObject(String a, String b, String c, String d) {
+    private String jsonDuaObject(String a, String b, String c, String d, String ver) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("aa", a);
@@ -9528,6 +9609,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             if (!d.equalsIgnoreCase("")) {
                 obj.put("dd", d);
             }
+
+            obj.put("ver",ver);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -11001,9 +11084,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
 
-                        String ccc = jsonDuaObject(content, attachment, api_officers, jsonObject.toString());
+                        String ccc = jsonDuaObject(content, attachment, api_officers, jsonObject.toString(),context.getResources().getString(R.string.app_version));
                         if (include_assignto.equalsIgnoreCase("0")) {
-                            ccc = jsonDuaObject(content, attachment, "", jsonObject.toString());
+                            ccc = jsonDuaObject(content, attachment, "", jsonObject.toString(),context.getResources().getString(R.string.app_version));
                         }
 
                         Log.w("setelahRefresh", ccc);

@@ -771,7 +771,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
             if (aa.getId().contains("|")) {
                 if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-                    new Refresh(getActivity()).execute(aa.getId(), username, idTab);
+                    new   Refresh(getActivity()).execute(aa.getId(), username, idTab);
                 }
             }
 
@@ -898,9 +898,9 @@ public class FragmentRoomMultipleTask extends Fragment {
 
                                 Log.w("IK : ", content);
 
-                                String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString());
+                                String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString(),context.getResources().getString(R.string.app_version));
                                 if (include_assignto.equalsIgnoreCase("0")) {
-                                    ccc = jsonDuaObjectW(content, attachment, "", jsonObject.toString());
+                                    ccc = jsonDuaObjectW(content, attachment, "", jsonObject.toString(),context.getResources().getString(R.string.app_version));
                                 }
 
 
@@ -936,7 +936,7 @@ public class FragmentRoomMultipleTask extends Fragment {
         }
     }
 
-    private String jsonDuaObjectW(String a, String b, String c, String d) {
+    private String jsonDuaObjectW(String a, String b, String c, String d, String ver) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("aa", a);
@@ -952,6 +952,8 @@ public class FragmentRoomMultipleTask extends Fragment {
                 Log.w("adabdi2", d);
                 obj.put("dd", d);
             }
+
+            obj.put("ver",ver);
 
         } catch (JSONException e) {
             e.printStackTrace();

@@ -108,6 +108,7 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
                 .placeholder(R.drawable.logo_byon)
                 .into(holder.mImageView);
 
+
         fonts.FontFamily(context.getAssets(), holder.mTextView, Fonts.FONT_ROBOTO_BOLD);
 
     }

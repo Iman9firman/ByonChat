@@ -19,7 +19,10 @@
     <dimen name="editTextGroup">40dp</dimen>
     <dimen name="margin230">230dp</dimen>
     <dimen name="margin160">160dp</dimen>
+    <dimen name="margin150">150dp</dimen>
     <dimen name="margin140">120dp</dimen>
+    <dimen name="margin130">130dp</dimen>
+    <dimen name="margin120">140dp</dimen>
     <dimen name="margin100">100dp</dimen>
     <dimen name="margin90">90dp</dimen>
     <dimen name="margin80">80dp</dimen>

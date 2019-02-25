@@ -17,7 +17,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
@@ -27,11 +26,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.net.Uri;
@@ -69,20 +65,15 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,7 +83,6 @@ import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.ConversationActivity;
-import com.byonchat.android.ListSelectedBotFragment;
 import com.byonchat.android.LoadingGetTabRoomActivity;
 import com.byonchat.android.LoginDinamicFingerPrint;
 import com.byonchat.android.LoginDinamicRoomActivity;
@@ -105,7 +95,6 @@ import com.byonchat.android.communication.MyBroadcastReceiver;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.communication.WhatsAppJobService;
-import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.curved.CurvedImageView;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
@@ -114,9 +103,7 @@ import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.Message;
-import com.byonchat.android.ui.adapter.OnItemClickListener;
-import com.byonchat.android.ui.adapter.OnLongItemClickListener;
-import com.byonchat.android.ui.view.ByonchatRecyclerView;
+import com.byonchat.android.sync.BCServiceSyncAdapter;
 import com.byonchat.android.utils.BlurBuilder;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.Fonts;
@@ -130,15 +117,12 @@ import com.byonchat.android.utils.Utility;
 import com.byonchat.android.utils.UtilsPD;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
-import com.byonchat.android.widget.BadgeView;
 import com.github.mmin18.widget.RealtimeBlurView;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.rom4ek.arcnavigationview.ArcNavigationView;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -164,7 +148,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -1188,14 +1171,18 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     else
                         resolveTwoGridTwo(itemList, i);
                 } else if (jsonArray.length() == 3) {
-                    vFrameGridNineThree.setVisibility(View.VISIBLE);
+                    vFrameGridNineThree.setVisibility(View.INVISIBLE);
+                    vFrameGridNineSix.setVisibility(View.VISIBLE);
+                    vFrameGridNineNine.setVisibility(View.INVISIBLE);
+
+                    vFrameGridNineNineOne.setVisibility(View.INVISIBLE);
 
                     if (i == 0)
-                        resolveNineGridOne(itemList, i);
+                        resolveNineGridFour(itemList, i);
                     else if (i == 1)
-                        resolveNineGridTwo(itemList, i);
+                        resolveNineGridFive(itemList, i);
                     else if (i == 2)
-                        resolveNineGridThree(itemList, i);
+                        resolveNineGridSix(itemList, i);
                 } else if (jsonArray.length() == 4) {
                     if (i == 0)
                         resolveFourGridOne(itemList, i);
@@ -2403,6 +2390,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void resolveServices() {
+        BCServiceSyncAdapter.initializeSyncAdapter(getApplicationContext());
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             if (prefs != null) {

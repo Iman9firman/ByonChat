@@ -31,6 +31,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission
         android:name="android.permission.MANAGE_DOCUMENTS"
         tools:ignore="ProtectedPermissions" />
@@ -100,7 +103,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <receiver android:name=".communication.ServiceAutoStart">
             <intent-filter>
@@ -331,6 +336,32 @@
             android:name=".AccountSettingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_acount_setting" />
+
+        <provider
+            android:name=".sync.BCContentProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true" />
+
+        <service android:name=".sync.BCAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <service
+            android:name=".sync.BCServiceSync"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
 
         <service
             android:name=".communication.WhatsAppJobService"

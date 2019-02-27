@@ -1812,6 +1812,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             try {
                 JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
                 String targetURL = jObj.getString("path");
+                Toast.makeText(MainBaseActivityNew.this, targetURL+"", Toast.LENGTH_SHORT).show();
 
                 AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
                 alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);

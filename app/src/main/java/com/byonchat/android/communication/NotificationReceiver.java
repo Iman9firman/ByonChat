@@ -95,7 +95,6 @@ public class NotificationReceiver extends BroadcastReceiver {
         if (vo != null) {
             Log.w("sudah", "1");
             Log.w("sudah1", vo.getMessage());
-            bc:
 //1_277091610admin//2595//8;List Pengiriman Mobil
             if (vo.getMessage().startsWith("bc://")) {
 
@@ -124,13 +123,9 @@ public class NotificationReceiver extends BroadcastReceiver {
                     String h = cursorIS.getString(cursorIS.getColumnIndexOrThrow(BotListDB.ROOM_ICON));
 
                     try {
-                        Log.w("lala2", d);
                         JSONArray jsonArray = new JSONArray(d);
                         for (int iss = 0; iss < jsonArray.length(); iss++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(iss);
-                            Log.w("kasuk :: ", jsonObject.toString());
-                            //   Log.w("kasuk :: " + iss, jsonArray.getJSONObject(iss).getString("urutan"));
-
                             if (jsonObject.getString("id_rooms_tab").equalsIgnoreCase(asal[2])) {
 
                                 String aaa = b;
@@ -227,7 +222,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
                     } catch (JSONException e1) {
                         e1.printStackTrace();
-                        Log.w("lala33", e1.getMessage());
                     }
 
                 }

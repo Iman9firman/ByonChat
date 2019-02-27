@@ -1084,15 +1084,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 RadioButton checkedRadioButton = (RadioButton) group.findViewById(checkedId);
                 boolean isChecked = checkedRadioButton.isChecked();
                 if (isChecked) {
-                    Log.w("har", checkedRadioButton.getText().toString());
+                    Log.w("har1", checkedRadioButton.getText().toString());
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", types);
                     if (cEdit.getCount() > 0) {
+                        Log.w("har2", checkedRadioButton.getText().toString());
                         String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-
+                        Log.w("banisd", text);
                         JSONObject lala = null;
                         try {
                             lala = new JSONObject(text);
+
                             JSONObject jsonObject = new JSONObject(expandedListText);
+
                             JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
 
                             JSONObject oContent = jj.getJSONObject(expandedListPosition);
@@ -1105,11 +1108,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 Log.w("sadis", "kosong");
                             }
 
+                            Log.w("sabanBi", lala.toString());
+
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), types, name, "cild");
                             db.updateDetailRoomWithFlagContent(orderModel);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Log.w("BUrhan", e.toString());
                         }
                     } else {
                         Log.w("ksoog", "lalalR");

@@ -583,6 +583,19 @@ public class BotListDB extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getSingleRoomDetailFormIsi(String username, String tab_id) {
+        Cursor cursor = getDatabase().query(ROOM_DETAIl_TABLE, new String[]
+                {
+                        ROOM_DETAIL_ID, ROOM_DETAIL_ID_TAB, ROOM_DETAIL_ID_ROOM, ROOM_DETAIL_CONTENT, ROOM_DETAIL_FLAG_CONTENT, ROOM_DETAIL_FLAG_TAB, ROOM_DETAIL_FLAG_ROOM
+                }, ROOM_DETAIL_ID_ROOM + "= '" + username + "' AND " + ROOM_DETAIL_FLAG_ROOM + "= 'form_isi'" + " AND " + ROOM_DETAIL_ID_TAB + "= '" + tab_id + "'", null, null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        return cursor;
+    }
+
+
     public Cursor getSingleRoomDetailFormWithFlag(String id, String usernameRoom, String tab_id, String Status) {
         Cursor cursor = getDatabase().query(ROOM_DETAIl_TABLE, new String[]
                 {

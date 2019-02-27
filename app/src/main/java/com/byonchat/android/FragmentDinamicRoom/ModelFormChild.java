@@ -10,16 +10,36 @@ public class ModelFormChild {
     private String detail;
     private String price;
 
+    private boolean text;
+
+
+    public ModelFormChild(String id, String title, String detail, String price, boolean text) {
+        this.id = id;
+        this.title = title;
+        this.detail = detail;
+        this.price = price;
+        this.text = text;
+    }
+
     public ModelFormChild(String title, String detail) {
         this.title = title;
         this.detail = detail;
     }
 
-    public ModelFormChild(String id,String title, String detail, String price) {
+    public ModelFormChild(String id, String title, String detail, String price) {
         this.id = id;
         this.title = title;
         this.detail = detail;
         this.price = price;
+    }
+
+
+    public void setText(boolean text) {
+        this.text = text;
+    }
+
+    public boolean isText() {
+        return text;
     }
 
     public String getTitle() {

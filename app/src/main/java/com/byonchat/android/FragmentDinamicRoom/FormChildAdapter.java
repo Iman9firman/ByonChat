@@ -135,7 +135,11 @@ public class FormChildAdapter extends BaseAdapter {
             }
             Log.w("dd", dodo);
             try {
-                nilai = Double.parseDouble(dodo != null ? dodo.replace(",", "") : "0.0") * Double.parseDouble(row_pos.getPrice() != null ? row_pos.getPrice().replace(",", "") : "0.0");
+                if (!row_pos.isText()) {
+                    nilai = Double.parseDouble(dodo != null ? dodo.replace(",", "") : "0.0") * Double.parseDouble(row_pos.getPrice() != null ? row_pos.getPrice().replace(",", "") : "0.0");
+                } else {
+                    nilai = Double.parseDouble(row_pos.getPrice() != null ? row_pos.getPrice().replace(",", "") : "0.0");
+                }
             } catch (Exception e) {
                 nilai = 0.0;
             }
@@ -151,7 +155,9 @@ public class FormChildAdapter extends BaseAdapter {
                 holder.price.setVisibility(View.GONE);
             } else {
                 if (!from.equalsIgnoreCase("value")) {
-                    holder.detail.setText(row_pos.getDetail() + " x " + new Validations().getInstance(context).numberToCurency(row_pos.getPrice()));
+                    if (!row_pos.isText()) {
+                        holder.detail.setText(row_pos.getDetail() + " x " + new Validations().getInstance(context).numberToCurency(row_pos.getPrice()));
+                    }
                 }
             }
             holder.title.setSelected(true);

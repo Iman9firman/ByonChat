@@ -46,6 +46,7 @@ import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.P
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POST_FOTO;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLDETAIL;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLMULIPLEDETAIL;
+import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLMULIPLEDETAILUPDATE;
 
 public class AllAboutUploadTask {
 
@@ -367,7 +368,10 @@ public class AllAboutUploadTask {
             } else {
                 if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
                     String[] ff = idDetail.split("\\|");
-                    if (ff.length == 2) {
+                    if (ff.length == 2) {//"293","id_rooms_tab":"2584"
+                        // 2584::389|2427
+                        Log.w("BoboENak", idTab + "::" + idDetail);
+                       // new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAILUPDATE, username,  idTab, idDetail);
                         new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAIL, username, idTab, idDetail);
                     } else {
                         new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);

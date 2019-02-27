@@ -388,6 +388,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
         protected String doInBackground(String... key) {
             try {
+                Log.w("hallo", linkTembak);
                 HttpClient httpClient = HttpHelper
                         .createHttpClient(mContext);
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
@@ -464,10 +465,12 @@ public class FragmentRoomMultipleTask extends Fragment {
                                     RoomsDetail orderModelTitle2 = new RoomsDetail(id + "|" + parent_id, idTab, username, jsonDuaObject(va(orderModelTitle211), is_reject), "1", joContent.getJSONObject(0).getString("type").toString(), "list");
                                     botListDB.insertRoomsDetail(orderModelTitle2);
                                 } else if (joContent.length() > 1) {
+
                                     RoomsDetail orderModelTitle21a = new RoomsDetail(id + "|" + parent_id, idTab, username, joContent.getJSONObject(0).getString("value").toString(), "1", joContent.getJSONObject(0).getString("type").toString(), "list");
                                     RoomsDetail orderModelTitle21 = new RoomsDetail(id + "|" + parent_id, idTab, username, jsonDuaObject(va(orderModelTitle21a), is_reject), "1", joContent.getJSONObject(0).getString("type").toString(), "list");
                                     botListDB.insertRoomsDetail(orderModelTitle21);
-                                    RoomsDetail orderModelTitle2a = new RoomsDetail(id + "|" + parent_id, idTab, username, joContent.getJSONObject(0).getString("value").toString(), "2", joContent.getJSONObject(1).getString("type").toString(), "list");
+
+                                    RoomsDetail orderModelTitle2a = new RoomsDetail(id + "|" + parent_id, idTab, username, joContent.getJSONObject(1).getString("value").toString(), "2", joContent.getJSONObject(1).getString("type").toString(), "list");
                                     RoomsDetail orderModelTitle2 = new RoomsDetail(id + "|" + parent_id, idTab, username, jsonDuaObject(va(orderModelTitle2a), is_reject), "2", joContent.getJSONObject(1).getString("type").toString(), "list");
                                     botListDB.insertRoomsDetail(orderModelTitle2);
                                 }
@@ -707,28 +710,35 @@ public class FragmentRoomMultipleTask extends Fragment {
 
                 if (roomsDetail1.getFlag_content().equalsIgnoreCase("1")) {
                     JSONObject jO = null;
-                    try {
-                        jO = new JSONObject(roomsDetail1.getContent());
-                        String content = "";
-                        if (jO.has("aa")) {
-                            content = jO.getString("aa");
+
+                    for (int i = 0; i < listItem3.size(); i++){
+                        try {
+                            jO = new JSONObject(listItem3.get(i).getContent());
+                            String content = "";
+                            if (jO.has("aa")) {
+                                content = jO.getString("aa");
+                            }
+
+                            if (jO.has("bb")) {
+                                statusBaru = jO.getString("bb");
+                            }
+
+                            if (i == 0){
+                                title = abs(content, roomsDetail1.getFlag_tab());
+                            }
+                            if (i == 1){
+                                desc = abs(content, roomsDetail2.getFlag_tab());
+                            }
+
+                        } catch (JSONException e) {
+                            title = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
+                            desc = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
+                            e.printStackTrace();
                         }
-
-                        if (jO.has("bb")) {
-                            statusBaru = jO.getString("bb");
-                        }
-
-                        title = abs(content, roomsDetail1.getFlag_tab());
-
-                    } catch (JSONException e) {
-                        title = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
-                        e.printStackTrace();
                     }
 
-                    desc = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
-
                 } else {
-                    JSONObject jO = null;
+                    /*JSONObject jO = null;
                     try {
                         jO = new JSONObject(roomsDetail2.getContent());
                         String content = "";
@@ -747,7 +757,34 @@ public class FragmentRoomMultipleTask extends Fragment {
                         e.printStackTrace();
                     }
 
-                    desc = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
+                    desc = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());*/
+                    JSONObject jO = null;
+
+                    for (int i = 0; i < listItem3.size(); i++){
+                        try {
+                            jO = new JSONObject(listItem3.get(i).getContent());
+                            String content = "";
+                            if (jO.has("aa")) {
+                                content = jO.getString("aa");
+                            }
+
+                            if (jO.has("bb")) {
+                                statusBaru = jO.getString("bb");
+                            }
+
+                            if (i == 0){
+                                title = abs(content, roomsDetail1.getFlag_tab());
+                            }
+                            if (i == 1){
+                                desc = abs(content, roomsDetail2.getFlag_tab());
+                            }
+
+                        } catch (JSONException e) {
+                            title = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
+                            desc = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
 
@@ -864,6 +901,11 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 String content = jsonRootObject.getString("data");
                                 String include_assignto = jsonRootObject.getString("include_assignto");
 
+                                String anothers = "";
+                                if (jsonRootObject.has("anothers")) {
+                                    anothers = jsonRootObject.getString("anothers");
+                                }
+
                                 JSONObject jsonObject = new JSONObject();
                                 if (data.contains("include_status_task")) {
                                     String include_status_task = jsonRootObject.getString("include_status_task");
@@ -898,13 +940,13 @@ public class FragmentRoomMultipleTask extends Fragment {
 
                                 Log.w("IK : ", content);
 
-                                String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString());
+                                String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString(), context.getResources().getString(R.string.app_version));
                                 if (include_assignto.equalsIgnoreCase("0")) {
-                                    ccc = jsonDuaObjectW(content, attachment, "", jsonObject.toString());
+                                    ccc = jsonDuaObjectW(content, attachment, "", jsonObject.toString(), context.getResources().getString(R.string.app_version));
                                 }
 
 
-                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
+                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, anothers, time_str, "form");
                                 db.insertRoomsDetail(orderModel2);
 
 
@@ -936,7 +978,7 @@ public class FragmentRoomMultipleTask extends Fragment {
         }
     }
 
-    private String jsonDuaObjectW(String a, String b, String c, String d) {
+    private String jsonDuaObjectW(String a, String b, String c, String d, String ver) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("aa", a);
@@ -952,6 +994,8 @@ public class FragmentRoomMultipleTask extends Fragment {
                 Log.w("adabdi2", d);
                 obj.put("dd", d);
             }
+
+            obj.put("ver", ver);
 
         } catch (JSONException e) {
             e.printStackTrace();

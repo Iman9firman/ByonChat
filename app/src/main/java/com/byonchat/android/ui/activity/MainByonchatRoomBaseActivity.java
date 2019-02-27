@@ -225,7 +225,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.w(TAG, e.toString());
             finish();
-            Toast.makeText(this, R.string.str_not_able_open_room, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, R.string.str_not_able_open_room, Toast.LENGTH_SHORT).show();
         }
     }
 

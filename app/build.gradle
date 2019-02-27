@@ -243,6 +243,6 @@ dependencies {
 
     compile ('com.github.kenglxn.QRGen:android:2.5.0'){ exclude group: 'com.google.zxing' }
 
-    //QR Code
+    compile 'com.github.HendrixString:Android-PdfMyXml:v1.0.1'
 }
 apply plugin: 'com.google.gms.google-services'

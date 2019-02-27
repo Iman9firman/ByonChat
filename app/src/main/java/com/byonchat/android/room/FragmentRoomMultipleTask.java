@@ -732,6 +732,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
                         } catch (JSONException e) {
                             title = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
+                            desc = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
                             e.printStackTrace();
                         }
                     }
@@ -780,6 +781,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
                         } catch (JSONException e) {
                             title = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());
+                            desc = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
                             e.printStackTrace();
                         }
                     }

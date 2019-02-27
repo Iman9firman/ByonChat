@@ -75,8 +75,8 @@ public class LoginISS extends AppCompatActivity {
        /* userID.setText("1701793");
         passID.setText("Pass1701793");*/
 
-        userID.setText("1701793");
-        passID.setText("Pass1701793");
+        userID.setText("TESTING");
+        passID.setText("Testing1234");
 
 
         erwgv.setOnClickListener(new View.OnClickListener() {

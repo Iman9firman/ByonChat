@@ -388,6 +388,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
         protected String doInBackground(String... key) {
             try {
+                Log.w("hallo", linkTembak);
                 HttpClient httpClient = HttpHelper
                         .createHttpClient(mContext);
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
@@ -771,7 +772,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
             if (aa.getId().contains("|")) {
                 if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-                    new   Refresh(getActivity()).execute(aa.getId(), username, idTab);
+                    new Refresh(getActivity()).execute(aa.getId(), username, idTab);
                 }
             }
 
@@ -864,6 +865,11 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 String content = jsonRootObject.getString("data");
                                 String include_assignto = jsonRootObject.getString("include_assignto");
 
+                                String anothers = "";
+                                if (jsonRootObject.has("anothers")) {
+                                    anothers = jsonRootObject.getString("anothers");
+                                }
+
                                 JSONObject jsonObject = new JSONObject();
                                 if (data.contains("include_status_task")) {
                                     String include_status_task = jsonRootObject.getString("include_status_task");
@@ -898,13 +904,13 @@ public class FragmentRoomMultipleTask extends Fragment {
 
                                 Log.w("IK : ", content);
 
-                                String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString(),context.getResources().getString(R.string.app_version));
+                                String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString(), context.getResources().getString(R.string.app_version));
                                 if (include_assignto.equalsIgnoreCase("0")) {
-                                    ccc = jsonDuaObjectW(content, attachment, "", jsonObject.toString(),context.getResources().getString(R.string.app_version));
+                                    ccc = jsonDuaObjectW(content, attachment, "", jsonObject.toString(), context.getResources().getString(R.string.app_version));
                                 }
 
 
-                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
+                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, anothers, time_str, "form");
                                 db.insertRoomsDetail(orderModel2);
 
 
@@ -953,7 +959,7 @@ public class FragmentRoomMultipleTask extends Fragment {
                 obj.put("dd", d);
             }
 
-            obj.put("ver",ver);
+            obj.put("ver", ver);
 
         } catch (JSONException e) {
             e.printStackTrace();

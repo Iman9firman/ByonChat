@@ -3,10 +3,10 @@
     android:id="@+id/optionlist"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/backgroud_conversation"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@drawable/backgroud_conversation"
+    android:orientation="vertical"
     android:padding="@dimen/margin5">
 
     <RelativeLayout
@@ -17,72 +17,75 @@
             android:id="@+id/btn_add_cild"
             android:layout_width="@dimen/margin100"
             android:layout_height="@dimen/margin30"
-            android:text="Add"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_gravity="center"
             android:background="@drawable/oval_btn_room"
             android:padding="5dp"
+            android:text="Add"
             android:textAllCaps="false"
             android:textColor="@drawable/selector_txt_blue_white"
-            android:textSize="14sp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:textSize="14sp" />
 
     </RelativeLayout>
+
     <TableRow
-        android:paddingTop="@dimen/margin5"
         android:id="@+id/tableRow1"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:stretchColumns="0,1,2"
-        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentTop="true"
+        android:paddingTop="@dimen/margin5"
+        android:stretchColumns="0,1,2">
 
         <TextView
             android:id="@+id/titleName"
             android:layout_weight="2"
-            android:singleLine="true"
             android:ellipsize="marquee"
+            android:gravity="left"
+            android:singleLine="true"
             android:text="Nama"
-            android:textColor="@android:color/black"
-            android:gravity="left"/>
+            android:textColor="@android:color/black" />
     </TableRow>
 
     <ListView
         android:id="@+id/listOrder"
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        android:dividerPadding="2dp"
         android:orientation="horizontal"
-        android:showDividers="none|middle|beginning|end"
-        android:dividerPadding="2dp"/>
+        android:showDividers="none|middle|beginning|end" />
 
     <TableRow
-        android:paddingTop="@dimen/margin5"
         android:id="@+id/tableRow2"
-        android:visibility="gone"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:stretchColumns="0,1,2"
-        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentTop="true"
+        android:paddingTop="@dimen/margin5"
+        android:stretchColumns="0,1,2"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/title_order"
             android:layout_weight="2"
-            android:singleLine="true"
             android:ellipsize="marquee"
+            android:gravity="left"
+            android:singleLine="true"
             android:text="Total"
             android:textColor="@android:color/black"
-            android:gravity="left"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/total_price_order"
             android:layout_weight="4"
+            android:gravity="right"
             android:text="10000"
             android:textColor="@android:color/black"
-            android:gravity="right"/>
+            android:textStyle="bold" />
     </TableRow>
 
 

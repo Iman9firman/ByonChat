@@ -782,6 +782,10 @@ public class FragmentRoomTaskWater extends Fragment {
                         String id_rooms_tab = jsonRootObject.getString("id_rooms_tab");
                         String attachment = jsonRootObject.getString("attachment");
                         String content = jsonRootObject.getString("data");
+                        String anothers = "";
+                        if (jsonRootObject.has("anothers")) {
+                            anothers = jsonRootObject.getString("anothers");
+                        }
 
                         Log.w("content", content);
 
@@ -797,7 +801,7 @@ public class FragmentRoomTaskWater extends Fragment {
                         if (!attachment.equalsIgnoreCase("")) {
                             ccc = jsonDuaObject(content, attachment);
                         }
-                        RoomsDetail orderModel = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
+                        RoomsDetail orderModel = new RoomsDetail(username, id_rooms_tab, username, ccc, anothers, time_str, "form");
                         botListDB.insertRoomsDetail(orderModel);
 
 

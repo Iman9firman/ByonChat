@@ -16,7 +16,7 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin100">
+            android:layout_margin="@dimen/margin140">
 
             <android.support.v7.widget.CardView
                 android:id="@+id/cardview"
@@ -50,39 +50,39 @@
 
                         <ImageView
                             android:id="@+id/logo_item_grid_one"
-                            android:layout_width="65dp"
-                            android:layout_height="65dp"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
                             android:layout_gravity="center"
                             android:layout_weight="1"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_room_about" />
-
-                        <TextView
-                            android:id="@+id/title_item_grid_one"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal|top"
-                            android:layout_marginLeft="@dimen/margin3"
-                            android:layout_marginTop="@dimen/margin5"
-                            android:layout_marginRight="@dimen/margin3"
-                            android:ellipsize="end"
-                            android:fadingEdge="horizontal"
-                            android:maxLines="2"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:scrollHorizontally="true"
-                            android:text="asdfasdfasd asdfasdf asdfasdfsf"
-                            android:textAlignment="center"
-                            android:textColor="@color/byonchat_primary_text"
-                            android:textSize="16sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent" />
                     </LinearLayout>
 
                 </android.support.constraint.ConstraintLayout>
 
             </android.support.v7.widget.CardView>
+
+            <TextView
+                android:id="@+id/title_item_grid_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_marginLeft="@dimen/margin3"
+                android:layout_marginTop="@dimen/margin5"
+                android:layout_marginRight="@dimen/margin3"
+                android:ellipsize="end"
+                android:fadingEdge="horizontal"
+                android:maxLines="2"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:scrollHorizontally="true"
+                android:text="asdfasdfasd asdfasdf asdfasdfsf"
+                android:textAlignment="center"
+                android:textColor="@color/byonchat_primary_text"
+                android:textSize="14sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardview" />
 
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>

@@ -549,6 +549,9 @@
     <string name="desc_fingerprint">Please place your fingertip on the scanner to verify your identity</string>
     <string name="title_activity_request_passcode_room">RequestPasscodeRoomActivity</string>
 
+    <string name="sync_account_type">android.byonchat.com</string>
+    <string name="content_authority">com.byonchat.android</string>
+
     <string-array name="dialog_grid_size">
         <item name="size_three">3 x n</item>
         <item name="size_four">4 x n</item>

@@ -171,6 +171,16 @@ public class BotListDB extends SQLiteOpenHelper {
         }
     }
 
+    public boolean deleteDetailRoomById(String detail_id, String tab_id) {
+        String where = ROOM_DETAIL_ID_ROOM + " = ? AND " + ROOM_DETAIL_ID_TAB + " = ? AND " + ROOM_DETAIL_FLAG_ROOM + " = ? ";
+        String[] whereArgs = {detail_id, tab_id, "form"};
+
+        boolean updateSuccessful = getDatabase().delete(ROOM_DETAIl_TABLE, where, whereArgs) > 0;
+
+        return updateSuccessful;
+    }
+
+
     public void insertListTitleTask(RoomsDetail roomsDetail, String action) {
         if (jsonResultType(roomsDetail.getFlag_content(), "c").equalsIgnoreCase("0") || jsonResultType(roomsDetail.getFlag_content(), "c").equalsIgnoreCase("1")) {
             String content = roomsDetail.getContent();
@@ -572,6 +582,7 @@ public class BotListDB extends SQLiteOpenHelper {
 
 
     public Cursor getSingleRoomDetailForm(String username, String tab_id) {
+        Log.w("ggggg", "getSingleRoomDetailForm " + username + " -- " + tab_id);
         Cursor cursor = getDatabase().query(ROOM_DETAIl_TABLE, new String[]
                 {
                         ROOM_DETAIL_ID, ROOM_DETAIL_ID_TAB, ROOM_DETAIL_ID_ROOM, ROOM_DETAIL_CONTENT, ROOM_DETAIL_FLAG_CONTENT, ROOM_DETAIL_FLAG_TAB, ROOM_DETAIL_FLAG_ROOM

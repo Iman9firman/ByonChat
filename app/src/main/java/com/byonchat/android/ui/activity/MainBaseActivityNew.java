@@ -1819,6 +1819,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
                     if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
 
+                        refreshRoomForm();
+
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
@@ -1835,6 +1837,35 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
                 });
                 alertbox.show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected void refreshRoomForm() {
+        Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
+        if (cur.getCount() > 0) {
+
+            String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+
+            try {
+                JSONArray jsonArray = new JSONArray(content);
+                itemList.clear();
+                positionList.clear();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                if (prefs != null) {
+                    extra_tab = prefs.getString(Constants.EXTRA_TAB_MOVEMENT, "");
+                    if (!extra_tab.equalsIgnoreCase("")) {
+                        jsonArray = new JSONArray(extra_tab);
+                    }
+                }
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
+
+                    Byonchat.getBotListDB().deleteDetailRoomById(username, id_rooms_tab);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

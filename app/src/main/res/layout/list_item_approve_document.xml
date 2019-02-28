@@ -21,7 +21,7 @@
         app:cardCornerRadius="8dp">
 
         <LinearLayout
-            android:id="@+id/main_content"
+            android:id="@+id/all_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -77,48 +77,10 @@
                     </RelativeLayout>
                 </FrameLayout>
 
-                <LinearLayout
-                    android:id="@+id/layoutComment"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin4"
-                    android:orientation="vertical"
-                    android:paddingBottom="@dimen/margin4">
-
-                    <LinearLayout
-                        android:id="@+id/btComment"
-                        android:layout_width="50dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/button_timeline_background"
-                        android:gravity="center_vertical|center_horizontal"><!-- 5 -->
-
-                        <TextView
-                            android:id="@+id/text.btn.comment"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Comments"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:textColor="@color/text_like_counter"
-                            android:textSize="10sp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_horizontal"><!-- 6 -->
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                    </LinearLayout>
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/main_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -130,14 +92,14 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <!--<TextView
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:singleLine="true"
                         android:text="Title : "
                         android:textColor="@color/judul"
                         android:textSize="@dimen/oto_feed_item_profile_name"
-                        android:textStyle="bold" />-->
+                        android:textStyle="bold" />
 
 
                     <TextView
@@ -157,14 +119,35 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <!--<TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Request at : "
+                        android:textColor="@color/timestamp"
+                        android:textSize="@dimen/oto_feed_item_timestamp" />
+
+                    <TextView
+                        android:id="@+id/timestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Updates on : 26-1-2016, 10:10 AM"
+                        android:textColor="@color/timestamp"
+                        android:textSize="@dimen/oto_feed_item_timestamp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingTop="@dimen/oto_feed_item_margin"
                         android:paddingRight="@dimen/oto_feed_item_margin"
-                        android:text="Description : "
+                        android:text="Request by : "
                         android:textColor="@color/description"
-                        android:textSize="@dimen/oto_feed_item_profile_status" />-->
+                        android:textSize="@dimen/oto_feed_item_profile_status" />
 
                     <TextView
                         android:id="@+id/txtStatusMsg"
@@ -179,40 +162,17 @@
                         android:textSize="@dimen/oto_feed_item_profile_status" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingTop="@dimen/oto_feed_item_margin"
-                    android:paddingRight="@dimen/oto_feed_item_margin">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Upload Date : "
-                        android:textColor="@color/timestamp"
-                        android:textSize="@dimen/oto_feed_item_timestamp" />
-
-                    <TextView
-                        android:id="@+id/timestamp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Updates on : 26-1-2016, 10:10 AM"
-                        android:textColor="@color/timestamp"
-                        android:textSize="@dimen/oto_feed_item_timestamp" />
-                </LinearLayout>
-
                 <me.gujun.android.taggroup.TagGroup
                     android:id="@+id/tag_group"
                     style="@style/TagGroup.Beauty_Red"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin5"
                     android:layout_marginBottom="@dimen/margin5"
-                    app:atg_borderColor="@color/button_border"
+                    app:atg_borderColor="@color/orange_300"
                     app:atg_horizontalPadding="@dimen/margin5"
                     app:atg_horizontalSpacing="@dimen/margin5"
-                    app:atg_textColor="@color/button_border"
-                    app:atg_textSize="10sp" />
+                    app:atg_textColor="@color/orange_300"
+                    app:atg_textSize="8sp" />
             </LinearLayout>
         </LinearLayout>
 

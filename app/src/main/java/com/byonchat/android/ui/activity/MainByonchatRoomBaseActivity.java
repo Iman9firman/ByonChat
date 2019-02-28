@@ -89,7 +89,9 @@ import com.byonchat.android.room.FragmentRoomSearchMultiTask;
 import com.byonchat.android.room.FragmentRoomTask;
 import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.tempSchedule.TempScheduleRoom;
+import com.byonchat.android.ui.fragment.ByonchatApprovalRequestFragment;
 import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
+import com.byonchat.android.ui.fragment.ByonchatStatusRequestFragment;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.byonchat.android.utils.Utility;
 import com.googlecode.mp4parser.authoring.Edit;
@@ -579,7 +581,14 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     show = true;
                     valSetOne.add("hide");
                     mFragment = FragmentRoomSearchMultiTask.newInstance(title, "https://bb.byonchat.com/ApiReliever/index.php/Request/close_list", username, id_rooms_tab, color, include_latlong, MainByonchatRoomBaseActivity.this, "showMultiple");
+                } else if (category.equalsIgnoreCase("23")) {
+                    show = true;
+                    mFragment = ByonchatStatusRequestFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
+                } else if (category.equalsIgnoreCase("24")) {
+                    show = true;
+                    mFragment = ByonchatApprovalRequestFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 }
+
 
                 if (status.equalsIgnoreCase("1") && show) {
 //                    adapter.addFragment(mFragment, title);

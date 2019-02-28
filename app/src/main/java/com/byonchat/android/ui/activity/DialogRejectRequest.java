@@ -1,4 +1,5 @@
-package com.byonchat.android;
+package com.byonchat.android.ui.activity;
+
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -33,6 +34,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
+import com.byonchat.android.R;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseHelper;
@@ -65,42 +67,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class DialogFormChildRequestDoc extends DialogFragment {
+public class DialogRejectRequest extends DialogFragment {
 
-    String username = "";
-    String idTab = "";
-    String title = "";
-    String url = "";
+    String id_hps = "";
     long id = 0;
     String description = "";
     LinearLayout linearLayout;
     Button mCancel, mOkay;
     MessengerDatabaseHelper databaseHelper;
     UserDB dbHelper;
+    DialogRejectListener listener;
 
-    public static DialogFormChildRequestDoc newInstance(String username, String idTab, long idFile, String title, String description, String url) {
-        DialogFormChildRequestDoc f = new DialogFormChildRequestDoc();
+    public static DialogRejectRequest newInstance(String id) {
+        DialogRejectRequest f = new DialogRejectRequest();
         Bundle args = new Bundle();
-        args.putString("username", username);
-        args.putString("idTab", idTab);
-        args.putLong("id",idFile);
-        args.putString("title", title);
-        args.putString("description", description);
-        args.putString("url",url);
+        args.putString("id", id);
         f.setArguments(args);
-
         return f;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        idTab = getArguments().getString("idTab");
-        username = getArguments().getString("username");
-        id = getArguments().getLong("id");
-        title = getArguments().getString("title");
-        description = getArguments().getString("description");
-        url = getArguments().getString("url");
+        id_hps = getArguments().getString("id");
     }
 
 
@@ -114,26 +103,8 @@ public class DialogFormChildRequestDoc extends DialogFragment {
         linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
         linearLayout.setPadding(16,16,16,16);
 
-        RelativeLayout titleLayout = new RelativeLayout(getContext());
-        titleLayout.setGravity(Gravity.CENTER);
-        TextView titleView = new TextView(getContext());
-        titleView.setText(title);
-        titleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-        titleView.setSingleLine(true);
-        titleView.setMarqueeRepeatLimit(-1);
-        titleView.setSelected(true);
-        titleView.setTextSize(20);
-        titleView.canScrollHorizontally(View.SCROLL_AXIS_HORIZONTAL);
-        titleView.setTypeface(Typeface.DEFAULT_BOLD);
-        LinearLayout.LayoutParams titlePars = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams viewpas = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        viewpas.setMargins(30,15,30,15);
-        titleLayout.addView(titleView, titlePars);
-        View view = new View(getContext());
-        view.setBackgroundColor(getActivity().getResources().getColor(R.color.black_alpha_50));
-
         TextView textView = new TextView(getContext());
-        textView.setText("Request to download the document?");
+        textView.setText("Are you sure to delete your request?");
         textView.setTextSize(15);
 
         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -141,45 +112,23 @@ public class DialogFormChildRequestDoc extends DialogFragment {
         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 200);
         params2.setMargins(30, 10, 30, 0);
 
-        EditText editText = new EditText(getContext());
-        editText.setHint("Information for approval *");
-        editText.setTextSize(15);
-        editText.setLines(8);
-        editText.setPadding(10,10,10,10);
-        editText.setMaxLines(10);
-        editText.setGravity(Gravity.TOP);
-//        editText.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        editText.setBackground(getActivity().getResources().getDrawable(R.drawable.rounder_editext));
-
-        linearLayout.addView(titleLayout, params1);
-        linearLayout.addView(view, viewpas);
         linearLayout.addView(textView, params1);
-        linearLayout.addView(editText,params2);
 
         mCancel = (Button) dialog.findViewById(R.id.btn_proceed);
         mCancel.setText("Cancel");
         mOkay = (Button) dialog.findViewById(R.id.btn_cancel);
-        mOkay.setText("Request");
+        mOkay.setText("Delete");
 
         mOkay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Map<String, String> params = new HashMap<>();
-                params.put("bc_user_requester",  databaseHelper.getMyContact().getJabberId());
-                params.put("id_file", id+"");
-                params.put("link_file",url);
-                params.put("keterangan",editText.getText()+"");
-                params.put("nama_user_requester",dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
-                params.put("nama_file",title);
-                params.put("datas",jsonData());
-
-                Log.w("ating yinguut",jsonData());
-                if(editText.getText().toString().equalsIgnoreCase("")){
-                    editText.setError("Must be filled");
-                }else {
-                    getDialog().dismiss();
-                    getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Request", params, true);
-                    Toast.makeText(getActivity(), "Mohon tunggu untuk approvement", Toast.LENGTH_SHORT).show();
+                params.put("id", id_hps);
+                getDialog().dismiss();
+                getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Request/delete", params, true);
+                Toast.makeText(getActivity(), "Request Deleted", Toast.LENGTH_SHORT).show();
+                if (listener != null){
+                    listener.onReject();
                 }
             }
         });
@@ -197,9 +146,9 @@ public class DialogFormChildRequestDoc extends DialogFragment {
     private String jsonData(){
 
         JSONArray datas = new JSONArray();
+        JSONObject approver = new JSONObject();
         try {
             /*if(!dbHelper.getColValue(UserDB.ATASAN_1_NIK).equalsIgnoreCase("")){
-                JSONObject approver = new JSONObject();
                 approver.put("bc_user_approval",dbHelper.getColValue(UserDB.ATASAN_1_PHONE));
                 approver.put("nama",dbHelper.getColValue(UserDB.ATASAN_1_NAMA));
                 approver.put("nik",dbHelper.getColValue(UserDB.ATASAN_1_NIK));
@@ -207,27 +156,17 @@ public class DialogFormChildRequestDoc extends DialogFragment {
                 datas.put(approver);
             }
             if(!dbHelper.getColValue(UserDB.ATASAN_2_NIK).equalsIgnoreCase("")){
-                JSONObject approver2 = new JSONObject();
-                approver2.put("bc_user_approval",dbHelper.getColValue(UserDB.ATASAN_2_PHONE));
-                approver2.put("nama",dbHelper.getColValue(UserDB.ATASAN_2_NAMA));
-                approver2.put("nik",dbHelper.getColValue(UserDB.ATASAN_2_NIK));
-                approver2.put("order","2");
-                datas.put(approver2);
-            }*/
-
-                JSONObject approver = new JSONObject();
-                approver.put("bc_user_approval","6281588888892");
-                approver.put("nama","Iman");
-                approver.put("nik","00001");
-                approver.put("order","1");
+                approver.put("bc_user_approval",dbHelper.getColValue(UserDB.ATASAN_2_PHONE));
+                approver.put("nama",dbHelper.getColValue(UserDB.ATASAN_2_NAMA));
+                approver.put("nik",dbHelper.getColValue(UserDB.ATASAN_2_NIK));
+                approver.put("order","2");
                 datas.put(approver);
-
-               /* JSONObject approver2 = new JSONObject();
-                approver2.put("bc_user_approval","6285328200060");
-                approver2.put("nama","Aziz");
-                approver2.put("nik","00002");
-                approver2.put("order","2");
-                datas.put(approver2);*/
+            }*/
+            approver.put("bc_user_approval",databaseHelper.getMyContact().getJabberId());
+            approver.put("nama",dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
+            approver.put("nik",dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
+            approver.put("order","1");
+            datas.put(approver);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -265,6 +204,18 @@ public class DialogFormChildRequestDoc extends DialogFragment {
             }
         };
         queue.add(sr);
+    }
+
+    public DialogRejectListener getListener() {
+        return listener;
+    }
+
+    public void setListener(DialogRejectListener listener) {
+        this.listener = listener;
+    }
+
+    public interface DialogRejectListener{
+        void onReject();
     }
 
     /*private class posTask extends AsyncTask<String, Integer, String> {

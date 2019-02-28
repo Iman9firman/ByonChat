@@ -59,12 +59,17 @@ public class RelieverListAdapter extends RecyclerView.Adapter<RelieverListAdapte
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton checkboxView, boolean isChecked) {
+                Log.w("Proudly prestice 1","ok");
                 if (isChecked){
+                    Log.w("Proudly prestice 13",z+"");
                     z++;
                 } else {
+                    Log.w("Proudly prestice 12",z+"");
                     z--;
                 }
                 if (z > maxSelect){
+                    Log.w("Proudly prestice 10",maxSelect+"");
+                    Log.w("Proudly prestice 11",z+"");
                     Toast.makeText(context,"Hanya dapat memilih "+maxSelect+" reliever.", Toast.LENGTH_SHORT).show();
                     checkboxView.setChecked(false);
                     z--;

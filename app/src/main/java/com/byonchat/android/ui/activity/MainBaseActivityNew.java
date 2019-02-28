@@ -1126,6 +1126,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 } else if (category.equalsIgnoreCase("18")) {
                     itemMain.iconTest = R.drawable.ic_room_name_card;
                     Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("19")) {
+                    loginIss = true;
+                    itemMain.iconTest = R.drawable.ic_room_catalog;
+                    Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("20")) {
                     loginIss = true;
                     itemMain.iconTest = R.drawable.ic_room_task;
@@ -1157,7 +1161,14 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     valSetOne.add(include_latlong);
                     valSetOne.add("hide");
                     Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("23")) {
+                    itemMain.iconTest = R.drawable.ic_default_room;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("24")) {
+                    itemMain.iconTest = R.drawable.ic_room_name_card;
+                    Constants.map.put(i, null);
                 }
+
 
                 itemList.add(i, itemMain);
                 positionList.add(i, title);

@@ -139,5 +139,16 @@ public class UserDB extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public String getColValue(String keyword){
+        Cursor cursor = getDatabase().query(TABLE_ISS, new String[]
+                {
+                        keyword,
+                }, null, null, null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+        String name = cursor.getString(cursor.getColumnIndexOrThrow(keyword));
+        return name;
+    }
 
 }

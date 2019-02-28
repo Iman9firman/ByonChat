@@ -9,10 +9,12 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.helpers.Constants;
 
@@ -24,6 +26,7 @@ public class ByonchatPDFPreviewActivity extends AppCompatActivity {
 
     LinearLayout layout;
     WebView webView;
+    UserDB dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +35,15 @@ public class ByonchatPDFPreviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_byonchat_pdf_preview);
 
+        dbHelper = new UserDB(this);
         layout = (LinearLayout) findViewById(R.id.layout_watermark);
         webView = (WebView) findViewById(R.id.webView_test);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return true;
+            }
+        });
         webView.loadUrl("https://docs.google.com/viewer?embedded=true&url=" + getIntent().getStringExtra(Constants.EXTRA_URL));
         layout.setWeightSum(4);
         layout.setBackgroundColor(Color.TRANSPARENT);
@@ -42,8 +51,8 @@ public class ByonchatPDFPreviewActivity extends AppCompatActivity {
         for (int i = 1; i < 3; i++) {
             TextView nama = new TextView(this);
             TextView nick = new TextView(this);
-            nama.setText("Budi Santoso");
-            nick.setText("NIK.20156640");
+            nama.setText(dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
+            nick.setText(dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
             nama.setRotation(315);
             nick.setRotation(315);
             LinearLayout.LayoutParams par = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,

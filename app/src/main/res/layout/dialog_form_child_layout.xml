@@ -61,28 +61,15 @@
 
                 <Button
                     android:id="@+id/btn_proceed"
-                    android:layout_width="@dimen/margin100"
-                    android:layout_height="@dimen/margin30"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="@dimen/margin20"
-                    android:background="@drawable/oval_btn_room"
-                    android:padding="5dp"
+                    style="@style/btn_submit_v111"
                     android:text="Add"
-                    android:textAllCaps="false"
-                    android:textColor="@drawable/selector_txt_blue_white"
-                    android:textSize="14sp" />
+                    android:layout_marginRight="5dp"/>
 
                 <Button
                     android:id="@+id/btn_cancel"
-                    android:layout_width="@dimen/margin100"
-                    android:layout_height="@dimen/margin30"
-                    android:layout_gravity="center"
-                    android:background="@drawable/oval_btn_room"
-                    android:padding="5dp"
+                    style="@style/btn_submit_v111"
                     android:text="Cancel"
-                    android:textAllCaps="false"
-                    android:textColor="@drawable/selector_txt_blue_white"
-                    android:textSize="14sp" />
+                    android:layout_marginLeft="5dp"/>
             </LinearLayout>
 
 

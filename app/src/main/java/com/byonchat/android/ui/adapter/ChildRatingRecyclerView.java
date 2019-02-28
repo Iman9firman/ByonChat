@@ -75,10 +75,13 @@ public class ChildRatingRecyclerView {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 int jjsss = ((RequesterBaseRatingActivity) mContext).getCountCheck(data.header_id);
+                Log.w("Proudly prestice 0","ok");
                 if (jjsss > 0 && isChecked) {
+                    Log.w("Proudly prestice 00",jjsss+"");
                     Toast.makeText(mContext, "Hanya dapat memilih " + jjsss + " reliever.", Toast.LENGTH_SHORT).show();
                     buttonView.setChecked(false);
                 } else {
+                    Log.w("Proudly prestice 01",jjsss+"");
                     if (itemClickListener != null) {
                         itemClickListener.onItemClick(position, data, isChecked);
                     }

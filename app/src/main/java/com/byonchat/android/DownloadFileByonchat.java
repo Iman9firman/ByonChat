@@ -19,7 +19,20 @@ import android.webkit.MimeTypeMap;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.byonchat.android.provider.DataBaseDropDown;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -32,6 +45,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 
@@ -125,27 +140,55 @@ public class DownloadFileByonchat extends AppCompatActivity {
                 File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
                 File oldFile = new File(oldFolder, NEW_NAME_FILE);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
-                    intent.setData(uri);
-                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    startActivity(intent);
+                if(getIntent().getStringExtra("download") != null ){
+                    try {
+                        createPdfFooter(oldFile+"", oldFolder +"/ISS_"+NEW_NAME_FILE,getIntent().getStringExtra("download"));
 
-                } else {
+                        Toast.makeText(getApplicationContext(),"Successfully Downloaded",Toast.LENGTH_SHORT).show();
 
-                    MimeTypeMap map = MimeTypeMap.getSingleton();
-                    String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-                    String type = map.getMimeTypeFromExtension(ext);
-                    if (type == null)
-                        type = "*/*";
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    Uri data = Uri.fromFile(oldFile);
-                    intent.setDataAndType(data, type);
-                    startActivity(intent);
+                        if(oldFile.exists()){
+                            try {
+                                oldFile.delete();
+
+                                if(getIntent().getStringExtra("approving") != null) {
+                                    String apa = getIntent().getStringExtra("approving");
+                                    Log.w("Parking lot prestice",apa);
+                                    Map<String, String> params = new HashMap<>();
+                                    params.put("id_history", apa);
+                                    params.put("status", 1 + "");
+
+                                    getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Approval/update", params, true);
+                                }
+                            }catch (Exception e){
+                                Log.e("Error hereee","get "+e.getMessage());
+                            }
+                        }
+
+                    }catch (Exception e){
+                        Log.e("Error hereee","get "+e.getMessage());
+                    }
+                }else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
+                        intent.setData(uri);
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(intent);
+
+                    } else {
+
+                        MimeTypeMap map = MimeTypeMap.getSingleton();
+                        String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
+                        String type = map.getMimeTypeFromExtension(ext);
+                        if (type == null)
+                            type = "*/*";
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        Uri data = Uri.fromFile(oldFile);
+                        intent.setDataAndType(data, type);
+                        startActivity(intent);
+                    }
                 }
-
 
             } else {
                 Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
@@ -239,12 +282,92 @@ public class DownloadFileByonchat extends AppCompatActivity {
                 mDatabaseOpenTask.execute(new Context[]{this});
             }
         } else {
-            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
-                finish();
+
+            if(getIntent().getStringExtra("download") != null ){
+
+                File baru = new File(oldFolder, "ISS_"+NEW_NAME_FILE);
+
+                if(baru.exists()) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", baru);
+                        intent.setData(uri);
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(intent);
+
+                    } else {
+
+                        MimeTypeMap map = MimeTypeMap.getSingleton();
+                        String ext = MimeTypeMap.getFileExtensionFromUrl(baru.getName());
+                        String type = map.getMimeTypeFromExtension(ext);
+                        if (type == null)
+                            type = "*/*";
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        Uri data = Uri.fromFile(baru);
+                        intent.setDataAndType(data, type);
+                        startActivity(intent);
+                    }
+                }else {
+                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                    DownloadFile mDatabaseOpenTask = new DownloadFile();
+                    mDatabaseOpenTask.execute(new Context[]{this});
+                }
+            }else {
+                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                DownloadFile mDatabaseOpenTask = new DownloadFile();
+                mDatabaseOpenTask.execute(new Context[]{this});
             }
-            DownloadFile mDatabaseOpenTask = new DownloadFile();
-            mDatabaseOpenTask.execute(new Context[]{this});
         }
     }
+
+    public void createPdfFooter(String originPath, String destPath, String text) throws IOException, DocumentException {
+
+        PdfReader reader = new PdfReader(originPath);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(destPath));
+        Phrase footer = new Phrase(text, new Font(Font.FontFamily.UNDEFINED, 10,0,BaseColor.RED));
+        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+            float x1 = 10;
+            float x2 = reader.getPageSize(i).getWidth()-10;
+            float y1 = reader.getPageSize(i).getBottom(10);
+            float y2 = reader.getPageSize(i).getBottom(60);
+            ColumnText ct = new ColumnText(stamper.getOverContent(i));
+            ct.setSimpleColumn(footer,x1,y1,x2,y2,15,Element.ALIGN_RIGHT);
+            ct.go();
+        }
+        stamper.close();
+        reader.close();
+    }
+
+    private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
+        Log.w("start prestice","FYTSX");
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                response -> {
+                    Log.w("sukses prestice",response);
+                    if (hide) {
+                    }
+
+                },
+                error -> {
+                    Log.w("error prestice",error);
+                }
+        ) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                return params2;
+            }
+        };
+        queue.add(sr);
+    }
+
 }

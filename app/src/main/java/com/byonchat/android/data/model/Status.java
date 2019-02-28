@@ -1,6 +1,5 @@
 package com.byonchat.android.data.model;
 
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
@@ -8,7 +7,7 @@ import android.os.Parcelable;
 
 import com.byonchat.android.utils.AndroidUtil;
 
-public class File implements Parcelable {
+public class Status implements Parcelable {
     public static final String TYPE_TEXT = "text";
 
     protected ProgressListener progressListener;
@@ -18,25 +17,24 @@ public class File implements Parcelable {
     public long id;
     public String title;
     public String subtitle;
-    public String description;
-    public String url;
-    public String thumbnail;
-    public String size;
+    public String nama_apv1;
+    public String nama_apv2;
+    public String nama_apv3;
+    public String no_requester;
+    public String create_date;
+    public String history;
+    public String id_request;
+    public String id_history;
     public int progress;
     public String type;
-    public String file_type;
+    public String url;
     public String timestamp;
     public boolean isDownloading;
     public boolean isDownloaded;
     public boolean isSelected;
     public boolean isPinned;
 
-    //additional
-    public String nama_requester;
-    public String nik_requester;
-    public String id_history;
-
-    public File() {
+    public Status() {
     }
 
     public boolean isDownloading() {
@@ -83,27 +81,31 @@ public class File implements Parcelable {
     }
 
     public interface DownloadingListener {
-        void onDownloading(File file, boolean downloading);
+        void onDownloading(Status file, boolean downloading);
     }
 
     public interface ProgressListener {
-        void onProgress(File file, int percentage);
+        void onProgress(Status file, int percentage);
     }
 
     public boolean isSelected() {
         return isSelected;
     }
 
-    public boolean areContentsTheSame(File file) {
+    public boolean areContentsTheSame(Status file) {
         return id == file.id
                 && title.equals(file.title)
                 && subtitle.equals(file.subtitle)
-                && description.equals(file.description)
-                && url.equals(file.url)
-                && size.equals(file.size)
+                && nama_apv1.equals(file.nama_apv1)
+                && nama_apv2.equals(file.nama_apv2)
+                && nama_apv3.equals(file.nama_apv3)
+                && no_requester.equals(file.no_requester)
+                && create_date.equals(file.create_date)
+                && id_request.equals(file.id_request)
+                && id_history.equals(file.id_history)
                 && progress == file.progress
                 && type.equals(file.type)
-                && file_type.equals(file.file_type)
+                && url.equals(file.url)
                 && timestamp.equals(file.timestamp)
                 && isDownloading == file.isDownloading;
     }
@@ -118,39 +120,47 @@ public class File implements Parcelable {
         parcel.writeLong(id);
         parcel.writeString(title);
         parcel.writeString(subtitle);
-        parcel.writeString(description);
-        parcel.writeString(url);
-        parcel.writeString(size);
+        parcel.writeString(nama_apv1);
+        parcel.writeString(nama_apv2);
+        parcel.writeString(nama_apv3);
+        parcel.writeString(no_requester);
+        parcel.writeString(create_date);
+        parcel.writeString(id_request);
+        parcel.writeString(id_history);
         parcel.writeString(type);
-        parcel.writeString(file_type);
+        parcel.writeString(url);
         parcel.writeString(timestamp);
         parcel.writeByte((byte) (isDownloaded ? 1 : 0));
         parcel.writeByte((byte) (isSelected ? 1 : 0));
     }
 
-    protected File(Parcel in) {
+    protected Status(Parcel in) {
         id = in.readLong();
         title = in.readString();
         subtitle = in.readString();
-        description = in.readString();
-        url = in.readString();
-        size = in.readString();
+        nama_apv1 = in.readString();
+        nama_apv2 = in.readString();
+        nama_apv3 = in.readString();
+        no_requester = in.readString();
+        create_date = in.readString();
+        id_request = in.readString();
+        id_history = in.readString();
         type = in.readString();
-        file_type = in.readString();
+        url = in.readString();
         timestamp = in.readString();
         isDownloaded = in.readByte() != 0;
         isSelected = in.readByte() != 0;
     }
 
-    public static final Creator<File> CREATOR = new Creator<File>() {
+    public static final Creator<Status> CREATOR = new Creator<Status>() {
         @Override
-        public File createFromParcel(Parcel in) {
-            return new File(in);
+        public Status createFromParcel(Parcel in) {
+            return new Status(in);
         }
 
         @Override
-        public File[] newArray(int size) {
-            return new File[size];
+        public Status[] newArray(int id_request) {
+            return new Status[id_request];
         }
     };
 

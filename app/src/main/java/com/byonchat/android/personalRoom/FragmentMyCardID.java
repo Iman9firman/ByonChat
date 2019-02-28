@@ -5,17 +5,22 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,12 +35,14 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.EndlessRecyclerViewScrollListener;
 import com.byonchat.android.utils.PermissionsUtil;
+import com.hendrix.pdfmyxml.viewRenderer.AbstractViewRenderer;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -75,6 +82,7 @@ public class FragmentMyCardID extends Fragment {
             "android.permission.READ_EXTERNAL_STORAGE"
     };
 
+    CardView namecardMain;
     ImageView imageLogo;
     TextView textName;
     TextView textPhone;
@@ -138,6 +146,7 @@ public class FragmentMyCardID extends Fragment {
         View view = inflater.inflate(R.layout.room_fragment_idcard, container, false);
 
 
+        namecardMain = view.findViewById(R.id.namecard_main);
         imageLogo = view.findViewById(R.id.logo_ncl);
         textName = view.findViewById(R.id.tv_nama_ncl);
         textPhone = view.findViewById(R.id.tv_hp_ncl);
@@ -147,30 +156,64 @@ public class FragmentMyCardID extends Fragment {
 
         // TODO: 27/02/19 bisa download dan share  & UBAH JADI IMAGEVIEW
 
-        /*imCard = (ImageView) sss.findViewById(R.id.id_cards);
-        big_share = (FloatingActionButton) sss.findViewById(R.id.main_share);
-        card_share = (FloatingActionButton) sss.findViewById(R.id.card_share);
-        merge_share = (FloatingActionButton) sss.findViewById(R.id.all_share);
-
+//        imCard = (ImageView) sss.findViewById(R.id.id_cards);
+        big_share = (FloatingActionButton) view.findViewById(R.id.main_share);
+//        card_share = (FloatingActionButton) sss.findViewById(R.id.card_share);
+//        merge_share = (FloatingActionButton) sss.findViewById(R.id.all_share);
+//
         big_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (card_share.getVisibility() == View.GONE) {
+                /*if (card_share.getVisibility() == View.GONE) {
                     card_share.setVisibility(View.VISIBLE);
                     merge_share.setVisibility(View.VISIBLE);
                 } else {
                     card_share.setVisibility(View.GONE);
                     merge_share.setVisibility(View.GONE);
+                }*/
+
+                try {
+
+                    com.hendrix.pdfmyxml.PdfDocument doc = new com.hendrix.pdfmyxml.PdfDocument(getContext());
+                    doc.addPage(createBitmapFromView(namecardMain));
+                    doc.setRenderWidth(630);
+                    doc.setRenderHeight(360);
+                    doc.setOrientation(com.hendrix.pdfmyxml.PdfDocument.A4_MODE.LANDSCAPE);
+                    doc.setProgressTitle(R.string.crop__saving);
+                    doc.setProgressMessage(R.string.crop__wait);
+                    doc.setFileName("namecardnewbyon");
+                    File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+                    doc.setSaveDirectory(pdf);
+                    doc.setInflateOnMainThread(false);
+                    doc.setListener(new com.hendrix.pdfmyxml.PdfDocument.Callback() {
+                        @Override
+                        public void onComplete(File file) {
+                            Log.w(TAG, "onComplete: "+file.getAbsolutePath());
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Log.w(TAG, "onError: "+e.getLocalizedMessage());
+                        }
+                    });
+
+                    doc.createPdf(getContext());
+
+                    Toast.makeText(getContext(),"Success",Toast.LENGTH_SHORT).show();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(),"Err : "+e,Toast.LENGTH_LONG).show();
                 }
             }
         });
-
-        merge_share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addFile();
-            }
-        });*/
+//
+//        merge_share.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                addFile();
+//            }
+//        });
 
         return view;
     }
@@ -352,7 +395,6 @@ public class FragmentMyCardID extends Fragment {
                             Log.w("kambing", description);
 
                             JSONObject desc = new JSONObject(description);
-
                             Picasso.with(mContext).load(desc.getString("imageLogo")).into(imageLogo);
                             textName.setText(Html.fromHtml(desc.getString("textName")));
                             textPhone.setText("Hp. "+desc.getString("textPhone"));
@@ -360,8 +402,7 @@ public class FragmentMyCardID extends Fragment {
                             textAddress.setText(Html.fromHtml(desc.getString("textAddress")));
                             textWarn.setText(desc.getString("textWarn"));
 
-
-                            card_share.setOnClickListener(new View.OnClickListener() {
+                            /*card_share.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
@@ -379,7 +420,7 @@ public class FragmentMyCardID extends Fragment {
                                     intent.putExtra("nama_file", title + "_idcard");
                                     mContext.startActivity(intent);
                                 }
-                            });
+                            });*/
 
                         }
                     } catch (JSONException e) {
@@ -390,6 +431,24 @@ public class FragmentMyCardID extends Fragment {
                 }
             }
         }
+    }
+
+    public Bitmap createBitmapFromView(View v) {
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+        v.setLayoutParams(params);
+        v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+        Bitmap bitmap = Bitmap.createBitmap(v.getMeasuredWidth(),
+                v.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+
+        Canvas c = new Canvas(bitmap);
+        v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+        v.draw(c);
+        return bitmap;
     }
 
     /*public void refresh(ArrayList<RoomsDetail> s, boolean refresh) {

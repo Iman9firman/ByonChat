@@ -450,7 +450,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
                             file.title = title;
                             file.subtitle = subtitle;
                             file.timestamp = timestamp;
-                            file.url = "https://bb.byonchat.com/phpdocx/test.php";
+                            file.url = url;
                             file.type = type;
                             file.thumbnail = thumbnail;
                             file.description = descriptionTag;

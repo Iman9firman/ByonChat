@@ -222,12 +222,12 @@ public class DialogFormChildRequestDoc extends DialogFragment {
                 approver.put("order","1");
                 datas.put(approver);
 
-               /* JSONObject approver2 = new JSONObject();
+                JSONObject approver2 = new JSONObject();
                 approver2.put("bc_user_approval","6285328200060");
                 approver2.put("nama","Aziz");
                 approver2.put("nik","00002");
                 approver2.put("order","2");
-                datas.put(approver2);*/
+                datas.put(approver2);
 
         } catch (Exception e) {
             e.printStackTrace();

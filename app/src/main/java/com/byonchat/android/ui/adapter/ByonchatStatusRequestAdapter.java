@@ -211,9 +211,12 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                     if(status.equalsIgnoreCase("1")){
                         ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.VISIBLE);
                         ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Approved");
-                    }else {
+                    }else if(status.equalsIgnoreCase("0")){
                         ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
                         ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting "+nama);
+                    }else {
+                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
+                        ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Rejected");
                     }
                 }
             }else if(history.length() == 3){
@@ -227,13 +230,10 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                 }
                 if(ord.equalsIgnoreCase("1")){
                     if(status.equalsIgnoreCase("0")){
-                        Log.w("ini ngobrol","oke 1" + ord +", "+ item.title);
                         num_loc = 1;
                     }else if(status.equalsIgnoreCase("1")){
-                        Log.w("ini ngobrol","oke 2" + ord +", "+ item.title);
                         num_loc = 2;
                     }else{
-                        Log.w("ini ngobrol","oke 3" + ord +", "+ item.title);
                         num_loc = 0;
                     }
                 }

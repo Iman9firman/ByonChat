@@ -10,11 +10,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byonchat.android.DownloadFileByonchat;
@@ -73,6 +75,14 @@ public class FragmentMyCardID extends Fragment {
             "android.permission.READ_EXTERNAL_STORAGE"
     };
 
+    ImageView imageLogo;
+    TextView textName;
+    TextView textPhone;
+    TextView textOutlet;
+    TextView textAddress;
+    TextView textWarn;
+
+
     public FragmentMyCardID(Activity ctx) {
         mContext = ctx;
     }
@@ -125,9 +135,19 @@ public class FragmentMyCardID extends Fragment {
         if (messengerHelper == null) {
             messengerHelper = MessengerDatabaseHelper.getInstance(mContext.getApplicationContext());
         }
-        View sss = inflater.inflate(R.layout.room_fragment_idcard, container, false);
+        View view = inflater.inflate(R.layout.room_fragment_idcard, container, false);
 
-        imCard = (ImageView) sss.findViewById(R.id.id_cards);
+
+        imageLogo = view.findViewById(R.id.logo_ncl);
+        textName = view.findViewById(R.id.tv_nama_ncl);
+        textPhone = view.findViewById(R.id.tv_hp_ncl);
+        textOutlet = view.findViewById(R.id.tv_outlet_ncl);
+        textAddress = view.findViewById(R.id.tv_alamat_ncl);
+        textWarn = view.findViewById(R.id.tv_warn_ncl);
+
+        // TODO: 27/02/19 bisa download dan share  & UBAH JADI IMAGEVIEW
+
+        /*imCard = (ImageView) sss.findViewById(R.id.id_cards);
         big_share = (FloatingActionButton) sss.findViewById(R.id.main_share);
         card_share = (FloatingActionButton) sss.findViewById(R.id.card_share);
         merge_share = (FloatingActionButton) sss.findViewById(R.id.all_share);
@@ -150,9 +170,9 @@ public class FragmentMyCardID extends Fragment {
             public void onClick(View v) {
                 addFile();
             }
-        });
+        });*/
 
-        return sss;
+        return view;
     }
 
     protected void addFile() {
@@ -313,17 +333,66 @@ public class FragmentMyCardID extends Fragment {
                 }
 
                 ArrayList<RoomsDetail> allRoomDetailFormWithFlag = db.allRoomDetailFormWithFlag("", username, idRoomTab, "value");
+
                 if (allRoomDetailFormWithFlag != null) {
-                    Log.w("Lewat --------------- 2", "iya");
-                    Log.w("Lewat --------------- 3", allRoomDetailFormWithFlag + "");
-                    Log.w("Lewat --------------- 4", username + " - " + idRoomTab + " - " + urlTembak);
-                    refresh(allRoomDetailFormWithFlag, true);
+                    try {
+
+                        for (RoomsDetail ss : allRoomDetailFormWithFlag) {
+
+                            JSONObject c = new JSONObject(ss.getContent());
+                            String id = c.getString("id");
+                            String title = c.getString("title");
+                            String description = c.getString("description");
+                            String file_kartu = c.getString("file");
+                            String thump = c.getString("thumbnail");
+                            String tgl_upload = c.getString("add_date");
+
+                            /*CardLink.add(file_kartu);
+                            CardLink.add(title);*/
+                            Log.w("kambing", description);
+
+                            JSONObject desc = new JSONObject(description);
+
+                            Picasso.with(mContext).load(desc.getString("imageLogo")).into(imageLogo);
+                            textName.setText(Html.fromHtml(desc.getString("textName")));
+                            textPhone.setText("Hp. "+desc.getString("textPhone"));
+                            textOutlet.setText(desc.getString("textOutlet"));
+                            textAddress.setText(Html.fromHtml(desc.getString("textAddress")));
+                            textWarn.setText(desc.getString("textWarn"));
+
+
+                            card_share.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
+                                    intentd.putExtra("path", file_kartu);
+                                    intentd.putExtra("nama_file", title);
+                                    mContext.startActivity(intentd);
+                                }
+                            });
+
+                            imCard.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(mContext, DownloadFileByonchat.class);
+                                    intent.putExtra("path", file_kartu);
+                                    intent.putExtra("nama_file", title + "_idcard");
+                                    mContext.startActivity(intent);
+                                }
+                            });
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    //refresh(allRoomDetailFormWithFlag, true);
                 }
             }
         }
     }
 
-    public void refresh(ArrayList<RoomsDetail> s, boolean refresh) {
+    /*public void refresh(ArrayList<RoomsDetail> s, boolean refresh) {
         try {
 
             for (RoomsDetail ss : s) {
@@ -351,7 +420,7 @@ public class FragmentMyCardID extends Fragment {
                     public void onClick(View v) {
                         Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
                         intentd.putExtra("path", file_kartu);
-                        intentd.putExtra("nama_file",title);
+                        intentd.putExtra("nama_file", title);
                         mContext.startActivity(intentd);
                     }
                 });
@@ -361,7 +430,7 @@ public class FragmentMyCardID extends Fragment {
                     public void onClick(View v) {
                         Intent intent = new Intent(mContext, DownloadFileByonchat.class);
                         intent.putExtra("path", file_kartu);
-                        intent.putExtra("nama_file",title+"_idcard");
+                        intent.putExtra("nama_file", title + "_idcard");
                         mContext.startActivity(intent);
                     }
                 });
@@ -369,5 +438,5 @@ public class FragmentMyCardID extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

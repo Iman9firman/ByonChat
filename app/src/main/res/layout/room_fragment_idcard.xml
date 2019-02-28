@@ -4,29 +4,120 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f1f1f1"
+    android:background="@color/grayList"
     android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:id="@+id/relative_id_card"
         android:layout_width="match_parent"
-        android:paddingTop="@dimen/margin70"
         android:layout_height="match_parent"
-        android:background="@color/carbon_black">
+        android:paddingTop="@dimen/margin70">
 
-        <ImageView
-            android:id="@+id/id_cards"
-            android:layout_width="match_parent"
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/margin10" />
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/margin10"
+            app:cardCornerRadius="@dimen/margin5"
+            app:cardElevation="@dimen/margin10">
+
+            <RelativeLayout
+                android:id="@+id/namecard_main"
+                android:layout_width="match_parent"
+                android:layout_height="240dp">
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/constraintLayout"
+                    android:layout_margin="@dimen/margin10"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true">
+
+                    <android.support.constraint.Guideline
+                        android:id="@+id/guide_ncl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_percent=".5" />
+
+                    <ImageView
+                        android:id="@+id/logo_ncl"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:padding="4dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintHeight_default="percent"
+                        app:layout_constraintHeight_percent=".6"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent=".4" />
+
+                    <TextView
+                        android:id="@+id/tv_hp_ncl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toTopOf="@id/guide_ncl"
+                        app:layout_constraintLeft_toRightOf="@id/logo_ncl"
+                        app:layout_constraintRight_toRightOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_nama_ncl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toTopOf="@id/tv_hp_ncl"
+                        app:layout_constraintLeft_toRightOf="@id/logo_ncl"
+                        app:layout_constraintRight_toRightOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_outlet_ncl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintLeft_toRightOf="@id/logo_ncl"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/guide_ncl" />
+
+                    <TextView
+                        android:id="@+id/tv_alamat_ncl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:textSize="10sp"
+                        app:layout_constraintLeft_toRightOf="@id/logo_ncl"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_outlet_ncl" />
+
+                    <TextView
+                        android:id="@+id/tv_warn_ncl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textSize="8sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="@id/logo_ncl"
+                        app:layout_constraintTop_toBottomOf="@id/logo_ncl" />
+
+                </android.support.constraint.ConstraintLayout>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
 
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="5dp"
         android:orientation="vertical"
         app:layout_anchor="@+id/relative_id_card"
@@ -36,12 +127,12 @@
             android:id="@+id/main_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
-            android:src="@drawable/ico_share"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
             android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ico_share"
             app:layout_anchor="@+id/relative_id_card"
             app:layout_anchorGravity="right|top" />
 
@@ -49,10 +140,10 @@
             android:id="@+id/card_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
             android:padding="5dp"
             android:tint="@color/white"
             android:visibility="gone"
@@ -62,13 +153,13 @@
             android:id="@+id/all_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
             android:padding="5dp"
-            android:visibility="gone"
             android:tint="@color/white"
+            android:visibility="gone"
             app:srcCompat="@drawable/pdf_ico" />
 
     </LinearLayout>

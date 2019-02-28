@@ -9158,21 +9158,21 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         }
 
+                        Log.w("doremi", linkGetAsignTo);
 
                         if (!linkGetAsignTo.equalsIgnoreCase("")) {
-                            if (linearLayout.getChildAt(linearLayout.getChildCount() - 2).getVisibility() == View.VISIBLE) {
-                                Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
-                                if (cursorCild.getCount() == 0) {
-                                    b.setEnabled(true);
-                                    errorReq.add("Assign To");
-                                }
+                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
+                            if (cursorCild.getCount() == 0) {
+                                berhenti = true;
+                                b.setEnabled(true);
+                                errorReq.add("Assign To");
                             }
-
                         }
 
                         if (includeStatus) {
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "includeStatus", "");
                             if (cEdit.getCount() == 0) {
+                                berhenti = true;
                                 b.setEnabled(true);
                                 errorReq.add("Status");
                             }
@@ -9241,6 +9241,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                             return;
                         } else {
+                            Log.w("berhasih", "hiasd");
                             int nom = 0;
                             for (ArrayList<String> innerList : stringAPI) {
                                 String param = "";
@@ -12655,6 +12656,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("username_room", usr));
                 nameValuePairs.add(new BasicNameValuePair("id_tab", idTab));
+                Log.w("webToo1n", usr);
+                Log.w("webToo2n", idTab);
+                MessengerDatabaseHelper messengerHelper = null;
+                if (messengerHelper == null) {
+                    messengerHelper = MessengerDatabaseHelper.getInstance(context);
+                }
+
+                Contact contact = messengerHelper.getMyContact();
+
+                nameValuePairs.add(new BasicNameValuePair("bc_user", contact.getJabberId()));
 
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 

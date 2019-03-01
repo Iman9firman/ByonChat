@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
@@ -35,7 +36,6 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.EndlessRecyclerViewScrollListener;
 import com.byonchat.android.utils.PermissionsUtil;
-import com.hendrix.pdfmyxml.viewRenderer.AbstractViewRenderer;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -84,6 +84,7 @@ public class FragmentMyCardID extends Fragment {
 
     CardView namecardMain;
     ImageView imageLogo;
+    ImageView imageLogo2;
     TextView textName;
     TextView textPhone;
     TextView textOutlet;
@@ -148,13 +149,90 @@ public class FragmentMyCardID extends Fragment {
 
         namecardMain = view.findViewById(R.id.namecard_main);
         imageLogo = view.findViewById(R.id.logo_ncl);
+        imageLogo2 = view.findViewById(R.id.logo_2_ncl);
         textName = view.findViewById(R.id.tv_nama_ncl);
         textPhone = view.findViewById(R.id.tv_hp_ncl);
         textOutlet = view.findViewById(R.id.tv_outlet_ncl);
         textAddress = view.findViewById(R.id.tv_alamat_ncl);
         textWarn = view.findViewById(R.id.tv_warn_ncl);
 
+        if (db == null) {
+            db = BotListDB.getInstance(mContext.getApplicationContext());
+        }
+
+        Cursor cur = db.getSingleRoom(username);
+        if (cur.getCount() > 0) {
+            final String officer = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "d");
+            Log.w("alamak", officer);
+
+            JSONObject jsonOfficer = null;
+            try {
+                jsonOfficer = new JSONObject(officer);
+                //{"bc_user":"628589122112","name":"Iman","nik":"23432","divisi":"MARKETING","jabatan":"SALES CONSULTANT","lokasi":"HONDA PONDOK INDAH"}
+
+                Picasso.with(mContext).load("https://bb.byonchat.com/mediafiles/profile_photo_special_rooms/icon_honda.png").into(imageLogo);
+
+                textName.setText(Html.fromHtml("<b>" + jsonOfficer.getString("jabatan") + "</b><br>" + jsonOfficer.getString("name")));
+                textPhone.setText("Hp. 0" + jsonOfficer.getString("bc_user").substring(2, jsonOfficer.getString("bc_user").length()));
+                textOutlet.setText(jsonOfficer.getString("lokasi"));
+                if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PONDOK INDAH")) {
+                    textAddress.setText(Html.fromHtml("Jalan Sultan Iskandar Muda No.kav 8, RT.1/RW.5\n" + "Telp.(021) 7223366\n"));
+                    Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
+                    textWarn.setText("Honda Pondok Indah tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
+                } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA FATMAWATI")) {
+                    Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
+                    textAddress.setText(Html.fromHtml("Jl. RS. Fatmawati No. 21 Jakarta Selatan, 12410\n" + "Telp. 021 - 7656456 (SR) 021 - 7508895 (Bengkel)\n" + "021 - 7502678"));
+                    textWarn.setText("Honda Fatmawati tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
+                } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PRADANA SAWANGAN")) {
+                    imageLogo2.setVisibility(View.GONE);
+                    textAddress.setText(Html.fromHtml("Jl.Raya Cinangka No.9 Serua Bojong Sari\n" + "Depok-Jawa Barat 16517\n" + "Telp. (021) 3049 8889,(021) 3049 9990\n" + "Fax (021) 3042 8889"));
+                    textWarn.setText("Honda Pradana Sawangan tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
+                }
+
+
+                //
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+/*
+
         // TODO: 27/02/19 bisa download dan share  & UBAH JADI IMAGEVIEW
+        try {
+
+            com.hendrix.pdfmyxml.PdfDocument doc = new com.hendrix.pdfmyxml.PdfDocument(getContext());
+            doc.addPage(createBitmapFromView(namecardMain));
+            doc.setRenderWidth(630);
+            doc.setRenderHeight(360);
+            doc.setOrientation(com.hendrix.pdfmyxml.PdfDocument.A4_MODE.LANDSCAPE);
+            doc.setProgressTitle(R.string.crop__saving);
+            doc.setProgressMessage(R.string.crop__wait);
+            doc.setFileName("namecardnewbyon");
+            File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+            doc.setSaveDirectory(pdf);
+            doc.setInflateOnMainThread(false);
+            doc.setListener(new com.hendrix.pdfmyxml.PdfDocument.Callback() {
+                @Override
+                public void onComplete(File file) {
+                    Log.w(TAG, "onComplete: "+file.getAbsolutePath());
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Log.w(TAG, "onError: "+e.getLocalizedMessage());
+                }
+            });
+
+            doc.createPdf(getContext());
+
+            Toast.makeText(getContext(),"Success",Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(),"Err : "+e,Toast.LENGTH_LONG).show();
+        }
 
 //        imCard = (ImageView) sss.findViewById(R.id.id_cards);
         big_share = (FloatingActionButton) view.findViewById(R.id.main_share);
@@ -162,61 +240,62 @@ public class FragmentMyCardID extends Fragment {
 //        merge_share = (FloatingActionButton) sss.findViewById(R.id.all_share);
 //
         big_share.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View v) {
-                /*if (card_share.getVisibility() == View.GONE) {
+                if (card_share.getVisibility() == View.GONE) {
                     card_share.setVisibility(View.VISIBLE);
                     merge_share.setVisibility(View.VISIBLE);
                 } else {
                     card_share.setVisibility(View.GONE);
                     merge_share.setVisibility(View.GONE);
-                }*/
-
-                try {
-
-                    com.hendrix.pdfmyxml.PdfDocument doc = new com.hendrix.pdfmyxml.PdfDocument(getContext());
-                    doc.addPage(createBitmapFromView(namecardMain));
-                    doc.setRenderWidth(630);
-                    doc.setRenderHeight(360);
-                    doc.setOrientation(com.hendrix.pdfmyxml.PdfDocument.A4_MODE.LANDSCAPE);
-                    doc.setProgressTitle(R.string.crop__saving);
-                    doc.setProgressMessage(R.string.crop__wait);
-                    doc.setFileName("namecardnewbyon");
-                    File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
-                    doc.setSaveDirectory(pdf);
-                    doc.setInflateOnMainThread(false);
-                    doc.setListener(new com.hendrix.pdfmyxml.PdfDocument.Callback() {
-                        @Override
-                        public void onComplete(File file) {
-                            Log.w(TAG, "onComplete: "+file.getAbsolutePath());
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Log.w(TAG, "onError: "+e.getLocalizedMessage());
-                        }
-                    });
-
-                    doc.createPdf(getContext());
-
-                    Toast.makeText(getContext(),"Success",Toast.LENGTH_SHORT).show();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(),"Err : "+e,Toast.LENGTH_LONG).show();
                 }
+
+
             }
         });
-//
-//        merge_share.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                addFile();
-//            }
-//        });
+
+        merge_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFile();
+            }
+        });
+
+        card_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
+                intentd.putExtra("path", file_kartu);
+                intentd.putExtra("nama_file", title);
+                mContext.startActivity(intentd);
+            }
+        });
+*/
+
 
         return view;
     }
+
+    private String jsonResultType(String json, String type) {
+        String hasil = "";
+        JSONObject jObject = null;
+        try {
+            jObject = new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (jObject != null) {
+            try {
+                hasil = jObject.getString(type);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return hasil;
+    }
+
 
     protected void addFile() {
         if (PermissionsUtil.hasPermissions(getActivity(), FILE_PERMISSION)) {
@@ -248,189 +327,7 @@ public class FragmentMyCardID extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (personal) {
 
-        } else {
-            if (NetworkInternetConnectionStatus.getInstance(mContext.getApplicationContext()).isOnline(mContext.getApplicationContext())) {
-                new AmbilGambar().execute(urlTembak, myContact, username, idRoomTab);
-            } else {
-                ArrayList<RoomsDetail> allRoomDetailFormWithFlag = db.allRoomDetailFormWithFlag("", username, idRoomTab, "value");
-                if (allRoomDetailFormWithFlag.size() > 0) {
-                } else {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext.getApplicationContext()).isOnline(mContext.getApplicationContext())) {
-                        new AmbilGambar().execute(urlTembak, myContact, username, idRoomTab);
-                    }
-                }
-            }
-        }
-    }
-
-    private void launchUploadActivity(boolean isImage) {
-        if (personal) {
-            DialogFragmentPicture d = new DialogFragmentPicture();
-            d.DialogFragmentPicture(fileUri.getPath(), myContact);
-            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    onResume();
-                }
-            });
-            d.show(getFragmentManager(), "dialog");
-        } else {
-            DialogFragmentPicture d = new DialogFragmentPicture();
-            d.DialogFragmentPicture(fileUri.getPath(), username);
-            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    onResume();
-                }
-            });
-            d.show(getFragmentManager(), "dialog");
-        }
-    }
-
-    private void launchUploadActivityFromImgSelected(String sourceFileUri) {
-        int day, month, year;
-        int second, minute, hour;
-        GregorianCalendar date = new GregorianCalendar();
-
-        day = date.get(Calendar.DAY_OF_MONTH);
-        month = date.get(Calendar.MONTH);
-        year = date.get(Calendar.YEAR);
-
-        second = date.get(Calendar.SECOND);
-        minute = date.get(Calendar.MINUTE);
-        hour = date.get(Calendar.HOUR);
-
-        String name = (hour + "" + minute + "" + second + "" + day + "" + (month + 1) + "" + year);
-        String tag = name + ".jpg";
-        String fileName = sourceFileUri.replace(sourceFileUri, tag);
-
-        if (personal) {
-            DialogFragmentPicture d = new DialogFragmentPicture();
-            d.DialogFragmentPicture(sourceFileUri, myContact);
-            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    onResume();
-                }
-            });
-            d.show(getFragmentManager(), "dialog");
-        } else {
-            DialogFragmentPicture d = new DialogFragmentPicture();
-            d.DialogFragmentPicture(sourceFileUri, username);
-            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    onResume();
-                }
-            });
-            d.show(getFragmentManager(), "dialog");
-        }
-    }
-
-    class AmbilGambar extends AsyncTask<String, Void, String> {
-        ProgressDialog loading;
-        ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
-        String result = "";
-        InputStream inputStream = null;
-        String idTab;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            HashMap<String, String> data = new HashMap<String, String>();
-            data.put("bc_user", params[1]);
-            data.put("username_room", params[2]);
-            data.put("id_rooms_tab", params[3]);
-
-//            idTab = params[3];
-            String result = profileSaveDescription.sendPostRequest(params[0], data);
-            return result;
-        }
-
-        protected void onPostExecute(String s) {
-            Log.w("Lewat --------------- 1", "iya");
-            if (s.equals(null)) {
-                Toast.makeText(mContext.getApplicationContext(), "Internet Problem.", Toast.LENGTH_SHORT).show();
-            } else {
-                JSONArray dataJsonArr = null;
-                try {
-                    JSONObject json = new JSONObject(s);
-                    String json_userId = json.getString("id_rooms_tab");
-                    String json_userRoom = json.getString("username_room");
-                    db.deleteRoomsDetailPtabPRoom(idRoomTab, username);
-                    dataJsonArr = json.getJSONArray("data");
-                    for (int i = 0; i < dataJsonArr.length(); i++) {
-                        JSONObject c = dataJsonArr.getJSONObject(i);
-                        String id = c.getString("id");
-                        RoomsDetail orderModel = new RoomsDetail(id, json_userId, json_userRoom, dataJsonArr.getJSONObject(i).toString(), "", "", "value");
-                        db.insertRoomsDetail(orderModel);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                ArrayList<RoomsDetail> allRoomDetailFormWithFlag = db.allRoomDetailFormWithFlag("", username, idRoomTab, "value");
-
-                if (allRoomDetailFormWithFlag != null) {
-                    try {
-
-                        for (RoomsDetail ss : allRoomDetailFormWithFlag) {
-
-                            JSONObject c = new JSONObject(ss.getContent());
-                            String id = c.getString("id");
-                            String title = c.getString("title");
-                            String description = c.getString("description");
-                            String file_kartu = c.getString("file");
-                            String thump = c.getString("thumbnail");
-                            String tgl_upload = c.getString("add_date");
-
-                            /*CardLink.add(file_kartu);
-                            CardLink.add(title);*/
-                            Log.w("kambing", description);
-
-                            JSONObject desc = new JSONObject(description);
-                            Picasso.with(mContext).load(desc.getString("imageLogo")).into(imageLogo);
-                            textName.setText(Html.fromHtml(desc.getString("textName")));
-                            textPhone.setText("Hp. "+desc.getString("textPhone"));
-                            textOutlet.setText(desc.getString("textOutlet"));
-                            textAddress.setText(Html.fromHtml(desc.getString("textAddress")));
-                            textWarn.setText(desc.getString("textWarn"));
-
-                            /*card_share.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
-                                    intentd.putExtra("path", file_kartu);
-                                    intentd.putExtra("nama_file", title);
-                                    mContext.startActivity(intentd);
-                                }
-                            });
-
-                            imCard.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(mContext, DownloadFileByonchat.class);
-                                    intent.putExtra("path", file_kartu);
-                                    intent.putExtra("nama_file", title + "_idcard");
-                                    mContext.startActivity(intent);
-                                }
-                            });*/
-
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    //refresh(allRoomDetailFormWithFlag, true);
-                }
-            }
-        }
     }
 
     public Bitmap createBitmapFromView(View v) {
@@ -451,51 +348,5 @@ public class FragmentMyCardID extends Fragment {
         return bitmap;
     }
 
-    /*public void refresh(ArrayList<RoomsDetail> s, boolean refresh) {
-        try {
 
-            for (RoomsDetail ss : s) {
-
-                JSONObject c = new JSONObject(ss.getContent());
-                String id = c.getString("id");
-                String title = c.getString("title");
-                String description = c.getString("description");
-                String file_kartu = c.getString("file");
-                String thump = c.getString("thumbnail");
-//                String type = c.getString("type");
-                String tgl_upload = c.getString("add_date");
-                CardLink.add(file_kartu);
-                CardLink.add(title);
-
-                Log.w("SAYA yeyeye 1", c + "");
-//                Log.w("SAYA yeyeye 2",item2+"");
-                Log.w("SAYA yeyeye 3", file_kartu + "");
-//                Log.w("SAYA yeyeye 4",c+"");
-
-                Picasso.with(mContext).load(thump).into(imCard);
-
-                card_share.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
-                        intentd.putExtra("path", file_kartu);
-                        intentd.putExtra("nama_file", title);
-                        mContext.startActivity(intentd);
-                    }
-                });
-
-                imCard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(mContext, DownloadFileByonchat.class);
-                        intent.putExtra("path", file_kartu);
-                        intent.putExtra("nama_file", title + "_idcard");
-                        mContext.startActivity(intent);
-                    }
-                });
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }*/
 }

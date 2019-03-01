@@ -69,6 +69,8 @@ public class AllAboutUploadTask {
     String labelDone;
     String customersId;
     String linkGetAsignTo;
+    String patokanUpload;
+
 
     public static final SimpleDateFormat hourFormat = new SimpleDateFormat(
             "HH:mm:ss dd/MM/yyyy", Locale.getDefault());
@@ -80,7 +82,7 @@ public class AllAboutUploadTask {
         return instance;
     }
 
-    public void UploadTask(OnTaskCompleted _taskCompleted, String _idDetail, String _username, String _idTab) {
+    public void UploadTask(OnTaskCompleted _taskCompleted, String _idDetail, String _username, String _idTab, String patoakan) {
         this.taskCompleted = _taskCompleted;
 
         if (db == null) {
@@ -90,6 +92,7 @@ public class AllAboutUploadTask {
         idDetail = _idDetail;
         username = _username;
         idTab = _idTab;
+        patokanUpload = patoakan;
         taskCompleted.onTaskProses("proses");
 
 
@@ -368,11 +371,13 @@ public class AllAboutUploadTask {
             } else {
                 if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
                     String[] ff = idDetail.split("\\|");
-                    if (ff.length == 2) {//"293","id_rooms_tab":"2584"
-                        // 2584::389|2427
-                        Log.w("BoboENak", idTab + "::" + idDetail);
-                       // new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAILUPDATE, username,  idTab, idDetail);
-                        new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAIL, username, idTab, idDetail);
+                    if (ff.length == 2) {
+                        if (patokanUpload.length()>0){
+                            new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAILUPDATE, username,  idTab, idDetail);
+                        }else{
+                            new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAIL, username, idTab, idDetail);
+                        }
+
                     } else {
                         new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
                     }

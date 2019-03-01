@@ -711,7 +711,7 @@ public class FragmentRoomMultipleTask extends Fragment {
                 if (roomsDetail1.getFlag_content().equalsIgnoreCase("1")) {
                     JSONObject jO = null;
 
-                    for (int i = 0; i < listItem3.size(); i++){
+                    for (int i = 0; i < listItem3.size(); i++) {
                         try {
                             jO = new JSONObject(listItem3.get(i).getContent());
                             String content = "";
@@ -723,10 +723,10 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 statusBaru = jO.getString("bb");
                             }
 
-                            if (i == 0){
+                            if (i == 0) {
                                 title = abs(content, roomsDetail1.getFlag_tab());
                             }
-                            if (i == 1){
+                            if (i == 1) {
                                 desc = abs(content, roomsDetail2.getFlag_tab());
                             }
 
@@ -760,7 +760,7 @@ public class FragmentRoomMultipleTask extends Fragment {
                     desc = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());*/
                     JSONObject jO = null;
 
-                    for (int i = 0; i < listItem3.size(); i++){
+                    for (int i = 0; i < listItem3.size(); i++) {
                         try {
                             jO = new JSONObject(listItem3.get(i).getContent());
                             String content = "";
@@ -772,10 +772,10 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 statusBaru = jO.getString("bb");
                             }
 
-                            if (i == 0){
+                            if (i == 0) {
                                 title = abs(content, roomsDetail1.getFlag_tab());
                             }
-                            if (i == 1){
+                            if (i == 1) {
                                 desc = abs(content, roomsDetail2.getFlag_tab());
                             }
 
@@ -901,10 +901,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 String content = jsonRootObject.getString("data");
                                 String include_assignto = jsonRootObject.getString("include_assignto");
 
-                                String anothers = "";
-                                if (jsonRootObject.has("anothers")) {
-                                    anothers = jsonRootObject.getString("anothers");
-                                }
 
                                 JSONObject jsonObject = new JSONObject();
                                 if (data.contains("include_status_task")) {
@@ -946,7 +942,25 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 }
 
 
-                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, anothers, time_str, "form");
+                                String bawaDariBelakang = "";
+                                if (jsonRootObject.has("anothers")) {
+                                    JSONObject tambahan = new JSONObject("{}");
+                                    if (jsonRootObject.has("alasan_reject")) {
+                                        if (jsonRootObject.has("anothers")) {
+                                            String anothers = jsonRootObject.getString("anothers");
+                                            if (!anothers.equalsIgnoreCase("[]")) {
+                                                tambahan = new JSONObject(anothers);
+                                                tambahan.put("message", jsonRootObject.getJSONObject("alasan_reject").getString("message"));
+                                                bawaDariBelakang = tambahan.toString();
+                                            } else {
+                                                bawaDariBelakang = "{}";
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, bawaDariBelakang, time_str, "form");
                                 db.insertRoomsDetail(orderModel2);
 
 

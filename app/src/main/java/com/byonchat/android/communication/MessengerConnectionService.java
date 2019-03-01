@@ -5261,7 +5261,7 @@ Log.w("every",co.getJabberId());
                                         RoomsDetail orderModel = new RoomsDetail(bb.getId(), bb.getParent_tab(), aa.getUsername(), dateString, "1", null, "parent");
                                         botListDB.updateDetailRoomWithFlagContentParent(orderModel);
 
-                                        new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(MessengerConnectionService.this, bb.getId(), aa.getUsername(), bb.getParent_tab());
+                                        new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(MessengerConnectionService.this, bb.getId(), aa.getUsername(), bb.getParent_tab(),"");
 
 
                                     }

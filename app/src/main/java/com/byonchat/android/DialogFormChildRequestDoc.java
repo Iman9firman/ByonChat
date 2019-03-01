@@ -198,7 +198,7 @@ public class DialogFormChildRequestDoc extends DialogFragment {
 
         JSONArray datas = new JSONArray();
         try {
-            /*if(!dbHelper.getColValue(UserDB.ATASAN_1_NIK).equalsIgnoreCase("")){
+            if(!dbHelper.getColValue(UserDB.ATASAN_1_NIK).equalsIgnoreCase("")){
                 JSONObject approver = new JSONObject();
                 approver.put("bc_user_approval",dbHelper.getColValue(UserDB.ATASAN_1_PHONE));
                 approver.put("nama",dbHelper.getColValue(UserDB.ATASAN_1_NAMA));
@@ -213,9 +213,9 @@ public class DialogFormChildRequestDoc extends DialogFragment {
                 approver2.put("nik",dbHelper.getColValue(UserDB.ATASAN_2_NIK));
                 approver2.put("order","2");
                 datas.put(approver2);
-            }*/
+            }
 
-                JSONObject approver = new JSONObject();
+               /* JSONObject approver = new JSONObject();
                 approver.put("bc_user_approval","6281588888892");
                 approver.put("nama","Iman");
                 approver.put("nik","00001");
@@ -227,7 +227,7 @@ public class DialogFormChildRequestDoc extends DialogFragment {
                 approver2.put("nama","Aziz");
                 approver2.put("nik","00002");
                 approver2.put("order","2");
-                datas.put(approver2);
+                datas.put(approver2)*/;
 
         } catch (Exception e) {
             e.printStackTrace();

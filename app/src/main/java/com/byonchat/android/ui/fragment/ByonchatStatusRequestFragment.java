@@ -197,8 +197,6 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
         chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
         mAdapter = new ByonchatStatusRequestAdapter(getContext(), files);
 
-        Log.w("isi harusee dkp",files+"");
-
         mAdapter.setOnLongItemClickListener((view, position) -> {
             Status item = files.get(position);
 
@@ -238,8 +236,11 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
                 JSONObject jsonObject = history.getJSONObject(ii);
                 String status = jsonObject.getString("status");
 
-                Log.w("Jadinya sama",valid+" uu->"+status);
                 if(status.equalsIgnoreCase("2")){
+                    valid = true;
+                }
+
+                if(history.length() == 1){
                     valid = true;
                 }
             }
@@ -247,7 +248,6 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
             e.printStackTrace();
         }
 
-        Log.w("Jadinya sama",valid+"");
         return valid;
     }
 
@@ -335,7 +335,6 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
                 response -> {
                     rdialog.dismiss();
                     if (hide) {
-                        Log.w("INI hasile harusee",response);
                         try {
                             JSONArray jsonArray0 = new JSONArray(response);
                             JSONObject jsonObject = jsonArray0.getJSONObject(0);

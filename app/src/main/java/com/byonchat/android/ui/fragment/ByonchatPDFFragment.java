@@ -274,41 +274,30 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     protected void resolesTagGroup(){
-        /*ArrayList<ItemListTrending> tagSearch = new ArrayList<>();
-        tagSearch.add(new ItemListTrending("1","#Cara","text"));
-        tagSearch.add(new ItemListTrending("2","#Dokumen","text"));
-        tagSearch.add(new ItemListTrending("3","#Abs","text"));
-        tagSearch.add(new ItemListTrending("4","#okekeooekoe","text"));
-
-        setTags("#",tagSearch);
-
-        vTagGroup.setOnTagClickListener(new TagView.OnTagClickListener() {
-            @Override
-            public void onTagClick(Tag tag, int position) {
-                mAdapter.getFilter().filter(tag.text);
-                Toast.makeText(getContext(),tag.text,Toast.LENGTH_SHORT).show();
-            }
-        });*/
         vTagLayout.setVisibility(View.VISIBLE);
+
+        vTag1.setText("Kebijakan");
         vTag1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mAdapter.getFilter().filter(vTag1.getText().toString().toLowerCase());
             }
         });
+        vTag2.setText("SOP");
         vTag2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mAdapter.getFilter().filter(vTag2.getText().toString());
             }
         });
-        vTag3.setText("Flow");
+        vTag3.setText("SWI");
         vTag3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mAdapter.getFilter().filter(vTag3.getText().toString());
             }
         });
+        vTag4.setText("Operational");
         vTag4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -327,25 +316,6 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
 
         getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/View_history", params, true);
     }
-/*
-    private void setTags(CharSequence cs, ArrayList<ItemListTrending> itemListTrending) {
-        if (cs.toString().equals("")) {
-            vTagGroup.addTags(new ArrayList<Tag>());
-            return;
-        }
-        String text = cs.toString();
-        ArrayList<Tag> tags = new ArrayList<>();
-        Tag tag;
-        for (int i = 0; i < itemListTrending.size(); i++) {
-            if (itemListTrending.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
-                tag = new Tag(itemListTrending.get(i).getName().substring(1));
-                tag.radius = 10f;
-                tag.layoutColor = Color.parseColor(itemListTrending.get(i).getColor());
-                tags.add(tag);
-            }
-        }
-        vTagGroup.addTags(tags);
-    }*/
 
     protected void showPopup(View view, final Video video) {
         View menuItemView = view.findViewById(R.id.more);

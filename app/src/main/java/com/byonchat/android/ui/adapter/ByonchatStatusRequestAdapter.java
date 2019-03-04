@@ -193,7 +193,6 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                 ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Rejected");
             }
 
-
             if(nik.equalsIgnoreCase("download")){
                 if(status.equalsIgnoreCase("1")){
                     ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setText("VIEW");
@@ -204,6 +203,11 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                     ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setBackgroundResource(R.drawable.new_btn_room_lv_g);
                     downloaded = false;
                 }
+            }
+
+            if(history.length() == 1){
+                ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
+                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Tidak Ada Atasan");
             }
 
             if(history.length() == 2){
@@ -245,45 +249,14 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                             ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting "+nama);
                         }
                     }
-                }else if (num_loc == 2){
+                } else if (num_loc == 2){
                     if(ord.equalsIgnoreCase("2")){
                         if(status.equalsIgnoreCase("0")){
                             ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting "+nama);
                         }
                     }
                 }
-            }/*else{
-                if(ord.equalsIgnoreCase("3")){
-                    if(status.equalsIgnoreCase("1")){
-                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.VISIBLE);
-                        ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Approved");
-                    }else {
-                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
-                    }
-                }
-                if(ord.equalsIgnoreCase("1")){
-                    if(status.equalsIgnoreCase("1")){
-                      num_loc = 2;
-                    }
-                }
-                if(ord.equalsIgnoreCase("2")){
-                    if(status.equalsIgnoreCase("2")){
-                      num_loc = 3;
-                    }
-                }
-                if(ord.equalsIgnoreCase("1") && status.equalsIgnoreCase("0")){
-                    num_loc = 1;
-                    ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting "+nama);
-                }else if(ord.equalsIgnoreCase("2") && status.equalsIgnoreCase("0")){
-                    if(num_loc == 2){
-                        ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting "+nama);
-                    }
-                }else if(ord.equalsIgnoreCase("3") && status.equalsIgnoreCase("0")){
-                    if (num_loc == 3){
-                        ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting "+nama);
-                    }
-                }
-            }*/
+            }
         }
     }
 

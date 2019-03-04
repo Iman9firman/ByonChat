@@ -1424,7 +1424,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
         }
         if (loginIss) {
-            if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(26) == 1) {
+           /* if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(26) == 1) {
                 if (title.equalsIgnoreCase("ISS INDONESIA")) {
                     if (success == null) {
                         Intent a = new Intent(getApplicationContext(), LoginISS.class);
@@ -1434,7 +1434,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                         finish();
                     }
                 }
-            }
+            }*/
         }
 
     }

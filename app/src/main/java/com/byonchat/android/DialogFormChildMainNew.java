@@ -967,7 +967,6 @@ public class DialogFormChildMainNew extends DialogFragment {
                     linearEstimasi[count].setLayoutParams(params2);
                     linearLayout.addView(linearEstimasi[count]);
                 } else if (type.equalsIgnoreCase("dropdown")) {
-                    Log.w("lo", "bibasd");
 
                     TextView textView = new TextView(getActivity());
                     if (required.equalsIgnoreCase("1")) {
@@ -982,11 +981,12 @@ public class DialogFormChildMainNew extends DialogFragment {
                     JSONArray jsonArrays = new JSONArray(isi);
                     Log.w("as", isi);
                     final ArrayList<String> spinnerArray = new ArrayList<String>();
+                    spinnerArray.add("--Please Select--");
+
                     final ArrayList<String> spinnerArrayVal = new ArrayList<String>();
                     for (int ia = 0; ia < jsonArrays.length(); ia++) {
                         String l = jsonArrays.getJSONObject(ia).getString("label_option").toString().replace("+", " ");
                         String l_name = jsonArrays.getJSONObject(ia).getString("val_name").toString().replace("+", " ");
-                        Log.w("lala", l);
 
                         spinnerArray.add(l.replace("+", " "));
                         spinnerArrayVal.add(l_name.replace("+", " "));

@@ -7236,7 +7236,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         final ArrayList<String> spinnerArray = new ArrayList<String>();
                         final ArrayList<String> spinnerArrayFlag = new ArrayList<String>();
                         //cuma iss
-                        // spinnerArray.add("--Please Select--");
+
+                        spinnerArray.add("--Please Select--");
+
                         for (int ia = 0; ia < jsonArrays.length(); ia++) {
                             String l = jsonArrays.getJSONObject(ia).getString("label_option").toString();
 
@@ -8801,6 +8803,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     spinner.setSelection(spinnerPosition);
                 }
 
+
+/*
+                if (!linkGetAsignTo.equalsIgnoreCase("")) {
+                    linearLayout.getChildAt(linearLayout.getChildCount() - 2).getVisibility()
+                    Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
+                    if (cursorCild.getCount() == 0) {
+                        berhenti = true;
+                        b.setEnabled(true);
+                        errorReq.add("Assign To");
+                    }
+                }
+*/
+
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -9116,9 +9131,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         }
 
-                        Log.w("doremi", linkGetAsignTo);
-
-                        if (!linkGetAsignTo.equalsIgnoreCase("")) {
+                        if (linearLayout.getChildAt(linearLayout.getChildCount() - 2).getVisibility() == View.VISIBLE) {
                             Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
                             if (cursorCild.getCount() == 0) {
                                 berhenti = true;

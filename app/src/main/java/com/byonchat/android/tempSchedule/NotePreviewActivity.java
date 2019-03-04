@@ -154,7 +154,7 @@ public class NotePreviewActivity extends AppCompatActivity {
                 intent.putExtra("idTask", id_detail);
                 intent.putExtra("clndr", calendar);
                 intent.putExtra("strtdt", startDate);
-                generateDB(startDate, id_detail, idTab, "", "Draft", "#" + color, 0,"");
+                generateDB(startDate, id_detail, idTab, "", "Draft", "#" + color, 0, "");
                 startActivity(intent);
             }
         });
@@ -166,7 +166,7 @@ public class NotePreviewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         recyclerView.addItemDecoration(divider);
 
-        adapter = new NotePreviewAdapter(this,NotePreviewActivity.this, getInside(content), title, username, idTab, color, latLong, from, calendar, startDate);
+        adapter = new NotePreviewAdapter(this, NotePreviewActivity.this, getInside(content), title, username, idTab, color, latLong, from, calendar, startDate);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -210,7 +210,7 @@ public class NotePreviewActivity extends AppCompatActivity {
                 String warna = joKedua.getString("bg_status");
                 String ket = joKedua.getString("keterangan");
 
-                generateDB(dateFormat(selected_date), id, idTab, jaKedua.toString(), status, warna, 1,ket);
+                generateDB(dateFormat(selected_date), id, idTab, jaKedua.toString(), status, warna, 1, ket);
 
 //{"id":"3","value":[{"label":"Title","type":"text","value":"sobari"},{"label":"Lokasi","type":"map","value":"-6.197442500000001%3B106.76115234374996%3B6%C2%B011%2750.8%22S+106%C2%B045%2740.1%22E%3BJalan+Meruya+Utara+Blok+Lameo+No.24F%2C+RT.1%2FRW.5%2C+Meruya+Utara%2C+Kembangan%2C+Kota+Jakarta+Barat%2C+Daerah+Khusus+Ibukota+Jakarta+11620%2C+Indonesia%3B+%3B"},{"label":"Jam mulai","type":"time","value":"18:11"},{"label":"Jam Selesai","type":"time","value":"18:11"},{"label":"Keterangan","type":"textarea","value":"ruuull"}],"report_status":"Waiting","bg_status":"#80ce81","selected_date":"2019-01-29","created_at":"2019-01-29 18:11:24"}:<>:[{"label":"Title","type":"text","value":"sobari"},{"label":"Lokasi","type":"map","value":"-6.197442500000001%3B106.76115234374996%3B6%C2%B011%2750.8%22S+106%C2%B045%2740.1%22E%3BJalan+Meruya+Utara+Blok+Lameo+No.24F%2C+RT.1%2FRW.5%2C+Meruya+Utara%2C+Kembangan%2C+Kota+Jakarta+Barat%2C+Daerah+Khusus+Ibukota+Jakarta+11620%2C+Indonesia%3B+%3B"},{"label":"Jam mulai","type":"time","value":"18:11"},{"label":"Jam Selesai","type":"time","value":"18:11"},{"label":"Keterangan","type":"textarea","value":"ruuull"}]
             }
@@ -257,7 +257,7 @@ public class NotePreviewActivity extends AppCompatActivity {
                         endTime = cnt;
                     }
                 }
-                n = new Note(title, lokasi, "", startTime, endTime, keterangan, "", "", id_detail, status, false, warna,ket_status);
+                n = new Note(title, lokasi, "", startTime, endTime, keterangan, "", "", id_detail, status, false, warna, ket_status);
             } else {
 
              /*   0 = job desk
@@ -279,9 +279,9 @@ public class NotePreviewActivity extends AppCompatActivity {
 
                     if (selected_date.equalsIgnoreCase(startDate)) {
                         if (nampan2.size() == 5) {
-                            n = new Note(nampan2.get(1), nampan2.get(2), "", nampan2.get(4), nampan2.get(5), nampan2.get(0), "", "", id_detail, status, true, warna,ket_status);
+                            n = new Note(nampan2.get(1), nampan2.get(2), "", nampan2.get(4), nampan2.get(5), nampan2.get(0), "", "", id_detail, status, true, warna, ket_status);
                         } else {
-                            n = new Note(nampan2.get(1), nampan2.get(2), nampan2.get(3), nampan2.get(4), nampan2.get(5), nampan2.get(0), nampan2.get(6), nampan2.get(7), id_detail, status, true, warna,ket_status);
+                            n = new Note(nampan2.get(1), nampan2.get(2), nampan2.get(3), nampan2.get(4), nampan2.get(5), nampan2.get(0), nampan2.get(6), nampan2.get(7), id_detail, status, true, warna, ket_status);
                         }
 
 
@@ -306,13 +306,16 @@ public class NotePreviewActivity extends AppCompatActivity {
             Date curDate = f.parse(currentDate);
             Date evDate = f.parse(eventDate);
 
-            if(evDate.after(curDate)){
+            if (evDate.after(curDate)) {
                 return true;
-            }else {
+            } else if (evDate.equals(curDate)) {
+                return true;
+            } else {
                 return false;
             }
 
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -334,7 +337,7 @@ public class NotePreviewActivity extends AppCompatActivity {
         return resRandom;
     }
 
-    private void generateDB(String date, String id_detail, String id_tab, String value, String status, String warna, int isSubmit,String keterangan) {
+    private void generateDB(String date, String id_detail, String id_tab, String value, String status, String warna, int isSubmit, String keterangan) {
         eventDatabase = new MyEventDatabase(getApplicationContext());
         db = eventDatabase.getWritableDatabase();
 

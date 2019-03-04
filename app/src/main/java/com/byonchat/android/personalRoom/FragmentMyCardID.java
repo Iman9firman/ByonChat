@@ -198,16 +198,16 @@ public class FragmentMyCardID extends Fragment {
                                     textPhone.setText("Hp. 0" + jsonOfficer.getString("bc_user").substring(2, jsonOfficer.getString("bc_user").length()));
                                     textOutlet.setText(jsonOfficer.getString("lokasi"));
                                     if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PONDOK INDAH")) {
-                                        textAddress.setText(Html.fromHtml("Jalan Sultan Iskandar Muda No.kav 8, RT.1/RW.5\n" + "Telp.(021) 7223366\n"));
+                                        textAddress.setText(Html.fromHtml("Jalan Sultan Iskandar Muda No.kav 8, RT.1/RW.5\n" + "Telp. Showroom : (021) 7223366,\n"+"Bengkel : (021) 7223377,\n"+"Fax : (021) 7223747"));
                                         Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
                                         textWarn.setText("Honda Pondok Indah tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
                                     } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA FATMAWATI")) {
                                         Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
-                                        textAddress.setText(Html.fromHtml("Jl. RS. Fatmawati No. 21 Jakarta Selatan, 12410\n" + "Telp. 021 - 7656456 (SR) 021 - 7508895 (Bengkel)\n" + "021 - 7502678"));
+                                        textAddress.setText(Html.fromHtml("Jl. RS. Fatmawati No. 21 Jakarta Selatan, 12410\n" + "Telp. Showroom: (021) 7656456\n" + "Bengkel : (021) 7656437 \n" + "Fax : (021) 7502678"));
                                         textWarn.setText("Honda Fatmawati tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
                                     } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PRADANA SAWANGAN")) {
                                         imageLogo2.setVisibility(View.GONE);
-                                        textAddress.setText(Html.fromHtml("Jl.Raya Cinangka No.9 Serua Bojong Sari\n" + "Depok-Jawa Barat 16517\n" + "Telp. (021) 3049 8889,(021) 3049 9990\n" + "Fax (021) 3042 8889"));
+                                        textAddress.setText(Html.fromHtml("Jl.Raya Cinangka No.9 Serua Bojong Sari\n" + "Depok-Jawa Barat 16517\n" + "Telp. (021) 3049 8889, (021) 3049 9990\n" + "Fax : (021) 3042 8889"));
                                         textWarn.setText("Honda Pradana Sawangan tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
                                     }
 

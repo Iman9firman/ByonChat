@@ -199,7 +199,7 @@
                     android:textColor="@android:color/black"
                     android:textColorHint="@color/grayList" />
 
-                <EditText
+            <!--    <EditText
                     android:id="@+id/txtKeterangan"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -209,7 +209,14 @@
                     android:padding="@dimen/margin5"
                     android:scrollbars="vertical"
                     android:textColor="@android:color/black"
-                    android:textColorHint="@color/grayList" />
+                    android:textColorHint="@color/grayList" />-->
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:id="@+id/spinKeterangan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin3"
+                    android:layout_marginBottom="@dimen/margin3"
+                    android:textColor="@android:color/black" />
 
             </LinearLayout>
 

@@ -51,25 +51,30 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
 
     ArrayList<MainPekerjaan> mainPekerjaans;
     ArrayList<SubPekerjaan> subPekerjaans;
+    ArrayList<SubPekerjaan> ketPekerjaans;
 
     ArrayAdapter<String> spinnerArrayMainAdapter;
     ArrayAdapter<String> spinnerArraySubAdapter;
+    ArrayAdapter<String> spinnerArrayKetAdapter;
     ArrayList<String> spinnerArrayMain;
     ArrayList<String> spinnerArraySub;
+    ArrayList<String> spinnerArrayKet;
 
     Spinner spinnerMain;
     Spinner spinnerSub;
+    Spinner spinnerKet;
 
     Button simpan;
     Button add, cancel;
 
     String subIdnya;
     String subNamenya;
+    int ketPosisi = 0;
     String pekerjaanNamenya;
     TextView valueAwal, valueAkhir;
 
     ImageButton btnDateAwal, btnDateAkhir;
-    EditText jumlah, keterangan;
+    EditText jumlah/*, keterangan*/;
 
     MyDialogListener listener;
     Activity activity;
@@ -172,7 +177,8 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
         setContentView(R.layout.dialog_form_child_requester_layout);
 
         jumlah = (EditText) findViewById(R.id.txtKuota1Jumlah);
-        keterangan = (EditText) findViewById(R.id.txtKeterangan);
+//        keterangan = (EditText) findViewById(R.id.txtKeterangan);
+        spinnerKet = (Spinner) findViewById(R.id.spinKeterangan) ;
         valueAkhir = (TextView) findViewById(R.id.value_akhir);
         valueAwal = (TextView) findViewById(R.id.value_awal);
         add = (Button) findViewById(R.id.btn_add_cild);
@@ -185,6 +191,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             spinnerMain.setBackground(activity.getResources().getDrawable(R.drawable.spinner_background));
             spinnerSub.setBackground(activity.getResources().getDrawable(R.drawable.spinner_background));
+            spinnerKet.setBackground(activity.getResources().getDrawable(R.drawable.spinner_background));
         }
 
         mainPekerjaans = new ArrayList<>();
@@ -201,8 +208,21 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
         spinnerArraySubAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArraySub);
         spinnerArraySubAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        spinnerArrayKet = new ArrayList<String>();
+
+        spinnerArrayKetAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArrayKet);
+        spinnerArrayKetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         spinnerMain.setAdapter(spinnerArrayMainAdapter);
         spinnerSub.setAdapter(spinnerArraySubAdapter);
+        spinnerKet.setAdapter(spinnerArrayKetAdapter);
+
+        spinnerArrayKet.add("Sakit");
+        spinnerArrayKet.add("Cuti");
+        spinnerArrayKet.add("Alpa");
+        spinnerArrayKet.add("PKWT");
+        spinnerArrayKet.add("OOJ");
+        spinnerArrayKet.add("Turnover");
 
         cancel.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -232,6 +252,18 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
                 Log.w("gamungkin2", subPekerjaans.get(position).getId());
                 subIdnya = subPekerjaans.get(position).getId();
                 subNamenya = subPekerjaans.get(position).getNamaPekerjaan();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        spinnerKet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ketPosisi = position;
             }
 
             @Override
@@ -277,11 +309,6 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
                 return;
             }
 
-            if (keterangan.getText().toString().length() == 0) {
-                Toast.makeText(getContext(), "Harap isi Keterangan", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
 
             JSONObject jsonObject = new JSONObject();
             Log.w("gamungkin", subIdnya);
@@ -293,7 +320,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
                 jsonObject.put("jadwalMulai", valueAwal.getText().toString());
                 jsonObject.put("jadwalAkhir", valueAkhir.getText().toString());
                 jsonObject.put("jumlah", jumlah.getText().toString());
-                jsonObject.put("keterangan", keterangan.getText().toString());
+                jsonObject.put("keterangan", spinnerKet.getItemAtPosition(ketPosisi));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

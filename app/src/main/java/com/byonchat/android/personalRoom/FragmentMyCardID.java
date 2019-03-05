@@ -17,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -39,9 +40,11 @@ import com.byonchat.android.personalRoom.utils.ShareFileFromAPI;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.tabRequest.RelieverDetailActivity;
 import com.byonchat.android.ui.activity.MainBaseActivityNew;
 import com.byonchat.android.utils.EndlessRecyclerViewScrollListener;
 import com.byonchat.android.utils.PermissionsUtil;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -56,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
@@ -161,7 +165,6 @@ public class FragmentMyCardID extends Fragment {
         card_share = (FloatingActionButton) view.findViewById(R.id.card_share);
         merge_share = (FloatingActionButton) view.findViewById(R.id.all_share);
 
-
         namecardMain = view.findViewById(R.id.namecard_main);
         imageLogo = view.findViewById(R.id.logo_ncl);
         imageLogo2 = view.findViewById(R.id.logo_2_ncl);
@@ -170,6 +173,11 @@ public class FragmentMyCardID extends Fragment {
         textOutlet = view.findViewById(R.id.tv_outlet_ncl);
         textAddress = view.findViewById(R.id.tv_alamat_ncl);
         textWarn = view.findViewById(R.id.tv_warn_ncl);
+
+        ProgressDialog rdialog = new ProgressDialog(mContext);
+        rdialog.setMessage("Loading your id card...");
+        rdialog.setTitle("Please Wait");
+        rdialog.show();
 
         if (db == null) {
             db = BotListDB.getInstance(mContext.getApplicationContext());
@@ -180,66 +188,73 @@ public class FragmentMyCardID extends Fragment {
             final String officer = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "d");
             Log.w("alamak", officer);
 
-            Picasso.with(mContext)
-                    .load("https://bb.byonchat.com/mediafiles/profile_photo_special_rooms/icon_honda.png")
-                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            Log.w("si jreng lewwat","bitmap grees");
-                            if (bitmap != null) {
-                                imageLogo.setImageBitmap(bitmap);
+            Handler handler = new Handler();
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    Picasso.with(mContext)
+                            .load("https://bb.byonchat.com/mediafiles/profile_photo_special_rooms/icon_honda.png")
+                            .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                            .into(new Target() {
+                                @Override
+                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                    Log.w("si jreng lewwat", "bitmap grees");
+                                    if (bitmap != null) {
+                                        imageLogo.setImageBitmap(bitmap);
 
-                                JSONObject jsonOfficer = null;
-                                try {
-                                    jsonOfficer = new JSONObject(officer);
+                                        JSONObject jsonOfficer = null;
+                                        try {
+                                            jsonOfficer = new JSONObject(officer);
 
-                                    textName.setText(Html.fromHtml("<b>" + jsonOfficer.getString("jabatan") + "</b><br>" + jsonOfficer.getString("name")));
-                                    textPhone.setText("Hp. 0" + jsonOfficer.getString("bc_user").substring(2, jsonOfficer.getString("bc_user").length()));
+                                            textName.setText(Html.fromHtml("<b>" + jsonOfficer.getString("jabatan") + "</b><br>" + jsonOfficer.getString("name")));
+                                            textPhone.setText("Hp. 0" + jsonOfficer.getString("bc_user").substring(2, jsonOfficer.getString("bc_user").length()));
 //                                    textOutlet.setText(jsonOfficer.getString("lokasi") +"\n");
-                                    if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PONDOK INDAH")) {
-                                        textOutlet.setText(jsonOfficer.getString("lokasi") +"\n"+"PT. Istana Kebayoran Raya Motor");
-                                        textAddress.setText("Jalan Sultan Iskandar Muda No.kav 8, RT.1/RW.5\n" + "Telp. Showroom : (021) 7223366,\n"+"Bengkel : (021) 7223377,\n"+"Fax : (021) 7223747");
-                                        Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
-                                        textWarn.setText("Honda Pondok Indah tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
-                                    } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA FATMAWATI")) {
-                                        textOutlet.setText(jsonOfficer.getString("lokasi") +"\n"+"PT. Istana Kebayoran Raya Motor");
-                                        Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
-                                        textAddress.setText("Jl. RS. Fatmawati No. 21 Jakarta Selatan, 12410\n" + "Telp. Showroom : (021) 7656456,\n" + "Bengkel : (021) 7656437,\n" + "Fax : (021) 7502678");
-                                        textWarn.setText("Honda Fatmawati tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
-                                    } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PRADANA SAWANGAN")) {
-                                        textOutlet.setText(jsonOfficer.getString("lokasi") +"\n"+"PT. Ambara Karya Pradana");
-                                        imageLogo2.setVisibility(View.GONE);
-                                        textAddress.setText("Jl.Raya Cinangka No.9 Serua Bojong Sari\n" + "Depok-Jawa Barat 16517\n" + "Telp. (021) 3049 8889, (021) 3049 9990,\n" + "(021) 3042 8889");
-                                        textWarn.setText("Honda Pradana Sawangan tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
+                                            if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PONDOK INDAH")) {
+                                                textOutlet.setText(jsonOfficer.getString("lokasi") + "\n" + "PT. Istana Kebayoran Raya Motor");
+                                                textAddress.setText("Jalan Sultan Iskandar Muda No.kav 8, RT.1/RW.5\n" + "Telp. Showroom : (021) 7223366,\n" + "Bengkel : (021) 7223377,\n" + "Fax : (021) 7223747");
+                                                Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
+                                                textWarn.setText("Honda Pondok Indah tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
+                                            } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA FATMAWATI")) {
+                                                textOutlet.setText(jsonOfficer.getString("lokasi") + "\n" + "PT. Istana Kebayoran Raya Motor");
+                                                Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
+                                                textAddress.setText("Jl. RS. Fatmawati No. 21 Jakarta Selatan, 12410\n" + "Telp. Showroom : (021) 7656456,\n" + "Bengkel : (021) 7656437,\n" + "Fax : (021) 7502678");
+                                                textWarn.setText("Honda Fatmawati tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
+                                            } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PRADANA SAWANGAN")) {
+                                                textOutlet.setText(jsonOfficer.getString("lokasi") + "\n" + "PT. Ambara Karya Pradana");
+                                                imageLogo2.setVisibility(View.GONE);
+                                                textAddress.setText("Jl.Raya Cinangka No.9 Serua Bojong Sari\n" + "Depok-Jawa Barat 16517\n" + "Telp. (021) 3049 8889, (021) 3049 9990,\n" + "(021) 3042 8889");
+                                                textWarn.setText("Honda Pradana Sawangan tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
+                                            }
+
+                                            Log.w("si jreng lewwat", "i11");
+                                            rdialog.dismiss();
+
+                                            shareCardID(jsonOfficer.getString("name"));
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                            rdialog.dismiss();
+                                            Log.e("APa error nya tice3hon", "ini nih: " + e.getMessage());
+                                        }
+
                                     }
-
-                                    Log.w("si jreng lewwat","i11");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
 
-                                try {
-                                    shareCardID( jsonOfficer.getString("name"));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                @Override
+                                public void onBitmapFailed(Drawable errorDrawable) {
+
                                 }
 
-                            }
-                        }
+                                @Override
+                                public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                        }
-                    });
-
+                                }
+                            });
+                }
+            };
+            handler.postDelayed(runnable, 800);
         }
+
 
         return view;
     }

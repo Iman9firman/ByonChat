@@ -105,7 +105,6 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
         Manhera.getInstance().get()
                 .load(im.icon_name.equalsIgnoreCase(null)
                         || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
                 .into(holder.mImageView);
 
 

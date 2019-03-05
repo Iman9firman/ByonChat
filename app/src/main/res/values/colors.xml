@@ -207,9 +207,9 @@
     <color name="textColorSecondary">#676767</color>
     <color name="ims_secondary_color">#7B7B7B</color>
     <color name="ims_third_color">#B8B8B8</color>
-    <color name="ims_chat_list_primary_color">#676767</color>
-    <color name="ims_chat_list_secondary_color">#A8A8A8</color>
-    <color name="ims_chat_list_background_color">#f2f3f4</color>
+    <color name="ims_chat_list_primary_color">#242424</color>
+    <color name="ims_chat_list_secondary_color">#707070</color>
+    <color name="ims_chat_list_background_color">#ffffff</color>
     <color name="ims_chat_list_notification_color">#B1B1B1</color>
     <color name="ims_search_rounded_color">#ededed</color>
     <color name="ims_blur_background">#689E9E9E</color>

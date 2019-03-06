@@ -76,13 +76,58 @@ public class LoginISS extends AppCompatActivity {
        /* userID.setText("1701793");
         passID.setText("Pass1701793");*/
 
+<<<<<<< HEAD
         userID.setHint("Username");
         passID.setHint("Password");
+=======
+        /*userID.setText("TESTING");
+        passID.setText("Testing1234");*/
+
+
+        String testHardcode = "{\n" +
+                "    \"MESSAGE\": \"LOGIN BERHASIL\",\n" +
+                "    \"URITOKENS\": \"aXNzaWQ6MTcwMTc5MzoxMTkuMTAuMTc4LjU0OkpHWkJjREZBUzJWWklWOTBiMHN6Ymc9PToyMDE5MDMwNjE1MDE0OTowLDIsMzAsMA==\",\n" +
+                "    \"STATUS\": true,\n" +
+                "    \"RESULT\": [\n" +
+                "        {\n" +
+                "            \"ATASAN1_JOBTITLE\": \"Area Head RS Ciputra, Eka Hospital, RS Pelni and Paramount\",\n" +
+                "            \"USER_NAME\": \"N9992\",\n" +
+                "            \"ATASAN1_EMAIL\": \"agus@iss.co.id\",\n" +
+                "            \"EMPLOYEE_PHOTOS\": \"https://sf.dataon.com/sf6/index.cfm?sfid=sys.sec.getimage&img=52EEAD80B7FDB3B31AFC8737ABFF9A94E1638C7EDB7F3EC97788B9BE19CDD2D8C952632F7EB06FBFAF76B1B154B1AE65B4ABF9C2CEDB468D93568FFECD1D41C4BF9D496BB068AEB2B4B070D2A9A67C3FA8FF01ED1BBAF19FA80B769240A04010EFC30CF2658FA3369EBE9D3799B0F290AC6DABBB&fname=201806/DO17590517_13401.JPG\",\n" +
+                "            \"EMPLOYEE_NIK\": \"N9992\",\n" +
+                "            \"ATASAN2_NIK\": \"0054065\",\n" +
+                "            \"LIST_REQUESTER_ROLE\": \"N101468,N100012\",\n" +
+                "            \"EMPLOYEE_NAME\": \"AGUSTINUS IRWANTO\",\n" +
+                "            \"ATASAN1_NAMA\": \"AGUSTINUS IRWANTO\",\n" +
+                "            \"DIVISION_CODE\": \"19KAS1\",\n" +
+                "            \"EMPLOYEE_JOBTITLE\": \"SERVICE SUPERVISOR JAKARTA EKA HOSPITAL CLN [ISS-00625F0001]\",\n" +
+                "            \"LIST_APPROVER_ROLE2\": \"\",\n" +
+                "            \"DEPARTEMENT_CODE\": \"19KAS0107\",\n" +
+                "            \"ATASAN1_NIK\": \"N9992\",\n" +
+                "            \"ATASAN1_PHONE\": \"6281808884801\",\n" +
+                "            \"DIVISION_NAME\": \"Key Account Segment 1\",\n" +
+                "            \"ATASAN2_PHONE\": \"6281319906930\",\n" +
+                "            \"EMPLOYEE_EMAIL\": \"agus@iss.co.id\",\n" +
+                "            \"EMPLOYEE_PHONE\": \"6281808884801\",\n" +
+                "            \"ATASAN2_EMAIL\": \"rusbandi@iss.co.id\",\n" +
+                "            \"ATASAN2_JOBTITLE\": \"Area Head RS Ciputra, Eka Hospital\",\n" +
+                "            \"ATASAN1_USER_NAME\": \"N9992\",\n" +
+                "            \"ATASAN2_NAMA\": \"RUSBANDI\",\n" +
+                "            \"EMPLOYEE_MULTIPLECOST\": \"ISS-00625F0001-EKA HOSPITAL CLN [ISS-00625F0001]\",\n" +
+                "            \"MYROLE\": \"\",\n" +
+                "            \"DEPARTEMENT_NAME\": \"Key Segment Healthcare\",\n" +
+                "            \"ATASAN2_USER_NAME\": \"0054065\",\n" +
+                "            \"LIST_APPROVER_ROLE1\": \"\"\n" +
+                "        }\n" +
+                "    ]\n" +
+                "}";
+>>>>>>> 51a5fc82032afc77d550408a443f6a277dac32ea
 
         erwgv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goVerif(userID.getText().toString(), passID.getText().toString(), accID.getText().toString());
+//                goVerif(userID.getText().toString(), passID.getText().toString(), accID.getText().toString());
+                parseJSON(testHardcode);
                 pd = new ProgressDialog(LoginISS.this);
                 pd.setMessage("Please Wait");
                 pd.show();
@@ -193,6 +238,7 @@ public class LoginISS extends AppCompatActivity {
 
             if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
                 new Validations().getInstance(getApplicationContext()).setTimebyId(26);
+//                Toast.makeText(LoginISS.this, "Atasan 1 : "+ATASAN_1_NAMA+", ATASAN 2 : "+ATASAN_2_NAMA+", Requester : "+EMPLOYEE_NAME, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
                 intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                 intent.putExtra("success", "oke");

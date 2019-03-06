@@ -73,16 +73,8 @@ public class LoginISS extends AppCompatActivity {
 
         accID.setText("issid");
         accID.setVisibility(View.INVISIBLE);
-       /* userID.setText("1701793");
-        passID.setText("Pass1701793");*/
-
-<<<<<<< HEAD
         userID.setHint("Username");
         passID.setHint("Password");
-=======
-        /*userID.setText("TESTING");
-        passID.setText("Testing1234");*/
-
 
         String testHardcode = "{\n" +
                 "    \"MESSAGE\": \"LOGIN BERHASIL\",\n" +
@@ -121,7 +113,6 @@ public class LoginISS extends AppCompatActivity {
                 "        }\n" +
                 "    ]\n" +
                 "}";
->>>>>>> 51a5fc82032afc77d550408a443f6a277dac32ea
 
         erwgv.setOnClickListener(new View.OnClickListener() {
             @Override

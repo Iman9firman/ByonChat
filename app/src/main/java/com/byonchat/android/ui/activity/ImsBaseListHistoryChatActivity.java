@@ -131,6 +131,9 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
     @NonNull
     protected NestedScrollView vNestedScroll;
 
+    @NonNull
+    protected RelativeLayout vFrameBottom;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -498,6 +501,10 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         });
     }
 
+    protected void resolveBottomFrame() {
+        vFrameBottom.setVisibility(iconItemList.size() > 0 ? View.VISIBLE : View.GONE);
+    }
+
     @TargetApi(23)
     protected void onScroll() {
 //        vNestedScroll.setOnScrollChangeListener(new View.OnScrollChangeListener() {
@@ -700,6 +707,8 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         if (mAdapter != null) {
             mAdapter.setItems(iconItemList);
         }
+
+        resolveBottomFrame();
     }
 
     public class LoadMessageList extends AsyncTask<String, Void, List<IconItem>> {
@@ -929,6 +938,9 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
 
     @NonNull
     protected abstract NestedScrollView getNestedScrollView();
+
+    @NonNull
+    protected abstract RelativeLayout getBottomFrame();
 
     @NonNull
     protected abstract FrameLayout getFrameChatLists();

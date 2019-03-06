@@ -35,15 +35,15 @@ public class Roboto {
     static {
         typefacePaths.put(Style.Black, "carbon/Roboto-Black.ttf");
         typefacePaths.put(Style.BlackItalic, "carbon/Roboto-BlackItalic.ttf");
-        typefacePaths.put(Style.Bold, "carbon/Roboto-Bold.ttf");
+        typefacePaths.put(Style.Bold, "carbon/roboto_bold.ttf");
         typefacePaths.put(Style.BoldItalic, "carbon/Roboto-BoldItalic.ttf");
-        typefacePaths.put(Style.Italic, "carbon/Roboto-Italic.ttf");
-        typefacePaths.put(Style.Light, "carbon/Roboto-Light.ttf");
+        typefacePaths.put(Style.Italic, "carbon/roboto_italic.ttf");
+        typefacePaths.put(Style.Light, "carbon/roboto_light.ttf");
         typefacePaths.put(Style.LightItalic, "carbon/Roboto-LightItalic.ttf");
-        typefacePaths.put(Style.Medium, "carbon/Roboto-Medium.ttf");
+        typefacePaths.put(Style.Medium, "carbon/roboto_medium.ttf");
         typefacePaths.put(Style.MediumItalic, "carbon/Roboto-MediumItalic.ttf");
-        typefacePaths.put(Style.Regular, "carbon/Roboto-Regular.ttf");
-        typefacePaths.put(Style.Thin, "carbon/Roboto-Thin.ttf");
+        typefacePaths.put(Style.Regular, "carbon/roboto_regular.ttf");
+        typefacePaths.put(Style.Thin, "carbon/roboto_thin.ttf");
         typefacePaths.put(Style.ThinItalic, "carbon/Roboto-ThinItalic.ttf");
 
         typefacePaths.put(Style.CondensedBold, "carbon/RobotoCondensed-Bold.ttf");

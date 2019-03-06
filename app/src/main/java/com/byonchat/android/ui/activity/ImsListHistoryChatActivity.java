@@ -58,6 +58,7 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
         vBtnCreateMessage = getFloatingButtonCreateMsg();
         vScrollView = getScrollView();
         vNestedScroll = getNestedScrollView();
+        vFrameBottom = getBottomFrame();
     }
 
     @Override
@@ -182,6 +183,13 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
     @Override
     protected NestedScrollView getNestedScrollView() {
         return (NestedScrollView) findViewById(R.id.nested_scroll);
+    }
+
+
+    @NonNull
+    @Override
+    protected RelativeLayout getBottomFrame() {
+        return (RelativeLayout) findViewById(R.id.frame_bottom);
     }
 
     @NonNull

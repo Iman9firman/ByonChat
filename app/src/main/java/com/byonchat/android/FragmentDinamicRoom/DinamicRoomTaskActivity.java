@@ -291,6 +291,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     String dbMaster = "";
     String linkGetAsignTo = "";
     boolean includeStatus = false;
+    boolean denganCheck = true;
     String typeStatus = "0";
     String labelApprove = "Approve";
     String labelReject = "Reject";
@@ -3119,20 +3120,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         } else {
 // TODO: 28/10/18 impelria maintenance
                                             if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
-                                                if (Message.isJSONValid(list.get(1).getContent())) {
-                                                    JSONObject jObject = null;
-                                                    try {
-                                                        jObject = new JSONObject(list.get(1).getContent());
-                                                        String tPP = jObject.get("Part ID").toString() + " " + jObject.get("Nama Part").toString() + " (" + list.get(0).getContent() + ")";
-                                                        decsUntuk = list.get(2).getContent();
-                                                        priceUntuk = jObject.get("AVE").toString();
+                                                if (list.size() > 1) {
+                                                    if (Message.isJSONValid(list.get(1).getContent())) {
+                                                        JSONObject jObject = null;
+                                                        try {
+                                                            jObject = new JSONObject(list.get(1).getContent());
+                                                            String tPP = jObject.get("Part ID").toString() + " " + jObject.get("Nama Part").toString() + " (" + list.get(0).getContent() + ")";
+                                                            decsUntuk = list.get(2).getContent();
+                                                            priceUntuk = jObject.get("AVE").toString();
 
-                                                        rowItems.add(new ModelFormChild(idchildDetail, tPP, decsUntuk, priceUntuk));
+                                                            rowItems.add(new ModelFormChild(idchildDetail, tPP, decsUntuk, priceUntuk));
 
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+
                                                     }
-
                                                 }
                                             } else {
                                                 rowItems.add(new ModelFormChild(idchildDetail, titleUntuk, decsUntuk, priceUntuk));
@@ -8830,10 +8833,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                         if (!spinnerArray.get(position).equals("--Please Select--")) {
+                            //cumahonda
                             if (spinnerArray.get(position).equalsIgnoreCase("suspect")) {
                                 btnSUMBIT.setVisibility(View.INVISIBLE);
-                            } else {
+                            } else if (spinnerArray.get(position).equalsIgnoreCase("Hot Prospect")) {
                                 btnSUMBIT.setVisibility(View.VISIBLE);
+                            } else if (spinnerArray.get(position).equalsIgnoreCase("deal")) {
+                                denganCheck = true;
+                            } else if (spinnerArray.get(position).equalsIgnoreCase("no deal")) {
+                                denganCheck = false;
+                            } else if (spinnerArray.get(position).equalsIgnoreCase("valid")) {
+                                denganCheck = true;
+                            } else if (spinnerArray.get(position).equalsIgnoreCase("reject")) {
+                                denganCheck = false;
                             }
 
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "includeStatus", "");
@@ -8971,30 +8983,152 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         boolean berhenti = false;
 
                         List<String> errorReq = new ArrayList<String>();
-                        for (Integer key : hashMap.keySet()) {
-                            List<String> value = hashMap.get(key);
-                            if (value != null) {
-                                Boolean lolos = false;
-                                if (!lolosReq.isEmpty()) {
-                                    if (lolosReq.contains(String.valueOf(key))) {
-                                        lolos = true;
-                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
-                                        if (cEdit.getCount() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
-                                            db.deleteDetailRoomWithFlagContent(orderModel);
+
+                        if (denganCheck) {
+                            for (Integer key : hashMap.keySet()) {
+                                List<String> value = hashMap.get(key);
+                                if (value != null) {
+                                    Boolean lolos = false;
+                                    if (!lolosReq.isEmpty()) {
+                                        if (lolosReq.contains(String.valueOf(key))) {
+                                            lolos = true;
+                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
+                                            if (cEdit.getCount() > 0) {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                                                db.deleteDetailRoomWithFlagContent(orderModel);
+                                            }
                                         }
                                     }
-                                }
 
 
-                                if (value.get(1).toString().equalsIgnoreCase("1") && !lolos) {
-                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
-                                    if (cEdit.getCount() > 0) {
-                                        if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
+                                    if (value.get(1).toString().equalsIgnoreCase("1") && !lolos) {
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
+                                        if (cEdit.getCount() > 0) {
+                                            if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
+                                                if (value.get(2).toString().equalsIgnoreCase("text") ||
+                                                        value.get(2).toString().equalsIgnoreCase("textarea") ||
+                                                        value.get(2).toString().equalsIgnoreCase("email") ||
+                                                        value.get(2).toString().equalsIgnoreCase("number") ||
+                                                        value.get(2).toString().equalsIgnoreCase("phone_number") ||
+                                                        value.get(2).toString().equalsIgnoreCase("currency")) {
+                                                    String aa = value.get(0).toString();
+                                                    et[Integer.valueOf(aa)].setError("required");
+                                                    berhenti = true;
+                                                } else if (value.get(2).toString().equalsIgnoreCase("attach_api")) {
+                                                    //tidak ada action
+                                                } else {
+                                                    berhenti = true;
+                                                    errorReq.add(value.get(4).toString());
+                                                }
+                                            } else {
+                                                if (value.get(2).toString().equalsIgnoreCase("dropdown_form")) {
+
+                                                    JSONObject jsonObject = null;
+                                                    try {
+                                                        jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                                                        Iterator<String> iter = jsonObject.keys();
+                                                        int mas = 0;
+                                                        while (iter.hasNext()) {
+                                                            mas = mas + 1;
+                                                            String keys = iter.next();
+                                                            try {
+                                                                JSONArray jsAdd = jsonObject.getJSONArray(keys);
+
+                                                                for (int ic = 0; ic < jsAdd.length(); ic++) {
+
+                                                                    JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
+
+                                                                    String val = oContent.getString("v");
+                                                                    if (val.length() == 1) {
+                                                                        if (val.equalsIgnoreCase("0")) {
+                                                                            String not = oContent.getString("n");
+                                                                            if (not.length() == 0) {
+                                                                                JSONArray aa = new JSONArray();
+                                                                                if (oContent.has("f")) {
+                                                                                    aa = oContent.getJSONArray("f");
+                                                                                }
+
+                                                                                if (aa.length() == 0) {
+                                                                                    //diisi 0 dan harus ada salah satu yang di isi
+                                                                                    errorReq.add("Mohon isi Note Atau Foto pada Point " + mas + " - " + (ic + 1));
+                                                                                    berhenti = true;
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    } else {
+                                                                        String not = oContent.getString("n");
+                                                                        if (not.length() == 0) {
+                                                                            JSONArray aa = new JSONArray();
+                                                                            if (oContent.has("f")) {
+                                                                                aa = oContent.getJSONArray("f");
+                                                                            }
+
+                                                                            if (aa.length() == 0) {
+                                                                                errorReq.add("Harap Pilih Cheklist Pada Point " + mas + " - " + (ic + 1));
+                                                                                berhenti = true;
+                                                                            }
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                            } catch (JSONException e) {
+                                                                // Something went wrong!
+                                                            }
+                                                        }
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                } else if (value.get(2).toString().equalsIgnoreCase("phone_number")) {
+                                                    String saya = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                                                    if (saya.length() > 9 && saya.length() < 15) {
+                                                        String sss = test_Nom(saya);
+                                                        if (sss.equalsIgnoreCase("Nomor anda salah")) {
+                                                            berhenti = true;
+                                                            String aa = value.get(0).toString();
+                                                            et[Integer.valueOf(aa)].setError("Phone not valid");
+                                                        }
+                                                    } else {
+                                                        berhenti = true;
+                                                        String aa = value.get(0).toString();
+                                                        et[Integer.valueOf(aa)].setError("Phone not valid");
+                                                    }
+                                                } else if (value.get(2).toString().equalsIgnoreCase("email")) {
+                                                    String aa = value.get(0).toString();
+                                                    if (!cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("@")) {
+                                                        berhenti = true;
+                                                        et[Integer.valueOf(aa)].setError("Email not valid");
+                                                    }
+
+                                                } else if (value.get(2).toString().equalsIgnoreCase("new_dropdown_dinamis")) {
+                                                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("--Please Select--")) {
+                                                        berhenti = true;
+                                                        errorReq.add(value.get(4).toString());
+                                                    }
+
+                                                } else if (value.get(2).toString().equalsIgnoreCase("dropdown")) {
+                                                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("--Please Select--")) {
+                                                        berhenti = true;
+                                                        errorReq.add(value.get(4).toString());
+                                                    }
+                                                } else if (value.get(2).toString().equalsIgnoreCase("time")) {
+                                                    String aa = value.get(3).toString();
+                                                    try {
+                                                        JSONObject rt = new JSONObject();
+                                                        rt.put("id", aa);
+                                                        rt.put("jam", cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)) + "");
+                                                        ar.put(rt);
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                    validateTime = true;
+                                                }
+                                            }
+                                        } else {
                                             if (value.get(2).toString().equalsIgnoreCase("text") ||
                                                     value.get(2).toString().equalsIgnoreCase("textarea") ||
-                                                    value.get(2).toString().equalsIgnoreCase("email") ||
                                                     value.get(2).toString().equalsIgnoreCase("number") ||
+                                                    value.get(2).toString().equalsIgnoreCase("email") ||
                                                     value.get(2).toString().equalsIgnoreCase("phone_number") ||
                                                     value.get(2).toString().equalsIgnoreCase("currency")) {
                                                 String aa = value.get(0).toString();
@@ -9006,137 +9140,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 berhenti = true;
                                                 errorReq.add(value.get(4).toString());
                                             }
-                                        } else {
-                                            if (value.get(2).toString().equalsIgnoreCase("dropdown_form")) {
-
-                                                JSONObject jsonObject = null;
-                                                try {
-                                                    jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                                    Iterator<String> iter = jsonObject.keys();
-                                                    int mas = 0;
-                                                    while (iter.hasNext()) {
-                                                        mas = mas + 1;
-                                                        String keys = iter.next();
-                                                        try {
-                                                            JSONArray jsAdd = jsonObject.getJSONArray(keys);
-
-                                                            for (int ic = 0; ic < jsAdd.length(); ic++) {
-
-                                                                JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
-
-                                                                String val = oContent.getString("v");
-                                                                if (val.length() == 1) {
-                                                                    if (val.equalsIgnoreCase("0")) {
-                                                                        String not = oContent.getString("n");
-                                                                        if (not.length() == 0) {
-                                                                            JSONArray aa = new JSONArray();
-                                                                            if (oContent.has("f")) {
-                                                                                aa = oContent.getJSONArray("f");
-                                                                            }
-
-                                                                            if (aa.length() == 0) {
-                                                                                //diisi 0 dan harus ada salah satu yang di isi
-                                                                                errorReq.add("Mohon isi Note Atau Foto pada Point " + mas + " - " + (ic + 1));
-                                                                                berhenti = true;
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                } else {
-                                                                    String not = oContent.getString("n");
-                                                                    if (not.length() == 0) {
-                                                                        JSONArray aa = new JSONArray();
-                                                                        if (oContent.has("f")) {
-                                                                            aa = oContent.getJSONArray("f");
-                                                                        }
-
-                                                                        if (aa.length() == 0) {
-                                                                            errorReq.add("Harap Pilih Cheklist Pada Point " + mas + " - " + (ic + 1));
-                                                                            berhenti = true;
-                                                                        }
-                                                                    }
-
-                                                                }
-                                                            }
-                                                        } catch (JSONException e) {
-                                                            // Something went wrong!
-                                                        }
-                                                    }
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            } else if (value.get(2).toString().equalsIgnoreCase("phone_number")) {
-                                                String saya = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-                                                if (saya.length() > 9 && saya.length() < 15) {
-                                                    String sss = test_Nom(saya);
-                                                    if (sss.equalsIgnoreCase("Nomor anda salah")) {
-                                                        berhenti = true;
-                                                        String aa = value.get(0).toString();
-                                                        et[Integer.valueOf(aa)].setError("Phone not valid");
-                                                    }
-                                                } else {
-                                                    berhenti = true;
-                                                    String aa = value.get(0).toString();
-                                                    et[Integer.valueOf(aa)].setError("Phone not valid");
-                                                }
-                                            } else if (value.get(2).toString().equalsIgnoreCase("email")) {
-                                                String aa = value.get(0).toString();
-                                                if (!cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("@")) {
-                                                    berhenti = true;
-                                                    et[Integer.valueOf(aa)].setError("Email not valid");
-                                                }
-
-                                            } else if (value.get(2).toString().equalsIgnoreCase("new_dropdown_dinamis")) {
-                                                if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("--Please Select--")) {
-                                                    berhenti = true;
-                                                    errorReq.add(value.get(4).toString());
-                                                }
-
-                                            } else if (value.get(2).toString().equalsIgnoreCase("dropdown")) {
-                                                if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("--Please Select--")) {
-                                                    berhenti = true;
-                                                    errorReq.add(value.get(4).toString());
-                                                }
-                                            } else if (value.get(2).toString().equalsIgnoreCase("time")) {
-                                                String aa = value.get(3).toString();
-                                                try {
-                                                    JSONObject rt = new JSONObject();
-                                                    rt.put("id", aa);
-                                                    rt.put("jam", cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)) + "");
-                                                    ar.put(rt);
-                                                } catch (JSONException e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                validateTime = true;
-                                            }
-                                        }
-                                    } else {
-                                        if (value.get(2).toString().equalsIgnoreCase("text") ||
-                                                value.get(2).toString().equalsIgnoreCase("textarea") ||
-                                                value.get(2).toString().equalsIgnoreCase("number") ||
-                                                value.get(2).toString().equalsIgnoreCase("email") ||
-                                                value.get(2).toString().equalsIgnoreCase("phone_number") ||
-                                                value.get(2).toString().equalsIgnoreCase("currency")) {
-                                            String aa = value.get(0).toString();
-                                            et[Integer.valueOf(aa)].setError("required");
-                                            berhenti = true;
-                                        } else if (value.get(2).toString().equalsIgnoreCase("attach_api")) {
-                                            //tidak ada action
-                                        } else {
-                                            berhenti = true;
-                                            errorReq.add(value.get(4).toString());
                                         }
                                     }
                                 }
                             }
                         }
 
-                        if (linearLayout.getChildAt(linearLayout.getChildCount() - 2).getVisibility() == View.VISIBLE) {
-                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
-                            if (cursorCild.getCount() == 0) {
-                                berhenti = true;
-                                b.setEnabled(true);
-                                errorReq.add("Assign To");
+                        if (denganCheck) {
+                            if (!linkGetAsignTo.equalsIgnoreCase("")) {
+                                if (linearLayout.getChildAt(linearLayout.getChildCount() - 2).getVisibility() == View.VISIBLE) {
+                                    Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
+                                    if (cursorCild.getCount() == 0) {
+                                        berhenti = true;
+                                        b.setEnabled(true);
+                                        errorReq.add("Assign To");
+                                    }
+                                }
                             }
                         }
 
@@ -9192,7 +9211,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         if (berhenti) {
                             b.setEnabled(true);
-                            Log.w("sisapa", errorReq.size() + "");
                             if (errorReq.size() > 0) {
                                 final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
                                 alertbox.setTitle("Required");
@@ -9212,7 +9230,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                             return;
                         } else {
-                            Log.w("berhasih", "hiasd");
                             int nom = 0;
                             for (ArrayList<String> innerList : stringAPI) {
                                 String param = "";

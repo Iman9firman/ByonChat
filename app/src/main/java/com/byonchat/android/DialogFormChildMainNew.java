@@ -979,11 +979,11 @@ public class DialogFormChildMainNew extends DialogFragment {
                     TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                     String isi = jsonArrayCild.getJSONObject(i).getString("dropdown").toString();
                     JSONArray jsonArrays = new JSONArray(isi);
-                    Log.w("as", isi);
                     final ArrayList<String> spinnerArray = new ArrayList<String>();
-                    spinnerArray.add("--Please Select--");
-
                     final ArrayList<String> spinnerArrayVal = new ArrayList<String>();
+                    spinnerArray.add("--Please Select--");
+                    spinnerArrayVal.add("");
+
                     for (int ia = 0; ia < jsonArrays.length(); ia++) {
                         String l = jsonArrays.getJSONObject(ia).getString("label_option").toString().replace("+", " ");
                         String l_name = jsonArrays.getJSONObject(ia).getString("val_name").toString().replace("+", " ");

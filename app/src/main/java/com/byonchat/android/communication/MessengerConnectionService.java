@@ -2296,6 +2296,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                                 Intent intent = new Intent(ACTION_CHAT_OFF);
                                 sendOrderedBroadcast(intent, null);
                             } else if (pesan[0].equalsIgnoreCase("give_me_location")) {
+                                Log.w("supayaBisa", "on");
                                 Intent intent = new Intent(ACTION_REQGPS);
                                 intent.putExtra(KEY_LOC_REQ, vo.getMessage());
                                 sendOrderedBroadcast(intent, null);
@@ -5261,7 +5262,7 @@ Log.w("every",co.getJabberId());
                                         RoomsDetail orderModel = new RoomsDetail(bb.getId(), bb.getParent_tab(), aa.getUsername(), dateString, "1", null, "parent");
                                         botListDB.updateDetailRoomWithFlagContentParent(orderModel);
 
-                                        new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(MessengerConnectionService.this, bb.getId(), aa.getUsername(), bb.getParent_tab(),"");
+                                        new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(MessengerConnectionService.this, bb.getId(), aa.getUsername(), bb.getParent_tab(), "");
 
 
                                     }

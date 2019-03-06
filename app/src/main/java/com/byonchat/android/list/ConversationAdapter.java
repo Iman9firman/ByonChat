@@ -943,59 +943,68 @@ public class ConversationAdapter extends BaseAdapter {
             }
 
             if (btnOpen) {
-                final String link[] = data.getMessage().split(";");
-                holder.RelatifOpen.setVisibility(View.VISIBLE);
-                holder.btnOpenLink.setVisibility(View.VISIBLE);
-                holder.leftTimeDua.setVisibility(View.VISIBLE);
-                holder.textTime.setVisibility(View.GONE);
-                holder.imageLayout.setVisibility(View.GONE);
-                holder.textMessage.setVisibility(View.GONE);
-                holder.frameMainText.setVisibility(View.GONE);
+                if (data.getMessage().replace("<br/>", "").startsWith("bc://")){
+                    holder.textTime.setVisibility(View.GONE);
+                    holder.imageLayout.setVisibility(View.GONE);
+                    holder.textMessage.setVisibility(View.GONE);
+                    holder.frameMainText.setVisibility(View.GONE);
+                }else{
+                    final String link[] = data.getMessage().split(";");
+                    holder.RelatifOpen.setVisibility(View.VISIBLE);
+                    holder.btnOpenLink.setVisibility(View.VISIBLE);
+                    holder.leftTimeDua.setVisibility(View.VISIBLE);
+                    holder.textTime.setVisibility(View.GONE);
+                    holder.imageLayout.setVisibility(View.GONE);
+                    holder.textMessage.setVisibility(View.GONE);
+                    holder.frameMainText.setVisibility(View.GONE);
 
 
-                if (link.length == 2) {
-                    Pattern htmlPattern = Pattern.compile(".*\\<[^>]+>.*", Pattern.DOTALL);
-                    boolean isHTML = htmlPattern.matcher(data.getMessage()).matches();
-                    if (isHTML) {
-                        if (link[1].contains("<")) {
-                            holder.btnOpenLink.setText(Html.fromHtml(Html.fromHtml(link[1]).toString()));
+                    if (link.length == 2) {
+                        Pattern htmlPattern = Pattern.compile(".*\\<[^>]+>.*", Pattern.DOTALL);
+                        boolean isHTML = htmlPattern.matcher(data.getMessage()).matches();
+                        if (isHTML) {
+                            if (link[1].contains("<")) {
+                                holder.btnOpenLink.setText(Html.fromHtml(Html.fromHtml(link[1]).toString()));
+                            } else {
+                                holder.btnOpenLink.setText(Html.fromHtml(link[1]));
+                            }
                         } else {
                             holder.btnOpenLink.setText(Html.fromHtml(link[1]));
                         }
-                    } else {
-                        holder.btnOpenLink.setText(Html.fromHtml(link[1]));
                     }
-                }
-                holder.btnOpenLink.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (link[0].startsWith("https://") || link[0].startsWith("http://")) {
-                            Intent intent = new Intent(activity.getApplicationContext(), WebViewByonActivity.class);
-                            intent.putExtra(WebViewByonActivity.KEY_LINK_LOAD, link[0]);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            activity.getApplicationContext().startActivity(intent);
-                        } else if (link[0].startsWith("bc://")) {
-                            String room[] = link[0].split("//");
-                            Intent intent = new Intent(activity, ByonChatMainRoomActivity.class);
-                            intent.putExtra(ConversationActivity.KEY_JABBER_ID, room[1]);
+                    holder.btnOpenLink.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (link[0].startsWith("https://") || link[0].startsWith("http://")) {
+                                Intent intent = new Intent(activity.getApplicationContext(), WebViewByonActivity.class);
+                                intent.putExtra(WebViewByonActivity.KEY_LINK_LOAD, link[0]);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                activity.getApplicationContext().startActivity(intent);
+                            } else if (link[0].startsWith("bc://")) {
+                                String room[] = link[0].split("//");
+                                Intent intent = new Intent(activity, ByonChatMainRoomActivity.class);
+                                intent.putExtra(ConversationActivity.KEY_JABBER_ID, room[1]);
 
-                            if (room.length == 3 || room.length == 4) {
-                                intent.putExtra("firstTab", room[2]);
-                            } else {
-                                intent.putExtra("firstTab", "");
+                                if (room.length == 3 || room.length == 4) {
+                                    intent.putExtra("firstTab", room[2]);
+                                } else {
+                                    intent.putExtra("firstTab", "");
+                                }
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                activity.startActivity(intent);
                             }
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            activity.startActivity(intent);
                         }
-                    }
-                });
-                holder.btnOpenLink.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        longClickActionDelete(data, position);
-                        return true;
-                    }
-                });
+                    });
+                    holder.btnOpenLink.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            longClickActionDelete(data, position);
+                            return true;
+                        }
+                    });
+                }
+
+
             } else {
                 String text = Html.fromHtml(data.getMessage()).toString();
                 Pattern htmlPattern = Pattern.compile(".*\\<[^>]+>.*", Pattern.DOTALL);

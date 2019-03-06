@@ -318,7 +318,7 @@
                 android:layout_marginBottom="-25dp"
                 android:background="@null"
                 app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="32dp"
+                app:cardCornerRadius="@dimen/margin45"
                 app:cardElevation="0dp"
                 app:cardPreventCornerOverlap="false"
                 app:layout_anchor="@id/recycler_main"
@@ -346,15 +346,14 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
                             android:layout_marginBottom="@dimen/margin20"
-                            android:paddingLeft="@dimen/margin20"
-                            android:paddingRight="@dimen/margin20"
-                            android:paddingBottom="@dimen/margin20"
-                            android:tint="@color/textColorSecondary"
+                            android:paddingLeft="@dimen/margin15"
+                            android:paddingRight="@dimen/margin15"
+                            android:paddingBottom="@dimen/margin15"
                             app:backgroundTint="@color/white"
                             app:badgeTextColor="@color/white"
                             app:borderWidth="0dp"
                             app:elevation="0dp"
-                            app:srcCompat="@drawable/baseline_home_24" />
+                            app:srcCompat="@drawable/ic_01" />
 
                         <com.andremion.counterfab.CounterFab
                             android:id="@+id/fab_menu_2_main"
@@ -362,16 +361,15 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_marginBottom="@dimen/margin20"
-                            android:paddingLeft="@dimen/margin20"
-                            android:paddingRight="@dimen/margin20"
-                            android:tint="@color/textColorSecondary"
+                            android:paddingLeft="@dimen/margin15"
+                            android:paddingRight="@dimen/margin15"
                             app:backgroundTint="@color/white"
                             app:badgeBackgroundColor="@color/accent_500"
                             app:badgePosition="RightTop"
                             app:badgeTextColor="@color/white"
                             app:borderWidth="0dp"
                             app:elevation="0dp"
-                            app:srcCompat="@drawable/baseline_message_24" />
+                            app:srcCompat="@drawable/ic_02" />
 
                         <!--<android.support.design.widget.FloatingActionButton-->
                         <!--android:id="@+id/fab_menu_1_main"-->

@@ -21,18 +21,22 @@
             android:icon="@drawable/ic_mood_black_24dp"
             android:iconTint="@color/textColorSecondary"
             android:title="Set Status" />
+        <item
+            android:id="@+id/nav_item_create_shortcut"
+            android:icon="@drawable/ic_create_shortcut"
+            android:iconTint="@color/textColorSecondary"
+            android:title="Create Shorcut" />
+        <item
+            android:id="@+id/nav_item_grid_size"
+            android:icon="@drawable/ic_grid_size"
+            android:iconTint="@color/textColorSecondary"
+            android:title="Grid Size" />
     </group>
 
     <group android:id="@+id/group_menu">
         <item
             android:id="@+id/nav_item_refresh"
             android:title="Refresh Room" />
-        <item
-            android:id="@+id/nav_item_create_shortcut"
-            android:title="Create Shorcut" />
-        <item
-            android:id="@+id/nav_item_grid_size"
-            android:title="Grid Size" />
         <item
             android:id="@+id/nav_item_legal"
             android:title="Reset" />

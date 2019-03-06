@@ -66,6 +66,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
+
+                <RelativeLayout
+                    android:id="@+id/frame_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="65dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tap and hold on a chat for more options"
+                        android:textAlignment="center"
+                        android:textSize="@dimen/margin12"
+                        android:textStyle="bold" />
+                </RelativeLayout>
             </LinearLayout>
         </ScrollView>
 

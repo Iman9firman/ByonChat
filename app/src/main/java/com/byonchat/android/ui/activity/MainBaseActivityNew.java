@@ -1014,15 +1014,15 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
                 if (category.equalsIgnoreCase("1")) {
                     Constants.map.put(i, null);
-                    itemMain.iconTest = R.drawable.ic_room_about;
+                    itemMain.iconTest = R.drawable.ic_001;
                 } else if (category.equalsIgnoreCase("2")) {
                     Constants.map.put(i, null);
-                    itemMain.iconTest = R.drawable.ic_room_photo;
+                    itemMain.iconTest = R.drawable.ic_029;
                 } else if (category.equalsIgnoreCase("3")) {
                     Constants.map.put(i, null);
-                    itemMain.iconTest = R.drawable.ic_room_video;
+                    itemMain.iconTest = R.drawable.ic_024;
                 } else if (category.equalsIgnoreCase("4")) {
-                    itemMain.iconTest = R.drawable.ic_room_task;
+                    itemMain.iconTest = R.drawable.ic_003;
                     if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);
@@ -1075,28 +1075,28 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
                     }
                 } else if (category.equalsIgnoreCase("5")) {
-                    itemMain.iconTest = R.drawable.ic_room_note;
+                    itemMain.iconTest = R.drawable.ic_028;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("14")) {
-                    itemMain.iconTest = R.drawable.ic_room_news;
+                    itemMain.iconTest = R.drawable.ic_040;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("6")) {
-                    itemMain.iconTest = R.drawable.ic_room_news;
+                    itemMain.iconTest = R.drawable.ic_040;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("7")) {
-                    itemMain.iconTest = R.drawable.ic_room_directory;
+                    itemMain.iconTest = R.drawable.ic_002;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("8")) {
-                    itemMain.iconTest = R.drawable.ic_streaming_video;
+                    itemMain.iconTest = R.drawable.ic_038;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("9")) {
-                    itemMain.iconTest = R.drawable.ic_room_radio;
+                    itemMain.iconTest = R.drawable.ic_045;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("10")) {
-                    itemMain.iconTest = R.drawable.ic_room_api;
+                    itemMain.iconTest = R.drawable.ic_037;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("11")) {
-                    itemMain.iconTest = R.drawable.logo_byon;
+                    itemMain.iconTest = R.drawable.ic_017;
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add("pos");
                     valSetOne.add(username);
@@ -1107,7 +1107,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                     Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("15")) {
-                    itemMain.iconTest = R.drawable.ic_room_video_local;
+                    itemMain.iconTest = R.drawable.ic_024;
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add("btube");
                     valSetOne.add(username);
@@ -1118,21 +1118,21 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                     Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("16")) {
-                    itemMain.iconTest = R.drawable.ic_room_catalog;
+                    itemMain.iconTest = R.drawable.ic_040;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("17")) {
-                    itemMain.iconTest = R.drawable.ic_room_name_card;
+                    itemMain.iconTest = R.drawable.ic_012;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("18")) {
-                    itemMain.iconTest = R.drawable.ic_room_name_card;
+                    itemMain.iconTest = R.drawable.ic_012;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("19")) {
                     loginIss = true;
-                    itemMain.iconTest = R.drawable.ic_room_catalog;
+                    itemMain.iconTest = R.drawable.ic_040;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("20")) {
                     loginIss = true;
-                    itemMain.iconTest = R.drawable.ic_room_task;
+                    itemMain.iconTest = R.drawable.ic_015;
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add(title);
                     valSetOne.add(username);
@@ -1142,7 +1142,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     valSetOne.add("fabSearch");
                     Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("21")) {
-                    itemMain.iconTest = R.drawable.ic_room_task;
+                    itemMain.iconTest = R.drawable.ic_015;
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add(title);
                     valSetOne.add(username);
@@ -1152,7 +1152,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     valSetOne.add("hide");
                     Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("22")) {
-                    itemMain.iconTest = R.drawable.ic_room_task;
+                    itemMain.iconTest = R.drawable.ic_015;
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add(title);
                     valSetOne.add(username);
@@ -1162,10 +1162,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     valSetOne.add("hide");
                     Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("23")) {
-                    itemMain.iconTest = R.drawable.ic_default_room;
+                    itemMain.iconTest = R.drawable.ic_008;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("24")) {
-                    itemMain.iconTest = R.drawable.ic_room_name_card;
+                    itemMain.iconTest = R.drawable.ic_015;
                     Constants.map.put(i, null);
                 }
 

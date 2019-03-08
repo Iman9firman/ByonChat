@@ -317,7 +317,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin50"
                 android:layout_marginRight="@dimen/margin50"
-                android:layout_marginBottom="-25dp"
+                android:layout_marginBottom="-45dp"
                 android:background="@null"
                 app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="@dimen/margin45"
@@ -330,7 +330,7 @@
                 <eightbitlab.com.blurview.BlurView
                     android:id="@+id/blurView"
                     android:layout_width="match_parent"
-                    android:layout_height="110dp"
+                    android:layout_height="130dp"
                     android:background="@null"
                     android:elevation="4dp"
                     app:blurOverlayColor="@color/ims_blur_background">

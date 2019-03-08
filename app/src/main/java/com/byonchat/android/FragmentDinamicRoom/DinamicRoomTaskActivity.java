@@ -112,6 +112,7 @@ import com.byonchat.android.list.IconItem;
 import com.byonchat.android.list.utilLoadImage.ImageLoaderLarge;
 import com.byonchat.android.location.ActivityDirection;
 import com.byonchat.android.model.AddChildFotoExModel;
+import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.ChatParty;
@@ -331,6 +332,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     Boolean call = false;
     boolean validateTime = false;
     String JcontentBawaanReject = "";
+
+    private ArrayList<Kunjungan> kunjunganList = new ArrayList<>();
+    private ArrayList<String> valuesKnjngnOne = new ArrayList<>();
+    private ArrayList<String> valuesKnjngnTwo = new ArrayList<>();
 
     JSONArray ar = new JSONArray();
 
@@ -6190,6 +6195,163 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
 
+                    } else if (type.equalsIgnoreCase("load_dropdown_k")){
+
+                        // TODO: 3/8/19 untuk pilihan dari api , blm bisa auto select saat back save 
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+                        textView.setLayoutParams(new TableRow.LayoutParams(0));
+
+                        TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
+
+                        String downloadForm = jsonArray.getJSONObject(i).getString("formula");
+                        valuesKnjngnOne.add("--Please Select--");
+                        valuesKnjngnOne.add("Repeat Order");
+                        valuesKnjngnOne.add("Referensi");
+
+                        MessengerDatabaseHelper messengerHelper = null;
+                        if (messengerHelper == null) {
+                            messengerHelper = MessengerDatabaseHelper.getInstance(context);
+                        }
+
+                        Contact contact = messengerHelper.getMyContact();
+
+                        String bcUser = contact.getJabberId();
+
+                        SearchableSpinner spinner = new SearchableSpinner(this);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+                        }
+
+                        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, valuesKnjngnOne);
+                        new getKnjngnJson(downloadForm,spinnerArrayAdapter).execute(bcUser);
+
+                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinner.setAdapter(spinnerArrayAdapter);
+                        params2.setMargins(30, 10, 30, 40);
+                        spinner.setLayoutParams(params2);
+
+                        SearchableSpinner spinner2 = new SearchableSpinner(this);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            spinner2.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+                        }
+                        spinner2.setLayoutParams(params2);
+                        spinner2.setVisibility(View.INVISIBLE);
+
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                        if (cursorCild.getCount() > 0) {
+                            int spinnerPosition = spinnerArrayAdapter.getPosition(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                            spinner.setSelection(spinnerPosition);
+                        } else {
+                            if (spinner.getSelectedItem() != null) {
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinner.getSelectedItem().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                db.insertRoomsDetail(orderModel);
+                            }
+
+                        }
+
+
+                        if ((!showButton)) {
+                            spinner.setEnabled(false);
+                        } else {
+                            final int finalI7 = i;
+                            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                                @Override
+                                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
+
+                                    if (myPosition > 2){
+                                        valuesKnjngnTwo = kunjunganList.get(myPosition-3).getDaleman();
+                                        ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, valuesKnjngnTwo);
+                                        spinnerArrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                        spinner2.setAdapter(spinnerArrayAdapter2);
+                                        spinnerArrayAdapter2.notifyDataSetChanged();
+                                        spinner2.setVisibility(View.VISIBLE);
+                                    } else {
+                                        spinner2.setVisibility(View.INVISIBLE);
+                                    }
+/*
+                                    HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
+                                    ArrayList<String> udah = new ArrayList<>();
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
+                                    if (cEdit.getCount() > 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                    } else {
+                                        if (String.valueOf(spinnerArray.get(myPosition)).length() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                            db.insertRoomsDetail(orderModel);
+                                        } else {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                        }
+                                    }
+*/
+                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
+                                    if (cEdit.getCount() > 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinnerArrayAdapter.getItem(myPosition), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                    } else {
+                                        if (spinnerArrayAdapter.getItem(myPosition).length() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinnerArrayAdapter.getItem(myPosition), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                            db.insertRoomsDetail(orderModel);
+                                        } else {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinnerArrayAdapter.getItem(myPosition), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                        }
+                                    }
+
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parentView) {
+                                }
+
+                            });
+                        }
+
+                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params1.setMargins(30, 10, 30, 0);
+
+                        LinearLayout.LayoutParams params12 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params12.setMargins(50, 10, 30, 0);
+
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add("");
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView, params1);
+
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(spinner, params1);
+
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(spinner2, params1);
+
+                        View view = new View(this);
+                        view.setVisibility(View.INVISIBLE);
+
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(view, params2);
+
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
                     } else if (type.equalsIgnoreCase("load_dropdown")) {
 
                         if (count == null) {
@@ -10907,6 +11069,96 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             }
         });
     }
+
+    class getKnjngnJson extends AsyncTask<String , Void , String> {
+
+        private String urlStr;
+        private ArrayAdapter<String> adapter;
+
+        ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
+
+        public getKnjngnJson(String url , ArrayAdapter<String> adapter){
+            this.urlStr = url;
+            this.adapter = adapter;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            kunjunganList.clear();
+            HashMap<String, String> data = new HashMap<>();
+            data.put("bc_user", strings[0]);
+
+            String result = profileSaveDescription.sendPostRequest(urlStr, data);
+            try {
+
+                JSONArray parentArr = new JSONArray(result);
+                for (int iv = 0 ; iv < parentArr.length(); iv++){
+                    JSONObject objParent = parentArr.getJSONObject(iv);
+                    Iterator<String> iter = objParent.keys();
+                    while (iter.hasNext()) {
+                        String key = iter.next();
+                        valuesKnjngnOne.add(key);
+                        try {
+                            ArrayList<String> temp = new ArrayList<>();
+                            temp.add("--Please Select--");
+                            JSONArray arrChild = objParent.getJSONArray(key);
+                            for(int an = 0 ; an<arrChild.length(); an++){
+                                String child = arrChild.getString(an);
+                                temp.add(child);
+                            }
+                            kunjunganList.add(new Kunjungan(key,temp));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            adapter.notifyDataSetChanged();
+            super.onPostExecute(result);
+        }
+    }
+
+    class Kunjungan {
+
+        String name;
+        ArrayList<String> daleman;
+
+        public Kunjungan(String name , ArrayList<String> daleman){
+            this.name = name;
+            this.daleman = daleman;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public ArrayList<String> getDaleman() {
+            return daleman;
+        }
+
+        public void setDaleman(ArrayList<String> daleman) {
+            this.daleman = daleman;
+        }
+    }
+
 
 
     private class getJSONeKtp extends AsyncTask<String, Void, String> {

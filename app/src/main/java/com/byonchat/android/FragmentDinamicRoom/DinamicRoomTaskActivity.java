@@ -2058,6 +2058,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         final ArrayList<String> spinnerArray = new ArrayList<String>();
 
+                        spinnerArray.add("--Please Select--");
                         HashMap<String, ArrayList<String>> hashMapss = new HashMap<>();
 
                         for (int ia = 0; ia < jsonArrays.length(); ia++) {
@@ -2107,39 +2108,62 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 @Override
                                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
 
-                                    HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
-                                    ArrayList<String> udah = new ArrayList<>();
+                                    if (!spinnerArray.get(myPosition).equalsIgnoreCase("--Please Select--")) {
+                                        HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
+                                        ArrayList<String> udah = new ArrayList<>();
 
-                                    for (int asik = 0; asik < spinnerArray.size(); asik++) {
-                                        String slip = spinnerArray.get(asik);
-                                        ArrayList<String> sss = hashMapL.get(slip);
-                                        if (slip.equalsIgnoreCase(spinnerArray.get(myPosition))) {
-                                            for (int ia = 0; ia < sss.size(); ia++) {
-                                                udah.add(sss.get(ia));
-                                                List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
-                                                if (value != null) {
-                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                        lolosReq.remove(sss.get(ia));
-                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            //false
-                                            for (int ia = 0; ia < sss.size(); ia++) {
-                                                List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
-                                                if (value != null) {
-                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                        if (!udah.contains(sss.get(ia))) {
-                                                            lolosReq.add(sss.get(ia));
-                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                        for (int asik = 1; asik < (spinnerArray.size()); asik++) {
+                                            String slip = spinnerArray.get(asik);
+                                            ArrayList<String> sss = hashMapL.get(slip);
+                                            if (slip.equalsIgnoreCase(spinnerArray.get(myPosition))) {
+                                                for (int ia = 0; ia < sss.size(); ia++) {
+                                                    udah.add(sss.get(ia));
+                                                    List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
+                                                    if (value != null) {
+                                                        for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                            lolosReq.remove(sss.get(ia));
+                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
                                                         }
                                                     }
                                                 }
-                                            }
+                                            } else {
+                                                //false
+                                                for (int ia = 0; ia < sss.size(); ia++) {
+                                                    List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
+                                                    if (value != null) {
+                                                        for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                            if (!udah.contains(sss.get(ia))) {
+                                                                lolosReq.add(sss.get(ia));
+                                                                linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                            }
+                                                        }
+                                                    }
+                                                }
 
+                                            }
                                         }
+
+                                    } else {
+
+                                        HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
+                                        Iterator iterator = hashMapL.entrySet().iterator();
+
+                                        while (iterator.hasNext()) {
+                                            Map.Entry me2 = (Map.Entry) iterator.next();
+                                            ArrayList<String> sss = (ArrayList<String>) me2.getValue();
+                                            for (String salam : sss) {
+                                                List value = (List) hashMap.get(Integer.parseInt(salam));
+                                                if (value != null) {
+                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                        lolosReq.remove(salam);
+                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                    }
+                                                }
+                                            }
+                                        }
+
                                     }
+
 
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
                                     if (cEdit.getCount() > 0) {
@@ -2154,6 +2178,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                         }
                                     }
+
 
                                 }
 

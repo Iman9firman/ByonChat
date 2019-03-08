@@ -98,7 +98,7 @@ public class LoginISS extends AppCompatActivity {
                 "            \"ATASAN1_NIK\": \"N9992\",\n" +
                 "            \"ATASAN1_PHONE\": \"6281808884801\",\n" +
                 "            \"DIVISION_NAME\": \"Key Account Segment 1\",\n" +
-                "            \"ATASAN2_PHONE\": \"6281319906930\",\n" +
+                "            \"ATASAN2_PHONE\": \"6281513702471\",\n" +
                 "            \"EMPLOYEE_EMAIL\": \"agus@iss.co.id\",\n" +
                 "            \"EMPLOYEE_PHONE\": \"6281808884801\",\n" +
                 "            \"ATASAN2_EMAIL\": \"rusbandi@iss.co.id\",\n" +

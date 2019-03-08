@@ -209,10 +209,12 @@
                 android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="-100dp"
+                android:fadingEdgeLength="30dp"
                 android:paddingLeft="18dp"
                 android:paddingTop="24dp"
                 android:paddingRight="18dp"
                 android:paddingBottom="24dp"
+                android:requiresFadingEdge="vertical"
                 android:scrollbars="none"
                 android:visibility="invisible"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />

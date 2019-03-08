@@ -23,13 +23,14 @@
             app:cardElevation="@dimen/margin10">
 
             <RelativeLayout
+                android:id="@+id/frame_card"
                 android:layout_width="315dp"
-                android:layout_height="180dp">
+                android:layout_height="wrap_content">
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/constraintLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_margin="@dimen/margin10">
 

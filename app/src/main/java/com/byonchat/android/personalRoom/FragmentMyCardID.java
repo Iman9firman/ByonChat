@@ -10,6 +10,7 @@ import android.content.pm.ShortcutManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
@@ -23,9 +24,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -104,7 +107,7 @@ public class FragmentMyCardID extends Fragment {
     TextView textOutlet;
     TextView textAddress;
     TextView textWarn;
-
+    RelativeLayout vFrameCard;
 
     public FragmentMyCardID(Activity ctx) {
         mContext = ctx;
@@ -173,6 +176,15 @@ public class FragmentMyCardID extends Fragment {
         textOutlet = view.findViewById(R.id.tv_outlet_ncl);
         textAddress = view.findViewById(R.id.tv_alamat_ncl);
         textWarn = view.findViewById(R.id.tv_warn_ncl);
+        vFrameCard = view.findViewById(R.id.frame_card);
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width - 50, ViewGroup.LayoutParams.WRAP_CONTENT);
+        vFrameCard.setLayoutParams(params);
 
         ProgressDialog rdialog = new ProgressDialog(mContext);
         rdialog.setMessage("Loading your id card...");
@@ -206,23 +218,23 @@ public class FragmentMyCardID extends Fragment {
                                         try {
                                             jsonOfficer = new JSONObject(officer);
 
-                                            textName.setText(Html.fromHtml("<b>" + jsonOfficer.getString("jabatan") + "</b><br>" + jsonOfficer.getString("name")));
+                                            textName.setText(Html.fromHtml("<b>" + jsonOfficer.getString("jabatan") + "</b><br><br>" + jsonOfficer.getString("name")));
                                             textPhone.setText("Hp. 0" + jsonOfficer.getString("bc_user").substring(2, jsonOfficer.getString("bc_user").length()));
 //                                    textOutlet.setText(jsonOfficer.getString("lokasi") +"\n");
                                             if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PONDOK INDAH")) {
                                                 textOutlet.setText(jsonOfficer.getString("lokasi") + "\n" + "PT. Istana Kebayoran Raya Motor");
-                                                textAddress.setText("Jalan Sultan Iskandar Muda No.kav 8, RT.1/RW.5\n" + "Telp. Showroom : (021) 7223366,\n" + "Bengkel : (021) 7223377,\n" + "Fax : (021) 7223747");
+                                                textAddress.setText("Jalan Sultan Iskandar Muda No.kav 8, RT.1/RW.5\n" + "Telp. Showroom : (021) 7223366\n" + "Bengkel : (021) 7223377\n" + "Fax : (021) 7223747");
                                                 Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
                                                 textWarn.setText("Honda Pondok Indah tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
                                             } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA FATMAWATI")) {
                                                 textOutlet.setText(jsonOfficer.getString("lokasi") + "\n" + "PT. Istana Kebayoran Raya Motor");
                                                 Picasso.with(mContext).load("https://i0.wp.com/www.honda-ikb.com/baru/wp-content/uploads/elementor/thumbs/Page-BgTexture-nqj4cccw6nbm654ntwowspt9pau9kujusoc9pb241s.jpg?zoom=2&w=1170").into(imageLogo2);
-                                                textAddress.setText("Jl. RS. Fatmawati No. 21 Jakarta Selatan, 12410\n" + "Telp. Showroom : (021) 7656456,\n" + "Bengkel : (021) 7656437,\n" + "Fax : (021) 7502678");
+                                                textAddress.setText("Jl. RS. Fatmawati No. 21 Jakarta Selatan, 12410\n" + "Telp. Showroom : (021) 7656456\n" + "Bengkel : (021) 7656437\n" + "Fax : (021) 7502678");
                                                 textWarn.setText("Honda Fatmawati tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
                                             } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PRADANA SAWANGAN")) {
                                                 textOutlet.setText(jsonOfficer.getString("lokasi") + "\n" + "PT. Ambara Karya Pradana");
                                                 imageLogo2.setVisibility(View.GONE);
-                                                textAddress.setText("Jl.Raya Cinangka No.9 Serua Bojong Sari\n" + "Depok-Jawa Barat 16517\n" + "Telp. (021) 3049 8889, (021) 3049 9990,\n" + "(021) 3042 8889");
+                                                textAddress.setText(Html.fromHtml("Jl.Raya Cinangka No.9 Serua Bojong Sari<br>" + "Depok-Jawa Barat 16517<br>" + "Telp. (021) 3049 8889<br> <font color='#FFFFFF'>Telp.</font> (021) 3049 9990<br>" + "Fax : (021) 3042 8889"));
                                                 textWarn.setText("Honda Pradana Sawangan tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
                                             }
 
@@ -259,8 +271,8 @@ public class FragmentMyCardID extends Fragment {
         return view;
     }
 
-    private void shareCardID(String name){
-        Log.w("si jreng lewwat","iya[ps");
+    private void shareCardID(String name) {
+        Log.w("si jreng lewwat", "iya[ps");
         final String[] path_file = new String[1];
         // TODO: 27/02/19 bisa download dan share  & UBAH JADI IMAGEVIEW
         try {
@@ -272,20 +284,20 @@ public class FragmentMyCardID extends Fragment {
             doc.setOrientation(com.hendrix.pdfmyxml.PdfDocument.A4_MODE.LANDSCAPE);
             doc.setProgressTitle(R.string.crop__saving);
             doc.setProgressMessage(R.string.crop__wait);
-            doc.setFileName("idcard_" + name +"_honda");
-            File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ByonChatDoc" );
+            doc.setFileName("idcard_" + name + "_honda");
+            File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ByonChatDoc");
             doc.setSaveDirectory(pdf);
             doc.setInflateOnMainThread(false);
             doc.setListener(new com.hendrix.pdfmyxml.PdfDocument.Callback() {
                 @Override
                 public void onComplete(File file) {
                     path_file[0] = file.getAbsolutePath();
-                    Log.w(TAG, "onComplete: "+file.getAbsolutePath());
+                    Log.w(TAG, "onComplete: " + file.getAbsolutePath());
                 }
 
                 @Override
                 public void onError(Exception e) {
-                    Log.w(TAG, "onError: "+e.getLocalizedMessage());
+                    Log.w(TAG, "onError: " + e.getLocalizedMessage());
                 }
             });
 
@@ -293,7 +305,7 @@ public class FragmentMyCardID extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getContext(),"Err : "+e,Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Err : " + e, Toast.LENGTH_LONG).show();
         }
 
         big_share.setOnClickListener(new View.OnClickListener() {
@@ -313,17 +325,17 @@ public class FragmentMyCardID extends Fragment {
         merge_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addFile( path_file[0],"idcard_" + name +"_honda" );
+                addFile(path_file[0], "idcard_" + name + "_honda");
             }
         });
 
         card_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.w("Jreng jreng hha",path_file[0]);
+                Log.w("Jreng jreng hha", path_file[0]);
                 Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
                 intentd.putExtra("path", path_file[0]);
-                intentd.putExtra("nama_file", "idcard_" + name +"_honda");
+                intentd.putExtra("nama_file", "idcard_" + name + "_honda");
                 mContext.startActivity(intentd);
             }
         });

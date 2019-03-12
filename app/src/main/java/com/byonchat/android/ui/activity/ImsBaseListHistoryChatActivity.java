@@ -648,6 +648,8 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
                 cal.get(Calendar.DATE), 0, 0, 0);
         if (cursor.getCount() > 0) {
             iconItemList.clear();
+        } else {
+            iconItemList = new ArrayList<>();
         }
         while (cursor.moveToNext()) {
             String jabberId = cursor.getString(indexJabberId);

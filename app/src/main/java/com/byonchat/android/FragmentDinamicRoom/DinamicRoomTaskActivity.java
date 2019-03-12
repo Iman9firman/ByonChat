@@ -3814,15 +3814,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(String.valueOf(i));
 
 
-                        if (JcontentBawaan.has(name)) {
-                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
-                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
-                                if (values.has("value")) {
-                                    et[count].setText(values.getString("value"));
-                                }
-                            }
-                        }
-
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
 
@@ -3833,9 +3824,21 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                db.insertRoomsDetail(orderModel);
+
                             }
+
+                            if (JcontentBawaan.has(name)) {
+                                if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                    JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                    if (values.has("value")) {
+                                        et[count].setText(values.getString("value"));
+                                    }
+                                }
+                            }
+
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, et[count].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                            db.insertRoomsDetail(orderModel);
+
                         }
 
                         if ((!showButton)) {
@@ -4135,14 +4138,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         et[count].setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
 
-                        if (JcontentBawaan.has(name)) {
-                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
-                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
-                                if (values.has("value")) {
-                                    et[count].setText(values.getString("value"));
-                                }
-                            }
-                        }
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
@@ -4150,9 +4145,25 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                db.insertRoomsDetail(orderModel);
+
                             }
+
+                            if (JcontentBawaan.has(name)) {
+                                if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                    JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                    if (values.has("value")) {
+                                        et[count].setText(values.getString("value"));
+                                    }
+                                }
+                            }
+
+                            if (et[count].getText().toString().length() > 0) {
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, et[count].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                db.insertRoomsDetail(orderModel);
+
+                            }
+
+
                         }
 
                         if ((!showButton)) {
@@ -4398,23 +4409,28 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt("15"))});
 
-                        if (JcontentBawaan.has(name)) {
-                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
-                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
-                                if (values.has("value")) {
-                                    et[count].setText(values.getString("value"));
-                                }
-                            }
-                        }
-
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+
+                            }
+
+                            if (JcontentBawaan.has(name)) {
+                                if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                    JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                    if (values.has("value")) {
+                                        et[count].setText(values.getString("value"));
+                                    }
+                                }
+                            }
+
+                            if (et[count].getText().toString().length() > 0) {
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, et[count].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
+
                             }
                         }
 
@@ -4498,14 +4514,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
 
-                        if (JcontentBawaan.has(name)) {
-                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
-                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
-                                if (values.has("value")) {
-                                    et[count].setText(values.getString("value"));
-                                }
-                            }
-                        }
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
@@ -4513,8 +4521,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                db.insertRoomsDetail(orderModel);
                             } else {
                                 Cursor cursorValue = db.getSingleRoomDetailFormWithFlag(idDetail, username, idTab, "value");
                                 if (cursorValue.getCount() > 0) {
@@ -4541,9 +4547,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     }
 
                                     et[count].setText(valUEParent);
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, valUEParent, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                    db.insertRoomsDetail(orderModel);
                                 }
+                            }
+
+                            if (JcontentBawaan.has(name)) {
+                                if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                    JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                    if (values.has("value")) {
+                                        et[count].setText(values.getString("value"));
+                                    }
+                                }
+                            }
+
+                            if (et[count].getText().toString().length() > 0) {
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, et[count].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                db.insertRoomsDetail(orderModel);
+
                             }
                         }
 
@@ -4631,14 +4650,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
 
-                        if (JcontentBawaan.has(name)) {
-                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
-                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
-                                if (values.has("value")) {
-                                    et[count].setText(values.getString("value"));
-                                }
-                            }
-                        }
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
@@ -4646,8 +4657,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 et[count].setText(value);
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, value, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+
+                            }
+
+                            if (JcontentBawaan.has(name)) {
+                                if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                    JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                    if (values.has("value")) {
+                                        et[count].setText(values.getString("value"));
+                                    }
+                                }
+                            }
+
+                            if (et[count].getText().toString().length() > 0) {
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, et[count].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
+
                             }
                         }
 
@@ -5329,7 +5354,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
                                 JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                 if (values.has("value")) {
-                                    Log.w("kadu", values.getString("value"));
                                     Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
                                 }
                             }
@@ -7489,16 +7513,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         final EditText et = (EditText) spinerTitle.findViewById(R.id.editTextOther);
                         et.setVisibility(View.GONE);
 
-                        if (JcontentBawaan.has(name)) {
-                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
-                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
-                                if (values.has("value")) {
-                                    int spinnerPosition = spinnerArrayAdapter.getPosition(values.getString("value"));
-                                    spinner.setSelection(spinnerPosition);
-                                }
-                            }
-                        }
-
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
@@ -7509,6 +7523,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                             spinner.setSelection(spinnerPosition);
                         } else {
+                            if (JcontentBawaan.has(name)) {
+                                if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                    JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                    if (values.has("value")) {
+                                        int spinnerPosition = spinnerArrayAdapter.getPosition(values.getString("value"));
+                                        spinner.setSelection(spinnerPosition);
+                                    }
+                                }
+                            }
+
                             if (spinner.getSelectedItem() != null) {
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinner.getSelectedItem().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
@@ -7958,8 +7982,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
                                     JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                     if (values.has("value")) {
-                                        //String isi = values.getString("value");
-                                        String isi = "{\"a\":\"33791\",\"b\":\"Bangka Belitung\",\"c\":\"Kabupaten Bangka Selatan\",\"d\":\"Kepulauan Pongok\",\"e\":\"Celagen\"}";
+                                        String isi = values.getString("value");
 
                                         kodePos.setText(jsonResultType(isi, "a"));
                                         Log.w("gambus1", "Slam");
@@ -8674,15 +8697,37 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         final ArrayList<String> spinnerArrayFlag = new ArrayList<String>();
                         Boolean manul = true;
 
+                        String hasilDariDB = "";
+                        String hasilDariEditValue = "";
+                        if (JcontentBawaan.has(name)) {
+                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                if (values.has("value")) {
+                                    hasilDariDB = values.getString("value");
+                                }
+                            }
+                        }
+
+                        Cursor cursorC = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                        if (cursorC.getCount() > 0) {
+                            hasilDariDB = cursorC.getString(cursorC.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                        }
+
+                        if (hasilDariDB.split(" = ").length == 2) {
+                            hasilDariEditValue = hasilDariDB.split(" = ")[1];
+                            hasilDariDB = hasilDariDB.split(" = ")[0];
+
+                        }
 
                         for (int iaa = 0; iaa < jsonArrayCeks.length(); iaa++) {
                             String l = jsonArrayCeks.getJSONObject(iaa).getString("label_radio").toString();
                             String cek = jsonArrayCeks.getJSONObject(iaa).getString("is_checked").toString();
 
-
+                            String flagDrop = "";
                             if (jsonArrayCeks.getJSONObject(iaa).has("flag")) {
-                                String flagDrop = jsonArrayCeks.getJSONObject(iaa).getString("flag").toString();
+                                flagDrop = jsonArrayCeks.getJSONObject(iaa).getString("flag").toString();
                                 spinnerArrayFlag.add(iaa, flagDrop);
+
                             }
 
 
@@ -8690,57 +8735,30 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             rb[iaa].setText(l);
                             rb[iaa].setId(iaa);
 
+                            if (!cek.equalsIgnoreCase("null")) {
+                                rb[iaa].setChecked(true);
+                            }
+
+
+                            if (hasilDariDB.equalsIgnoreCase(l)) {
+                                rb[iaa].setChecked(true);
+                            }
+
+
                             if ((!showButton)) {
                                 rb[iaa].setEnabled(false);
                             }
 
-                            if (JcontentBawaan.has(name)) {
-                                if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
-                                    JSONObject values = new JSONObject(JcontentBawaan.getString(name));
-                                    if (values.has("value")) {
-                                        if (rb[iaa].getText().toString().equalsIgnoreCase(values.getString("value"))) {
-                                            rb[iaa].setChecked(true);
-                                        }
-                                    }
-                                }
-                            }
-
-
-                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
-                            if (cursorCild.getCount() > 0) {
-                                if (rb[iaa].getText().toString().equalsIgnoreCase(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)))) {
-                                    rb[iaa].setChecked(true);
-                                    manul = false;
-                                    et.setVisibility(View.GONE);
-                                    et.setText("");
-
-                                } else {
-                                    if (jsonArrayCeks.getJSONObject(iaa).has("flag")) {
-                                        String flagDrop = jsonArrayCeks.getJSONObject(iaa).getString("flag").toString();
-                                        if (manul && flagDrop.equalsIgnoreCase("manual_input")) {
-                                            rb[jsonArrayCeks.length() - 1].setChecked(true);
-                                            et.setVisibility(View.VISIBLE);
-                                            et.setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                        }
-                                    }
-                                }
-
+                            if (rb[iaa].isChecked() && flagDrop.equalsIgnoreCase("manual_input")) {
+                                et.setText(hasilDariEditValue);
+                                et.setVisibility(View.VISIBLE);
                             } else {
-                                if (cek.equalsIgnoreCase("1")) {
-                                    rb[iaa].setChecked(true);
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rb[iaa].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                                    db.insertRoomsDetail(orderModel);
-                                }
-
+                                et.setVisibility(View.GONE);
+                                et.setText("");
                             }
-
 
                             rg[count].addView(rb[iaa]);
                         }
-
-
-                        //et.setVisibility(View.GONE);
-
 
                         if ((!showButton)) {
                             rg[count].setEnabled(false);
@@ -8753,9 +8771,17 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     RadioButton rbs = (RadioButton) group.findViewById(checkedId);
                                     if (null != rbs && checkedId > -1) {
+                                        if (spinnerArrayFlag.get(checkedId).equalsIgnoreCase("manual_input")) {
 
-                                        if (spinnerArrayFlag.size() == rb.length && spinnerArrayFlag.get(checkedId).equalsIgnoreCase("manual_input")) {
-                                            Log.w("kabal", "baru2");
+                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI23)));
+                                            if (cEdit.getCount() > 0) {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rbs.getText().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                            } else {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rbs.getText().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                db.insertRoomsDetail(orderModel);
+                                            }
+
                                             et.setVisibility(View.VISIBLE);
                                             et.addTextChangedListener(new TextWatcher() {
                                                 @Override
@@ -8772,21 +8798,20 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 public void afterTextChanged(Editable s) {
                                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI23)));
                                                     if (cEdit.getCount() > 0) {
-                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rbs.getText().toString() + " = " + String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
                                                         db.updateDetailRoomWithFlagContent(orderModel);
                                                     } else {
                                                         if (String.valueOf(s).length() > 0) {
-                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rbs.getText().toString() + " = " + String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
                                                             db.insertRoomsDetail(orderModel);
                                                         } else {
-                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
+                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rbs.getText().toString() + " = " + String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
                                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                                         }
                                                     }
                                                 }
                                             });
                                         } else {
-                                            Log.w("kabal", "baru3");
                                             et.setVisibility(View.GONE);
                                             et.setText("");
 

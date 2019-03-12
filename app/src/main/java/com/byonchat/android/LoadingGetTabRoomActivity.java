@@ -1,14 +1,25 @@
 package com.byonchat.android;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
@@ -17,6 +28,7 @@ import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.Validations;
+import com.googlecode.mp4parser.srt.SrtParser;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,6 +44,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,7 +52,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LoadingGetTabRoomActivity extends AppCompatActivity {
 
@@ -51,12 +66,20 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
+    public static Intent generateISS(Context context, String result, String bc_user) {
+        Intent intent = new Intent(context, LoadingGetTabRoomActivity.class);
+        intent.putExtra("newday", result);
+        intent.putExtra("bcUser", bc_user);
+        intent.putExtra("iss","ya");
+        return intent;
+    }
 
     String finalPath = "/bc_voucher_client/webservice/get_tab_rooms.php";
     String linkPath = "https://" + MessengerConnectionService.HTTP_SERVER;
     String GETTAB = linkPath + finalPath;
     BotListDB botListDB;
     String targetUrl;
+    String bc_user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,18 +89,98 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
             botListDB = BotListDB.getInstance(this);
         }
 
-        String room_name = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
-        targetUrl = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+        String iss = getIntent().getStringExtra("iss");
+        if(iss == null) {
+            String room_name = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
+            targetUrl = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
 
-        if (targetUrl != null) {
-            GETTAB = targetUrl + finalPath;
-            Log.w("papa1", targetUrl);
-        } else {
-            targetUrl = linkPath;
-            Log.w("papa2", targetUrl);
+            if (targetUrl != null) {
+                GETTAB = targetUrl + finalPath;
+                Log.w("papa1", targetUrl);
+            } else {
+                targetUrl = linkPath;
+                Log.w("papa2", targetUrl);
+            }
+
+            new Refresh().execute(GETTAB, room_name);
+        }else{
+            targetUrl = "https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php";
+            String newday = getIntent().getStringExtra("newday");
+            extractResult(newday);
+            bc_user = getIntent().getStringExtra("bcUser");
         }
+    }
 
-        new Refresh().execute(GETTAB, room_name);
+    private void extractResult(String result){
+        try {
+            JSONObject jsonRootObject = new JSONObject(result);
+            String username = jsonRootObject.getString("username_room");
+            String content = jsonRootObject.getString("tab_room");
+            String realname = jsonRootObject.getString("nama_display");
+            String icon = jsonRootObject.getString("icon"); // byonchat
+            String backdrop = jsonRootObject.getString("backdrop")
+                    .equalsIgnoreCase("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/") ? ""
+                    : jsonRootObject.getString("backdrop"); //null default kita
+            String color = jsonRootObject.getString("color")
+                    .equalsIgnoreCase("null") ? "FFFFFF"
+                    : jsonRootObject.getString("color");  //null putih
+            String lastUpdate = jsonRootObject.getString("last_update");
+            String firstTab = jsonRootObject.getString("current_tab");
+            String textColor = jsonRootObject.getString("color_text")
+                    .equalsIgnoreCase("null") ? "000000"
+                    : jsonRootObject.getString("color_text"); //null hitam
+            String description = jsonRootObject.getString("description");
+            String officer = jsonRootObject.getString("officer");
+            String protect = "0";
+
+            Log.w("skidrow", color + " -- " + icon + " -- " + textColor + " -- " + backdrop);
+            if (jsonRootObject.has("password_protected")) {
+                protect = jsonRootObject.getString("password_protected");
+            }
+
+            //ini untuk delete
+            botListDB.deleteRoomsbyTAB(username);
+            String lu = "";
+            Cursor cursor = botListDB.getSingleRoom(username);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Calendar cal = Calendar.getInstance();
+            String time_str = dateFormat.format(cal.getTime());
+            Log.w("Welsnm donwm -0",username+", "+ realname+", "+ content+", "+ backdrop+", "+ lastUpdate+", "+ icon+", "+ firstTab+", "+ time_str);
+            if (cursor.getCount() > 0) {
+                lu = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_LASTUPDATE));
+                if (!lu.equalsIgnoreCase(lastUpdate)) {
+                    botListDB.deleteRoomsbyTAB(username);
+                    Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, targetUrl, protect), backdrop, lastUpdate, icon, firstTab, time_str);
+                    botListDB.insertRooms(rooms);
+                }
+            } else {
+                Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, targetUrl, protect), backdrop, lastUpdate, icon, firstTab, time_str);
+                botListDB.insertRooms(rooms);
+            }
+            cursor.close();
+
+            Log.w("hasil nyampemana 0", result);
+            Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
+
+            new Validations().getInstance(getApplicationContext()).removeById(26);
+            new Validations().getInstance(getApplicationContext()).removeById(25);
+
+            Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
+            intent.putExtra(ConversationActivity.KEY_JABBER_ID, bc_user);
+            intent.putExtra("success", "oke");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(intent);
+            finish();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
+            intent.putExtra(ConversationActivity.KEY_JABBER_ID, bc_user);
+            intent.putExtra("success", "oke");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getApplicationContext().startActivity(intent);
+            finish();
+        }
     }
 
     private class Refresh extends AsyncTask<String, String, String> {

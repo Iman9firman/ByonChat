@@ -192,16 +192,16 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                     if (jsonArrayTiga.length() > 0) {
 
                         for (int j = 0; j < jsonArrayTiga.length(); j++) {
-                            JSONObject jOb = jsonArrayTiga.getJSONObject(j);
-                            String id = jOb.getString("id_request_detail");
-                            String name = jOb.getString("nama");
-                            String id_reliever = jOb.getString("id_reliever");
-                            String distance = jOb.getString("jarak");
-                            String total = jOb.getString("total_kerja");
-                            String status = jOb.getString("status");
-                            String contact = jOb.getString("hp");
-                            String location = jOb.getString("lat") + ":" + jOb.getString("long");
-                            String rating = jOb.getString("rating");
+                            JSONObject jOb      = jsonArrayTiga.getJSONObject(j);
+                            String id           = jOb.getString("id_request_detail");
+                            String name         = jOb.getString("nama");
+                            String id_reliever  = jOb.getString("id_reliever");
+                            String distance     = jOb.getString("jarak");
+                            String total        = jOb.getString("total_kerja");
+                            String status       = jOb.getString("status");
+                            String contact      = jOb.getString("hp");
+                            String location     = jOb.getString("lat") + ":" + jOb.getString("long");
+                            String rating       = jOb.getString("rating");
 
                             int titik = distance.length() - distance.indexOf(".");
                             if (titik > 4) {
@@ -226,14 +226,17 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                             vList.addView(new ChildRatingRecyclerView(RequesterBaseRatingActivity.this, j, data, new ChildRatingRecyclerView.OnCheckedChangeListener() {
 
                                 @Override
-                                public void onItemClick(int position, MkgServices data, Boolean check) {
+                                public void onItemClick(int position, MkgServices datas, Boolean check) {
                                     List<MkgServices> selected = new ArrayList<>();
                                     int size = items.size();
                                     for (int is = size - 1; is >= 0; is--) {
-                                        if (items.get(is).id.equalsIgnoreCase(data.id)) {
-                                            items.get(is).isChecked = !data.isChecked();
+                                        if (items.get(is).id.equalsIgnoreCase(datas.id)) {
+                                            items.get(is).isChecked = !datas.isChecked();
+                                            data.isChecked = check;
                                         }
                                         selected.add(items.get(is));
+                                    }
+                                    for(int oio = 0; oio < selected.size(); oio++) {
                                     }
                                     unSelectedItems = getSelectedList(selected);
                                 }

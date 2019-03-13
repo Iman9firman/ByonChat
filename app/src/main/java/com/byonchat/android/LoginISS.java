@@ -24,6 +24,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
+import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.provider.BotListDB;
+import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.Validations;
 import com.google.android.gms.vision.L;
@@ -40,6 +44,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +55,7 @@ public class LoginISS extends AppCompatActivity {
     String sukses;
     UserDB dbHelper;
     SQLiteDatabase db;
+    private MessengerDatabaseHelper dbhelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +71,7 @@ public class LoginISS extends AppCompatActivity {
 
         username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
         dbHelper = new UserDB(this);
+        dbhelper = MessengerDatabaseHelper.getInstance(this);
         db = dbHelper.getWritableDatabase();
         db.delete("user", null, null);
         Button erwgv = (Button) findViewById(R.id.loginBtn);
@@ -73,61 +81,80 @@ public class LoginISS extends AppCompatActivity {
 
         accID.setText("issid");
         accID.setVisibility(View.INVISIBLE);
-        userID.setHint("Username");
-        passID.setHint("Password");
-
-        String testHardcode = "{\n" +
-                "    \"MESSAGE\": \"LOGIN BERHASIL\",\n" +
-                "    \"URITOKENS\": \"aXNzaWQ6MTcwMTc5MzoxMTkuMTAuMTc4LjU0OkpHWkJjREZBUzJWWklWOTBiMHN6Ymc9PToyMDE5MDMwNjE1MDE0OTowLDIsMzAsMA==\",\n" +
-                "    \"STATUS\": true,\n" +
-                "    \"RESULT\": [\n" +
-                "        {\n" +
-                "            \"ATASAN1_JOBTITLE\": \"Area Head RS Ciputra, Eka Hospital, RS Pelni and Paramount\",\n" +
-                "            \"USER_NAME\": \"N9992\",\n" +
-                "            \"ATASAN1_EMAIL\": \"agus@iss.co.id\",\n" +
-                "            \"EMPLOYEE_PHOTOS\": \"https://sf.dataon.com/sf6/index.cfm?sfid=sys.sec.getimage&img=52EEAD80B7FDB3B31AFC8737ABFF9A94E1638C7EDB7F3EC97788B9BE19CDD2D8C952632F7EB06FBFAF76B1B154B1AE65B4ABF9C2CEDB468D93568FFECD1D41C4BF9D496BB068AEB2B4B070D2A9A67C3FA8FF01ED1BBAF19FA80B769240A04010EFC30CF2658FA3369EBE9D3799B0F290AC6DABBB&fname=201806/DO17590517_13401.JPG\",\n" +
-                "            \"EMPLOYEE_NIK\": \"N9992\",\n" +
-                "            \"ATASAN2_NIK\": \"0054065\",\n" +
-                "            \"LIST_REQUESTER_ROLE\": \"N101468,N100012\",\n" +
-                "            \"EMPLOYEE_NAME\": \"AGUSTINUS IRWANTO\",\n" +
-                "            \"ATASAN1_NAMA\": \"AGUSTINUS IRWANTO\",\n" +
-                "            \"DIVISION_CODE\": \"19KAS1\",\n" +
-                "            \"EMPLOYEE_JOBTITLE\": \"SERVICE SUPERVISOR JAKARTA EKA HOSPITAL CLN [ISS-00625F0001]\",\n" +
-                "            \"LIST_APPROVER_ROLE2\": \"\",\n" +
-                "            \"DEPARTEMENT_CODE\": \"19KAS0107\",\n" +
-                "            \"ATASAN1_NIK\": \"N9992\",\n" +
-                "            \"ATASAN1_PHONE\": \"6281808884801\",\n" +
-                "            \"DIVISION_NAME\": \"Key Account Segment 1\",\n" +
-                "            \"ATASAN2_PHONE\": \"6281513702471\",\n" +
-                "            \"EMPLOYEE_EMAIL\": \"agus@iss.co.id\",\n" +
-                "            \"EMPLOYEE_PHONE\": \"6281808884801\",\n" +
-                "            \"ATASAN2_EMAIL\": \"rusbandi@iss.co.id\",\n" +
-                "            \"ATASAN2_JOBTITLE\": \"Area Head RS Ciputra, Eka Hospital\",\n" +
-                "            \"ATASAN1_USER_NAME\": \"N9992\",\n" +
-                "            \"ATASAN2_NAMA\": \"RUSBANDI\",\n" +
-                "            \"EMPLOYEE_MULTIPLECOST\": \"ISS-00625F0001-EKA HOSPITAL CLN [ISS-00625F0001]\",\n" +
-                "            \"MYROLE\": \"\",\n" +
-                "            \"DEPARTEMENT_NAME\": \"Key Segment Healthcare\",\n" +
-                "            \"ATASAN2_USER_NAME\": \"0054065\",\n" +
-                "            \"LIST_APPROVER_ROLE1\": \"\"\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}";
-
         erwgv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                goVerif(userID.getText().toString(), passID.getText().toString(), accID.getText().toString());
-                parseJSON(testHardcode);
-                pd = new ProgressDialog(LoginISS.this);
-                pd.setMessage("Please Wait");
-                pd.show();
+                if(userID.getText().toString().equalsIgnoreCase("")){
+                    Toast.makeText(getApplicationContext(), "Please enter your username!",Toast.LENGTH_SHORT).show();
+                    userID.setError("Can't Empty");
+                }else if(passID.getText().toString().equalsIgnoreCase("")){
+                    Toast.makeText(getApplicationContext(), "Please enter your password!",Toast.LENGTH_SHORT).show();
+                    passID.setError("Can't Empty");
+                }else {
+                    pd = new ProgressDialog(LoginISS.this);
+                    pd.setMessage("Please Wait");
+                    pd.show();
+                    Map<String, String> params = new HashMap<>();
+                    params.put("username", userID.getText().toString());
+                    params.put("password", passID.getText().toString());
+                    params.put("bc_user", dbhelper.getMyContact().getJabberId());
+
+                    LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
+                }
             }
         });
     }
 
+    private void LoginThis(String Url, Map<String, String> params2, Boolean hide) {
 
-    public void goVerif(String user, String pass, String acc) {
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                response -> {
+                    if (hide) {
+                        Log.w("sukses harusee", response);
+                        try {
+                            JSONObject jsonRootObject = new JSONObject(response);
+                            parseJSON(response, jsonRootObject.getString("json_iss"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                },
+                error -> {
+                    Log.w("Erroe harusee",error);
+                    pd.dismiss();
+                }
+        ) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                return params2;
+            }
+        };
+        sr.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+                Log.e("HttpClient", "error: " + error.toString());
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        queue.add(sr);
+    }
+
+    /*public void goVerif(String user, String pass, String acc) {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest sr = new StringRequest(Request.Method.GET, "https://issapi.dataon.com/sfapi/index.cfm?endpoint=/issid_SF_EO_cekuser/" + user + "/BYONCHAT",
@@ -143,9 +170,9 @@ public class LoginISS extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                       /* pd.dismiss();
+                       *//* pd.dismiss();
                         Log.e("HttpClient", "error: " + error.toString());
-                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();*/
+                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();*//*
                     }
                 }) {
 
@@ -177,9 +204,10 @@ public class LoginISS extends AppCompatActivity {
             }
         });
         queue.add(sr);
-    }
+    }*/
 
-    private void parseJSON(String result) {
+    private void parseJSON(String allres, String result) {
+        Log.w("Res LOgs harusee",result);
         String[] dataLOG = new String[0];
         try {
             JSONObject start = new JSONObject(result);
@@ -230,11 +258,14 @@ public class LoginISS extends AppCompatActivity {
             if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
                 new Validations().getInstance(getApplicationContext()).setTimebyId(26);
 //                Toast.makeText(LoginISS.this, "Atasan 1 : "+ATASAN_1_NAMA+", ATASAN 2 : "+ATASAN_2_NAMA+", Requester : "+EMPLOYEE_NAME, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
+                /*Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
                 intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                 intent.putExtra("success", "oke");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getApplicationContext().startActivity(intent);
+                getApplicationContext().startActivity(intent);*/
+                Intent ii = LoadingGetTabRoomActivity.generateISS(getApplicationContext(),allres,username);
+                startActivity(ii);
+                pd.dismiss();
                 finish();
             } else {
                 Toast.makeText(LoginISS.this, "Username dan password anda salah", Toast.LENGTH_LONG).show();

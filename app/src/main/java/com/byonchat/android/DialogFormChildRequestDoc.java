@@ -215,20 +215,19 @@ public class DialogFormChildRequestDoc extends DialogFragment {
                 datas.put(approver2);
             }
 
-               /* JSONObject approver = new JSONObject();
-                approver.put("bc_user_approval","6281588888892");
-                approver.put("nama","Iman");
+                /*JSONObject approver = new JSONObject();
+                approver.put("bc_user_approval","6287771783888");
+                approver.put("nama","AGUSTINUS IRWANTO");
                 approver.put("nik","00001");
                 approver.put("order","1");
                 datas.put(approver);
 
                 JSONObject approver2 = new JSONObject();
-                approver2.put("bc_user_approval","6285328200060");
-                approver2.put("nama","Aziz");
+                approver2.put("bc_user_approval","6281588888892");
+                approver2.put("nama","RUSBANDI");
                 approver2.put("nik","00002");
                 approver2.put("order","2");
                 datas.put(approver2)*/
-            ;
 
         } catch (Exception e) {
             e.printStackTrace();

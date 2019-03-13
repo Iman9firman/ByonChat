@@ -76,6 +76,7 @@ public class RelieverDetailActivity extends AppCompatActivity {
 
         } else {
             Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
+            Log.w("popps 1","here");
             finish();
         }
     }
@@ -134,12 +135,14 @@ public class RelieverDetailActivity extends AppCompatActivity {
                         e.printStackTrace();
                         Log.w("nupo2", e + "");
                         Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
+                        Log.w("popps 2","here");
                         finish();
                     }
 
                 },
                 error -> {
                     Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
+                    Log.w("popps 3","here");
                     finish();
                     rdialog.dismiss();
                 }

@@ -17,11 +17,16 @@ import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingAc
 import com.byonchat.android.ISSActivity.Requester.RequesterBaseRatingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.data.model.MkgServices;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.tabRequest.RelieverDetailActivity;
 import com.mindorks.placeholderview.annotations.Click;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 @Layout(R.layout.mkg_child_rating_layout)
 public class ChildRatingRecyclerView {
@@ -47,6 +52,7 @@ public class ChildRatingRecyclerView {
     private Context mContext;
     private MkgServices data;
     private int position;
+//    ArrayList<String> daftar_checked = new ArrayList<>();
 
     private OnCheckedChangeListener itemClickListener;
 
@@ -70,26 +76,27 @@ public class ChildRatingRecyclerView {
             child_text_total.setText(data.total_kerja + " x bekerja");
         }
 
-        child_checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (data.isChecked) {
+            child_checkbox.setChecked(true);
+        } else {
+            child_checkbox.setChecked(false);
+        }
 
+        child_checkbox.setOnClickListener(new android.view.View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View v) {
                 int jjsss = ((RequesterBaseRatingActivity) mContext).getCountCheck(data.header_id);
-                Log.w("Proudly prestice 0","ok");
-                if (jjsss > 0 && isChecked) {
-                    Log.w("Proudly prestice 00",jjsss+"");
+                if (jjsss > 0 && child_checkbox.isChecked()) {
                     Toast.makeText(mContext, "Hanya dapat memilih " + jjsss + " reliever.", Toast.LENGTH_SHORT).show();
-                    buttonView.setChecked(false);
+                    child_checkbox.setChecked(false);
                 } else {
-                    Log.w("Proudly prestice 01",jjsss+"");
                     if (itemClickListener != null) {
-                        itemClickListener.onItemClick(position, data, isChecked);
+                        itemClickListener.onItemClick(position, data, child_checkbox.isChecked());
                     }
                 }
-
-
             }
         });
+
 
         frame_content.setOnClickListener(new android.view.View.OnClickListener() {
             @Override

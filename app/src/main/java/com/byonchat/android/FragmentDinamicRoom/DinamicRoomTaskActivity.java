@@ -2090,10 +2090,24 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         params2.setMargins(30, 10, 30, 40);
                         spinner.setLayoutParams(params2);
 
+                        String hasilDariDB = "";
+                        if (JcontentBawaan.has(name)) {
+                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                if (values.has("value")) {
+                                    hasilDariDB = values.getString("value");
+                                }
+                            }
+                        }
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
-                            int spinnerPosition = spinnerArrayAdapter.getPosition(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                            hasilDariDB = cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                        }
+
+
+                        if (hasilDariDB.length() > 0) {
+                            int spinnerPosition = spinnerArrayAdapter.getPosition(hasilDariDB);
                             spinner.setSelection(spinnerPosition);
                         } else {
                             if (spinner.getSelectedItem() != null) {
@@ -3680,6 +3694,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                         if (values.has("value")) {
                                             et[count].setText(values.getString("value"));
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, values.getString("value"), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                            db.insertRoomsDetail(orderModel);
                                         }
                                     }
                                 } else {
@@ -3699,6 +3715,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                         if (values.has("value")) {
                                             et[count].setText(values.getString("value"));
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, values.getString("value"), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                            db.insertRoomsDetail(orderModel);
                                         }
                                     }
                                 } else {
@@ -4310,9 +4328,27 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             btnOption.setImageResource(R.drawable.ic_time);
                         }
                         final TextView valueFile = (TextView) linearEstimasi[count].findViewById(R.id.value);
+
+                        String hasilDariDB = "";
+                        if (JcontentBawaan.has(name)) {
+                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                if (values.has("value")) {
+                                    hasilDariDB = values.getString("value");
+                                }
+                            }
+                        }
+
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
-                            valueFile.setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                            hasilDariDB = cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                        } else {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, hasilDariDB, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                            db.insertRoomsDetail(orderModel);
+                        }
+
+                        if (hasilDariDB.length() > 0) {
+                            valueFile.setText(hasilDariDB);
                         } else {
                             if (!value.equalsIgnoreCase("")) {
                                 valueFile.setText(value);
@@ -6316,7 +6352,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     if (myPosition > 2) {
                                         String awalAn = spinnerArrayAdapter.getItem(myPosition);
                                         valuesKnjngnTwo = kunjunganList.get(myPosition - 3).getDaleman();
-                                        ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, valuesKnjngnTwo);
+                                        ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_spinner_item_black, valuesKnjngnTwo);
                                         spinnerArrayAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                         spinner2.setAdapter(spinnerArrayAdapter2);
                                         spinnerArrayAdapter2.notifyDataSetChanged();
@@ -6442,7 +6478,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         Contact contact = messengerHelper.getMyContact();
 
-                        SpinnerCustomAdapter spinnerArrayAdapter = new SpinnerCustomAdapter(this, android.R.layout.simple_spinner_item, downloadForm, contact.getJabberId(), spinnerArray);
+                        SpinnerCustomAdapter spinnerArrayAdapter = new SpinnerCustomAdapter(this, R.layout.simple_spinner_item_black, downloadForm, contact.getJabberId(), spinnerArray);
                         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinner.setAdapter(spinnerArrayAdapter);
                         params2.setMargins(30, 10, 30, 40);
@@ -6684,7 +6720,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                                         newSpinner[count].setBackground(getResources().getDrawable(R.drawable.spinner_background));
                                     }
-                                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
                                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                     newSpinner[count].setAdapter(spinnerArrayAdapter);
 
@@ -6972,7 +7008,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                                         spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
                                     }
-                                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
                                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                     spinner.setAdapter(spinnerArrayAdapter);
 
@@ -7344,7 +7380,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                                     spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
                                 }
-                                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
                                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinner.setAdapter(spinnerArrayAdapter);
 
@@ -7495,7 +7531,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                             spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
                         }
-                        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
                         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinner.setAdapter(spinnerArrayAdapter);
                         params2.setMargins(30, 10, 30, 40);
@@ -7937,7 +7973,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                                 spinnerPropinsi.setBackground(getResources().getDrawable(R.drawable.spinner_background));
                             }
-                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArrayPropinsi); //selected item will look like a spinner set from XML
+                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, R.layout.simple_spinner_item_black, spinnerArrayPropinsi); //selected item will look like a spinner set from XML
                             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerPropinsi.setAdapter(spinnerArrayAdapter);
 
@@ -7948,7 +7984,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             final ArrayList<String> spinnerArrayKota = new ArrayList<>();
                             spinnerArrayKota.add("Semua Kota/Kabupaten");
                             final ArrayAdapter<String> spinnerKotaArrayAdapter = new ArrayAdapter<String>(
-                                    this, android.R.layout.simple_spinner_item, spinnerArrayKota);
+                                    this, R.layout.simple_spinner_item_black, spinnerArrayKota);
                             spinnerKotaArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerKota.setAdapter(spinnerKotaArrayAdapter);
 
@@ -7959,7 +7995,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             final ArrayList<String> spinnerArrayKecamatan = new ArrayList<>();
                             spinnerArrayKecamatan.add("Semua Kecamatan");
                             final ArrayAdapter<String> spinnerKecamatanArrayAdapter = new ArrayAdapter<String>(
-                                    this, android.R.layout.simple_spinner_item, spinnerArrayKecamatan);
+                                    this, R.layout.simple_spinner_item_black, spinnerArrayKecamatan);
                             spinnerKecamatanArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerKecamatan.setAdapter(spinnerKecamatanArrayAdapter);
 
@@ -7970,7 +8006,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             final ArrayList<String> spinnerArrayKelurahan = new ArrayList<>();
                             spinnerArrayKelurahan.add("Semua Kelurahan");
                             final ArrayAdapter<String> spinnerKelurahanArrayAdapter = new ArrayAdapter<String>(
-                                    this, android.R.layout.simple_spinner_item, spinnerArrayKelurahan);
+                                    this, R.layout.simple_spinner_item_black, spinnerArrayKelurahan);
                             spinnerKelurahanArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             spinnerKelurahan.setAdapter(spinnerKelurahanArrayAdapter);
 
@@ -9813,7 +9849,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
                 }
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(spinnerArrayAdapter);
                 final String finalTitlle = titlle;
@@ -9956,7 +9992,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 }
 
 
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(spinnerArrayAdapter);
                 final String finalTitlle = titlle;
@@ -12481,7 +12517,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                             outerMap.put(Integer.valueOf(valueForms.get(0).toString()), hashMapss);
 
-                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
                             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             newSpinner[Integer.valueOf(valueForms.get(0).toString())].setAdapter(spinnerArrayAdapter);
 

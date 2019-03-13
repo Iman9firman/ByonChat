@@ -234,7 +234,7 @@ public class FragmentMyCardID extends Fragment {
                                             } else if (jsonOfficer.getString("lokasi").equalsIgnoreCase("HONDA PRADANA SAWANGAN")) {
                                                 textOutlet.setText(jsonOfficer.getString("lokasi") + "\n" + "PT. Ambara Karya Pradana");
                                                 imageLogo2.setVisibility(View.GONE);
-                                                textAddress.setText(Html.fromHtml("Jl.Raya Cinangka No.9 Serua Bojong Sari<br>" + "Depok-Jawa Barat 16517<br>" + "Telp. (021) 3049 8889<br> <font color='#FFFFFF'>Telp.</font> (021) 3049 9990<br>" + "<font color='#FFFFFF'>Telp.</font> (021) 3042 8889"));
+                                                textAddress.setText(Html.fromHtml("Jl.Raya Cinangka No.9<br>Serua, Bojongsari<br>" + "Depok-Jawa Barat 16517<br>" + "Telp. (021) 3049 8889<br> <font color='#FFFFFF'>Telp.</font> (021) 3049 9990<br>" + "<font color='#FFFFFF'>Telp.</font> (021) 3042 8889"));
                                                 textWarn.setText("Honda Pradana Sawangan tidak bertanggung jawab apabila customer melakukan pembayaran apapun melalui sales baik secara tunai maupun transfer ke rekening pribadi sales.");
                                             }
 

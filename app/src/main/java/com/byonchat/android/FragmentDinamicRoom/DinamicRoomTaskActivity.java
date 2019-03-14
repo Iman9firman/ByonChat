@@ -6455,17 +6455,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
 
                         String downloadForm = jsonArray.getJSONObject(i).getString("formula").toString();
-                        String resutll = "[{\"spk\":\"081491060200030\"},{\"spk\":\"081491060200030\"}]";
                         final ArrayList<String> spinnerArray = new ArrayList<String>();
-                        spinnerArray.add("test");
-                        /*if (resutll.length() > 0) {
-                            final JSONArray jsonArrays = new JSONArray(resutll);
-
-                            for (int ia = 0; ia < jsonArrays.length(); ia++) {
-                                String l = jsonArrays.getJSONObject(ia).getString("spk").toString();
-                                spinnerArray.add(l);
-                            }
-                        }*/
+                        spinnerArray.add("-");
 
                         SearchableSpinner spinner = new SearchableSpinner(this);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -11775,8 +11766,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     String anothers = jsonRootObject.getString("anothers");
                                     if (!anothers.equalsIgnoreCase("[]")) {
                                         tambahan = new JSONObject(anothers);
-                                        tambahan.put("message", jsonRootObject.getJSONObject("alasan_reject").getString("message"));
-                                        bawaDariBelakang = tambahan.toString();
+                                        if (jsonRootObject.toString().contains("\"alasan_reject\": {")) {
+                                            if (jsonRootObject.getJSONObject("alasan_reject").has("message")) {
+                                                tambahan.put("message", jsonRootObject.getJSONObject("alasan_reject").getString("message"));
+                                                bawaDariBelakang = tambahan.toString();
+                                            } else {
+                                                bawaDariBelakang = "{}";
+                                            }
+                                        } else {
+                                            bawaDariBelakang = "{}";
+                                        }
                                     } else {
                                         bawaDariBelakang = "{}";
                                     }
@@ -11790,7 +11789,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                     } catch (JSONException e) {
-                        Log.w("maraMara2", e.toString());
                         e.printStackTrace();
                         finish();
                         error = "Tolong periksa koneksi internet.";

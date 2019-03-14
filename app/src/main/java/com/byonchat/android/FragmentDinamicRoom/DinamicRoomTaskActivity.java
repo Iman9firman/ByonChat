@@ -8005,86 +8005,103 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             final TextView kodePos = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
                             kodePos.setTextSize(15);
 
+                            int spinnerPositionProvinsi = 0;
+                            int spinnerPositionKota = 0;
+                            int spinnerPositionKec = 0;
+                            int spinnerPositionKel = 0;
+                            String isi = "";
+
                             if (JcontentBawaan.has(name)) {
                                 if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
                                     JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                     if (values.has("value")) {
-                                        String isi = values.getString("value");
-
-                                        kodePos.setText(jsonResultType(isi, "a"));
+                                        isi = values.getString("value");
                                         Log.w("gambus1", "Slam");
-
-                                        if (!jsonResultType(isi, "b").equalsIgnoreCase("Semua Provinsi")) {
-                                            Log.w("gambus1", "Slam");
-                                            Cursor cKota = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"jenis", "kabupaten"}, "propinsi = '" + jsonResultType(isi, "b") + "'", null, null, null, null, null);
-
-                                            if (cKota.moveToFirst()) {
-                                                do {
-                                                    String column1 = cKota.getString(0);
-                                                    String column2 = cKota.getString(1);
-                                                    spinnerArrayKota.add(column1 + " " + column2);
-
-                                                } while (cKota.moveToNext());
-                                                spinnerKotaArrayAdapter.notifyDataSetChanged();
-                                            }
-
-                                            if (!jsonResultType(isi, "c").equalsIgnoreCase("Semua Kota/Kabupaten")) {
-                                                Log.w("gambus2", "Slam");
-
-                                                String[] contoh = new String[2];
-                                                if (jsonResultType(isi, "c").startsWith("Kabupaten ")) {
-                                                    contoh[0] = "Kabupaten";
-                                                    contoh[1] = jsonResultType(isi, "c").toString().split("Kabupaten")[1];
-
-                                                } else if (jsonResultType(isi, "c").startsWith("Kota ")) {
-                                                    contoh[0] = "Kota";
-                                                    contoh[1] = jsonResultType(isi, "c").toString().split("Kota ")[1];
-                                                }
-
-                                                Cursor cKecamatan = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"kecamatan"}, "propinsi = '" + jsonResultType(isi, "b") + "' and jenis = '" + contoh[0] + "' and kabupaten = '" + contoh[1].trim() + "'", null, "kecamatan", null, null, null);
-
-                                                if (cKecamatan.moveToFirst()) {
-                                                    Log.w("gambus3", "Slam");
-                                                    do {
-                                                        String column1 = cKecamatan.getString(0);
-                                                        spinnerArrayKecamatan.add(column1);
-
-                                                    } while (cKecamatan.moveToNext());
-                                                    spinnerKecamatanArrayAdapter.notifyDataSetChanged();
-                                                }
-
-                                                if (!jsonResultType(isi, "d").equalsIgnoreCase("Semua Kecamatan")) {
-                                                    Log.w("gambus4", "Slam");
-                                                    Cursor ckelurahan = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"kelurahan"}, "propinsi = '" + jsonResultType(isi, "b") + "' and jenis = '" + contoh[0] + "' and kabupaten = '" + contoh[1].trim() + "' and kecamatan ='" + jsonResultType(isi, "d") + "'", null,
-                                                            null, null, null, null);
-                                                    if (ckelurahan.moveToFirst()) {
-                                                        do {
-                                                            String column1 = ckelurahan.getString(0);
-                                                            spinnerArrayKelurahan.add(column1);
-
-                                                        } while (ckelurahan.moveToNext());
-                                                        spinnerKelurahanArrayAdapter.notifyDataSetChanged();
-                                                    }
-
-                                                }
-                                            }
-
-                                            int spinnerPositionProvinsi = spinnerArrayAdapter.getPosition(jsonResultType(isi, "b"));
-                                            spinnerPropinsi.setSelection(spinnerPositionProvinsi);
-                                            int spinnerPositionKota = spinnerKotaArrayAdapter.getPosition(jsonResultType(isi, "c"));
-                                            spinnerKota.setSelection(spinnerPositionKota);
-                                            int spinnerPositionKec = spinnerKecamatanArrayAdapter.getPosition(jsonResultType(isi, "d"));
-                                            spinnerKecamatan.setSelection(spinnerPositionKec);
-                                            int spinnerPositionKel = spinnerKelurahanArrayAdapter.getPosition(jsonResultType(isi, "e"));
-                                            spinnerKelurahan.setSelection(spinnerPositionKel);
-                                        }
-
                                     }
                                 }
+                                Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+
+                                if (cursorCild.getCount() > 0) {
+                                    isi = cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                                } else {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, isi, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                    db.insertRoomsDetail(orderModel);
+                                }
+
+                                if (!jsonResultType(isi, "b").equalsIgnoreCase("Semua Provinsi")) {
+                                    Log.w("gambus1", "Slam");
+                                    Cursor cKota = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"jenis", "kabupaten"}, "propinsi = '" + jsonResultType(isi, "b") + "'", null, null, null, null, null);
+
+                                    if (cKota.moveToFirst()) {
+                                        do {
+                                            String column1 = cKota.getString(0);
+                                            String column2 = cKota.getString(1);
+                                            spinnerArrayKota.add(column1 + " " + column2);
+
+                                        } while (cKota.moveToNext());
+                                        spinnerKotaArrayAdapter.notifyDataSetChanged();
+                                    }
+
+                                    if (!jsonResultType(isi, "c").equalsIgnoreCase("Semua Kota/Kabupaten")) {
+                                        Log.w("gambus2", "Slam");
+
+                                        String[] contoh = new String[2];
+                                        if (jsonResultType(isi, "c").startsWith("Kabupaten ")) {
+                                            contoh[0] = "Kabupaten";
+                                            contoh[1] = jsonResultType(isi, "c").toString().split("Kabupaten")[1];
+
+                                        } else if (jsonResultType(isi, "c").startsWith("Kota ")) {
+                                            contoh[0] = "Kota";
+                                            contoh[1] = jsonResultType(isi, "c").toString().split("Kota ")[1];
+                                        }
+
+                                        Cursor cKecamatan = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"kecamatan"}, "propinsi = '" + jsonResultType(isi, "b") + "' and jenis = '" + contoh[0] + "' and kabupaten = '" + contoh[1].trim() + "'", null, "kecamatan", null, null, null);
+
+                                        if (cKecamatan.moveToFirst()) {
+                                            Log.w("gambus3", "Slam");
+                                            do {
+                                                String column1 = cKecamatan.getString(0);
+                                                spinnerArrayKecamatan.add(column1);
+
+                                            } while (cKecamatan.moveToNext());
+                                            spinnerKecamatanArrayAdapter.notifyDataSetChanged();
+                                        }
+
+                                        if (!jsonResultType(isi, "d").equalsIgnoreCase("Semua Kecamatan")) {
+                                            Log.w("gambus4", "Slam");
+                                            Cursor ckelurahan = mDB.getWritableDatabase().query(true, "wilayah", new String[]{"kelurahan"}, "propinsi = '" + jsonResultType(isi, "b") + "' and jenis = '" + contoh[0] + "' and kabupaten = '" + contoh[1].trim() + "' and kecamatan ='" + jsonResultType(isi, "d") + "'", null,
+                                                    null, null, null, null);
+                                            if (ckelurahan.moveToFirst()) {
+                                                do {
+                                                    String column1 = ckelurahan.getString(0);
+                                                    spinnerArrayKelurahan.add(column1);
+
+                                                } while (ckelurahan.moveToNext());
+                                                spinnerKelurahanArrayAdapter.notifyDataSetChanged();
+                                            }
+
+                                        }
+                                    }
+                                }
+
+                                kodePos.setText(jsonResultType(isi, "a"));
+
+                                spinnerPositionProvinsi = spinnerArrayAdapter.getPosition(jsonResultType(isi, "b"));
+                                spinnerPropinsi.setSelection(spinnerPositionProvinsi);
+
+                                spinnerPositionKota = spinnerKotaArrayAdapter.getPosition(jsonResultType(isi, "c"));
+                                spinnerKota.setSelection(spinnerPositionKota);
+
+                                spinnerPositionKec = spinnerKecamatanArrayAdapter.getPosition(jsonResultType(isi, "d"));
+                                spinnerKecamatan.setSelection(spinnerPositionKec);
+
+                                spinnerPositionKel = spinnerKelurahanArrayAdapter.getPosition(jsonResultType(isi, "e"));
+                                spinnerKelurahan.setSelection(spinnerPositionKel);
                             }
 
+                            /*
+                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
 
-                            /*Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                             if (cursorCild.getCount() > 0) {
                                 final String isi = cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
 
@@ -8157,7 +8174,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonPosCode("-", "Semua Provinsi", "Semua Kota/Kabupaten", "Semua Kecamatan", "Semua Kelurahan"), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
                                 db.insertRoomsDetail(orderModel);
                             }*/
-
 
                             if ((!showButton)) {
                                 spinnerPropinsi.setEnabled(false);
@@ -10351,7 +10367,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     }
 
     private void refreshForm() {
-
 
         Cursor cursor = db.getSingleRoomDetailForm(username, idTab);
         if (cursor.getCount() > 0) {

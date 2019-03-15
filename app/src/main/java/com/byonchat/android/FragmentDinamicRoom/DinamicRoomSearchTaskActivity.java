@@ -72,6 +72,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
     ArrayList<String> dua = new ArrayList<>();
     SearchableSpinner spinner;
     View line_bottom;
+    String lat_long;
 
 
     @Override
@@ -112,14 +113,27 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         Cursor cursor = db.getSingle();
         if (cursor.getCount() > 0) {
             String content = cursor.getString(cursor.getColumnIndexOrThrow(UserDB.EMPLOYEE_MULTICOST));
+            Log.w("WHoss nonre 0",content);
 
             ArrayList<String> spinnerArray = new ArrayList<String>();
-            String[] arr = content.split(",");
+            //old code
+            /*String[] arr = content.split(",");*/
+            try {
+                JSONArray arr = new JSONArray(content);
 
-            for (int as = 0; as < arr.length; as++) {
-                spinnerArray.add(arr[as].substring(0, arr[as].indexOf("[")));
-                dua.add(arr[as].substring(arr[as].indexOf("[") + 1, arr[as].indexOf("]")));
-            }
+                for (int as = 0; as < arr.length(); as++) {
+                    JSONObject jo = arr.getJSONObject(as);
+                    String cost_center = jo.getString("costcenter");
+                    lat_long = jo.getString("latlng");
+                    if( lat_long.equalsIgnoreCase("")){
+                        lat_long = "-6.1989168,106.7591713";
+                    }
+                    //old code
+                    /*spinnerArray.add(arr[as].substring(0, arr[as].indexOf("[")));
+                    dua.add(arr[as].substring(arr[as].indexOf("[") + 1, arr[as].indexOf("]")));*/
+                    spinnerArray.add(cost_center.substring(0, cost_center.indexOf("[")));
+                    dua.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
+                }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
@@ -128,13 +142,13 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(spinnerArrayAdapter);
 
-
+            }catch (Exception e){}
         }
 
         btnAddCild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.w("param1 nonre",dua.get(spinner.getSelectedItemPosition()));
                 DialogFormChildMainRequester dialogFormChildMainRequester = new DialogFormChildMainRequester(DinamicRoomSearchTaskActivity.this);
                 dialogFormChildMainRequester.setListener(new DialogFormChildMainRequester.MyDialogListener() {
                     @Override
@@ -187,6 +201,9 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                             Contact contact = messengerHelper.getMyContact();
                             Map<String, String> params = new HashMap<>();
                             params.put("jjt", dua.get(spinner.getSelectedItemPosition()));
+                            String[] latlongS = lat_long.split(",");
+                            params.put("lat", latlongS[0]);//latlong
+                            params.put("long", latlongS[1]);//latlong
                             params.put("data", jsonArray.toString());
                             params.put("bc_user", contact.getJabberId());
 
@@ -207,8 +224,6 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                     Toast.makeText(DinamicRoomSearchTaskActivity.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
                     finish();
                 }
-
-
             }
         });
     }

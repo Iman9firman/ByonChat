@@ -97,7 +97,7 @@ public class LoginISS extends AppCompatActivity {
                     Map<String, String> params = new HashMap<>();
                     params.put("username", userID.getText().toString());
                     params.put("password", passID.getText().toString());
-                    params.put("bc_user", dbhelper.getMyContact().getJabberId());
+                    params.put("bc_user", /*dbhelper.getMyContact().getJabberId()*/"6285697223760");
 
                     LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
                 }

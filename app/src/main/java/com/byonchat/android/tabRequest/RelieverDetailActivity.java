@@ -3,6 +3,7 @@ package com.byonchat.android.tabRequest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -10,8 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,10 +24,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.data.model.MkgServices;
+import com.byonchat.android.helpers.Constants;
+import com.byonchat.android.list.IconItem;
+import com.byonchat.android.provider.ChatParty;
+import com.byonchat.android.provider.Contact;
 import com.byonchat.android.ui.adapter.ChildRecyclerView;
 import com.byonchat.android.ui.adapter.HeaderRecyclerView;
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -43,7 +51,8 @@ public class RelieverDetailActivity extends AppCompatActivity {
     CircularImageView image_detailReliever;
     RatingBar rating_detailReliever;
     TextView text_name_real_detailReliever, text_birthDate_real_detailReliever, text_address_real_detailReliever, text_jobExp_real_detailReliever, text_nik_detailreleiver;
-
+    ImageView chat_this;
+    String nama, noHp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +75,7 @@ public class RelieverDetailActivity extends AppCompatActivity {
         text_address_real_detailReliever = (TextView) findViewById(R.id.text_address_real_detailReliever);
         text_jobExp_real_detailReliever = (TextView) findViewById(R.id.text_jobExp_real_detailReliever);
         text_nik_detailreleiver = (TextView) findViewById(R.id.text_nik_detailReliever);
-
+        chat_this = (ImageView) findViewById(R.id.chat_this);
 
         String aa = getIntent().getStringExtra("IDRELIEVER");
         if (aa != null) {
@@ -79,6 +88,24 @@ public class RelieverDetailActivity extends AppCompatActivity {
             Log.w("popps 1","here");
             finish();
         }
+
+        chat_this.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChatParty sample = new Contact(nama,noHp,"");
+                IconItem item = new IconItem(noHp,nama,"","",sample);
+                if (item.getJabberId().equalsIgnoreCase("")) {
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), ConversationActivity.class);
+                    String jabberId = item.getJabberId();
+                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+                    intent.putExtra(Constants.EXTRA_ITEM, item);
+//                    intent.putExtra(Constants.EXTRA_COLOR, "000000");
+//                    intent.putExtra(Constants.EXTRA_COLORTEXT, "000000");
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
 
@@ -103,7 +130,7 @@ public class RelieverDetailActivity extends AppCompatActivity {
 //                            for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jOb = jsonObject.getJSONObject("data");
 //                                JSONObject jOb = jsonArray.getJSONObject(i);
-                        String noHp = jOb.getString("bc_user");
+                        noHp = jOb.getString("bc_user");
                         String rat = jOb.getString("rating");
                         float rating = 0;
                         if (!rat.equalsIgnoreCase("")) {
@@ -111,7 +138,7 @@ public class RelieverDetailActivity extends AppCompatActivity {
                         }
 
                         String email = jOb.getString("email");
-                        String nama = jOb.getString("nama");
+                        nama = jOb.getString("nama");
                         String foto = jOb.getString("foto");
                         String ttl = jOb.getString("ttl");
                         String nik = jOb.getString("nik");

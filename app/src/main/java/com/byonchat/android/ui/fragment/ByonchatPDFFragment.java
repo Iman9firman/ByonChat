@@ -177,6 +177,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         resolveListFile();
         resolveRefreshList();
         resolesTagGroup();
+        onRefresh();
 
         vFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,13 +190,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        onResume();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
+//        onResume();
         vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
             new getFile().execute(urlTembak);
@@ -204,6 +199,20 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
             vRefreshList.setRefreshing(false);
             Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        /*vRefreshList.setRefreshing(true);
+        if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
+            new getFile().execute(urlTembak);
+            Log.w("Apa ini harusee",urlTembak);
+        } else {
+            vRefreshList.setRefreshing(false);
+            Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        }*/
     }
 
     protected void resolveConnectionProblem() {

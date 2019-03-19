@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -45,6 +46,9 @@ public class ProductCatalogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final PictureModel item = data.get(position);
         String url = item.getUrl_thumb();
+
+        ((MyItemHolder) holder).vTitle.setText(item.getTitle());
+
         Picasso.with(context)
                 .load(url)
                 .noFade()
@@ -60,10 +64,14 @@ public class ProductCatalogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     public static class MyItemHolder extends RecyclerView.ViewHolder {
         Target mImg;
+        TextView vTitle;
 
         public MyItemHolder(View itemView) {
             super(itemView);
             mImg = (Target) itemView.findViewById(R.id.item_img);
+            vTitle = (TextView) itemView.findViewById(R.id.title_item_grid);
+
+            vTitle.setVisibility(View.VISIBLE);
         }
     }
 }

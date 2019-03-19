@@ -474,6 +474,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
     protected RecyclerView.LayoutManager layoutManager;
     protected RecyclerViewDragDropManager recyclerViewDragDropManager;
+
     protected ProgressDialog progressDialog;
     protected boolean isRecyclerViewShowed = true;
 

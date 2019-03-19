@@ -263,7 +263,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         name = listItem != null ? listItem.name : getIntent().getExtras().getString(EXTRA_NAME);
         icon = listItem != null ? listItem.icon : getIntent().getExtras().getString(EXTRA_ICON);
 
-        Log.w("ggggg", id_rooms_tab + " -- " + category + " -- " + include_pull);
+        Log.w("ggggg", id_rooms_tab + " -- " + category + " -- " + include_pull + " -- " + url_tembak);
     }
 
     protected void onViewReady(Bundle savedInstanceState) {

@@ -15,18 +15,15 @@
 
         <Button
             android:id="@+id/btn_add_cild"
-            android:layout_width="@dimen/margin100"
-            android:layout_height="@dimen/margin30"
+            style="@style/btn_submit_v11"
+            android:layout_width="wrap_content"
             android:text="Add"
             android:layout_gravity="center"
-            android:background="@drawable/oval_btn_room"
-            android:padding="5dp"
-            android:textAllCaps="false"
-            android:textColor="@drawable/selector_txt_blue_white"
-            android:textSize="14sp"
+            android:layout_margin="5dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"/>
+
 
     </RelativeLayout>
     <TableRow

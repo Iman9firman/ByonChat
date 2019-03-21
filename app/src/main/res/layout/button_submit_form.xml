@@ -7,16 +7,12 @@
     android:paddingTop="5dp"
     android:paddingRight="10dp"
     >
+
     <Button
         android:id="@+id/btn_submit"
-        android:layout_width="@dimen/margin100"
-        android:layout_height="@dimen/margin30"
-        android:text="Submit"
-        android:layout_centerInParent="true"
-        android:layout_gravity="center"
-        android:background="@drawable/oval_btn_room"
-        android:padding="5dp"
-        android:textAllCaps="false"
-        android:textColor="@drawable/selector_txt_blue_white"
-        android:textSize="14sp" />
+        style="@style/btn_submit_v1"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/margin15"
+        android:text="SUBMIT" />
     </LinearLayout>

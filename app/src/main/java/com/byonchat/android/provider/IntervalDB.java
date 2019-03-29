@@ -38,6 +38,7 @@ public class IntervalDB {
 //id 24 untuk squence chatOff
 //id 25 untuk squence limitBukaRoom
 //id 26 untuk squence limitBukaRoomISS
+//id 27 untuk on/off ShareLocation (Reliever ISS)
 
 	private static final String DB_NAME		= "interval_db";
 	private static final int	DB_VER		= 3;

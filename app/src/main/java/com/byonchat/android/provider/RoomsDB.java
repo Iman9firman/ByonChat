@@ -30,14 +30,16 @@ public class RoomsDB extends SQLiteOpenHelper {
     public static final String ROOMS_ISACTIVE = "is_active";
     public static final String TRENDING_ID = "id";
     public static final String TRENDING_NAME = "trending_name";
+    public static final String STRING_NAME = "string_name";
 
     private SQLiteDatabase mDb;
     private static RoomsDB instance;
 
     private static final String DATABASE_NAME = "ROOMS.db";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     private static final String ROOMS_TABLE = "rooms";
     private static final String TRENDING_TABLE = "trendings";
+    private static final String SAVE_STRING = "strings";
 
     private static final String CREATE_TABLE_ROOMS = "create table "
             + ROOMS_TABLE + " (" + ROOMS_ID
@@ -55,6 +57,11 @@ public class RoomsDB extends SQLiteOpenHelper {
             + TRENDING_NAME + " text, "
             + ROOMS_TYPE + " text)";
 
+    private static final String CREATE_TABLE_SAVE_STRING = "create table "
+            + SAVE_STRING + " (" + TRENDING_ID
+            + " integer primary key , "
+            + STRING_NAME + " text)";
+
     private Context mCtx;
 
     @Override
@@ -69,12 +76,13 @@ public class RoomsDB extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (newVersion > oldVersion) {
-            if (newVersion == 6) {
+            if (newVersion == 7) {
                 db.execSQL("DROP TABLE IF EXISTS " + ROOMS_TABLE);
             }
 
             db.execSQL(mCtx.getString(R.string.sql_createtable_rooms));
             db.execSQL(mCtx.getString(R.string.sql_createtable_rooms_trending));
+            db.execSQL(mCtx.getString(R.string.sql_createtable_rooms_string));
             try {
                 db.execSQL("ALTER TABLE " + ROOMS_TABLE + " ADD COLUMN " + ROOMS_ISACTIVE + " text ");
                 db.execSQL("ALTER TABLE " + ROOMS_TABLE + " ADD COLUMN " + ROOMS_TARGET_URL + " text ");
@@ -95,6 +103,7 @@ public class RoomsDB extends SQLiteOpenHelper {
     private void createTable() {
         getDatabase().execSQL(mCtx.getString(R.string.sql_createtable_rooms));
         getDatabase().execSQL(mCtx.getString(R.string.sql_createtable_rooms_trending));
+        getDatabase().execSQL(mCtx.getString(R.string.sql_createtable_rooms_string));
     }
 
     public RoomsDB(Context context) {
@@ -144,6 +153,14 @@ public class RoomsDB extends SQLiteOpenHelper {
         mDb.insert(TRENDING_TABLE, null, cv);
     }
 
+    public void insertSaveString(String value) {
+        ContentValues cv = new ContentValues();
+        cv.put(STRING_NAME, value);
+        mDb.insert(SAVE_STRING, null, cv);
+        Log.w("apa isii",value);
+//        mDb.execSQL("INSERT INTO strings ("+STRING_NAME+") VALUES ("+value+")");
+    }
+
     public boolean deleteTrending(String type) {
         return mDb.delete(TRENDING_TABLE, ROOMS_TYPE + "= '" + type + "'", null) > 0;
     }
@@ -152,12 +169,20 @@ public class RoomsDB extends SQLiteOpenHelper {
         return mDb.delete(ROOMS_TABLE, null, null) > 0;
     }
 
+    public boolean deleteStrings() {
+        return mDb.delete(SAVE_STRING, null, null) > 0;
+    }
+
     public boolean deletebyId(String id) {
         return mDb.delete(ROOMS_TABLE, ROOMS_ID + "= " + id + "", null) > 0;
     }
 
     public boolean deletebyName(String judul) {
         return mDb.delete(ROOMS_TABLE, ROOMS_NAME + "= '" + judul + "'", null) > 0;
+    }
+
+    public boolean deleteStringbyValue(String judul) {
+        return mDb.delete(SAVE_STRING, STRING_NAME + "= '" + judul + "'", null) > 0;
     }
 
     public boolean deleteRoomsSelected() {
@@ -296,6 +321,21 @@ public class RoomsDB extends SQLiteOpenHelper {
             } while (cur.moveToNext());
         }
         return listMemberCards;
+    }
+
+    public ArrayList<String> retrieveSaveString(){
+        ArrayList<String> value = new ArrayList<>();
+        Cursor cursor = getDatabase().query(SAVE_STRING, new String[]
+                {
+                        STRING_NAME,
+                }, null, null, null, null, null);
+
+        if (cursor != null)
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndexOrThrow(STRING_NAME));
+            value.add(name);
+        }
+        return value;
     }
 
 }

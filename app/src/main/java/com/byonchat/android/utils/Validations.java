@@ -204,6 +204,36 @@ public class Validations {
         return error;
     }
 
+    public void setShareLocOnOff(boolean onOff){
+        //id IntervalDB ke 27 ISSReliever
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(27);
+        if (cursor.getCount() > 0) {
+            db.deleteContact(27);
+        }
+        Log.w("Adakah hasilnya bos","ada nih 0: "+onOff);
+        Interval interval = new Interval();
+        interval.setId(27);
+        interval.setTime(onOff+"");
+        db.createContact(interval);
+        db.close();
+    }
+
+    public boolean getShareLocOnOff(int id){
+        //id IntervalDB ke 27 ISSReliever
+        boolean onOff = false;
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(id);
+        if (cursor.getCount() > 0) {
+            onOff = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)));
+        }
+
+        Log.w("Adakah hasilnya bos","ada nih : "+onOff);
+        return onOff;
+    }
+
     public void setTimebyId(int id) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();

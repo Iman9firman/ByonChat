@@ -88,7 +88,7 @@ public class FragmentProductCatalog extends Fragment {
     private GridLayoutManager gridLayoutManager;
     private PictureDetailActivity pictureActivity;
     private static String URL_DELETE_PICTURE = "https://" + MessengerConnectionService.HTTP_SERVER2 + "/personal_room/webservice/proses/delete_photo.php";
-    private Activity mContext ;
+    private Activity mContext;
     public static int IMGS[] = {
             R.drawable.bt_add_image,
     };
@@ -96,6 +96,7 @@ public class FragmentProductCatalog extends Fragment {
     public FragmentProductCatalog(Activity ctx) {
         mContext = ctx;
     }
+
     public static FragmentProductCatalog newInstance(String myc, String tit, String utm, String usr, String idrtab, String color, Boolean flag, Activity act) {
         FragmentProductCatalog fragmentRoomTask = new FragmentProductCatalog(act);
         Bundle args = new Bundle();
@@ -262,16 +263,16 @@ public class FragmentProductCatalog extends Fragment {
         });
 
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(mContext.getApplicationContext(),
-            new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-            final PictureModel item = pictureModels.get(position);
-                Intent intent = new Intent(mContext, DownloadFileByonchat.class);
-                intent.putExtra("path", item.getUrl());
-                intent.putExtra("nama_file",item.getTitle());
-                mContext.startActivity(intent);
-            }
-        }));
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        final PictureModel item = pictureModels.get(position);
+                        Intent intent = new Intent(mContext, DownloadFileByonchat.class);
+                        intent.putExtra("path", item.getUrl());
+                        intent.putExtra("nama_file", item.getTitle());
+                        mContext.startActivity(intent);
+                    }
+                }));
     }
 
     @Override
@@ -433,8 +434,8 @@ public class FragmentProductCatalog extends Fragment {
 
         // External sdcard location
         File mediaStorageDir = new File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-            IMAGE_DIRECTORY_NAME);
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                IMAGE_DIRECTORY_NAME);
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
@@ -558,7 +559,6 @@ public class FragmentProductCatalog extends Fragment {
             }
 
             for (RoomsDetail ss : s) {
-
                 JSONObject c = new JSONObject(ss.getContent());
                 PictureModel item2 = new PictureModel();
                 String id = c.getString("id");

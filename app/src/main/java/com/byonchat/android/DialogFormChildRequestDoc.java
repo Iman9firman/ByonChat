@@ -170,6 +170,7 @@ public class DialogFormChildRequestDoc extends DialogFragment {
                 params.put("link_file", url);
                 params.put("keterangan", editText.getText() + "");
                 params.put("nama_user_requester", dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
+                params.put("nik_requester", dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
                 params.put("nama_file", title);
                 params.put("datas", jsonData());
 

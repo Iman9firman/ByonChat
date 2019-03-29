@@ -127,7 +127,7 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
             }
 
             String downol = "Dokumen Tidak Terkendali Jika Diunduh dan/atau Dicetak - Uncontrolled When Downloaded And/or Printed"+"\n"+
-                            "Downloaded at "+ item.timestamp +" By : "+ dbHelper.getColValue(UserDB.EMPLOYEE_NAME) +" --- "+dbHelper.getColValue(UserDB.EMPLOYEE_NIK)+ " --- Approved By : "+dbHelper.getColValue(UserDB.ATASAN_1_NAMA)+", and "+dbHelper.getColValue(UserDB.ATASAN_2_NAMA)+"\n"+
+                            "Downloaded at "+ item.timestamp +" By : "+ dbHelper.getColValue(UserDB.EMPLOYEE_NAME) +" --- "+dbHelper.getColValue(UserDB.EMPLOYEE_NIK)+ " --- 1st Approved By : "+dbHelper.getColValue(UserDB.ATASAN_1_NAMA)+", and  2nd Approved By : "+dbHelper.getColValue(UserDB.ATASAN_2_NAMA)+"\n"+
                             "Controlled Copy";
             if(dbHelper.getColValue(UserDB.ATASAN_2_NIK).equalsIgnoreCase("")){
                 downol = "Dokumen Tidak Terkendali Jika Diunduh dan/atau Dicetak - Uncontrolled When Downloaded And/or Printed"+"\n"+

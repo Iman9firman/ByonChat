@@ -257,6 +257,15 @@ public class LoginISS extends AppCompatActivity {
 
             if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
                 new Validations().getInstance(getApplicationContext()).setTimebyId(26);
+                //Not fix!!! Change how to detect as reliever with another ways
+                JSONObject jsonRootObject = new JSONObject(allres);
+                JSONArray tab = jsonRootObject.getJSONArray("tab_room");
+                for (int i = 0; i < tab.length(); i++ ){
+                    String name = tab.getJSONObject(i).getString("tab_name");
+                    if (name.equalsIgnoreCase("Job Call")){
+                        new Validations().getInstance(getApplicationContext()).setShareLocOnOff(true);
+                    }
+                }
 //                Toast.makeText(LoginISS.this, "Atasan 1 : "+ATASAN_1_NAMA+", ATASAN 2 : "+ATASAN_2_NAMA+", Requester : "+EMPLOYEE_NAME, Toast.LENGTH_LONG).show();
                 /*Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
                 intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);

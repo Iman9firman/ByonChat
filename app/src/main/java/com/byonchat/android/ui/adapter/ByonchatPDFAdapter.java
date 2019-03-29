@@ -84,45 +84,71 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int i) {
         File item = itemsFiltered.get(i);
-        if (viewHolder instanceof ByonchatPDFViewHolder) {
-            String title = item.title;
 
-            if (mSearchText != null && !mSearchText.isEmpty()) {
-                int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
-                int endPos = startPos + mSearchText.length();
+        if(item.type.equalsIgnoreCase("folder")){
+            ((ByonchatPDFViewHolder) viewHolder).vName.setText(item.title);
+            ((ByonchatPDFViewHolder) viewHolder).vTimestamp.setText(parseDateToddMMyyyy(item.timestamp));
+            ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setVisibility(View.GONE);
+            ((ByonchatPDFViewHolder) viewHolder).vBtComment.setVisibility(View.GONE);
+            ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setVisibility(View.GONE);
+            Picasso.with(context).load("https://iss.byonchat.com/adminLTE/dist/img/dir.png")
+                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatPDFViewHolder) viewHolder).vIconView);
+            ((ByonchatPDFViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
+                if (onPreviewItemClickListener != null) {
+                    onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
+                }
+            });
+            ((ByonchatPDFViewHolder) viewHolder).vFramePhoto.setOnClickListener(view ->{
+                if (onPreviewItemClickListener != null) {
+                    onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
+                }
+            });
+        }else {
 
-                if (startPos != -1) {
-                    Spannable spannable = new SpannableString(title);
-                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
-                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ((ByonchatPDFViewHolder) viewHolder).vName.setText(spannable);
+            if (viewHolder instanceof ByonchatPDFViewHolder) {
+                String title = item.title;
+
+                if (mSearchText != null && !mSearchText.isEmpty()) {
+                    int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
+                    int endPos = startPos + mSearchText.length();
+
+                    if (startPos != -1) {
+                        Spannable spannable = new SpannableString(title);
+                        ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ((ByonchatPDFViewHolder) viewHolder).vName.setText(spannable);
+                    } else {
+                        ((ByonchatPDFViewHolder) viewHolder).vName.setText(title);
+                    }
                 } else {
                     ((ByonchatPDFViewHolder) viewHolder).vName.setText(title);
                 }
-            } else {
-                ((ByonchatPDFViewHolder) viewHolder).vName.setText(title);
+
+                showFileImage(viewHolder, item.url);
+                showTagView(viewHolder, item.description);
+
+
+                ((ByonchatPDFViewHolder) viewHolder).vTimestamp.setText(parseDateToddMMyyyy(item.timestamp));
+
+                ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setVisibility(View.VISIBLE);
+                ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.subtitle));
+
+                ((ByonchatPDFViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
+                    if (onPreviewItemClickListener != null) {
+                        onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
+                    }
+                });
+
+                ((ByonchatPDFViewHolder) viewHolder).vMainContent.setOnClickListener(view ->{});
+
+                ((ByonchatPDFViewHolder) viewHolder).vBtComment.setVisibility(View.VISIBLE);
+                ((ByonchatPDFViewHolder) viewHolder).vBtComment.setOnClickListener(view -> {
+                    if (onRequestItemClickListener != null) {
+                        onRequestItemClickListener.onItemClick(view, i, (File) getData().get(i));
+                    }
+                });
             }
-
-            showFileImage(viewHolder, item.url);
-            showTagView(viewHolder, item.description);
-
-
-            ((ByonchatPDFViewHolder) viewHolder).vTimestamp.setText(parseDateToddMMyyyy(item.timestamp));
-
-            ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.subtitle));
-
-            ((ByonchatPDFViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
-                if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i));
-                }
-            });
-
-            ((ByonchatPDFViewHolder) viewHolder).vBtComment.setOnClickListener(view -> {
-                if (onRequestItemClickListener != null) {
-                    onRequestItemClickListener.onItemClick(view, i, (File) getData().get(i));
-                }
-            });
         }
     }
 
@@ -152,6 +178,7 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         String[] tags = getTagView(item) /*null*/;
 
         if (tags != null && tags.length > 0) {
+            ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setVisibility(View.VISIBLE);
             ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setTags(tags);
         }
 

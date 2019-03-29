@@ -25,6 +25,8 @@
         id INTEGER PRIMARY KEY, name TEXT, description TEXT, realname TEXT, link TEXT, type TEXT, is_active TEXT, target_url TEXT);</string>
     <string name="sql_createtable_rooms_trending">CREATE TABLE IF NOT EXISTS trendings(<!--_id INTEGER PRIMARY KEY AUTOINCREMENT, -->
         id INTEGER PRIMARY KEY, trending_name TEXT, type TEXT);</string>
+    <string name="sql_createtable_rooms_string">CREATE TABLE IF NOT EXISTS strings(<!--_id INTEGER PRIMARY KEY AUTOINCREMENT, -->
+        id INTEGER PRIMARY KEY, string_name TEXT);</string>
 
     <string name="add_rooms">Add room </string>
     <string name="text_empty_selected">You can now add all your rooms.</string>

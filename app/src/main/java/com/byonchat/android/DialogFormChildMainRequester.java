@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -32,6 +33,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.provider.RoomsDB;
 import com.byonchat.android.widget.CalendarDialog;
 import com.googlecode.mp4parser.authoring.Edit;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
@@ -209,6 +211,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
         spinnerArraySubAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinnerArrayKet = new ArrayList<String>();
+        spinnerArrayKet.add("-Pilih keterangan-");
 
         spinnerArrayKetAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArrayKet);
         spinnerArrayKetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -325,6 +328,12 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
                 e.printStackTrace();
             }
 
+            RoomsDB roomsDB = new RoomsDB(getContext());
+            roomsDB.open();
+//            SQLiteDatabase db = roomsDB.getWritableDatabase();
+//            db.execSQL('INSERT INTO strings (string_name) VALUES ('+jsonObject.toString()+')');
+            roomsDB.insertSaveString(jsonObject.toString()+"");
+            roomsDB.close();
             listener.userSelectedAValue(jsonObject.toString());
             dismiss();
         }

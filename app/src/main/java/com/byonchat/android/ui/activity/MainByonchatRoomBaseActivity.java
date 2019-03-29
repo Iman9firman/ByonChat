@@ -77,6 +77,7 @@ import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.tempSchedule.TempScheduleRoom;
 import com.byonchat.android.ui.fragment.ByonchatApprovalRequestFragment;
 import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
+import com.byonchat.android.ui.fragment.ByonchatRepairReportFragment;
 import com.byonchat.android.ui.fragment.ByonchatStatusRequestFragment;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -241,7 +242,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         name = listItem != null ? listItem.name : getIntent().getExtras().getString(EXTRA_NAME);
         icon = listItem != null ? listItem.icon : getIntent().getExtras().getString(EXTRA_ICON);
 
-        Log.w("ggggg", id_rooms_tab + " -- " + category + " -- " + include_pull);
+        Log.w("ggggg", id_rooms_tab + " -- " + category + " -- " + include_pull + " -- " + url_tembak);
     }
 
     protected void onViewReady(Bundle savedInstanceState) {
@@ -323,7 +324,17 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         mDrawable.setColorFilter(Color.parseColor("#" + colorText), PorterDuff.Mode.SRC_ATOP);
         vImgToolbarBack.setImageDrawable(mDrawable);
 
-        vToolbarBack.setOnClickListener(v -> onBackPressed());
+        vToolbarBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mFragment instanceof ByonchatPDFFragment) {
+                    ByonchatPDFFragment fragment = (ByonchatPDFFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
+                    fragment.onBackClick();
+                }else{
+                    onBackPressed();
+                }
+            }
+        });
         vToolbarTitle.setText(title);
     }
 
@@ -565,6 +576,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 } else if (category.equalsIgnoreCase("24")) {
                     show = true;
                     mFragment = ByonchatApprovalRequestFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
+                } else if (category.equalsIgnoreCase("26")) {
+                    show = true;
+                    mFragment = ByonchatRepairReportFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 }
 
 

@@ -347,7 +347,7 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
 
 
                             if (jsonArray.length() > 0) {
-                                for (int i = 0; i < jsonArray.length(); i++) {
+                                for (int i = jsonArray.length() -1 ; i >= 0; i--) {
                                     JSONObject jObj = jsonArray.getJSONObject(i);
                                     String id = jObj.getString("id");
                                     String id_file = jObj.getString("id_file");

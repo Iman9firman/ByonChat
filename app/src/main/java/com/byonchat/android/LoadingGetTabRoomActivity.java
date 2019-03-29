@@ -66,11 +66,12 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
+
     public static Intent generateISS(Context context, String result, String bc_user) {
         Intent intent = new Intent(context, LoadingGetTabRoomActivity.class);
         intent.putExtra("newday", result);
         intent.putExtra("bcUser", bc_user);
-        intent.putExtra("iss","ya");
+        intent.putExtra("iss", "ya");
         return intent;
     }
 
@@ -90,7 +91,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
         }
 
         String iss = getIntent().getStringExtra("iss");
-        if(iss == null) {
+        if (iss == null) {
             String room_name = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
             targetUrl = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
 
@@ -103,7 +104,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
             }
 
             new Refresh().execute(GETTAB, room_name);
-        }else{
+        } else {
             targetUrl = "https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php";
             String newday = getIntent().getStringExtra("newday");
             extractResult(newday);
@@ -111,7 +112,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
         }
     }
 
-    private void extractResult(String result){
+    private void extractResult(String result) {
         try {
             JSONObject jsonRootObject = new JSONObject(result);
             String username = jsonRootObject.getString("username_room");
@@ -146,7 +147,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Calendar cal = Calendar.getInstance();
             String time_str = dateFormat.format(cal.getTime());
-            Log.w("Welsnm donwm -0",username+", "+ realname+", "+ content+", "+ backdrop+", "+ lastUpdate+", "+ icon+", "+ firstTab+", "+ time_str);
+            Log.w("Welsnm donwm -0", username + ", " + realname + ", " + content + ", " + backdrop + ", " + lastUpdate + ", " + icon + ", " + firstTab + ", " + time_str);
             if (cursor.getCount() > 0) {
                 lu = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_LASTUPDATE));
                 if (!lu.equalsIgnoreCase(lastUpdate)) {
@@ -285,7 +286,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
 
                         Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
                         //logout iss
-                        
+
                         new Validations().getInstance(getApplicationContext()).removeById(26);
                         new Validations().getInstance(getApplicationContext()).removeById(25);
 

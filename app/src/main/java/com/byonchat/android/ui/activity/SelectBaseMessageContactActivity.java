@@ -203,7 +203,8 @@ public abstract class SelectBaseMessageContactActivity extends AppCompatActivity
             } else if (RefreshContactService.ACTION_CONTACT_REFRESHED.equals(intent.getAction())) {
 //                refreshContactList();
                 Toast.makeText(context, "refresh contact", Toast.LENGTH_SHORT).show();
-                pDialog.dismiss();
+                if (pDialog != null)
+                    pDialog.dismiss();
             }
         }
     }

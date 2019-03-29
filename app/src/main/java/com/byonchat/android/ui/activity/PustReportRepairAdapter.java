@@ -88,6 +88,15 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
                 }
             }
         });
+        holder.before.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onPreviewItemClickListener != null) {
+                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null , "before");
+                }
+            }
+        });
+
     }
 
     @Override

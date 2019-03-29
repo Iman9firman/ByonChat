@@ -36,6 +36,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
+import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
@@ -278,25 +279,36 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 foto, new OnPreviewItemClickListener() {
             @Override
             public void onItemClick(View view, int position, File item, String type) {
-                task_id = position+"";
-                CameraActivity.Builder start = new CameraActivity.Builder(PushRepairReportActivity.this, REQ_CAMERA);
-                start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
-                start.setCameraFace(CameraActivity.CAMERA_FRONT);
-                start.setFlashMode(CameraActivity.FLASH_OFF);
-                start.setQuality(CameraActivity.MEDIUM);
-                start.setRatio(CameraActivity.RATIO_4_3);
-                start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
-                if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
+                if(type.equalsIgnoreCase("before")){
+                    task_id = position + "";
+                    Intent intent = new Intent(PushRepairReportActivity.this, ZoomImageViewActivity.class);
+                    for(int i = 0; i< foto.size();i++){
+                        if(foto.get(i).getId().equalsIgnoreCase(task_id)){
+                            intent.putExtra(ZoomImageViewActivity.KEY_FILE, foto.get(i).getBefore());
+                        }
+                    }
+                    startActivity(intent);
+                }else {
+                    task_id = position + "";
+                    CameraActivity.Builder start = new CameraActivity.Builder(PushRepairReportActivity.this, REQ_CAMERA);
+                    start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                    start.setCameraFace(CameraActivity.CAMERA_FRONT);
+                    start.setFlashMode(CameraActivity.FLASH_OFF);
+                    start.setQuality(CameraActivity.MEDIUM);
+                    start.setRatio(CameraActivity.RATIO_4_3);
+                    start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
+                    if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
+                    new Camera(start.build()).lauchCamera();
                 }
-                new Camera(start.build()).lauchCamera();
             }
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());

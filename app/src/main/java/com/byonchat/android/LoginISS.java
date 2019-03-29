@@ -97,7 +97,7 @@ public class LoginISS extends AppCompatActivity {
                     Map<String, String> params = new HashMap<>();
                     params.put("username", userID.getText().toString());
                     params.put("password", passID.getText().toString());
-                    params.put("bc_user", /*dbhelper.getMyContact().getJabberId()*/"6285697223760");
+                    params.put("bc_user", dbhelper.getMyContact().getJabberId());
 
                     LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
                 }
@@ -257,6 +257,15 @@ public class LoginISS extends AppCompatActivity {
 
             if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
                 new Validations().getInstance(getApplicationContext()).setTimebyId(26);
+                //Not fix!!! Change how to detect as reliever with another ways
+                JSONObject jsonRootObject = new JSONObject(allres);
+                JSONArray tab = jsonRootObject.getJSONArray("tab_room");
+                for (int i = 0; i < tab.length(); i++ ){
+                    String name = tab.getJSONObject(i).getString("tab_name");
+                    if (name.equalsIgnoreCase("Job Call")){
+                        new Validations().getInstance(getApplicationContext()).setShareLocOnOff(true);
+                    }
+                }
 //                Toast.makeText(LoginISS.this, "Atasan 1 : "+ATASAN_1_NAMA+", ATASAN 2 : "+ATASAN_2_NAMA+", Requester : "+EMPLOYEE_NAME, Toast.LENGTH_LONG).show();
                 /*Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
                 intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);

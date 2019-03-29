@@ -29,7 +29,7 @@ import java.util.Locale;
 
 import me.gujun.android.taggroup.TagGroup;
 
-public class ByonchatApprovalDocAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+public class ByonchatRepairReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     protected static final int VIEWTYPE_ITEM_TEXT = 1;
 
@@ -46,10 +46,10 @@ public class ByonchatApprovalDocAdapter extends RecyclerView.Adapter<RecyclerVie
     protected OnRequestItemClickListener onRequestItemClickListener;
     protected OnPreviewItemClickListener onPreviewItemClickListener;
 
-    public ByonchatApprovalDocAdapter(Context context,
-                              List<File> items,
-                              OnPreviewItemClickListener onPreviewItemClickListener,
-                              OnRequestItemClickListener onRequestItemClickListener) {
+    public ByonchatRepairReportAdapter(Context context,
+                                      List<File> items,
+                                      OnPreviewItemClickListener onPreviewItemClickListener,
+                                      OnRequestItemClickListener onRequestItemClickListener) {
         this.context = context;
         this.items = items;
         this.itemsFiltered = items;

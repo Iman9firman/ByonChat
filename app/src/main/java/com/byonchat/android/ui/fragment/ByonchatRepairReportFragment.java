@@ -1,3 +1,4 @@
+
 package com.byonchat.android.ui.fragment;
 
 import android.annotation.SuppressLint;
@@ -14,7 +15,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -37,22 +37,31 @@ import com.byonchat.android.data.model.File;
 import com.byonchat.android.data.model.Status;
 import com.byonchat.android.data.model.Video;
 import com.byonchat.android.helpers.Constants;
+import com.byonchat.android.list.contact;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.ui.activity.ByonchatPDFPreviewActivity;
 import com.byonchat.android.ui.activity.DialogApproveRequestDocument;
+import com.byonchat.android.ui.activity.DialogRejectRequest;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
+import com.byonchat.android.ui.activity.PushRepairReportActivity;
 import com.byonchat.android.ui.adapter.ByonchatApprovalDocAdapter;
+import com.byonchat.android.ui.adapter.ByonchatRepairReportAdapter;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
+import com.google.android.gms.vision.L;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,7 +76,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressLint("ValidFragment")
-public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ByonchatRepairReportFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     protected List<File> files = new ArrayList<>();
 
@@ -77,10 +86,10 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
     private String username;
     private String idRoomTab;
     private String color;
-    MessengerDatabaseHelper databaseHelper;
 
     protected LinearLayoutManager chatLayoutManager;
-    protected ByonchatApprovalDocAdapter mAdapter;
+    protected ByonchatRepairReportAdapter mAdapter;
+    MessengerDatabaseHelper databaseHelper;
 
     protected boolean isChanged = true;
     protected MainByonchatRoomBaseActivity activity;
@@ -100,16 +109,16 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
     @NonNull
     protected TextView vTextContentError;
 
-    public ByonchatApprovalRequestFragment() {
+    public ByonchatRepairReportFragment() {
 
     }
 
-    public ByonchatApprovalRequestFragment(MainByonchatRoomBaseActivity activity) {
+    public ByonchatRepairReportFragment(MainByonchatRoomBaseActivity activity) {
         this.activity = activity;
     }
 
-    public static ByonchatApprovalRequestFragment newInstance(String myc, String tit, String utm, String usr, String idrtab, String color, MainByonchatRoomBaseActivity activity) {
-        ByonchatApprovalRequestFragment fragment = new ByonchatApprovalRequestFragment(activity);
+    public static ByonchatRepairReportFragment newInstance(String myc, String tit, String utm, String usr, String idrtab, String color, MainByonchatRoomBaseActivity activity) {
+        ByonchatRepairReportFragment fragment = new ByonchatRepairReportFragment(activity);
         Bundle args = new Bundle();
         args.putString("aa", tit);
         args.putString("bb", utm);
@@ -127,7 +136,7 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
         super.onCreate(savedInstanceState);
         databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
         title = getArguments().getString("aa");
-        urlTembak = "https://bb.byonchat.com/ApiDocumentControl/index.php/Approval/list";
+        urlTembak = "https://bb.byonchat.com/ApiDocumentControl/index.php/Request/list";
         username = getArguments().getString("cc");
         idRoomTab = getArguments().getString("dd");
         myContact = getArguments().getString("ee");
@@ -150,19 +159,14 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
         return view;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         resolveConnectionProblem();
         resolveListFile();
         resolveRefreshList();
 
-        vFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Intent intent = ByonchatVideoBeforeDownloadActivity.generateIntent(getContext());
-//                startActivity(intent);
-            }
-        });
+        vFab.setVisibility(View.GONE);
     }
 
     @Override
@@ -172,17 +176,18 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
 
     @Override
     public void onResume() {
-        super.onResume();
-
         vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
             Map<String, String> params = new HashMap<>();
-            params.put("bc_user_approval",  databaseHelper.getMyContact().getJabberId());
-            getDetail(urlTembak,params,true);
+            params.put("username_room",  username);
+            params.put("bc_user",  databaseHelper.getMyContact().getJabberId());
+            params.put("id_rooms_tab",  idRoomTab);
+            getDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_tobe_repair.php",params,true);
         } else {
             vRefreshList.setRefreshing(false);
             Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
+        super.onResume();
     }
 
     protected void resolveConnectionProblem() {
@@ -195,24 +200,16 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
         vListVideoTube.setUpAsList();
         vListVideoTube.setNestedScrollingEnabled(false);
         chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
-        mAdapter = new ByonchatApprovalDocAdapter(getContext(), files, new OnPreviewItemClickListener() {
+        mAdapter = new ByonchatRepairReportAdapter(getContext(), files, new OnPreviewItemClickListener() {
             @Override
             public void onItemClick(View view, int position, File item, String type) {
-                FragmentManager fm = activity.getSupportFragmentManager();
-                DialogApproveRequestDocument testDialog = DialogApproveRequestDocument.newInstance(username, idRoomTab, item.id, item.title, "nulll", item.nama_requester, item.timestamp, item.description, item.id_history);
-                testDialog.setRetainInstance(true);
-                testDialog.show(fm, "Dialog");
-                testDialog.setListener(new DialogApproveRequestDocument.DialogRefreshListener(){
-                    @Override
-                    public void onRefreshUp() {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                onRefresh();
-                            }
-                        }, 300);
-                    }
-                });
+                Map<String, String> params = new HashMap<>();
+                params.put("username_room",  username);
+                params.put("bc_user",  databaseHelper.getMyContact().getJabberId());
+                params.put("id_rooms_tab",  idRoomTab);
+                params.put("task_id",  item.id+"");
+                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_tobe_repair.php",params,true);
+
             }
         }, new OnRequestItemClickListener() {
             @Override
@@ -223,20 +220,9 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
             }
         });
 
-        mAdapter.setOnItemClickListener((view, position) -> {
-            if (isChanged) {
-//                Intent intent = ByonchatDetailVideoTubeActivity.generateIntent(getContext(), mAdapter.getData().get(position));
-//                startActivity(intent);
-            } else
-                adapterSelected((File) mAdapter.getData().get(position));
-        });
-
-        mAdapter.setOnLongItemClickListener((view, position) -> {
-            /*adapterSelected((Video) mAdapter.getData().get(position));*/
-        });
-
         vListVideoTube.setAdapter(mAdapter);
     }
+
 
     protected void adapterSelected(File file) {
         file.isSelected = !file.isSelected();
@@ -321,48 +307,44 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
                 response -> {
                     rdialog.dismiss();
                     if (hide) {
-                        Log.w("INI approvere harusee",response);
                         try {
+//                            JSONArray jsonArray0 = new JSONArray(response);
                             JSONObject jsonObject = new JSONObject(response);
-                            String status = jsonObject.getString("status");
-                            String message = jsonObject.getString("message");
+//                            String status = jsonObject.getString("status");
+//                            String message = jsonObject.getString("message");
 
                             files.clear();
-                            if (message.equalsIgnoreCase("succes")) {
-                                JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
+                            JSONArray jsonArray = new JSONArray(jsonObject.getString("value_detail"));
 
-                                if (jsonArray.length() > 0) {
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        JSONObject jObj = jsonArray.getJSONObject(i);
-                                        String _id = jObj.getString("id_request");
-                                        String id = jObj.getString("id_file");
-                                        String id_history = jObj.getString("id_request_history");
-                                        String timestamp = jObj.getString("create_at");
-                                        String bc_user_requester = jObj.getString("bc_user_requester");
-                                        String keterangan = jObj.getString("keterangan");
-                                        String url = jObj.getString("link_file");
-                                        String nik = jObj.getString("nik");
-                                        String nama_requester = jObj.getString("nama_user_requester");
-                                        String nama_file = jObj.getString("nama_file");
 
-                                        File file = new File();
-                                        file.id = Long.valueOf(id);
-                                        file.title = nama_file;
-                                        file.timestamp = timestamp;
-                                        file.url = url;
-                                        file.type = "text";
-                                        file.description = keterangan;
-                                        file.nama_requester = nama_requester;
-                                        file.id_history = id_history;
+                            if (jsonArray.length() > 0) {
+                                for (int i = jsonArray.length() -1 ; i >= 0; i--) {
+                                    JSONObject jObj = jsonArray.getJSONObject(i);
+                                    String id = jObj.getString("id");
+//                                        String link_file = jObj.getString("link_file");
+//                                        String timestamp = jObj.getString("create_at");
+//                                        String bc_user_requester = jObj.getString("bc_user_requester");
+                                    String nama_file = jObj.getString("title");
+//                                        String history = jObj.getString("history");
 
-                                        files.add(file);
-                                    }
+//                                        String id_request = new JSONArray(history).getJSONObject(0).getString("id_request");
+//                                        String id_history = new JSONArray(history).getJSONObject(new JSONArray(history).length()-1).getString("id");
 
-                                    mAdapter.setItems(files);
-                                    mAdapter.notifyDataSetChanged();
+                                    File file = new File();
+                                    file.id = Long.valueOf(id);
+                                    file.title = nama_file;
+                                    file.url = "";
+                                    file.timestamp = "";
+                                    file.type = "text";
+                                    file.id_history = "";
+                                    file.description = "";
+                                    file.nama_requester = "";
+
+                                    files.add(file);
                                 }
-                            } else {
-                                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+
+                                mAdapter.setItems(files);
+                                mAdapter.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -384,6 +366,39 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
         };
         queue.add(sr);
     }
-}
 
+    private void getMoreDetail(String Url, Map<String, String> params2, Boolean hide) {
+        ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
+        rdialog.setMessage("Loading...");
+        rdialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
+
+        StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                response -> {
+                    rdialog.dismiss();
+                    if (hide) {
+                        Intent iii = new Intent(getContext(),PushRepairReportActivity.class);
+                        iii.putExtra("data",response);
+                        iii.putExtra("username_room",username);
+                        iii.putExtra("bc_user",databaseHelper.getMyContact().getJabberId());
+                        iii.putExtra("id_rooms_tab",idRoomTab);
+                        startActivity(iii);
+                    }
+
+                },
+                error -> {
+                    rdialog.dismiss();
+                }
+        ) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                return params2;
+            }
+        };
+        queue.add(sr);
+    }
+}
 

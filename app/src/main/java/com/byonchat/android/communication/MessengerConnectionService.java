@@ -1545,43 +1545,49 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
 
+        Log.w("Adakah hasilnya bos","ada nih 2 : "+"ok");
         Timer LocTimer = new Timer();
         TimerTask LocTimerTask = new TimerTask() {
             @Override
             public void run() {
                 if (locSpyChange != null) {
-                    try {
-                        String url = "https://bb.byonchat.com/luar/lapor_lokasi.php";
-                        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
+                    if (new Validations().getInstance(getApplicationContext()).getShareLocOnOff(27) == true) {
+                        Log.w("Adakah hasilnya bos","ada nih 3 : "+true);
+                        try {
+                            String url = "https://bb.byonchat.com/luar/lapor_lokasi.php";
+                            StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                        }
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                        }
                                     }
-                                },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                    }
+                            ) {
+                                @Override
+                                protected Map<String, String> getParams() {
+                                    Map<String, String> params = new HashMap<String, String>();
+                                    params.put("user", databaseHelper.getMyContact().getJabberId());
+                                    params.put("lat", locSpyChange.getLatitude() + "");
+                                    params.put("long", locSpyChange.getLongitude() + "");
+                                    return params;
                                 }
-                        ) {
-                            @Override
-                            protected Map<String, String> getParams() {
-                                Map<String, String> params = new HashMap<String, String>();
-                                params.put("user", databaseHelper.getMyContact().getJabberId());
-                                params.put("lat", locSpyChange.getLatitude() + "");
-                                params.put("long", locSpyChange.getLongitude() + "");
-                                return params;
-                            }
-                        };
+                            };
 
-                        Application.getInstance().addToRequestQueue(postRequest);
+                            Application.getInstance().addToRequestQueue(postRequest);
 
-                    } catch (Exception e) {
+                        } catch (Exception e) {
+
+                        }
                     }
                 }
             }
         };
         LocTimer.schedule(LocTimerTask, 60000, 60000);
+
     }
 
     //This will handle the broadcast

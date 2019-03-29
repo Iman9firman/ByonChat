@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
@@ -440,11 +441,16 @@ public class AllAboutUploadTask {
                 entity.addPart("username_room", new StringBody(usr));
                 entity.addPart("id_rooms_tab", new StringBody(idr));
                 entity.addPart("id_detail_tab", new StringBody(idDetail));
+                Log.w("Entiti sajaha ke 1","usr : " +new StringBody(usr)+", idr : "+new StringBody(idr)+", idDetail : "+new StringBody(idDetail));
+
+                Log.w("Kena lewat sajaha","Setuju 0");
 
                 if (calendar != null) {
                     if (calendar.equalsIgnoreCase("true boi")) {
 
+                        Log.w("Kena lewat sajaha","Setuju 1");
                         entity.addPart("selected_date", new StringBody(startDate));
+                        Log.w("Entiti sajaha ke 2", ""+new StringBody(startDate));
                     }
                 }
 
@@ -480,6 +486,7 @@ public class AllAboutUploadTask {
 
 
                     entity.addPart("assign_to", new StringBody(has));
+                    Log.w("Entiti sajaha ke 3", ""+new StringBody(has));
 
                 }
 
@@ -495,12 +502,14 @@ public class AllAboutUploadTask {
                             resultti = "2";
                         }
                         entity.addPart("status_task", new StringBody(resultti));
+                        Log.w("Entiti sajaha ke 4", ""+new StringBody(resultti));
                     }
                 }
 
 
                 if (!isReject.equalsIgnoreCase("")) {
                     entity.addPart("is_reject", new StringBody(isReject));
+                    Log.w("Entiti sajaha ke 5", ""+new StringBody(isReject));
                 }
 
 
@@ -511,13 +520,16 @@ public class AllAboutUploadTask {
                     if (!cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)).equalsIgnoreCase("")) {
                         entity.addPart("latlong_before", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a")));
                         entity.addPart("latlong_after", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "b")));
+                        Log.w("Entiti sajaha ke 6 a", "a");
                     } else {
                         entity.addPart("latlong_before", new StringBody("null"));
                         entity.addPart("latlong_after", new StringBody("null"));
+                        Log.w("Entiti sajaha ke 6 b", "b");
                     }
                 } else {
                     entity.addPart("latlong_before", new StringBody("null"));
                     entity.addPart("latlong_after", new StringBody("null"));
+                    Log.w("Entiti sajaha ke 6 c", "c");
                 }
 
                 if (fromList.equalsIgnoreCase("hide") || fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
@@ -527,6 +539,7 @@ public class AllAboutUploadTask {
                         if (ff.length == 2) {
                             entity.addPart("parent_id", new StringBody(ff[1]));
                             entity.addPart("id_list_push", new StringBody(ff[0]));
+                            Log.w("Entiti sajaha ke 7", ""+new StringBody(idDetail+""));
                         }
                     }
                 }
@@ -538,6 +551,7 @@ public class AllAboutUploadTask {
 
                 Contact contact = messengerHelper.getMyContact();
                 entity.addPart("bc_user", new StringBody(contact.getJabberId()));
+                Log.w("Entiti sajaha ke 8", ""+new StringBody(contact.getJabberId()));
 
                 ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, usr, idr, "cild");
 
@@ -735,7 +749,8 @@ public class AllAboutUploadTask {
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 200) {
                     if (gpxfile.exists()) {
-                        gpxfile.delete();
+                        Toast.makeText(context,"Boleh kartun 0",Toast.LENGTH_SHORT).show();
+//                        gpxfile.delete();
                     }
 
                     final String data = EntityUtils.toString(r_entity);
@@ -766,7 +781,8 @@ public class AllAboutUploadTask {
                     }
                 } else {
                     if (gpxfile.exists()) {
-                        gpxfile.delete();
+                        Toast.makeText(context,"Boleh kartun 1",Toast.LENGTH_SHORT).show();
+//                        gpxfile.delete();
                     }
                     long date = System.currentTimeMillis();
                     String dateString = hourFormat.format(date);
@@ -780,7 +796,8 @@ public class AllAboutUploadTask {
 
             } catch (ClientProtocolException e) {
                 if (gpxfile.exists()) {
-                    gpxfile.delete();
+                    Toast.makeText(context,"Boleh kartun 2",Toast.LENGTH_SHORT).show();
+//                    gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
                 String dateString = hourFormat.format(date);
@@ -791,7 +808,8 @@ public class AllAboutUploadTask {
 
             } catch (IOException e) {
                 if (gpxfile.exists()) {
-                    gpxfile.delete();
+                    Toast.makeText(context,"Boleh kartun 3",Toast.LENGTH_SHORT).show();
+//                    gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
                 String dateString = hourFormat.format(date);

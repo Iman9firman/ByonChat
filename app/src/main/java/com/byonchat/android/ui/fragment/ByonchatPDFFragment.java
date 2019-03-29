@@ -1,7 +1,9 @@
 package com.byonchat.android.ui.fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -73,10 +75,12 @@ import java.util.Map;
 public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     protected List<File> files = new ArrayList<>();
+//    protected List<File> folders = new ArrayList<>();
 
     private String myContact;
     private String title;
     private String urlTembak;
+    private ArrayList<String> urlBack = new ArrayList<>();
     private String username;
     private String idRoomTab;
     private String color;
@@ -101,6 +105,8 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     protected FloatingActionButton vFab;
     @NonNull
     protected TextView vTextError;
+    @NonNull
+    protected TextView vTextEmpty;
     @NonNull
     protected TextView vTextContentError;
 //    @NonNull
@@ -160,6 +166,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         vRefreshList = getRefreshList(view);
         vFab = getFabView(view);
         vTextError = getTextError(view);
+        vTextEmpty = getTextEmpty(view);
         vTextContentError = getTextContentError(view);
 //        vTagGroup = getTagContent(view);
         vTagLayout = getTagContent(view);
@@ -179,6 +186,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         resolesTagGroup();
         onRefresh();
 
+        vTextEmpty.setText("No file in this directory");
         vFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,7 +201,8 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
 //        onResume();
         vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-            new getFile().execute(urlTembak);
+            urlBack.add("OnBack");
+            new getFile().execute("https://iss.byonchat.com/index.php/Api/Files");
             Log.w("Apa ini harusee",urlTembak);
         } else {
             vRefreshList.setRefreshing(false);
@@ -205,6 +214,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     public void onResume() {
         super.onResume();
 
+//        urlBack = urlTembak;
         /*vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
             new getFile().execute(urlTembak);
@@ -226,16 +236,22 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
 
     protected void resolveListFile() {
         files = new ArrayList<>();
+//        folders = new ArrayList<>();
         vListVideoTube.setUpAsList();
         vListVideoTube.setNestedScrollingEnabled(false);
         chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
         mAdapter = new ByonchatPDFAdapter(getContext(), files, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, File item) {
-                Intent intent = new Intent(getContext(), ByonchatPDFPreviewActivity.class);
-                intent.putExtra(Constants.EXTRA_URL, item.url);
-                startActivity(intent);
-                traceView(item);
+            public void onItemClick(View view, int position, File item, String type) {
+                if(type.equalsIgnoreCase("folder")){
+                    urlBack.add(item._id+"");
+                    new getFile().execute("https://iss.byonchat.com/index.php/Api/Files/"+item.id);
+                }else {
+                    Intent intent = new Intent(getContext(), ByonchatPDFPreviewActivity.class);
+                    intent.putExtra(Constants.EXTRA_URL, item.url);
+                    startActivity(intent);
+                    traceView(item);
+                }
             }
         }, new OnRequestItemClickListener() {
             @Override
@@ -370,6 +386,10 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         return (TextView) view.findViewById(R.id.text_coba_lagi);
     }
 
+    protected TextView getTextEmpty(View view) {
+        return (TextView) view.findViewById(R.id.text_empty);
+    }
+
     protected TextView getTextContentError(View view) {
         return (TextView) view.findViewById(R.id.text_content_error);
     }
@@ -398,7 +418,8 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
 
         @Override
         protected String doInBackground(String... params) {
-
+            Log.w("Killing speri",params[0]);
+            urlTembak = params[0];
             return GET(params[0]);
         }
 
@@ -406,42 +427,134 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         protected void onPostExecute(String result) {
             try {
                 JSONObject jsonObject = new JSONObject(result);
-                String status = jsonObject.getString("status");
-                String message = jsonObject.getString("message");
 
                 files.clear();
-                if (message.equalsIgnoreCase("sukses")) {
-                    JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
-                    if (jsonArray.length() > 0) {
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jObj = jsonArray.getJSONObject(i);
-                            String id = jObj.getString("id");
-                            String title = jObj.getString("title");
-                            String subtitle = jObj.getString("subtitle");
-                            String timestamp = jObj.getString("timestamp");
-                            String url = jObj.getString("url");
-                            String type = jObj.getString("type");
-                            String thumbnail = jObj.getString("thumbnail");
-                            String descriptionTag = jObj.getString("tag");
+                JSONArray folderArray = new JSONArray(jsonObject.getString("folder"));
+                if (folderArray.length() > 0) {
+                    for (int i = 0; i < folderArray.length(); i++) {
+                        JSONObject jObj = folderArray.getJSONObject(i);
+                        String id = jObj.getString("id");
+                        String idparent = jObj.getString("parent_id");
+                        String title = jObj.getString("nama_folder");
+                        String timestamp = jObj.getString("create_at");
 
-                            File file = new File();
-                            file.id = Long.valueOf(id);
-                            file.title = title;
-                            file.subtitle = subtitle;
-                            file.timestamp = timestamp;
-                            file.url = url;
-                            file.type = type;
-                            file.thumbnail = thumbnail;
-                            file.description = descriptionTag;
+                        File file = new File();
+                        file.id = Long.valueOf(id);
+                        file._id = Integer.parseInt(idparent);
+                        file.title = title;
+                        file.type = "folder";
+                        file.timestamp = timestamp;
+                        file.url = "https://iss.byonchat.com/files/"+id;
 
-                            files.add(file);
-                        }
-
-                        mAdapter.setItems(files);
+                        files.add(file);
                     }
-                } else {
-                    Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
                 }
+                JSONArray jsonArray = new JSONArray(jsonObject.getString("files"));
+                Log.w("isi dari holdyui", jsonArray+"");
+                if (jsonArray.length() > 0) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jObj = jsonArray.getJSONObject(i);
+                        String id = jObj.getString("id");
+                        String title = jObj.getString("nama_file");
+                        String subtitle = jObj.getString("desc");
+                        String timestamp = jObj.getString("create_at");
+                        String url = jObj.getString("base_url");
+                        String type = jObj.getString("type_file");
+//                        String thumbnail = jObj.getString("thumbnail");
+                        String descriptionTag = jObj.getString("tag");
+
+                        File file = new File();
+                        file.id = Long.valueOf(id);
+                        file.title = title;
+                        file.subtitle = subtitle;
+                        file.timestamp = timestamp;
+                        file.url = url + title + type;
+                        file.type = type;
+//                        file.thumbnail = thumbnail;
+                        file.description = descriptionTag;
+
+                        files.add(file);
+                    }
+                }
+
+
+                if(jsonArray.length() == 0 && folderArray.length() == 0){
+                    vFrameEmpty.setVisibility(View.VISIBLE);
+                }else{
+                    vFrameEmpty.setVisibility(View.GONE);
+                }
+
+                mAdapter.setItems(files);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            vRefreshList.setRefreshing(false);
+        }
+
+    }
+
+    private class sercFile extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.w("Killing speri",params[0]);
+            return GET(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+
+                files.clear();
+                JSONArray folderArray = new JSONArray(jsonObject.getString("folder"));
+                if (folderArray.length() > 0) {
+                    for (int i = 0; i < folderArray.length(); i++) {
+                        JSONObject jObj = folderArray.getJSONObject(i);
+                        String id = jObj.getString("id");
+                        String idparent = jObj.getString("parent_id");
+                        String title = jObj.getString("nama_folder");
+                        String timestamp = jObj.getString("create_at");
+
+                        File file = new File();
+                        file.id = Long.valueOf(id);
+                        file.title = title;
+                        file.type = "folder";
+                        file.timestamp = timestamp;
+                        file.url = "https://iss.byonchat.com/files/"+id;
+
+                        files.add(file);
+                    }
+                }
+                JSONArray jsonArray = new JSONArray(jsonObject.getString("files"));
+                Log.w("isi dari holdyui", jsonArray+"");
+                if (jsonArray.length() > 0) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jObj = jsonArray.getJSONObject(i);
+                        String id = jObj.getString("id");
+                        String title = jObj.getString("nama_file");
+                        String subtitle = jObj.getString("desc");
+                        String timestamp = jObj.getString("create_at");
+                        String url = jObj.getString("base_url");
+                        String type = jObj.getString("type_file");
+//                        String thumbnail = jObj.getString("thumbnail");
+                        String descriptionTag = jObj.getString("tag");
+
+                        File file = new File();
+                        file.id = Long.valueOf(id);
+                        file.title = title;
+                        file.subtitle = subtitle;
+                        file.timestamp = timestamp;
+                        file.url = url + title + type;
+                        file.type = type;
+//                        file.thumbnail = thumbnail;
+                        file.description = descriptionTag;
+
+                        files.add(file);
+                    }
+                }
+
+                mAdapter.setItems(files);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -485,10 +598,26 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     public void onActionSearch(String args) {
         vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-            new getFile().execute(urlTembak + args);
+            new sercFile().execute(urlTembak+"/"+args);
         } else {
             vRefreshList.setRefreshing(false);
             Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onBackClick(){
+        if(urlBack.get(urlBack.size()-1).equalsIgnoreCase("OnBack")){
+            getActivity().onBackPressed();
+        }else {
+            vRefreshList.setRefreshing(true);
+            if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
+                new getFile().execute("https://iss.byonchat.com/index.php/Api/Files/" + urlBack.get(urlBack.size() - 1));
+                urlBack.remove(urlBack.size() - 1);
+                Log.w("Apa ini harusee", urlTembak);
+            } else {
+                vRefreshList.setRefreshing(false);
+                Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

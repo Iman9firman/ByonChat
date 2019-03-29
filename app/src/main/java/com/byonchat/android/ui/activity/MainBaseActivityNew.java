@@ -525,7 +525,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected int room_id;
     protected String roomid = "";
     protected int i = 0;
-    Boolean loginIss = false;
+    Boolean loginIss = true;
 
     protected SQLiteDatabase sqLiteDatabase;
 
@@ -1128,11 +1128,11 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     itemMain.iconTest = R.drawable.ic_012;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("19")) {
-                    loginIss = true;
+//                    loginIss = true;
                     itemMain.iconTest = R.drawable.ic_040;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("20")) {
-                    loginIss = true;
+//                    loginIss = true;
                     itemMain.iconTest = R.drawable.ic_015;
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add(title);
@@ -1166,6 +1166,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     itemMain.iconTest = R.drawable.ic_008;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("24")) {
+                    itemMain.iconTest = R.drawable.ic_015;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("26")) {
                     itemMain.iconTest = R.drawable.ic_015;
                     Constants.map.put(i, null);
                 }

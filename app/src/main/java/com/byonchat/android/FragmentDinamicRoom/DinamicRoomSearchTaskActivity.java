@@ -47,6 +47,7 @@ import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.provider.RoomsDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.tabRequest.MapsViewActivity;
 import com.byonchat.android.utils.ValidationsKey;
@@ -77,11 +78,13 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        refresh();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        refresh();
         super.onResume();
     }
 
@@ -153,7 +156,6 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                 dialogFormChildMainRequester.setListener(new DialogFormChildMainRequester.MyDialogListener() {
                     @Override
                     public void userSelectedAValue(String value) {
-                        keperluan.add(value);
                         refresh();
                     }
 
@@ -231,38 +233,48 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
     public void refresh() {
         listRequest.removeAllViews();
 
+        RoomsDB roomsDB = new RoomsDB(getApplicationContext());
+        roomsDB.open();
+        ArrayList<String> data = roomsDB.retrieveSaveString();
+        keperluan = data;
+        roomsDB.close();
+
         int ia = 0;
 
-        for (String kk : keperluan) {
-            LinearLayout linearEstimasi = (LinearLayout) getLayoutInflater().inflate(R.layout.add_child_requester, null);
+        if(keperluan != null) {
+            for (String kk : keperluan) {
+                LinearLayout linearEstimasi = (LinearLayout) getLayoutInflater().inflate(R.layout.add_child_requester, null);
 
-            TextView textDesc = linearEstimasi.findViewById(R.id.textDesc);
+                TextView textDesc = linearEstimasi.findViewById(R.id.textDesc);
 
-            Button btnModify = linearEstimasi.findViewById(R.id.btnModify);
-            Button btnCancel = linearEstimasi.findViewById(R.id.btnCancel);
-            btnModify.setVisibility(View.GONE);
-            btnCancel.setText("REMOVE");
-            int finalIa = ia;
-            btnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    keperluan.remove(finalIa);
-                    listRequest.removeViewAt(finalIa);
+                Button btnModify = linearEstimasi.findViewById(R.id.btnModify);
+                Button btnCancel = linearEstimasi.findViewById(R.id.btnCancel);
+                btnModify.setVisibility(View.GONE);
+                btnCancel.setText("REMOVE");
+                int finalIa = ia;
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        RoomsDB roomsDB = new RoomsDB(getApplicationContext());
+                        roomsDB.open();
+                        roomsDB.deleteStringbyValue(keperluan.get(finalIa));
+                        roomsDB.close();
+                        refresh();
+                    }
+                });
 
+                try {
+                    JSONObject jsonObject = new JSONObject(kk);
+                    textDesc.setText(jsonObject.getString("pekerjaan") + ", " + jsonObject.getString("subPekerjaa") + ", " + jsonObject.getString("jadwalMulai") + " - " + jsonObject.getString("jadwalAkhir")
+                            + ", jumlah = " + jsonObject.getString("jumlah") + ", keterangan = " + jsonObject.getString("keterangan"));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            });
 
-            try {
-                JSONObject jsonObject = new JSONObject(kk);
-                textDesc.setText(jsonObject.getString("pekerjaan") + ", " + jsonObject.getString("subPekerjaa") + ", " + jsonObject.getString("jadwalMulai") + " - " + jsonObject.getString("jadwalAkhir")
-                        + ", jumlah = " + jsonObject.getString("jumlah") + ", keterangan = " + jsonObject.getString("keterangan"));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+                listRequest.addView(linearEstimasi);
+                ia++;
             }
-
-            listRequest.addView(linearEstimasi);
-            ia++;
         }
 
         if (listRequest.getChildCount() > 0) {
@@ -343,6 +355,10 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                 alertbox.setMessage("Are you sure you want to exit?");
                 alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
+                        RoomsDB roomsDB = new RoomsDB(getApplicationContext());
+                        roomsDB.open();
+                        roomsDB.deleteStrings();
+                        roomsDB.close();
                         onBackPressed();
                     }
                 });

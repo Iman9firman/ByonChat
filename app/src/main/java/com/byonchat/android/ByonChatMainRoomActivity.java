@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Build;
@@ -33,11 +31,9 @@ import android.widget.Toast;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
-import com.byonchat.android.R;
+import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
-import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.helpers.Constants;
-import com.byonchat.android.list.ItemListMemberCard;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.ContentRoom;
 import com.byonchat.android.provider.RoomsDetail;
@@ -53,7 +49,6 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -207,7 +202,6 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
                 ArrayList<RoomsDetail> listItem3 = Byonchat.getBotListDB().allRoomDetailFormWithFlag(aa.getId(), value.get(1).toString(), value.get(2).toString(), "list");
                 for (RoomsDetail ii : listItem3) {
                     if (ii.getFlag_content().equalsIgnoreCase("1")) {
-                        Log.w("2abub", ii.getContent());
                         JSONObject jO = null;
                         try {
                             jO = new JSONObject(ii.getContent());
@@ -236,7 +230,14 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 
             if (value.size() > 1) {
                 try {
+
+
                     Intent intent = new Intent(getApplicationContext(), DinamicRoomTaskActivity.class);
+
+                    if (value.get(2).toString().equalsIgnoreCase("2613")) {
+                        intent = new Intent(getApplicationContext(), DinamicSLATaskActivity.class);
+                    }
+
                     intent.putExtra("tt", value.get(0).toString());
                     intent.putExtra("uu", value.get(1).toString());
                     intent.putExtra("ii", value.get(2).toString());

@@ -974,7 +974,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
         try {
             JSONArray jsonArray = new JSONArray(content);
-            Log.w("aKaK", content);
             itemList.clear();
             positionList.clear();
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1342,9 +1341,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.w("menahanIS", e.getMessage());
         }
-        Log.w("menahan", itemList.size() + "");
 
         adapter.setItems(itemList, positionList);
     }

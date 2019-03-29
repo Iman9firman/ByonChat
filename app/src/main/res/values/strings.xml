@@ -1,8 +1,8 @@
 <resources>
     <string name="hallo">hallo</string>
     <string name="app_name">ByonChat</string>
-    <string name="app_version">2.4.0</string>
-    <string name="app_company">imperial</string>
+    <string name="app_version">2.6.2.1</string>
+    <string name="app_company">honda</string>
     <string name="action_settings">Settings</string>
     <string name="str_delete">Delete</string>
     <string name="group_create_info">Please provide group name</string>
@@ -10,7 +10,7 @@
     <string name="sql_createtable_configurations">CREATE TABLE IF NOT EXISTS configurations(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT);</string>
     <string name="sql_createtable_configurations_index">CREATE INDEX IF NOT EXISTS configuration_name ON configurations(name);</string>
     <string name="sql_createtable_group">CREATE TABLE IF NOT EXISTS groups(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, jid TEXT, status TEXT);</string>
-    <string name="sql_createtable_group_index">CREATE UNIQUE INDEX IF NOT EXISTS group_jid ON groups(jid COLLATE NOCASE);</string>
+    <string name="sql_createtable_group_index">CREATE UNIQUE INDTS group_jid ON groups(jid COLLATE NOCASE);</string>
     <!-- <string name="sql_createtable_contact">CREATE TABLE IF NOT EXISTS contacts(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, jid TEXT, status TEXT, addrbook_id TEXT, type INTEGER DEFAULT 0);</string> -->
     <string name="sql_createtable_contact">CREATE TABLE IF NOT EXISTS contacts(_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, realname TEXT, jid TEXT, status TEXT, addrbook_id TEXT,point TEXT,gender TEXT, birthdate TEXT, email TEXT,facebookId TEXT,city TEXT,cp INTEGER DEFAULT 0);</string>
     <string name="sql_altertable_contact">ALTER TABLE contacts ADD COLUMN cp INTEGER DEFAULT 0</string>
@@ -556,4 +556,5 @@
         <item name="size_three">3 x n</item>
         <item name="size_four">4 x n</item>
     </string-array>
+    <string name="title_activity_dinamic_slatask">DinamicSLATaskActivity</string>
 </resources>

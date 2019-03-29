@@ -364,21 +364,31 @@ public class AllAboutUploadTask {
         }
 
         if (listUpload.size() == 0) {
+            Log.w("abdulMasalah", "1");
             if (fromList.equalsIgnoreCase("show")) {
+                Log.w("abdulMasalah1", POSDETAIL);
                 new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
             } else if (fromList.equalsIgnoreCase("hide")) {
+                Log.w("abdulMasalah2", PULLDETAIL);
                 new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLDETAIL, username, idTab, idDetail);
             } else {
+                Log.w("abdulMasalah", "2");
                 if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
+                    Log.w("abdulMasalah", "3");
                     String[] ff = idDetail.split("\\|");
+                    Log.w("abdulMasalah", "4");
                     if (ff.length == 2) {
-                        if (patokanUpload.length()>0){
-                            new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAILUPDATE, username,  idTab, idDetail);
-                        }else{
+                        Log.w("abdulMasalah", "5");
+                        if (patokanUpload.length() > 0) {
+                            Log.w("abdulMasalah6", PULLMULIPLEDETAILUPDATE);
+                            new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAILUPDATE, username, idTab, idDetail);
+                        } else {
+                            Log.w("abdulMasalah7", PULLMULIPLEDETAIL);
                             new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAIL, username, idTab, idDetail);
                         }
 
                     } else {
+                        Log.w("abdulMasalah8", "1");
                         new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
                     }
                 }
@@ -570,9 +580,10 @@ public class AllAboutUploadTask {
                                 try {
                                     JSONArray jsAdd = jsonObject.getJSONArray(key);
                                     JSONArray newJS = new JSONArray();
+                                    String lastCusID = "";
                                     for (int ic = 0; ic < jsAdd.length(); ic++) {
                                         JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
-                                        String lastCusID = oContent.getString("iD");
+                                        lastCusID = oContent.getString("iD");
                                         String val = oContent.getString("v");
                                         String not = oContent.getString("n");
                                         JSONArray aa = new JSONArray();
@@ -582,17 +593,23 @@ public class AllAboutUploadTask {
 
 
                                         JSONObject jOdetail = new JSONObject();
-                                        jOdetail.put("id", lastCusID);
+                                        jOdetail.put("id", "49");
                                         jOdetail.put("val", val);
                                         jOdetail.put("note", not);
-                                        jOdetail.put("foto", aa);
+                                        jOdetail.put("foto", "IMG_28032019_100918_SCzuLKreNS.jpg");
 
 
                                         newJS.put(jOdetail);
 
                                     }
-                                    joN.put("id", key.toString());
-                                    joN.put("checklists", newJS);
+                                    JSONArray josArr = new JSONArray();
+                                    JSONObject joNC = new JSONObject();
+                                    joNC.put("id", "37");
+                                    joNC.put("check", newJS);
+
+                                    josArr.put(joNC);
+                                    joN.put("id", "16");
+                                    joN.put("subsec", josArr);
                                     jsAU.put(joN);
 
                                 } catch (JSONException e) {
@@ -601,8 +618,39 @@ public class AllAboutUploadTask {
                             }
 
                             jsHead.put("outlet_id", customersId);
-                            jsHead.put("audit", jsAU);
+                            jsHead.put("sec", jsAU);
+
+
+                            //{"outlet_id":"14","audit":[{"id":"49","checklists":[{"id":"16|37|49","val":"1","note":"","foto":[]}]}]}
+
                             cc = jsHead.toString();
+                            Log.w("beruntung", cc);
+
+                            /*cc = "{\n" +
+                                    "  \"type\": \"dropdown_form\",\n" +
+                                    "  \"value\": [\n" +
+                                    "    {\n" +
+                                    "      \"outlet_id\": \"14\",\n" +
+                                    "      \"sec\": [\n" +
+                                    "        {\n" +
+                                    "          \"id\":\"16\",\n" +
+                                    "          \"subsec\":[{\n" +
+                                    "              \"id\": \"37\",\n" +
+                                    "            \"check\": [{\n" +
+                                    "              \"id\": \"49\",\n" +
+                                    "              \"val\": \"\",\n" +
+                                    "              \"note\": \"\",\n" +
+                                    "              \"foto\": []\n" +
+                                    "            }]\n" +
+                                    "            }\n" +
+                                    "          ]\n" +
+                                    "        }\n" +
+                                    "      ]\n" +
+                                    "    }\n" +
+                                    "  ]\n" +
+                                    "}";*/
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

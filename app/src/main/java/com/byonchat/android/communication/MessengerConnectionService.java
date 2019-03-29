@@ -1545,6 +1545,8 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
 
+        /*
+        kirim per 1 menit ??? hanya reliever aja yang perlu ini
         Timer LocTimer = new Timer();
         TimerTask LocTimerTask = new TimerTask() {
             @Override
@@ -1581,7 +1583,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                 }
             }
         };
-        LocTimer.schedule(LocTimerTask, 60000, 60000);
+        LocTimer.schedule(LocTimerTask, 60000, 60000);*/
     }
 
     //This will handle the broadcast

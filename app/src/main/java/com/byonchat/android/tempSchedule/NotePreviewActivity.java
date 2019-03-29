@@ -300,6 +300,7 @@ public class NotePreviewActivity extends AppCompatActivity {
 
     private boolean checkDate(String eventDate) {
         Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, 1);
         SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy");
         String currentDate = f.format(cal.getTime());
         try {

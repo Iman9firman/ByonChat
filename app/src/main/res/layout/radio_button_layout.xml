@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_radiobutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".2"/>
+
+    <RadioGroup
+        android:id="@+id/radiogroup_radiobutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@id/guide_radiobutton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <RadioButton
+            android:id="@+id/ok_radiobutton"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Yes"
+            android:textSize="30sp"
+            android:layout_margin="4dp"/>
+
+        <RadioButton
+            android:id="@+id/notok_radiobutton"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="No"
+            android:textSize="30sp"
+            android:layout_margin="4dp"/>
+
+    </RadioGroup>
+
+</android.support.constraint.ConstraintLayout>

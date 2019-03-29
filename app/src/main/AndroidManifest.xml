@@ -48,7 +48,6 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
@@ -65,26 +64,14 @@
         android:required="false" />
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true" />
-
-    <!-- for Samsung -->
+        android:required="true" /> <!-- for Samsung -->
     <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
-    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
-
-    <!-- for htc -->
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" /> <!-- for htc -->
     <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
-    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
-
-    <!-- for sony -->
-    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
-
-    <!-- for apex -->
-    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
-
-    <!-- for solid -->
-    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
-
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" /> <!-- for sony -->
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" /> <!-- for apex -->
+    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" /> <!-- for solid -->
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
 
@@ -102,6 +89,7 @@
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -122,9 +110,7 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
                 <action android:name="com.byonchat.android.utils.ConnectionChangeReceiver" />
             </intent-filter>
-        </receiver>
-
-        <!-- Firebase Notifications -->
+        </receiver> <!-- Firebase Notifications -->
         <service android:name=".communication.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -347,26 +333,25 @@
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-
         <service
             android:name=".sync.BCServiceSync"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
+
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-
         <service
             android:name=".communication.WhatsAppJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <service android:name=".communication.MessengerConnectionService" />
         <service android:name=".utils.RefreshContactService" />
         <service android:name=".utils.StreamService" />
@@ -379,7 +364,7 @@
             android:name=".communication.MyJobService"
             android:enabled="true"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"></service>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name=".communication.JobIntentNotificationService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
@@ -392,7 +377,6 @@
                 <action android:name="android.os.action.DEVICE_IDLE_MODE_CHANGED" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".communication.MyBroadcastReceiver"
             android:enabled="true"
@@ -444,7 +428,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs" />
-
         <!--
         // test key
         AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo
@@ -458,7 +441,6 @@
             API Prod
             android:value="AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs" />
         -->
-
         <activity
             android:name=".FinalizingActivity"
             android:label="@string/title_activity_finalizing"
@@ -585,9 +567,7 @@
             android:name=".FragmentDinamicRoom.LoginRoomActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".FragmentDinamicRoom.DinamicRoomTaskActivity" />
-        <activity android:name=".LoadingGetTabRoomActivity" />
-
-        <!-- lukman -->
+        <activity android:name=".LoadingGetTabRoomActivity" /> <!-- lukman -->
         <activity
             android:name=".personalRoom.PersonalRoomActivity"
             android:label="PersonalRoom"
@@ -657,8 +637,7 @@
             android:label="PersonalRoom"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
-            tools:ignore="NewApi" />
-        <!-- end lukman -->
+            tools:ignore="NewApi" /> <!-- end lukman -->
         <activity
             android:name=".ActivityVouchersDetail"
             android:label="@string/title_activity_vouchers"
@@ -752,9 +731,12 @@
             android:name=".ISSActivity.Reliever.CheckInActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
+        
+        <activity android:name=".FragmentDinamicRoom.DinamicSLATaskActivity" />
+
         <activity android:name=".tabRequest.RelieverListActivity" />
         <activity android:name=".tabRequest.MapsViewActivity" />
-        <activity android:name=".tabRequest.RelieverDetailActivity"></activity>
+        <activity android:name=".tabRequest.RelieverDetailActivity" />
         <activity
             android:name=".ISSActivity.Requester.RequesterRatingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

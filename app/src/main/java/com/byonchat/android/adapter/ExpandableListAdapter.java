@@ -120,6 +120,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 JSONObject lala = new JSONObject(text);
                 JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
                 JSONObject oContent = jj.getJSONObject(expandedListPosition);
+
                 if (oContent.getString("v").equalsIgnoreCase("1")) {
                     okeP.setChecked(true);
                 } else if (oContent.getString("v").equalsIgnoreCase("0")) {
@@ -930,11 +931,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 }
 
             } else {
+                Log.w("siap", "nomerA");
                 okeP.setChecked(false);
                 notP.setChecked(false);
                 editText.setText("");
-                Log.w("salamAN2", "dua");
-                // Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
                 imageA.setVisibility(View.VISIBLE);
                 imageB.setVisibility(View.GONE);
                 imageC.setVisibility(View.GONE);
@@ -957,8 +957,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             okeP.setChecked(false);
             notP.setChecked(false);
             editText.setText("");
-            Log.w("salamAN1", "dua");
-            // Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
             imageA.setVisibility(View.VISIBLE);
             imageB.setVisibility(View.GONE);
             imageC.setVisibility(View.GONE);
@@ -1043,39 +1041,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                         dialog.cancel();
                                     }
                                 })
-                        /*.setPositiveButton("Delete",
-                                new DialogInterface.OnClickListener() {
-                                    @TargetApi(11)
-                                    public void onClick(
-                                            DialogInterface dialog, int id) {
-                                        editText.setText("");
-
-                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", types);
-                                        if (cEdit.getCount() > 0) {
-                                            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-
-                                            JSONObject lala = null;
-                                            try {
-                                                lala = new JSONObject(text);
-                                                JSONObject jsonObject = new JSONObject(expandedListText);
-                                                JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
-
-                                                JSONObject oContent = jj.getJSONObject(expandedListPosition);
-                                                oContent.put("n", "");
-
-                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), types, name, "cild");
-                                                db.updateDetailRoomWithFlagContent(orderModel);
-
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-
-                                        dialog.cancel();
-                                    }
-                                })
-                        */.show();
+                        .show();
             }
         });
 
@@ -1089,7 +1055,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     if (cEdit.getCount() > 0) {
                         Log.w("har2", checkedRadioButton.getText().toString());
                         String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-                        Log.w("banisd", text);
                         JSONObject lala = null;
                         try {
                             lala = new JSONObject(text);
@@ -1101,86 +1066,26 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                             JSONObject oContent = jj.getJSONObject(expandedListPosition);
 
                             if (checkedRadioButton.getText().toString().equalsIgnoreCase("OK")) {
-                                Log.w("sadis", "satu");
                                 oContent.put("v", "1");
                             } else {
                                 oContent.put("v", "0");
-                                Log.w("sadis", "kosong");
                             }
 
-                            Log.w("sabanBi", lala.toString());
+                            Log.w("duus", lala.toString());
+                            // {"49":[{"iD":"163749","v":"0","n":""}],"customersId":"BNDSH"}
 
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), types, name, "cild");
                             db.updateDetailRoomWithFlagContent(orderModel);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Log.w("BUrhan", e.toString());
                         }
                     } else {
-                        Log.w("ksoog", "lalalR");
                     }
                 }
             }
         });
 
-
-
-        /*text1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (text1.isChecked()) {
-
-                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", types);
-                    if (cEdit.getCount() > 0) {
-                        String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-
-                        JSONObject lala = null;
-                        try {
-                            lala = new JSONObject(text);
-                            JSONObject jsonObject = new JSONObject(expandedListText);
-                            JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
-
-                            JSONObject oContent = jj.getJSONObject(expandedListPosition);
-                            oContent.put("v", "1");
-                            //oContent.put("f", "IMG_2018_07_16_16_05_47.jpg");
-
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), types, name, "cild");
-                            db.updateDetailRoomWithFlagContent(orderModel);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                } else {
-                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", types);
-                    if (cEdit.getCount() > 0) {
-                        String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-
-                        JSONObject lala = null;
-                        try {
-                            lala = new JSONObject(text);
-                            JSONObject jsonObject = new JSONObject(expandedListText);
-                            JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
-
-                            JSONObject oContent = jj.getJSONObject(expandedListPosition);
-                            oContent.put("v", "0");
-
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, lala.toString(), types, name, "cild");
-                            db.updateDetailRoomWithFlagContent(orderModel);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }
-
-            }
-        });*/
 
         return convertView;
     }

@@ -272,20 +272,24 @@ public class FragmentMyCardID extends Fragment {
     }
 
     private void shareCardID(String name) {
-        Log.w("si jreng lewwat", "iya[ps");
+        Log.w("si jreng lewwat", vFrameCard.getHeight() + "::" + vFrameCard.getWidth());
         final String[] path_file = new String[1];
         // TODO: 27/02/19 bisa download dan share  & UBAH JADI IMAGEVIEW
         try {
-
+//417::1030
             com.hendrix.pdfmyxml.PdfDocument doc = new com.hendrix.pdfmyxml.PdfDocument(getContext());
             doc.addPage(createBitmapFromView(namecardMain));
-            doc.setRenderWidth(630);
-            doc.setRenderHeight(360);
+            doc.setRenderWidth(vFrameCard.getWidth());
+            doc.setRenderHeight(vFrameCard.getHeight());
             doc.setOrientation(com.hendrix.pdfmyxml.PdfDocument.A4_MODE.LANDSCAPE);
             doc.setProgressTitle(R.string.crop__saving);
             doc.setProgressMessage(R.string.crop__wait);
             doc.setFileName("idcard_" + name + "_honda");
+
             File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ByonChatDoc");
+            if (!pdf.exists()) {
+                pdf.mkdir();
+            }
             doc.setSaveDirectory(pdf);
             doc.setInflateOnMainThread(false);
             doc.setListener(new com.hendrix.pdfmyxml.PdfDocument.Callback() {
@@ -332,7 +336,6 @@ public class FragmentMyCardID extends Fragment {
         card_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.w("Jreng jreng hha", path_file[0]);
                 Intent intentd = new Intent(mContext, ShareFileFromAPI.class);
                 intentd.putExtra("path", path_file[0]);
                 intentd.putExtra("nama_file", "idcard_" + name + "_honda");

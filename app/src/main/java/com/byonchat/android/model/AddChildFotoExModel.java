@@ -105,5 +105,7 @@ public class AddChildFotoExModel {
     public void setChildListText(String childListText) {
         this.childListText = childListText;
     }
+
+
 }
 

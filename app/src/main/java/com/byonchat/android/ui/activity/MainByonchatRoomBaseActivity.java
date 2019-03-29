@@ -4,46 +4,34 @@ import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -58,6 +46,7 @@ import android.widget.Toast;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.ConversationActivity;
+import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.FragmentDirectory;
@@ -81,9 +70,6 @@ import com.byonchat.android.personalRoom.FragmentMyPicture;
 import com.byonchat.android.personalRoom.FragmentMyVideo;
 import com.byonchat.android.personalRoom.FragmentProductCatalog;
 import com.byonchat.android.personalRoom.FragmentWebView;
-import com.byonchat.android.provider.ContactBot;
-import com.byonchat.android.provider.ContentRoom;
-import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.room.FragmentRoomMultipleTask;
 import com.byonchat.android.room.FragmentRoomSearchMultiTask;
 import com.byonchat.android.room.FragmentRoomTask;
@@ -93,23 +79,15 @@ import com.byonchat.android.ui.fragment.ByonchatApprovalRequestFragment;
 import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
 import com.byonchat.android.ui.fragment.ByonchatStatusRequestFragment;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
-import com.byonchat.android.utils.Utility;
-import com.googlecode.mp4parser.authoring.Edit;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
@@ -636,6 +614,10 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 if (value.get(5).toString().equalsIgnoreCase("show") || value.get(5).toString().equalsIgnoreCase("showMultiple")) {
                     vFloatingButton.show();
                     Intent intent = new Intent(getApplicationContext(), DinamicRoomTaskActivity.class);
+                    if (value.get(2).toString().equalsIgnoreCase("2613")) {
+                        intent = new Intent(getApplicationContext(), DinamicSLATaskActivity.class);
+                    }
+
                     String action = value.get(0).toString();
                     if (action.equalsIgnoreCase("pos")) {
                         intent = new Intent(getApplicationContext(), RoomPOSdetail.class);
@@ -650,7 +632,11 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                         intent.putExtra("from", value.get(5).toString());
                         intent.putExtra("idTask", "");
                     }
+
+
                     showFabIntent(intent);
+
+
                 } else if (value.get(5).toString().equalsIgnoreCase("showvideo")) {
                     Intent intent = ByonchatVideoBeforeDownloadActivity.generateIntent(getApplicationContext(),
                             username,

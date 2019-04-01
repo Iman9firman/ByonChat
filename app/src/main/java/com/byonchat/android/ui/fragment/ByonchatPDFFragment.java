@@ -109,18 +109,6 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     protected TextView vTextEmpty;
     @NonNull
     protected TextView vTextContentError;
-//    @NonNull
-//    protected TagView vTagGroup;
-    @NonNull
-    protected LinearLayout vTagLayout;
-    @NonNull
-    protected TextView vTag1;
-    @NonNull
-    protected TextView vTag2;
-    @NonNull
-    protected TextView vTag3;
-    @NonNull
-    protected TextView vTag4;
 
     public ByonchatPDFFragment() {
 
@@ -168,12 +156,6 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         vTextError = getTextError(view);
         vTextEmpty = getTextEmpty(view);
         vTextContentError = getTextContentError(view);
-//        vTagGroup = getTagContent(view);
-        vTagLayout = getTagContent(view);
-        vTag1 = getTagSatu(view);
-        vTag2 = getTagDua(view);
-        vTag3 = getTagTiga(view);
-        vTag4 = getTagEmpat(view);
 
         return view;
     }
@@ -183,7 +165,6 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         resolveConnectionProblem();
         resolveListFile();
         resolveRefreshList();
-        resolesTagGroup();
         onRefresh();
 
         vTextEmpty.setText("No file in this directory");
@@ -298,39 +279,6 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         vRefreshList.setOnRefreshListener(this);
     }
 
-    protected void resolesTagGroup(){
-        vTagLayout.setVisibility(View.VISIBLE);
-
-        vTag1.setText("Kebijakan");
-        vTag1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.getFilter().filter(vTag1.getText().toString().toLowerCase());
-            }
-        });
-        vTag2.setText("SOP");
-        vTag2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.getFilter().filter(vTag2.getText().toString());
-            }
-        });
-        vTag3.setText("SWI");
-        vTag3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.getFilter().filter(vTag3.getText().toString());
-            }
-        });
-        vTag4.setText("Operational");
-        vTag4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.getFilter().filter(vTag4.getText().toString());
-            }
-        });
-    }
-
     private void traceView(File file){
         Map<String, String> params = new HashMap<>();
         params.put("nama_file",  file.title);
@@ -394,22 +342,6 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         return (TextView) view.findViewById(R.id.text_content_error);
     }
 
-    protected LinearLayout getTagContent(View view) {
-        return (LinearLayout) view.findViewById(R.id.tag_filter);
-    }
-
-    protected TextView getTagSatu(View view) {
-        return (TextView) view.findViewById(R.id.tag_satu);
-    }
-    protected TextView getTagDua(View view) {
-        return (TextView) view.findViewById(R.id.tag_dua);
-    }
-    protected TextView getTagTiga(View view) {
-        return (TextView) view.findViewById(R.id.tag_tiga);
-    }
-    protected TextView getTagEmpat(View view) {
-        return (TextView) view.findViewById(R.id.tag_empat);
-    }
     protected void showError(String errorMessage) {
         Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
     }

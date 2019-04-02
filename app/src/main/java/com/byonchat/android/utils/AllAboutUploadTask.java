@@ -451,16 +451,16 @@ public class AllAboutUploadTask {
                 entity.addPart("username_room", new StringBody(usr));
                 entity.addPart("id_rooms_tab", new StringBody(idr));
                 entity.addPart("id_detail_tab", new StringBody(idDetail));
-                Log.w("Entiti sajaha ke 1","usr : " +new StringBody(usr)+", idr : "+new StringBody(idr)+", idDetail : "+new StringBody(idDetail));
+                Log.w("Entiti sajaha ke 1", "usr : " + new StringBody(usr) + ", idr : " + new StringBody(idr) + ", idDetail : " + new StringBody(idDetail));
 
-                Log.w("Kena lewat sajaha","Setuju 0");
+                Log.w("Kena lewat sajaha", "Setuju 0");
 
                 if (calendar != null) {
                     if (calendar.equalsIgnoreCase("true boi")) {
 
-                        Log.w("Kena lewat sajaha","Setuju 1");
+                        Log.w("Kena lewat sajaha", "Setuju 1");
                         entity.addPart("selected_date", new StringBody(startDate));
-                        Log.w("Entiti sajaha ke 2", ""+new StringBody(startDate));
+                        Log.w("Entiti sajaha ke 2", "" + new StringBody(startDate));
                     }
                 }
 
@@ -496,7 +496,7 @@ public class AllAboutUploadTask {
 
 
                     entity.addPart("assign_to", new StringBody(has));
-                    Log.w("Entiti sajaha ke 3", ""+new StringBody(has));
+                    Log.w("Entiti sajaha ke 3", "" + new StringBody(has));
 
                 }
 
@@ -512,14 +512,14 @@ public class AllAboutUploadTask {
                             resultti = "2";
                         }
                         entity.addPart("status_task", new StringBody(resultti));
-                        Log.w("Entiti sajaha ke 4", ""+new StringBody(resultti));
+                        Log.w("Entiti sajaha ke 4", "" + new StringBody(resultti));
                     }
                 }
 
 
                 if (!isReject.equalsIgnoreCase("")) {
                     entity.addPart("is_reject", new StringBody(isReject));
-                    Log.w("Entiti sajaha ke 5", ""+new StringBody(isReject));
+                    Log.w("Entiti sajaha ke 5", "" + new StringBody(isReject));
                 }
 
 
@@ -549,7 +549,7 @@ public class AllAboutUploadTask {
                         if (ff.length == 2) {
                             entity.addPart("parent_id", new StringBody(ff[1]));
                             entity.addPart("id_list_push", new StringBody(ff[0]));
-                            Log.w("Entiti sajaha ke 7", ""+new StringBody(idDetail+""));
+                            Log.w("Entiti sajaha ke 7", "" + new StringBody(idDetail + ""));
                         }
                     }
                 }
@@ -561,7 +561,7 @@ public class AllAboutUploadTask {
 
                 Contact contact = messengerHelper.getMyContact();
                 entity.addPart("bc_user", new StringBody(contact.getJabberId()));
-                Log.w("Entiti sajaha ke 8", ""+new StringBody(contact.getJabberId()));
+                Log.w("Entiti sajaha ke 8", "" + new StringBody(contact.getJabberId()));
 
                 ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, usr, idr, "cild");
 
@@ -635,10 +635,74 @@ public class AllAboutUploadTask {
                             jsHead.put("sec", jsAU);
 
 
+                            cc = "{\n" +
+                                    "  \"kode_jjt\" : \"ISS-00625F0001\",\n" +
+                                    "  \"pembobotan\": [\n" +
+                                    "    {\n" +
+                                    "      \"id\": 29,\n" +
+                                    "      \"section\": [\n" +
+                                    "        {\n" +
+                                    "          \"id\": 40,\n" +
+                                    "          \"subsection\": [\n" +
+                                    "            {\n" +
+                                    "              \"id\": 82,\n" +
+                                    "              \"pertanyaan\": [\n" +
+                                    "                {\n" +
+                                    "                  \"id\": 56,\n" +
+                                    "                  \"v\": \"1\",\n" +
+                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                    "                  \"n\": \"satu\",\n" +
+                                    "                  \"b\": \"0.633\"\n" +
+                                    "                },\n" +
+                                    "                {\n" +
+                                    "                  \"id\": 57,\n" +
+                                    "                  \"v\": \"1\",\n" +
+                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                    "                  \"n\": \"\",\n" +
+                                    "                  \"b\": \"0.633\"\n" +
+                                    "                },\n" +
+                                    "                {\n" +
+                                    "                  \"id\": 58,\n" +
+                                    "                  \"v\": \"1\",\n" +
+                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                    "                  \"n\": \"dua\",\n" +
+                                    "                  \"b\": \"0.633\"\n" +
+                                    "                },\n" +
+                                    "                {\n" +
+                                    "                  \"id\": 59,\n" +
+                                    "                  \"v\": \"1\",\n" +
+                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                    "                  \"n\": \"tiga\",\n" +
+                                    "                  \"b\": \"0.633\"\n" +
+                                    "                },\n" +
+                                    "                {\n" +
+                                    "                  \"id\": 61,\n" +
+                                    "                  \"v\": \"1\",\n" +
+                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                    "                  \"n\": \"empat\",\n" +
+                                    "                  \"b\": \"0.633\"\n" +
+                                    "                },{\n" +
+                                    "                  \"id\": 62,\n" +
+                                    "                  \"v\": \"1\",\n" +
+                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                    "                  \"n\": \"lima\",\n" +
+                                    "                  \"b\": \"0.633\"\n" +
+                                    "                }\n" +
+                                    "              ]\n" +
+                                    "            }\n" +
+                                    "          ]\n" +
+                                    "        }\n" +
+                                    "      ]\n" +
+                                    "    }\n" +
+                                    "  ]\n" +
+                                    "}";
+
                             //{"outlet_id":"14","audit":[{"id":"49","checklists":[{"id":"16|37|49","val":"1","note":"","foto":[]}]}]}
 
-                            cc = jsHead.toString();
-                            Log.w("beruntung", cc);
+                            // cc = jsHead.toString();
+
+
+                            // Log.w("beruntung", cc);
 
                             /*cc = "{\n" +
                                     "  \"type\": \"dropdown_form\",\n" +
@@ -797,8 +861,7 @@ public class AllAboutUploadTask {
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 200) {
                     if (gpxfile.exists()) {
-                        Toast.makeText(context,"Boleh kartun 0",Toast.LENGTH_SHORT).show();
-//                        gpxfile.delete();
+                        gpxfile.delete();
                     }
 
                     final String data = EntityUtils.toString(r_entity);
@@ -829,7 +892,7 @@ public class AllAboutUploadTask {
                     }
                 } else {
                     if (gpxfile.exists()) {
-                        Toast.makeText(context,"Boleh kartun 1",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Boleh kartun 1", Toast.LENGTH_SHORT).show();
 //                        gpxfile.delete();
                     }
                     long date = System.currentTimeMillis();
@@ -844,7 +907,7 @@ public class AllAboutUploadTask {
 
             } catch (ClientProtocolException e) {
                 if (gpxfile.exists()) {
-                    Toast.makeText(context,"Boleh kartun 2",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Boleh kartun 2", Toast.LENGTH_SHORT).show();
 //                    gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
@@ -856,7 +919,7 @@ public class AllAboutUploadTask {
 
             } catch (IOException e) {
                 if (gpxfile.exists()) {
-                    Toast.makeText(context,"Boleh kartun 3",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Boleh kartun 3", Toast.LENGTH_SHORT).show();
 //                    gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();

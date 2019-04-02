@@ -1926,9 +1926,13 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
             adapter = new SLAISSAdapter(this, itemList, recyclerView);
 
+
             recyclerView.setAdapter(adapter);
             recyclerView.setAccordion(false);
             recyclerView.removeItemClickListeners();
+
+            RoomsDetail orderModels = new RoomsDetail(idDetail, idTab, username, "Isi", jsonCreateType("66989", "dropdown_form", "0"), "isian", "cild");
+            db.insertRoomsDetail(orderModels);
 
 
             try {

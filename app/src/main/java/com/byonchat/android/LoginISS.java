@@ -84,13 +84,13 @@ public class LoginISS extends AppCompatActivity {
         erwgv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(userID.getText().toString().equalsIgnoreCase("")){
-                    Toast.makeText(getApplicationContext(), "Please enter your username!",Toast.LENGTH_SHORT).show();
+                if (userID.getText().toString().equalsIgnoreCase("")) {
+                    Toast.makeText(getApplicationContext(), "Please enter your username!", Toast.LENGTH_SHORT).show();
                     userID.setError("Can't Empty");
-                }else if(passID.getText().toString().equalsIgnoreCase("")){
-                    Toast.makeText(getApplicationContext(), "Please enter your password!",Toast.LENGTH_SHORT).show();
+                } else if (passID.getText().toString().equalsIgnoreCase("")) {
+                    Toast.makeText(getApplicationContext(), "Please enter your password!", Toast.LENGTH_SHORT).show();
                     passID.setError("Can't Empty");
-                }else {
+                } else {
                     pd = new ProgressDialog(LoginISS.this);
                     pd.setMessage("Please Wait");
                     pd.show();
@@ -99,6 +99,9 @@ public class LoginISS extends AppCompatActivity {
                     params.put("password", passID.getText().toString());
                     params.put("bc_user", dbhelper.getMyContact().getJabberId());
 
+                    Log.w("jojo1", userID.getText().toString());
+                    Log.w("jojo2", passID.getText().toString());
+
                     LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
                 }
             }
@@ -106,24 +109,24 @@ public class LoginISS extends AppCompatActivity {
     }
 
     private void LoginThis(String Url, Map<String, String> params2, Boolean hide) {
-
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     if (hide) {
-                        Log.w("sukses harusee", response);
                         try {
                             JSONObject jsonRootObject = new JSONObject(response);
                             parseJSON(response, jsonRootObject.getString("json_iss"));
                         } catch (JSONException e) {
+                            pd.dismiss();
+                            Toast.makeText(getApplicationContext(), "Please Check Username or password", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     }
 
                 },
                 error -> {
-                    Log.w("Erroe harusee",error);
+                    Toast.makeText(getApplicationContext(), "Please Try Again", Toast.LENGTH_SHORT).show();
                     pd.dismiss();
                 }
         ) {
@@ -207,7 +210,7 @@ public class LoginISS extends AppCompatActivity {
     }*/
 
     private void parseJSON(String allres, String result) {
-        Log.w("Res LOgs harusee",result);
+        Log.w("Res LOgs harusee", result);
         String[] dataLOG = new String[0];
         try {
             JSONObject start = new JSONObject(result);
@@ -260,9 +263,9 @@ public class LoginISS extends AppCompatActivity {
                 //Not fix!!! Change how to detect as reliever with another ways
                 JSONObject jsonRootObject = new JSONObject(allres);
                 JSONArray tab = jsonRootObject.getJSONArray("tab_room");
-                for (int i = 0; i < tab.length(); i++ ){
+                for (int i = 0; i < tab.length(); i++) {
                     String name = tab.getJSONObject(i).getString("tab_name");
-                    if (name.equalsIgnoreCase("Job Call")){
+                    if (name.equalsIgnoreCase("Job Call")) {
                         new Validations().getInstance(getApplicationContext()).setShareLocOnOff(true);
                     }
                 }
@@ -272,7 +275,7 @@ public class LoginISS extends AppCompatActivity {
                 intent.putExtra("success", "oke");
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getApplicationContext().startActivity(intent);*/
-                Intent ii = LoadingGetTabRoomActivity.generateISS(getApplicationContext(),allres,username);
+                Intent ii = LoadingGetTabRoomActivity.generateISS(getApplicationContext(), allres, username);
                 startActivity(ii);
                 pd.dismiss();
                 finish();

@@ -40,7 +40,32 @@
             android:paddingBottom="@dimen/margin50"
             android:weightSum="1">
 
+            <TextView
+                android:id="@+id/textLokasi"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/margin10"
+                android:layout_marginRight="@dimen/margin10"
+                android:padding="@dimen/margin5"
+                android:text="JJT"
+                android:textColor="@android:color/black"
+                android:textColorHint="@color/grayList" />
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textLokasi"
+                android:layout_marginLeft="@dimen/margin10"
+                android:layout_marginTop="@dimen/margin3"
+                android:layout_marginRight="@dimen/margin10"
+                android:layout_marginBottom="@dimen/margin3"
+                android:textColor="@android:color/black" />
+
+
             <com.multilevelview.MultiLevelRecyclerView
+
                 android:id="@+id/recy_main"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

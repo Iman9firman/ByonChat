@@ -97,15 +97,13 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
 
             if (targetUrl != null) {
                 GETTAB = targetUrl + finalPath;
-                Log.w("papa1", targetUrl);
             } else {
                 targetUrl = linkPath;
-                Log.w("papa2", targetUrl);
             }
 
             new Refresh().execute(GETTAB, room_name);
         } else {
-            targetUrl = "https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php";
+            targetUrl = linkPath;
             String newday = getIntent().getStringExtra("newday");
             extractResult(newday);
             bc_user = getIntent().getStringExtra("bcUser");
@@ -147,7 +145,6 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Calendar cal = Calendar.getInstance();
             String time_str = dateFormat.format(cal.getTime());
-            Log.w("Welsnm donwm -0", username + ", " + realname + ", " + content + ", " + backdrop + ", " + lastUpdate + ", " + icon + ", " + firstTab + ", " + time_str);
             if (cursor.getCount() > 0) {
                 lu = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_LASTUPDATE));
                 if (!lu.equalsIgnoreCase(lastUpdate)) {
@@ -160,9 +157,6 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 botListDB.insertRooms(rooms);
             }
             cursor.close();
-
-            Log.w("hasil nyampemana 0", result);
-            Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
 
             new Validations().getInstance(getApplicationContext()).removeById(26);
             new Validations().getInstance(getApplicationContext()).removeById(25);

@@ -99,6 +99,7 @@ import com.byonchat.android.DialogFormChildMainNew;
 import com.byonchat.android.DownloadFileByonchat;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.DownloadUtilsActivity;
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.ReaderOcr;
 import com.byonchat.android.ZoomImageViewActivity;
@@ -208,6 +209,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
 
     private MultiLevelRecyclerView recyclerView;
+    SearchableSpinner spinner;
     private SLAISSAdapter adapter;
     private List<SLAISSItem> itemList;
 
@@ -1794,6 +1796,43 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "0", firstLat, "parent");
                 db.insertRoomsDetail(orderModel);
+            }
+
+
+            spinner = (SearchableSpinner) findViewById(R.id.spinner);
+
+            ArrayList<String> dua = new ArrayList<>();
+            String lat_long;
+
+            UserDB userDB = UserDB.getInstance(getApplicationContext());
+            Cursor cursorJJT = userDB.getSingle();
+            if (cursorJJT.getCount() > 0) {
+                String contentJJT = cursorJJT.getString(cursorJJT.getColumnIndexOrThrow(UserDB.EMPLOYEE_MULTICOST));
+
+                ArrayList<String> spinnerArray = new ArrayList<String>();
+                try {
+                    JSONArray arr = new JSONArray(contentJJT);
+
+                    for (int as = 0; as < arr.length(); as++) {
+                        JSONObject jo = arr.getJSONObject(as);
+                        String cost_center = jo.getString("costcenter");
+                        lat_long = jo.getString("latlng");
+                        if (lat_long.equalsIgnoreCase("")) {
+                            lat_long = "-6.1989168,106.7591713";
+                        }
+                        spinnerArray.add(cost_center.substring(0, cost_center.indexOf("[")));
+                        dua.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+                    }
+                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner.setAdapter(spinnerArrayAdapter);
+
+                } catch (Exception e) {
+                }
             }
 
 
@@ -10787,6 +10826,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 HttpClient httpclient = new DefaultHttpClient(httpParameters);
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
+
                 // Add your data
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("username_room", usr));
@@ -10796,7 +10836,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     String[] ff = pId.split("\\|");
                     if (ff.length == 2) {
                         nameValuePairs.add(new BasicNameValuePair("parent_id", ff[1]));
-                        nameValuePairs.add(new BasicNameValuePair("id_list_push", ff[0]));
+                        nameValuePairs.add(new BasicNameValuePair("id_list_push", ff[1]));
                     }
                 }
 
@@ -10805,6 +10845,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 // Execute HTTP Post Request
                 HttpResponse response = httpclient.execute(httppost);
                 int status = response.getStatusLine().getStatusCode();
+
                 if (status == 200) {
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);

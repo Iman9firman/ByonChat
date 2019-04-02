@@ -34,6 +34,17 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/arrow_item"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:scaleType="center"
+        app:srcCompat="@drawable/ic_arrow_down"
+        app:layout_constraintBottom_toBottomOf="@id/title_item"
+        app:layout_constraintLeft_toRightOf="@id/title_item"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_oncheck_item"

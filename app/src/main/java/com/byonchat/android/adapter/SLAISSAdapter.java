@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -131,7 +132,10 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         if (mItem.hasChildren() && mItem.getChildren().size() > 0) {
             mHolder.itemOnCheckLayout.setVisibility(View.GONE);
             mHolder.buttonPicker.setVisibility(View.GONE);
+            setExpandButton(mHolder.imgArrow, mItem.isExpanded());
+            mHolder.imgArrow.setVisibility(View.VISIBLE);
         } else {
+            mHolder.imgArrow.setVisibility(View.GONE);
             if (checkDB(Integer.valueOf(mHolder.textId.getText().toString()))) {
                 if (getOkFromDB(Integer.valueOf(mHolder.textId.getText().toString())) == 1) {
                     mHolder.buttonPicker.setBackground(mActivity.getDrawable(R.drawable.check_ok));
@@ -160,6 +164,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         private TextView textId;
         private ImageButton pictPicker;
         private ImageButton buttonPicker;
+        private ImageView imgArrow;
 
         ISSHolder(final View v) {
             super(v);
@@ -169,11 +174,14 @@ public class SLAISSAdapter extends MultiLevelAdapter {
             textComment = v.findViewById(R.id.comment_item);
             buttonPicker = v.findViewById(R.id.picker_item);
             pictPicker = v.findViewById(R.id.pict_item);
+            imgArrow = v.findViewById(R.id.arrow_item);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mMultiLevelRecyclerView.toggleItemsGroup(getAdapterPosition());
+                    imgArrow.animate().rotation(mListItems.get(getAdapterPosition()).isExpanded() ? -180 : 0).start();
+                    mMultiLevelRecyclerView.scrollToPosition(mListItems.size()-1);
                 }
             });
 
@@ -372,6 +380,11 @@ public class SLAISSAdapter extends MultiLevelAdapter {
 
     public void removeDB() {
         database.getWritableDatabase().delete(TABLE_NAME, null, null);
+    }
+
+    private void setExpandButton(ImageView expandButton, boolean isExpanded) {
+        // set the icon based on the current state
+        expandButton.setImageResource(isExpanded ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down);
     }
 
 }

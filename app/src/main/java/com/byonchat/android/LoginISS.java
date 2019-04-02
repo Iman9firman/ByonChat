@@ -99,9 +99,6 @@ public class LoginISS extends AppCompatActivity {
                     params.put("password", passID.getText().toString());
                     params.put("bc_user", dbhelper.getMyContact().getJabberId());
 
-                    Log.w("jojo1", userID.getText().toString());
-                    Log.w("jojo2", passID.getText().toString());
-
                     LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
                 }
             }
@@ -119,7 +116,7 @@ public class LoginISS extends AppCompatActivity {
                             parseJSON(response, jsonRootObject.getString("json_iss"));
                         } catch (JSONException e) {
                             pd.dismiss();
-                            Toast.makeText(getApplicationContext(), "Please Check Username or password", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     }

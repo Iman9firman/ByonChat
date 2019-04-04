@@ -347,7 +347,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     String tanggal, flag;
     NotificationManager mNotificationManager;
 
-    private LocationManager mLocationManager = null;
+    // private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 0;
     private static final float LOCATION_DISTANCE = 0f;
     Context c = this;
@@ -1523,9 +1523,9 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         }
 
 
-        initializeLocationManager();
+        // initializeLocationManager();
 
-        try {
+       /* try {
             mLocationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
                     mLocationListeners[1]);
@@ -1543,7 +1543,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             Log.i(TAG, "fail to request location update, ignore", ex);
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
-        }
+        }*/
 
         if (new Validations().getInstance(getApplicationContext()).getShareLocOnOff(27) == true) {
             Timer LocTimer = new Timer();
@@ -2015,7 +2015,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         Intent broadcastIntent = new Intent("com.byonchat.android.utils.ConnectionChangeReceiver");
         sendBroadcast(broadcastIntent);
 
-        if (mLocationManager != null) {
+        /*if (mLocationManager != null) {
             for (int loc = 0; loc < mLocationListeners.length; loc++) {
                 try {
                     if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -2026,7 +2026,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     Log.i(TAG, "fail to remove location listners, ignore", ex);
                 }
             }
-        }
+        }*/
 
     }
 
@@ -5620,7 +5620,7 @@ Log.w("every",co.getJabberId());
         return "";
     }
 
-    private class LocationListener implements android.location.LocationListener {
+    /*private class LocationListener implements android.location.LocationListener {
 
         Location mLastLocation;
         String lat = "";
@@ -5661,19 +5661,19 @@ Log.w("every",co.getJabberId());
         }
 
 
-    }
+    }*/
 
-    LocationListener[] mLocationListeners = new LocationListener[]{
+  /*  LocationListener[] mLocationListeners = new LocationListener[]{
             new LocationListener(LocationManager.GPS_PROVIDER),
             new LocationListener(LocationManager.NETWORK_PROVIDER)
-    };
+    };*/
 
-    private void initializeLocationManager() {
+    /*private void initializeLocationManager() {
         Log.e(TAG, "initializeLocationManager");
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
-    }
+    }*/
 
     public static boolean isMockLocationOn(Location location, Context context) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {

@@ -582,7 +582,133 @@ public class AllAboutUploadTask {
                     } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("form_child")) {
 
                     } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
-                        try {
+                        /*cc = "{\n" +
+                                "  \"kode_jjt\" : \"ISS-00625F0001\",\n" +
+                                "  \"pembobotan\": [\n" +
+                                "    {\n" +
+                                "      \"id\": 29,\n" +
+                                "      \"section\": [\n" +
+                                "        {\n" +
+                                "          \"id\": 40,\n" +
+                                "          \"subsection\": [\n" +
+                                "            {\n" +
+                                "              \"id\": 82,\n" +
+                                "              \"pertanyaan\": [\n" +
+                                "                {\n" +
+                                "                  \"id\": 56,\n" +
+                                "                  \"v\": \"1\",\n" +
+                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                "                  \"n\": \"satu\",\n" +
+                                "                  \"b\": \"0.633\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"id\": 57,\n" +
+                                "                  \"v\": \"0\",\n" +
+                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                "                  \"n\": \"\",\n" +
+                                "                  \"b\": \"0.633\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"id\": 58,\n" +
+                                "                  \"v\": \"0\",\n" +
+                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                "                  \"n\": \"dua\",\n" +
+                                "                  \"b\": \"0.633\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"id\": 59,\n" +
+                                "                  \"v\": \"0\",\n" +
+                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                "                  \"n\": \"tiga\",\n" +
+                                "                  \"b\": \"0.633\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"id\": 61,\n" +
+                                "                  \"v\": \"1\",\n" +
+                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                "                  \"n\": \"empat\",\n" +
+                                "                  \"b\": \"0.633\"\n" +
+                                "                },{\n" +
+                                "                  \"id\": 62,\n" +
+                                "                  \"v\": \"1\",\n" +
+                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                "                  \"n\": \"lima\",\n" +
+                                "                  \"b\": \"0.633\"\n" +
+                                "                }\n" +
+                                "              ]\n" +
+                                "            }\n" +
+                                "          ]\n" +
+                                "        }\n" +
+                                "      ]\n" +
+                                "    }\n" +
+                                "  ]\n" +
+                                "}";*/
+
+                        cc = "{\n" +
+                                "  \"kode_jjt\" : \"ISS-00625F0001\",\n" +
+                                "  \"area\" : \"EKA HOSPITAL CLN\",\n" +
+                                "  \"pembobotan\": [\n" +
+                                "    {\n" +
+                                "      \"id\": 29,\n" +
+                                "      \"bobot\":80,\n" +
+                                "      \"section\": [\n" +
+                                "        {\n" +
+                                "          \"id\": 40,\n" +
+                                "          \"subsection\": [\n" +
+                                "            {\n" +
+                                "              \"id\": 82,\n" +
+                                "              \"pertanyaan\": [\n" +
+                                "                {\n" +
+                                "                  \"id\": 56,\n" +
+                                "                  \"v\": \"1\",\n" +
+                                "                  \"f\": \"\",\n" +
+                                "                  \"n\": \"\",\n" +
+                                "                  \"b\": \"0.633\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"id\": 57,\n" +
+                                "                  \"v\": \"0\",\n" +
+                                "                  \"f\": \"IMG_29032019_114204_vRIsq55lBf.jpg\",\n" +
+                                "                  \"n\": \"\",\n" +
+                                "                  \"b\": \"0\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"id\": 58,\n" +
+                                "                  \"v\": \"1\",\n" +
+                                "                  \"f\": \"\",\n" +
+                                "                  \"n\": \"\",\n" +
+                                "                  \"b\": \"0.633\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"id\": 59,\n" +
+                                "                  \"v\": \"1\",\n" +
+                                "                  \"f\": \"\",\n" +
+                                "                  \"n\": \"\",\n" +
+                                "                  \"b\": \"0.633\"\n" +
+                                "                },\n" +
+                                "                {\n" +
+                                "                  \"id\": 61,\n" +
+                                "                  \"v\": \"0\",\n" +
+                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
+                                "                  \"n\": \"ini apa\",\n" +
+                                "                  \"b\": \"0\"\n" +
+                                "                },{\n" +
+                                "                  \"id\": 62,\n" +
+                                "                  \"v\": \"0\",\n" +
+                                "                  \"f\": \"IMG_29032019_114523_kAXDebwzxF.jpg\",\n" +
+                                "                  \"n\": \"disini gagal\",\n" +
+                                "                  \"b\": \"0\"\n" +
+                                "                }\n" +
+                                "              ]\n" +
+                                "            }\n" +
+                                "          ]\n" +
+                                "        }\n" +
+                                "      ]\n" +
+                                "    }\n" +
+                                "  ]\n" +
+                                "}";
+
+                        /*try {
                             JSONObject jsonObject = new JSONObject(cc);
                             Iterator<String> iter = jsonObject.keys();
 
@@ -635,67 +761,7 @@ public class AllAboutUploadTask {
                             jsHead.put("sec", jsAU);
 
 
-                            cc = "{\n" +
-                                    "  \"kode_jjt\" : \"ISS-00625F0001\",\n" +
-                                    "  \"pembobotan\": [\n" +
-                                    "    {\n" +
-                                    "      \"id\": 29,\n" +
-                                    "      \"section\": [\n" +
-                                    "        {\n" +
-                                    "          \"id\": 40,\n" +
-                                    "          \"subsection\": [\n" +
-                                    "            {\n" +
-                                    "              \"id\": 82,\n" +
-                                    "              \"pertanyaan\": [\n" +
-                                    "                {\n" +
-                                    "                  \"id\": 56,\n" +
-                                    "                  \"v\": \"1\",\n" +
-                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                    "                  \"n\": \"satu\",\n" +
-                                    "                  \"b\": \"0.633\"\n" +
-                                    "                },\n" +
-                                    "                {\n" +
-                                    "                  \"id\": 57,\n" +
-                                    "                  \"v\": \"1\",\n" +
-                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                    "                  \"n\": \"\",\n" +
-                                    "                  \"b\": \"0.633\"\n" +
-                                    "                },\n" +
-                                    "                {\n" +
-                                    "                  \"id\": 58,\n" +
-                                    "                  \"v\": \"1\",\n" +
-                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                    "                  \"n\": \"dua\",\n" +
-                                    "                  \"b\": \"0.633\"\n" +
-                                    "                },\n" +
-                                    "                {\n" +
-                                    "                  \"id\": 59,\n" +
-                                    "                  \"v\": \"1\",\n" +
-                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                    "                  \"n\": \"tiga\",\n" +
-                                    "                  \"b\": \"0.633\"\n" +
-                                    "                },\n" +
-                                    "                {\n" +
-                                    "                  \"id\": 61,\n" +
-                                    "                  \"v\": \"1\",\n" +
-                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                    "                  \"n\": \"empat\",\n" +
-                                    "                  \"b\": \"0.633\"\n" +
-                                    "                },{\n" +
-                                    "                  \"id\": 62,\n" +
-                                    "                  \"v\": \"1\",\n" +
-                                    "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                    "                  \"n\": \"lima\",\n" +
-                                    "                  \"b\": \"0.633\"\n" +
-                                    "                }\n" +
-                                    "              ]\n" +
-                                    "            }\n" +
-                                    "          ]\n" +
-                                    "        }\n" +
-                                    "      ]\n" +
-                                    "    }\n" +
-                                    "  ]\n" +
-                                    "}";
+
 
                             //{"outlet_id":"14","audit":[{"id":"49","checklists":[{"id":"16|37|49","val":"1","note":"","foto":[]}]}]}
 
@@ -704,7 +770,7 @@ public class AllAboutUploadTask {
 
                             // Log.w("beruntung", cc);
 
-                            /*cc = "{\n" +
+                            *//*cc = "{\n" +
                                     "  \"type\": \"dropdown_form\",\n" +
                                     "  \"value\": [\n" +
                                     "    {\n" +
@@ -726,12 +792,12 @@ public class AllAboutUploadTask {
                                     "      ]\n" +
                                     "    }\n" +
                                     "  ]\n" +
-                                    "}";*/
+                                    "}";*//*
 
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                        }
+                        }*/
                     }
 
                     try {

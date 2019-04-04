@@ -124,6 +124,7 @@ import com.byonchat.android.provider.DataBaseHelper;
 import com.byonchat.android.provider.DatabaseKodePos;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.provider.RadioButtonCheckDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.tempSchedule.MyEventDatabase;
 import com.byonchat.android.utils.AllAboutUploadTask;
@@ -205,13 +206,19 @@ import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_COMMENT;
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID;
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_IMG;
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_OK;
+import static com.byonchat.android.provider.RadioButtonCheckDB.TABLE_NAME;
+
 public class DinamicSLATaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener, AllAboutUploadTask.OnTaskCompleted {
 
 
     private MultiLevelRecyclerView recyclerView;
     SearchableSpinner spinner;
     private SLAISSAdapter adapter;
-    private List<SLAISSItem> itemList;
+    private List<SLAISSItem> itemList = new ArrayList<>();
 
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
@@ -1801,17 +1808,18 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
             spinner = (SearchableSpinner) findViewById(R.id.spinner);
 
-            ArrayList<String> dua = new ArrayList<>();
             String lat_long;
-
             UserDB userDB = UserDB.getInstance(getApplicationContext());
+            ArrayList<String> spinnerArraySla = new ArrayList<String>();
+            ArrayList<String> duaJJt = new ArrayList<>();
+            spinnerArraySla.add("--Please Select--");
+
             Cursor cursorJJT = userDB.getSingle();
             if (cursorJJT.getCount() > 0) {
                 String contentJJT = cursorJJT.getString(cursorJJT.getColumnIndexOrThrow(UserDB.EMPLOYEE_MULTICOST));
-
-                ArrayList<String> spinnerArray = new ArrayList<String>();
                 try {
                     JSONArray arr = new JSONArray(contentJJT);
+
 
                     for (int as = 0; as < arr.length(); as++) {
                         JSONObject jo = arr.getJSONObject(as);
@@ -1820,119 +1828,276 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         if (lat_long.equalsIgnoreCase("")) {
                             lat_long = "-6.1989168,106.7591713";
                         }
-                        spinnerArray.add(cost_center.substring(0, cost_center.indexOf("[")));
-                        dua.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
+                        Log.w("farani", cost_center);
+                        spinnerArraySla.add(cost_center.substring(0, cost_center.indexOf("[")));
+                        duaJJt.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
                     }
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
-                    }
-                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
-                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinner.setAdapter(spinnerArrayAdapter);
 
                 } catch (Exception e) {
                 }
             }
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+            }
+
+            ArrayAdapter<String> spinnerArrayAdapterSLA = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArraySla); //selected item will look like a spinner set from XML
+            spinnerArrayAdapterSLA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(spinnerArrayAdapterSLA);
 
             recyclerView = findViewById(R.id.recy_main);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            String json = "{\n" +
-                    "  \"data\": [\n" +
-                    "    {\n" +
-                    "      \"id\": 0,\n" +
-                    "      \"label\": \"Parameter Output\",\n" +
-                    "      \"data\": [\n" +
-                    "        {\n" +
-                    "          \"id\": 1,\n" +
-                    "          \"label\": \"Departure\",\n" +
-                    "          \"data\": [\n" +
-                    "            {\n" +
-                    "              \"id\": 2,\n" +
-                    "              \"label\": \"Curb Side\",\n" +
-                    "              \"data\": [\n" +
-                    "                {\n" +
-                    "                  \"id\": 3,\n" +
-                    "                  \"label\": \"Lantai bebas dari sampah lepas dan noda (removable stain)\"\n" +
-                    "                },\n" +
-                    "                {\n" +
-                    "                  \"id\": 4,\n" +
-                    "                  \"label\": \"langit-langit bersih dan bebas dari sawang\"\n" +
-                    "                },\n" +
-                    "                {\n" +
-                    "                  \"id\": 5,\n" +
-                    "                  \"label\": \"dinding/kaca bebas dari noda dan debu\"\n" +
-                    "                }\n" +
-                    "              ]\n" +
-                    "            },{\n" +
-                    "              \"id\": 12,\n" +
-                    "              \"label\": \"Check-in Area\",\n" +
-                    "              \"data\": [\n" +
-                    "                {\n" +
-                    "                  \"id\": 13,\n" +
-                    "                  \"label\": \"Lantai bebas dari sampah lepas dan noda (removable stain)\"\n" +
-                    "                },\n" +
-                    "                {\n" +
-                    "                  \"id\": 14,\n" +
-                    "                  \"label\": \"langit-langit bersih dan bebas dari sawang\"\n" +
-                    "                },\n" +
-                    "                {\n" +
-                    "                  \"id\": 15,\n" +
-                    "                  \"label\": \"dinding/kaca bebas dari noda dan debu\"\n" +
-                    "                }\n" +
-                    "              ]\n" +
-                    "            }\n" +
-                    "          ]\n" +
-                    "        }\n" +
-                    "      ]\n" +
-                    "    },\n" +
-                    "    {\n" +
-                    "      \"id\": 6,\n" +
-                    "      \"label\": \"Parameter Compliance\",\n" +
-                    "      \"data\": [\n" +
-                    "        {\n" +
-                    "          \"id\": 7,\n" +
-                    "          \"label\": \"Melakukan Verifikasi SOP\",\n" +
-                    "          \"data\": [\n" +
-                    "            {\n" +
-                    "              \"id\": 8,\n" +
-                    "              \"label\": \"Berikan pertanyaan tentang SOP kepada Operator\n" +
-                    "(sampling 5 orang diambil nilai rata - rata)\",\n" +
-                    "              \"data\": [\n" +
-                    "                {\n" +
-                    "                  \"id\": 9,\n" +
-                    "                  \"label\": \"Operator dapat menjelaskan seluruh SOP dengan baik dan runut serta dapat menunjukan perlengkapan kerja (peralatan, consumable items, mesin, K3) yang digunakan sesuai SOP\"\n" +
-                    "                },\n" +
-                    "                {\n" +
-                    "                  \"id\": 10,\n" +
-                    "                  \"label\": \"Operator dapat menjelaskan hanya sebagian SOP atau tidak runut serta perlengkapan kerja yang digunakan tidak sesuai SOP atau terdapat kekurangan\"\n" +
-                    "                },\n" +
-                    "                {\n" +
-                    "                  \"id\": 11,\n" +
-                    "                  \"label\": \"Operator tidak dapat menjelaskan SOP sama sekali\"\n" +
-                    "                }\n" +
-                    "              ]\n" +
-                    "            }\n" +
-                    "          ]\n" +
-                    "        }\n" +
-                    "      ]\n" +
-                    "    }\n" +
-                    "  ]\n" +
-                    "}";
+            final List<String> valSetOne1 = new ArrayList<String>();
+            valSetOne1.add(String.valueOf(0));
+            valSetOne1.add("1");
+            valSetOne1.add("text");
+            valSetOne1.add("jjt");
+            valSetOne1.add("JJT");
+            valSetOne1.add(String.valueOf(0));
 
-            itemList = (List<SLAISSItem>) getListFromJson("", json, 0);
+            final List<String> valSetOne2 = new ArrayList<String>();
+            valSetOne2.add(String.valueOf(1));
+            valSetOne2.add("1");
+            valSetOne2.add("dropdown_form");
+            valSetOne2.add("forn_isian");
+            valSetOne2.add("Pembobotan");
+            valSetOne2.add(String.valueOf(1));
 
-            adapter = new SLAISSAdapter(this, itemList, recyclerView);
+            hashMap.put(Integer.parseInt("66985"), valSetOne1);
+            hashMap.put(Integer.parseInt("66989"), valSetOne2);
+
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
+
+                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66985", "text", "0"));
+
+                    if (spinnerArraySla.get(myPosition).equalsIgnoreCase("--Please Select--")) {
+                        recyclerView.setVisibility(View.GONE);
+                        if (cEdit.getCount() > 0) {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                            db.deleteDetailRoomWithFlagContent(orderModel);
+                        }
+                    } else {
+
+                        if (cEdit.getCount() > 0) {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                            db.updateDetailRoomWithFlagContent(orderModel);
+                        } else {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                            db.insertRoomsDetail(orderModel);
+
+                        }
+
+                        String assup = duaJJt.get(myPosition - 1);
+                        DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(context, "sqlite_iss");
+
+                        String asiop[] = {"jt.id AS id_jjt", "pb.id AS id_pembobotan", "pb.nama_pembobotan AS nama_pembobotan", "pb.grade AS grade"
+                                , "s.id AS id_section", "s.title AS title_section", "ss.id AS id_subsection", "ss.title AS title_subsection", "p.id AS id_pertanyaan", "p.pertanyaan AS pertanyaan"};
+
+                        String asiap = "jjt jt\n" +
+                                "INNER JOIN jjt_checklists jtc ON jt.id=jtc.id_jjt\n" +
+                                "INNER JOIN pembobotan pb ON pb.id=jtc.id_pembobotan\n" +
+                                "INNER JOIN pembobotan_checklists pc ON pb.id=pc.id_pembobotan\n" +
+                                "INNER JOIN section s ON s.id=pc.id_section\n" +
+                                "INNER JOIN section_checklists sc ON s.id=sc.id_section\n" +
+                                "INNER JOIN sub_section ss ON ss.id=sc.id_subsection\n" +
+                                "INNER JOIN subsection_checklists sbc ON ss.id=sbc.id_subsection\n" +
+                                "INNER JOIN pertanyaan p ON p.id=sbc.id_pertanyaan";
+
+                        if (mDBDquerySLA.getWritableDatabase() != null) {
+                            final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + assup + "'", null, null, null, null, null);
+
+                            // TODO: 03/04/19
+                            //1. data dari database convert jadi json (done)
+                            //2. cheklist di buat dinamis  (done)
+                            //3. foto dapat di edit2
+                            //4. validasi pengirman
+                            //5. submit form
+                            //6. save draft
 
 
-            recyclerView.setAdapter(adapter);
-            recyclerView.setAccordion(false);
-            recyclerView.removeItemClickListeners();
+                            if (css.moveToFirst()) {
 
-            RoomsDetail orderModels = new RoomsDetail(idDetail, idTab, username, "Isi", jsonCreateType("66989", "dropdown_form", "0"), "isian", "cild");
-            db.insertRoomsDetail(orderModels);
+                                Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66989", "dropdown_form", "1"));
+                                if (cEdit2.getCount() > 0) {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "berisi", jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
+                                    db.updateDetailRoomWithFlagContent(orderModel);
+                                } else {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "berisi", jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
+                                    db.insertRoomsDetail(orderModel);
+
+                                }
+                                recyclerView.setVisibility(View.VISIBLE);
+                                String bobotIdOld = "";
+                                String sectionOld = "";
+                                String subSectionOld = "";
+
+                                try {
+                                    JSONObject hasilCOnvert = new JSONObject();
+                                    JSONArray satu = new JSONArray();
+                                    JSONArray dua = new JSONArray();
+                                    JSONArray tiga = new JSONArray();
+                                    JSONArray empat = new JSONArray();
+
+                                    do {
+                                        String idBobot = css.getString(1);
+                                        String idSection = css.getString(4);
+                                        String idSubSection = css.getString(6);
+                                        String idPertanyaan = css.getString(8);
+
+                                        String namaBobot = css.getString(2);
+                                        String bobotNya = css.getString(3);
+                                        String namaSection = css.getString(5);
+                                        String namaSubSection = css.getString(7);
+                                        String itemTobe = css.getString(9);
+
+
+                                        if (bobotIdOld.equalsIgnoreCase(idBobot)) {
+                                            if (sectionOld.equalsIgnoreCase(idSection)) {
+                                                if (subSectionOld.equalsIgnoreCase(idSubSection)) {
+                                                    JSONObject ppObject = new JSONObject();
+                                                    ppObject.put("id", idPertanyaan);
+                                                    ppObject.put("label", itemTobe);
+                                                    empat.put(ppObject);
+
+                                                } else {
+                                                    subSectionOld = idSubSection;
+                                                    empat = new JSONArray();
+
+                                                    JSONObject ppObject = new JSONObject();
+                                                    ppObject.put("id", idPertanyaan);
+                                                    ppObject.put("label", itemTobe);
+                                                    empat.put(ppObject);
+
+                                                    JSONObject empatObject = new JSONObject();
+                                                    empatObject.put("id", idSubSection);
+                                                    empatObject.put("label", namaSubSection);
+                                                    empatObject.put("data", empat);
+                                                    tiga.put(empatObject);
+                                                }
+                                            } else {
+                                                subSectionOld = idSubSection;
+                                                sectionOld = idSection;
+
+                                                empat = new JSONArray();
+                                                tiga = new JSONArray();
+
+                                                JSONObject ppObject = new JSONObject();
+                                                ppObject.put("id", idPertanyaan);
+                                                ppObject.put("label", itemTobe);
+                                                empat.put(ppObject);
+
+                                                JSONObject empatObject = new JSONObject();
+                                                empatObject.put("id", idSubSection);
+                                                empatObject.put("label", namaSubSection);
+                                                empatObject.put("data", empat);
+                                                tiga.put(empatObject);
+
+                                                JSONObject tigaObject = new JSONObject();
+                                                tigaObject.put("id", idSection);
+                                                tigaObject.put("label", namaSection);
+                                                tigaObject.put("data", tiga);
+                                                dua.put(tigaObject);
+
+                                            }
+                                        } else {
+                                            bobotIdOld = idBobot;
+                                            if (!sectionOld.equalsIgnoreCase(idSection)) {
+                                                sectionOld = idSection;
+                                                if (!subSectionOld.equalsIgnoreCase(idSubSection)) {
+                                                    subSectionOld = idSubSection;
+                                                    dua = new JSONArray();
+                                                    tiga = new JSONArray();
+                                                    empat = new JSONArray();
+
+
+                                                    JSONObject ppObject = new JSONObject();
+                                                    ppObject.put("id", idPertanyaan);
+                                                    ppObject.put("label", itemTobe);
+                                                    empat.put(ppObject);
+
+                                                    JSONObject empatObject = new JSONObject();
+                                                    empatObject.put("id", idSubSection);
+                                                    empatObject.put("label", namaSubSection);
+                                                    empatObject.put("data", empat);
+                                                    tiga.put(empatObject);
+
+                                                    JSONObject tigaObject = new JSONObject();
+                                                    tigaObject.put("id", idSection);
+                                                    tigaObject.put("label", namaSection);
+                                                    tigaObject.put("data", tiga);
+                                                    dua.put(tigaObject);
+
+                                                    JSONObject duaObject = new JSONObject();
+                                                    duaObject.put("id", idBobot);
+                                                    duaObject.put("label", namaBobot);
+                                                    duaObject.put("bobot", bobotNya);
+                                                    duaObject.put("data", dua);
+
+                                                    satu.put(duaObject);
+                                                }
+                                            }
+
+                                        }
+
+                                    } while (css.moveToNext());
+                                    hasilCOnvert.put("data", satu);
+                                    itemList = (List<SLAISSItem>) getListFromJson("", hasilCOnvert.toString(), 0);
+                                    adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, itemList, recyclerView);
+                                    recyclerView.setAdapter(adapter);
+                                    recyclerView.setAccordion(false);
+                                    recyclerView.removeItemClickListeners();
+
+                                    adapter.notifyDataSetChanged();
+                                } catch (Exception e) {
+
+                                }
+
+                            } else {
+                                if (deleteContent) {
+                                    db.deleteRoomsDetailbyId(idDetail, idTab, username);
+                                }
+                                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                    Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                                    finish();
+                                }
+
+                                finish();
+                                Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
+                                intent.putExtra("name_db", "sqlite_iss");
+                                intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                                startActivity(intent);
+                                return;
+                            }
+
+                        } else {
+                            if (deleteContent) {
+                                db.deleteRoomsDetailbyId(idDetail, idTab, username);
+                            }
+                            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                                finish();
+                            }
+
+                            finish();
+                            Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
+                            intent.putExtra("name_db", "sqlite_iss");
+                            intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                            startActivity(intent);
+                            return;
+                        }
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {
+                }
+
+            });
 
 
             try {
@@ -1999,6 +2164,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     final String type = jsonArray.getJSONObject(i).getString("type").toString();
                     final String flag = jsonArray.getJSONObject(i).getString("flag").toString();
 
+                    Log.w("dariZar", i + "::" + idListTask + "<>" + name + "><" + type);
                     //zharfan
                     JSONArray dropdownViewId = null;
                     if (jsonArray.getJSONObject(i).has("dropdown_view_parents")) {
@@ -6034,130 +6200,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("dropdown_form")) {
-                        Log.w("happy:1:>", idListTask);
-                        if (idListTask.equalsIgnoreCase("66989")) {
-
-                        } else {
-                            TextView textView = new TextView(DinamicSLATaskActivity.this);
-                            if (required.equalsIgnoreCase("1")) {
-                                label += "<font size=\"3\" color=\"red\">*</font>";
-                            }
-                            textView.setText(Html.fromHtml(label));
-                            textView.setTextSize(15);
-                            textView.setLayoutParams(new TableRow.LayoutParams(0));
-
-                            if (count == null) {
-                                count = 0;
-                            } else {
-                                count++;
-                            }
-
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(String.valueOf(count));
-                            valSetOne.add(required);
-                            valSetOne.add(type);
-                            valSetOne.add(name);
-                            valSetOne.add(label);
-                            valSetOne.add(String.valueOf(i));
-
-                            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                            params1.setMargins(30, 10, 30, 0);
-                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                            linearLayout.addView(textView, params1);
-
-                            idListTaskMasterForm = idListTask;
-
-                            linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
-                            final JSONObject jObject = new JSONObject(value);
-                            String url = jObject.getString("url");
-                            DataBaseDropDown mDB = null;
-
-                            String[] aa = url.split("/");
-                            String nama = aa[aa.length - 1].toString();
-                            if (!nama.contains(".")) {
-                                if (!dbMaster.equalsIgnoreCase("")) {
-                                    String[] aaBB = dbMaster.split("/");
-                                    nama = aaBB[aaBB.length - 1].toString();
-                                }
-                            }
-
-                            final int finalI5 = i;
-                            mDB = new DataBaseDropDown(context, nama.substring(0, nama.indexOf(".")));
-                            try {
-
-
-                                final HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
-                                final List<String> expandableListTitle = new ArrayList<String>();
-
-                                if (mDB.getWritableDatabase() != null) {
-                                    String table = jsonArray.getJSONObject(i).getString("formula").toString();
-                                    if (table != null) {
-
-                                        List<String> valFormula = new ArrayList<String>();
-                                        valFormula.add(nama.substring(0, nama.indexOf(".")));
-                                        valFormula.add(table);
-                                        hashMapDropForm.put(Integer.parseInt(idListTask), valFormula);
-
-                                        RelativeLayout relativeLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.expandable_listview, null);
-                                        expandableListView[count] = (ExpandableListView) relativeLayout.findViewById(R.id.expandableView);
-
-
-                                        final ExpandableListAdapter expandableListAdapter = new ExpandableListAdapter(this, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(idListTask, type, String.valueOf(finalI5)), name);
-                                        expandableListView[count].setAdapter(expandableListAdapter);
-                                        expandableListView[count].setGroupIndicator(null);
-
-                                        setListViewHeightBasedOnChildren(expandableListView[count]);
-
-                                        expandableListView[count].setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
-                                            @Override
-                                            public boolean onGroupClick(ExpandableListView parent, View v,
-                                                                        int groupPosition, long id) {
-
-                                                setListViewHeight(parent, groupPosition);
-
-                                                return false;
-                                            }
-                                        });
-
-                                        TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
-                                        params2.setMargins(40, 10, 10, 0);
-                                        relativeLayout.setLayoutParams(params2);
-
-                                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                                        linearLayout.addView(relativeLayout);
-
-                                    }
-
-                                } else {
-                                    if (deleteContent) {
-                                        db.deleteRoomsDetailbyId(idDetail, idTab, username);
-                                    }
-                                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                                        Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
-                                        finish();
-                                    }
-
-                                    finish();
-                                    Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
-                                    intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
-                                    intent.putExtra("path_db", url);
-                                    startActivity(intent);
-                                    return;
-                                }
-                            } catch (Exception e) {
-
-                            }
-
-                            TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
-                            params2.setMargins(60, 10, 30, 0);
-                            linearEstimasi[count].setLayoutParams(params2);
-                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                            linearLayout.addView(linearEstimasi[count]);
-
-                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
-                        }
-
 
                     } else if (type.equalsIgnoreCase("load_dropdown_k")) {
 
@@ -8153,7 +8195,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         }
                     }
                 }
-            } catch (JSONException e) {
+            } catch (
+                    JSONException e) {
                 e.printStackTrace();
             }
 
@@ -8415,61 +8458,35 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                             } else {
                                                 if (value.get(2).toString().equalsIgnoreCase("dropdown_form")) {
 
-                                                    JSONObject jsonObject = null;
-                                                    try {
-                                                        jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                                        Iterator<String> iter = jsonObject.keys();
-                                                        int mas = 0;
-                                                        while (iter.hasNext()) {
-                                                            mas = mas + 1;
-                                                            String keys = iter.next();
-                                                            try {
-                                                                JSONArray jsAdd = jsonObject.getJSONArray(keys);
+                                                    //disini ya validasi
 
-                                                                for (int ic = 0; ic < jsAdd.length(); ic++) {
+                                                    RadioButtonCheckDB database = new RadioButtonCheckDB(activity);
+                                                    SQLiteDatabase dbSLAA = database.getReadableDatabase();
 
-                                                                    JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
+                                                    Cursor cursorSala = dbSLAA.query(TABLE_NAME,
+                                                            new String[]{COLUMN_ID, COLUMN_OK, COLUMN_COMMENT, COLUMN_IMG},
+                                                            null, null, null, null, null, null);
+                                                    if (cursorSala.moveToFirst()) {
+                                                        do {
+                                                            Log.w("bisaMudah1", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_ID)));
+                                                            Log.w("bisaMudah2", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_OK)));
 
-                                                                    String val = oContent.getString("v");
-                                                                    if (val.length() == 1) {
-                                                                        if (val.equalsIgnoreCase("0")) {
-                                                                            String not = oContent.getString("n");
-                                                                            if (not.length() == 0) {
-                                                                                JSONArray aa = new JSONArray();
-                                                                                if (oContent.has("f")) {
-                                                                                    aa = oContent.getJSONArray("f");
-                                                                                }
+                                                     /*       Log.w("bisaMudah3", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_COMMENT)));
+                                                            Log.w("bisaMudah4", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_IMG)));*/
 
-                                                                                if (aa.length() == 0) {
-                                                                                    //diisi 0 dan harus ada salah satu yang di isi
-                                                                                    errorReq.add("Mohon isi Note Atau Foto pada Point " + mas + " - " + (ic + 1));
-                                                                                    berhenti = true;
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    } else {
-                                                                        String not = oContent.getString("n");
-                                                                        if (not.length() == 0) {
-                                                                            JSONArray aa = new JSONArray();
-                                                                            if (oContent.has("f")) {
-                                                                                aa = oContent.getJSONArray("f");
-                                                                            }
-
-                                                                            if (aa.length() == 0) {
-                                                                                errorReq.add("Harap Pilih Cheklist Pada Point " + mas + " - " + (ic + 1));
-                                                                                berhenti = true;
-                                                                            }
-                                                                        }
-
-                                                                    }
-                                                                }
-                                                            } catch (JSONException e) {
-                                                                // Something went wrong!
-                                                            }
-                                                        }
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
+                                                        } while (cursorSala.moveToNext());
                                                     }
+                                                    cursorSala.close();
+
+                                                   /* do {
+                                                        Log.w("kagadng", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_IMG)));
+
+
+                                                        //ok = cursorSala.getString(cursorSala.getColumnIndex(COLUMN_IMG));
+                                                    } while (cursorSala.moveToNext());*/
+                                                    cursorSala.close();
+
+
                                                 } else if (value.get(2).toString().equalsIgnoreCase("phone_number")) {
                                                     String saya = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
                                                     if (saya.length() > 9 && saya.length() < 15) {
@@ -8524,7 +8541,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     value.get(2).toString().equalsIgnoreCase("phone_number") ||
                                                     value.get(2).toString().equalsIgnoreCase("currency")) {
                                                 String aa = value.get(0).toString();
-                                                et[Integer.valueOf(aa)].setError("required");
+                                                errorReq.add("JJT");
                                                 berhenti = true;
                                             } else if (value.get(2).toString().equalsIgnoreCase("attach_api")) {
                                                 //tidak ada action
@@ -10689,7 +10706,9 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             });
             alertbox.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
-                    adapter.removeDB();
+                    if (adapter != null) {
+                        adapter.removeDB();
+                    }
                     db.deleteRoomsDetailbyId(idDetail, idTab, username);
                     if (calendar != null) {
                         if (calendar.equalsIgnoreCase("true boi")) {
@@ -12268,7 +12287,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 id = objectOne.getInt("id");
 
                 item.setTitle(from + (one + 1) + ". " + title);
-                item.setId(id);
+                String idd = from + (one + 1) + id;
+                item.setId(Integer.valueOf(idd.replace(".", "")));
                 item.addChildren((List<RecyclerViewItem>) getListFromJson(from + (one + 1) + ".", objectOne.toString(), levelNumber + 1));
                 itemList.add(item);
             }

@@ -209,10 +209,6 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                             params.put("data", jsonArray.toString());
                             params.put("bc_user", contact.getJabberId());
 
-                            Log.w("param1 popps",dua.get(spinner.getSelectedItemPosition()));
-                            Log.w("param2 popps",jsonArray.toString());
-                            Log.w("param3 popps",contact.getJabberId());
-
                             getSubPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Request", params);
 
                         } else {

@@ -318,9 +318,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        Log.w("banyak3", "112");
         if (image != null) {
-            Log.w("banyak4", image);
             values.put(COLUMN_IMG, image);
         } else {
 

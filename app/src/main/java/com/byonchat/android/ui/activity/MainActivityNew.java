@@ -573,7 +573,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                 if (cursorSkin.getCount() == 0 || insertByon) {
                     Bitmap logos = BitmapFactory.decodeResource(getResources(), R.drawable.logo_byon);
                     Bitmap back = BitmapFactory.decodeResource(getResources(), R.drawable.bg_chat_baru);
-                    Bitmap header = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                    Bitmap header = BitmapFactory.decodeResource(getResources(), R.drawable.logo_byon);
                     Skin skin = new Skin("byonchat", "original", "#006b9c", logos, header, back);
                     db.createSkin(skin);
                 }

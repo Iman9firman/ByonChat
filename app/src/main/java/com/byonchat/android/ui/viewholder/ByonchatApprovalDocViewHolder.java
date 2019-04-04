@@ -29,6 +29,7 @@ public class ByonchatApprovalDocViewHolder extends RecyclerView.ViewHolder imple
     public View vView;
     public TagGroup vTagGroup;
     public carbon.widget.LinearLayout vFramePhoto;
+    public LinearLayout vReqContent;
 
     protected Drawable selectionBackground;
     protected int selectionChecked;
@@ -51,9 +52,11 @@ public class ByonchatApprovalDocViewHolder extends RecyclerView.ViewHolder imple
         vMainContent = (LinearLayout) view.findViewById(R.id.main_content);
         vLayoutComment = (LinearLayout) view.findViewById(R.id.layoutComment);
         vBtComment = (LinearLayout) view.findViewById(R.id.btComment);
+        vReqContent = (LinearLayout) view.findViewById(R.id.requsetbai);
         vView = (View) view.findViewById(R.id.view);
         vTagGroup = (TagGroup) view.findViewById(R.id.tag_group);
         vFramePhoto = (carbon.widget.LinearLayout) view.findViewById(R.id.frame_photo);
+
 
         loadConfig();
 

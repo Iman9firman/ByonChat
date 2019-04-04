@@ -6,6 +6,7 @@ import java.io.File;
 
 public class Photo {
     private String id, title, before, afterString;
+    private String verif;
     File after;
 
     public Photo() {
@@ -16,6 +17,14 @@ public class Photo {
         this.title = title;
         this.before = before;
         this.after = after;
+    }
+
+    public Photo(String id, String title, String before, String aftera, String verif) {
+        this.id = id;
+        this.title = title;
+        this.before = before;
+        this.afterString = aftera;
+        this.verif = verif;
     }
 
     public Photo(String id, String title, String before, File after, String aftera) {
@@ -64,5 +73,13 @@ public class Photo {
 
     public void setAfterString(String afterString) {
         this.afterString = afterString;
+    }
+
+    public String getVerif() {
+        return verif;
+    }
+
+    public void setVerif(String verif) {
+        this.verif = verif;
     }
 }

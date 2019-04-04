@@ -76,9 +76,11 @@ import com.byonchat.android.room.FragmentRoomTask;
 import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.tempSchedule.TempScheduleRoom;
 import com.byonchat.android.ui.fragment.ByonchatApprovalRequestFragment;
+import com.byonchat.android.ui.fragment.ByonchatFollowUpSLAFragment;
 import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
 import com.byonchat.android.ui.fragment.ByonchatRepairReportFragment;
 import com.byonchat.android.ui.fragment.ByonchatStatusRequestFragment;
+import com.byonchat.android.ui.fragment.ByonchatVerifikasiSLAFragment;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -579,6 +581,12 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 } else if (category.equalsIgnoreCase("26")) {
                     show = true;
                     mFragment = ByonchatRepairReportFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
+                } else if (category.equalsIgnoreCase("27")) {
+                    show = true;
+                    mFragment = ByonchatFollowUpSLAFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
+                } else if (category.equalsIgnoreCase("28")) {
+                    show = true;
+                    mFragment = ByonchatVerifikasiSLAFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 }
 
 

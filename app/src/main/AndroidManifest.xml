@@ -306,6 +306,12 @@
         <activity
             android:name=".ui.activity.PushRepairReportActivity"
             android:label="Report Repairment" />
+        <activity
+            android:name=".ui.activity.PustSLAFollowUpActivity"
+            android:label="Follow Up SLA" />
+        <activity
+            android:name=".ui.activity.PushSLAVerificationActivity"
+            android:label="Verifikasi SLA" />
         <!--
         <activity
             android:name=".SelectContactActivity"

@@ -104,16 +104,12 @@ public class ByonchatRepairReportAdapter extends RecyclerView.Adapter<RecyclerVi
                     onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
                 }
             });
-            ((ByonchatApprovalDocViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
-                if (onRequestItemClickListener != null) {
-                    onRequestItemClickListener.onItemClick(view, i, (File) getData().get(i));
-                }
-            });
+            ((ByonchatApprovalDocViewHolder) viewHolder).vReqContent.setVisibility(View.GONE);
         }
     }
 
     private void showFileImage(RecyclerView.ViewHolder viewHolder, String thumbnail) {
-        Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/public/list_attachment/icon-pdf.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatApprovalDocViewHolder) viewHolder).vIconView);
+        Picasso.with(context).load("http://139.162.29.123/cms_iss/adminLTE/dist/img/new_file.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatApprovalDocViewHolder) viewHolder).vIconView);
     }
 
     private String[] getTagView() {

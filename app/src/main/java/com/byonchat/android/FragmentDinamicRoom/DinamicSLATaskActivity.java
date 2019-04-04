@@ -1883,16 +1883,18 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         }
                     } else {
 
+                        String assup = duaJJt.get(myPosition - 1);
+
                         if (cEdit.getCount() > 0) {
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
                             db.updateDetailRoomWithFlagContent(orderModel);
                         } else {
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
                             db.insertRoomsDetail(orderModel);
 
                         }
 
-                        String assup = duaJJt.get(myPosition - 1);
+
                         DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(context, "sqlite_iss");
 
                         String asiop[] = {"jt.id AS id_jjt", "pb.id AS id_pembobotan", "pb.nama_pembobotan AS nama_pembobotan", "pb.grade AS grade"
@@ -8468,8 +8470,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                             null, null, null, null, null, null);
                                                     if (cursorSala.moveToFirst()) {
                                                         do {
-                                                            Log.w("bisaMudah1", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_ID)));
-                                                            Log.w("bisaMudah2", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_OK)));
+                                                           /* Log.w("bisaMudah1", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_ID)));
+                                                            Log.w("bisaMudah2", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_OK)));*/
 
                                                      /*       Log.w("bisaMudah3", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_COMMENT)));
                                                             Log.w("bisaMudah4", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_IMG)));*/

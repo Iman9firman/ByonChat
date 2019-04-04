@@ -350,14 +350,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 rdialog.setMessage("Loading...");
                 rdialog.show();
 
-                /*for (int i = 0; i < foto.size();i++) {
-                    new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
-                            getIntent().getStringExtra("username_room"),
-                            id_rooms_tab, id_task_list,
-                            foto.get(i).getAfter().toString(),
-                            foto.get(i).getId());
-                }*/
-
                 Log.w("Bodoamat skhwd",fileJson());
                 new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla.php",
                         getIntent().getStringExtra("username_room"),getIntent().getStringExtra("bc_user"),
@@ -366,33 +358,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                         getIntent().getStringExtra("id_rooms_tab"));
             }
         });
-    }
-
-    private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    rdialog.dismiss();
-                    finish();
-                    Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
-                    Log.w("Return push errorrr", response);
-
-                },
-                error -> {
-                    Toast.makeText(getApplicationContext(),"Error found! Try Again",Toast.LENGTH_SHORT).show();
-                    rdialog.dismiss();
-                    Log.w("Return push errorrrrr2", error);
-                }
-        ) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        queue.add(sr);
     }
 
     private String fileJson(){
@@ -442,131 +407,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         Log.w("Apa ujug ujug (gandi)",stringdong);
         return stringdong;
-    }
-
-    private class UploadFileToServerCild extends AsyncTask<String, Integer, String> {
-        long totalSize = 0;
-        String ii;
-        String id;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5]);
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile(String URL, String username, String id_room, String id_list, String value, String ids) {
-            String responseString = null;
-            ii = value;
-            id = ids;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(URL);
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                java.io.File sourceFile = new java.io.File(resizeAndCompressImageBeforeSend(getApplicationContext(), ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
-
-                if (!sourceFile.exists()) {
-                    return "File not exists";
-                }
-
-                ContentType contentType = ContentType.create("image/jpeg");
-                entity.addPart("username_room", new StringBody(username));
-                entity.addPart("id_rooms_tab", new StringBody(id_room));
-                entity.addPart("id_list_task", new StringBody(id_list));
-                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
-
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    String _response = EntityUtils.toString(r_entity); // content will be consume only once
-                    return _response;
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.w("segitu@@",result);
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-                String message = jsonObject.getString("message");
-                if (message.length() == 0) {
-                    Log.w("segitu@1@",result);
-                    String fileNameServer = jsonObject.getString("filename");
-                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/"+fileNameServer;
-
-                    Log.w("11111 errorre 1",fileNameServer);
-                    for (int i = 0; i < foto.size(); i++){
-                        if(foto.get(i).getId().equalsIgnoreCase(id)){
-                            Photo fotonya = new Photo(foto.get(i).getId(), foto.get(i).getTitle(),foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
-                            uploadfoto.add(fotonya);
-                        }
-                    }
-
-
-                } else {
-                    Log.w("segitu@2@",result);
-                }
-
-                if(foto.size() == uploadfoto.size()){
-                    Log.w("segitu@3@",result);
-//                    Map<String, String> params = new HashMap<>();
-//                    params.put("username_room",  getIntent().getStringExtra("username_room"));
-//                    params.put("bc_user",  getIntent().getStringExtra("bc_user"));
-//                    params.put("id_rooms_tab",  getIntent().getStringExtra("id_rooms_tab"));
-//                    params.put("json",  fileJson());
-//                    Log.w("buifder uewufg",getIntent().getStringExtra("id_rooms_tab")+", "+ getIntent().getStringExtra("username_room"));
-//                    Log.w("nreoirgn errorre egbh",fileJson());
-//                    getDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_tobe_repair.php",params,true);
-                    new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_sla.php",
-                            getIntent().getStringExtra("username_room"),getIntent().getStringExtra("bc_user"),
-                            getIntent().getStringExtra("id_rooms_tab"));
-
-//                   rdialog.dismiss();
-                    Log.w("pasukan ujug ujug",fileJson());
-//                   Toast.makeText(PushSLAVerificationActivity.this,fileJson() ,Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-
-            }
-            super.onPostExecute(result);
-        }
     }
 
     private class UploadJSONSOn extends AsyncTask<String, Integer, String> {

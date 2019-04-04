@@ -292,7 +292,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                     task_id = position + "";
                     CameraActivity.Builder start = new CameraActivity.Builder(PushRepairReportActivity.this, REQ_CAMERA);
                     start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
-                    start.setCameraFace(CameraActivity.CAMERA_FRONT);
+                    start.setCameraFace(CameraActivity.CAMERA_REAR);
                     start.setFlashMode(CameraActivity.FLASH_OFF);
                     start.setQuality(CameraActivity.MEDIUM);
                     start.setRatio(CameraActivity.RATIO_4_3);

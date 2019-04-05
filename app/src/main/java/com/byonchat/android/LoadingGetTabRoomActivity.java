@@ -281,7 +281,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
                         //logout iss
 
-                        new Validations().getInstance(getApplicationContext()).removeById(26);
+                     //
                         new Validations().getInstance(getApplicationContext()).removeById(25);
 
                         Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);

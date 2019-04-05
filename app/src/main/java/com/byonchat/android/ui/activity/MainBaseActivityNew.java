@@ -79,10 +79,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andremion.counterfab.CounterFab;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.ConversationActivity;
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.LoadingGetTabRoomActivity;
 import com.byonchat.android.LoginDinamicFingerPrint;
 import com.byonchat.android.LoginDinamicRoomActivity;
@@ -151,7 +159,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import eightbitlab.com.blurview.BlurView;
@@ -162,7 +172,7 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL;
 import static com.byonchat.android.helpers.Constants.URL_LAPOR_SELECTED;
 
-public abstract class MainBaseActivityNew extends AppCompatActivity implements LocationAssistant.Listener,
+public abstract class MainBaseActivityNew extends AppCompatActivity implements /*LocationAssistant.Listener,*/
         AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener {
 
 //    @NonNull
@@ -482,7 +492,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected List<String> positionList = new ArrayList<>();
 
     protected LaporSelectedRoom laporSelectedRoom;
-    protected LocationAssistant assistant;
+//    protected LocationAssistant assistant;
     protected Fonts fonts = new Fonts();
 
     protected DraggableGridExampleAdapter adapter;
@@ -502,7 +512,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             .getName() + ".refreshBadger";
     protected static final String ACTION_REFRESH_NOTIF = MainBaseActivityNew.class
             .getName() + ".refreshNotif";
-    protected static int TAG_CODE_PERMISSION_LOCATION = 77;
+//    protected static int TAG_CODE_PERMISSION_LOCATION = 77;
 
     public static Activity mActivity;
     protected boolean isVisible = false;
@@ -525,7 +535,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected int room_id;
     protected String roomid = "";
     protected int i = 0;
-    Boolean loginIss = true;
+//    Boolean loginIss = true;
 
     protected SQLiteDatabase sqLiteDatabase;
 
@@ -560,8 +570,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected abstract void onSetupRoom();
 
     protected void applyChatConfig() {
-        assistant = new LocationAssistant(this, this, LocationAssistant.Accuracy.HIGH, 5000, false);
-        assistant.setVerbose(true);
+        /*assistant = new LocationAssistant(this, this, LocationAssistant.Accuracy.HIGH, 5000, false);
+        assistant.setVerbose(true);*/
 
         if (getIntent().getExtras() != null) {
             if (!getIntent().hasExtra(Constants.EXTRA_ROOM)) {
@@ -716,6 +726,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
 
+        if(title.equalsIgnoreCase("ISS INDONESIA")){
+            nav_Menu.findItem(R.id.nav_logout_button).setVisible(isTrue);
+        }
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
         if (cur.getCount() > 0) {
             String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
@@ -1427,8 +1440,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             }
 
         }
-        if (loginIss) {
-            if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(26) == 1) {
+//        if (loginIss) {
+            if (new Validations().getInstance(getApplicationContext()).getValidationLoginISSById(26) == 1) {
                 if (title.equalsIgnoreCase("ISS INDONESIA")) {
                     if (success == null) {
                         Intent a = new Intent(getApplicationContext(), LoginISS.class);
@@ -1436,10 +1449,11 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                         a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
                         startActivity(a);
                         finish();
+                        Log.w("Lewat kahsini salahA12","Iya iya iya");
                     }
                 }
             }
-        }
+//        }
 
     }
 
@@ -1474,7 +1488,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         }, 500);
     }
 
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         if (requestCode == TAG_CODE_PERMISSION_LOCATION) {
@@ -1486,7 +1500,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 Toast.makeText(getApplicationContext(), getString(R.string.permission_request_title), Toast.LENGTH_SHORT).show();
             }
         }
-    }
+    }*/
 
     @Override
     public void onRefresh() {
@@ -1842,9 +1856,14 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                         editor.apply();
 
                         finish();
-
-                        Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                        startActivity(ii);
+                        if(title.equalsIgnoreCase("ISS INDONESIA")){
+                            Intent ii = LoadingGetTabRoomActivity.generateISS(getApplicationContext(), new Validations().getInstance(getApplicationContext()).getString(28), username);
+                            startActivity(ii);
+                            finish();
+                        }else {
+                            Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                            startActivity(ii);
+                        }
                     } else {
                         Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
                     }
@@ -1856,6 +1875,26 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 e.printStackTrace();
             }
         }
+
+
+    }
+
+    protected void LogoutRoom() {
+        AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
+        alertbox.setTitle("Logout Apps");
+        alertbox.setMessage("Are you sure you want to Logout?");
+        alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
+            new Validations().getInstance(getApplicationContext()).removeById(26);
+
+            Intent a = new Intent(getApplicationContext(), LoginISS.class);
+            a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+            a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+            startActivity(a);
+            finish();
+        });
+        alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
+        });
+        alertbox.show();
     }
 
     protected void refreshRoomForm() {
@@ -1922,7 +1961,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         startActivity(Intent.createChooser(sharingIntent, shareTitle));
     }
-
+/*
     @Override
     public void onNeedLocationPermission() {
 
@@ -1962,7 +2001,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @Override
     public void onError(LocationAssistant.ErrorType type, String message) {
 
-    }
+    }*/
 
     protected void createShortcut() {
         Byonchat.getRoomsDB().open();

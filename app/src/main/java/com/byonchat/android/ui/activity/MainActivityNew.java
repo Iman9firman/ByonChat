@@ -362,7 +362,7 @@ public class MainActivityNew extends MainBaseActivityNew {
             }
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED
@@ -380,7 +380,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                             Manifest.permission.CALL_PHONE,
                             Manifest.permission.RECEIVE_SMS},
                     TAG_CODE_PERMISSION_LOCATION);
-        }
+        }*/
 
         try {
             int off = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
@@ -397,7 +397,7 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onPause() {
         unregisterReceiver(broadcastHandler);
-        assistant.stop();
+//        assistant.stop();
         numbers.clear();
         appBarLayout.removeOnOffsetChangedListener(this);
         super.onPause();
@@ -406,7 +406,7 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onResume() {
         super.onResume();
-        assistant.start();
+//        assistant.start();
 
         IntentFilter f = new IntentFilter(
                 MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
@@ -647,6 +647,9 @@ public class MainActivityNew extends MainBaseActivityNew {
                             break;
                         case R.id.nav_item_grid_size:
                             changeGridSize();
+                            break;
+                        case R.id.nav_logout_button:
+                            LogoutRoom();
                             break;
                         case R.id.nav_item_legal:
                             /*Byonchat.getRoomsDB().open();

@@ -111,6 +111,7 @@ import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.Message;
+import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.sync.BCServiceSyncAdapter;
 import com.byonchat.android.utils.BlurBuilder;
 import com.byonchat.android.utils.DialogUtil;
@@ -1833,50 +1834,54 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     }
 
     protected void RefreshRoom() {
-        vSwipeRefresh.setRefreshing(false);
-        Byonchat.getRoomsDB().open();
-        botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
-        Byonchat.getRoomsDB().close();
-        if (botArrayListist.size() > 0) {
-            try {
-                JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
-                String targetURL = jObj.getString("path");
+        if(title.equalsIgnoreCase("ISS INDONESIA")){
+            vSwipeRefresh.setRefreshing(false);
+            Map<String, String> params = new HashMap<>();
+            params.put("username", new Validations().getInstance(getApplicationContext()).getString(28));
+            params.put("password", new Validations().getInstance(getApplicationContext()).getString(29));
+            params.put("bc_user",   Byonchat.getMessengerHelper().getMyContact().getJabberId() );
 
-                AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
-                alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
-                alertbox.setMessage("Are you sure you want to Refresh?");
-                alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
-                    if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+            LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
+        }else {
+            vSwipeRefresh.setRefreshing(false);
+            Byonchat.getRoomsDB().open();
+            botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
+            Byonchat.getRoomsDB().close();
+            if (botArrayListist.size() > 0) {
+                try {
+                    JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+                    String targetURL = jObj.getString("path");
 
-                        refreshRoomForm();
+                    AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
+                    alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
+                    alertbox.setMessage("Are you sure you want to Refresh?");
+                    alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
+                        if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
 
-                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
-                        editor.apply();
+                            refreshRoomForm();
 
-                        finish();
-                        if(title.equalsIgnoreCase("ISS INDONESIA")){
-                            Intent ii = LoadingGetTabRoomActivity.generateISS(getApplicationContext(), new Validations().getInstance(getApplicationContext()).getString(28), username);
-                            startActivity(ii);
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                            editor.apply();
+
                             finish();
-                        }else {
-                            Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                            startActivity(ii);
+
+                                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                                startActivity(ii);
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
-                });
-                alertbox.show();
-            } catch (JSONException e) {
-                e.printStackTrace();
+                    });
+                    alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
+                    });
+                    alertbox.show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
-
     }
 
     protected void LogoutRoom() {
@@ -1885,6 +1890,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         alertbox.setMessage("Are you sure you want to Logout?");
         alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
             new Validations().getInstance(getApplicationContext()).removeById(26);
+            new Validations().getInstance(getApplicationContext()).removeById(28);
+            new Validations().getInstance(getApplicationContext()).removeById(29);
 
             Intent a = new Intent(getApplicationContext(), LoginISS.class);
             a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
@@ -2574,5 +2581,128 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
         Log.i(MainActivityNew.class.getName(), "isMyServiceRunning? " + false + "");
         return false;
+    }
+
+    private void LoginThis(String Url, Map<String, String> params2, Boolean hide) {
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                response -> {
+                    if (hide) {
+                        try {
+                            JSONObject jsonRootObject = new JSONObject(response);
+                            parseJSON(response, jsonRootObject.getString("json_iss"));
+                        } catch (JSONException e) {
+                            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                    }
+
+                },
+                error -> {
+                    Toast.makeText(getApplicationContext(), "Please Try Again : because, "+error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+        ) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                return params2;
+            }
+        };
+        sr.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+                Log.e("HttpClient", "error: " + error.toString());
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        queue.add(sr);
+    }
+
+    private void parseJSON(String allres, String result) {
+        Log.w("Res LOgs harusee", result);
+        String[] dataLOG = new String[0];
+        try {
+            JSONObject start = new JSONObject(result);
+            String sukses = start.getString("MESSAGE");
+            String token = start.getString("URITOKENS");
+            String status = start.get("STATUS") + "";
+            JSONArray data = start.getJSONArray("RESULT");
+            JSONObject jsonObject = data.getJSONObject(0);
+            String USERNAME = jsonObject.getString("USER_NAME");
+            String EMPLOYEE_NAME = jsonObject.getString("EMPLOYEE_NAME");
+            String EMPLOYEE_EMAIL = jsonObject.getString("EMPLOYEE_EMAIL");
+            String EMPLOYEE_NIK = jsonObject.getString("EMPLOYEE_NIK");
+            String EMPLOYEE_JT = jsonObject.getString("EMPLOYEE_JOBTITLE");
+            String EMPLOYEE_MULTICOST = jsonObject.getString("EMPLOYEE_MULTIPLECOST");
+            String EMPLOYEE_PHONE = jsonObject.getString("EMPLOYEE_PHONE");
+            String EMPLOYEE_PHOTOS = jsonObject.getString("EMPLOYEE_PHOTOS");
+            String ATASAN_1_USERNAME = jsonObject.getString("ATASAN1_USER_NAME");
+            String ATASAN_1_EMAIL = jsonObject.getString("ATASAN1_EMAIL");
+            String ATASAN_1_NIK = jsonObject.getString("ATASAN1_NIK");
+            String ATASAN_1_JT = jsonObject.getString("ATASAN1_JOBTITLE");
+            String ATASAN_1_NAMA = jsonObject.getString("ATASAN1_NAMA");
+            String ATASAN_1_PHONE = jsonObject.getString("ATASAN1_PHONE");
+            String DIVISION_CODE = jsonObject.getString("DIVISION_CODE");
+            String DIVISION_NAME = jsonObject.getString("DIVISION_NAME");
+            String DEPARTEMEN_CODE = jsonObject.getString("DEPARTEMENT_CODE");
+            String DEPARTEMEN_NAME = jsonObject.getString("DEPARTEMENT_NAME");
+            String ATASAN_2_USERNAME = jsonObject.getString("ATASAN2_USER_NAME");
+            String ATASAN_2_EMAIL = jsonObject.getString("ATASAN2_EMAIL");
+            String ATASAN_2_NIK = jsonObject.getString("ATASAN2_NIK");
+            String ATASAN_2_JT = jsonObject.getString("ATASAN2_JOBTITLE");
+            String ATASAN_2_NAMA = jsonObject.getString("ATASAN2_NAMA");
+            String ATASAN_2_PHONE = jsonObject.getString("ATASAN2_PHONE");
+            String LIST_APPROVE_ROLE1 = jsonObject.getString("LIST_APPROVER_ROLE1");
+            String LIST_APPROVE_ROLE2 = jsonObject.getString("LIST_APPROVER_ROLE2");
+            String LIST_REQ_ROLE = jsonObject.getString("LIST_REQUESTER_ROLE");
+            String MY_ROLE = jsonObject.getString("MYROLE");
+
+            dataLOG = new String[]{token, status, USERNAME, EMPLOYEE_NAME, EMPLOYEE_EMAIL, EMPLOYEE_NIK,
+                    EMPLOYEE_JT, EMPLOYEE_MULTICOST, EMPLOYEE_PHONE, EMPLOYEE_PHOTOS, ATASAN_1_USERNAME,
+                    ATASAN_1_EMAIL, ATASAN_1_NIK, ATASAN_1_JT, ATASAN_1_NAMA, ATASAN_1_PHONE, DIVISION_CODE,
+                    DIVISION_NAME, DEPARTEMEN_CODE, DEPARTEMEN_NAME, ATASAN_2_USERNAME, ATASAN_2_EMAIL,
+                    ATASAN_2_NIK, ATASAN_2_JT, ATASAN_2_NAMA, ATASAN_2_PHONE, LIST_APPROVE_ROLE1, LIST_APPROVE_ROLE2,
+                    LIST_REQ_ROLE, MY_ROLE};
+
+            UserDB dbHelper = new UserDB(this);
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
+
+
+            if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
+                new Validations().getInstance(getApplicationContext()).setTimebyId(26);
+                //Not fix!!! Change how to detect as reliever with another ways
+                JSONObject jsonRootObject = new JSONObject(allres);
+                JSONArray tab = jsonRootObject.getJSONArray("tab_room");
+                for (int i = 0; i < tab.length(); i++) {
+                    String name = tab.getJSONObject(i).getString("tab_name");
+                    if (name.equalsIgnoreCase("Job Call")) {
+                        new Validations().getInstance(getApplicationContext()).setShareLocOnOff(true);
+                    }
+                }
+                Intent ii = LoadingGetTabRoomActivity.generateISS(getApplicationContext(), allres, username);
+                startActivity(ii);
+            } else {
+                Toast.makeText(this, "Username dan password anda salah", Toast.LENGTH_LONG).show();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Terjadi Kesalah di Server ISS. Terimakasih", Toast.LENGTH_LONG).show();
+        }
+
+
     }
 }

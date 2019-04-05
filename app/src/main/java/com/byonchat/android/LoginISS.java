@@ -95,9 +95,13 @@ public class LoginISS extends AppCompatActivity {
                     pd.setMessage("Please Wait");
                     pd.show();
                     Map<String, String> params = new HashMap<>();
-                    params.put("username", /*userID.getText().toString()*/"0054065");
-                    params.put("password", /*passID.getText().toString()*/"Rusbandi26");
-                    params.put("bc_user", /*dbhelper.getMyContact().getJabberId()*/"628151652279");
+                    params.put("username", userID.getText().toString());
+                    params.put("password", passID.getText().toString());
+
+
+                    new Validations().getInstance(getApplicationContext()).setString(userID.getText().toString(), 28);
+                    new Validations().getInstance(getApplicationContext()).setString(passID.getText().toString(), 29);
+                    params.put("bc_user", dbhelper.getMyContact().getJabberId());
 
                     LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
                 }
@@ -257,7 +261,6 @@ public class LoginISS extends AppCompatActivity {
 
             if (sukses.equalsIgnoreCase("LOGIN BERHASIL")) {
                 new Validations().getInstance(getApplicationContext()).setTimebyId(26);
-                new Validations().getInstance(getApplicationContext()).setString(allres, 28);
                 //Not fix!!! Change how to detect as reliever with another ways
                 JSONObject jsonRootObject = new JSONObject(allres);
                 JSONArray tab = jsonRootObject.getJSONArray("tab_room");

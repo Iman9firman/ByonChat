@@ -39,6 +39,8 @@ public class IntervalDB {
 //id 25 untuk squence limitBukaRoom
 //id 26 untuk squence limitBukaRoomISS
 //id 27 untuk on/off ShareLocation (Reliever ISS)
+//id 28 untuk string username / NIK ISS
+//id 29 untuk string password ISS
 
 	private static final String DB_NAME		= "interval_db";
 	private static final int	DB_VER		= 3;

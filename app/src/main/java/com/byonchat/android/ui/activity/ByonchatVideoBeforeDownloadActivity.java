@@ -15,6 +15,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -167,7 +168,7 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
             final Context context) {
         int currentAPIVersion = Build.VERSION.SDK_INT;
         if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(context,
+            if (PermissionChecker.checkSelfPermission(context,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
                         this,

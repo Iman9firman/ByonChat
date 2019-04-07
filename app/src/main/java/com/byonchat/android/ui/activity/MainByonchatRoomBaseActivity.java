@@ -57,6 +57,7 @@ import com.byonchat.android.FragmentDinamicRoom.FragmentStreamingRadio;
 import com.byonchat.android.FragmentDinamicRoom.FragmentStreamingVideo;
 import com.byonchat.android.FragmentDinamicRoom.RoomPOSdetail;
 import com.byonchat.android.LoadingGetTabRoomActivity;
+import com.byonchat.android.LoginISS;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.createMeme.FilteringImage;
@@ -332,7 +333,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 if (mFragment instanceof ByonchatPDFFragment) {
                     ByonchatPDFFragment fragment = (ByonchatPDFFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                     fragment.onBackClick();
-                }else{
+                } else {
                     onBackPressed();
                 }
             }
@@ -602,23 +603,19 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
         } else {
             next = false;
             if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                /*try {
-                    Byonchat.getRoomsDB().open();
-                    ArrayList<ContactBot> botArrayListist = new ArrayList<>();
-                    botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
-                    Byonchat.getRoomsDB().close();
+                if (username.equalsIgnoreCase("1_345171158admin")) {
 
-                    if (botArrayListist.size() > 0) {
-                        JSONObject jObj = new JSONObject(botArrayListist.get(0).getType());
-                        String targetURL = jObj.getString("path");*/
+                    Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, Byonchat.getMessengerHelper().getMyContact().getJabberId());
+                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                    startActivity(a);
+                    finish();
 
-                finish();
-                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                startActivity(ii);
-                    /*}
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }*/
+                } else {
+                    finish();
+                    Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                    startActivity(ii);
+                }
 
             } else {
                 Toast.makeText(MainByonchatRoomBaseActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();

@@ -52,6 +52,7 @@ import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.ItemListTrending;
 import com.byonchat.android.list.SearchroomAdapter;
+import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.IntervalDB;
@@ -1176,8 +1177,21 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                 editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
                 editor.apply();
 
-                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), name, path);
-                startActivity(ii);
+
+                if (name.equalsIgnoreCase("1_345171158admin")) {
+
+                    Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, Byonchat.getMessengerHelper().getMyContact().getJabberId());
+                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                    startActivity(a);
+                    finish();
+
+                } else {
+                    finish();
+                    Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), name, targetURL);
+                    startActivity(ii);
+                }
+
 
             }
         }

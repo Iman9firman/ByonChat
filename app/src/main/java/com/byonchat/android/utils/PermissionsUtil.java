@@ -10,6 +10,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -45,7 +46,7 @@ public class PermissionsUtil {
         }
 
         for (String perm : perms) {
-            boolean hasPerm = (ContextCompat.checkSelfPermission(context, perm) ==
+            boolean hasPerm = (PermissionChecker.checkSelfPermission(context, perm) ==
                     PackageManager.PERMISSION_GRANTED);
             if (!hasPerm) {
                 return false;

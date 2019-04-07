@@ -67,6 +67,8 @@ public class LoginISS extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.iss_default));
         }
 
+        new Validations().getInstance(getApplicationContext()).removeById(26);
+
         final Intent inti = getIntent();
 
         username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
@@ -101,7 +103,14 @@ public class LoginISS extends AppCompatActivity {
 
                     new Validations().getInstance(getApplicationContext()).setString(userID.getText().toString(), 28);
                     new Validations().getInstance(getApplicationContext()).setString(passID.getText().toString(), 29);
+
                     params.put("bc_user", dbhelper.getMyContact().getJabberId());
+                   /* if (userID.getText().toString().equalsIgnoreCase("1701793")) {
+                        params.put("bc_user", "6285697223760");//busiti
+                    } else {
+                        params.put("bc_user", "6282213295568");//ahmadYani
+                    }*/
+
 
                     LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
                 }
@@ -127,7 +136,7 @@ public class LoginISS extends AppCompatActivity {
 
                 },
                 error -> {
-                    Toast.makeText(getApplicationContext(), "Please Try Again : because, "+error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please Try Again : because, " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     pd.dismiss();
                 }
         ) {
@@ -158,60 +167,7 @@ public class LoginISS extends AppCompatActivity {
         queue.add(sr);
     }
 
-    /*public void goVerif(String user, String pass, String acc) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        StringRequest sr = new StringRequest(Request.Method.GET, "https://issapi.dataon.com/sfapi/index.cfm?endpoint=/issid_SF_EO_cekuser/" + user + "/BYONCHAT",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.e("HttpClient", "success! response: " + response);
-//                        Toast.makeText(LoginISS.this,response,Toast.LENGTH_LONG).show();
-                        pd.dismiss();
-                        parseJSON(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                       *//* pd.dismiss();
-                        Log.e("HttpClient", "error: " + error.toString());
-                        Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();*//*
-                    }
-                }) {
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("X-SFAPI-UserName", user);
-                params.put("X-SFAPI-UserPass", pass);
-                params.put("X-SFAPI-Account", acc);
-                return params;
-            }
-        };
-        sr.setRetryPolicy(new RetryPolicy() {
-            @Override
-            public int getCurrentTimeout() {
-                return 50000;
-            }
-
-            @Override
-            public int getCurrentRetryCount() {
-                return 50000;
-            }
-
-            @Override
-            public void retry(VolleyError error) throws VolleyError {
-                pd.dismiss();
-                Log.e("HttpClient", "error: " + error.toString());
-                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        queue.add(sr);
-    }*/
-
     private void parseJSON(String allres, String result) {
-        Log.w("Res LOgs harusee", result);
         String[] dataLOG = new String[0];
         try {
             JSONObject start = new JSONObject(result);
@@ -264,18 +220,19 @@ public class LoginISS extends AppCompatActivity {
                 //Not fix!!! Change how to detect as reliever with another ways
                 JSONObject jsonRootObject = new JSONObject(allres);
                 JSONArray tab = jsonRootObject.getJSONArray("tab_room");
+                Boolean jalankan = false;
                 for (int i = 0; i < tab.length(); i++) {
                     String name = tab.getJSONObject(i).getString("tab_name");
                     if (name.equalsIgnoreCase("Job Call")) {
-                        new Validations().getInstance(getApplicationContext()).setShareLocOnOff(true);
+                        jalankan = true;
                     }
                 }
-//                Toast.makeText(LoginISS.this, "Atasan 1 : "+ATASAN_1_NAMA+", ATASAN 2 : "+ATASAN_2_NAMA+", Requester : "+EMPLOYEE_NAME, Toast.LENGTH_LONG).show();
-                /*Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
-                intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                intent.putExtra("success", "oke");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getApplicationContext().startActivity(intent);*/
+
+                new Validations().getInstance(getApplicationContext()).setShareLocOnOff(jalankan);
+
+                Intent intent = new Intent(LoginISS.this, MessengerConnectionService.class);
+                stopService(intent);
+
                 Intent ii = LoadingGetTabRoomActivity.generateISS(getApplicationContext(), allres, username);
                 startActivity(ii);
                 finish();

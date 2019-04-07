@@ -238,19 +238,7 @@ public class Validations {
                     }else {
                         error = 0;
                     }
-                    /*if (day_sysDB == day_sys) {
-                        if (hour_sysDB == hour_sys) {
-                            if ((min_sys - min_sysDB) > 15) {
-                                error = 1;
-                            } else {
-                                error = 0;
-                            }
-                        } else {
-                            error = 1;
-                        }
-                    } else {
-                        error = 1;
-                    }*/
+
                 } else {
                     error = 1;
                 }

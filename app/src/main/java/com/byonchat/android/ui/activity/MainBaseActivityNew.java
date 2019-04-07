@@ -493,7 +493,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     protected List<String> positionList = new ArrayList<>();
 
     protected LaporSelectedRoom laporSelectedRoom;
-//    protected LocationAssistant assistant;
+    //    protected LocationAssistant assistant;
     protected Fonts fonts = new Fonts();
 
     protected DraggableGridExampleAdapter adapter;
@@ -727,7 +727,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
 
-        if(title.equalsIgnoreCase("ISS INDONESIA")){
+        if (title.equalsIgnoreCase("ISS INDONESIA")) {
             nav_Menu.findItem(R.id.nav_logout_button).setVisible(isTrue);
         }
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
@@ -1374,19 +1374,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
         collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
 
-        /*FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + color));
-//        tb.setBackgroundColor(Color.parseColor("#" + color));
-
-        String warna = "#" + color;
-        String top = warna.replace("#", "#70");
-        String bottom = warna.replace("#", "#00");
-
-        int[] col = {Color.parseColor(warna), Color.parseColor(bottom)};
-        GradientDrawable gd = new GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM, col);
-        gd.setCornerRadius(0f);
-        tb.setBackground(gd);*/
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
 //                backgroundImage.setForeground(new ColorDrawable(Color.parseColor("#" + percent + color)));
@@ -1441,21 +1428,17 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             }
 
         }
-//        if (loginIss) {
-            if (new Validations().getInstance(getApplicationContext()).getValidationLoginISSById(26) == 1) {
-                if (title.equalsIgnoreCase("ISS INDONESIA")) {
-                    if (success == null) {
-                        Intent a = new Intent(getApplicationContext(), LoginISS.class);
-                        a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                        a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
-                        startActivity(a);
-                        finish();
-                        Log.w("Lewat kahsini salahA12","Iya iya iya");
-                    }
+        if (new Validations().getInstance(getApplicationContext()).getValidationLoginISSById(26) == 1) {
+            if (title.equalsIgnoreCase("ISS INDONESIA")) {
+                if (success == null) {
+                    Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                    startActivity(a);
+                    finish();
                 }
             }
-//        }
-
+        }
     }
 
     protected void resolveToolbarExpanded() {
@@ -1834,15 +1817,15 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     }
 
     protected void RefreshRoom() {
-        if(title.equalsIgnoreCase("ISS INDONESIA")){
+        if (title.equalsIgnoreCase("ISS INDONESIA")) {
             vSwipeRefresh.setRefreshing(false);
             Map<String, String> params = new HashMap<>();
             params.put("username", new Validations().getInstance(getApplicationContext()).getString(28));
             params.put("password", new Validations().getInstance(getApplicationContext()).getString(29));
-            params.put("bc_user",   Byonchat.getMessengerHelper().getMyContact().getJabberId() );
+            params.put("bc_user", Byonchat.getMessengerHelper().getMyContact().getJabberId());
 
             LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
-        }else {
+        } else {
             vSwipeRefresh.setRefreshing(false);
             Byonchat.getRoomsDB().open();
             botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
@@ -1867,8 +1850,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
                             finish();
 
-                                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                                startActivity(ii);
+                            Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                            startActivity(ii);
 
                         } else {
                             Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
@@ -1890,6 +1873,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         alertbox.setMessage("Are you sure you want to Logout?");
         alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
             new Validations().getInstance(getApplicationContext()).removeById(26);
+            new Validations().getInstance(getApplicationContext()).removeById(27);
             new Validations().getInstance(getApplicationContext()).removeById(28);
             new Validations().getInstance(getApplicationContext()).removeById(29);
 
@@ -2600,7 +2584,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
                 },
                 error -> {
-                    Toast.makeText(getApplicationContext(), "Please Try Again : because, "+error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Please Try Again : because, " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         ) {
 
@@ -2686,14 +2670,19 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                 //Not fix!!! Change how to detect as reliever with another ways
                 JSONObject jsonRootObject = new JSONObject(allres);
                 JSONArray tab = jsonRootObject.getJSONArray("tab_room");
+
+                Boolean jalankan = false;
                 for (int i = 0; i < tab.length(); i++) {
                     String name = tab.getJSONObject(i).getString("tab_name");
                     if (name.equalsIgnoreCase("Job Call")) {
-                        new Validations().getInstance(getApplicationContext()).setShareLocOnOff(true);
+                        jalankan = true;
                     }
                 }
+
+                new Validations().getInstance(getApplicationContext()).setShareLocOnOff(jalankan);
                 Intent ii = LoadingGetTabRoomActivity.generateISS(getApplicationContext(), allres, username);
                 startActivity(ii);
+
             } else {
                 Toast.makeText(this, "Username dan password anda salah", Toast.LENGTH_LONG).show();
             }

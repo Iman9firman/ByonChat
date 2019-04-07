@@ -347,12 +347,13 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     String tanggal, flag;
     NotificationManager mNotificationManager;
 
-    // private LocationManager mLocationManager = null;
+    private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 0;
     private static final float LOCATION_DISTANCE = 0f;
     Context c = this;
     private static Location locSpyChange = null;
     public static boolean onLoc = false;
+    LocationListener[] mLocationListeners;
 
 
     static {
@@ -373,20 +374,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         SmackConfiguration.addDisabledSmackClass("org.jivesoftware.smackx.xdatavalidation.XDataValidationManager");
     }
 
-    public void startTimer() {
-        timer = new Timer();
-        initializeTimerTask();
-        timer.schedule(timerTask, 1000, 1000); //
-    }
-
-    public void initializeTimerTask() {
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                Log.i("in timer", "in timer ++++  " + (counter++));
-            }
-        };
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -394,6 +381,21 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 //        startTimer();
 
         Log.d("HIDUP", "onStartCommand MessengerConnectionService");
+
+        mLocationListeners = new LocationListener[]{
+                new LocationListener(LocationManager.GPS_PROVIDER),
+                new LocationListener(LocationManager.NETWORK_PROVIDER)
+        };
+
+        if (mLocationManager == null) {
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        }
+
+        if (new Validations().getInstance(getApplicationContext()).getShareLocOnOff(27) == true) {
+            requestLocationUpdates(true);
+        } else {
+            requestLocationUpdates(false);
+        }
 
         Contact contact = databaseHelper.getMyContact();
         if (contact != null) {
@@ -403,13 +405,39 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             started = true;
         }
 
-//        if (scheduleTaskExecutor == null) {
-//            scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
-//            scheduleTaskExecutor.scheduleAtFixedRate(new MessengerConnectionTask(this), 0, 1, TimeUnit.SECONDS);
-//        }
 
         return START_STICKY;
     }
+
+    public void requestLocationUpdates(boolean request) {
+        if (request) {
+
+            try {
+                mLocationManager.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                        mLocationListeners[1]);
+            } catch (java.lang.SecurityException ex) {
+                Log.i(TAG, "fail to request location update, ignore", ex);
+            } catch (IllegalArgumentException ex) {
+                Log.d(TAG, "network provider does not exist, " + ex.getMessage());
+            }
+
+            try {
+                mLocationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                        mLocationListeners[0]);
+            } catch (java.lang.SecurityException ex) {
+                Log.i(TAG, "fail to request location update, ignore", ex);
+            } catch (IllegalArgumentException ex) {
+                Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+            }
+
+        } else {
+            mLocationManager.removeUpdates(mLocationListeners[0]);
+            mLocationManager.removeUpdates(mLocationListeners[1]);
+        }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private String createNotificationChannel(String channelId, String channelName) {
@@ -473,9 +501,46 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     private void doSomethingRepeatedly() {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
-                Log.w("aa1a", "jalan");
                 if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                    Log.w("aa1a2", "jalan");
+
+                    if (new Validations().getInstance(getApplicationContext()).getShareLocOnOff(27) == true) {
+
+                        if (locSpyChange != null) {
+                            try {
+                                String url = "https://bb.byonchat.com/luar/lapor_lokasi.php";
+                                StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                                        new Response.Listener<String>() {
+                                            @Override
+                                            public void onResponse(String response) {
+                                            }
+                                        },
+                                        new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                            }
+                                        }
+                                ) {
+                                    @Override
+                                    protected Map<String, String> getParams() {
+                                        Map<String, String> params = new HashMap<String, String>();
+                                        params.put("user", databaseHelper.getMyContact().getJabberId());
+                                        params.put("lat", locSpyChange.getLatitude() + "");
+                                        params.put("long", locSpyChange.getLongitude() + "");
+                                        return params;
+                                    }
+                                };
+
+                                Application.getInstance().addToRequestQueue(postRequest);
+
+                            } catch (Exception e) {
+                            }
+                        }
+
+                    } else {
+                        requestLocationUpdates(false);
+                        Log.w("laporPak", "no");
+                    }
+
 
                     /* service
                     ArrayList<SubmitingModel> ss = SubmitingRoomDB.getInstance(getApplicationContext()).getAllSubmitingModel();
@@ -567,7 +632,9 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                         }
                     }
 
+
                 }
+
             }
 
             public void sendReadStatus(Message vo) throws SmackException {
@@ -1521,74 +1588,8 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
             getBaseContext().registerReceiver(notifReceive, nya);
         }
-
-
-        // initializeLocationManager();
-
-       /* try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[1]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
-        }
-
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[0]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
-        }*/
-
-        if (new Validations().getInstance(getApplicationContext()).getShareLocOnOff(27) == true) {
-            Timer LocTimer = new Timer();
-            TimerTask LocTimerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    if (locSpyChange != null) {
-                        try {
-                            String url = "https://bb.byonchat.com/luar/lapor_lokasi.php";
-                            StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                                    new Response.Listener<String>() {
-                                        @Override
-                                        public void onResponse(String response) {
-                                        }
-                                    },
-                                    new Response.ErrorListener() {
-                                        @Override
-                                        public void onErrorResponse(VolleyError error) {
-                                        }
-                                    }
-                            ) {
-                                @Override
-                                protected Map<String, String> getParams() {
-                                    Map<String, String> params = new HashMap<String, String>();
-                                    params.put("user", databaseHelper.getMyContact().getJabberId());
-                                    params.put("lat", locSpyChange.getLatitude() + "");
-                                    params.put("long", locSpyChange.getLongitude() + "");
-                                    return params;
-                                }
-                            };
-
-                            Application.getInstance().addToRequestQueue(postRequest);
-
-                        } catch (Exception e) {
-                        }
-                    }
-                }
-            };
-            LocTimer.schedule(LocTimerTask, 60000, 60000);
-        }
-
-        /*
-        kirim per 1 menit ??? hanya reliever aja yang perlu ini
-       */
     }
+
 
     //This will handle the broadcast
     public BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -2007,26 +2008,8 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             e.printStackTrace();
         }
 
-//        AlarmManager alarmMgr = (AlarmManager) this.getSystemService(this.ALARM_SERVICE);
-//        Intent i = new Intent(this, MessengerConnectionService.class);
-//        PendingIntent pendingIntent = PendingIntent.getService(this, Utility.generateRandomInt(), i, 0);
-//        alarmMgr.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1, pendingIntent);
-
         Intent broadcastIntent = new Intent("com.byonchat.android.utils.ConnectionChangeReceiver");
         sendBroadcast(broadcastIntent);
-
-        /*if (mLocationManager != null) {
-            for (int loc = 0; loc < mLocationListeners.length; loc++) {
-                try {
-                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    mLocationManager.removeUpdates(mLocationListeners[loc]);
-                } catch (Exception ex) {
-                    Log.i(TAG, "fail to remove location listners, ignore", ex);
-                }
-            }
-        }*/
 
     }
 
@@ -5620,14 +5603,12 @@ Log.w("every",co.getJabberId());
         return "";
     }
 
-    /*private class LocationListener implements android.location.LocationListener {
+    private class LocationListener implements android.location.LocationListener {
 
         Location mLastLocation;
         String lat = "";
         String lng = "";
         String acc = "";
-
-        SQLiteDatabase db;
 
         public LocationListener(String provider) {
             Log.e("zharfan", "LocationListener : " + provider);
@@ -5640,6 +5621,10 @@ Log.w("every",co.getJabberId());
             lng = "" + location.getLongitude();
             acc = "" + location.getAccuracy();
             locSpyChange = location;
+
+            if (isMockLocationOn(location, getApplicationContext())) {
+                //boobfan
+            }
 
             Log.e(TAG, "onLocationChanged : " + location);
             mLastLocation.set(location);
@@ -5661,19 +5646,8 @@ Log.w("every",co.getJabberId());
         }
 
 
-    }*/
+    }
 
-  /*  LocationListener[] mLocationListeners = new LocationListener[]{
-            new LocationListener(LocationManager.GPS_PROVIDER),
-            new LocationListener(LocationManager.NETWORK_PROVIDER)
-    };*/
-
-    /*private void initializeLocationManager() {
-        Log.e(TAG, "initializeLocationManager");
-        if (mLocationManager == null) {
-            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        }
-    }*/
 
     public static boolean isMockLocationOn(Location location, Context context) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {

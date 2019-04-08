@@ -56,6 +56,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.http.GET;
+
 public class LoadingGetTabRoomActivity extends AppCompatActivity {
 
     public static Intent generateIntent(Context context, String username, String targetUrl) {
@@ -99,6 +101,10 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 GETTAB = targetUrl + finalPath;
             } else {
                 targetUrl = linkPath;
+            }
+
+            if(!GETTAB.contains("http")){
+                GETTAB = "https://bb.byonchat.com"+ GETTAB;
             }
 
             new Refresh().execute(GETTAB, room_name);

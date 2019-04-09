@@ -200,22 +200,32 @@ public class DialogFormChildRequestDoc extends DialogFragment {
         JSONArray datas = new JSONArray();
         try {
             if (!dbHelper.getColValue(UserDB.ATASAN_1_NIK).equalsIgnoreCase("")) {
-                JSONObject approver = new JSONObject();
-                approver.put("bc_user_approval", validasiNomer(dbHelper.getColValue(UserDB.ATASAN_1_PHONE)));
-                approver.put("nama", dbHelper.getColValue(UserDB.ATASAN_1_NAMA));
-                approver.put("nik", dbHelper.getColValue(UserDB.ATASAN_1_NIK));
-                approver.put("order", "1");
-                datas.put(approver);
+                if (!dbHelper.getColValue(UserDB.ATASAN_1_NIK).equalsIgnoreCase("")) {
+                    JSONObject approver = new JSONObject();
+                    approver.put("bc_user_approval", validasiNomer(dbHelper.getColValue(UserDB.ATASAN_1_PHONE)));
+                    approver.put("nama", dbHelper.getColValue(UserDB.ATASAN_1_NAMA));
+                    approver.put("nik", dbHelper.getColValue(UserDB.ATASAN_1_NIK));
+                    approver.put("order", "1");
+                    datas.put(approver);
+                }
+                if (!dbHelper.getColValue(UserDB.ATASAN_2_NIK).equalsIgnoreCase("")) {
+                    JSONObject approver2 = new JSONObject();
+                    approver2.put("bc_user_approval", validasiNomer(dbHelper.getColValue(UserDB.ATASAN_2_PHONE)));
+                    approver2.put("nama", dbHelper.getColValue(UserDB.ATASAN_2_NAMA));
+                    approver2.put("nik", dbHelper.getColValue(UserDB.ATASAN_2_NIK));
+                    approver2.put("order", "2");
+                    datas.put(approver2);
+                }
+            }else{
+                if (!dbHelper.getColValue(UserDB.ATASAN_2_NIK).equalsIgnoreCase("")) {
+                    JSONObject approver2 = new JSONObject();
+                    approver2.put("bc_user_approval", validasiNomer(dbHelper.getColValue(UserDB.ATASAN_2_PHONE)));
+                    approver2.put("nama", dbHelper.getColValue(UserDB.ATASAN_2_NAMA));
+                    approver2.put("nik", dbHelper.getColValue(UserDB.ATASAN_2_NIK));
+                    approver2.put("order", "1");
+                    datas.put(approver2);
+                }
             }
-            if (!dbHelper.getColValue(UserDB.ATASAN_2_NIK).equalsIgnoreCase("")) {
-                JSONObject approver2 = new JSONObject();
-                approver2.put("bc_user_approval", validasiNomer(dbHelper.getColValue(UserDB.ATASAN_2_PHONE)));
-                approver2.put("nama", dbHelper.getColValue(UserDB.ATASAN_2_NAMA));
-                approver2.put("nik", dbHelper.getColValue(UserDB.ATASAN_2_NIK));
-                approver2.put("order", "2");
-                datas.put(approver2);
-            }
-
                 /*JSONObject approver = new JSONObject();
                 approver.put("bc_user_approval","6287771783888");
                 approver.put("nama","AGUSTINUS IRWANTO");

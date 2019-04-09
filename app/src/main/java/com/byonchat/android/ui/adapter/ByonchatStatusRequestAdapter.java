@@ -159,6 +159,13 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                         }
 
                     }else {
+                        File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "ByonChatDoc");
+                        File oldFile = new File(oldFolder, "request_"+item.id_request+".pdf");
+                        if(oldFile.exists()){
+                            oldFile.delete();
+                            Log.w("ada file nya azxasx","dws");
+                        }
+                        Log.w("uihfewuig azxasx","faewg");
                         Intent intent = new Intent(context, DownloadFileByonchat.class);
                         intent.putExtra("path", item.url);
                         intent.putExtra("nama_file", "request_" + item.id_request);

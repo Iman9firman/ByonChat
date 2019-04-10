@@ -38,6 +38,7 @@ import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.ContentRoom;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
+import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.Utility;
 import com.google.gson.Gson;
@@ -161,8 +162,11 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 
         vSearchView.closeSearch();
 
-        if (searchAppBarLayout.getVisibility() == View.VISIBLE)
-            hideSearchBar(positionFromRight);
+        if (!(mFragment instanceof ByonchatPDFFragment)) {
+            if (searchAppBarLayout.getVisibility() == View.VISIBLE)
+                hideSearchBar(positionFromRight);
+        }
+
     }
 
     public static String jsonResultType(String json, String type) {

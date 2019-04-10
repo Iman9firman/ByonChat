@@ -180,6 +180,9 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     @Override
     public void onRefresh() {
 //        onResume();
+        Log.w("Apa itum kemnke","idup");
+
+
         vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
             urlBack.add("OnBack");
@@ -195,6 +198,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     public void onResume() {
         super.onResume();
 
+        Log.w("Apa inim kemnke","idup");
 //        urlBack = urlTembak;
         /*vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
@@ -529,8 +533,12 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
 
     public void onActionSearch(String args) {
         vRefreshList.setRefreshing(true);
+        String urlSearch = urlTembak;
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-            new sercFile().execute(urlTembak+"/"+args);
+            if(urlSearch.equalsIgnoreCase("https://iss.byonchat.com/index.php/Api/Files")){
+                urlSearch = "https://iss.byonchat.com/index.php/Api/Files/0";
+            }
+            new sercFile().execute(urlSearch+"/"+args);
         } else {
             vRefreshList.setRefreshing(false);
             Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();

@@ -116,11 +116,9 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         Cursor cursor = db.getSingle();
         if (cursor.getCount() > 0) {
             String content = cursor.getString(cursor.getColumnIndexOrThrow(UserDB.EMPLOYEE_MULTICOST));
-            Log.w("WHoss nonre 0",content);
 
             ArrayList<String> spinnerArray = new ArrayList<String>();
-            //old code
-            /*String[] arr = content.split(",");*/
+
             try {
                 JSONArray arr = new JSONArray(content);
 
@@ -128,30 +126,29 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                     JSONObject jo = arr.getJSONObject(as);
                     String cost_center = jo.getString("costcenter");
                     lat_long = jo.getString("latlng");
-                    if( lat_long.equalsIgnoreCase("")){
+
+                    if (lat_long.equalsIgnoreCase("")) {
                         lat_long = "-6.1989168,106.7591713";
                     }
-                    //old code
-                    /*spinnerArray.add(arr[as].substring(0, arr[as].indexOf("[")));
-                    dua.add(arr[as].substring(arr[as].indexOf("[") + 1, arr[as].indexOf("]")));*/
+
                     spinnerArray.add(cost_center.substring(0, cost_center.indexOf("[")));
                     dua.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
                 }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
-            }
-            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
-            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(spinnerArrayAdapter);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+                }
+                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinner.setAdapter(spinnerArrayAdapter);
 
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
         }
 
         btnAddCild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.w("param1 nonre",dua.get(spinner.getSelectedItemPosition()));
                 DialogFormChildMainRequester dialogFormChildMainRequester = new DialogFormChildMainRequester(DinamicRoomSearchTaskActivity.this);
                 dialogFormChildMainRequester.setListener(new DialogFormChildMainRequester.MyDialogListener() {
                     @Override
@@ -173,15 +170,6 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (NetworkInternetConnectionStatus.getInstance(DinamicRoomSearchTaskActivity.this).isOnline(DinamicRoomSearchTaskActivity.this)) {
-                   /* String wow = "[{\"id_request\":\"170\",\"request_status\":\"2\",\"kode_jjt\":\"ISS-00625F0001\",\"nama_jjt\":\"EKA HOSPITAL CLN\",\"jjt_lat\":\"-6.2985016\",\"jjt_long\":\"106.6695476\",\"sub_request\":[{\"id_sub_request\":\"178\",\"nama_pekerjaan\":\"Cleaner\",\"jumlah\":\"2\",\"request_detail\":[{\"id_request_detail\":\"918\",\"rating\":5,\"nama\":\"AHMAD SOLEMAN\",\"id_reliever\":\"65\",\"jarak\":11.466734999664,\"lat\":\"-6.20148373\",\"long\":\"106.63436890\",\"hp\":\"6281293939690\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"915\",\"rating\":5,\"nama\":\"FERI KARNIATI\",\"id_reliever\":\"48\",\"jarak\":14.520820268344,\"lat\":\"-6.18782234\",\"long\":\"106.73928070\",\"hp\":\"6282199247538\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"909\",\"rating\":5,\"nama\":\"MUHIDIN\",\"id_reliever\":\"27\",\"jarak\":16.619236165417,\"lat\":\"-6.29332352\",\"long\":\"106.81983185\",\"hp\":\"6282246006769\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"913\",\"rating\":5,\"nama\":\"SYAMSUL AZIS\",\"id_reliever\":\"41\",\"jarak\":19.431112064058,\"lat\":\"-6.22453022\",\"long\":\"106.82882690\",\"hp\":\"6282298743810\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"922\",\"rating\":5,\"nama\":\"NUR SALIMIN\",\"id_reliever\":\"70\",\"jarak\":19.695171120012,\"lat\":\"-6.22645521\",\"long\":\"106.83233643\",\"hp\":\"6282324302246\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"923\",\"rating\":5,\"nama\":\"ILHAM FAUZI\",\"id_reliever\":\"71\",\"jarak\":14.573812722949,\"lat\":\"-6.37537813\",\"long\":\"106.77635956\",\"hp\":\"6283136289516\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"920\",\"rating\":5,\"nama\":\"HASAN BASRI\",\"id_reliever\":\"67\",\"jarak\":12.489663021116,\"lat\":\"-6.26469183\",\"long\":\"106.77731323\",\"hp\":\"6285782284899\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"911\",\"rating\":5,\"nama\":\"SANDRI ZOHAL MERDESA\",\"id_reliever\":\"37\",\"jarak\":17.928846453725,\"lat\":\"-6.23335171\",\"long\":\"106.81793213\",\"hp\":\"6285810459346\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"916\",\"rating\":5,\"nama\":\"CATUR WAHYUDI\",\"id_reliever\":\"52\",\"jarak\":17.940851136857,\"lat\":\"-6.23789167\",\"long\":\"106.81998444\",\"hp\":\"6285814635491\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"925\",\"rating\":5,\"nama\":\"ACEP SUPRIADI\",\"id_reliever\":\"93\",\"jarak\":18.709599367913,\"lat\":\"-6.22188330\",\"long\":\"106.51883698\",\"hp\":\"6285883565464\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"926\",\"rating\":5,\"nama\":\"Jaya (ByonChat)\",\"id_reliever\":\"215\",\"jarak\":15.090096009804,\"lat\":\"-6.19780397\",\"long\":\"106.76107788\",\"hp\":\"6287771783888\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"912\",\"rating\":5,\"nama\":\"KRISTINA\",\"id_reliever\":\"38\",\"jarak\":18.972424764858,\"lat\":\"-6.23533678\",\"long\":\"106.82901001\",\"hp\":\"6287785349696\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"914\",\"rating\":5,\"nama\":\"SUNTAMA\",\"id_reliever\":\"46\",\"jarak\":14.711326116941,\"lat\":\"-6.18372440\",\"long\":\"106.73575592\",\"hp\":\"6287878877005\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"924\",\"rating\":5,\"nama\":\"AHMAD ANGGRI FAUJI\",\"id_reliever\":\"72\",\"jarak\":5.4291954589328,\"lat\":\"-6.27989674\",\"long\":\"106.71496582\",\"hp\":\"6289506594546\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"919\",\"rating\":5,\"nama\":\"ROBIATUL ADAWIYAH\",\"id_reliever\":\"66\",\"jarak\":18.843954509136,\"lat\":\"-6.22384930\",\"long\":\"106.82260895\",\"hp\":\"6289606795860\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"910\",\"rating\":5,\"nama\":\"SETIAWAN RAMDANI\",\"id_reliever\":\"33\",\"jarak\":16.435716939178,\"lat\":\"-6.27082300\",\"long\":\"106.81562805\",\"hp\":\"6289610601394\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"917\",\"rating\":5,\"nama\":\"TARONI\",\"id_reliever\":\"58\",\"jarak\":18.596306882179,\"lat\":\"-6.15645123\",\"long\":\"106.75835419\",\"hp\":\"6289662598085\",\"status\":\"0\",\"total_kerja\":\"\"},{\"id_request_detail\":\"921\",\"rating\":5,\"nama\":\"DENI SAPUTRO SUSWANTO\",\"id_reliever\":\"68\",\"jarak\":11.788849182905,\"lat\":\"-6.27138901\",\"long\":\"106.77266693\",\"hp\":\"628979138466\",\"status\":\"0\",\"total_kerja\":\"\"}]},{\"id_sub_request\":\"179\",\"nama_pekerjaan\":\"Gardener\",\"jumlah\":\"3\",\"request_detail\":[]}]}]";
-//TESTING INI OYY
-                    Intent intent5 = new Intent(getApplicationContext(), RequesterRatingActivity.class);
-                    intent5.putExtra(Constants.EXTRA_COLOR, "006b9c");
-                    intent5.putExtra(Constants.EXTRA_COLORTEXT, "004a6d");
-                    intent5.putExtra(Constants.EXTRA_ITEM, wow);
-                    startActivity(intent5);
-                    finish();
-*/
                     try {
                         if (!keperluan.isEmpty()) {
                             JSONArray jsonArray = new JSONArray();
@@ -202,10 +190,13 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
                             Contact contact = messengerHelper.getMyContact();
                             Map<String, String> params = new HashMap<>();
+                            params.put("jjt_nama", spinner.getSelectedItem().toString().replace(dua.get(spinner.getSelectedItemPosition()) + "-", ""));
                             params.put("jjt", dua.get(spinner.getSelectedItemPosition()));
                             String[] latlongS = lat_long.split(",");
+
                             params.put("lat", latlongS[0]);//latlong
                             params.put("long", latlongS[1]);//latlong
+
                             params.put("data", jsonArray.toString());
                             params.put("bc_user", contact.getJabberId());
 
@@ -237,7 +228,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
         int ia = 0;
 
-        if(keperluan != null) {
+        if (keperluan != null) {
             for (String kk : keperluan) {
                 LinearLayout linearEstimasi = (LinearLayout) getLayoutInflater().inflate(R.layout.add_child_requester, null);
 
@@ -288,7 +279,6 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
-                    Log.w("kampret", response);
 
                     rdialog.dismiss();
                     try {
@@ -296,14 +286,25 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                         Intent intent5 = new Intent(getApplicationContext(), RequesterRatingActivity.class);
                         intent5.putExtra(Constants.EXTRA_COLOR, "006b9c");
                         intent5.putExtra(Constants.EXTRA_COLORTEXT, "004a6d");
+
                         JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
                         intent5.putExtra(Constants.EXTRA_ITEM, jsonArray.toString());
-                        Log.w("Muse prestice hdi",jsonArray.toString());
-                        startActivity(intent5);
-                        finish();
+
+                        if (jsonArray.length() > 0) {
+                            RoomsDB roomsDB = new RoomsDB(getApplicationContext());
+                            roomsDB.open();
+                            roomsDB.deleteStrings();
+                            roomsDB.close();
+                            
+                            startActivity(intent5);
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Terjadi kesalahan pada sistem , Harap ulangi beberapa saat", Toast.LENGTH_SHORT).show();
+                        }
+
                     } catch (JSONException e) {
-                        Log.w("popps 4e","here"+e);
-                        Log.w("popps 4o",response);
+                        Log.w("popps 4e", "here" + e);
+                        Log.w("popps 4o", response);
                         Toast.makeText(getApplicationContext(), "Terjadi kesalahan pada sistem , Harap ulangi beberapa saat", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
@@ -311,7 +312,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                 error -> {
                     rdialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
-                    Log.w("popps 4","here"+error);
+                    Log.w("popps 4", "here" + error);
                 }
         ) {
 

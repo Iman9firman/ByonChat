@@ -1,9 +1,12 @@
 package com.byonchat.android.ISSActivity.Requester;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -192,16 +195,16 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                     if (jsonArrayTiga.length() > 0) {
 
                         for (int j = 0; j < jsonArrayTiga.length(); j++) {
-                            JSONObject jOb      = jsonArrayTiga.getJSONObject(j);
-                            String id           = jOb.getString("id_request_detail");
-                            String name         = jOb.getString("nama");
-                            String id_reliever  = jOb.getString("id_reliever");
-                            String distance     = jOb.getString("jarak");
-                            String total        = jOb.getString("total_kerja");
-                            String status       = jOb.getString("status");
-                            String contact      = jOb.getString("hp");
-                            String location     = jOb.getString("lat") + ":" + jOb.getString("long");
-                            String rating       = jOb.getString("rating");
+                            JSONObject jOb = jsonArrayTiga.getJSONObject(j);
+                            String id = jOb.getString("id_request_detail");
+                            String name = jOb.getString("nama");
+                            String id_reliever = jOb.getString("id_reliever");
+                            String distance = jOb.getString("jarak");
+                            String total = jOb.getString("total_kerja");
+                            String status = jOb.getString("status");
+                            String contact = jOb.getString("hp");
+                            String location = jOb.getString("lat") + ":" + jOb.getString("long");
+                            String rating = jOb.getString("rating");
 
                             int titik = distance.length() - distance.indexOf(".");
                             if (titik > 4) {
@@ -236,7 +239,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                                         }
                                         selected.add(items.get(is));
                                     }
-                                    for(int oio = 0; oio < selected.size(); oio++) {
+                                    for (int oio = 0; oio < selected.size(); oio++) {
                                     }
                                     unSelectedItems = getSelectedList(selected);
                                 }
@@ -254,6 +257,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                         }
 
                     } else {
+
                         vList.addView(new NotifikasinoresultView(RequesterBaseRatingActivity.this, "Reliever tidak ditemukan, Harap tekan SUBMIT untuk Pencarian Reliever oleh Team Resources"));
                         Map<String, String> paramss = new HashMap<>();
                         paramss.put("id_sub_request", jsonArrayDua.getJSONObject(ia).getString("id_sub_request"));
@@ -329,6 +333,14 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
             //validasi jika tidak ada reliver atau kurang dari request
             if (reportToResources.size() > 0) {
+
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:+" + "6281585397231"));
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException activityException) {
+                }
+
                 requestByParony("https://bb.byonchat.com/ApiReliever/index.php/Request/req_reliever", reportToResources.get(0), items);
             } else {
 

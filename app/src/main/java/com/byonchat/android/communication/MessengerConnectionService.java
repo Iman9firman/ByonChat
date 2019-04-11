@@ -332,7 +332,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     private BlockListDB blockListDB;
     private BotListDB botListDB;
     private Timer timer = new Timer();
-    private TimerTask timerTask;
+    private Timer timerDua = new Timer();
     public int counter = 0;
     private static String SQL_REMOVE_MESSAGES_STATUS = "DELETE FROM " + Message.TABLE_NAME + " WHERE " + Message.PACKET_ID + " =?;";
     private static String SQL_UPDATE_MESSAGES = "UPDATE " + Message.TABLE_NAME + " SET status = " + Message.STATUS_READ + " WHERE " + Message.PACKET_ID + " =?;";
@@ -498,10 +498,37 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         }
     }
 
+
     private void doSomethingRepeatedly() {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+
+
+                    /* service
+                    ArrayList<SubmitingModel> ss = SubmitingRoomDB.getInstance(getApplicationContext()).getAllSubmitingModel();
+
+                    Log.w("alal1", ss.size() + "");
+                    for (SubmitingModel sss : ss) {
+
+                        Log.w("alalContent", sss.getContent() + "");
+                        Log.w("alalStatus", sss.getStatus() + "");
+                        Log.w("alalId", sss.getId() + "");
+
+
+                        SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
+                        submitingRoomDB.updateContact(sss.getId(), "2");
+
+                        Message message = new Message();
+                        message.setMessage(sss.getContent());
+                        message.setId(sss.getId());
+
+                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
+                        intent.putExtra(UploadService.ACTION, "uploadTaskRoom");
+                        intent.putExtra(UploadService.KEY_MESSAGE, message);
+                        startService(intent);
+
+                    }*/
 
                     if (new Validations().getInstance(getApplicationContext()).getShareLocOnOff(27) == true) {
 
@@ -540,32 +567,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                         requestLocationUpdates(false);
                         Log.w("laporPak", "no");
                     }
-
-
-                    /* service
-                    ArrayList<SubmitingModel> ss = SubmitingRoomDB.getInstance(getApplicationContext()).getAllSubmitingModel();
-
-                    Log.w("alal1", ss.size() + "");
-                    for (SubmitingModel sss : ss) {
-
-                        Log.w("alalContent", sss.getContent() + "");
-                        Log.w("alalStatus", sss.getStatus() + "");
-                        Log.w("alalId", sss.getId() + "");
-
-
-                        SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
-                        submitingRoomDB.updateContact(sss.getId(), "2");
-
-                        Message message = new Message();
-                        message.setMessage(sss.getContent());
-                        message.setId(sss.getId());
-
-                        Intent intent = new Intent(getApplicationContext(), UploadService.class);
-                        intent.putExtra(UploadService.ACTION, "uploadTaskRoom");
-                        intent.putExtra(UploadService.KEY_MESSAGE, message);
-                        startService(intent);
-
-                    }*/
 
                     Contact contact = databaseHelper.getMyContact();
 
@@ -2001,12 +2002,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         started = false;
         unregisterReceiver(receiver);
         unregisterReceiver(notifReceive);
-
-        try {
-            timerTask.cancel();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         Intent broadcastIntent = new Intent("com.byonchat.android.utils.ConnectionChangeReceiver");
         sendBroadcast(broadcastIntent);

@@ -90,6 +90,7 @@ import com.byonchat.android.room.FragmentRoomTask;
 import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.tempSchedule.TempScheduleRoom;
 import com.byonchat.android.ui.fragment.ByonchatApprovalRequestFragment;
+import com.byonchat.android.ui.fragment.ByonchatDefectListFragment;
 import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
 import com.byonchat.android.ui.fragment.ByonchatStatusRequestFragment;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
@@ -587,6 +588,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 } else if (category.equalsIgnoreCase("24")) {
                     show = true;
                     mFragment = ByonchatApprovalRequestFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
+                } else if (category.equalsIgnoreCase("25")) {
+                    show = true;
+                    mFragment = ByonchatDefectListFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 }
 
 

@@ -25,7 +25,7 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
 
     public LinearLayout vMainContent;
     public Target vIconView;
-    public LinearLayout vLayoutComment, vBtComment;
+    public LinearLayout vLayoutComment, vBtComment, vLayoutDate;
     public TextView vName, vTimestamp, vTxtStatusMsg;
     public TextView vTxtRequest;
     public View vView;
@@ -55,6 +55,7 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
         vBtComment = (LinearLayout) view.findViewById(R.id.btComment);
         vView = (View) view.findViewById(R.id.view);
         vTagGroup = (TagGroup) view.findViewById(R.id.tag_group);
+        vLayoutDate = (LinearLayout) view.findViewById(R.id.layoutDate);
         vTxtRequest = (TextView) view.findViewById(R.id.text_btn_comment);
         vFramePhoto = (carbon.widget.LinearLayout) view.findViewById(R.id.frame_photo);
 

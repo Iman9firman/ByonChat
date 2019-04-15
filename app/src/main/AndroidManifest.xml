@@ -751,6 +751,8 @@
         <activity
             android:name=".ISSActivity.Reliever.CheckInActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activity.ByonchatDetailDefectActivity" />
         <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
         <activity android:name=".tabRequest.RelieverListActivity" />
         <activity android:name=".tabRequest.MapsViewActivity" />

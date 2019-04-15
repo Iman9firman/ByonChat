@@ -36,7 +36,7 @@ public class FormChildAdapter extends BaseAdapter {
     String from = "";
     Boolean froms = false;
 
-    FormChildAdapter(Context context, List<ModelFormChild> rowItems, String frm, Boolean frmB) {
+    public FormChildAdapter(Context context, List<ModelFormChild> rowItems, String frm, Boolean frmB) {
         this.context = context;
         this.rowItems = rowItems;
         this.from = frm;

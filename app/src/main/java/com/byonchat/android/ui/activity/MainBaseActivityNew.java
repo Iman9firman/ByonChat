@@ -1167,6 +1167,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 } else if (category.equalsIgnoreCase("24")) {
                     itemMain.iconTest = R.drawable.ic_015;
                     Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("25")) {
+                    itemMain.iconTest = R.drawable.ic_003;
+                    Constants.map.put(i, null);
                 }
 
 

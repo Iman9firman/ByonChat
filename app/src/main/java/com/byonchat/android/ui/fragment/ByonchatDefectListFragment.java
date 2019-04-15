@@ -326,13 +326,7 @@ public class ByonchatDefectListFragment extends Fragment implements SwipeRefresh
     }
 
     public void onActionSearch(String args) {
-        vRefreshList.setRefreshing(true);
-        if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-//            new getFile().execute(urlTembak + args);
-        } else {
-            vRefreshList.setRefreshing(false);
-            Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
-        }
+        mAdapter.getFilter().filter(args);
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {

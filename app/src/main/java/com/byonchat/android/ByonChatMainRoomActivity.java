@@ -593,6 +593,8 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
             menu.findItem(R.id.action_search).setVisible(true);
         } else if (category.equalsIgnoreCase("14")) {
             menu.findItem(R.id.action_search).setVisible(true);
+        } else if(category.equalsIgnoreCase("25")){
+            menu.findItem(R.id.action_search).setVisible(true);
         }
         return super.onPrepareOptionsMenu(menu);
     }

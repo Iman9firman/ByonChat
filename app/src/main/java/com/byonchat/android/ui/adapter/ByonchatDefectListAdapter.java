@@ -261,9 +261,7 @@ public class ByonchatDefectListAdapter extends RecyclerView.Adapter<RecyclerView
                 mSearchText = charString;
                 List<File> filteredList = new ArrayList<>();
                 for (File row : items) {
-                    if (row.title.toLowerCase(Locale.getDefault()).contains(charString)
-                            || row.subtitle.toLowerCase(Locale.getDefault()).contains(charString)/*
-                            || Utility.parseDateToddMMyyyy(String.valueOf(row.timestamp)).toLowerCase(Locale.getDefault()).contains(charString)*/ ) {
+                    if (row.subtitle.toLowerCase(Locale.getDefault()).contains(charString) ) {
                         Log.w("Kita ngobrol uie",row.title +", "+row.description+", "+row.timestamp);
                         filteredList.add(row);
                     }

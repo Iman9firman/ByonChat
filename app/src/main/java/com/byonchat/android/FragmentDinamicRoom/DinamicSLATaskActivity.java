@@ -209,6 +209,7 @@ import zharfan.com.cameralibrary.CameraActivity;
 
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_COMMENT;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID;
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID_DETAIL;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_IMG;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_OK;
 import static com.byonchat.android.provider.RadioButtonCheckDB.TABLE_NAME;
@@ -1869,6 +1870,16 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             hashMap.put(Integer.parseInt("66985"), valSetOne1);
             hashMap.put(Integer.parseInt("66989"), valSetOne2);
 
+            Cursor cEditTakut = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66985", "text", "0"));
+            if (cEditTakut.getCount() > 0) {
+                String hasilDariDB = cEditTakut.getString(cEditTakut.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                if (hasilDariDB.contains("|")) {
+                    int spinnerPosition = spinnerArrayAdapterSLA.getPosition(hasilDariDB.split("\\|")[0]);
+                    spinner.setSelection(spinnerPosition);
+                }
+            }
+
+
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                 @Override
@@ -1917,23 +1928,15 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             // TODO: 03/04/19
                             //1. data dari database convert jadi json (done)
                             //2. cheklist di buat dinamis  (done)
-                            //3. foto dapat di edit2
-                            //4. validasi pengirman
-                            //5. submit form
-                            //6. save draft
+                            //3. foto dapat di edit2  (done)
+                            //4. validasi pengirman (done)
+                            //5. submit form (foto udah tinggal data)
+                            //6. save draft  (done)
+                            //7. set bobot (done)
 
 
                             if (css.moveToFirst()) {
 
-                                Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66989", "dropdown_form", "1"));
-                                if (cEdit2.getCount() > 0) {
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "berisi", jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
-                                    db.updateDetailRoomWithFlagContent(orderModel);
-                                } else {
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "berisi", jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
-                                    db.insertRoomsDetail(orderModel);
-
-                                }
                                 recyclerView.setVisibility(View.VISIBLE);
                                 String bobotIdOld = "";
                                 String sectionOld = "";
@@ -1965,6 +1968,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     JSONObject ppObject = new JSONObject();
                                                     ppObject.put("id", idPertanyaan);
                                                     ppObject.put("label", itemTobe);
+                                                    ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
                                                     empat.put(ppObject);
 
                                                 } else {
@@ -1974,6 +1978,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     JSONObject ppObject = new JSONObject();
                                                     ppObject.put("id", idPertanyaan);
                                                     ppObject.put("label", itemTobe);
+                                                    ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
                                                     empat.put(ppObject);
 
                                                     JSONObject empatObject = new JSONObject();
@@ -1991,6 +1996,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                 JSONObject ppObject = new JSONObject();
                                                 ppObject.put("id", idPertanyaan);
+                                                ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
                                                 ppObject.put("label", itemTobe);
                                                 empat.put(ppObject);
 
@@ -2020,6 +2026,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                     JSONObject ppObject = new JSONObject();
                                                     ppObject.put("id", idPertanyaan);
+                                                    ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
                                                     ppObject.put("label", itemTobe);
                                                     empat.put(ppObject);
 
@@ -2049,13 +2056,87 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                     } while (css.moveToNext());
                                     hasilCOnvert.put("data", satu);
-                                    itemList = (List<SLAISSItem>) getListFromJson("", hasilCOnvert.toString(), 0);
-                                    adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, itemList, recyclerView);
+
+
+                                    itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
+                                    adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView);
                                     recyclerView.setAdapter(adapter);
                                     recyclerView.setAccordion(false);
                                     recyclerView.removeItemClickListeners();
 
                                     adapter.notifyDataSetChanged();
+
+
+                                    JSONObject levelBobot1 = hasilCOnvert;
+
+                                    JSONArray saveSLADetail = new JSONArray();
+                                    JSONArray level1Array = levelBobot1.getJSONArray("data");
+                                    for (int oneL = 0; oneL < level1Array.length(); oneL++) {
+                                        JSONObject objectOne = level1Array.getJSONObject(oneL);
+                                        String id = objectOne.getString("id");
+
+                                        String bobot = objectOne.getString("bobot");
+                                        JSONArray level2Array = objectOne.getJSONArray("data");
+                                        Double bbt = Double.valueOf(bobot) / level2Array.length();
+
+                                        JSONObject detailing1 = new JSONObject();
+                                        detailing1.put("id", id);
+                                        JSONArray data1 = new JSONArray();
+
+                                        for (int twoL = 0; twoL < level2Array.length(); twoL++) {
+                                            JSONObject objectTwo = level2Array.getJSONObject(twoL);
+                                            String id2 = objectTwo.getString("id");
+                                            JSONArray level3Array = objectTwo.getJSONArray("data");
+                                            Double bbt2 = bbt / level3Array.length();
+
+
+                                            JSONObject detailing2 = new JSONObject();
+                                            detailing2.put("id", id2);
+                                            JSONArray data2 = new JSONArray();
+
+                                            for (int threeL = 0; threeL < level3Array.length(); threeL++) {
+                                                JSONObject objectThree = level3Array.getJSONObject(threeL);
+                                                String id3 = objectThree.getString("id");
+                                                JSONArray level4Array = objectThree.getJSONArray("data");
+                                                Double bbt3 = bbt2 / level4Array.length();
+
+                                                JSONObject detailing3 = new JSONObject();
+                                                detailing3.put("id", id3);
+
+                                                JSONArray data3 = new JSONArray();
+                                                for (int fourL = 0; fourL < level4Array.length(); fourL++) {
+                                                    JSONObject objectFour = level4Array.getJSONObject(fourL);
+                                                    String id4 = objectFour.getString("id");
+                                                    JSONObject detailing = new JSONObject();
+                                                    detailing.put("id", id4);
+                                                    detailing.put("bt", bbt3);
+                                                    data3.put(detailing);
+                                                }
+                                                detailing3.put("data", data3);
+                                                data2.put(detailing3);
+                                            }
+                                            detailing2.put("data", data2);
+                                            data1.put(detailing2);
+                                        }
+                                        detailing1.put("data", data1);
+                                        detailing1.put("bobot", bobot);
+
+
+                                        saveSLADetail.put(detailing1);
+                                    }
+
+                                    Log.w("juragan", saveSLADetail.toString());
+
+                                    Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66989", "dropdown_form", "1"));
+                                    if (cEdit2.getCount() > 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, saveSLADetail.toString(), jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
+                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                    } else {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, saveSLADetail.toString(), jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
+                                        db.insertRoomsDetail(orderModel);
+
+                                    }
+
                                 } catch (Exception e) {
 
                                 }
@@ -8460,36 +8541,79 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                 }
                                             } else {
                                                 if (value.get(2).toString().equalsIgnoreCase("dropdown_form")) {
-
-                                                    //disini ya validasi
-
+                                                    String sayaJA = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
                                                     RadioButtonCheckDB database = new RadioButtonCheckDB(activity);
                                                     SQLiteDatabase dbSLAA = database.getReadableDatabase();
 
-                                                    Cursor cursorSala = dbSLAA.query(TABLE_NAME,
-                                                            new String[]{COLUMN_ID, COLUMN_OK, COLUMN_COMMENT, COLUMN_IMG},
-                                                            null, null, null, null, null, null);
-                                                    if (cursorSala.moveToFirst()) {
-                                                        do {
-                                                           /* Log.w("bisaMudah1", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_ID)));
-                                                            Log.w("bisaMudah2", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_OK)));*/
 
-                                                     /*       Log.w("bisaMudah3", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_COMMENT)));
-                                                            Log.w("bisaMudah4", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_IMG)));*/
+                                                    try {
+                                                        JSONArray jsonArray = new JSONArray(sayaJA);
+                                                        for (int oneL = 0; oneL < jsonArray.length(); oneL++) {
+                                                            String id = jsonArray.getJSONObject(oneL).getString("id");
+                                                            JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
 
-                                                        } while (cursorSala.moveToNext());
+                                                            for (int twoL = 0; twoL < data1.length(); twoL++) {
+                                                                String id2 = data1.getJSONObject(twoL).getString("id");
+                                                                JSONArray data2 = data1.getJSONObject(twoL).getJSONArray("data");
+
+                                                                for (int threeL = 0; threeL < data2.length(); threeL++) {
+                                                                    String id3 = data2.getJSONObject(threeL).getString("id");
+                                                                    JSONArray data3 = data2.getJSONObject(threeL).getJSONArray("data");
+
+                                                                    for (int fourL = 0; fourL < data3.length(); fourL++) {
+                                                                        String id4 = data3.getJSONObject(fourL).getString("id");
+                                                                        String bt4 = data3.getJSONObject(fourL).getString("bt");
+
+                                                                        String idCheck = idDetail + "-" + id + "-" + id2 + "-" + id3 + "-" + id4;
+
+                                                                        boolean isExist = false;
+
+                                                                        Cursor cursor = dbSLAA.rawQuery("SELECT * FROM " + TABLE_NAME
+                                                                                + " WHERE id_detail =?", new String[]{String.valueOf(idCheck)});
+                                                                        while (cursor.moveToNext()) {
+                                                                            isExist = true;
+                                                                        }
+                                                                        cursor.close();
+
+                                                                        if (!isExist) {
+                                                                            berhenti = true;
+                                                                            errorReq.add("Harap di pilih : " + id4);
+                                                                        } else {
+
+                                                                            Cursor cursorD = dbSLAA.query(TABLE_NAME,
+                                                                                    new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
+                                                                                    COLUMN_ID_DETAIL + "=?",
+                                                                                    new String[]{idCheck}, null, null, null, null);
+                                                                            while (cursorD.moveToNext()) {
+                                                                                int ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
+                                                                                String img = cursorD.getString(cursorD.getColumnIndex(COLUMN_IMG));
+                                                                                String com = cursorD.getString(cursorD.getColumnIndex(COLUMN_COMMENT));
+
+                                                                                if (ok == 0) {
+                                                                                    if (img == null && com == null) {
+                                                                                        berhenti = true;
+                                                                                        errorReq.add("Tambahkan comment atau foto : " + id4);
+                                                                                    }
+                                                                                }
+
+                                                                            }
+                                                                            cursorD.close();
+
+                                                                        }
+
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+
+                                                        }
+
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
                                                     }
-                                                    cursorSala.close();
-
-                                                   /* do {
-                                                        Log.w("kagadng", cursorSala.getString(cursorSala.getColumnIndex(COLUMN_IMG)));
-
-
-                                                        //ok = cursorSala.getString(cursorSala.getColumnIndex(COLUMN_IMG));
-                                                    } while (cursorSala.moveToNext());*/
-                                                    cursorSala.close();
-
-
                                                 } else if (value.get(2).toString().equalsIgnoreCase("phone_number")) {
                                                     String saya = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
                                                     if (saya.length() > 9 && saya.length() < 15) {
@@ -9645,10 +9769,9 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                         if (idListTaskMasterForm.equalsIgnoreCase("66986")) {
                             if (valueIdValue.getTypes().equalsIgnoreCase("insert")) {
-                                adapter.insertDB(Integer.valueOf(valueIdValue.getIdDetail()), 0, f.getAbsolutePath());
+                                adapter.insertDB(valueIdValue.getIdDetail(), 0, f.getAbsolutePath(), null);
                             } else {
-                                Log.w("kadal", f.getAbsolutePath() + "::" + valueIdValue.getExpandedListText());
-                                adapter.updateDB(Integer.valueOf(valueIdValue.getIdDetail()), Integer.valueOf(valueIdValue.getExpandedListText()), f.getAbsolutePath());
+                                adapter.updateDB(valueIdValue.getIdDetail(), Integer.valueOf(valueIdValue.getExpandedListText()), f.getAbsolutePath(), null);
                             }
 
                             adapter.notifyDataSetChanged();
@@ -12276,7 +12399,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
     }
 
-    private List<?> getListFromJson(String from, String jsonString, int levelNumber) {
+    private List<?> getListFromJson(String id_parent, String from, String jsonString, int levelNumber) {
         List<RecyclerViewItem> itemList = new ArrayList<>();
         String title;
         int id = 0;
@@ -12291,8 +12414,14 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                 item.setTitle(from + (one + 1) + ". " + title);
                 String idd = from + (one + 1) + id;
+
+
                 item.setId(Integer.valueOf(idd.replace(".", "")));
-                item.addChildren((List<RecyclerViewItem>) getListFromJson(from + (one + 1) + ".", objectOne.toString(), levelNumber + 1));
+                if (levelNumber == 3) {
+                    item.setId_content(idDetail + "-" + objectOne.getString("id_content"));
+                }
+
+                item.addChildren((List<RecyclerViewItem>) getListFromJson(id_parent, from + (one + 1) + ".", objectOne.toString(), levelNumber + 1));
                 itemList.add(item);
             }
         } catch (JSONException e) {

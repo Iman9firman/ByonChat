@@ -1,5 +1,6 @@
 package com.byonchat.android.utils;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,6 +16,7 @@ import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseHelper;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.provider.RadioButtonCheckDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.tempSchedule.MyEventDatabase;
 
@@ -48,6 +50,12 @@ import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.P
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLDETAIL;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLMULIPLEDETAIL;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLMULIPLEDETAILUPDATE;
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_COMMENT;
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID;
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID_DETAIL;
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_IMG;
+import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_OK;
+import static com.byonchat.android.provider.RadioButtonCheckDB.TABLE_NAME;
 
 public class AllAboutUploadTask {
 
@@ -246,7 +254,7 @@ public class AllAboutUploadTask {
             String content = "";
 
             String cc = list.get(u).getContent();
-
+            Log.w("masukUploadNot", cc.toString());
             try {
                 if (cc.startsWith("{")) {
                     if (!cc.startsWith("[")) {
@@ -256,11 +264,15 @@ public class AllAboutUploadTask {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.w("masukUploadNot2", cc.toString());
             }
 
 
+            Log.w("masukUpload", "satu");
             if (jsA != null) {
+                Log.w("masukUpload", "dua");
                 if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
+                    Log.w("masukUpload", "tiga");
                     try {
                         JSONObject jsonObject = new JSONObject(list.get(u).getContent());
                         Iterator<String> iter = jsonObject.keys();
@@ -301,11 +313,13 @@ public class AllAboutUploadTask {
                                 }
 
                             } catch (JSONException e) {
+                                Log.w("masukUpload", "empat");
                                 // Something went wrong!
                             }
                         }
 
                     } catch (JSONException e) {
+                        Log.w("masukUpload", "lima");
                         e.printStackTrace();
                     }
                 }
@@ -341,7 +355,77 @@ public class AllAboutUploadTask {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
+
+                    RadioButtonCheckDB database = new RadioButtonCheckDB(context);
+                    SQLiteDatabase dbSLAA = database.getReadableDatabase();
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(cc);
+                        for (int oneL = 0; oneL < jsonArray.length(); oneL++) {
+                            String id = jsonArray.getJSONObject(oneL).getString("id");
+                            JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
+
+                            for (int twoL = 0; twoL < data1.length(); twoL++) {
+                                String id2 = data1.getJSONObject(twoL).getString("id");
+                                JSONArray data2 = data1.getJSONObject(twoL).getJSONArray("data");
+
+                                for (int threeL = 0; threeL < data2.length(); threeL++) {
+                                    String id3 = data2.getJSONObject(threeL).getString("id");
+                                    JSONArray data3 = data2.getJSONObject(threeL).getJSONArray("data");
+
+                                    for (int fourL = 0; fourL < data3.length(); fourL++) {
+                                        String id4 = data3.getJSONObject(fourL).getString("id");
+                                        String bt4 = data3.getJSONObject(fourL).getString("bt");
+
+                                        String idCheck = idDetail + "-" + id + "-" + id2 + "-" + id3 + "-" + id4;
+
+                                        boolean isExist = false;
+
+                                        Cursor cursor = dbSLAA.rawQuery("SELECT * FROM " + TABLE_NAME
+                                                + " WHERE id_detail =?", new String[]{String.valueOf(idCheck)});
+                                        while (cursor.moveToNext()) {
+                                            isExist = true;
+                                        }
+                                        cursor.close();
+
+                                        if (isExist) {
+                                            Cursor cursorD = dbSLAA.query(TABLE_NAME,
+                                                    new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
+                                                    COLUMN_ID_DETAIL + "=?",
+                                                    new String[]{idCheck}, null, null, null, null);
+                                            while (cursorD.moveToNext()) {
+                                                int ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
+                                                String img = cursorD.getString(cursorD.getColumnIndex(COLUMN_IMG));
+                                                String com = cursorD.getString(cursorD.getColumnIndex(COLUMN_COMMENT));
+
+                                                if (img != null) {
+
+                                                    if (img.split("\\|").length == 1) {
+                                                        new UploadFileToServerSLA().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POST_FOTO,
+                                                                username, idTab, idListTaskMasterForm, img, idCheck);
+                                                    }
+
+                                                }
+                                            }
+                                            cursorD.close();
+
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
+
 
                /*  nanti lagi
                 else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("rear_camera")) {
@@ -582,131 +666,136 @@ public class AllAboutUploadTask {
                     } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("form_child")) {
 
                     } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
-                        /*cc = "{\n" +
-                                "  \"kode_jjt\" : \"ISS-00625F0001\",\n" +
-                                "  \"pembobotan\": [\n" +
-                                "    {\n" +
-                                "      \"id\": 29,\n" +
-                                "      \"section\": [\n" +
-                                "        {\n" +
-                                "          \"id\": 40,\n" +
-                                "          \"subsection\": [\n" +
-                                "            {\n" +
-                                "              \"id\": 82,\n" +
-                                "              \"pertanyaan\": [\n" +
-                                "                {\n" +
-                                "                  \"id\": 56,\n" +
-                                "                  \"v\": \"1\",\n" +
-                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                "                  \"n\": \"satu\",\n" +
-                                "                  \"b\": \"0.633\"\n" +
-                                "                },\n" +
-                                "                {\n" +
-                                "                  \"id\": 57,\n" +
-                                "                  \"v\": \"0\",\n" +
-                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                "                  \"n\": \"\",\n" +
-                                "                  \"b\": \"0.633\"\n" +
-                                "                },\n" +
-                                "                {\n" +
-                                "                  \"id\": 58,\n" +
-                                "                  \"v\": \"0\",\n" +
-                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                "                  \"n\": \"dua\",\n" +
-                                "                  \"b\": \"0.633\"\n" +
-                                "                },\n" +
-                                "                {\n" +
-                                "                  \"id\": 59,\n" +
-                                "                  \"v\": \"0\",\n" +
-                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                "                  \"n\": \"tiga\",\n" +
-                                "                  \"b\": \"0.633\"\n" +
-                                "                },\n" +
-                                "                {\n" +
-                                "                  \"id\": 61,\n" +
-                                "                  \"v\": \"1\",\n" +
-                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                "                  \"n\": \"empat\",\n" +
-                                "                  \"b\": \"0.633\"\n" +
-                                "                },{\n" +
-                                "                  \"id\": 62,\n" +
-                                "                  \"v\": \"1\",\n" +
-                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                "                  \"n\": \"lima\",\n" +
-                                "                  \"b\": \"0.633\"\n" +
-                                "                }\n" +
-                                "              ]\n" +
-                                "            }\n" +
-                                "          ]\n" +
-                                "        }\n" +
-                                "      ]\n" +
-                                "    }\n" +
-                                "  ]\n" +
-                                "}";*/
 
-                        cc = "{\n" +
-                                "  \"kode_jjt\" : \"ISS-00625F0001\",\n" +
-                                "  \"area\" : \"EKA HOSPITAL CLN\",\n" +
-                                "  \"pembobotan\": [\n" +
-                                "    {\n" +
-                                "      \"id\": 29,\n" +
-                                "      \"bobot\":80,\n" +
-                                "      \"section\": [\n" +
-                                "        {\n" +
-                                "          \"id\": 40,\n" +
-                                "          \"subsection\": [\n" +
-                                "            {\n" +
-                                "              \"id\": 82,\n" +
-                                "              \"pertanyaan\": [\n" +
-                                "                {\n" +
-                                "                  \"id\": 56,\n" +
-                                "                  \"v\": \"1\",\n" +
-                                "                  \"f\": \"\",\n" +
-                                "                  \"n\": \"\",\n" +
-                                "                  \"b\": \"0.633\"\n" +
-                                "                },\n" +
-                                "                {\n" +
-                                "                  \"id\": 57,\n" +
-                                "                  \"v\": \"0\",\n" +
-                                "                  \"f\": \"IMG_29032019_114204_vRIsq55lBf.jpg\",\n" +
-                                "                  \"n\": \"\",\n" +
-                                "                  \"b\": \"0\"\n" +
-                                "                },\n" +
-                                "                {\n" +
-                                "                  \"id\": 58,\n" +
-                                "                  \"v\": \"1\",\n" +
-                                "                  \"f\": \"\",\n" +
-                                "                  \"n\": \"\",\n" +
-                                "                  \"b\": \"0.633\"\n" +
-                                "                },\n" +
-                                "                {\n" +
-                                "                  \"id\": 59,\n" +
-                                "                  \"v\": \"1\",\n" +
-                                "                  \"f\": \"\",\n" +
-                                "                  \"n\": \"\",\n" +
-                                "                  \"b\": \"0.633\"\n" +
-                                "                },\n" +
-                                "                {\n" +
-                                "                  \"id\": 61,\n" +
-                                "                  \"v\": \"0\",\n" +
-                                "                  \"f\": \"IMG_28032019_100918_SCzuLKreNS.jpg\",\n" +
-                                "                  \"n\": \"ini apa\",\n" +
-                                "                  \"b\": \"0\"\n" +
-                                "                },{\n" +
-                                "                  \"id\": 62,\n" +
-                                "                  \"v\": \"0\",\n" +
-                                "                  \"f\": \"IMG_29032019_114523_kAXDebwzxF.jpg\",\n" +
-                                "                  \"n\": \"disini gagal\",\n" +
-                                "                  \"b\": \"0\"\n" +
-                                "                }\n" +
-                                "              ]\n" +
-                                "            }\n" +
-                                "          ]\n" +
-                                "        }\n" +
-                                "      ]\n" +
-                                "    }\n" +
-                                "  ]\n" +
-                                "}";
+                        RadioButtonCheckDB database = new RadioButtonCheckDB(context);
+                        SQLiteDatabase dbSLAA = database.getReadableDatabase();
+
+
+                        try {
+                            JSONArray jsonArray = new JSONArray(cc);
+                            JSONObject section = new JSONObject();
+
+                            JSONArray pembobotanArray = new JSONArray();
+
+                            for (int oneL = 0; oneL < jsonArray.length(); oneL++) {
+                                String id = jsonArray.getJSONObject(oneL).getString("id");
+                                JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
+
+                                String bobot = jsonArray.getJSONObject(oneL).getString("bobot");
+
+                                JSONArray sectionArray = new JSONArray();
+
+
+                                for (int twoL = 0; twoL < data1.length(); twoL++) {
+                                    String id2 = data1.getJSONObject(twoL).getString("id");
+                                    JSONArray data2 = data1.getJSONObject(twoL).getJSONArray("data");
+
+                                    JSONObject subSection = new JSONObject();
+                                    JSONArray subSectionArray = new JSONArray();
+
+                                    for (int threeL = 0; threeL < data2.length(); threeL++) {
+                                        String id3 = data2.getJSONObject(threeL).getString("id");
+                                        JSONArray data3 = data2.getJSONObject(threeL).getJSONArray("data");
+
+                                        JSONObject pertanyaanObject = new JSONObject();
+                                        JSONArray pertanyaanNya = new JSONArray();
+
+                                        for (int fourL = 0; fourL < data3.length(); fourL++) {
+
+                                            String id4 = data3.getJSONObject(fourL).getString("id");
+                                            String bt4 = data3.getJSONObject(fourL).getString("bt");
+
+                                            JSONObject pertanyaanDetail = new JSONObject();
+                                            pertanyaanDetail.put("id", Integer.valueOf(id4));
+
+                                            String idCheck = idDetail + "-" + id + "-" + id2 + "-" + id3 + "-" + id4;
+
+                                            boolean isExist = false;
+
+                                            Cursor cursor = dbSLAA.rawQuery("SELECT * FROM " + TABLE_NAME
+                                                    + " WHERE id_detail =?", new String[]{String.valueOf(idCheck)});
+                                            while (cursor.moveToNext()) {
+                                                isExist = true;
+                                            }
+                                            cursor.close();
+
+                                            if (!isExist) {
+                                            } else {
+                                                int ok = 0;
+                                                String img = "";
+                                                String com = "";
+                                                Cursor cursorD = dbSLAA.query(TABLE_NAME,
+                                                        new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
+                                                        COLUMN_ID_DETAIL + "=?",
+                                                        new String[]{idCheck}, null, null, null, null);
+                                                while (cursorD.moveToNext()) {
+                                                    ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
+                                                    img = cursorD.getString(cursorD.getColumnIndex(COLUMN_IMG));
+                                                    com = cursorD.getString(cursorD.getColumnIndex(COLUMN_COMMENT));
+
+                                                    if (ok == 0) {
+                                                        if (img == null && com == null) {
+                                                        }
+                                                    }
+
+
+                                                }
+                                                cursorD.close();
+
+
+                                                pertanyaanDetail.put("v", String.valueOf(ok));
+                                                if (img != null) {
+                                                    if (img.split("\\|").length == 2) {
+                                                        pertanyaanDetail.put("f", img.split("\\|")[1]);
+                                                    } else {
+                                                        pertanyaanDetail.put("f", "");
+                                                    }
+                                                } else {
+                                                    pertanyaanDetail.put("f", "");
+                                                }
+
+                                                pertanyaanDetail.put("n", com != null ? com : "");
+                                                if (ok == 1) {
+                                                    pertanyaanDetail.put("b", bt4);
+                                                } else {
+                                                    pertanyaanDetail.put("b", "0");
+                                                }
+
+
+                                            }
+
+                                            pertanyaanNya.put(pertanyaanDetail);
+
+                                        }
+                                        pertanyaanObject.put("id", Integer.valueOf(id3));
+                                        pertanyaanObject.put("pertanyaan", pertanyaanNya);
+                                        subSectionArray.put(pertanyaanObject);
+                                    }
+                                    subSection.put("id", Integer.valueOf(id2));
+                                    subSection.put("subsection", subSectionArray);
+                                    sectionArray.put(subSection);
+
+                                }
+                                section.put("section", sectionArray);
+                                section.put("bobot", Integer.valueOf(bobot));
+                                section.put("id", Integer.valueOf(id));
+                                pembobotanArray.put(section);
+                            }
+
+
+                            JSONObject jjtnya = new JSONObject();
+
+
+                            jjtnya.put("kode_jjt", "ISS-00625F0001");
+                            jjtnya.put("area", "EKA HOSPITAL CLN");
+                            jjtnya.put("pembobotan", pembobotanArray);
+
+
+                            cc = jjtnya.toString().replace("\\", "");
+                            Log.w("bismilah", cc.replace("\\", ""));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
                         /*try {
                             JSONObject jsonObject = new JSONObject(cc);
@@ -959,7 +1048,7 @@ public class AllAboutUploadTask {
                 } else {
                     if (gpxfile.exists()) {
                         Toast.makeText(context, "Boleh kartun 1", Toast.LENGTH_SHORT).show();
-//                        gpxfile.delete();
+                        gpxfile.delete();
                     }
                     long date = System.currentTimeMillis();
                     String dateString = hourFormat.format(date);
@@ -974,7 +1063,7 @@ public class AllAboutUploadTask {
             } catch (ClientProtocolException e) {
                 if (gpxfile.exists()) {
                     Toast.makeText(context, "Boleh kartun 2", Toast.LENGTH_SHORT).show();
-//                    gpxfile.delete();
+                    gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
                 String dateString = hourFormat.format(date);
@@ -986,7 +1075,7 @@ public class AllAboutUploadTask {
             } catch (IOException e) {
                 if (gpxfile.exists()) {
                     Toast.makeText(context, "Boleh kartun 3", Toast.LENGTH_SHORT).show();
-//                    gpxfile.delete();
+                    gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
                 String dateString = hourFormat.format(date);
@@ -995,6 +1084,123 @@ public class AllAboutUploadTask {
                 db.updateDetailRoomWithFlagContentParent(orderModel);
                 taskCompleted.onTaskCompleted(20, "gagal upload");
             }
+        }
+    }
+
+
+    private class UploadFileToServerSLA extends AsyncTask<String, Integer, String> {
+        long totalSize = 0;
+        String uri, id_konten_sla;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            taskCompleted.onTaskUpdate(0, "");
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5]);
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+            taskCompleted.onTaskUpdate(progress[0], "Upload Image " + prosesUpload.size() + "/" + totalUpload);
+        }
+
+        @SuppressWarnings("deprecation")
+        private String uploadFile(String URL, String username, String id_room, String id_list, String _uri, String _id_konten_sla) {
+            prosesUpload.add("ada");
+            String responseString = null;
+            uri = _uri;
+            id_konten_sla = _id_konten_sla;
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(URL);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+
+                            }
+                        });
+
+                File sourceFile = new File(resizeAndCompressImageBeforeSend(context, uri, "fileUploadBC_" + new Date().getTime() + ".jpg"));
+                if (!sourceFile.exists()) {
+                    return "File not exists";
+                }
+
+                ContentType contentType = ContentType.create("image/jpeg");
+                entity.addPart("username_room", new StringBody(username));
+                entity.addPart("id_rooms_tab", new StringBody(id_room));
+                entity.addPart("id_list_task", new StringBody(id_list));
+                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
+
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+
+                if (statusCode == 200) {
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                String message = jsonObject.getString("message");
+                if (message.length() == 0) {
+                    String fileNameServer = jsonObject.getString("filename");
+
+                    RadioButtonCheckDB database = new RadioButtonCheckDB(context);
+                    SQLiteDatabase dbSLAA = database.getReadableDatabase();
+
+                    Cursor cursorD = dbSLAA.query(TABLE_NAME,
+                            new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
+                            COLUMN_ID_DETAIL + "=?",
+                            new String[]{id_konten_sla}, null, null, null, null);
+                    while (cursorD.moveToNext()) {
+                        int ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
+                        String img = cursorD.getString(cursorD.getColumnIndex(COLUMN_IMG));
+                        String com = cursorD.getString(cursorD.getColumnIndex(COLUMN_COMMENT));
+
+                        if (img != null) {
+                            ContentValues values = new ContentValues();
+                            values.put(COLUMN_IMG, img + "|" + fileNameServer);
+                            dbSLAA.update(TABLE_NAME, values, COLUMN_ID_DETAIL + " = ?",
+                                    new String[]{String.valueOf(id_konten_sla)});
+                        }
+                    }
+                    cursorD.close();
+
+                    uploadFileChild("looping");
+                } else {
+                    taskCompleted.onTaskCompleted(20, message);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            super.onPostExecute(result);
         }
     }
 

@@ -368,11 +368,16 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 rdialog.show();
 
                 for (int i = 0; i < foto.size();i++) {
-                    new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
-                            getIntent().getStringExtra("username_room"),
-                            id_rooms_tab, id_task_list,
-                            foto.get(i).getAfter().toString(),
-                            foto.get(i).getId());
+                    if(foto.get(i).getAfter() != null) {
+                        new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                getIntent().getStringExtra("username_room"),
+                                id_rooms_tab, id_task_list,
+                                foto.get(i).getAfter().toString(),
+                                foto.get(i).getId());
+                    } else{
+                        Toast.makeText(getApplicationContext(),"Mohon tambahkan foto update yang terkait masalah tertera!",Toast.LENGTH_SHORT).show();
+                        rdialog.dismiss();
+                    }
                 }
             }
         });

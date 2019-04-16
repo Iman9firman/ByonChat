@@ -153,7 +153,14 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                                         fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
                                     }
 
-                                    Photo fotonya = new Photo(id, title, fotony, null);
+                                    Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
+                                    Photo fotonya = null;
+                                    if (cursorCild.getCount() > 0) {
+                                        java.io.File f = new java.io.File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                                        fotonya = new Photo(id, title, fotony, f);
+                                    }else {
+                                        fotonya = new Photo(id, title, fotony, null);
+                                    }
                                     foto.add(fotonya);
                                 }/*else{
                                     String id = fifth.getString("id");

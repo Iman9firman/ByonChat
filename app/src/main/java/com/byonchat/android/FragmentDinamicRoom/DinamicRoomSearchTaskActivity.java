@@ -180,6 +180,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                                 jsonObject.put("mulai", joo.getString("jadwalMulai"));
                                 jsonObject.put("selesai", joo.getString("jadwalAkhir"));
                                 jsonObject.put("jumlah", joo.getString("jumlah"));
+                                jsonObject.put("keterangan", joo.getString("keterangan"));
 
                                 jsonArray.put(jsonObject);
                             }
@@ -190,6 +191,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
                             Contact contact = messengerHelper.getMyContact();
                             Map<String, String> params = new HashMap<>();
+
                             params.put("jjt_nama", spinner.getSelectedItem().toString().replace(dua.get(spinner.getSelectedItemPosition()) + "-", ""));
                             params.put("jjt", dua.get(spinner.getSelectedItemPosition()));
                             String[] latlongS = lat_long.split(",");
@@ -295,24 +297,21 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                             roomsDB.open();
                             roomsDB.deleteStrings();
                             roomsDB.close();
-                            
+
                             startActivity(intent5);
                             finish();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Terjadi kesalahan pada sistem , Harap ulangi beberapa saat", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Terjadi kesalahan pada sistem , Harap ulangi beberapa saat.", Toast.LENGTH_SHORT).show();
                         }
 
                     } catch (JSONException e) {
-                        Log.w("popps 4e", "here" + e);
-                        Log.w("popps 4o", response);
-                        Toast.makeText(getApplicationContext(), "Terjadi kesalahan pada sistem , Harap ulangi beberapa saat", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Terjadi kesalahan pada sistem , Harap ulangi beberapa saat..", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
                 },
                 error -> {
                     rdialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
-                    Log.w("popps 4", "here" + error);
                 }
         ) {
 
@@ -336,7 +335,6 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
             @Override
             public void retry(VolleyError error) throws VolleyError {
                 rdialog.dismiss();
-                Log.e("HttpClient", "error: " + error.toString());
                 Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
             }
         });

@@ -222,7 +222,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
 
         spinnerArrayKet.add("Sakit");
         spinnerArrayKet.add("Cuti");
-        spinnerArrayKet.add("Alpa");
+        spinnerArrayKet.add("Alfa");
         spinnerArrayKet.add("PKWT");
         spinnerArrayKet.add("OOJ");
         spinnerArrayKet.add("Turnover");
@@ -252,7 +252,6 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
         spinnerSub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.w("gamungkin2", subPekerjaans.get(position).getId());
                 subIdnya = subPekerjaans.get(position).getId();
                 subNamenya = subPekerjaans.get(position).getNamaPekerjaan();
             }
@@ -314,8 +313,6 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
 
 
             JSONObject jsonObject = new JSONObject();
-            Log.w("gamungkin", subIdnya);
-            Log.w("gamungkin", subIdnya);
             try {
                 jsonObject.put("pekerjaan", pekerjaanNamenya);
                 jsonObject.put("subPekerjaa", subNamenya);

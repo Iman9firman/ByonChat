@@ -11613,14 +11613,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             return;
         }
 
-       /* AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(activity, 11);
-        photo.setMediaAction(AnncaConfiguration.MEDIA_ACTION_PHOTO);
-        photo.setMediaQuality(AnncaConfiguration.MEDIA_QUALITY_MEDIUM);
-        photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_REAR);
-        photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
-        new Annca(photo.build()).launchCamera();*/
+        CameraActivity.Builder start = new CameraActivity.Builder(activity, 11);
+        start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+        start.setCameraFace(CameraActivity.CAMERA_REAR);
+        start.setFlashMode(CameraActivity.FLASH_OFF);
+        start.setQuality(CameraActivity.MEDIUM);
+        start.setRatio(CameraActivity.RATIO_4_3);
+        start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
+        new Camera(start.build()).lauchCamera();
 
-        showAttachmentDialogNew(11);
+        // showAttachmentDialogNew(11);
     }
 
 

@@ -114,13 +114,7 @@ public class FragmentStreamingRadio extends Fragment {
         buttonPlay = (Button) sss.findViewById(R.id.buttonPlay);
         progressRadio = (ProgressBar) sss.findViewById(R.id.progressRadio);
 
-        Cursor cursorValue = db.getSingleRoomDetailFormWithFlag("", username, idRoomTab, "value");
-        if (cursorValue.getCount() > 0) {
-            db.deleteRoomsDetailPtabPRoom(idRoomTab, username);
-        }
-
         btnPress();
-
         mswipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

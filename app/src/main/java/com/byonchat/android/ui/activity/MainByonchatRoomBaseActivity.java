@@ -300,7 +300,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     } else if (mFragment instanceof FragmentMyNewsNew) {
                         FragmentMyNewsNew fragment = (FragmentMyNewsNew) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
-                    } else if (mFragment instanceof  ByonchatDefectListFragment) {
+                    } else if (mFragment instanceof ByonchatDefectListFragment) {
                         ByonchatDefectListFragment fragment = ((ByonchatDefectListFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment));
                         fragment.onActionSearch(s.toString());
                     }
@@ -323,7 +323,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     } else if (mFragment instanceof FragmentMyNewsNew) {
                         FragmentMyNewsNew fragment = (FragmentMyNewsNew) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
-                    } else if (mFragment instanceof  ByonchatDefectListFragment) {
+                    } else if (mFragment instanceof ByonchatDefectListFragment) {
                         ByonchatDefectListFragment fragment = ((ByonchatDefectListFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment));
                         fragment.onActionSearch(s.toString());
                     }
@@ -515,7 +515,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     mFragment = FragmentStreamingVideo.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, MainByonchatRoomBaseActivity.this);
                 } else if (category.equalsIgnoreCase("9")) {
                     show = true;
-                    mFragment = new FragmentStreamingRadio();
+                    mFragment = FragmentStreamingRadio.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, MainByonchatRoomBaseActivity.this);
                 } else if (category.equalsIgnoreCase("10")) {
                     show = true;
                     mFragment = FragmentRoomAPI.newInstance(title, url_tembak, username, id_rooms_tab, "0", MainByonchatRoomBaseActivity.this);

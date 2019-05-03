@@ -6,6 +6,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.andremion.counterfab.CounterFab;
 import com.byonchat.android.R;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
@@ -18,6 +19,7 @@ public class MyViewHolder extends AbstractDraggableItemViewHolder implements Vie
     public OnLongItemClickListener longItemClickListener;
     public TextView mTextView;
     public ImageView mImageView;
+    public CounterFab mItemBadge;
 
     public MyViewHolder(View v,
                         OnItemClickListener itemClickListener,
@@ -25,6 +27,7 @@ public class MyViewHolder extends AbstractDraggableItemViewHolder implements Vie
         super(v);
         mTextView = v.findViewById(R.id.title_item_grid);
         mImageView = v.findViewById(R.id.logo_item_grid);
+        mItemBadge = v.findViewById(R.id.fab_menu_autogrid);
 
         this.itemClickListener = itemClickListener;
         this.longItemClickListener = longItemClickListener;

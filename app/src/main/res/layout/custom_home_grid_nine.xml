@@ -59,6 +59,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="top">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginLeft="@dimen/margin5"
+                                    android:layout_marginRight="@dimen/margin5"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.andremion.counterfab.CounterFab
+                                        android:id="@+id/fab_menu_9_1"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        app:backgroundTint="@color/white"
+                                        app:badgeBackgroundColor="@color/accent_500"
+                                        app:badgePosition="RightTop"
+                                        app:badgeTextColor="@color/white"
+                                        app:borderWidth="0dp"
+                                        app:elevation="0dp" />
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -138,6 +163,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="top">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginLeft="@dimen/margin5"
+                                    android:layout_marginRight="@dimen/margin5"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.andremion.counterfab.CounterFab
+                                        android:id="@+id/fab_menu_9_2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        app:backgroundTint="@color/white"
+                                        app:badgeBackgroundColor="@color/accent_500"
+                                        app:badgePosition="RightTop"
+                                        app:badgeTextColor="@color/white"
+                                        app:borderWidth="0dp"
+                                        app:elevation="0dp" />
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -219,6 +269,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="top">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginLeft="@dimen/margin5"
+                                    android:layout_marginRight="@dimen/margin5"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.andremion.counterfab.CounterFab
+                                        android:id="@+id/fab_menu_9_3"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        app:backgroundTint="@color/white"
+                                        app:badgeBackgroundColor="@color/accent_500"
+                                        app:badgePosition="RightTop"
+                                        app:badgeTextColor="@color/white"
+                                        app:borderWidth="0dp"
+                                        app:elevation="0dp" />
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -310,6 +385,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="top">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginLeft="@dimen/margin5"
+                                    android:layout_marginRight="@dimen/margin5"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.andremion.counterfab.CounterFab
+                                        android:id="@+id/fab_menu_9_4"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        app:backgroundTint="@color/white"
+                                        app:badgeBackgroundColor="@color/accent_500"
+                                        app:badgePosition="RightTop"
+                                        app:badgeTextColor="@color/white"
+                                        app:borderWidth="0dp"
+                                        app:elevation="0dp" />
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -390,6 +490,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="top">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginLeft="@dimen/margin5"
+                                    android:layout_marginRight="@dimen/margin5"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.andremion.counterfab.CounterFab
+                                        android:id="@+id/fab_menu_9_5"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        app:backgroundTint="@color/white"
+                                        app:badgeBackgroundColor="@color/accent_500"
+                                        app:badgePosition="RightTop"
+                                        app:badgeTextColor="@color/white"
+                                        app:borderWidth="0dp"
+                                        app:elevation="0dp" />
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -470,6 +595,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="top">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginLeft="@dimen/margin5"
+                                    android:layout_marginRight="@dimen/margin5"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.andremion.counterfab.CounterFab
+                                        android:id="@+id/fab_menu_9_6"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        app:backgroundTint="@color/white"
+                                        app:badgeBackgroundColor="@color/accent_500"
+                                        app:badgePosition="RightTop"
+                                        app:badgeTextColor="@color/white"
+                                        app:borderWidth="0dp"
+                                        app:elevation="0dp" />
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -566,6 +716,31 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_gravity="top">
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="0dp"
+                                        android:layout_marginLeft="@dimen/margin5"
+                                        android:layout_marginRight="@dimen/margin5"
+                                        android:orientation="vertical"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintLeft_toLeftOf="parent"
+                                        app:layout_constraintRight_toRightOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent">
+
+                                        <com.andremion.counterfab.CounterFab
+                                            android:id="@+id/fab_menu_9_7"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_gravity="center"
+                                            android:layout_weight="1"
+                                            android:scaleType="fitCenter"
+                                            app:backgroundTint="@color/white"
+                                            app:badgeBackgroundColor="@color/accent_500"
+                                            app:badgePosition="RightTop"
+                                            app:badgeTextColor="@color/white"
+                                            app:borderWidth="0dp"
+                                            app:elevation="0dp" />
+                                    </LinearLayout>
 
                                     <LinearLayout
                                         android:layout_width="match_parent"
@@ -647,6 +822,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="top">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginLeft="@dimen/margin5"
+                                    android:layout_marginRight="@dimen/margin5"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.andremion.counterfab.CounterFab
+                                        android:id="@+id/fab_menu_9_8"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        app:backgroundTint="@color/white"
+                                        app:badgeBackgroundColor="@color/accent_500"
+                                        app:badgePosition="RightTop"
+                                        app:badgeTextColor="@color/white"
+                                        app:borderWidth="0dp"
+                                        app:elevation="0dp" />
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -728,6 +928,31 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="top">
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:layout_marginLeft="@dimen/margin5"
+                                    android:layout_marginRight="@dimen/margin5"
+                                    android:orientation="vertical"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <com.andremion.counterfab.CounterFab
+                                        android:id="@+id/fab_menu_9_9"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:layout_weight="1"
+                                        android:scaleType="fitCenter"
+                                        app:backgroundTint="@color/white"
+                                        app:badgeBackgroundColor="@color/accent_500"
+                                        app:badgePosition="RightTop"
+                                        app:badgeTextColor="@color/white"
+                                        app:borderWidth="0dp"
+                                        app:elevation="0dp" />
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"

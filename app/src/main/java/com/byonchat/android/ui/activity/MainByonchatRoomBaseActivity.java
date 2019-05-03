@@ -409,7 +409,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     protected void resolveFragment() {
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        Log.w("CEK WV GANDHIP", category + "  -  " + title);
+        Log.w("CEK WV GANDHIP", category + "  -  " + title+" -----   "+id_rooms_tab+" --> "+username);
         if (cur.getCount() > 0) {
             try {
                 if (category.equalsIgnoreCase("1")) {

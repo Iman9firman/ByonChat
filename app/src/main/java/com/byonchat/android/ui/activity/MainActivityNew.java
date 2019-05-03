@@ -340,6 +340,26 @@ public class MainActivityNew extends MainBaseActivityNew {
         vTitleItemGridNineEight = findViewById(R.id.title_item_grid_nine_eight);
         vLogoItemGridNineNine = findViewById(R.id.logo_item_grid_nine_nine);
         vTitleItemGridNineNine = findViewById(R.id.title_item_grid_nine_nine);
+
+        tab_menu_main = findViewById(R.id.fab_menu_mainmain);
+
+        tab_menu_21 = findViewById(R.id.fab_menu_2_1);
+        tab_menu_22 = findViewById(R.id.fab_menu_2_2);
+
+        tab_menu_41 = findViewById(R.id.fab_menu_4_1);
+        tab_menu_42 = findViewById(R.id.fab_menu_4_2);
+        tab_menu_43 = findViewById(R.id.fab_menu_4_3);
+        tab_menu_44 = findViewById(R.id.fab_menu_4_4);
+
+        tab_menu_91 = findViewById(R.id.fab_menu_9_1);
+        tab_menu_92 = findViewById(R.id.fab_menu_9_2);
+        tab_menu_93 = findViewById(R.id.fab_menu_9_3);
+        tab_menu_94 = findViewById(R.id.fab_menu_9_4);
+        tab_menu_95 = findViewById(R.id.fab_menu_9_5);
+        tab_menu_96 = findViewById(R.id.fab_menu_9_6);
+        tab_menu_97 = findViewById(R.id.fab_menu_9_7);
+        tab_menu_98 = findViewById(R.id.fab_menu_9_8);
+        tab_menu_99 = findViewById(R.id.fab_menu_9_9);
     }
 
     @RequiresApi(23)
@@ -411,6 +431,7 @@ public class MainActivityNew extends MainBaseActivityNew {
 
         IntentFilter f = new IntentFilter(
                 MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
+        f.addAction(MessengerConnectionService.ACTION_REFRESH_NOTIF_FORM);
         f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
         f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
         f.setPriority(1);
@@ -513,6 +534,17 @@ public class MainActivityNew extends MainBaseActivityNew {
         resolveListRooms();
         resolveOpenRooms();
         resolveRefreshGrid();
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            vFrameTabOne.setVisibility(View.INVISIBLE);
+            vFrameTabTwo.setVisibility(View.INVISIBLE);
+            vFrameTabFour.setVisibility(View.INVISIBLE);
+            vFrameTabNine.setVisibility(View.INVISIBLE);
+        }else{
+            if(itemList.size() < 9){
+                recyclerView.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     @Override

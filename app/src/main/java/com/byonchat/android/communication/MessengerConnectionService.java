@@ -255,6 +255,8 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             .getName() + ".statusChangedConversation";
     public static final String ACTION_MESSAGE_RECEIVED = MessengerConnectionService.class
             .getName() + ".messageReceived";
+    public static final String ACTION_REFRESH_NOTIF_FORM = MessengerConnectionService.class
+            .getName() + ".refreshNotifForm";
     public static final String ACTION_INVITE_GROUP = MessengerConnectionService.class
             .getName() + ".inviteGroup";
     public static final String ACTION_ADD_CARD = MessengerConnectionService.class
@@ -2466,6 +2468,17 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                         }
 
 
+                    }
+
+                    if(room.length == 5){
+                        databaseHelper.execSql("INSERT INTO tab_menu_badge (id_tab, jid, message) VALUES (?,?,?)",new String[]{room[2],databaseHelper.getMyContact().getJabberId(),room[3]});
+                        vo.setMessage("New task from : "+room[3]);
+
+                        Intent intent = new Intent(ACTION_REFRESH_NOTIF_FORM);
+                        intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                        intent.putExtra(KEY_CONTACT_NAME, name + additionalInfo);
+                        sendOrderedBroadcast(intent, null);
+                        return;
                     }
 
 

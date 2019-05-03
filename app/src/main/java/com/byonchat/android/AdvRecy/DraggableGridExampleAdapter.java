@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -20,9 +21,12 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import com.andremion.counterfab.CounterFab;
 import com.byonchat.android.Manhera.Manhera;
 import com.byonchat.android.R;
 import com.byonchat.android.helpers.Constants;
+import com.byonchat.android.local.Byonchat;
+import com.byonchat.android.provider.Message;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.viewholder.MyViewHolder;
@@ -36,6 +40,9 @@ import com.itextpdf.text.Font;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_BADGE_TAB_MENU;
+import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL;
 
 public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHolder>
         implements DraggableItemAdapter<MyViewHolder>, Filterable {
@@ -110,6 +117,23 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
 
         fonts.FontFamily(context.getAssets(), holder.mTextView, Fonts.FONT_ROBOTO_BOLD);
 
+        addTabMenuBadger(im, holder.mItemBadge);
+    }
+
+    public void addTabMenuBadger(ItemMain itemMain, CounterFab itemBadger) {
+        int badgeCount = 0;
+        Cursor cursor = Byonchat.getMessengerHelper().query(
+                SQL_SELECT_TOTAL_BADGE_TAB_MENU,
+                new String[]{String.valueOf(itemMain.id_rooms_tab)});
+        int indexTotal = cursor.getColumnIndex("total");
+        while (cursor.moveToNext()) {
+            badgeCount = cursor.getInt(indexTotal);
+        }
+        cursor.close();
+
+//        Byonchat.getMessengerHelper().execSql("INSERT INTO tab_menu_badge (id_tab, jid, message) VALUES (?,?,?)",new String[]{2392+"","6282146951000","Makan Bos"});
+
+        itemBadger.setCount(badgeCount);
     }
 
     public void setItems(List<ItemMain> items, List<String> positionList) {

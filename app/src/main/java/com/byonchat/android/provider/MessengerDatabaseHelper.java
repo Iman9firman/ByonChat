@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MessengerDatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "messenger.db";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     private static MessengerDatabaseHelper instance;
     private Context context;
@@ -166,6 +166,10 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
         getDatabase().execSQL(
                 context.getString(R.string.sql_insert_configuration),
                 new String[]{Configuration.LAST_CONTACT_REFRESHED, "0"});
+
+        //Tab Menu Badger
+        getDatabase()
+                .execSQL("CREATE TABLE IF NOT EXISTS tab_menu_badge(_id INTEGER PRIMARY KEY AUTOINCREMENT, id_tab TEXT, jid TEXT, message TEXT)");
     }
 
     /*
@@ -178,7 +182,9 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < newVersion) {
-            db.execSQL(context.getString(R.string.sql_altertable_contact));
+//            db.execSQL(context.getString(R.string.sql_altertable_contact));
+            db.execSQL("DROP TABLE IF EXISTS tab_menu_badge" );
+            onCreate(db);
         }
     }
 

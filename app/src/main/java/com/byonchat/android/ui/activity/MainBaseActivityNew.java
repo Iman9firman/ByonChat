@@ -170,6 +170,7 @@ import jp.wasabeef.blurry.Blurry;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 //import me.leolin.shortcutbadger.ShortcutBadger;
 
+import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_BADGE_TAB_MENU;
 import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL;
 import static com.byonchat.android.helpers.Constants.URL_LAPOR_SELECTED;
 
@@ -208,6 +209,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
     @NonNull
     CounterFab fab_menu_1, fab_menu_2/*, fab_menu_3*/;
+
+    @NonNull
+    CounterFab tab_menu_main, tab_menu_21, tab_menu_22, tab_menu_41, tab_menu_42, tab_menu_43, tab_menu_44, tab_menu_91,
+            tab_menu_92, tab_menu_93, tab_menu_94, tab_menu_95, tab_menu_96, tab_menu_97, tab_menu_98, tab_menu_99;
 
     @NonNull
     protected CardView card_search_main;
@@ -1566,6 +1571,20 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             bv1.show();*/
     }
 
+    public void addTabMenuBadger(ItemMain itemMain, CounterFab itemBadger) {
+        int badgeCount = 0;
+        Cursor cursor = Byonchat.getMessengerHelper().query(
+                SQL_SELECT_TOTAL_BADGE_TAB_MENU,
+                new String[]{String.valueOf(itemMain.id_rooms_tab)});
+        int indexTotal = cursor.getColumnIndex("total");
+        while (cursor.moveToNext()) {
+            badgeCount = cursor.getInt(indexTotal);
+        }
+        cursor.close();
+
+        itemBadger.setCount(badgeCount);
+    }
+
     class BroadcastHandler extends BroadcastReceiver {
 
         @Override
@@ -1573,6 +1592,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             if (MessengerConnectionService.ACTION_MESSAGE_RECEIVED
                     .equals(intent.getAction())) {
                 addShortcutBadger(context);
+            } else if (MessengerConnectionService.ACTION_REFRESH_NOTIF_FORM
+                    .equals(intent.getAction())) {
+                onHomeRefresh();
             } else if (ACTION_REFRESH_BADGER.equals(intent.getAction())) {
                 addShortcutBadger(context);
             } else if (ACTION_REFRESH_NOTIF.equals(intent.getAction())) {
@@ -2141,6 +2163,14 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         resolveOpenRooms();
         resolveRefreshGrid();
         resolveShowRecyclerView();
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            recyclerView.setVisibility(View.VISIBLE);
+            vFrameTabOne.setVisibility(View.INVISIBLE);
+            vFrameTabTwo.setVisibility(View.INVISIBLE);
+            vFrameTabFour.setVisibility(View.INVISIBLE);
+            vFrameTabNine.setVisibility(View.INVISIBLE);
+        }
     }
 
     protected void resolveOneGrid(List<ItemMain> itemList) {
@@ -2160,6 +2190,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(0));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_main);
     }
 
     protected void resolveTwoGridOne(List<ItemMain> itemList, int position) {
@@ -2179,6 +2211,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_21);
     }
 
     protected void resolveTwoGridTwo(List<ItemMain> itemList, int position) {
@@ -2198,6 +2232,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_22);
     }
 
     protected void resolveFourGridOne(List<ItemMain> itemList, int position) {
@@ -2217,6 +2253,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_41);
     }
 
     protected void resolveFourGridTwo(List<ItemMain> itemList, int position) {
@@ -2236,6 +2274,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_42);
     }
 
     protected void resolveFourGridThree(List<ItemMain> itemList, int position) {
@@ -2255,6 +2295,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_43);
     }
 
     protected void resolveFourGridFour(List<ItemMain> itemList, int position) {
@@ -2274,6 +2316,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_44);
     }
 
     protected void resolveNineGridOne(List<ItemMain> itemList, int position) {
@@ -2295,6 +2339,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_91);
     }
 
     protected void resolveNineGridTwo(List<ItemMain> itemList, int position) {
@@ -2316,6 +2362,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_92);
     }
 
     protected void resolveNineGridThree(List<ItemMain> itemList, int position) {
@@ -2337,6 +2385,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_93);
     }
 
     protected void resolveNineGridFour(List<ItemMain> itemList, int position) {
@@ -2358,6 +2408,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_94);
     }
 
     protected void resolveNineGridFive(List<ItemMain> itemList, int position) {
@@ -2379,6 +2431,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_95);
     }
 
     protected void resolveNineGridSix(List<ItemMain> itemList, int position) {
@@ -2400,6 +2454,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_96);
     }
 
     protected void resolveNineGridSeven(List<ItemMain> itemList, int position) {
@@ -2421,6 +2477,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_97);
     }
 
     protected void resolveNineGridEight(List<ItemMain> itemList, int position) {
@@ -2442,6 +2500,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_98);
     }
 
     protected void resolveNineGridNine(List<ItemMain> itemList, int position) {
@@ -2463,6 +2523,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         });
+
+        addTabMenuBadger( im, tab_menu_99);
     }
 
     protected void resolveServices() {

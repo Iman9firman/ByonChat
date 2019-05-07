@@ -274,7 +274,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
     protected void resolveListFile() {
 
 
-        mAdapter = new PustReportRepairAdapter(getApplication(),id_task,
+        mAdapter = new PustReportRepairAdapter(this,id_task,
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override

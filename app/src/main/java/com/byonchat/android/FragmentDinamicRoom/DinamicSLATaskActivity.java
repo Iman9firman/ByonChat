@@ -2086,9 +2086,11 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         for (int twoL = 0; twoL < level2Array.length(); twoL++) {
                                             JSONObject objectTwo = level2Array.getJSONObject(twoL);
                                             String id2 = objectTwo.getString("id");
+                                            String lb2 = objectTwo.getString("label");
                                             JSONArray level3Array = objectTwo.getJSONArray("data");
                                             Double bbt2 = bbt / level3Array.length();
 
+                                            Log.w("Enak looonoa efc",objectTwo+"");
 
                                             JSONObject detailing2 = new JSONObject();
                                             detailing2.put("id", id2);
@@ -2107,8 +2109,10 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                 for (int fourL = 0; fourL < level4Array.length(); fourL++) {
                                                     JSONObject objectFour = level4Array.getJSONObject(fourL);
                                                     String id4 = objectFour.getString("id");
+                                                    String lb4 = objectFour.getString("label");
                                                     JSONObject detailing = new JSONObject();
                                                     detailing.put("id", id4);
+                                                    detailing.put("label", lb2+" - "+lb4);
                                                     detailing.put("bt", bbt3);
                                                     data3.put(detailing);
                                                 }
@@ -8562,6 +8566,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                                     for (int fourL = 0; fourL < data3.length(); fourL++) {
                                                                         String id4 = data3.getJSONObject(fourL).getString("id");
+                                                                        String lb4 = data3.getJSONObject(fourL).getString("label");
                                                                         String bt4 = data3.getJSONObject(fourL).getString("bt");
 
                                                                         String idCheck = idDetail + "-" + id + "-" + id2 + "-" + id3 + "-" + id4;
@@ -8577,7 +8582,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                                         if (!isExist) {
                                                                             berhenti = true;
-                                                                            errorReq.add("Harap di pilih : " + id4);
+                                                                            errorReq.add("*"+lb4);
                                                                         } else {
 
                                                                             Cursor cursorD = dbSLAA.query(TABLE_NAME,

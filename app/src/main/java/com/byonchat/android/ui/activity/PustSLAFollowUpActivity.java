@@ -5,11 +5,15 @@ public class PustSLAFollowUpActivity {
 package com.byonchat.android.ui.activity;
 
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -29,8 +33,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -46,6 +52,7 @@ import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.provider.SLANoteDB;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
@@ -86,6 +93,8 @@ import java.util.Map;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
+import static com.byonchat.android.provider.SLANoteDB.TABLE_NAME;
+
 public class PustSLAFollowUpActivity extends AppCompatActivity {
     String task_id, id_task, id_task_list, id_rooms_tab;
     String name_title;
@@ -102,18 +111,19 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
     Integer totalUpload = 0;
     BotListDB db;
     private String basejson;
+    SLANoteDB NoteDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
-//layout_push_reportrepair_activity
 
         db = BotListDB.getInstance(getApplicationContext());
         vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
         basejson = getIntent().getStringExtra("data");
+        NoteDB = new SLANoteDB(getApplicationContext());
 
         resolveData();
         resolveListFile();
@@ -132,8 +142,9 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
                 JSONArray pembobotan = first.getJSONArray("pembobotan");
-                for (int ii = 0; ii < pembobotan.length(); ii++) {
-                    JSONObject second = pembobotan.getJSONObject(ii);
+//                for (int ii = 0; ii < pembobotan.length(); ii++) {
+                    Log.w("pbbtan datanya jumlah",pembobotan.length()+"");
+                    JSONObject second = pembobotan.getJSONObject(0);
                     JSONArray section = second.getJSONArray("section");
                     for (int iii = 0; iii < section.length(); iii++) {
                         JSONObject third = section.getJSONObject(iii);
@@ -179,7 +190,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             }
                         }
                     }
-                }
+//                }
             }
         } catch (JSONException e) {
 
@@ -317,7 +328,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
     protected void resolveListFile() {
 
 
-        mAdapter = new PustReportRepairAdapter(getApplication(),id_task,
+        mAdapter = new PustReportRepairAdapter(this,id_task,
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
@@ -331,7 +342,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         }
                     }
                     startActivity(intent);
-                }else {
+                }else if(type.equalsIgnoreCase("after")){
                     task_id = position + "";
                     CameraActivity.Builder start = new CameraActivity.Builder(PustSLAFollowUpActivity.this, REQ_CAMERA);
                     start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
@@ -365,6 +376,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+                Log.w("segituStart","bye");
             }
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
@@ -375,6 +387,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 rdialog.show();
 
                 for (int i = 0; i < foto.size();i++) {
+                    Log.w("segituStart","awal  -->  "+foto.get(i).getAfter());
                     if(foto.get(i).getAfter() != null) {
                         new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
                                 getIntent().getStringExtra("username_room"),
@@ -481,6 +494,9 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                                     if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                                         Log.w("ujug2 nambah", id);
                                         fifth.put("a", uploadfoto.get(vi).getAfterString());
+                                        if(checkDB(id)){
+                                            fifth.put("ket",getTheDB(id));
+                                        }
                                     }
                                 }
 
@@ -499,6 +515,34 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         return stringdong;
     }
 
+    private boolean checkDB(String id) {
+        boolean isExist = false;
+
+        SQLiteDatabase db = NoteDB.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME
+                + " WHERE id_detail =?", new String[]{String.valueOf(id)});
+        while (cursor.moveToNext()) {
+            isExist = true;
+        }
+        cursor.close();
+        return isExist;
+    }
+
+    private String getTheDB(String id) {
+        String isExist = "";
+
+        SQLiteDatabase db = NoteDB.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME
+                + " WHERE id_detail =?", new String[]{String.valueOf(id)});
+        while (cursor.moveToNext()) {
+                isExist = cursor.getString(cursor.getColumnIndex("comment"));
+        }
+        cursor.close();
+        return isExist;
+    }
+
     private class UploadFileToServerCild extends AsyncTask<String, Integer, String> {
         long totalSize = 0;
         String ii;
@@ -507,6 +551,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            Log.w("segituStart","de");
         }
 
         @Override

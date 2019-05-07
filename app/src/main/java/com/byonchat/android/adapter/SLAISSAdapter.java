@@ -226,7 +226,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
                 public void onClick(View v) {
 
                     if (checkDB(textId.getText().toString())) {
-                        if (getImgeB(mHolder.textId.getText().toString()) != null) {
+                        if (getImgeB(textId.getText().toString()) != null) {
                             Intent intent = new Intent(mActivity, ZoomImageViewActivity.class);
                             intent.putExtra(ZoomImageViewActivity.KEY_FILE, "file:////" + getImgeB(textId.getText().toString()));
                             mActivity.startActivity(intent);

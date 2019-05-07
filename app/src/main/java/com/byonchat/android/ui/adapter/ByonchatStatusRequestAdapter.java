@@ -61,7 +61,6 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
     boolean downloaded = false;
     int num_loc = 0;
 
-    /*protected OnItemClickListener itemClickListener;*/
     protected OnLongItemClickListener longItemClickListener;
 
     public ByonchatStatusRequestAdapter(Context context,
@@ -135,14 +134,13 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                         "Controlled Copy";
             }
 
-            Log.w("Tinggi banget hretut" , downol);
-
             String finalDownol = downol;
             ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.w("Parking lt prestice 1st",item.id_history);
-                    if(downloaded){
+                    Log.w("Parking lt prestice 1st",item.id_history +" --> "+downloaded/*+"  -->  "+dwn*/);
+//                    if(downloaded){
+                    if(((ByonchatStatusViewHolder) viewHolder).vTextDownload.getText().toString().equalsIgnoreCase("VIEW")){
                         File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "ByonChatDoc");
                         File oldFile = new File(oldFolder, "ISS_request_"+item.id_request+".pdf");
 
@@ -163,9 +161,7 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                         File oldFile = new File(oldFolder, "request_"+item.id_request+".pdf");
                         if(oldFile.exists()){
                             oldFile.delete();
-                            Log.w("ada file nya azxasx","dws");
                         }
-                        Log.w("uihfewuig azxasx","faewg");
                         Intent intent = new Intent(context, DownloadFileByonchat.class);
                         intent.putExtra("path", item.url);
                         intent.putExtra("nama_file", "request_" + item.id_request);
@@ -438,10 +434,6 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
             });*/
         }
     }
-
-    /*public void setOnItemClickListener(OnItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }*/
 
     public void setOnLongItemClickListener(OnLongItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;

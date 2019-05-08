@@ -386,17 +386,24 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 rdialog.setMessage("Loading...");
                 rdialog.show();
 
-                for (int i = 0; i < foto.size();i++) {
-                    Log.w("segituStart","awal  -->  "+foto.get(i).getAfter());
-                    if(foto.get(i).getAfter() != null) {
-                        new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
-                                getIntent().getStringExtra("username_room"),
-                                id_rooms_tab, id_task_list,
-                                foto.get(i).getAfter().toString(),
-                                foto.get(i).getId());
-                    } else{
-                        Toast.makeText(getApplicationContext(),"Mohon tambahkan foto update yang terkait masalah tertera!",Toast.LENGTH_SHORT).show();
-                        rdialog.dismiss();
+                Log.w("ujuga ujuga ujuga",foto.size()+"");
+
+                if(foto.size() == 0){
+                    new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_sla.php",
+                            getIntent().getStringExtra("username_room"),getIntent().getStringExtra("bc_user"),
+                            getIntent().getStringExtra("id_rooms_tab"));
+                }else {
+                    for (int i = 0; i < foto.size(); i++) {
+                        if (foto.get(i).getAfter() != null) {
+                            new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                    getIntent().getStringExtra("username_room"),
+                                    id_rooms_tab, id_task_list,
+                                    foto.get(i).getAfter().toString(),
+                                    foto.get(i).getId());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Mohon tambahkan foto update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
+                            rdialog.dismiss();
+                        }
                     }
                 }
             }

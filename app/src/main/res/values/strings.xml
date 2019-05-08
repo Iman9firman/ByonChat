@@ -1,7 +1,7 @@
 <resources>
     <string name="hallo">hallo</string>
     <string name="app_name">ISS Connect</string>
-    <string name="app_version">2.6.2.1</string>
+    <string name="app_version">2.6.3</string>
     <string name="app_company">iss</string>
     <string name="action_settings">Settings</string>
     <string name="str_delete">Delete</string>

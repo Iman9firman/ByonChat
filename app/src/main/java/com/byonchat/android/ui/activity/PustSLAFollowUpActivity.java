@@ -386,17 +386,24 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 rdialog.setMessage("Loading...");
                 rdialog.show();
 
-                for (int i = 0; i < foto.size();i++) {
-                    Log.w("segituStart","awal  -->  "+foto.get(i).getAfter());
-                    if(foto.get(i).getAfter() != null) {
-                        new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
-                                getIntent().getStringExtra("username_room"),
-                                id_rooms_tab, id_task_list,
-                                foto.get(i).getAfter().toString(),
-                                foto.get(i).getId());
-                    } else{
-                        Toast.makeText(getApplicationContext(),"Mohon tambahkan foto update yang terkait masalah tertera!",Toast.LENGTH_SHORT).show();
-                        rdialog.dismiss();
+                Log.w("ujuga ujuga ujuga",foto.size()+"");
+
+                if(foto.size() == 0){
+                    new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_sla.php",
+                            getIntent().getStringExtra("username_room"),getIntent().getStringExtra("bc_user"),
+                            getIntent().getStringExtra("id_rooms_tab"));
+                }else {
+                    for (int i = 0; i < foto.size(); i++) {
+                        if (foto.get(i).getAfter() != null) {
+                            new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                    getIntent().getStringExtra("username_room"),
+                                    id_rooms_tab, id_task_list,
+                                    foto.get(i).getAfter().toString(),
+                                    foto.get(i).getId());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Mohon tambahkan foto update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
+                            rdialog.dismiss();
+                        }
                     }
                 }
             }
@@ -515,6 +522,47 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         return stringdong;
     }
 
+    private void deleteNote(){
+        try {
+            JSONObject gvcs = new JSONObject(fileJson());
+            JSONArray jar = gvcs.getJSONArray("value_detail");
+            for (int i = 0; i < jar.length(); i++) {
+                JSONObject first = jar.getJSONObject(i);
+                JSONArray pembobotan = first.getJSONArray("pembobotan");
+                for (int ii = 0; ii < pembobotan.length(); ii++) {
+                    JSONObject second = pembobotan.getJSONObject(ii);
+                    JSONArray section = second.getJSONArray("section");
+                    for (int iii = 0; iii < section.length(); iii++) {
+                        JSONObject third = section.getJSONObject(iii);
+                        JSONArray subsection = third.getJSONArray("subsection");
+                        for (int iv = 0; iv < subsection.length(); iv++) {
+                            JSONObject fourth = subsection.getJSONObject(iv);
+                            JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
+                            for (int v = 0; v < pertanyaan.length(); v++) {
+                                JSONObject fifth = pertanyaan.getJSONObject(v);
+                                String id = fifth.getString("id");
+                                for (int vi = 0; vi < uploadfoto.size();vi++) {
+                                    if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
+                                        Log.w("ujug2 nambah", id);
+                                        fifth.put("a", uploadfoto.get(vi).getAfterString());
+                                        if(checkDB(id)){
+                                            deleteFromDB(id);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (JSONException e) {
+            Log.w("ujug ujug error", e.getMessage());
+        }
+
+    }
+
     private boolean checkDB(String id) {
         boolean isExist = false;
 
@@ -541,6 +589,16 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         }
         cursor.close();
         return isExist;
+    }
+
+    private void deleteFromDB(String id) {
+
+        SQLiteDatabase db = NoteDB.getWritableDatabase();
+
+        db.execSQL("DELETE FROM " + TABLE_NAME
+                + " WHERE id_detail =?", new String[]{String.valueOf(id)});
+
+        db.close();
     }
 
     private class UploadFileToServerCild extends AsyncTask<String, Integer, String> {
@@ -756,6 +814,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            deleteNote();
             Toast.makeText(getApplicationContext(),"Success Uploading Report",Toast.LENGTH_LONG).show();
             rdialog.dismiss();
             finish();

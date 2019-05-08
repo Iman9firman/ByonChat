@@ -380,7 +380,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                             aa = FragmentRoomMultipleTask.newInstance(title, jsonRootObject.getString("pull"), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, include_latlong, ByonChatMainRoomActivity.this, "showMultiple");
                             valSetOne.add("showMultiple");
                             map.put(i, valSetOne);
-                        } else if (include_pull.equalsIgnoreCase("7")){
+                        } else if (include_pull.equalsIgnoreCase("7")) {
                             JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                             List<String> valSetOne = new ArrayList<String>();
                             valSetOne.add(title);
@@ -389,9 +389,9 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                             valSetOne.add(color);
                             valSetOne.add(include_latlong);
                             show = true;
-                            aa = TempScheduleRoom.newInstance(title,jsonRootObject.getString("pull"),username,jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(),color,include_latlong,ByonChatMainRoomActivity.this,"showMultiple");
+                            aa = TempScheduleRoom.newInstance(title, jsonRootObject.getString("pull"), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, include_latlong, ByonChatMainRoomActivity.this, "showMultiple");
                             valSetOne.add("hideMultiple");
-                            map.put(i,valSetOne);
+                            map.put(i, valSetOne);
 
                         }
                     } else if (category.equalsIgnoreCase("5")) {
@@ -453,7 +453,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                         map.put(i, null);
                         show = true;
                         aa = FragmentProductCatalog.newInstance(messengerHelper.getMyContact().getJabberId(), title, jsonArray.getJSONObject(i).getString("url_tembak").toString(), username, jsonArray.getJSONObject(i).getString("id_rooms_tab").toString(), color, false, ByonChatMainRoomActivity.this);
-                    }else if (category.equalsIgnoreCase("17")) {
+                    } else if (category.equalsIgnoreCase("17")) {
                         //TIME=WATCH
                         map.put(i, null);
                         show = true;
@@ -688,13 +688,7 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                     ii.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                     if (targetURL != null) {
                         ii.putExtra(ConversationActivity.KEY_TITLE, targetURL);
-                        Log.w("lahan", "1");
-
-                    } else {
-                        Log.w("lahan", "2");
-
                     }
-
                     ii.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(ii);
                 } else {

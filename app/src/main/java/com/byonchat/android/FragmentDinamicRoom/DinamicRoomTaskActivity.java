@@ -1772,14 +1772,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         }
                                     }
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
-                                    if (cEdit.getCount() > 0)
-
-                                    {
+                                    if (cEdit.getCount() > 0) {
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
-                                    } else
-
-                                    {
+                                    } else {
                                         if (String.valueOf(spinnerArray.get(myPosition)).length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArray.get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
@@ -5779,7 +5775,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
                                                     linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1, counts - 1);
 
-                                                    String mera = finalColumnNames[0] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'";
+                                                    String mera = "upper(" + finalColumnNames[0] + ")" + "= " + "upper('" + spinner.getSelectedItem().toString().replace("'", "''") + "')";
                                                     String next = whereDone != null ? " and " + whereDone : "";
                                                     if (mera.equalsIgnoreCase("")) {
                                                         next = whereDone != null ? whereDone : "";
@@ -7779,9 +7775,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
                         }
 
-                        if (!linkGetAsignTo.equalsIgnoreCase(""))
-
-                        {
+                        if (!linkGetAsignTo.equalsIgnoreCase("")) {
                             if (linearLayout.getChildAt(linearLayout.getChildCount() - 2).getVisibility() == View.VISIBLE) {
                                 Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "assignTo", "");
                                 if (cursorCild.getCount() == 0) {
@@ -7803,9 +7797,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
 
-                        if (includeStatus)
-
-                        {
+                        if (includeStatus) {
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "includeStatus", "");
                             if (cEdit.getCount() == 0) {
                                 b.setEnabled(true);
@@ -7825,9 +7817,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
 
-                        if (berhenti)
-
-                        {
+                        if (berhenti) {
                             b.setEnabled(true);
                             if (errorReq.size() > 0) {
                                 final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
@@ -7846,9 +7836,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 alertbox.show();
                             }
                             return;
-                        } else
-
-                        {
+                        } else {
                             int nom = 0;
                             for (ArrayList<String> innerList : stringAPI) {
                                 String param = "";
@@ -7923,9 +7911,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         }
 
 
-                        if (latLong.equalsIgnoreCase("1"))
-
-                        {
+                        if (latLong.equalsIgnoreCase("1")) {
                             gps = new GPSTracker(DinamicRoomTaskActivity.this);
                             if (!gps.canGetLocation()) {
                                 startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), REQ_LOCATION_SETTING);
@@ -7969,17 +7955,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         if (NetworkInternetConnectionStatus.getInstance(context).
 
-                                isOnline(context))
-
-                        {
+                                isOnline(context)) {
                             long date = System.currentTimeMillis();
                             String dateString = hourFormat.format(date);
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
                             db.updateDetailRoomWithFlagContentParent(orderModel);
                             uploadFileChild("pertama");
-                        } else
-
-                        {
+                        } else {
                             long date = System.currentTimeMillis();
                             String dateString = hourFormat.format(date);
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "3", null, "parent");
@@ -7991,9 +7973,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 });
             }
 
-        } else
-
-        {
+        } else {
             if (username != null) {
                 if (fromList.equalsIgnoreCase("hide")) {
                     new Refresh(DinamicRoomTaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
@@ -8021,9 +8001,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         if (
 
-                getCurrentFocus() != null)
-
-        {
+                getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
@@ -8477,7 +8455,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             final Integer asIs = from + 1;
             if (asIs < coloum.length) {
                 String titlle = jsonValue[asIs];
-                final Cursor c = mDB.getWritableDatabase().query(true, table, new String[]{coloum[asIs]}, where, null, coloum[asIs], null, null, null);
+                final Cursor c = mDB.getWritableDatabase().query(true, table, new String[]{"upper(" + coloum[asIs] + ")"}, where, null, "upper(" + coloum[asIs] + ")", null, null, null);
                 final ArrayList<String> spinnerArray = new ArrayList<String>();
 
                 if (coloum.length - 1 != asIs) {
@@ -8565,7 +8543,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         final int count = view.getChildCount();
                         view.removeViews(asIs + 1, count - (asIs + 1));
                         if (!spinner.getSelectedItem().toString().equals("--Please Select--")) {
-                            addSpinnerDinamics(jsonValue, namedb, view, table, coloum, asIs, where + " and " + coloum[asIs] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'", idListTask, type, finalI24, name);
+                            addSpinnerDinamics(jsonValue, namedb, view, table, coloum, asIs, where + " and upper(" + coloum[asIs] + ") = upper('" + spinner.getSelectedItem().toString().replace("'", "''") + "')", idListTask, type, finalI24, name);
 
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                             if (cEdit.getCount() > 0) {

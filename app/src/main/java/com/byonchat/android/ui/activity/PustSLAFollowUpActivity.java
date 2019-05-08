@@ -142,9 +142,9 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
                 JSONArray pembobotan = first.getJSONArray("pembobotan");
-//                for (int ii = 0; ii < pembobotan.length(); ii++) {
+                for (int ii = 0; ii < pembobotan.length(); ii++) {
                     Log.w("pbbtan datanya jumlah",pembobotan.length()+"");
-                    JSONObject second = pembobotan.getJSONObject(0);
+                    JSONObject second = pembobotan.getJSONObject(ii);
                     JSONArray section = second.getJSONArray("section");
                     for (int iii = 0; iii < section.length(); iii++) {
                         JSONObject third = section.getJSONObject(iii);
@@ -190,7 +190,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             }
                         }
                     }
-//                }
+                }
             }
         } catch (JSONException e) {
 

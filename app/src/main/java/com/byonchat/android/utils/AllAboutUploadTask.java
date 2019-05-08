@@ -673,11 +673,11 @@ public class AllAboutUploadTask {
 
                         try {
                             JSONArray jsonArray = new JSONArray(cc);
-                            JSONObject section = new JSONObject();
 
                             JSONArray pembobotanArray = new JSONArray();
 
                             for (int oneL = 0; oneL < jsonArray.length(); oneL++) {
+                                JSONObject section = new JSONObject();
                                 String id = jsonArray.getJSONObject(oneL).getString("id");
                                 JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
 

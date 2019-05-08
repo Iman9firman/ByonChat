@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -42,6 +43,7 @@ import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.provider.SLANoteDB;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
@@ -82,6 +84,8 @@ import java.util.Map;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
+import static com.byonchat.android.provider.SLANoteDB.TABLE_NAME;
+
 public class PushRepairReportActivity extends AppCompatActivity {
     String task_id, id_task, id_task_list, id_rooms_tab;
     String name_title;
@@ -97,6 +101,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
 //    ArrayList<String> prosesUpload = new ArrayList<>();
     Integer totalUpload = 0;
     BotListDB db;
+    SLANoteDB NoteDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +113,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
         vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
+        NoteDB = new SLANoteDB(getApplicationContext());
 
         resolveData();
         resolveListFile();
@@ -117,6 +123,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
     protected void resolveData() {
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
+            Log.w("Datanya hitaru ama",gvcs+"");
             id_task = gvcs.getString("task_id");
             id_task_list = gvcs.getString("id_list_task");
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
@@ -398,6 +405,12 @@ public class PushRepairReportActivity extends AppCompatActivity {
                     jsonObject2.put("key","after");
                     jsonObject2.put("foto",uploadfoto.get(i).getAfterString());
 
+                    if (uploadfoto.get(i).getId().equalsIgnoreCase(uploadfoto.get(i).getId())) {
+                        if(checkDB(uploadfoto.get(i).getId())){
+                            jsonObject2.put("ket",getTheDB(uploadfoto.get(i).getId()));
+                        }
+                    }
+
                     jsonArray.put(jsonObject1);
                     jsonArray.put(jsonObject2);
 
@@ -413,6 +426,44 @@ public class PushRepairReportActivity extends AppCompatActivity {
         }
 
         return stringdong;
+    }
+
+    private boolean checkDB(String id) {
+        boolean isExist = false;
+
+        SQLiteDatabase db = NoteDB.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME
+                + " WHERE id_detail =?", new String[]{String.valueOf(id)});
+        while (cursor.moveToNext()) {
+            isExist = true;
+        }
+        cursor.close();
+        return isExist;
+    }
+
+    private String getTheDB(String id) {
+        String isExist = "";
+
+        SQLiteDatabase db = NoteDB.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME
+                + " WHERE id_detail =?", new String[]{String.valueOf(id)});
+        while (cursor.moveToNext()) {
+            isExist = cursor.getString(cursor.getColumnIndex("comment"));
+        }
+        cursor.close();
+        return isExist;
+    }
+
+    private void deleteFromDB(String id) {
+
+        SQLiteDatabase db = NoteDB.getWritableDatabase();
+
+        db.execSQL("DELETE FROM " + TABLE_NAME
+                + " WHERE id_detail =?", new String[]{String.valueOf(id)});
+
+        db.close();
     }
 
     private class UploadFileToServerCild extends AsyncTask<String, Integer, String> {
@@ -623,6 +674,14 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            for (int i = 0; i < uploadfoto.size();i++) {
+                if (uploadfoto.get(i).getId().equalsIgnoreCase(uploadfoto.get(i).getId())) {
+                    if(checkDB(uploadfoto.get(i).getId())){
+                        deleteFromDB(uploadfoto.get(i).getId());
+                    }
+                }
+            }
+
             Toast.makeText(getApplicationContext(),"Success Uploading Report",Toast.LENGTH_LONG).show();
             rdialog.dismiss();
             finish();

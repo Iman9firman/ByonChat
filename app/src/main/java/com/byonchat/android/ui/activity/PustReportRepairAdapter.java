@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,6 +96,9 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             }
         }
         holder.keterangan.setText(foto.getTitle());
+        if(checkDB(foto.getId())){
+            holder.note.setText(getTheDB(foto.getId()));
+        }
         holder.after.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,6 +156,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
 
 
     public void insertDB(String id, String comment) {
+        Log.w("Ngisi databez",id+"  -->  "+comment);
         SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -164,6 +169,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
     }
 
     public void updateDB(String id, String comment) {
+        Log.w("Ngapdete databez",id+"  -->  "+comment);
         SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -186,6 +192,21 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             isExist = true;
         }
         cursor.close();
+        return isExist;
+    }
+
+    private String getTheDB(String id) {
+        String isExist = "";
+
+        SQLiteDatabase db = database.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME
+                + " WHERE id_detail =?", new String[]{String.valueOf(id)});
+        while (cursor.moveToNext()) {
+            isExist = cursor.getString(cursor.getColumnIndex("comment"));
+        }
+        cursor.close();
+        Log.w("Ngambil databez",id+"  -->  "+isExist);
         return isExist;
     }
 

@@ -797,8 +797,8 @@ public class AllAboutUploadTask {
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 200) {
                     if (gpxfile.exists()) {
-                        Toast.makeText(context,"Boleh kartun 0",Toast.LENGTH_SHORT).show();
-//                        gpxfile.delete();
+                     //   Toast.makeText(context,"Boleh kartun 0",Toast.LENGTH_SHORT).show();
+                        gpxfile.delete();
                     }
 
                     final String data = EntityUtils.toString(r_entity);
@@ -829,8 +829,8 @@ public class AllAboutUploadTask {
                     }
                 } else {
                     if (gpxfile.exists()) {
-                        Toast.makeText(context,"Boleh kartun 1",Toast.LENGTH_SHORT).show();
-//                        gpxfile.delete();
+                     //   Toast.makeText(context,"Boleh kartun 1",Toast.LENGTH_SHORT).show();
+                      gpxfile.delete();
                     }
                     long date = System.currentTimeMillis();
                     String dateString = hourFormat.format(date);
@@ -844,8 +844,8 @@ public class AllAboutUploadTask {
 
             } catch (ClientProtocolException e) {
                 if (gpxfile.exists()) {
-                    Toast.makeText(context,"Boleh kartun 2",Toast.LENGTH_SHORT).show();
-//                    gpxfile.delete();
+                 //   Toast.makeText(context,"Boleh kartun 2",Toast.LENGTH_SHORT).show();
+                   gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
                 String dateString = hourFormat.format(date);
@@ -856,8 +856,8 @@ public class AllAboutUploadTask {
 
             } catch (IOException e) {
                 if (gpxfile.exists()) {
-                    Toast.makeText(context,"Boleh kartun 3",Toast.LENGTH_SHORT).show();
-//                    gpxfile.delete();
+                   // Toast.makeText(context,"Boleh kartun 3",Toast.LENGTH_SHORT).show();
+                   gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
                 String dateString = hourFormat.format(date);

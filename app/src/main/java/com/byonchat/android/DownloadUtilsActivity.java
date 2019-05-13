@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -63,34 +64,36 @@ public class DownloadUtilsActivity extends AppCompatActivity {
                 InputStream content = null;
                 try {
                     HttpResponse execute = client.execute(httpGet);
-                    if (execute.getStatusLine().getStatusCode() != 200) { return null; }
+                    if (execute.getStatusLine().getStatusCode() != 200) {
+                        return null;
+                    }
                     content = execute.getEntity().getContent();
                     long downloadSize = execute.getEntity().getContentLength();
-                    FileOutputStream fos = new FileOutputStream(DatabaseKodePos.getDatabaseFolder()+"daftarkodepos"+".sqlite");
+                    FileOutputStream fos = new FileOutputStream(DatabaseKodePos.getDatabaseFolder() + "daftarkodepos" + ".sqlite");
                     byte[] buffer = new byte[256];
                     int read;
                     long downloadedAlready = 0;
                     while ((read = content.read(buffer)) != -1) {
                         fos.write(buffer, 0, read);
                         downloadedAlready += read;
-                        publishProgress((int) (downloadedAlready*100/downloadSize));
+                        publishProgress((int) (downloadedAlready * 100 / downloadSize));
                     }
                     fos.flush();
                     fos.close();
                     content.close();
                     return true;
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
+                    Log.w("untukng", e.getMessage());
                     if (content != null) {
                         try {
                             content.close();
+                        } catch (IOException e1) {
                         }
-                        catch (IOException e1) {}
                     }
                     return false;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
+                Log.w("untukng22", e.getMessage());
                 return false;
             }
         }
@@ -112,10 +115,9 @@ public class DownloadUtilsActivity extends AppCompatActivity {
             if (result.equals(Boolean.TRUE)) {
                 Toast.makeText(DownloadUtilsActivity.this, "Success", Toast.LENGTH_LONG).show();
                 mDatabaseOpenTask = new DatabaseOpenTask();
-                mDatabaseOpenTask.execute(new Context[] { DownloadUtilsActivity.this });
-            }
-            else {
-                Toast.makeText(getApplicationContext(),"failed download, plese try again...", Toast.LENGTH_LONG).show();
+                mDatabaseOpenTask.execute(new Context[]{DownloadUtilsActivity.this});
+            } else {
+                Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
                 finish();
             }
         }
@@ -125,11 +127,11 @@ public class DownloadUtilsActivity extends AppCompatActivity {
     private class DatabaseOpenTask extends AsyncTask<Context, Void, DatabaseKodePos> {
 
         @Override
-        protected DatabaseKodePos doInBackground(Context ... ctx) {
+        protected DatabaseKodePos doInBackground(Context... ctx) {
             try {
                 String externalBaseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
                 // DELETE OLD DATABASE ANFANG
-                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+SD_CARD_FOLDER);
+                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
                 File oldFile = new File(oldFolder, "daftarkodepos.sqlite");
                 if (oldFile.exists()) {
                     oldFile.delete();
@@ -138,15 +140,13 @@ public class DownloadUtilsActivity extends AppCompatActivity {
                     oldFolder.delete();
                 }
                 // DELETE OLD DATABASE ENDE
-                File newDB = new File(DatabaseKodePos.getDatabaseFolder()+"daftarkodepos.sqlite");
+                File newDB = new File(DatabaseKodePos.getDatabaseFolder() + "daftarkodepos.sqlite");
                 if (newDB.exists()) {
                     return new DatabaseKodePos(ctx[0]);
-                }
-                else {
+                } else {
                     return null;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return null;
             }
         }
@@ -166,8 +166,7 @@ public class DownloadUtilsActivity extends AppCompatActivity {
                 mDB = null;
                 mDatabaseDownloadTask = new DatabaseDownloadTask();
                 mDatabaseDownloadTask.execute();
-            }
-            else {
+            } else {
                 mDB = newDB;
                 finish();
             }
@@ -201,18 +200,18 @@ public class DownloadUtilsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_pnumber);
-        LinearLayout linearLayoutContent = (LinearLayout)findViewById(R.id.linearLayoutContent);
+        LinearLayout linearLayoutContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
         linearLayoutContent.setVisibility(View.GONE);
         mDB = new DatabaseKodePos(getApplicationContext());
-        if(mDB.getWritableDatabase()!=null){
+        if (mDB.getWritableDatabase() != null) {
             finish();
-        }else {
+        } else {
             if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 Toast.makeText(getApplicationContext(), "Please insert memmory card", Toast.LENGTH_LONG).show();
                 finish();
             }
             mDatabaseOpenTask = new DatabaseOpenTask();
-            mDatabaseOpenTask.execute(new Context[] { this });
+            mDatabaseOpenTask.execute(new Context[]{this});
         }
 
     }

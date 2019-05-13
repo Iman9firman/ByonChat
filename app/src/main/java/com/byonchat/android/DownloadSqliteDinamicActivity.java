@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -28,7 +29,7 @@ import java.io.InputStream;
 
 public class DownloadSqliteDinamicActivity extends AppCompatActivity {
     private static final String SD_CARD_FOLDER = "DB";
-    private String DB_DOWNLOAD_PATH ;
+    private String DB_DOWNLOAD_PATH;
     private DataBaseDropDown mDB = null;
     private DatabaseDownloadTask mDatabaseDownloadTask = null;
     private DatabaseOpenTask mDatabaseOpenTask = null;
@@ -53,6 +54,7 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Context... params) {
             try {
+                Log.w("JAYAD", DB_DOWNLOAD_PATH);
                 File dbDownloadPath = new File(DataBaseDropDown.getDatabaseFolder());
                 if (!dbDownloadPath.exists()) {
                     dbDownloadPath.mkdirs();
@@ -65,34 +67,34 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
                 InputStream content = null;
                 try {
                     HttpResponse execute = client.execute(httpGet);
-                    if (execute.getStatusLine().getStatusCode() != 200) { return null; }
+                    if (execute.getStatusLine().getStatusCode() != 200) {
+                        return null;
+                    }
                     content = execute.getEntity().getContent();
                     long downloadSize = execute.getEntity().getContentLength();
-                    FileOutputStream fos = new FileOutputStream(DataBaseDropDown.getDatabaseFolder()+NAME_DB+".sqlite");
+                    FileOutputStream fos = new FileOutputStream(DataBaseDropDown.getDatabaseFolder() + NAME_DB + ".sqlite");
                     byte[] buffer = new byte[256];
                     int read;
                     long downloadedAlready = 0;
                     while ((read = content.read(buffer)) != -1) {
                         fos.write(buffer, 0, read);
                         downloadedAlready += read;
-                        publishProgress((int) (downloadedAlready*100/downloadSize));
+                        publishProgress((int) (downloadedAlready * 100 / downloadSize));
                     }
                     fos.flush();
                     fos.close();
                     content.close();
                     return true;
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     if (content != null) {
                         try {
                             content.close();
+                        } catch (IOException e1) {
                         }
-                        catch (IOException e1) {}
                     }
                     return false;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -111,17 +113,16 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
                 mProgressDialog.dismiss();
                 mProgressDialog = null;
             }
-            if (result!=null){
+            if (result != null) {
                 if (result.equals(Boolean.TRUE)) {
                     Toast.makeText(DownloadSqliteDinamicActivity.this, "Success", Toast.LENGTH_LONG).show();
                     mDatabaseOpenTask = new DatabaseOpenTask();
-                    mDatabaseOpenTask.execute(new Context[] { DownloadSqliteDinamicActivity.this });
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"failed download, plese try again...", Toast.LENGTH_LONG).show();
+                    mDatabaseOpenTask.execute(new Context[]{DownloadSqliteDinamicActivity.this});
+                } else {
+                    Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
                     finish();
                 }
-            }else{
+            } else {
                 finish();
             }
 
@@ -132,10 +133,10 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
     private class DatabaseOpenTask extends AsyncTask<Context, Void, DataBaseDropDown> {
 
         @Override
-        protected DataBaseDropDown doInBackground(Context ... ctx) {
+        protected DataBaseDropDown doInBackground(Context... ctx) {
             try {
-                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+SD_CARD_FOLDER);
-                File oldFile = new File(oldFolder, NAME_DB+".sqlite");
+                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
+                File oldFile = new File(oldFolder, NAME_DB + ".sqlite");
                 if (oldFile.exists()) {
                     oldFile.delete();
                 }
@@ -143,15 +144,13 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
                     oldFolder.delete();
                 }
                 // DELETE OLD DATABASE ENDE
-                File newDB = new File(DataBaseDropDown.getDatabaseFolder()+NAME_DB+".sqlite");
+                File newDB = new File(DataBaseDropDown.getDatabaseFolder() + NAME_DB + ".sqlite");
                 if (newDB.exists()) {
-                    return new DataBaseDropDown(ctx[0],NAME_DB);
-                }
-                else {
+                    return new DataBaseDropDown(ctx[0], NAME_DB);
+                } else {
                     return null;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return null;
             }
         }
@@ -171,8 +170,7 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
                 mDB = null;
                 mDatabaseDownloadTask = new DatabaseDownloadTask();
                 mDatabaseDownloadTask.execute();
-            }
-            else {
+            } else {
                 mDB = newDB;
                 finish();
             }
@@ -206,22 +204,22 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_pnumber);
-        LinearLayout linearLayoutContent = (LinearLayout)findViewById(R.id.linearLayoutContent);
+        LinearLayout linearLayoutContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
         linearLayoutContent.setVisibility(View.GONE);
 
         NAME_DB = getIntent().getStringExtra("name_db");
         DB_DOWNLOAD_PATH = getIntent().getStringExtra("path_db");
 
-        mDB = new DataBaseDropDown(getApplicationContext(),NAME_DB);
-        if(mDB.getWritableDatabase()!=null){
+        mDB = new DataBaseDropDown(getApplicationContext(), NAME_DB);
+        if (mDB.getWritableDatabase() != null) {
             finish();
-        }else {
+        } else {
             if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                 Toast.makeText(getApplicationContext(), "Please insert memmory card", Toast.LENGTH_LONG).show();
                 finish();
             }
             mDatabaseOpenTask = new DatabaseOpenTask();
-            mDatabaseOpenTask.execute(new Context[] { this });
+            mDatabaseOpenTask.execute(new Context[]{this});
         }
 
     }

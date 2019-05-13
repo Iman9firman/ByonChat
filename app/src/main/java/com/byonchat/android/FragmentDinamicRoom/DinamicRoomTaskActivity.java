@@ -170,6 +170,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.sufficientlysecure.htmltextview.HtmlResImageGetter;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 
@@ -6865,6 +6866,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                     intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
+                                    Log.w("IMANDANU", url);
                                     intent.putExtra("path_db", url);
                                     startActivity(intent);
                                     return;
@@ -7937,7 +7939,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             if (required.equalsIgnoreCase("1")) {
                                 label += "<font size=\"3\" color=\"red\">*</font>";
                             }
-                            textView.setText(Html.fromHtml(label + "ss"));
+                            textView.setText(Html.fromHtml(label));
                             textView.setTextSize(15);
                             textView.setLayoutParams(new TableRow.LayoutParams(0));
 
@@ -11645,6 +11647,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);
 
+                    Log.w("sudiBU", data);
+
                     try {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                         Calendar cal = Calendar.getInstance();
@@ -11738,9 +11742,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 if (jsonRootObject.has("anothers")) {
                                     String anothers = jsonRootObject.getString("anothers");
                                     if (!anothers.equalsIgnoreCase("[]")) {
-                                        tambahan = new JSONObject(anothers);
-                                        tambahan.put("message", jsonRootObject.getJSONObject("alasan_reject").getString("message"));
-                                        bawaDariBelakang = tambahan.toString();
+
+                                        Object json = new JSONTokener(jsonRootObject.getString("alasan_reject")).nextValue();
+                                        if (json instanceof JSONObject) {
+                                            if (jsonRootObject.getJSONObject("alasan_reject").has("message")) {
+                                                tambahan = new JSONObject(anothers);
+                                                tambahan.put("message", jsonRootObject.getJSONObject("alasan_reject").getString("message"));
+                                                bawaDariBelakang = tambahan.toString();
+                                            } else {
+                                                bawaDariBelakang = "{}";
+                                            }
+                                        } else {
+                                            bawaDariBelakang = "{}";
+                                        }
                                     } else {
                                         bawaDariBelakang = "{}";
                                     }
@@ -11754,27 +11768,27 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.w("Jojoh", e.getMessage() + "");
                         finish();
-                        error = "Tolong periksa koneksi internet.";
+                        error = "Tolong periksa koneksi internet.1";
                     }
                 } else {
                     finish();
-                    error = "Tolong periksa koneksi internet.";
+                    error = "Tolong periksa koneksi internet.2";
                 }
 
             } catch (ConnectTimeoutException e) {
                 e.printStackTrace();
                 DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(context, "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Tolong periksa koneksi internet3.", Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();
             } catch (ClientProtocolException e) {
                 DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(context, "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Tolong periksa koneksi internet.4", Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();
@@ -11782,7 +11796,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             } catch (IOException e) {
                 DinamicRoomTaskActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(context, "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Tolong periksa koneksi internet5.", Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();
@@ -12179,6 +12193,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 List valueForm = (List) hashMap.get(pair.getKey());
 
                 String DBmaster = value.get(0).toString();
+                if (DBmaster != null) {
+                    Log.w("IMANDANU@@", DBmaster);
+                }
+
                 String Formulamaster = value.get(1).toString();
 
 

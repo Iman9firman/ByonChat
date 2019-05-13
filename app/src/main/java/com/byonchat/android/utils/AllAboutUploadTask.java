@@ -435,6 +435,7 @@ public class AllAboutUploadTask {
             prosesUpload.add("ada");
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(valueIWantToSend);
+            Log.w("layakUn", valueIWantToSend);
 
             try {
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
@@ -451,16 +452,16 @@ public class AllAboutUploadTask {
                 entity.addPart("username_room", new StringBody(usr));
                 entity.addPart("id_rooms_tab", new StringBody(idr));
                 entity.addPart("id_detail_tab", new StringBody(idDetail));
-                Log.w("Entiti sajaha ke 1","usr : " +new StringBody(usr)+", idr : "+new StringBody(idr)+", idDetail : "+new StringBody(idDetail));
+                Log.w("Entiti sajaha ke 1", "usr : " + new StringBody(usr) + ", idr : " + new StringBody(idr) + ", idDetail : " + new StringBody(idDetail));
 
-                Log.w("Kena lewat sajaha","Setuju 0");
+                Log.w("Kena lewat sajaha", "Setuju 0");
 
                 if (calendar != null) {
                     if (calendar.equalsIgnoreCase("true boi")) {
 
-                        Log.w("Kena lewat sajaha","Setuju 1");
+                        Log.w("Kena lewat sajaha", "Setuju 1");
                         entity.addPart("selected_date", new StringBody(startDate));
-                        Log.w("Entiti sajaha ke 2", ""+new StringBody(startDate));
+                        Log.w("Entiti sajaha ke 2", "" + new StringBody(startDate));
                     }
                 }
 
@@ -496,7 +497,7 @@ public class AllAboutUploadTask {
 
 
                     entity.addPart("assign_to", new StringBody(has));
-                    Log.w("Entiti sajaha ke 3", ""+new StringBody(has));
+                    Log.w("Entiti sajaha ke 3", "" + new StringBody(has));
 
                 }
 
@@ -512,14 +513,14 @@ public class AllAboutUploadTask {
                             resultti = "2";
                         }
                         entity.addPart("status_task", new StringBody(resultti));
-                        Log.w("Entiti sajaha ke 4", ""+new StringBody(resultti));
+                        Log.w("Entiti sajaha ke 4", "" + new StringBody(resultti));
                     }
                 }
 
 
                 if (!isReject.equalsIgnoreCase("")) {
                     entity.addPart("is_reject", new StringBody(isReject));
-                    Log.w("Entiti sajaha ke 5", ""+new StringBody(isReject));
+                    Log.w("Entiti sajaha ke 5", "" + new StringBody(isReject));
                 }
 
 
@@ -549,7 +550,7 @@ public class AllAboutUploadTask {
                         if (ff.length == 2) {
                             entity.addPart("parent_id", new StringBody(ff[1]));
                             entity.addPart("id_list_push", new StringBody(ff[0]));
-                            Log.w("Entiti sajaha ke 7", ""+new StringBody(idDetail+""));
+                            Log.w("Entiti sajaha ke 7", "" + new StringBody(idDetail + ""));
                         }
                     }
                 }
@@ -561,7 +562,7 @@ public class AllAboutUploadTask {
 
                 Contact contact = messengerHelper.getMyContact();
                 entity.addPart("bc_user", new StringBody(contact.getJabberId()));
-                Log.w("Entiti sajaha ke 8", ""+new StringBody(contact.getJabberId()));
+                Log.w("Entiti sajaha ke 8", "" + new StringBody(contact.getJabberId()));
 
                 ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, usr, idr, "cild");
 
@@ -795,9 +796,10 @@ public class AllAboutUploadTask {
                 HttpEntity r_entity = response.getEntity();
 
                 int statusCode = response.getStatusLine().getStatusCode();
+                Log.w("kabau", statusCode + "");
+
                 if (statusCode == 200) {
                     if (gpxfile.exists()) {
-                     //   Toast.makeText(context,"Boleh kartun 0",Toast.LENGTH_SHORT).show();
                         gpxfile.delete();
                     }
 
@@ -829,8 +831,7 @@ public class AllAboutUploadTask {
                     }
                 } else {
                     if (gpxfile.exists()) {
-                     //   Toast.makeText(context,"Boleh kartun 1",Toast.LENGTH_SHORT).show();
-                      gpxfile.delete();
+                        gpxfile.delete();
                     }
                     long date = System.currentTimeMillis();
                     String dateString = hourFormat.format(date);
@@ -843,9 +844,9 @@ public class AllAboutUploadTask {
                 }
 
             } catch (ClientProtocolException e) {
+                Log.w("kabau2", e.getMessage() + "");
                 if (gpxfile.exists()) {
-                 //   Toast.makeText(context,"Boleh kartun 2",Toast.LENGTH_SHORT).show();
-                   gpxfile.delete();
+                    gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
                 String dateString = hourFormat.format(date);
@@ -855,9 +856,9 @@ public class AllAboutUploadTask {
                 taskCompleted.onTaskCompleted(20, "gagal upload");
 
             } catch (IOException e) {
+                Log.w("kabau3", e.getMessage() + "");
                 if (gpxfile.exists()) {
-                   // Toast.makeText(context,"Boleh kartun 3",Toast.LENGTH_SHORT).show();
-                   gpxfile.delete();
+                    gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
                 String dateString = hourFormat.format(date);

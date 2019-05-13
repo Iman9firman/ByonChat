@@ -5363,11 +5363,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         final List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(String.valueOf(count));
-                        valSetOne.add(required);
-                        valSetOne.add(type);
-                        valSetOne.add(name);
-                        valSetOne.add(label);
-                        valSetOne.add(String.valueOf(i));
+
 
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params2.setMargins(30, 10, 30, 0);
@@ -5385,7 +5381,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         linearLayout.addView(imageView[count], params);
 
 
-                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
                         final int finalI26 = i;
 
 
@@ -5393,11 +5388,20 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
                                 JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                 if (values.has("value")) {
+                                    if (required.equalsIgnoreCase("1")) {
+                                        required = "0";
+                                    }
                                     Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
                                 }
                             }
                         }
+                        valSetOne.add(required);
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
 
+                        hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {

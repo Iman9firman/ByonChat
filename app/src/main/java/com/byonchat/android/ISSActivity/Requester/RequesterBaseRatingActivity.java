@@ -174,7 +174,9 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
     protected void resolveListHistory() {
         vList.removeAllViews();
 
+        Log.w("inecn",itemData);
         try {
+            final String[] selectedGender = {"-"};
             JSONArray jsonArraySatu = new JSONArray(itemData);
             for (int i = 0; i < jsonArraySatu.length(); i++) {
                 idRequest = jsonArraySatu.getJSONObject(i).getString("id_request");
@@ -183,7 +185,13 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                 for (int ia = 0; ia < jsonArrayDua.length(); ia++) {
 
                     vList.addView(new HeaderRatingRecyclerView(RequesterBaseRatingActivity.this, jsonArraySatu.getJSONObject(i).getString("nama_jjt") + " - "
-                            + jsonArrayDua.getJSONObject(ia).getString("nama_pekerjaan"), jsonArraySatu.getJSONObject(i).getString("jjt_lat") + ":" + jsonArraySatu.getJSONObject(i).getString("jjt_long"), jsonArrayDua.getJSONObject(ia).getString("request_detail"), jsonArrayDua.getJSONObject(ia).getString("jumlah")));
+                            + jsonArrayDua.getJSONObject(ia).getString("nama_pekerjaan"), jsonArraySatu.getJSONObject(i).getString("jjt_lat") + ":" + jsonArraySatu.getJSONObject(i).getString("jjt_long"), jsonArrayDua.getJSONObject(ia).getString("request_detail"), jsonArrayDua.getJSONObject(ia).getString("jumlah"),
+                            new HeaderRatingRecyclerView.OnSpinnerChangeListener(){
+                                @Override
+                                public void onItemChanges(int position, String gender) {
+                                    selectedGender[0] = gender;
+                                }
+                            }));
 
                     JSONArray jsonArrayTiga = new JSONArray(jsonArrayDua.getJSONObject(ia).getString("request_detail"));
 
@@ -191,12 +199,12 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                     tersedia.add(jsonArrayTiga.length() + "");
                     namaPekerjaan.add(jsonArrayDua.getJSONObject(ia).getString("nama_pekerjaan"));
 
-
                     if (jsonArrayTiga.length() > 0) {
 
                         for (int j = 0; j < jsonArrayTiga.length(); j++) {
                             JSONObject jOb = jsonArrayTiga.getJSONObject(j);
                             String id = jOb.getString("id_request_detail");
+
                             String name = jOb.getString("nama");
                             String id_reliever = jOb.getString("id_reliever");
                             String distance = jOb.getString("jarak");
@@ -205,6 +213,10 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                             String contact = jOb.getString("hp");
                             String location = jOb.getString("lat") + ":" + jOb.getString("long");
                             String rating = jOb.getString("rating");
+                            String gender = "-";
+                            if(jOb.has("gender")){
+                                gender = jOb.getString("gender");
+                            }
 
                             int titik = distance.length() - distance.indexOf(".");
                             if (titik > 4) {
@@ -219,13 +231,19 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                             data.child_distance = distance.substring(0, distance.indexOf(".") + titik) + " KM";
                             data.child_status = status;
                             data.child_contact = contact;
+                            data.child_gender = gender;
                             data.child_location = location;
                             data.child_rating = rating;
                             data.total_kerja = total;
                             data.isChecked = false;
 
-                            items.add(data);
-
+                            if(selectedGender[0].equalsIgnoreCase("-")) {
+                                items.add(data);
+                            }else {
+                                if(data.child_gender.equalsIgnoreCase(selectedGender[0])){
+                                    items.add(data);
+                                }
+                            }
                             vList.addView(new ChildRatingRecyclerView(RequesterBaseRatingActivity.this, j, data, new ChildRatingRecyclerView.OnCheckedChangeListener() {
 
                                 @Override

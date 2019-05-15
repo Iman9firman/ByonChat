@@ -55,7 +55,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
     }
 
     public PustReportRepairAdapter(Activity context, String idDetail, String username, String idTab, List<Photo> moviesList,
-                              OnPreviewItemClickListener onPreviewItemClickListener) {
+                                   OnPreviewItemClickListener onPreviewItemClickListener) {
         this.allList = moviesList;
         this.context = context;
         this.idDetail = idDetail;
@@ -76,6 +76,11 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Photo foto = allList.get(position);
+
+        holder.note.setText("");
+
+        Picasso.with(context).load(R.drawable.ic_no_photo)
+                .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.after);
 
         Picasso.with(context).load(foto.getBefore())
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.before);
@@ -118,9 +123,6 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
         holder.note.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null , "note");
-                }*/
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
                 final View formsView = inflater.inflate(R.layout.dialog_edit_text, null, false);

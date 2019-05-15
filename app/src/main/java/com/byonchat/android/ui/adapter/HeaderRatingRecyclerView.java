@@ -2,13 +2,17 @@ package com.byonchat.android.ui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.byonchat.android.R;
+import com.byonchat.android.data.model.MkgServices;
 import com.byonchat.android.tabRequest.MapsViewActivity;
 import com.byonchat.android.tabRequest.RelieverListActivity;
 import com.mindorks.placeholderview.annotations.Layout;
@@ -18,6 +22,10 @@ import com.mindorks.placeholderview.annotations.expand.Collapse;
 import com.mindorks.placeholderview.annotations.expand.Expand;
 import com.mindorks.placeholderview.annotations.expand.Parent;
 import com.mindorks.placeholderview.annotations.expand.SingleTop;
+import com.toptoche.searchablespinnerlibrary.SearchableListDialog;
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+
+import java.util.ArrayList;
 
 @Parent
 @SingleTop
@@ -46,17 +54,22 @@ public class HeaderRatingRecyclerView {
     @View(R.id.jumlahReq)
     TextView totalReq;
 
+    @View(R.id.spinnerGender)
+    SearchableSpinner header_gender;
+
     private Context mContext;
     private String headerName, lat, relieverDetail, totals;
 
-    public HeaderRatingRecyclerView(Context context, String headerName, String latlong, String _relieverDetail, String total) {
+    public OnSpinnerChangeListener onChanger;
+
+    public HeaderRatingRecyclerView(Context context, String headerName, String latlong, String _relieverDetail, String total, OnSpinnerChangeListener onChanger) {
         this.mContext = context;
         this.headerName = headerName;
         this.lat = latlong;
         this.relieverDetail = _relieverDetail;
         this.relieverDetail = _relieverDetail;
         this.totals = total;
-
+        this.onChanger = onChanger;
 
     }
 
@@ -75,6 +88,18 @@ public class HeaderRatingRecyclerView {
                 mContext.startActivity(maps);
             }
         });
+
+        ArrayList<String> spinnerArray = new ArrayList<String>();
+        spinnerArray.add("Tampilkan semua");
+        spinnerArray.add("Laki - laki");
+        spinnerArray.add("Perempuan");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            header_gender.setBackground(mContext.getResources().getDrawable(R.drawable.spinner_background));
+        }
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        header_gender.setAdapter(spinnerArrayAdapter);
     }
 
     @Expand
@@ -87,5 +112,9 @@ public class HeaderRatingRecyclerView {
     private void onCollapse() {
         vFrameTotal.setVisibility(android.view.View.GONE);
         header_img_arrow.setRotation(0);
+    }
+
+    public interface OnSpinnerChangeListener {
+        void onItemChanges(int position, String gender);
     }
 }

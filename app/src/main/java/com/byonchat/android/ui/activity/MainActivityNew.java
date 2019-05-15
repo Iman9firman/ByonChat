@@ -109,6 +109,7 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
+import com.byonchat.android.view.ItemDialog;
 import com.byonchat.android.widget.BadgeView;
 import com.eightbitlab.supportrenderscriptblur.SupportRenderScriptBlur;
 import com.google.gson.Gson;
@@ -522,8 +523,43 @@ public class MainActivityNew extends MainBaseActivityNew {
         recyclerViewDragDropManager.attachRecyclerView(recyclerView);
 
         adapter.setOnItemClickListener((view, position) -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            /*Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);*/
+            if(subItemList.size() == 0) {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            }else {
+                List<ItemMain> subItemList2 = new ArrayList<>();
+
+                String member = adapter.getData().get(position).status;
+                try {
+                    JSONArray jsonArray = new JSONArray(member);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        String id_tab_dftared = jsonArray.getString(i);
+                        for (int u = 0; u < subItemList.size(); u++) {
+                            if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                                subItemList2.add(subItemList.get(u));
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                ItemDialog dialog = new ItemDialog(this, adapter.getData().get(position).tab_name, subItemList2);
+                int width, height;
+                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    width = (int) (getResources().getDisplayMetrics().widthPixels * 0.60);
+                    height = (int) (getResources().getDisplayMetrics().heightPixels * 0.90);
+                }else{
+                    width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+                    height = (int) (getResources().getDisplayMetrics().heightPixels * 0.50);
+                }
+                dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+                dialog.show();
+                dialog.getWindow().setLayout(width, height);
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
         });
 
         adapter.setOnLongItemClickListener((view, position) -> {
@@ -544,6 +580,14 @@ public class MainActivityNew extends MainBaseActivityNew {
             if(itemList.size() < 9){
                 recyclerView.setVisibility(View.INVISIBLE);
             }
+        }
+
+        if(subItemList.size() != 0){
+            vFrameTabOne.setVisibility(View.INVISIBLE);
+            vFrameTabTwo.setVisibility(View.INVISIBLE);
+            vFrameTabFour.setVisibility(View.INVISIBLE);
+            vFrameTabNine.setVisibility(View.INVISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
     }
 

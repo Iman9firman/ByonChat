@@ -121,6 +121,10 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
             JSONObject jsonRootObject = new JSONObject(result);
             String username = jsonRootObject.getString("username_room");
             String content = jsonRootObject.getString("tab_room");
+            if(jsonRootObject.has("grouping_room")){
+                String grouping = jsonRootObject.getString("grouping_room");
+                content = "JSONnnye "+content+"@@@"+grouping+"}";
+            }
             String realname = jsonRootObject.getString("nama_display");
             String icon = jsonRootObject.getString("icon"); // byonchat
             String backdrop = jsonRootObject.getString("backdrop")

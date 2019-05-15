@@ -143,7 +143,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 JSONObject first = jar.getJSONObject(i);
                 JSONArray pembobotan = first.getJSONArray("pembobotan");
                 for (int ii = 0; ii < pembobotan.length(); ii++) {
-                    Log.w("pbbtan datanya jumlah",pembobotan.length()+"");
                     JSONObject second = pembobotan.getJSONObject(ii);
                     JSONArray section = second.getJSONArray("section");
                     for (int iii = 0; iii < section.length(); iii++) {
@@ -439,47 +438,8 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
     private String fileJson(){
         String stringdong = "";
-
-        /*try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("username_room",getIntent().getStringExtra("username_room"));
-            jsonObject.put("task_id",id_task);
-            jsonObject.put("title",name_title);
-
-            JSONArray value_detail = new JSONArray();
-            for (int i = 0; i < uploadfoto.size();i++) {
-                JSONObject jsonObjectA = new JSONObject();
-                jsonObjectA.put("urutan",uploadfoto.get(i).getId());
-
-                JSONArray jsonArray = new JSONArray();
-                JSONObject jsonObject1 = new JSONObject();
-                jsonObject1.put("key","before");
-                jsonObject1.put("foto",uploadfoto.get(i).getBefore());
-                jsonObject1.put("keterangan",uploadfoto.get(i).getTitle());
-
-                JSONObject jsonObject2 = new JSONObject();
-                jsonObject2.put("key","after");
-                jsonObject2.put("foto",uploadfoto.get(i).getAfterString());
-
-                jsonArray.put(jsonObject1);
-                jsonArray.put(jsonObject2);
-
-                jsonObjectA.put("data",jsonArray);
-                value_detail.put(jsonObjectA);
-            }
-
-            jsonObject.put("value_detail",value_detail);
-
-            stringdong = jsonObject.toString();
-        } catch (JSONException e){
-
-        }*/
         try {
             JSONObject gvcs = new JSONObject(basejson);
-            id_task = gvcs.getString("task_id");
-            id_task_list = gvcs.getString("id_list_task");
-            id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
-            name_title = gvcs.getString("title");
             JSONArray jar = gvcs.getJSONArray("value_detail");
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
@@ -585,7 +545,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME
                 + " WHERE id_detail =?", new String[]{String.valueOf(id)});
         while (cursor.moveToNext()) {
-                isExist = cursor.getString(cursor.getColumnIndex("comment"));
+            isExist = cursor.getString(cursor.getColumnIndex("comment"));
         }
         cursor.close();
         return isExist;
@@ -597,6 +557,15 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         db.execSQL("DELETE FROM " + TABLE_NAME
                 + " WHERE id_detail =?", new String[]{String.valueOf(id)});
+
+        db.close();
+    }
+
+    private void deleAALLromDB() {
+
+        SQLiteDatabase db = NoteDB.getWritableDatabase();
+
+        db.execSQL("DELETE FROM " + TABLE_NAME);
 
         db.close();
     }
@@ -716,7 +685,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             getIntent().getStringExtra("id_rooms_tab"));
 
 //                   rdialog.dismiss();
-                   Log.w("pasukan ujug ujug",fileJson());
+                    Log.w("pasukan ujug ujug",fileJson());
 //                   Toast.makeText(PustSLAFollowUpActivity.this,fileJson() ,Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {

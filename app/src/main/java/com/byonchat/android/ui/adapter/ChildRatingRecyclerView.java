@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,6 +24,8 @@ import com.mindorks.placeholderview.annotations.Click;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -49,6 +52,9 @@ public class ChildRatingRecyclerView {
     @View(R.id.clicked)
     RelativeLayout frame_content;
 
+    @View(R.id.child_gender)
+    ImageView child_gender;
+
     private Context mContext;
     private MkgServices data;
     private int position;
@@ -74,6 +80,20 @@ public class ChildRatingRecyclerView {
             child_text_total.setText("pekerja baru");
         } else {
             child_text_total.setText(data.total_kerja + " x bekerja");
+        }
+
+        if(!data.child_gender.equalsIgnoreCase("-")){
+            int drowabel = 0;
+            if(data.child_gender.equalsIgnoreCase("L")){
+                drowabel = R.drawable.ic_male;
+            }else {
+                drowabel = R.drawable.ic_female;
+            }
+
+            Picasso.with(mContext).load(drowabel)
+                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(child_gender);
+        }else{
+            child_gender.setVisibility(android.view.View.INVISIBLE);
         }
 
         if (data.isChecked) {

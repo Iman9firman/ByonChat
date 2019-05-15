@@ -73,6 +73,19 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
         fonts = new Fonts();
     }
 
+    public DraggableGridExampleAdapter(Context context, List<ItemMain> itemList, int resourceId) {
+        setHasStableIds(true);
+
+        this.context = context;
+        this.itemList = itemList;
+        this.resourceId = resourceId;
+        this.filterList = itemList;
+        this.room_id = room_id;
+        this.positionList = positionList;
+
+        fonts = new Fonts();
+    }
+
     @Override
     public long getItemId(int position) {
         return filterList.get(position).getId();

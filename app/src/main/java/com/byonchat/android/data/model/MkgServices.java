@@ -16,6 +16,7 @@ public class MkgServices implements Parcelable {
     public String child_rating;
     public String total_kerja;
     public String id_reliever;
+    public String child_gender;
     public boolean isApprove;
     public boolean isChecked;
 
@@ -33,6 +34,7 @@ public class MkgServices implements Parcelable {
         header_id = in.readInt();
         header_name = in.readString();
         child_name = in.readString();
+        child_gender = in.readString();
         child_distance = in.readString();
         child_status = in.readString();
         child_contact = in.readString();
@@ -68,6 +70,7 @@ public class MkgServices implements Parcelable {
         dest.writeInt(header_id);
         dest.writeString(header_name);
         dest.writeString(child_name);
+        dest.writeString(child_gender);
         dest.writeString(child_distance);
         dest.writeString(child_status);
         dest.writeString(child_contact);

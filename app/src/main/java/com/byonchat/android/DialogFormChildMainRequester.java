@@ -301,6 +301,11 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
                 return;
             }
 
+            if(spinnerKet.getSelectedItem().toString().equalsIgnoreCase("-Pilih keterangan-")){
+                Toast.makeText(getContext(), "Harap masukan keterangan", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (valueAkhir.getText().toString().length() == 0) {
                 Toast.makeText(getContext(), "Harap masukan jam akhir kerja", Toast.LENGTH_SHORT).show();
                 return;

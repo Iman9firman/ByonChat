@@ -93,14 +93,35 @@ public class SLAISSAdapter extends MultiLevelAdapter {
     private MultiLevelRecyclerView mMultiLevelRecyclerView;
     private RadioButtonCheckDB database;
     String idDetailForm;
+    private CountCheckerListener listener;
 
-    public SLAISSAdapter(Activity activity, String idDetailForm, List<SLAISSItem> listItems, MultiLevelRecyclerView multiLevelRecyclerView) {
+    public SLAISSAdapter(Activity activity, String idDetailForm, List<SLAISSItem> listItems, MultiLevelRecyclerView multiLevelRecyclerView, CountCheckerListener counterListener) {
         super(listItems);
         this.mActivity = activity;
         this.mListItems = listItems;
         this.idDetailForm = idDetailForm;
         this.mMultiLevelRecyclerView = multiLevelRecyclerView;
+        this.listener = counterListener;
         database = new RadioButtonCheckDB(activity);
+        listener.onChecked(getCountDB(idDetailForm));
+    }
+
+    public interface CountCheckerListener {
+        void onChecked(int count);
+    }
+
+    public int getCountDB(String idDetailForm) {
+        int count = 0;
+        SQLiteDatabase db = database.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[]{COLUMN_OK},
+                "id_detail ='" + idDetailForm + "'", null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            count++;
+        }
+        cursor.close();
+
+        return count;
     }
 
     @Override
@@ -127,8 +148,6 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         }
 
 
-        Log.w("domoka", position + "::" + String.valueOf(mItem.getId_content()));
-
         mHolder.textTitle.setText(mItem.getTitle());
         mHolder.textId.setText(String.valueOf(mItem.getId_content()));
         Picasso.with(mActivity).load(R.drawable.ic_att_gallery).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(mHolder.pictPicker);
@@ -140,22 +159,22 @@ public class SLAISSAdapter extends MultiLevelAdapter {
             mHolder.imgArrow.setVisibility(View.VISIBLE);
         } else {
             mHolder.imgArrow.setVisibility(View.GONE);
-            if (checkDB(mHolder.textId.getText().toString())) {
-                if (getOkFromDB(mHolder.textId.getText().toString()) == 1) {
+            if (checkDB(idDetailForm, mHolder.textId.getText().toString())) {
+                if (getOkFromDB(idDetailForm, mHolder.textId.getText().toString()) == 1) {
                     mHolder.buttonPicker.setBackground(mActivity.getDrawable(R.drawable.check_ok));
                 } else {
                     mHolder.buttonPicker.setBackground(mActivity.getDrawable(R.drawable.check_no));
                 }
 
-                if (getImgeB(mHolder.textId.getText().toString()) != null) {
+                if (getImgeB(idDetailForm, mHolder.textId.getText().toString()) != null) {
                     if (mHolder.textId.getText().toString().split("\\|").length > 1) {
-                        Picasso.with(mActivity).load("file:////" + getImgeB(mHolder.textId.getText().toString())).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(mHolder.pictPicker);
+                        Picasso.with(mActivity).load("file:////" + getImgeB(idDetailForm, mHolder.textId.getText().toString())).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(mHolder.pictPicker);
                     } else {
-                        Picasso.with(mActivity).load("file:////" + getImgeB(mHolder.textId.getText().toString())).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(mHolder.pictPicker);
+                        Picasso.with(mActivity).load("file:////" + getImgeB(idDetailForm, mHolder.textId.getText().toString())).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(mHolder.pictPicker);
                     }
 
                 }
-                mHolder.textComment.setText(getComment(mHolder.textId.getText().toString()));
+                mHolder.textComment.setText(getComment(idDetailForm, mHolder.textId.getText().toString()));
 
             } else {
                 mHolder.buttonPicker.setBackground(mActivity.getDrawable(R.drawable.pemcil));
@@ -199,12 +218,13 @@ public class SLAISSAdapter extends MultiLevelAdapter {
                 @Override
                 public void onClick(View v) {
                     RadioButtonDialog radioButtonDialog;
-                    if (checkDB(textId.getText().toString())) {
-                        radioButtonDialog = new RadioButtonDialog(mActivity, getOkFromDB(textId.getText().toString()), new RadioButtonDialog.MyRadioDialogListener() {
+                    if (checkDB(idDetailForm, textId.getText().toString())) {
+                        radioButtonDialog = new RadioButtonDialog(mActivity, getOkFromDB(idDetailForm, textId.getText().toString()), new RadioButtonDialog.MyRadioDialogListener() {
                             @Override
                             public void userSubmit(int value) {
-                                updateDB(textId.getText().toString(), value, null, null);
+                                updateDB(idDetailForm, textId.getText().toString(), value, null, null);
                                 notifyDataSetChanged();
+                                listener.onChecked(getCountDB(idDetailForm));
                             }
                         });
                         radioButtonDialog.show();
@@ -212,8 +232,9 @@ public class SLAISSAdapter extends MultiLevelAdapter {
                         radioButtonDialog = new RadioButtonDialog(mActivity, -1, new RadioButtonDialog.MyRadioDialogListener() {
                             @Override
                             public void userSubmit(int value) {
-                                insertDB(textId.getText().toString(), value, null, null);
+                                insertDB(idDetailForm, textId.getText().toString(), value, null, null);
                                 notifyDataSetChanged();
+                                listener.onChecked(getCountDB(idDetailForm));
                             }
                         });
                         radioButtonDialog.show();
@@ -225,33 +246,29 @@ public class SLAISSAdapter extends MultiLevelAdapter {
                 @Override
                 public void onClick(View v) {
 
-                    if (checkDB(textId.getText().toString())) {
-                        if (getImgeB(textId.getText().toString()) != null) {
+                    if (checkDB(idDetailForm, textId.getText().toString())) {
+                        if (getImgeB(idDetailForm, textId.getText().toString()) != null) {
                             Intent intent = new Intent(mActivity, ZoomImageViewActivity.class);
-                            intent.putExtra(ZoomImageViewActivity.KEY_FILE, "file:////" + getImgeB(textId.getText().toString()));
+                            intent.putExtra(ZoomImageViewActivity.KEY_FILE, "file:////" + getImgeB(idDetailForm, textId.getText().toString()));
                             mActivity.startActivity(intent);
 
                         } else {
-                            AddChildFotoExModel aaa = new AddChildFotoExModel(textId.getText().toString(), "", "", "cild", "update", getAdapterPosition(), String.valueOf(getOkFromDB(textId.getText().toString())), 0, "add", "");
+                            AddChildFotoExModel aaa = new AddChildFotoExModel(idDetailForm + ";" + textId.getText().toString(), "", "", "cild", "update", getAdapterPosition(), String.valueOf(getOkFromDB(idDetailForm, textId.getText().toString())), 0, "add", "");
                             ((DinamicSLATaskActivity) mActivity).yourActivityMethod(aaa);
                         }
 
 
                     } else {
-                        AddChildFotoExModel aaa = new AddChildFotoExModel(textId.getText().toString(), "", "", "cild", "insert", getAdapterPosition(), "", 0, "add", "");
+                        AddChildFotoExModel aaa = new AddChildFotoExModel(idDetailForm + ";" + textId.getText().toString(), "", "", "cild", "insert", getAdapterPosition(), "", 0, "add", "");
                         ((DinamicSLATaskActivity) mActivity).yourActivityMethod(aaa);
-
-
                     }
-
-
                 }
             });
 
             pictPicker.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    AddChildFotoExModel aaa = new AddChildFotoExModel(textId.getText().toString(), "", "", "cild", "update", getAdapterPosition(), String.valueOf(getOkFromDB(textId.getText().toString())), 0, "add", "");
+                    AddChildFotoExModel aaa = new AddChildFotoExModel(textId.getText().toString(), "", "", "cild", "update", getAdapterPosition(), String.valueOf(getOkFromDB(idDetailForm, textId.getText().toString())), 0, "add", "");
                     ((DinamicSLATaskActivity) mActivity).yourActivityMethod(aaa);
                     return false;
                 }
@@ -277,10 +294,10 @@ public class SLAISSAdapter extends MultiLevelAdapter {
                                                 DialogInterface dialog, int id) {
                                             textComment.setText(edit.getText());
 
-                                            if (checkDB(textId.getText().toString())) {
-                                                updateDB(textId.getText().toString(), 0, null, edit.getText().toString());
+                                            if (checkDB(idDetailForm, textId.getText().toString())) {
+                                                updateDB(idDetailForm, textId.getText().toString(), 0, null, edit.getText().toString());
                                             } else {
-                                                insertDB(textId.getText().toString(), 0, null, edit.getText().toString());
+                                                insertDB(idDetailForm, textId.getText().toString(), 0, null, edit.getText().toString());
                                             }
 
 
@@ -295,11 +312,12 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         }
     }
 
-    public void insertDB(String id, int value, String image, String comment) {
+    public void insertDB(String idDetail, String id, int value, String image, String comment) {
         SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID_DETAIL, id);
+        values.put(COLUMN_ID, id);
+        values.put(COLUMN_ID_DETAIL, idDetail);
         values.put(COLUMN_OK, value);
         if (image != null) {
             values.put(COLUMN_IMG, image);
@@ -311,7 +329,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         db.close();
     }
 
-    public void updateDB(String id, int value, String image, String comment) {
+    public void updateDB(String idDetail, String id, int value, String image, String comment) {
         SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -327,17 +345,17 @@ public class SLAISSAdapter extends MultiLevelAdapter {
             values.put(COLUMN_OK, value);
         }
 
-        db.update(TABLE_NAME, values, COLUMN_ID_DETAIL + " = ?",
+        db.update(TABLE_NAME, values, COLUMN_ID_DETAIL + " = '" + idDetail + "' AND " + COLUMN_ID + " =?",
                 new String[]{String.valueOf(id)});
     }
 
-    private boolean checkDB(String id) {
+    private boolean checkDB(String idDetail, String id) {
         boolean isExist = false;
 
         SQLiteDatabase db = database.getReadableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME
-                + " WHERE id_detail =?", new String[]{String.valueOf(id)});
+                + " WHERE id_detail = '" + idDetail + "' AND id_item =?", new String[]{String.valueOf(id)});
         while (cursor.moveToNext()) {
             isExist = true;
         }
@@ -345,13 +363,13 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         return isExist;
     }
 
-    private int getOkFromDB(String id) {
+    private int getOkFromDB(String idDetail, String id) {
         int ok = 0;
         SQLiteDatabase db = database.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{COLUMN_ID, COLUMN_OK},
-                COLUMN_ID_DETAIL + "=?",
+                COLUMN_ID_DETAIL + " = '" + idDetail + "' AND " + COLUMN_ID + " =?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         while (cursor.moveToNext()) {
             ok = cursor.getInt(cursor.getColumnIndex(COLUMN_OK));
@@ -361,13 +379,13 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         return ok;
     }
 
-    private String getImgeB(String id) {
+    private String getImgeB(String idDetail, String id) {
         String ok = "";
         SQLiteDatabase db = database.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{COLUMN_ID_DETAIL, COLUMN_IMG},
-                COLUMN_ID_DETAIL + "=?",
+                COLUMN_ID_DETAIL + " = '" + idDetail + "' AND " + COLUMN_ID + " =?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         while (cursor.moveToNext()) {
             ok = cursor.getString(cursor.getColumnIndex(COLUMN_IMG));
@@ -387,13 +405,13 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         return ok;
     }
 
-    private String getComment(String id) {
+    private String getComment(String idDetail, String id) {
         String ok = "";
         SQLiteDatabase db = database.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{COLUMN_ID_DETAIL, COLUMN_COMMENT},
-                COLUMN_ID_DETAIL + "=?",
+                COLUMN_ID_DETAIL + " = '" + idDetail + "' AND " + COLUMN_ID + " =?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         while (cursor.moveToNext()) {
             ok = cursor.getString(cursor.getColumnIndex(COLUMN_COMMENT));

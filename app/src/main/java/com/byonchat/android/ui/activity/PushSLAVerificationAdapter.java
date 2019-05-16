@@ -14,7 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.byonchat.android.R;
+
 import java.io.File;
+
 import com.byonchat.android.model.Photo;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
@@ -34,7 +36,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView before, after;
         ImageButton btnVerif;
-        TextView keterangan;
+        TextView keterangan, note;
 
         public MyViewHolder(View view) {
             super(view);
@@ -42,11 +44,13 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             after = (ImageView) view.findViewById(R.id.imageAfter);
             keterangan = (TextView) view.findViewById(R.id.keterangan);
             btnVerif = (ImageButton) view.findViewById(R.id.imgVerif);
+            keterangan = (TextView) view.findViewById(R.id.keterangan);
+            note = (TextView) view.findViewById(R.id.notess);
         }
     }
 
     public PushSLAVerificationAdapter(Context context, String idDetail, String username, String idTab, List<Photo> moviesList,
-                                   OnPreviewItemClickListener onPreviewItemClickListener) {
+                                      OnPreviewItemClickListener onPreviewItemClickListener) {
         this.allList = moviesList;
         this.context = context;
         this.idDetail = idDetail;
@@ -90,19 +94,20 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             }
         }*/
 
-        if(foto.getVerif().equalsIgnoreCase("1")) {
+        if (foto.getVerif().equalsIgnoreCase("1")) {
             holder.btnVerif.setBackground(context.getDrawable(R.drawable.check_ok));
         } else {
             holder.btnVerif.setBackground(context.getDrawable(R.drawable.check_no));
         }
 
         holder.keterangan.setText(foto.getTitle());
+        holder.note.setText(foto.getKet());
 
         holder.btnVerif.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null , "changeVerif");
+                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "changeVerif");
                 }
             }
         });
@@ -110,7 +115,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null , "after");
+                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "after");
                 }
             }
         });
@@ -118,7 +123,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null , "before");
+                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "before");
                 }
             }
         });

@@ -179,10 +179,10 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
         vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
             Map<String, String> params = new HashMap<>();
-            params.put("username_room",  username);
-            params.put("bc_user",  databaseHelper.getMyContact().getJabberId());
-            params.put("id_rooms_tab",  idRoomTab);
-            getDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_tobe_repair.php",params,true);
+            params.put("username_room", username);
+            params.put("bc_user", databaseHelper.getMyContact().getJabberId());
+            params.put("id_rooms_tab", idRoomTab);
+            getDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_tobe_repair.php", params, true);
         } else {
             vRefreshList.setRefreshing(false);
             Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
@@ -204,11 +204,11 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
             @Override
             public void onItemClick(View view, int position, File item, String type) {
                 Map<String, String> params = new HashMap<>();
-                params.put("username_room",  username);
-                params.put("bc_user",  databaseHelper.getMyContact().getJabberId());
-                params.put("id_rooms_tab",  idRoomTab);
-                params.put("task_id",  item.id+"");
-                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_tobe_repair.php",params,true);
+                params.put("username_room", username);
+                params.put("bc_user", databaseHelper.getMyContact().getJabberId());
+                params.put("id_rooms_tab", idRoomTab);
+                params.put("task_id", item.id + "");
+                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_tobe_repair.php", params, true);
 
             }
         }, new OnRequestItemClickListener() {
@@ -318,12 +318,16 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
 
 
                             if (jsonArray.length() > 0) {
-                                for (int i = jsonArray.length() -1 ; i >= 0; i--) {
+                                for (int i = jsonArray.length() - 1; i >= 0; i--) {
                                     JSONObject jObj = jsonArray.getJSONObject(i);
                                     String id = jObj.getString("id");
 //                                        String link_file = jObj.getString("link_file");
 //                                        String timestamp = jObj.getString("create_at");
 //                                        String bc_user_requester = jObj.getString("bc_user_requester");
+                                    String timestamp = "";
+                                    if (jObj.has("tanggal_submit")) {
+                                        timestamp = jObj.getString("tanggal_submit");
+                                    }
                                     String nama_file = jObj.getString("title");
 //                                        String history = jObj.getString("history");
 
@@ -334,7 +338,7 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
                                     file.id = Long.valueOf(id);
                                     file.title = nama_file;
                                     file.url = "";
-                                    file.timestamp = "";
+                                    file.timestamp = timestamp;
                                     file.type = "text";
                                     file.id_history = "";
                                     file.description = "";
@@ -378,11 +382,11 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
                 response -> {
                     rdialog.dismiss();
                     if (hide) {
-                        Intent iii = new Intent(getContext(),PushRepairReportActivity.class);
-                        iii.putExtra("data",response);
-                        iii.putExtra("username_room",username);
-                        iii.putExtra("bc_user",databaseHelper.getMyContact().getJabberId());
-                        iii.putExtra("id_rooms_tab",idRoomTab);
+                        Intent iii = new Intent(getContext(), PushRepairReportActivity.class);
+                        iii.putExtra("data", response);
+                        iii.putExtra("username_room", username);
+                        iii.putExtra("bc_user", databaseHelper.getMyContact().getJabberId());
+                        iii.putExtra("id_rooms_tab", idRoomTab);
                         startActivity(iii);
                     }
 

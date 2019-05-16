@@ -7,6 +7,7 @@ import java.io.File;
 public class Photo {
     private String id, title, before, afterString;
     private String verif;
+    private String ket = "";
     File after;
 
     public Photo() {
@@ -25,6 +26,15 @@ public class Photo {
         this.before = before;
         this.afterString = aftera;
         this.verif = verif;
+    }
+
+    public Photo(String id, String title, String before, String aftera, String verif, String _ket) {
+        this.id = id;
+        this.title = title;
+        this.before = before;
+        this.afterString = aftera;
+        this.verif = verif;
+        this.ket = _ket;
     }
 
     public Photo(String id, String title, String before, File after, String aftera) {
@@ -81,5 +91,13 @@ public class Photo {
 
     public void setVerif(String verif) {
         this.verif = verif;
+    }
+
+    public String getKet() {
+        return ket;
+    }
+
+    public void setKet(String ket) {
+        this.ket = ket;
     }
 }

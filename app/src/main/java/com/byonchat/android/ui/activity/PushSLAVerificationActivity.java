@@ -115,7 +115,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     }
 
     protected void resolveData() {
-        Log.w("ini datanya apa cuk",getIntent().getStringExtra("data"));
+        Log.w("ini datanya apa cuk", getIntent().getStringExtra("data"));
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
             id_task = gvcs.getString("task_id");
@@ -137,18 +137,25 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                             JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
+                                Log.w("kampret", fifth.toString());
+
                                 String valid = fifth.getString("v");
-                                if(valid.equalsIgnoreCase("0")) {
+                                if (valid.equalsIgnoreCase("0")) {
                                     String id = fifth.getString("id");
                                     String fotony = fifth.getString("f");
                                     String title = fifth.getString("n");
+                                    String ket = "";
+                                    if (fifth.has("ket")) {
+                                        ket = fifth.getString("ket");
+                                    }
+
 
                                     String aftera = fifth.getString("a");
                                     if (!fotony.contains("http://")) {
                                         fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
                                     }
 
-                                    Photo fotonya = new Photo(id, title, fotony, aftera,valid);
+                                    Photo fotonya = new Photo(id, title, fotony, aftera, valid, ket);
                                     foto.add(fotonya);
                                 }
                             }
@@ -157,7 +164,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 }
             }
         } catch (JSONException e) {
-            Toast.makeText(getApplicationContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -184,8 +191,8 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                         RoomsDetail orderModel = new RoomsDetail(id_task, getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
                         db.insertRoomsDetail(orderModel);
 
-                        for(int i = 0; i < foto.size();i++){
-                            if(foto.get(i).getId().equalsIgnoreCase(task_id)){
+                        for (int i = 0; i < foto.size(); i++) {
+                            if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
                                 foto.get(i).setAfter(f);
                             }
                         }
@@ -292,25 +299,25 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     protected void resolveListFile() {
 
 
-        mAdapter = new PushSLAVerificationAdapter(getApplication(),id_task,
+        mAdapter = new PushSLAVerificationAdapter(getApplication(), id_task,
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
             public void onItemClick(View view, int position, File item, String type) {
                 task_id = position + "";
-                if(type.equalsIgnoreCase("changeVerif")){
-                    for(int i = 0; i < foto.size();i++){
-                        if(foto.get(i).getId().equalsIgnoreCase(task_id)){
-                            if(foto.get(i).getVerif().equalsIgnoreCase("0")){
+                if (type.equalsIgnoreCase("changeVerif")) {
+                    for (int i = 0; i < foto.size(); i++) {
+                        if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
+                            if (foto.get(i).getVerif().equalsIgnoreCase("0")) {
                                 foto.get(i).setVerif("1");
-                            }else{
+                            } else {
                                 foto.get(i).setVerif("0");
                             }
                         }
                     }
 
                     mAdapter.notifyDataSetChanged();
-                }else if(type.equalsIgnoreCase("before")){
+                } else if (type.equalsIgnoreCase("before")) {
                     Intent intent = new Intent(PushSLAVerificationActivity.this, ZoomImageViewActivity.class);
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
@@ -318,12 +325,12 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                         }
                     }
                     startActivity(intent);
-                }else {
+                } else {
                     Intent intent = new Intent(PushSLAVerificationActivity.this, ZoomImageViewActivity.class);
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
                             intent.putExtra(ZoomImageViewActivity.KEY_FILE, foto.get(i).getAfterString());
-                            Log.w("gyudbuwegb eugfu",foto.get(i).getAfterString());
+                            Log.w("gyudbuwegb eugfu", foto.get(i).getAfterString());
                         }
                     }
                     startActivity(intent);
@@ -336,7 +343,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         vListData.setAdapter(mAdapter);
     }
 
-    private void resolveSend(){
+    private void resolveSend() {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -350,17 +357,17 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 rdialog.setMessage("Loading...");
                 rdialog.show();
 
-                Log.w("Bodoamat skhwd",fileJson());
+                Log.w("Bodoamat skhwd", fileJson());
                 new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla.php",
-                        getIntent().getStringExtra("username_room"),getIntent().getStringExtra("bc_user"),
+                        getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                         getIntent().getStringExtra("id_rooms_tab"));
-                Log.w("param kirim skhwd",getIntent().getStringExtra("username_room")+", "+getIntent().getStringExtra("bc_user")+", "+
+                Log.w("param kirim skhwd", getIntent().getStringExtra("username_room") + ", " + getIntent().getStringExtra("bc_user") + ", " +
                         getIntent().getStringExtra("id_rooms_tab"));
             }
         });
     }
 
-    private String fileJson(){
+    private String fileJson() {
         String stringdong = "";
 
         try {
@@ -385,7 +392,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 String id = fifth.getString("id");
-                                for (int vi = 0; vi < foto.size();vi++) {
+                                for (int vi = 0; vi < foto.size(); vi++) {
                                     Log.w("ujug3 ID", "id json : " + id + ", id photo : " + foto.get(vi).getId());
                                     if (foto.get(vi).getId().equalsIgnoreCase(id)) {
                                         Log.w("ujug2 nambah", id);
@@ -405,7 +412,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             Log.w("ujug ujug error", e.getMessage());
         }
 
-        Log.w("Apa ujug ujug (gandi)",stringdong);
+        Log.w("Apa ujug ujug (gandi)", stringdong);
         return stringdong;
     }
 
@@ -438,7 +445,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
+                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
@@ -496,7 +503,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(),"Success Uploading Report",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Success Uploading Report", Toast.LENGTH_LONG).show();
             rdialog.dismiss();
             finish();
             super.onPostExecute(result);

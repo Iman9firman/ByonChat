@@ -64,6 +64,16 @@
                 android:textColor="@android:color/black" />
 
 
+            <TextView
+                android:id="@+id/progress_sla"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin10"
+                android:layout_marginRight="@dimen/margin10"
+                android:padding="@dimen/margin5"
+                android:textColor="@android:color/black"
+                android:textAlignment="textEnd"/>
+
             <com.multilevelview.MultiLevelRecyclerView
 
                 android:id="@+id/recy_main"

@@ -135,6 +135,7 @@ import com.byonchat.android.utils.GenerateQR;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.LocationAssistant;
 import com.byonchat.android.utils.MediaProcessingUtil;
+import com.byonchat.android.utils.Utility;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.ContactsCompletionView;
@@ -213,9 +214,14 @@ import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID_DETAIL;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_IMG;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_OK;
 import static com.byonchat.android.provider.RadioButtonCheckDB.TABLE_NAME;
+import static com.byonchat.android.utils.Utility.tableExists;
 
 public class DinamicSLATaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener, AllAboutUploadTask.OnTaskCompleted {
 
+    private TextView textProgress;
+    private int countCheck = 0;
+
+    DecimalFormat df2 = new DecimalFormat("#.##");
 
     private MultiLevelRecyclerView recyclerView;
     SearchableSpinner spinner;
@@ -1851,6 +1857,9 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             recyclerView = findViewById(R.id.recy_main);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+            textProgress = findViewById(R.id.progress_sla);
+
+
             final List<String> valSetOne1 = new ArrayList<String>();
             valSetOne1.add(String.valueOf(0));
             valSetOne1.add("1");
@@ -1889,6 +1898,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                     if (spinnerArraySla.get(myPosition).equalsIgnoreCase("--Please Select--")) {
                         recyclerView.setVisibility(View.GONE);
+                        textProgress.setVisibility(View.GONE);
                         if (cEdit.getCount() > 0) {
                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
                             db.deleteDetailRoomWithFlagContent(orderModel);
@@ -1909,8 +1919,9 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                         DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(context, "sqlite_iss");
 
+
                         String asiop[] = {"jt.id AS id_jjt", "pb.id AS id_pembobotan", "pb.nama_pembobotan AS nama_pembobotan", "pb.grade AS grade"
-                                , "s.id AS id_section", "s.title AS title_section", "ss.id AS id_subsection", "ss.title AS title_subsection", "p.id AS id_pertanyaan", "p.pertanyaan AS pertanyaan"};
+                                , "s.id AS id_section", "s.title AS title_section", "ss.id AS id_subsection", "ss.title AS title_subsection", "p.id AS id_pertanyaan", "p.pertanyaan AS pertanyaan", "jt.pass_grade AS pass_gradeNya"};
 
                         String asiap = "jjt jt\n" +
                                 "INNER JOIN jjt_checklists jtc ON jt.id=jtc.id_jjt\n" +
@@ -1921,8 +1932,32 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 "INNER JOIN sub_section ss ON ss.id=sc.id_subsection\n" +
                                 "INNER JOIN subsection_checklists sbc ON ss.id=sbc.id_subsection\n" +
                                 "INNER JOIN pertanyaan p ON p.id=sbc.id_pertanyaan";
-
+                        String passGrade = "0";
                         if (mDBDquerySLA.getWritableDatabase() != null) {
+                            // Log.w("Jambore", tableExists(mDBDquerySLA, "pass_grade") + "");
+                            String see[] = {"COUNT(*)"};
+
+                            final Cursor curCek = mDBDquerySLA.getWritableDatabase().query(true, "sqlite_master", see, "type = ? AND name = ?", new String[]{"table", "pass_grade"}, null, null, null, null);
+
+                            if (curCek.moveToFirst()) {
+                                if (curCek.getCount() == 0) {
+                                    if (deleteContent) {
+                                        db.deleteRoomsDetailbyId(idDetail, idTab, username);
+                                    }
+                                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                        Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
+
+                                    finish();
+                                    Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
+                                    intent.putExtra("name_db", "sqlite_iss");
+                                    intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                                    startActivity(intent);
+                                    return;
+                                }
+                            }
+
                             final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + assup + "'", null, null, null, null, null);
 
                             // TODO: 03/04/19
@@ -1936,7 +1971,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
 
                             if (css.moveToFirst()) {
-
+                                textProgress.setVisibility(View.VISIBLE);
                                 recyclerView.setVisibility(View.VISIBLE);
                                 String bobotIdOld = "";
                                 String sectionOld = "";
@@ -1960,6 +1995,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         String namaSection = css.getString(5);
                                         String namaSubSection = css.getString(7);
                                         String itemTobe = css.getString(9);
+                                        passGrade = css.getString(10);
 
 
                                         if (bobotIdOld.equalsIgnoreCase(idBobot)) {
@@ -2059,7 +2095,12 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
 
                                     itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
-                                    adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView);
+                                    adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
+                                        @Override
+                                        public void onChecked(int count) {
+                                            textProgress.setText(count + "/" + countCheck);
+                                        }
+                                    });
                                     recyclerView.setAdapter(adapter);
                                     recyclerView.setAccordion(false);
                                     recyclerView.removeItemClickListeners();
@@ -2090,8 +2131,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                             JSONArray level3Array = objectTwo.getJSONArray("data");
                                             Double bbt2 = bbt / level3Array.length();
 
-                                            Log.w("Enak looonoa efc",objectTwo+"");
-
                                             JSONObject detailing2 = new JSONObject();
                                             detailing2.put("id", id2);
                                             JSONArray data2 = new JSONArray();
@@ -2112,8 +2151,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     String lb4 = objectFour.getString("label");
                                                     JSONObject detailing = new JSONObject();
                                                     detailing.put("id", id4);
-                                                    detailing.put("label", lb2+" - "+lb4);
-                                                    detailing.put("bt", bbt3);
+                                                    detailing.put("label", lb2 + " - " + lb4);
+                                                    detailing.put("bt", df2.format(bbt3));
                                                     data3.put(detailing);
                                                 }
                                                 detailing3.put("data", data3);
@@ -2124,12 +2163,12 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         }
                                         detailing1.put("data", data1);
                                         detailing1.put("bobot", bobot);
+                                        detailing1.put("gr", passGrade);
 
 
                                         saveSLADetail.put(detailing1);
                                     }
 
-                                    Log.w("juragan", saveSLADetail.toString());
 
                                     Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66989", "dropdown_form", "1"));
                                     if (cEdit2.getCount() > 0) {
@@ -8552,6 +8591,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                     try {
                                                         JSONArray jsonArray = new JSONArray(sayaJA);
+                                                        Log.w("sakerep", sayaJA);
+
                                                         for (int oneL = 0; oneL < jsonArray.length(); oneL++) {
                                                             String id = jsonArray.getJSONObject(oneL).getString("id");
                                                             JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
@@ -8569,12 +8610,12 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                                         String lb4 = data3.getJSONObject(fourL).getString("label");
                                                                         String bt4 = data3.getJSONObject(fourL).getString("bt");
 
-                                                                        String idCheck = idDetail + "-" + id + "-" + id2 + "-" + id3 + "-" + id4;
+                                                                        String idCheck = id + "-" + id2 + "-" + id3 + "-" + id4;
 
                                                                         boolean isExist = false;
 
                                                                         Cursor cursor = dbSLAA.rawQuery("SELECT * FROM " + TABLE_NAME
-                                                                                + " WHERE id_detail =?", new String[]{String.valueOf(idCheck)});
+                                                                                + " WHERE id_detail ='" + idDetail + "' AND id_item =?", new String[]{String.valueOf(idCheck)});
                                                                         while (cursor.moveToNext()) {
                                                                             isExist = true;
                                                                         }
@@ -8582,12 +8623,12 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                                         if (!isExist) {
                                                                             berhenti = true;
-                                                                            errorReq.add("*"+lb4);
+                                                                            errorReq.add("*" + lb4);
                                                                         } else {
 
                                                                             Cursor cursorD = dbSLAA.query(TABLE_NAME,
                                                                                     new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
-                                                                                    COLUMN_ID_DETAIL + "=?",
+                                                                                    COLUMN_ID_DETAIL + "='" + idDetail + "' AND " + COLUMN_ID + " =?",
                                                                                     new String[]{idCheck}, null, null, null, null);
                                                                             while (cursorD.moveToNext()) {
                                                                                 int ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
@@ -8597,7 +8638,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                                                 if (ok == 0) {
                                                                                     if (img == null && com == null) {
                                                                                         berhenti = true;
-                                                                                        errorReq.add("Tambahkan comment atau foto : " + id4);
+                                                                                        errorReq.add("Tambahkan comment atau foto : " + lb4);
                                                                                     }
                                                                                 }
 
@@ -8618,6 +8659,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                     } catch (JSONException e) {
                                                         e.printStackTrace();
+                                                        Log.w("jojon", e.getMessage());
                                                     }
                                                 } else if (value.get(2).toString().equalsIgnoreCase("phone_number")) {
                                                     String saya = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
@@ -9774,9 +9816,9 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                         if (idListTaskMasterForm.equalsIgnoreCase("66986")) {
                             if (valueIdValue.getTypes().equalsIgnoreCase("insert")) {
-                                adapter.insertDB(valueIdValue.getIdDetail(), 0, f.getAbsolutePath(), null);
+                                adapter.insertDB(valueIdValue.getIdDetail().split(";")[0], valueIdValue.getIdDetail().split(";")[1], 0, f.getAbsolutePath(), null);
                             } else {
-                                adapter.updateDB(valueIdValue.getIdDetail(), Integer.valueOf(valueIdValue.getExpandedListText()), f.getAbsolutePath(), null);
+                                adapter.updateDB(valueIdValue.getIdDetail().split(";")[0], valueIdValue.getIdDetail().split(";")[1], Integer.valueOf(valueIdValue.getExpandedListText()), f.getAbsolutePath(), null);
                             }
 
                             adapter.notifyDataSetChanged();
@@ -12423,7 +12465,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                 item.setId(Integer.valueOf(idd.replace(".", "")));
                 if (levelNumber == 3) {
-                    item.setId_content(idDetail + "-" + objectOne.getString("id_content"));
+                    item.setId_content(objectOne.getString("id_content"));
+                    countCheck++;
                 }
 
                 item.addChildren((List<RecyclerViewItem>) getListFromJson(id_parent, from + (one + 1) + ".", objectOne.toString(), levelNumber + 1));

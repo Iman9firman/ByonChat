@@ -576,6 +576,11 @@
             android:name=".FragmentDinamicRoom.LoginRoomActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".FragmentDinamicRoom.DinamicRoomTaskActivity" />
+        <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
+        <activity
+            android:name=".FragmentDinamicRoom.DinamicSLATaskActivity"
+            android:screenOrientation="portrait" />
+
         <activity android:name=".LoadingGetTabRoomActivity" /> <!-- lukman -->
         <activity
             android:name=".personalRoom.PersonalRoomActivity"
@@ -739,10 +744,6 @@
         <activity
             android:name=".ISSActivity.Reliever.CheckInActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
-        
-        <activity android:name=".FragmentDinamicRoom.DinamicSLATaskActivity" />
-
         <activity android:name=".tabRequest.RelieverListActivity" />
         <activity android:name=".tabRequest.MapsViewActivity" />
         <activity android:name=".tabRequest.RelieverDetailActivity" />

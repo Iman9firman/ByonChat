@@ -254,7 +254,6 @@ public class AllAboutUploadTask {
             String content = "";
 
             String cc = list.get(u).getContent();
-            Log.w("masukUploadNot", cc.toString());
             try {
                 if (cc.startsWith("{")) {
                     if (!cc.startsWith("[")) {
@@ -264,15 +263,11 @@ public class AllAboutUploadTask {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.w("masukUploadNot2", cc.toString());
             }
 
 
-            Log.w("masukUpload", "satu");
             if (jsA != null) {
-                Log.w("masukUpload", "dua");
                 if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
-                    Log.w("masukUpload", "tiga");
                     try {
                         JSONObject jsonObject = new JSONObject(list.get(u).getContent());
                         Iterator<String> iter = jsonObject.keys();
@@ -313,13 +308,11 @@ public class AllAboutUploadTask {
                                 }
 
                             } catch (JSONException e) {
-                                Log.w("masukUpload", "empat");
                                 // Something went wrong!
                             }
                         }
 
                     } catch (JSONException e) {
-                        Log.w("masukUpload", "lima");
                         e.printStackTrace();
                     }
                 }
@@ -378,39 +371,29 @@ public class AllAboutUploadTask {
                                         String id4 = data3.getJSONObject(fourL).getString("id");
                                         String bt4 = data3.getJSONObject(fourL).getString("bt");
 
-                                        String idCheck = idDetail + "-" + id + "-" + id2 + "-" + id3 + "-" + id4;
+                                        String idCheck = id + "-" + id2 + "-" + id3 + "-" + id4;
 
-                                        boolean isExist = false;
+                                        Cursor cursor = dbSLAA.query(TABLE_NAME,
+                                                new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
+                                                COLUMN_ID_DETAIL + " = '" + idDetail + "' AND " + COLUMN_ID + " =?",
+                                                new String[]{idCheck}, null, null, null, null);
 
-                                        Cursor cursor = dbSLAA.rawQuery("SELECT * FROM " + TABLE_NAME
-                                                + " WHERE id_detail =?", new String[]{String.valueOf(idCheck)});
                                         while (cursor.moveToNext()) {
-                                            isExist = true;
+                                            int ok = cursor.getInt(cursor.getColumnIndex(COLUMN_OK));
+                                            String img = cursor.getString(cursor.getColumnIndex(COLUMN_IMG));
+                                            String com = cursor.getString(cursor.getColumnIndex(COLUMN_COMMENT));
+
+                                            if (img != null) {
+                                                if (img.split("\\|").length == 1) {
+                                                    new UploadFileToServerSLA().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POST_FOTO,
+                                                            username, idTab, idListTaskMasterForm, img, idCheck);
+                                                    return;
+                                                }
+
+                                            }
+
                                         }
                                         cursor.close();
-
-                                        if (isExist) {
-                                            Cursor cursorD = dbSLAA.query(TABLE_NAME,
-                                                    new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
-                                                    COLUMN_ID_DETAIL + "=?",
-                                                    new String[]{idCheck}, null, null, null, null);
-                                            while (cursorD.moveToNext()) {
-                                                int ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
-                                                String img = cursorD.getString(cursorD.getColumnIndex(COLUMN_IMG));
-                                                String com = cursorD.getString(cursorD.getColumnIndex(COLUMN_COMMENT));
-
-                                                if (img != null) {
-
-                                                    if (img.split("\\|").length == 1) {
-                                                        new UploadFileToServerSLA().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POST_FOTO,
-                                                                username, idTab, idListTaskMasterForm, img, idCheck);
-                                                    }
-
-                                                }
-                                            }
-                                            cursorD.close();
-
-                                        }
                                     }
 
                                 }
@@ -449,37 +432,27 @@ public class AllAboutUploadTask {
         }
 
         if (listUpload.size() == 0) {
-            Log.w("abdulMasalah", "1");
             if (fromList.equalsIgnoreCase("show")) {
-                Log.w("abdulMasalah1", POSDETAIL);
                 new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
             } else if (fromList.equalsIgnoreCase("hide")) {
-                Log.w("abdulMasalah2", PULLDETAIL);
                 new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLDETAIL, username, idTab, idDetail);
             } else {
-                Log.w("abdulMasalah", "2");
                 if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
-                    Log.w("abdulMasalah", "3");
                     String[] ff = idDetail.split("\\|");
-                    Log.w("abdulMasalah", "4");
                     if (ff.length == 2) {
-                        Log.w("abdulMasalah", "5");
                         if (patokanUpload.length() > 0) {
-                            Log.w("abdulMasalah6", PULLMULIPLEDETAILUPDATE);
                             new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAILUPDATE, username, idTab, idDetail);
                         } else {
-                            Log.w("abdulMasalah7", PULLMULIPLEDETAIL);
                             new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLMULIPLEDETAIL, username, idTab, idDetail);
                         }
 
                     } else {
-                        Log.w("abdulMasalah8", "1");
                         new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
                     }
                 }
             }
         } else {
-            uploadFileChild("looping");
+            uploadFileChild("loopingMaster");
         }
     }
 
@@ -535,16 +508,11 @@ public class AllAboutUploadTask {
                 entity.addPart("username_room", new StringBody(usr));
                 entity.addPart("id_rooms_tab", new StringBody(idr));
                 entity.addPart("id_detail_tab", new StringBody(idDetail));
-                Log.w("Entiti sajaha ke 1", "usr : " + new StringBody(usr) + ", idr : " + new StringBody(idr) + ", idDetail : " + new StringBody(idDetail));
-
-                Log.w("Kena lewat sajaha", "Setuju 0");
 
                 if (calendar != null) {
                     if (calendar.equalsIgnoreCase("true boi")) {
 
-                        Log.w("Kena lewat sajaha", "Setuju 1");
                         entity.addPart("selected_date", new StringBody(startDate));
-                        Log.w("Entiti sajaha ke 2", "" + new StringBody(startDate));
                     }
                 }
 
@@ -580,7 +548,6 @@ public class AllAboutUploadTask {
 
 
                     entity.addPart("assign_to", new StringBody(has));
-                    Log.w("Entiti sajaha ke 3", "" + new StringBody(has));
 
                 }
 
@@ -596,14 +563,12 @@ public class AllAboutUploadTask {
                             resultti = "2";
                         }
                         entity.addPart("status_task", new StringBody(resultti));
-                        Log.w("Entiti sajaha ke 4", "" + new StringBody(resultti));
                     }
                 }
 
 
                 if (!isReject.equalsIgnoreCase("")) {
                     entity.addPart("is_reject", new StringBody(isReject));
-                    Log.w("Entiti sajaha ke 5", "" + new StringBody(isReject));
                 }
 
 
@@ -614,16 +579,13 @@ public class AllAboutUploadTask {
                     if (!cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)).equalsIgnoreCase("")) {
                         entity.addPart("latlong_before", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a")));
                         entity.addPart("latlong_after", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "b")));
-                        Log.w("Entiti sajaha ke 6 a", "a");
                     } else {
                         entity.addPart("latlong_before", new StringBody("null"));
                         entity.addPart("latlong_after", new StringBody("null"));
-                        Log.w("Entiti sajaha ke 6 b", "b");
                     }
                 } else {
                     entity.addPart("latlong_before", new StringBody("null"));
                     entity.addPart("latlong_after", new StringBody("null"));
-                    Log.w("Entiti sajaha ke 6 c", "c");
                 }
 
                 if (fromList.equalsIgnoreCase("hide") || fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
@@ -633,7 +595,6 @@ public class AllAboutUploadTask {
                         if (ff.length == 2) {
                             entity.addPart("parent_id", new StringBody(ff[1]));
                             entity.addPart("id_list_push", new StringBody(ff[0]));
-                            Log.w("Entiti sajaha ke 7", "" + new StringBody(idDetail + ""));
                         }
                     }
                 }
@@ -645,7 +606,6 @@ public class AllAboutUploadTask {
 
                 Contact contact = messengerHelper.getMyContact();
                 entity.addPart("bc_user", new StringBody(contact.getJabberId()));
-                Log.w("Entiti sajaha ke 8", "" + new StringBody(contact.getJabberId()));
 
                 ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, usr, idr, "cild");
 
@@ -682,6 +642,7 @@ public class AllAboutUploadTask {
                                 JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
 
                                 String bobot = jsonArray.getJSONObject(oneL).getString("bobot");
+                                String ggr = jsonArray.getJSONObject(oneL).getString("gr");
 
                                 JSONArray sectionArray = new JSONArray();
 
@@ -708,12 +669,12 @@ public class AllAboutUploadTask {
                                             JSONObject pertanyaanDetail = new JSONObject();
                                             pertanyaanDetail.put("id", Integer.valueOf(id4));
 
-                                            String idCheck = idDetail + "-" + id + "-" + id2 + "-" + id3 + "-" + id4;
+                                            String idCheck = id + "-" + id2 + "-" + id3 + "-" + id4;
 
                                             boolean isExist = false;
 
                                             Cursor cursor = dbSLAA.rawQuery("SELECT * FROM " + TABLE_NAME
-                                                    + " WHERE id_detail =?", new String[]{String.valueOf(idCheck)});
+                                                    + " WHERE id_detail = '" + idDetail + "' AND id_item =?", new String[]{String.valueOf(idCheck)});
                                             while (cursor.moveToNext()) {
                                                 isExist = true;
                                             }
@@ -724,10 +685,8 @@ public class AllAboutUploadTask {
                                                 int ok = 0;
                                                 String img = "";
                                                 String com = "";
-                                                Cursor cursorD = dbSLAA.query(TABLE_NAME,
-                                                        new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
-                                                        COLUMN_ID_DETAIL + "=?",
-                                                        new String[]{idCheck}, null, null, null, null);
+                                                Cursor cursorD = dbSLAA.rawQuery("SELECT * FROM " + TABLE_NAME
+                                                        + " WHERE id_detail = '" + idDetail + "' AND id_item =?", new String[]{String.valueOf(idCheck)});
                                                 while (cursorD.moveToNext()) {
                                                     ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
                                                     img = cursorD.getString(cursorD.getColumnIndex(COLUMN_IMG));
@@ -776,6 +735,7 @@ public class AllAboutUploadTask {
                                     sectionArray.put(subSection);
 
                                 }
+                                section.put("grade", ggr);
                                 section.put("section", sectionArray);
                                 section.put("bobot", Integer.valueOf(bobot));
                                 section.put("id", Integer.valueOf(id));
@@ -786,13 +746,10 @@ public class AllAboutUploadTask {
                             JSONObject jjtnya = new JSONObject();
 
 
-                            jjtnya.put("kode_jjt", "ISS-00625F0001");
-                            jjtnya.put("area", "EKA HOSPITAL CLN");
                             jjtnya.put("pembobotan", pembobotanArray);
 
 
                             cc = jjtnya.toString().replace("\\", "");
-                            Log.w("bismilah", cc.replace("\\", ""));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -1047,7 +1004,6 @@ public class AllAboutUploadTask {
                     }
                 } else {
                     if (gpxfile.exists()) {
-                      //  Toast.makeText(context, "Boleh kartun 1", Toast.LENGTH_SHORT).show();
                         gpxfile.delete();
                     }
                     long date = System.currentTimeMillis();
@@ -1062,7 +1018,6 @@ public class AllAboutUploadTask {
 
             } catch (ClientProtocolException e) {
                 if (gpxfile.exists()) {
-                   // Toast.makeText(context, "Boleh kartun 2", Toast.LENGTH_SHORT).show();
                     gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
@@ -1074,7 +1029,6 @@ public class AllAboutUploadTask {
 
             } catch (IOException e) {
                 if (gpxfile.exists()) {
-                 //   Toast.makeText(context, "Boleh kartun 3", Toast.LENGTH_SHORT).show();
                     gpxfile.delete();
                 }
                 long date = System.currentTimeMillis();
@@ -1176,7 +1130,7 @@ public class AllAboutUploadTask {
 
                     Cursor cursorD = dbSLAA.query(TABLE_NAME,
                             new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
-                            COLUMN_ID_DETAIL + "=?",
+                            COLUMN_ID_DETAIL + " = '" + idDetail + "' AND " + COLUMN_ID + " =?",
                             new String[]{id_konten_sla}, null, null, null, null);
                     while (cursorD.moveToNext()) {
                         int ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
@@ -1186,13 +1140,13 @@ public class AllAboutUploadTask {
                         if (img != null) {
                             ContentValues values = new ContentValues();
                             values.put(COLUMN_IMG, img + "|" + fileNameServer);
-                            dbSLAA.update(TABLE_NAME, values, COLUMN_ID_DETAIL + " = ?",
+                            dbSLAA.update(TABLE_NAME, values, COLUMN_ID_DETAIL + " = '" + idDetail + "' AND " + COLUMN_ID + " =?",
                                     new String[]{String.valueOf(id_konten_sla)});
                         }
                     }
                     cursorD.close();
 
-                    uploadFileChild("looping");
+                    uploadFileChild("loopingSLA");
                 } else {
                     taskCompleted.onTaskCompleted(20, message);
 
@@ -1298,7 +1252,7 @@ public class AllAboutUploadTask {
                     String aadc = valueSS.replace("\"value\":\"" + (valueS.replace("/", "\\/")) + "\"", "\"value\":" + "\"" + fileNameServer + ";" + (uri.replace("/", "\\/")) + "\"");
                     RoomsDetail orderModel = new RoomsDetail(getId, getParent_tab, getParent_room, aadc, getFlag_content, getFlag_tab, getFlag_room);
                     db.updateDetailRoomWithFlagContent(orderModel);
-                    uploadFileChild("looping");
+                    uploadFileChild("loopingUploadFileToServer");
                 } else {
                     taskCompleted.onTaskCompleted(20, message);
 
@@ -1422,7 +1376,7 @@ public class AllAboutUploadTask {
 
                     RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsos.toString(), getFlag_content, getFlag_tab, "cild");
                     db.updateDetailRoomWithFlagContent(orderModel);
-                    uploadFileChild("looping");
+                    uploadFileChild("loopingUploadFileToServerCild");
                 } else {
                     taskCompleted.onTaskCompleted(20, message);
                 }

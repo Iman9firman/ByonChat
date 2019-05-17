@@ -525,7 +525,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         adapter.setOnItemClickListener((view, position) -> {
             /*Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);*/
-            if(subItemList.size() == 0) {
+            if(adapter.getData().get(position).category_tab != null) {
                 Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
                 startActivity(intent);
             }else {

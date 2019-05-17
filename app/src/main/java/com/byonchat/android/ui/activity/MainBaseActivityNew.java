@@ -935,7 +935,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
         adapter.setOnItemClickListener((view, position) -> {
             Log.w("How many theAsub",subItemList.size()+"");
-            if(subItemList.size() == 0) {
+            if(adapter.getData().get(position).category_tab != null) {
                 Log.w("How many theAsub","iyayaya");
                 Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
                 startActivity(intent);
@@ -1245,7 +1245,21 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                         Constants.map.put(i, null);
                     }
 
+                    itemList.add(itemMain);
 
+                    for(int s1 = 0; s1 < itemList.size(); s1++){
+                        try {
+                            JSONArray jsonArrow = new JSONArray(itemList.get(s1).status);
+                            for (int i1 = 0; i1 < jsonArrow.length(); i1++) {
+                                String id_tab_dftared = jsonArrow.getString(i1);
+                                if (id_tab_dftared.equalsIgnoreCase(id_rooms_tab)) {
+                                    itemList.remove(itemMain);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     subItemList.add(i, itemMain);
                     positionList.add(i, title);
                 }

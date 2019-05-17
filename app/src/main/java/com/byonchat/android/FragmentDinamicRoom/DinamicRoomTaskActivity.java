@@ -1000,22 +1000,24 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         if (iidd.equalsIgnoreCase("2207") || iidd.equalsIgnoreCase("2206") || iidd.equalsIgnoreCase("2209") || iidd.equalsIgnoreCase("2397")) {
 
                                                             JSONArray jsonarrayChild2 = new JSONArray(data);
-                                                            JSONObject ks0 = jsonarrayChild2.getJSONObject(0);
-                                                            JSONObject ks1 = jsonarrayChild2.getJSONObject(1);
-                                                            JSONObject ks2 = jsonarrayChild2.getJSONObject(2);
+                                                            if (jsonarrayChild2.length() == 3) {
+                                                                JSONObject ks0 = jsonarrayChild2.getJSONObject(0);
+                                                                JSONObject ks1 = jsonarrayChild2.getJSONObject(1);
+                                                                JSONObject ks2 = jsonarrayChild2.getJSONObject(2);
+                                                                JSONObject alas = ks1.getJSONObject("value");
+                                                                titleUntuk = alas.getString("Part ID") + " " + alas.getString("Nama Part") + "(" + ks0.getString("value") + ")";
+                                                                decsUntuk = ks2.getString("value");
+                                                                priceUntuk = alas.getString("AVE");
 
-                                                            JSONObject alas = ks1.getJSONObject("value");
-                                                            titleUntuk = alas.getString("Part ID") + " " + alas.getString("Nama Part") + "(" + ks0.getString("value") + ")";
-                                                            decsUntuk = ks2.getString("value");
-                                                            priceUntuk = alas.getString("AVE");
 
+                                                                line = (LinearLayout) getLayoutInflater().inflate(R.layout.from_cild_layout_value, null);
+                                                                lv = (ListView) line.findViewById(R.id.listOrder);
+                                                                addCild = (Button) line.findViewById(R.id.btn_add_cild);
+                                                                tQty = (TextView) line.findViewById(R.id.total_detail_order);
+                                                                tPrice = (TextView) line.findViewById(R.id.total_price_order);
+                                                                addCild.setVisibility(View.GONE);
+                                                            }
 
-                                                            line = (LinearLayout) getLayoutInflater().inflate(R.layout.from_cild_layout_value, null);
-                                                            lv = (ListView) line.findViewById(R.id.listOrder);
-                                                            addCild = (Button) line.findViewById(R.id.btn_add_cild);
-                                                            tQty = (TextView) line.findViewById(R.id.total_detail_order);
-                                                            tPrice = (TextView) line.findViewById(R.id.total_price_order);
-                                                            addCild.setVisibility(View.GONE);
                                                         }
 
                                                     }
@@ -3016,33 +3018,39 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 idListTaskMasterForm = idListTask;
                                 List<String> listId = db.getAllRoomDetailFormWithFlagContentWithOutId(DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), "child_detail");
 
-                                if (listId.size() == 0) {
-                                    if (asal.length() > 0) {
-                                        try {
-                                            JSONObject js1 = new JSONObject(asal);
-                                            JSONArray jsonArrayV = js1.getJSONArray("value");
-                                            for (int iz = 0; iz < jsonArrayV.length(); iz++) {
+                                if (asall.size() > 0) {
+                                    if (listId.size() == 0) {
+                                        if (asal != null) {
+                                            if (asal.length() > 0) {
+                                                try {
+                                                    JSONObject js1 = new JSONObject(asal);
+                                                    JSONArray jsonArrayV = js1.getJSONArray("value");
+                                                    for (int iz = 0; iz < jsonArrayV.length(); iz++) {
 
-                                                JSONArray jsonArrayVv = jsonArrayV.getJSONObject(iz).getJSONArray("data");
-                                                String resRandom = DialogFormChildMainNew.getRandomString();
+                                                        JSONArray jsonArrayVv = jsonArrayV.getJSONObject(iz).getJSONArray("data");
+                                                        String resRandom = DialogFormChildMainNew.getRandomString();
 
 
-                                                for (int iasd = 0; iasd < jsonArrayVv.length(); iasd++) {
-                                                    String a = jsonArrayVv.getJSONObject(iasd).getString("key");
-                                                    String b = jsonArrayVv.getJSONObject(iasd).getString("value");
-                                                    String c = jsonArrayVv.getJSONObject(iasd).getString("type");
+                                                        for (int iasd = 0; iasd < jsonArrayVv.length(); iasd++) {
+                                                            String a = jsonArrayVv.getJSONObject(iasd).getString("key");
+                                                            String b = jsonArrayVv.getJSONObject(iasd).getString("value");
+                                                            String c = jsonArrayVv.getJSONObject(iasd).getString("type");
 
-                                                    RoomsDetail orderModel2 = new RoomsDetail(resRandom, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), b, jsonCreateType(String.valueOf(asall.indexOf(c)), c, String.valueOf(asall.indexOf(c) - 1)), a, "child_detail");
-                                                    db.insertRoomsDetail(orderModel2);
+
+                                                            RoomsDetail orderModel2 = new RoomsDetail(resRandom, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTask), b, jsonCreateType(String.valueOf(asall.indexOf(c)), c, String.valueOf(asall.indexOf(c) - 1)), a, "child_detail");
+                                                            db.insertRoomsDetail(orderModel2);
+
+                                                        }
+                                                        listId.add(resRandom);
+                                                    }
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
                                                 }
-                                                listId.add(resRandom);
                                             }
-
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
                                         }
-                                    }
 
+                                    }
                                 }
 
 

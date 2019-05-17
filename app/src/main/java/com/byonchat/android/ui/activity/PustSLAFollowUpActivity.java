@@ -125,13 +125,15 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         basejson = getIntent().getStringExtra("data");
         NoteDB = new SLANoteDB(getApplicationContext());
 
+        Log.w("ivana", getIntent().getStringExtra("data"));
+
         resolveData();
         resolveListFile();
         resolveSend();
     }
 
     protected void resolveData() {
-        Log.w("ini datanya apa cuk",getIntent().getStringExtra("data"));
+
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
             id_task = gvcs.getString("task_id");
@@ -154,7 +156,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 String valid = fifth.getString("v");
-                                if(valid.equalsIgnoreCase("0")) {
+                                if (valid.equalsIgnoreCase("0")) {
                                     String id = fifth.getString("id");
                                     String fotony = fifth.getString("f");
                                     String title = fifth.getString("n");
@@ -168,7 +170,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                                     if (cursorCild.getCount() > 0) {
                                         java.io.File f = new java.io.File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                                         fotonya = new Photo(id, title, fotony, f);
-                                    }else {
+                                    } else {
                                         fotonya = new Photo(id, title, fotony, null);
                                     }
                                     foto.add(fotonya);
@@ -219,8 +221,8 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         RoomsDetail orderModel = new RoomsDetail(id_task, getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
                         db.insertRoomsDetail(orderModel);
 
-                        for(int i = 0; i < foto.size();i++){
-                            if(foto.get(i).getId().equalsIgnoreCase(task_id)){
+                        for (int i = 0; i < foto.size(); i++) {
+                            if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
                                 foto.get(i).setAfter(f);
                             }
                         }
@@ -327,21 +329,21 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
     protected void resolveListFile() {
 
 
-        mAdapter = new PustReportRepairAdapter(this,id_task,
+        mAdapter = new PustReportRepairAdapter(this, id_task,
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
             public void onItemClick(View view, int position, File item, String type) {
-                if(type.equalsIgnoreCase("before")){
+                if (type.equalsIgnoreCase("before")) {
                     task_id = position + "";
                     Intent intent = new Intent(PustSLAFollowUpActivity.this, ZoomImageViewActivity.class);
-                    for(int i = 0; i< foto.size();i++){
-                        if(foto.get(i).getId().equalsIgnoreCase(task_id)){
+                    for (int i = 0; i < foto.size(); i++) {
+                        if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
                             intent.putExtra(ZoomImageViewActivity.KEY_FILE, foto.get(i).getBefore());
                         }
                     }
                     startActivity(intent);
-                }else if(type.equalsIgnoreCase("after")){
+                } else if (type.equalsIgnoreCase("after")) {
                     task_id = position + "";
                     CameraActivity.Builder start = new CameraActivity.Builder(PustSLAFollowUpActivity.this, REQ_CAMERA);
                     start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
@@ -370,12 +372,12 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         vListData.setAdapter(mAdapter);
     }
 
-    private void resolveSend(){
+    private void resolveSend() {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
-                Log.w("segituStart","bye");
+                Log.w("segituStart", "bye");
             }
         });
         btnSubmit.setOnClickListener(new View.OnClickListener() {
@@ -385,13 +387,13 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 rdialog.setMessage("Loading...");
                 rdialog.show();
 
-                Log.w("ujuga ujuga ujuga",foto.size()+"");
+                Log.w("ujuga ujuga ujuga", foto.size() + "");
 
-                if(foto.size() == 0){
+                if (foto.size() == 0) {
                     new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_sla.php",
-                            getIntent().getStringExtra("username_room"),getIntent().getStringExtra("bc_user"),
+                            getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"));
-                }else {
+                } else {
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getAfter() != null) {
                             new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
@@ -416,12 +418,12 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 response -> {
                     rdialog.dismiss();
                     finish();
-                    Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                     Log.w("Return push errorrr", response);
 
                 },
                 error -> {
-                    Toast.makeText(getApplicationContext(),"Error found! Try Again",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error found! Try Again", Toast.LENGTH_SHORT).show();
                     rdialog.dismiss();
                     Log.w("Return push errorrrrr2", error);
                 }
@@ -436,7 +438,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         queue.add(sr);
     }
 
-    private String fileJson(){
+    private String fileJson() {
         String stringdong = "";
         try {
             JSONObject gvcs = new JSONObject(basejson);
@@ -456,13 +458,13 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 String id = fifth.getString("id");
-                                for (int vi = 0; vi < uploadfoto.size();vi++) {
+                                for (int vi = 0; vi < uploadfoto.size(); vi++) {
                                     Log.w("ujug3 ID", "id json : " + id + ", id photo : " + uploadfoto.get(vi).getId());
                                     if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                                         Log.w("ujug2 nambah", id);
                                         fifth.put("a", uploadfoto.get(vi).getAfterString());
-                                        if(checkDB(id)){
-                                            fifth.put("ket",getTheDB(id));
+                                        if (checkDB(id)) {
+                                            fifth.put("ket", getTheDB(id));
                                         }
                                     }
                                 }
@@ -478,11 +480,11 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             Log.w("ujug ujug error", e.getMessage());
         }
 
-        Log.w("Apa ujug ujug (gandi)",stringdong);
+        Log.w("Apa ujug ujug (gandi)", stringdong);
         return stringdong;
     }
 
-    private void deleteNote(){
+    private void deleteNote() {
         try {
             JSONObject gvcs = new JSONObject(fileJson());
             JSONArray jar = gvcs.getJSONArray("value_detail");
@@ -501,11 +503,11 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 String id = fifth.getString("id");
-                                for (int vi = 0; vi < uploadfoto.size();vi++) {
+                                for (int vi = 0; vi < uploadfoto.size(); vi++) {
                                     if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                                         Log.w("ujug2 nambah", id);
                                         fifth.put("a", uploadfoto.get(vi).getAfterString());
-                                        if(checkDB(id)){
+                                        if (checkDB(id)) {
                                             deleteFromDB(id);
                                         }
                                     }
@@ -578,7 +580,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.w("segituStart","de");
+            Log.w("segituStart", "de");
         }
 
         @Override
@@ -604,7 +606,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
+                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
@@ -648,30 +650,30 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.w("segitu@@",result);
+            Log.w("segitu@@", result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
-                    Log.w("segitu@1@",result);
+                    Log.w("segitu@1@", result);
                     String fileNameServer = jsonObject.getString("filename");
-                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/"+fileNameServer;
+                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
 
-                    Log.w("11111 errorre 1",fileNameServer);
-                    for (int i = 0; i < foto.size(); i++){
-                        if(foto.get(i).getId().equalsIgnoreCase(id)){
-                            Photo fotonya = new Photo(foto.get(i).getId(), foto.get(i).getTitle(),foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
+                    Log.w("11111 errorre 1", fileNameServer);
+                    for (int i = 0; i < foto.size(); i++) {
+                        if (foto.get(i).getId().equalsIgnoreCase(id)) {
+                            Photo fotonya = new Photo(foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
                             uploadfoto.add(fotonya);
                         }
                     }
 
 
                 } else {
-                    Log.w("segitu@2@",result);
+                    Log.w("segitu@2@", result);
                 }
 
-                if(foto.size() == uploadfoto.size()){
-                    Log.w("segitu@3@",result);
+                if (foto.size() == uploadfoto.size()) {
+                    Log.w("segitu@3@", result);
 //                    Map<String, String> params = new HashMap<>();
 //                    params.put("username_room",  getIntent().getStringExtra("username_room"));
 //                    params.put("bc_user",  getIntent().getStringExtra("bc_user"));
@@ -681,11 +683,11 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 //                    Log.w("nreoirgn errorre egbh",fileJson());
 //                    getDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_tobe_repair.php",params,true);
                     new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_sla.php",
-                            getIntent().getStringExtra("username_room"),getIntent().getStringExtra("bc_user"),
+                            getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"));
 
 //                   rdialog.dismiss();
-                    Log.w("pasukan ujug ujug",fileJson());
+                    Log.w("pasukan ujug ujug", fileJson());
 //                   Toast.makeText(PustSLAFollowUpActivity.this,fileJson() ,Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
@@ -725,7 +727,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
+                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
@@ -784,7 +786,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             deleteNote();
-            Toast.makeText(getApplicationContext(),"Success Uploading Report",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Success Uploading Report", Toast.LENGTH_LONG).show();
             rdialog.dismiss();
             finish();
             super.onPostExecute(result);

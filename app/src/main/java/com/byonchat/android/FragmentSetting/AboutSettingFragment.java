@@ -190,7 +190,8 @@ public class AboutSettingFragment extends Fragment {
         }
 
         protected void onPostExecute(String content) {
-            if (content.contains("http://app.byonchat.com/download_bc/")) {
+
+            if (content.contains("http://app.byonchat.com/download_bc/") || content.contains("http://dl.iss.co.id/")) {
                 taskDownload = new DownloadFromURL();
                 taskDownload.execute(content);
             } else {

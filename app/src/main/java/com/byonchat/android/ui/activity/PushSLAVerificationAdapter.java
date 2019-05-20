@@ -18,6 +18,7 @@ import com.byonchat.android.R;
 import java.io.File;
 
 import com.byonchat.android.model.Photo;
+import com.byonchat.android.model.SLAmodelNew;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
@@ -28,7 +29,7 @@ import java.util.List;
 
 public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVerificationAdapter.MyViewHolder> {
 
-    private List<Photo> allList;
+    private List<SLAmodelNew> allList;
     private Context context;
     String idDetail, idTab, username;
     protected OnPreviewItemClickListener onPreviewItemClickListener;
@@ -36,7 +37,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView before, after;
         ImageButton btnVerif;
-        TextView keterangan, note;
+        TextView keterangan, note, header;
 
         public MyViewHolder(View view) {
             super(view);
@@ -46,10 +47,11 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             btnVerif = (ImageButton) view.findViewById(R.id.imgVerif);
             keterangan = (TextView) view.findViewById(R.id.keterangan);
             note = (TextView) view.findViewById(R.id.notess);
+            header = (TextView) view.findViewById(R.id.header);
         }
     }
 
-    public PushSLAVerificationAdapter(Context context, String idDetail, String username, String idTab, List<Photo> moviesList,
+    public PushSLAVerificationAdapter(Context context, String idDetail, String username, String idTab, List<SLAmodelNew> moviesList,
                                       OnPreviewItemClickListener onPreviewItemClickListener) {
         this.allList = moviesList;
         this.context = context;
@@ -70,29 +72,13 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Photo foto = allList.get(position);
+        SLAmodelNew foto = allList.get(position);
 
         Picasso.with(context).load(foto.getBefore())
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.before);
 
         Picasso.with(context).load(foto.getAfterString())
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.after);
-
-        /*if(foto.getAfter() != null) {
-            Picasso.with(context).load(foto.getAfter())
-                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                    .into(holder.after);
-        }else {
-            BotListDB db = BotListDB.getInstance(context);
-            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "reportrepair", foto.getId());
-
-            if (cursorCild.getCount() > 0) {
-                File f = new File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                Picasso.with(context).load(f)
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(holder.after);
-            }
-        }*/
 
         if (foto.getVerif().equalsIgnoreCase("1")) {
             holder.btnVerif.setBackground(context.getDrawable(R.drawable.check_ok));
@@ -102,12 +88,13 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
 
         holder.keterangan.setText(foto.getTitle());
         holder.note.setText(foto.getKet());
+        holder.header.setText(foto.getHeader());
 
         holder.btnVerif.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "changeVerif");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "changeVerif");
                 }
             }
         });
@@ -115,7 +102,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "after");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "after");
                 }
             }
         });
@@ -123,7 +110,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "before");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "before");
                 }
             }
         });

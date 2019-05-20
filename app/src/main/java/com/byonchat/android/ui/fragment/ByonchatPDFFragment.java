@@ -227,7 +227,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
         mAdapter = new ByonchatPDFAdapter(getContext(), files, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, File item, String type) {
+            public void onItemClick(View view, String position, File item, String type) {
                 if(type.equalsIgnoreCase("folder")){
                     urlBack.add(item._id+"");
                     new getFile().execute("https://iss.byonchat.com/index.php/Api/Files/"+item.id);

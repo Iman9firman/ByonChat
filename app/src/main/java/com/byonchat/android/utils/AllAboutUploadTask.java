@@ -635,14 +635,14 @@ public class AllAboutUploadTask {
                             JSONArray jsonArray = new JSONArray(cc);
 
                             JSONArray pembobotanArray = new JSONArray();
-
+                            String ggr = "";
                             for (int oneL = 0; oneL < jsonArray.length(); oneL++) {
                                 JSONObject section = new JSONObject();
                                 String id = jsonArray.getJSONObject(oneL).getString("id");
                                 JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
 
                                 String bobot = jsonArray.getJSONObject(oneL).getString("bobot");
-                                String ggr = jsonArray.getJSONObject(oneL).getString("gr");
+                                ggr = jsonArray.getJSONObject(oneL).getString("gr");
 
                                 JSONArray sectionArray = new JSONArray();
 
@@ -735,7 +735,7 @@ public class AllAboutUploadTask {
                                     sectionArray.put(subSection);
 
                                 }
-                                section.put("grade", ggr);
+
                                 section.put("section", sectionArray);
                                 section.put("bobot", Integer.valueOf(bobot));
                                 section.put("id", Integer.valueOf(id));
@@ -747,6 +747,7 @@ public class AllAboutUploadTask {
 
 
                             jjtnya.put("pembobotan", pembobotanArray);
+                            jjtnya.put("grade", ggr);
 
 
                             cc = jjtnya.toString().replace("\\", "");

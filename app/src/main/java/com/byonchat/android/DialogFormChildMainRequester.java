@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,8 +43,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -73,7 +84,8 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
     String subNamenya;
     int ketPosisi = 0;
     String pekerjaanNamenya;
-    TextView valueAwal, valueAkhir;
+//    TextView /*valueAwal, valueAkhir*/;
+    EditText valueAwal, valueAkhir;
 
     ImageButton btnDateAwal, btnDateAkhir;
     EditText jumlah/*, keterangan*/;
@@ -181,8 +193,8 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
         jumlah = (EditText) findViewById(R.id.txtKuota1Jumlah);
 //        keterangan = (EditText) findViewById(R.id.txtKeterangan);
         spinnerKet = (Spinner) findViewById(R.id.spinKeterangan) ;
-        valueAkhir = (TextView) findViewById(R.id.value_akhir);
-        valueAwal = (TextView) findViewById(R.id.value_awal);
+        valueAkhir = (EditText) findViewById(R.id.value_akhir);
+        valueAwal = (EditText) findViewById(R.id.value_awal);
         add = (Button) findViewById(R.id.btn_add_cild);
         cancel = (Button) findViewById(R.id.btn_cancel);
         spinnerSub = (Spinner) findViewById(R.id.spinner_sub);
@@ -299,6 +311,12 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
             if (valueAwal.getText().toString().length() == 0) {
                 Toast.makeText(getContext(), "Harap masukan jam mulai kerja", Toast.LENGTH_SHORT).show();
                 return;
+            }else {
+                if (validateDateFormat(valueAwal.getText().toString()) == false){
+                    Toast.makeText(getContext(), "Input Date tidak valid", Toast.LENGTH_SHORT).show();
+                    valueAwal.setError("Format Date Salah");
+                    return;
+                }
             }
 
             if(spinnerKet.getSelectedItem().toString().equalsIgnoreCase("-Pilih keterangan-")){
@@ -309,6 +327,12 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
             if (valueAkhir.getText().toString().length() == 0) {
                 Toast.makeText(getContext(), "Harap masukan jam akhir kerja", Toast.LENGTH_SHORT).show();
                 return;
+            }else {
+                if (validateDateFormat(valueAkhir.getText().toString()) == false){
+                    Toast.makeText(getContext(), "Input Date tidak valid", Toast.LENGTH_SHORT).show();
+                    valueAkhir.setError("Format Date Salah");
+                    return;
+                }
             }
 
             if (jumlah.getText().toString().length() == 0) {
@@ -443,4 +467,20 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
         public void userCanceled();
     }
 
+    public boolean validateDateFormat(String dateToValdate) {
+
+        boolean valid = false;
+
+        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD HH:mm:ss");
+        //To make strict date format validation
+//        formatter.setLenient(false);
+        Date parsedDate = null;
+        try {
+            parsedDate = formatter.parse(dateToValdate);
+            valid = true;
+        } catch (ParseException e) {
+            valid = false;
+        }
+        return valid;
+    }
 }

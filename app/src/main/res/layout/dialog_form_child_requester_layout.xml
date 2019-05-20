@@ -103,7 +103,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <TextView
+                        <EditText
                             android:id="@+id/value_awal"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -113,7 +113,9 @@
                             android:background="@drawable/backgroud_conversation"
                             android:padding="@dimen/margin5"
                             android:textColor="@android:color/black"
-                            android:textColorHint="@color/grayList" />
+                            android:textColorHint="@color/grayList"
+                            android:hint="(Format: YYYY-MM-DD hh:mm)"
+                            android:textSize="11dp"/>
 
                         <ImageButton
                             android:id="@+id/btn_date_awal"
@@ -147,7 +149,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <TextView
+                        <EditText
                             android:id="@+id/value_akhir"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
@@ -157,7 +159,9 @@
                             android:background="@drawable/backgroud_conversation"
                             android:padding="@dimen/margin5"
                             android:textColor="@android:color/black"
-                            android:textColorHint="@color/grayList" />
+                            android:textColorHint="@color/grayList"
+                            android:hint="(Format: YYYY-MM-DD hh:mm)"
+                            android:textSize="11dp"/>
 
                         <ImageButton
                             android:id="@+id/btn_date_Akhir"

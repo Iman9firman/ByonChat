@@ -107,8 +107,6 @@ public class PushRepairReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
-//layout_push_reportrepair_activity
-
         db = BotListDB.getInstance(getApplicationContext());
         vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
@@ -123,7 +121,6 @@ public class PushRepairReportActivity extends AppCompatActivity {
     protected void resolveData() {
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
-            Log.w("Datanya hitaru ama",gvcs+"");
             id_task = gvcs.getString("task_id");
             id_task_list = gvcs.getString("id_list_task");
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
@@ -285,7 +282,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, File item, String type) {
+            public void onItemClick(View view, String position, File item, String type) {
                 if(type.equalsIgnoreCase("before")){
                     task_id = position + "";
                     Intent intent = new Intent(PushRepairReportActivity.this, ZoomImageViewActivity.class);

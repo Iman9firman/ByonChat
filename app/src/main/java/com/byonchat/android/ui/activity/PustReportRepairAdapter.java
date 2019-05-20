@@ -19,7 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.byonchat.android.R;
+
 import java.io.File;
+
 import com.byonchat.android.model.Photo;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.SLANoteDB;
@@ -85,11 +87,11 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
         Picasso.with(context).load(foto.getBefore())
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.before);
 
-        if(foto.getAfter() != null) {
+        if (foto.getAfter() != null) {
             Picasso.with(context).load(foto.getAfter())
                     .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                     .into(holder.after);
-        }else {
+        } else {
             BotListDB db = BotListDB.getInstance(context);
             Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "reportrepair", foto.getId());
 
@@ -101,14 +103,14 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             }
         }
         holder.keterangan.setText(foto.getTitle());
-        if(checkDB(foto.getId())){
+        if (checkDB(foto.getId())) {
             holder.note.setText(getTheDB(foto.getId()));
         }
         holder.after.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null , "after");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "after");
                 }
             }
         });
@@ -116,7 +118,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null , "before");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "before");
                 }
             }
         });
@@ -158,7 +160,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
 
 
     public void insertDB(String id, String comment) {
-        Log.w("Ngisi databez",id+"  -->  "+comment);
+        Log.w("Ngisi databez", id + "  -->  " + comment);
         SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -171,7 +173,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
     }
 
     public void updateDB(String id, String comment) {
-        Log.w("Ngapdete databez",id+"  -->  "+comment);
+        Log.w("Ngapdete databez", id + "  -->  " + comment);
         SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -208,7 +210,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             isExist = cursor.getString(cursor.getColumnIndex("comment"));
         }
         cursor.close();
-        Log.w("Ngambil databez",id+"  -->  "+isExist);
+        Log.w("Ngambil databez", id + "  -->  " + isExist);
         return isExist;
     }
 

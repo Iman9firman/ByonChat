@@ -78,22 +78,6 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
         Picasso.with(context).load(foto.getAfterString())
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.after);
 
-        /*if(foto.getAfter() != null) {
-            Picasso.with(context).load(foto.getAfter())
-                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                    .into(holder.after);
-        }else {
-            BotListDB db = BotListDB.getInstance(context);
-            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "reportrepair", foto.getId());
-
-            if (cursorCild.getCount() > 0) {
-                File f = new File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                Picasso.with(context).load(f)
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(holder.after);
-            }
-        }*/
-
         if (foto.getVerif().equalsIgnoreCase("1")) {
             holder.btnVerif.setBackground(context.getDrawable(R.drawable.check_ok));
         } else {
@@ -107,7 +91,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "changeVerif");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "changeVerif");
                 }
             }
         });
@@ -115,7 +99,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "after");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "after");
                 }
             }
         });
@@ -123,7 +107,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "before");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "before");
                 }
             }
         });

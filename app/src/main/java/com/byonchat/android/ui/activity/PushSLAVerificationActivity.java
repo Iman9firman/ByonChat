@@ -115,40 +115,47 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     }
 
     protected void resolveData() {
-        Log.w("ini datanya apa cuk", getIntent().getStringExtra("data"));
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
             id_task = gvcs.getString("task_id");
             id_task_list = gvcs.getString("id_list_task");
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
             name_title = gvcs.getString("title");
+
             JSONArray jar = gvcs.getJSONArray("value_detail");
+            String idSection = "";
+            String idSubSection = "";
+            String idPertanyaan = "";
+            String idItem = "";
+
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
                 JSONArray pembobotan = first.getJSONArray("pembobotan");
                 for (int ii = 0; ii < pembobotan.length(); ii++) {
                     JSONObject second = pembobotan.getJSONObject(ii);
                     JSONArray section = second.getJSONArray("section");
+                    idSection = second.getString("id");
                     for (int iii = 0; iii < section.length(); iii++) {
                         JSONObject third = section.getJSONObject(iii);
                         JSONArray subsection = third.getJSONArray("subsection");
+                        idSubSection = third.getString("id");
                         for (int iv = 0; iv < subsection.length(); iv++) {
                             JSONObject fourth = subsection.getJSONObject(iv);
                             JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
+                            idPertanyaan = fourth.getString("id");
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
-                                Log.w("kampret", fifth.toString());
-
+                                idItem = fifth.getString("id");
                                 String valid = fifth.getString("v");
                                 if (valid.equalsIgnoreCase("0")) {
-                                    String id = fifth.getString("id");
+                                    String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+
                                     String fotony = fifth.getString("f");
                                     String title = fifth.getString("n");
                                     String ket = "";
                                     if (fifth.has("ket")) {
                                         ket = fifth.getString("ket");
                                     }
-
 
                                     String aftera = fifth.getString("a");
                                     if (!fotony.contains("http://")) {
@@ -185,7 +192,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        Bitmap result = MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800,
+                        MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800,
                                 800);
 
                         RoomsDetail orderModel = new RoomsDetail(id_task, getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
@@ -303,7 +310,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, File item, String type) {
+            public void onItemClick(View view, String position, File item, String type) {
                 task_id = position + "";
                 if (type.equalsIgnoreCase("changeVerif")) {
                     for (int i = 0; i < foto.size(); i++) {
@@ -330,7 +337,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
                             intent.putExtra(ZoomImageViewActivity.KEY_FILE, foto.get(i).getAfterString());
-                            Log.w("gyudbuwegb eugfu", foto.get(i).getAfterString());
                         }
                     }
                     startActivity(intent);
@@ -356,13 +362,10 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 rdialog = new ProgressDialog(PushSLAVerificationActivity.this);
                 rdialog.setMessage("Loading...");
                 rdialog.show();
-
-                Log.w("Bodoamat skhwd", fileJson());
                 new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla.php",
                         getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                         getIntent().getStringExtra("id_rooms_tab"));
-                Log.w("param kirim skhwd", getIntent().getStringExtra("username_room") + ", " + getIntent().getStringExtra("bc_user") + ", " +
-                        getIntent().getStringExtra("id_rooms_tab"));
+
             }
         });
     }
@@ -376,26 +379,37 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             id_task_list = gvcs.getString("id_list_task");
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
             name_title = gvcs.getString("title");
+
             JSONArray jar = gvcs.getJSONArray("value_detail");
+
+            String idSection = "";
+            String idSubSection = "";
+            String idPertanyaan = "";
+            String idItem = "";
+
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
                 JSONArray pembobotan = first.getJSONArray("pembobotan");
                 for (int ii = 0; ii < pembobotan.length(); ii++) {
                     JSONObject second = pembobotan.getJSONObject(ii);
                     JSONArray section = second.getJSONArray("section");
+                    idSection = second.getString("id");
                     for (int iii = 0; iii < section.length(); iii++) {
                         JSONObject third = section.getJSONObject(iii);
                         JSONArray subsection = third.getJSONArray("subsection");
+                        idSubSection = third.getString("id");
                         for (int iv = 0; iv < subsection.length(); iv++) {
                             JSONObject fourth = subsection.getJSONObject(iv);
                             JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
+                            idPertanyaan = fourth.getString("id");
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
-                                String id = fifth.getString("id");
+                                idItem = fifth.getString("id");
+
+                                String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+
                                 for (int vi = 0; vi < foto.size(); vi++) {
-                                    Log.w("ujug3 ID", "id json : " + id + ", id photo : " + foto.get(vi).getId());
                                     if (foto.get(vi).getId().equalsIgnoreCase(id)) {
-                                        Log.w("ujug2 nambah", id);
                                         fifth.remove("v");
                                         fifth.put("v", foto.get(vi).getVerif());
                                     }
@@ -409,10 +423,8 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
             stringdong = gvcs.toString();
         } catch (JSONException e) {
-            Log.w("ujug ujug error", e.getMessage());
         }
 
-        Log.w("Apa ujug ujug (gandi)", stringdong);
         return stringdong;
     }
 

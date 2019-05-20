@@ -101,7 +101,7 @@ public class ByonchatRepairReportAdapter extends RecyclerView.Adapter<RecyclerVi
 
             ((ByonchatApprovalDocViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
+                    onPreviewItemClickListener.onItemClick(view, i+"", (File) getData().get(i), item.type);
                 }
             });
             ((ByonchatApprovalDocViewHolder) viewHolder).vReqContent.setVisibility(View.GONE);

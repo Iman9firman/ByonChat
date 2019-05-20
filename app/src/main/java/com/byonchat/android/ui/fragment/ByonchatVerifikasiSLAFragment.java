@@ -207,7 +207,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
         chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
         mAdapter = new ByonchatRepairReportAdapter(getContext(), files, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, File item, String type) {
+            public void onItemClick(View view, String position, File item, String type) {
                 Map<String, String> params = new HashMap<>();
                 params.put("username_room", username);
                 params.put("bc_user", databaseHelper.getMyContact().getJabberId());
@@ -383,7 +383,6 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
                 response -> {
                     rdialog.dismiss();
                     if (hide) {
-                        Log.w("ganma", response);
                         Intent iii = new Intent(getContext(), PushSLAVerificationActivity.class);
                         iii.putExtra("data", response);
                         iii.putExtra("username_room", username);

@@ -1015,5 +1015,9 @@ public class BotListDB extends SQLiteOpenHelper {
         return getDatabase().delete(ROOM_DETAIl_TABLE, ROOM_DETAIL_ID_ROOM + "= '" + username + "' AND " + ROOM_DETAIL_FLAG_ROOM + "= 'form'" + " AND " + ROOM_DETAIL_ID_TAB + "= '" + tab_id + "'", null) > 0;
     }
 
+    public boolean deleteNoteSLA(String id, String id_tab, String flagContent, String flagRoom) {
+        return getDatabase().delete(ROOM_DETAIl_TABLE, ROOM_DETAIL_ID_ROOM + "= '" + id + "' AND " + ROOM_DETAIL_ID_TAB + "= '" + id_tab + "'" + " AND " + ROOM_DETAIL_FLAG_CONTENT + "= '" + flagContent + "'" + " AND " + ROOM_DETAIL_FLAG_ROOM + "= '" + flagRoom + "'", null) > 0;
+    }
+
 
 }

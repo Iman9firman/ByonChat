@@ -3390,6 +3390,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 e.printStackTrace();
                             }
                         } else {
+                            Log.w("masukSLA", "disniSLA");
                             JSONArray jsonArrayCild = new JSONArray(formChild);
 
                             boolean perhitungan = false;
@@ -3663,13 +3664,17 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                     addCild.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
+                                            Log.w("masukSLA" + idListTask, "disniSLA");
                                             if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
+                                                Log.w("masukSLA1", "disniSLA");
                                                 FragmentManager fm = getSupportFragmentManager();
                                                 DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicSLATaskActivity.this, String.valueOf(linearLayout.getChildAt(0).getTop()));
                                                 testDialog.setRetainInstance(true);
                                                 testDialog.show(fm, "Dialog");
                                             } else {
+                                                Log.w("masukSLA2", "disniSLA");
                                                 if (customersId.equalsIgnoreCase("")) {
+                                                    Log.w("masukSLA3", "disniSLA");
                                                     final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicSLATaskActivity.this);
                                                     alertbox.setTitle("required");
                                                     String content = "Please Select Customer ";
@@ -3684,6 +3689,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     return;
                                                 }
                                                 if (idListTask.equalsIgnoreCase("62483")) {
+                                                    Log.w("masukSLA4", "disniSLA");
                                                     //talking Order lemindo
                                                     FragmentManager fm = getSupportFragmentManager();
                                                     DialogFormChildMainLemindo testDialog = DialogFormChildMainLemindo.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId);
@@ -3691,6 +3697,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     testDialog.show(fm, "Dialog");
 
                                                 } else {
+                                                    Log.w("masukSLA5", "disniSLA");
                                                     FragmentManager fm = getSupportFragmentManager();
                                                     DialogFormChildMain testDialog = DialogFormChildMain.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId);
                                                     testDialog.setRetainInstance(true);

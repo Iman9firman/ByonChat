@@ -709,7 +709,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                     }
                 }
             }
-
+            deleteNote();
             Toast.makeText(getApplicationContext(), "Success Uploading Report", Toast.LENGTH_LONG).show();
             rdialog.dismiss();
             finish();
@@ -772,4 +772,53 @@ public class PushRepairReportActivity extends AppCompatActivity {
         }
         return inSampleSize;
     }
+
+    private void deleteNote() {
+        try {
+            JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
+            JSONArray jar = gvcs.getJSONArray("value_detail");
+
+            String idSection = "";
+            String idSubSection = "";
+            String idPertanyaan = "";
+            String idItem = "";
+
+            for (int i = 0; i < jar.length(); i++) {
+                JSONObject first = jar.getJSONObject(i);
+                JSONArray pembobotan = first.getJSONArray("pembobotan");
+                for (int ii = 0; ii < pembobotan.length(); ii++) {
+                    JSONObject second = pembobotan.getJSONObject(ii);
+                    JSONArray section = second.getJSONArray("section");
+                    idSection = second.getString("id");
+                    for (int iii = 0; iii < section.length(); iii++) {
+                        JSONObject third = section.getJSONObject(iii);
+                        JSONArray subsection = third.getJSONArray("subsection");
+                        idSubSection = third.getString("id");
+                        for (int iv = 0; iv < subsection.length(); iv++) {
+                            JSONObject fourth = subsection.getJSONObject(iv);
+                            JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
+                            idPertanyaan = fourth.getString("id");
+                            for (int v = 0; v < pertanyaan.length(); v++) {
+                                JSONObject fifth = pertanyaan.getJSONObject(v);
+                                idItem = fifth.getString("id");
+                                String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+                                for (int vi = 0; vi < uploadfoto.size(); vi++) {
+                                    if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
+                                        fifth.put("a", uploadfoto.get(vi).getAfterString());
+                                        if (checkDB(id)) {
+                                            deleteFromDB(id);
+                                            db.deleteNoteSLA(id_task, getIntent().getStringExtra("id_rooms_tab"), id, "reportrepair");
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+        }
+    }
+
 }

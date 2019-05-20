@@ -492,7 +492,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
 
     @Override
     public void onDestroy() {
-        if (localBroadcastReceiver != null){
+        if (localBroadcastReceiver != null) {
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(localBroadcastReceiver);
         }
         super.onDestroy();
@@ -574,26 +574,19 @@ public class DialogFormChildMainNcal extends DialogFragment {
 
                     }
                 }
-                Log.w("lolo", "cinta");
+                Log.w("lolo", "cinta ==" + idchildDetail);
                 boolean next = true;
                 if (titleUntuk.equalsIgnoreCase("")) {
                     AlertDialog.Builder builder = DialogUtil.generateAlertDialog(mContext, "Required", "Please input field (*)");
                     builder.show();
                     next = false;
                 } else if (decsUntuk.equalsIgnoreCase("")) {
-                    /*     Log.w("soso", et.length + "");*/
-
-                   /* if (et.length > 1) {
-                        et[1].setError("required");
+                    if (idListTaskMaster.equalsIgnoreCase("66986")) {
+                        AlertDialog.Builder builder = DialogUtil.generateAlertDialog(mContext, "Required", "Please input field (*)");
+                        builder.show();
                         next = false;
-                    } else {
-                        et[0].setError("required");
-                        next = false;
-                    }*/
-
+                    }
                 }
-
-                Log.w("lolo", next + "");
 
 
                 if (next) {

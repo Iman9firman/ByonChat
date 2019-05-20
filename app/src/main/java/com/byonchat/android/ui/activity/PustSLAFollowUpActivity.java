@@ -144,7 +144,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    
+
 
     protected void resolveData() {
 
@@ -533,10 +533,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                                         fifth.put("a", uploadfoto.get(vi).getAfterString());
                                         if (checkDB(id)) {
                                             deleteFromDB(id);
-                                            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
-                                            if (cursorCild.getCount() > 0) {
-                                                //delete ya
-                                            }
+                                            db.deleteNoteSLA(id_task, getIntent().getStringExtra("id_rooms_tab"), id, "reportrepair");
                                         }
                                     }
                                 }
@@ -548,7 +545,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             }
         } catch (JSONException e) {
         }
-
     }
 
     private boolean checkDB(String id) {

@@ -236,7 +236,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                         RoomsDetail orderModel = new RoomsDetail(id_task, getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
                         db.insertRoomsDetail(orderModel);
-
                         for (int i = 0; i < foto.size(); i++) {
                             if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
                                 foto.get(i).setAfter(f);

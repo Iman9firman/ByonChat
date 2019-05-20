@@ -150,6 +150,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
 
         mHolder.textTitle.setText(mItem.getTitle());
         mHolder.textId.setText(String.valueOf(mItem.getId_content()));
+        mHolder.textComment.setText("");
         Picasso.with(mActivity).load(R.drawable.ic_att_gallery).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(mHolder.pictPicker);
 
         if (mItem.hasChildren() && mItem.getChildren().size() > 0) {
@@ -268,7 +269,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
             pictPicker.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    AddChildFotoExModel aaa = new AddChildFotoExModel(textId.getText().toString(), "", "", "cild", "update", getAdapterPosition(), String.valueOf(getOkFromDB(idDetailForm, textId.getText().toString())), 0, "add", "");
+                    AddChildFotoExModel aaa = new AddChildFotoExModel(idDetailForm + ";" + textId.getText().toString(), "", "", "cild", "update", getAdapterPosition(), String.valueOf(getOkFromDB(idDetailForm, textId.getText().toString())), 0, "add", "");
                     ((DinamicSLATaskActivity) mActivity).yourActivityMethod(aaa);
                     return false;
                 }
@@ -292,7 +293,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
                                         @TargetApi(11)
                                         public void onClick(
                                                 DialogInterface dialog, int id) {
-                                            textComment.setText(edit.getText());
+                                            // textComment.setText(edit.getText());
 
                                             if (checkDB(idDetailForm, textId.getText().toString())) {
                                                 updateDB(idDetailForm, textId.getText().toString(), 0, null, edit.getText().toString());
@@ -300,7 +301,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
                                                 insertDB(idDetailForm, textId.getText().toString(), 0, null, edit.getText().toString());
                                             }
 
-
+                                            notifyDataSetChanged();
                                             dialog.cancel();
                                         }
                                     })

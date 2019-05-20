@@ -18,6 +18,7 @@ import com.byonchat.android.R;
 import java.io.File;
 
 import com.byonchat.android.model.Photo;
+import com.byonchat.android.model.SLAmodelNew;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
@@ -28,7 +29,7 @@ import java.util.List;
 
 public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVerificationAdapter.MyViewHolder> {
 
-    private List<Photo> allList;
+    private List<SLAmodelNew> allList;
     private Context context;
     String idDetail, idTab, username;
     protected OnPreviewItemClickListener onPreviewItemClickListener;
@@ -36,7 +37,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView before, after;
         ImageButton btnVerif;
-        TextView keterangan, note;
+        TextView keterangan, note, header;
 
         public MyViewHolder(View view) {
             super(view);
@@ -46,10 +47,11 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             btnVerif = (ImageButton) view.findViewById(R.id.imgVerif);
             keterangan = (TextView) view.findViewById(R.id.keterangan);
             note = (TextView) view.findViewById(R.id.notess);
+            header = (TextView) view.findViewById(R.id.header);
         }
     }
 
-    public PushSLAVerificationAdapter(Context context, String idDetail, String username, String idTab, List<Photo> moviesList,
+    public PushSLAVerificationAdapter(Context context, String idDetail, String username, String idTab, List<SLAmodelNew> moviesList,
                                       OnPreviewItemClickListener onPreviewItemClickListener) {
         this.allList = moviesList;
         this.context = context;
@@ -70,7 +72,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Photo foto = allList.get(position);
+        SLAmodelNew foto = allList.get(position);
 
         Picasso.with(context).load(foto.getBefore())
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.before);
@@ -86,6 +88,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
 
         holder.keterangan.setText(foto.getTitle());
         holder.note.setText(foto.getKet());
+        holder.header.setText(foto.getHeader());
 
         holder.btnVerif.setOnClickListener(new View.OnClickListener() {
             @Override

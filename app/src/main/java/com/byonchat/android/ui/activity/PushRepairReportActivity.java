@@ -26,6 +26,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -41,6 +42,7 @@ import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
+import com.byonchat.android.model.SLAmodelNew;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.provider.SLANoteDB;
@@ -91,15 +93,12 @@ public class PushRepairReportActivity extends AppCompatActivity {
     String name_title;
     LinearLayout linearLayout;
     ByonchatRecyclerView vListData;
-    ArrayList<Photo> foto = new ArrayList<>();
-    ArrayList<Photo> uploadfoto = new ArrayList<>();
+    ArrayList<SLAmodelNew> foto = new ArrayList<>();
+    ArrayList<SLAmodelNew> uploadfoto = new ArrayList<>();
     PustReportRepairAdapter mAdapter;
     private static final int REQ_CAMERA = 1201;
     Button btnSubmit, btnCancel;
     ProgressDialog rdialog;
-//    private OnTaskCompleted taskCompleted;
-//    ArrayList<String> prosesUpload = new ArrayList<>();
-    Integer totalUpload = 0;
     BotListDB db;
     SLANoteDB NoteDB;
 
@@ -107,6 +106,9 @@ public class PushRepairReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         db = BotListDB.getInstance(getApplicationContext());
         vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
@@ -116,6 +118,20 @@ public class PushRepairReportActivity extends AppCompatActivity {
         resolveData();
         resolveListFile();
         resolveSend();
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     protected void resolveData() {
@@ -133,12 +149,12 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 String title = basefoto.getString("keterangan");
 
                 Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
-                Photo fotonya = null;
+                SLAmodelNew fotonya = null;
                 if (cursorCild.getCount() > 0) {
                     java.io.File f = new java.io.File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                    fotonya = new Photo(id, title, fotony, f);
-                }else {
-                    fotonya = new Photo(id, title, fotony, null);
+                    fotonya = new SLAmodelNew("Header", id, title, fotony, f);
+                } else {
+                    fotonya = new SLAmodelNew("Header", id, title, fotony, (java.io.File) null);
                 }
                 foto.add(fotonya);
             }
@@ -170,8 +186,8 @@ public class PushRepairReportActivity extends AppCompatActivity {
                         RoomsDetail orderModel = new RoomsDetail(id_task, getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
                         db.insertRoomsDetail(orderModel);
 
-                        for(int i = 0; i < foto.size();i++){
-                            if(foto.get(i).getId().equalsIgnoreCase(task_id)){
+                        for (int i = 0; i < foto.size(); i++) {
+                            if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
                                 foto.get(i).setAfter(f);
                             }
                         }
@@ -278,21 +294,21 @@ public class PushRepairReportActivity extends AppCompatActivity {
     protected void resolveListFile() {
 
 
-        mAdapter = new PustReportRepairAdapter(this,id_task,
+        mAdapter = new PustReportRepairAdapter(this, id_task,
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
             public void onItemClick(View view, String position, File item, String type) {
-                if(type.equalsIgnoreCase("before")){
+                if (type.equalsIgnoreCase("before")) {
                     task_id = position + "";
                     Intent intent = new Intent(PushRepairReportActivity.this, ZoomImageViewActivity.class);
-                    for(int i = 0; i< foto.size();i++){
-                        if(foto.get(i).getId().equalsIgnoreCase(task_id)){
+                    for (int i = 0; i < foto.size(); i++) {
+                        if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
                             intent.putExtra(ZoomImageViewActivity.KEY_FILE, foto.get(i).getBefore());
                         }
                     }
                     startActivity(intent);
-                }else {
+                } else {
                     task_id = position + "";
                     CameraActivity.Builder start = new CameraActivity.Builder(PushRepairReportActivity.this, REQ_CAMERA);
                     start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
@@ -321,7 +337,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
         vListData.setAdapter(mAdapter);
     }
 
-    private void resolveSend(){
+    private void resolveSend() {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -335,15 +351,30 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 rdialog.setMessage("Loading...");
                 rdialog.show();
 
-                for (int i = 0; i < foto.size();i++) {
-                    if(foto.get(i).getAfter() != null) {
+                for (int ii = 0; ii < foto.size(); ii++) {
+                    if (foto.get(ii).getAfter() == null) {
+                        Toast.makeText(getApplicationContext(), "Mohon tambahkan foto update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
+                        rdialog.dismiss();
+                        return;
+                    }
+
+                    if (getTheDB(foto.get(ii).getId()).length() == 0) {
+                        Toast.makeText(getApplicationContext(), "Mohon tambahkan Keterangan update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
+                        rdialog.dismiss();
+                        return;
+                    }
+
+                }
+
+                for (int i = 0; i < foto.size(); i++) {
+                    if (foto.get(i).getAfter() != null) {
                         new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
                                 getIntent().getStringExtra("username_room"),
                                 id_rooms_tab, id_task_list,
                                 foto.get(i).getAfter().toString(),
                                 foto.get(i).getId());
-                    } else{
-                        Toast.makeText(getApplicationContext(),"Mohon tambahkan foto update yang terkait masalah tertera!",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Mohon tambahkan foto update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
                         rdialog.dismiss();
                     }
                 }
@@ -352,18 +383,18 @@ public class PushRepairReportActivity extends AppCompatActivity {
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-                RequestQueue queue = Volley.newRequestQueue(this);
+        RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
                     finish();
-                    Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                     Log.w("Return push errorrr", response);
 
                 },
                 error -> {
-                    Toast.makeText(getApplicationContext(),"Error found! Try Again",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Error found! Try Again", Toast.LENGTH_SHORT).show();
                     rdialog.dismiss();
                     Log.w("Return push errorrrrr2", error);
                 }
@@ -378,47 +409,47 @@ public class PushRepairReportActivity extends AppCompatActivity {
         queue.add(sr);
     }
 
-    private String fileJson(){
+    private String fileJson() {
         String stringdong = "";
 
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("username_room",getIntent().getStringExtra("username_room"));
-            jsonObject.put("task_id",id_task);
-            jsonObject.put("title",name_title);
+            jsonObject.put("username_room", getIntent().getStringExtra("username_room"));
+            jsonObject.put("task_id", id_task);
+            jsonObject.put("title", name_title);
 
             JSONArray value_detail = new JSONArray();
-            for (int i = 0; i < uploadfoto.size();i++) {
+            for (int i = 0; i < uploadfoto.size(); i++) {
                 JSONObject jsonObjectA = new JSONObject();
-                jsonObjectA.put("urutan",uploadfoto.get(i).getId());
+                jsonObjectA.put("urutan", uploadfoto.get(i).getId());
 
-                    JSONArray jsonArray = new JSONArray();
-                    JSONObject jsonObject1 = new JSONObject();
-                    jsonObject1.put("key","before");
-                    jsonObject1.put("foto",uploadfoto.get(i).getBefore());
-                    jsonObject1.put("keterangan",uploadfoto.get(i).getTitle());
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObject1 = new JSONObject();
+                jsonObject1.put("key", "before");
+                jsonObject1.put("foto", uploadfoto.get(i).getBefore());
+                jsonObject1.put("keterangan", uploadfoto.get(i).getTitle());
 
-                    JSONObject jsonObject2 = new JSONObject();
-                    jsonObject2.put("key","after");
-                    jsonObject2.put("foto",uploadfoto.get(i).getAfterString());
+                JSONObject jsonObject2 = new JSONObject();
+                jsonObject2.put("key", "after");
+                jsonObject2.put("foto", uploadfoto.get(i).getAfterString());
 
-                    if (uploadfoto.get(i).getId().equalsIgnoreCase(uploadfoto.get(i).getId())) {
-                        if(checkDB(uploadfoto.get(i).getId())){
-                            jsonObject2.put("ket",getTheDB(uploadfoto.get(i).getId()));
-                        }
+                if (uploadfoto.get(i).getId().equalsIgnoreCase(uploadfoto.get(i).getId())) {
+                    if (checkDB(uploadfoto.get(i).getId())) {
+                        jsonObject2.put("ket", getTheDB(uploadfoto.get(i).getId()));
                     }
+                }
 
-                    jsonArray.put(jsonObject1);
-                    jsonArray.put(jsonObject2);
+                jsonArray.put(jsonObject1);
+                jsonArray.put(jsonObject2);
 
-                jsonObjectA.put("data",jsonArray);
+                jsonObjectA.put("data", jsonArray);
                 value_detail.put(jsonObjectA);
             }
 
-            jsonObject.put("value_detail",value_detail);
+            jsonObject.put("value_detail", value_detail);
 
             stringdong = jsonObject.toString();
-        } catch (JSONException e){
+        } catch (JSONException e) {
 
         }
 
@@ -496,7 +527,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
+                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
@@ -540,30 +571,30 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.w("segitu@@",result);
+            Log.w("segitu@@", result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
-                    Log.w("segitu@1@",result);
+                    Log.w("segitu@1@", result);
                     String fileNameServer = jsonObject.getString("filename");
-                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/"+fileNameServer;
+                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
 
-                    Log.w("11111 errorre 1",fileNameServer);
-                    for (int i = 0; i < foto.size(); i++){
-                        if(foto.get(i).getId().equalsIgnoreCase(id)){
-                            Photo fotonya = new Photo(foto.get(i).getId(), foto.get(i).getTitle(),foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
+                    Log.w("11111 errorre 1", fileNameServer);
+                    for (int i = 0; i < foto.size(); i++) {
+                        if (foto.get(i).getId().equalsIgnoreCase(id)) {
+                            SLAmodelNew fotonya = new SLAmodelNew("Header", foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
                             uploadfoto.add(fotonya);
                         }
                     }
 
 
                 } else {
-                    Log.w("segitu@2@",result);
+                    Log.w("segitu@2@", result);
                 }
 
-                if(foto.size() == uploadfoto.size()){
-                    Log.w("segitu@3@",result);
+                if (foto.size() == uploadfoto.size()) {
+                    Log.w("segitu@3@", result);
 //                    Map<String, String> params = new HashMap<>();
 //                    params.put("username_room",  getIntent().getStringExtra("username_room"));
 //                    params.put("bc_user",  getIntent().getStringExtra("bc_user"));
@@ -573,7 +604,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
 //                    Log.w("nreoirgn errorre egbh",fileJson());
 //                    getDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_tobe_repair.php",params,true);
                     new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_tobe_repair.php",
-                            getIntent().getStringExtra("username_room"),getIntent().getStringExtra("bc_user"),
+                            getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"));
                 }
             } catch (JSONException e) {
@@ -613,7 +644,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
+                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
@@ -671,15 +702,15 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            for (int i = 0; i < uploadfoto.size();i++) {
+            for (int i = 0; i < uploadfoto.size(); i++) {
                 if (uploadfoto.get(i).getId().equalsIgnoreCase(uploadfoto.get(i).getId())) {
-                    if(checkDB(uploadfoto.get(i).getId())){
+                    if (checkDB(uploadfoto.get(i).getId())) {
                         deleteFromDB(uploadfoto.get(i).getId());
                     }
                 }
             }
 
-            Toast.makeText(getApplicationContext(),"Success Uploading Report",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Success Uploading Report", Toast.LENGTH_LONG).show();
             rdialog.dismiss();
             finish();
             super.onPostExecute(result);

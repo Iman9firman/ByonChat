@@ -2,45 +2,61 @@ package com.byonchat.android.model;
 
 import java.io.File;
 
-public class Photo {
-    private String header, id, title, before, afterString;
+public class SLAmodelNew {
+    private String header = "";
+    private String id, title, before, afterString;
     private String verif;
     private String ket = "";
     File after;
 
-    public Photo() {
+    public SLAmodelNew() {
     }
 
-    public Photo(String id, String title, String before, File after) {
+    public SLAmodelNew(String header, String id, String title, String before, File after) {
         this.id = id;
         this.title = title;
         this.before = before;
         this.after = after;
+        if (!header.equalsIgnoreCase("header")) {
+            this.header = header;
+        }
     }
 
-    public Photo(String id, String title, String before, String aftera, String verif) {
+    public SLAmodelNew(String header, String title, String before, String aftera, String verif) {
         this.id = id;
         this.title = title;
         this.before = before;
         this.afterString = aftera;
         this.verif = verif;
+        this.header = header;
+        if (!header.equalsIgnoreCase("header")) {
+            this.header = header;
+        }
     }
 
-    public Photo(String id, String title, String before, String aftera, String verif, String _ket) {
+    public SLAmodelNew(String header, String id, String title, String before, String aftera, String verif, String _ket) {
         this.id = id;
         this.title = title;
         this.before = before;
         this.afterString = aftera;
         this.verif = verif;
         this.ket = _ket;
+        this.header = header;
+        if (!header.equalsIgnoreCase("header")) {
+            this.header = header;
+        }
     }
 
-    public Photo(String id, String title, String before, File after, String aftera) {
+    public SLAmodelNew(String header, String id, String title, String before, File after, String aftera) {
         this.id = id;
         this.title = title;
         this.before = before;
         this.after = after;
         this.afterString = aftera;
+        this.header = header;
+        if (!header.equalsIgnoreCase("header")) {
+            this.header = header;
+        }
     }
 
     public String getId() {

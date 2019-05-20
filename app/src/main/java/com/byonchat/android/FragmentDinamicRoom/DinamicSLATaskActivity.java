@@ -1960,16 +1960,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                             final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + assup + "'", null, null, null, null, null);
 
-                            // TODO: 03/04/19
-                            //1. data dari database convert jadi json (done)
-                            //2. cheklist di buat dinamis  (done)
-                            //3. foto dapat di edit2  (done)
-                            //4. validasi pengirman (done)
-                            //5. submit form (foto udah tinggal data)
-                            //6. save draft  (done)
-                            //7. set bobot (done)
-
-
                             if (css.moveToFirst()) {
                                 textProgress.setVisibility(View.VISIBLE);
                                 recyclerView.setVisibility(View.VISIBLE);
@@ -8591,21 +8581,27 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                     try {
                                                         JSONArray jsonArray = new JSONArray(sayaJA);
-                                                        Log.w("sakerep", sayaJA);
+
+                                                        String noSatu = "";
+                                                        String noDua = "";
+                                                        String noTiga = "";
+                                                        String noEmpat = "";
 
                                                         for (int oneL = 0; oneL < jsonArray.length(); oneL++) {
                                                             String id = jsonArray.getJSONObject(oneL).getString("id");
                                                             JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
-
+                                                            noSatu = String.valueOf(oneL + 1);
                                                             for (int twoL = 0; twoL < data1.length(); twoL++) {
                                                                 String id2 = data1.getJSONObject(twoL).getString("id");
                                                                 JSONArray data2 = data1.getJSONObject(twoL).getJSONArray("data");
-
+                                                                noDua = String.valueOf(twoL + 1);
                                                                 for (int threeL = 0; threeL < data2.length(); threeL++) {
                                                                     String id3 = data2.getJSONObject(threeL).getString("id");
                                                                     JSONArray data3 = data2.getJSONObject(threeL).getJSONArray("data");
-
+                                                                    noTiga = String.valueOf(threeL + 1);
                                                                     for (int fourL = 0; fourL < data3.length(); fourL++) {
+                                                                        noEmpat = String.valueOf(fourL + 1);
+
                                                                         String id4 = data3.getJSONObject(fourL).getString("id");
                                                                         String lb4 = data3.getJSONObject(fourL).getString("label");
                                                                         String bt4 = data3.getJSONObject(fourL).getString("bt");
@@ -8623,7 +8619,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                                         if (!isExist) {
                                                                             berhenti = true;
-                                                                            errorReq.add("*" + lb4);
+                                                                            errorReq.add(noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + lb4);
                                                                         } else {
 
                                                                             Cursor cursorD = dbSLAA.query(TABLE_NAME,
@@ -8638,7 +8634,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                                                 if (ok == 0) {
                                                                                     if (img == null && com == null) {
                                                                                         berhenti = true;
-                                                                                        errorReq.add("Tambahkan comment atau foto : " + lb4);
+                                                                                        errorReq.add("Tambahkan comment atau foto : " + noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + lb4);
                                                                                     }
                                                                                 }
 

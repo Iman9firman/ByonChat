@@ -25,6 +25,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -35,12 +36,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
+import com.byonchat.android.model.SLAmodelNew;
 import com.byonchat.android.provider.BotListDB;
+import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
@@ -88,8 +92,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     String name_title;
     LinearLayout linearLayout;
     ByonchatRecyclerView vListData;
-    ArrayList<Photo> foto = new ArrayList<>();
-    ArrayList<Photo> uploadfoto = new ArrayList<>();
+    ArrayList<SLAmodelNew> foto = new ArrayList<>();
     PushSLAVerificationAdapter mAdapter;
     private static final int REQ_CAMERA = 1201;
     Button btnSubmit, btnCancel;
@@ -103,6 +106,9 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         db = BotListDB.getInstance(getApplicationContext());
         vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
@@ -112,6 +118,20 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         resolveData();
         resolveListFile();
         resolveSend();
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     protected void resolveData() {
@@ -128,6 +148,14 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             String idPertanyaan = "";
             String idItem = "";
 
+            String headerTwo = "";
+            String headerFour = "";
+
+            String noSatu = "";
+            String noDua = "";
+            String noTiga = "";
+            String noEmpat = "";
+
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
                 JSONArray pembobotan = first.getJSONArray("pembobotan");
@@ -135,20 +163,29 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                     JSONObject second = pembobotan.getJSONObject(ii);
                     JSONArray section = second.getJSONArray("section");
                     idSection = second.getString("id");
+                    noSatu = String.valueOf(ii + 1);
                     for (int iii = 0; iii < section.length(); iii++) {
                         JSONObject third = section.getJSONObject(iii);
                         JSONArray subsection = third.getJSONArray("subsection");
                         idSubSection = third.getString("id");
+                        String asiop2[] = {"title"};
+                        headerTwo = getNameByIdSLA("section", asiop2, idSubSection);
+                        noDua = String.valueOf(iii + 1);
                         for (int iv = 0; iv < subsection.length(); iv++) {
                             JSONObject fourth = subsection.getJSONObject(iv);
                             JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
                             idPertanyaan = fourth.getString("id");
+                            noTiga = String.valueOf(iv + 1);
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 idItem = fifth.getString("id");
                                 String valid = fifth.getString("v");
                                 if (valid.equalsIgnoreCase("0")) {
                                     String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+
+                                    noEmpat = String.valueOf(v + 1);
+                                    String asiop4[] = {"pertanyaan"};
+                                    headerFour = getNameByIdSLA("pertanyaan", asiop4, idItem);
 
                                     String fotony = fifth.getString("f");
                                     String title = fifth.getString("n");
@@ -162,7 +199,9 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                                         fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
                                     }
 
-                                    Photo fotonya = new Photo(id, title, fotony, aftera, valid, ket);
+                                    String header = noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + headerTwo + " - " + headerFour;
+
+                                    SLAmodelNew fotonya = new SLAmodelNew(header, id, title, fotony, aftera, valid, ket);
                                     foto.add(fotonya);
                                 }
                             }
@@ -577,4 +616,35 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         }
         return inSampleSize;
     }
+
+    private String getNameByIdSLA(String table, String asiop[], String id) {
+        String header = "";
+        DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(PushSLAVerificationActivity.this, "sqlite_iss");
+        if (mDBDquerySLA.getWritableDatabase() != null) {
+
+
+            final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, table, asiop,
+                    "id = '" + id + "'", null, null, null, null, null);
+
+            if (css.moveToFirst()) {
+                header = css.getString(0);
+            }
+
+        } else {
+            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                Toast.makeText(PushSLAVerificationActivity.this, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                finish();
+            }
+
+            finish();
+            Intent intent = new Intent(PushSLAVerificationActivity.this, DownloadSqliteDinamicActivity.class);
+            intent.putExtra("name_db", "sqlite_iss");
+            intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+            startActivity(intent);
+            return header;
+        }
+        return header;
+
+    }
+
 }

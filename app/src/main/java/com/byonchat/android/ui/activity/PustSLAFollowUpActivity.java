@@ -30,6 +30,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,12 +42,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.helpers.Constants;
-import com.byonchat.android.model.Photo;
+import com.byonchat.android.model.SLAmodelNew;
 import com.byonchat.android.provider.BotListDB;
+import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.provider.SLANoteDB;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
@@ -96,8 +99,8 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
     String name_title;
     LinearLayout linearLayout;
     ByonchatRecyclerView vListData;
-    ArrayList<Photo> foto = new ArrayList<>();
-    ArrayList<Photo> uploadfoto = new ArrayList<>();
+    ArrayList<SLAmodelNew> foto = new ArrayList<>();
+    ArrayList<SLAmodelNew> uploadfoto = new ArrayList<>();
     PustReportRepairAdapter mAdapter;
     private static final int REQ_CAMERA = 1201;
     Button btnSubmit, btnCancel;
@@ -113,6 +116,10 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
 
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         db = BotListDB.getInstance(getApplicationContext());
         vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
@@ -124,6 +131,20 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         resolveListFile();
         resolveSend();
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
 
     protected void resolveData() {
 
@@ -139,26 +160,45 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             String idSubSection = "";
             String idPertanyaan = "";
             String idItem = "";
+
+            String headerTwo = "";
+            String headerFour = "";
+
+            String noSatu = "";
+            String noDua = "";
+            String noTiga = "";
+            String noEmpat = "";
+
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
                 JSONArray pembobotan = first.getJSONArray("pembobotan");
                 for (int ii = 0; ii < pembobotan.length(); ii++) {
                     JSONObject second = pembobotan.getJSONObject(ii);
                     idSection = second.getString("id");
+                    noSatu = String.valueOf(ii + 1);
                     JSONArray section = second.getJSONArray("section");
                     for (int iii = 0; iii < section.length(); iii++) {
                         JSONObject third = section.getJSONObject(iii);
                         idSubSection = third.getString("id");
+                        noDua = String.valueOf(iii + 1);
                         JSONArray subsection = third.getJSONArray("subsection");
+                        String asiop2[] = {"title"};
+                        headerTwo = getNameByIdSLA("section", asiop2, idSubSection);
+
                         for (int iv = 0; iv < subsection.length(); iv++) {
                             JSONObject fourth = subsection.getJSONObject(iv);
                             JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
                             idPertanyaan = fourth.getString("id");
+                            noTiga = String.valueOf(iv + 1);
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 String valid = fifth.getString("v");
+                                noEmpat = String.valueOf(v + 1);
                                 if (valid.equalsIgnoreCase("0")) {
                                     idItem = fifth.getString("id");
+                                    String asiop4[] = {"pertanyaan"};
+                                    headerFour = getNameByIdSLA("pertanyaan", asiop4, idItem);
+
                                     String fotony = fifth.getString("f");
                                     String title = fifth.getString("n");
 
@@ -167,14 +207,15 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                                     }
 
                                     String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+                                    String header = headerTwo + " - " + headerFour;
 
                                     Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
-                                    Photo fotonya = null;
+                                    SLAmodelNew fotonya = null;
                                     if (cursorCild.getCount() > 0) {
                                         java.io.File f = new java.io.File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                        fotonya = new Photo(id, title, fotony, f);
+                                        fotonya = new SLAmodelNew(noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + header, id, title, fotony, f);
                                     } else {
-                                        fotonya = new Photo(id, title, fotony, null);
+                                        fotonya = new SLAmodelNew(noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + header, id, title, fotony, (java.io.File) null);
                                     }
                                     foto.add(fotonya);
                                 }
@@ -635,30 +676,23 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.w("segitu@@", result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
-                    Log.w("segitu@1@", result);
                     String fileNameServer = jsonObject.getString("filename");
                     String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
 
-                    Log.w("11111 errorre 1", fileNameServer);
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getId().equalsIgnoreCase(id)) {
-                            Photo fotonya = new Photo(foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
+                            SLAmodelNew fotonya = new SLAmodelNew("Header", foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
                             uploadfoto.add(fotonya);
                         }
                     }
-
-
                 } else {
-                    Log.w("segitu@2@", result);
                 }
 
                 if (foto.size() == uploadfoto.size()) {
-                    Log.w("Over", fileJson());
                     new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_sla.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"));
@@ -820,6 +854,36 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             }
         }
         return inSampleSize;
+    }
+
+    private String getNameByIdSLA(String table, String asiop[], String id) {
+        String header = "";
+        DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(PustSLAFollowUpActivity.this, "sqlite_iss");
+        if (mDBDquerySLA.getWritableDatabase() != null) {
+
+
+            final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, table, asiop,
+                    "id = '" + id + "'", null, null, null, null, null);
+
+            if (css.moveToFirst()) {
+                header = css.getString(0);
+            }
+
+        } else {
+            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                Toast.makeText(PustSLAFollowUpActivity.this, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                finish();
+            }
+
+            finish();
+            Intent intent = new Intent(PustSLAFollowUpActivity.this, DownloadSqliteDinamicActivity.class);
+            intent.putExtra("name_db", "sqlite_iss");
+            intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+            startActivity(intent);
+            return header;
+        }
+        return header;
+
     }
 }
 

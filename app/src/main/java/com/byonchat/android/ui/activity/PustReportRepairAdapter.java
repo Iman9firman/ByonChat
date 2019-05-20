@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.byonchat.android.R;
 import java.io.File;
 
 import com.byonchat.android.model.Photo;
+import com.byonchat.android.model.SLAmodelNew;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.SLANoteDB;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
@@ -37,7 +39,7 @@ import static com.byonchat.android.provider.SLANoteDB.TABLE_NAME;
 
 public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepairAdapter.MyViewHolder> {
 
-    private List<Photo> allList;
+    private List<SLAmodelNew> allList;
     private Activity context;
     String idDetail, idTab, username;
     protected OnPreviewItemClickListener onPreviewItemClickListener;
@@ -45,10 +47,11 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView before, after;
-        TextView keterangan, note;
+        TextView keterangan, note, header;
 
         public MyViewHolder(View view) {
             super(view);
+            header = (TextView) view.findViewById(R.id.header);
             before = (ImageView) view.findViewById(R.id.imageBefore);
             after = (ImageView) view.findViewById(R.id.imageAfter);
             keterangan = (TextView) view.findViewById(R.id.keterangan);
@@ -56,7 +59,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
         }
     }
 
-    public PustReportRepairAdapter(Activity context, String idDetail, String username, String idTab, List<Photo> moviesList,
+    public PustReportRepairAdapter(Activity context, String idDetail, String username, String idTab, List<SLAmodelNew> moviesList,
                                    OnPreviewItemClickListener onPreviewItemClickListener) {
         this.allList = moviesList;
         this.context = context;
@@ -77,11 +80,14 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Photo foto = allList.get(position);
+        SLAmodelNew foto = allList.get(position);
 
         holder.note.setText("");
+        holder.header.setText("");
 
-        Picasso.with(context).load(R.drawable.ic_no_photo)
+        holder.header.setText(foto.getHeader());
+
+        Picasso.with(context).load(R.drawable.ic_att_gallery)
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.after);
 
         Picasso.with(context).load(foto.getBefore())
@@ -103,9 +109,11 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             }
         }
         holder.keterangan.setText(foto.getTitle());
+
         if (checkDB(foto.getId())) {
             holder.note.setText(getTheDB(foto.getId()));
         }
+
         holder.after.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +137,6 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
 
                 final View formsView = inflater.inflate(R.layout.dialog_edit_text, null, false);
                 final EditText edit = (EditText) formsView.findViewById(R.id.edit);
-
                 edit.setText(holder.note.getText().toString());
 
                 new AlertDialog.Builder(context)
@@ -160,7 +167,6 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
 
 
     public void insertDB(String id, String comment) {
-        Log.w("Ngisi databez", id + "  -->  " + comment);
         SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -173,7 +179,6 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
     }
 
     public void updateDB(String id, String comment) {
-        Log.w("Ngapdete databez", id + "  -->  " + comment);
         SQLiteDatabase db = database.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -210,7 +215,6 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             isExist = cursor.getString(cursor.getColumnIndex("comment"));
         }
         cursor.close();
-        Log.w("Ngambil databez", id + "  -->  " + isExist);
         return isExist;
     }
 

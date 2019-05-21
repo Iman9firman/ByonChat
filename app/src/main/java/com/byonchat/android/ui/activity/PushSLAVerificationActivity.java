@@ -443,9 +443,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 idItem = fifth.getString("id");
-
                                 String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
-
                                 for (int vi = 0; vi < foto.size(); vi++) {
                                     if (foto.get(vi).getId().equalsIgnoreCase(id)) {
                                         fifth.remove("v");

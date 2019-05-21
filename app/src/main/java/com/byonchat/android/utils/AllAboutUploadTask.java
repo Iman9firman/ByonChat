@@ -714,12 +714,7 @@ public class AllAboutUploadTask {
                                                 }
 
                                                 pertanyaanDetail.put("n", com != null ? com : "");
-                                                if (ok == 1) {
-                                                    pertanyaanDetail.put("b", bt4);
-                                                } else {
-                                                    pertanyaanDetail.put("b", "0");
-                                                }
-
+                                                pertanyaanDetail.put("b", bt4);
 
                                             }
 

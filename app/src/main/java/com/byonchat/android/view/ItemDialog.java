@@ -58,6 +58,7 @@ public class ItemDialog extends Dialog {
             public void onItemClick(View view, int position) {
                 Intent intent = ByonChatMainRoomActivity.generateIntent(context, (ItemMain) adapter.getData().get(position));
                 context.startActivity(intent);
+                dismiss();
             }
         });
 

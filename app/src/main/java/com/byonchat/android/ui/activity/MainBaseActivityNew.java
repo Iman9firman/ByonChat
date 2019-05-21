@@ -171,6 +171,7 @@ import jp.wasabeef.blurry.Blurry;
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 //import me.leolin.shortcutbadger.ShortcutBadger;
 
+import static com.byonchat.android.helpers.Constants.SQL_DELETE_BADGE_TAB_MENU;
 import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_BADGE_TAB_MENU;
 import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL;
 import static com.byonchat.android.helpers.Constants.URL_LAPOR_SELECTED;
@@ -1628,14 +1629,36 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
     public void addTabMenuBadger(ItemMain itemMain, CounterFab itemBadger) {
         int badgeCount = 0;
-        Cursor cursor = Byonchat.getMessengerHelper().query(
-                SQL_SELECT_TOTAL_BADGE_TAB_MENU,
-                new String[]{String.valueOf(itemMain.id_rooms_tab)});
-        int indexTotal = cursor.getColumnIndex("total");
-        while (cursor.moveToNext()) {
-            badgeCount = cursor.getInt(indexTotal);
+
+        if(itemMain.category_tab == null){
+            String member = itemMain.status;
+            try {
+                JSONArray jsonArray = new JSONArray(member);
+                for (int ii = 0; ii < jsonArray.length(); ii++) {
+                    String id_tab_dftared = jsonArray.getString(ii);
+
+                    Cursor cursor = Byonchat.getMessengerHelper().query(
+                            SQL_SELECT_TOTAL_BADGE_TAB_MENU,
+                            new String[]{String.valueOf(id_tab_dftared)});
+                    int indexTotal = cursor.getColumnIndex("total");
+                    while (cursor.moveToNext()) {
+                        badgeCount = badgeCount + cursor.getInt(indexTotal);
+                    }
+                    cursor.close();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else {
+            Cursor cursor = Byonchat.getMessengerHelper().query(
+                    SQL_SELECT_TOTAL_BADGE_TAB_MENU,
+                    new String[]{String.valueOf(itemMain.id_rooms_tab)});
+            int indexTotal = cursor.getColumnIndex("total");
+            while (cursor.moveToNext()) {
+                badgeCount = cursor.getInt(indexTotal);
+            }
+            cursor.close();
         }
-        cursor.close();
 
         itemBadger.setCount(badgeCount);
     }

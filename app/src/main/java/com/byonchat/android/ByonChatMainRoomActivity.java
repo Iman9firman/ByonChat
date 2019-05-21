@@ -60,9 +60,12 @@ import java.util.List;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
+import static com.byonchat.android.helpers.Constants.SQL_DELETE_BADGE_TAB_MENU;
+
 public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 
     public static Intent generateIntent(Context context, ItemMain item) {
+        Byonchat.getMessengerHelper().execSql(SQL_DELETE_BADGE_TAB_MENU, new String[]{String.valueOf(item.id_rooms_tab)});
         Intent intent = new Intent(context, ByonChatMainRoomActivity.class);
         intent.putExtra(EXTRA_ITEM, item);
         return intent;

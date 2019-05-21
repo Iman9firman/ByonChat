@@ -413,6 +413,7 @@
                 <action android:name="com.byonchat.android.communication.MessengerConnectionService.reqGps" />
                 <action android:name="com.byonchat.android.communication.MessengerConnectionService.taskDone" />
                 <action android:name="com.byonchat.android.communication.MessengerConnectionService.refreshRoom" />
+                <action android:name="com.byonchat.android.communication.MessengerConnectionService.refreshNotifForm" />
             </intent-filter>
         </receiver>
         <!--

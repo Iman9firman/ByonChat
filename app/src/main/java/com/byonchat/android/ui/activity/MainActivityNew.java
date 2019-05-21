@@ -581,14 +581,6 @@ public class MainActivityNew extends MainBaseActivityNew {
                 recyclerView.setVisibility(View.INVISIBLE);
             }
         }
-
-        if(subItemList.size() != 0){
-            vFrameTabOne.setVisibility(View.INVISIBLE);
-            vFrameTabTwo.setVisibility(View.INVISIBLE);
-            vFrameTabFour.setVisibility(View.INVISIBLE);
-            vFrameTabNine.setVisibility(View.INVISIBLE);
-            recyclerView.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override

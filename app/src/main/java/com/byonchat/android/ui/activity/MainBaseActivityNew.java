@@ -934,37 +934,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
 
         adapter.setOnItemClickListener((view, position) -> {
-            Log.w("How many theAsub",subItemList.size()+"");
-            if(adapter.getData().get(position).category_tab != null) {
-                Log.w("How many theAsub","iyayaya");
-                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-                startActivity(intent);
-            }else {
-                List<ItemMain> subItemList2 = new ArrayList<>();
-
-                String member = adapter.getData().get(position).status;
-                try {
-                    JSONArray jsonArray = new JSONArray(member);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        String id_tab_dftared = jsonArray.getString(i);
-                        for (int u = 0; u < subItemList.size(); u++) {
-                            if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
-                                subItemList2.add(subItemList.get(u));
-                            }
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                ItemDialog dialog = new ItemDialog(this, adapter.getData().get(position).tab_name, subItemList2);
-                int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
-                int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.50);
-                dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
-                dialog.show();
-                dialog.getWindow().setLayout(width, height);
-                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-            }
+            ItemMain im = itemList.get(position);
+            intentTabMenu(im, position);
         });
 
         adapter.setOnLongItemClickListener((view, position) -> {
@@ -1025,15 +996,19 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             new LoadImageFromURL(backdropBlur).execute(bcakdrop);
 
         try {
-            if(content.startsWith("JSONnnye")){
-                content = content.replace("JSONnnye","");
-                itemList.clear();
-                subItemList.clear();
-                positionList.clear();
+            itemList.clear();
+            positionList.clear();
+            subItemList.clear();
+            boolean grouping = false;
+
+            JSONArray jsonArray;
+            if(content.startsWith("JSONnnye")) {
+                content = content.replace("JSONnnye", "");
 
                 String[] bagibagi = content.split("@@@");
                 JSONArray jAAr = new JSONArray(bagibagi[1]);
-                for (int on = 0; on < jAAr.length();on++) {
+                Log.w("Bebau kesukan","satu  -->  "+jAAr);
+                for (int on = 0; on < jAAr.length(); on++) {
                     JSONObject jsonObject = /*new JSONObject(bagibagi[1]);*/jAAr.getJSONObject(on);
                     String title1 = jsonObject.getString("name");
                     String icon_name1 = jsonObject.getString("icon_name");
@@ -1044,210 +1019,220 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                             member, name, icon, icon_name1);
 
                     itemList.add(itemMain1);
+                    positionList.add(title1);
                 }
 
-                JSONArray jsonArray = new JSONArray(bagibagi[0]);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                if (prefs != null) {
-                    extra_tab = prefs.getString(Constants.EXTRA_TAB_MOVEMENT, "");
-                    if (!extra_tab.equalsIgnoreCase("")) {
-                        jsonArray = new JSONArray(extra_tab);
-                    }
+                jsonArray = new JSONArray(bagibagi[0]);
+                grouping = true;
+            }else {
+                jsonArray = new JSONArray(content);
+                grouping = false;
+            }
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs != null) {
+                extra_tab = prefs.getString(Constants.EXTRA_TAB_MOVEMENT, "");
+                if (!extra_tab.equalsIgnoreCase("")) {
+                    jsonArray = new JSONArray(extra_tab);
+                }
+            }
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
+                String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
+                String include_latlong = jsonArray.getJSONObject(i).getString("include_latlong").toString();
+                String include_pull = jsonArray.getJSONObject(i).getString("include_pull").toString();
+                String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
+                String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
+                String status = jsonArray.getJSONObject(i).getString("status").toString();
+                String icon_name = "";
+                if (jsonArray.getJSONObject(i).has("icon_name")) {
+                    icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
                 }
 
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
-                    String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
-                    String include_latlong = jsonArray.getJSONObject(i).getString("include_latlong").toString();
-                    String include_pull = jsonArray.getJSONObject(i).getString("include_pull").toString();
-                    String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
-                    String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
-                    String status = jsonArray.getJSONObject(i).getString("status").toString();
-                    String icon_name = "";
-                    if (jsonArray.getJSONObject(i).has("icon_name")) {
-                        icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
-                    }
+                if (!extra_tab.equalsIgnoreCase("")) {
+                    username = jsonArray.getJSONObject(i).getString("username");
+                    color = jsonArray.getJSONObject(i).getString("color");
+                    colorText = jsonArray.getJSONObject(i).getString("colorText");
+                    targetURL = jsonArray.getJSONObject(i).getString("targetURL");
+                    name = jsonArray.getJSONObject(i).getString("name");
+                    icon = jsonArray.getJSONObject(i).getString("icon");
+                    icon_name = jsonArray.getJSONObject(i).getString("icon_name");
+                }
 
-                    if (!extra_tab.equalsIgnoreCase("")) {
-                        username = jsonArray.getJSONObject(i).getString("username");
-                        color = jsonArray.getJSONObject(i).getString("color");
-                        colorText = jsonArray.getJSONObject(i).getString("colorText");
-                        targetURL = jsonArray.getJSONObject(i).getString("targetURL");
-                        name = jsonArray.getJSONObject(i).getString("name");
-                        icon = jsonArray.getJSONObject(i).getString("icon");
-                        icon_name = jsonArray.getJSONObject(i).getString("icon_name");
-                    }
+                ItemMain itemMain = new ItemMain(i, category, title, url_tembak, include_pull,
+                        username, id_rooms_tab, color, colorText, targetURL, include_latlong,
+                        status, name, icon, icon_name);
 
-                    ItemMain itemMain = new ItemMain(i, category, title, url_tembak, include_pull,
-                            username, id_rooms_tab, color, colorText, targetURL, include_latlong,
-                            status, name, icon, icon_name);
-
-                    if (category.equalsIgnoreCase("1")) {
-                        Constants.map.put(i, null);
-                        itemMain.iconTest = R.drawable.ic_001;
-                    } else if (category.equalsIgnoreCase("2")) {
-                        Constants.map.put(i, null);
-                        itemMain.iconTest = R.drawable.ic_029;
-                    } else if (category.equalsIgnoreCase("3")) {
-                        Constants.map.put(i, null);
-                        itemMain.iconTest = R.drawable.ic_024;
-                    } else if (category.equalsIgnoreCase("4")) {
-                        itemMain.iconTest = R.drawable.ic_003;
-                        if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("hide");
-                            Constants.map.put(i, valSetOne);
-                        } else if (include_pull.equalsIgnoreCase("0")) {
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("show");
-                            Constants.map.put(i, valSetOne);
-                        } else if (include_pull.equalsIgnoreCase("2")) {
-                            Constants.map.put(i, null);
-                        } else if (include_pull.equalsIgnoreCase("4") || include_pull.equalsIgnoreCase("5")) {
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("hideMultiple");
-                            Constants.map.put(i, valSetOne);
-                        } else if (include_pull.equalsIgnoreCase("6")) {
-                            JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("showMultiple");
-                            Constants.map.put(i, valSetOne);
-                        } else if (include_pull.equalsIgnoreCase("7")) {
-                            JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("hideMultiple");
-                            Constants.map.put(i, valSetOne);
-
-                        }
-                    } else if (category.equalsIgnoreCase("5")) {
-                        itemMain.iconTest = R.drawable.ic_028;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("14")) {
-                        itemMain.iconTest = R.drawable.ic_040;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("6")) {
-                        itemMain.iconTest = R.drawable.ic_040;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("7")) {
-                        itemMain.iconTest = R.drawable.ic_002;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("8")) {
-                        itemMain.iconTest = R.drawable.ic_038;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("9")) {
-                        itemMain.iconTest = R.drawable.ic_045;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("10")) {
-                        itemMain.iconTest = R.drawable.ic_037;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("11")) {
-                        itemMain.iconTest = R.drawable.ic_017;
+                if (category.equalsIgnoreCase("1")) {
+                    Constants.map.put(i, null);
+                    itemMain.iconTest = R.drawable.ic_001;
+                } else if (category.equalsIgnoreCase("2")) {
+                    Constants.map.put(i, null);
+                    itemMain.iconTest = R.drawable.ic_029;
+                } else if (category.equalsIgnoreCase("3")) {
+                    Constants.map.put(i, null);
+                    itemMain.iconTest = R.drawable.ic_024;
+                } else if (category.equalsIgnoreCase("4")) {
+                    itemMain.iconTest = R.drawable.ic_003;
+                    if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
                         List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add("pos");
+                        valSetOne.add(title);
+                        valSetOne.add(username);
+                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                        valSetOne.add(color);
+                        valSetOne.add(include_latlong);
+                        valSetOne.add("hide");
+                        Constants.map.put(i, valSetOne);
+                    } else if (include_pull.equalsIgnoreCase("0")) {
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(title);
                         valSetOne.add(username);
                         valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
                         valSetOne.add(color);
                         valSetOne.add(include_latlong);
                         valSetOne.add("show");
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                         Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("15")) {
-                        itemMain.iconTest = R.drawable.ic_024;
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add("btube");
-                        valSetOne.add(username);
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                        valSetOne.add(color);
-                        valSetOne.add(include_latlong);
-                        valSetOne.add("showvideo");
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                        Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("16")) {
-                        itemMain.iconTest = R.drawable.ic_040;
+                    } else if (include_pull.equalsIgnoreCase("2")) {
                         Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("17")) {
-                        itemMain.iconTest = R.drawable.ic_012;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("18")) {
-                        itemMain.iconTest = R.drawable.ic_012;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("19")) {
-//                    loginIss = true;
-                        itemMain.iconTest = R.drawable.ic_040;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("20")) {
-//                    loginIss = true;
-                        itemMain.iconTest = R.drawable.ic_015;
+                    } else if (include_pull.equalsIgnoreCase("4") || include_pull.equalsIgnoreCase("5")) {
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);
                         valSetOne.add(username);
                         valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
                         valSetOne.add(color);
                         valSetOne.add(include_latlong);
-                        valSetOne.add("fabSearch");
+                        valSetOne.add("hideMultiple");
                         Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("21")) {
-                        itemMain.iconTest = R.drawable.ic_015;
+                    } else if (include_pull.equalsIgnoreCase("6")) {
+                        JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);
                         valSetOne.add(username);
                         valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
                         valSetOne.add(color);
                         valSetOne.add(include_latlong);
-                        valSetOne.add("hide");
+                        valSetOne.add("showMultiple");
                         Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("22")) {
-                        itemMain.iconTest = R.drawable.ic_015;
+                    } else if (include_pull.equalsIgnoreCase("7")) {
+                        JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);
                         valSetOne.add(username);
                         valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
                         valSetOne.add(color);
                         valSetOne.add(include_latlong);
-                        valSetOne.add("hide");
+                        valSetOne.add("hideMultiple");
                         Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("23")) {
-                        itemMain.iconTest = R.drawable.ic_008;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("24")) {
-                        itemMain.iconTest = R.drawable.ic_015;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("26")) {
-                        itemMain.iconTest = R.drawable.ic_015;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("28")) {
-                        itemMain.iconTest = R.drawable.ic_012;
-                        Constants.map.put(i, null);
+
                     }
+                } else if (category.equalsIgnoreCase("5")) {
+                    itemMain.iconTest = R.drawable.ic_028;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("14")) {
+                    itemMain.iconTest = R.drawable.ic_040;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("6")) {
+                    itemMain.iconTest = R.drawable.ic_040;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("7")) {
+                    itemMain.iconTest = R.drawable.ic_002;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("8")) {
+                    itemMain.iconTest = R.drawable.ic_038;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("9")) {
+                    itemMain.iconTest = R.drawable.ic_045;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("10")) {
+                    itemMain.iconTest = R.drawable.ic_037;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("11")) {
+                    itemMain.iconTest = R.drawable.ic_017;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add("pos");
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("show");
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
+                    Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("15")) {
+                    itemMain.iconTest = R.drawable.ic_024;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add("btube");
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("showvideo");
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
+                    Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("16")) {
+                    itemMain.iconTest = R.drawable.ic_040;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("17")) {
+                    itemMain.iconTest = R.drawable.ic_012;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("18")) {
+                    itemMain.iconTest = R.drawable.ic_012;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("19")) {
+//                    loginIss = true;
+                    itemMain.iconTest = R.drawable.ic_040;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("20")) {
+//                    loginIss = true;
+                    itemMain.iconTest = R.drawable.ic_015;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("fabSearch");
+                    Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("21")) {
+                    itemMain.iconTest = R.drawable.ic_015;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("22")) {
+                    itemMain.iconTest = R.drawable.ic_015;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("23")) {
+                    itemMain.iconTest = R.drawable.ic_008;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("24")) {
+                    itemMain.iconTest = R.drawable.ic_015;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("26")) {
+                    itemMain.iconTest = R.drawable.ic_015;
+                    Constants.map.put(i, null);
+                } else if (category.equalsIgnoreCase("28")) {
+                    itemMain.iconTest = R.drawable.ic_012;
+                    Constants.map.put(i, null);
+                }
 
+
+
+                if(grouping == true) {
                     itemList.add(itemMain);
-
-                    for(int s1 = 0; s1 < itemList.size(); s1++){
+                    positionList.add(title);
+                    for (int s1 = 0; s1 < itemList.size(); s1++) {
                         try {
                             JSONArray jsonArrow = new JSONArray(itemList.get(s1).status);
                             for (int i1 = 0; i1 < jsonArrow.length(); i1++) {
@@ -1260,382 +1245,180 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                             e.printStackTrace();
                         }
                     }
-                    subItemList.add(i, itemMain);
-                    positionList.add(i, title);
-                }
-            }else {
-                JSONArray jsonArray = new JSONArray(content);
-                itemList.clear();
-                positionList.clear();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                if (prefs != null) {
-                    extra_tab = prefs.getString(Constants.EXTRA_TAB_MOVEMENT, "");
-                    if (!extra_tab.equalsIgnoreCase("")) {
-                        jsonArray = new JSONArray(extra_tab);
-                    }
-                }
 
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
-                    String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
-                    String include_latlong = jsonArray.getJSONObject(i).getString("include_latlong").toString();
-                    String include_pull = jsonArray.getJSONObject(i).getString("include_pull").toString();
-                    String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
-                    String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
-                    String status = jsonArray.getJSONObject(i).getString("status").toString();
-                    String icon_name = "";
-                    if (jsonArray.getJSONObject(i).has("icon_name")) {
-                        icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
-                    }
-
-                    if (!extra_tab.equalsIgnoreCase("")) {
-                        username = jsonArray.getJSONObject(i).getString("username");
-                        color = jsonArray.getJSONObject(i).getString("color");
-                        colorText = jsonArray.getJSONObject(i).getString("colorText");
-                        targetURL = jsonArray.getJSONObject(i).getString("targetURL");
-                        name = jsonArray.getJSONObject(i).getString("name");
-                        icon = jsonArray.getJSONObject(i).getString("icon");
-                        icon_name = jsonArray.getJSONObject(i).getString("icon_name");
-                    }
-
-                    ItemMain itemMain = new ItemMain(i, category, title, url_tembak, include_pull,
-                            username, id_rooms_tab, color, colorText, targetURL, include_latlong,
-                            status, name, icon, icon_name);
-
-                    if (category.equalsIgnoreCase("1")) {
-                        Constants.map.put(i, null);
-                        itemMain.iconTest = R.drawable.ic_001;
-                    } else if (category.equalsIgnoreCase("2")) {
-                        Constants.map.put(i, null);
-                        itemMain.iconTest = R.drawable.ic_029;
-                    } else if (category.equalsIgnoreCase("3")) {
-                        Constants.map.put(i, null);
-                        itemMain.iconTest = R.drawable.ic_024;
-                    } else if (category.equalsIgnoreCase("4")) {
-                        itemMain.iconTest = R.drawable.ic_003;
-                        if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("hide");
-                            Constants.map.put(i, valSetOne);
-                        } else if (include_pull.equalsIgnoreCase("0")) {
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("show");
-                            Constants.map.put(i, valSetOne);
-                        } else if (include_pull.equalsIgnoreCase("2")) {
-                            Constants.map.put(i, null);
-                        } else if (include_pull.equalsIgnoreCase("4") || include_pull.equalsIgnoreCase("5")) {
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("hideMultiple");
-                            Constants.map.put(i, valSetOne);
-                        } else if (include_pull.equalsIgnoreCase("6")) {
-                            JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("showMultiple");
-                            Constants.map.put(i, valSetOne);
-                        } else if (include_pull.equalsIgnoreCase("7")) {
-                            JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                            List<String> valSetOne = new ArrayList<String>();
-                            valSetOne.add(title);
-                            valSetOne.add(username);
-                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                            valSetOne.add(color);
-                            valSetOne.add(include_latlong);
-                            valSetOne.add("hideMultiple");
-                            Constants.map.put(i, valSetOne);
-
-                        }
-                    } else if (category.equalsIgnoreCase("5")) {
-                        itemMain.iconTest = R.drawable.ic_028;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("14")) {
-                        itemMain.iconTest = R.drawable.ic_040;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("6")) {
-                        itemMain.iconTest = R.drawable.ic_040;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("7")) {
-                        itemMain.iconTest = R.drawable.ic_002;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("8")) {
-                        itemMain.iconTest = R.drawable.ic_038;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("9")) {
-                        itemMain.iconTest = R.drawable.ic_045;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("10")) {
-                        itemMain.iconTest = R.drawable.ic_037;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("11")) {
-                        itemMain.iconTest = R.drawable.ic_017;
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add("pos");
-                        valSetOne.add(username);
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                        valSetOne.add(color);
-                        valSetOne.add(include_latlong);
-                        valSetOne.add("show");
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                        Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("15")) {
-                        itemMain.iconTest = R.drawable.ic_024;
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add("btube");
-                        valSetOne.add(username);
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                        valSetOne.add(color);
-                        valSetOne.add(include_latlong);
-                        valSetOne.add("showvideo");
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                        Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("16")) {
-                        itemMain.iconTest = R.drawable.ic_040;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("17")) {
-                        itemMain.iconTest = R.drawable.ic_012;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("18")) {
-                        itemMain.iconTest = R.drawable.ic_012;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("19")) {
-//                    loginIss = true;
-                        itemMain.iconTest = R.drawable.ic_040;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("20")) {
-//                    loginIss = true;
-                        itemMain.iconTest = R.drawable.ic_015;
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(title);
-                        valSetOne.add(username);
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                        valSetOne.add(color);
-                        valSetOne.add(include_latlong);
-                        valSetOne.add("fabSearch");
-                        Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("21")) {
-                        itemMain.iconTest = R.drawable.ic_015;
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(title);
-                        valSetOne.add(username);
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                        valSetOne.add(color);
-                        valSetOne.add(include_latlong);
-                        valSetOne.add("hide");
-                        Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("22")) {
-                        itemMain.iconTest = R.drawable.ic_015;
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(title);
-                        valSetOne.add(username);
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                        valSetOne.add(color);
-                        valSetOne.add(include_latlong);
-                        valSetOne.add("hide");
-                        Constants.map.put(i, valSetOne);
-                    } else if (category.equalsIgnoreCase("23")) {
-                        itemMain.iconTest = R.drawable.ic_008;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("24")) {
-                        itemMain.iconTest = R.drawable.ic_015;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("26")) {
-                        itemMain.iconTest = R.drawable.ic_015;
-                        Constants.map.put(i, null);
-                    } else if (category.equalsIgnoreCase("28")) {
-                        itemMain.iconTest = R.drawable.ic_012;
-                        Constants.map.put(i, null);
-                    }
-
-
+                    subItemList.add(itemMain);
+                }else{
                     itemList.add(i, itemMain);
-                    positionList.add(i, title);
-
-                    if (jsonArray.length() == 1) {
-                        resolveOneGrid(itemList);
-                    } else if (jsonArray.length() == 2) {
-                        Log.w(";lkj", "masuksini");
-                        if (i == 0)
-                            resolveTwoGridOne(itemList, i);
-                        else
-                            resolveTwoGridTwo(itemList, i);
-                    } else if (jsonArray.length() == 3) {
-                        vFrameGridNineThree.setVisibility(View.INVISIBLE);
-                        vFrameGridNineSix.setVisibility(View.VISIBLE);
-                        vFrameGridNineNine.setVisibility(View.INVISIBLE);
-
-                        vFrameGridNineNineOne.setVisibility(View.INVISIBLE);
-
-                        if (i == 0)
-                            resolveNineGridFour(itemList, i);
-                        else if (i == 1)
-                            resolveNineGridFive(itemList, i);
-                        else if (i == 2)
-                            resolveNineGridSix(itemList, i);
-                    } else if (jsonArray.length() == 4) {
-                        if (i == 0)
-                            resolveFourGridOne(itemList, i);
-                        else if (i == 1)
-                            resolveFourGridTwo(itemList, i);
-                        else if (i == 2)
-                            resolveFourGridThree(itemList, i);
-                        else if (i == 3)
-                            resolveFourGridFour(itemList, i);
-                    } else if (jsonArray.length() > 4 && jsonArray.length() <= 8) {
-                        if (jsonArray.length() == 5) {
-                            vFrameGridNineThree.setVisibility(View.VISIBLE);
-                            vFrameGridNineSix.setVisibility(View.VISIBLE);
-
-                            if (i == 0)
-                                resolveNineGridOne(itemList, i);
-                            else if (i == 1)
-                                resolveNineGridTwo(itemList, i);
-                            else if (i == 2)
-                                resolveNineGridThree(itemList, i);
-                            else if (i == 3)
-                                resolveNineGridFour(itemList, i);
-                            else if (i == 4)
-                                resolveNineGridSix(itemList, i);
-                        } else if (jsonArray.length() == 6) {
-                            vFrameGridNineThree.setVisibility(View.VISIBLE);
-                            vFrameGridNineSix.setVisibility(View.VISIBLE);
-
-                            if (i == 0)
-                                resolveNineGridOne(itemList, i);
-                            else if (i == 1)
-                                resolveNineGridTwo(itemList, i);
-                            else if (i == 2)
-                                resolveNineGridThree(itemList, i);
-                            else if (i == 3)
-                                resolveNineGridFour(itemList, i);
-                            else if (i == 4)
-                                resolveNineGridFive(itemList, i);
-                            else if (i == 5)
-                                resolveNineGridSix(itemList, i);
-                        } else if (jsonArray.length() == 7) {
-                            vFrameGridNineThree.setVisibility(View.VISIBLE);
-                            vFrameGridNineSix.setVisibility(View.VISIBLE);
-                            vFrameGridNineNine.setVisibility(View.VISIBLE);
-
-                            if (i == 0)
-                                resolveNineGridOne(itemList, i);
-                            else if (i == 1)
-                                resolveNineGridTwo(itemList, i);
-                            else if (i == 2)
-                                resolveNineGridThree(itemList, i);
-                            else if (i == 3)
-                                resolveNineGridFour(itemList, i);
-                            else if (i == 4)
-                                resolveNineGridFive(itemList, i);
-                            else if (i == 5)
-                                resolveNineGridSix(itemList, i);
-                            else if (i == 6)
-                                resolveNineGridEight(itemList, i);
-                        } else if (jsonArray.length() == 8) {
-                            vFrameGridNineThree.setVisibility(View.VISIBLE);
-                            vFrameGridNineSix.setVisibility(View.VISIBLE);
-                            vFrameGridNineNine.setVisibility(View.VISIBLE);
-
-                            if (i == 0)
-                                resolveNineGridOne(itemList, i);
-                            else if (i == 1)
-                                resolveNineGridTwo(itemList, i);
-                            else if (i == 2)
-                                resolveNineGridThree(itemList, i);
-                            else if (i == 3)
-                                resolveNineGridFour(itemList, i);
-                            else if (i == 4)
-                                resolveNineGridFive(itemList, i);
-                            else if (i == 5)
-                                resolveNineGridSix(itemList, i);
-                            else if (i == 6)
-                                resolveNineGridSeven(itemList, i);
-                            else if (i == 7)
-                                resolveNineGridNine(itemList, i);
-                        } else {
-                            vFrameGridNineThree.setVisibility(View.VISIBLE);
-                            vFrameGridNineSix.setVisibility(View.VISIBLE);
-                            vFrameGridNineNine.setVisibility(View.VISIBLE);
-
-                            if (i == 0)
-                                resolveNineGridOne(itemList, i);
-                            else if (i == 1)
-                                resolveNineGridTwo(itemList, i);
-                            else if (i == 2)
-                                resolveNineGridThree(itemList, i);
-                            else if (i == 3)
-                                resolveNineGridFour(itemList, i);
-                            else if (i == 4)
-                                resolveNineGridFive(itemList, i);
-                            else if (i == 5)
-                                resolveNineGridSix(itemList, i);
-                            else if (i == 6)
-                                resolveNineGridSeven(itemList, i);
-                            else if (i == 7)
-                                resolveNineGridEight(itemList, i);
-                            else if (i == 8)
-                                resolveNineGridNine(itemList, i);
-                        }
-                    }
+                    positionList.add(i,title);
                 }
-                Constants.map.put(jsonArray.length(), null);
 
-                if (jsonArray.length() == 1) {
-                    isRecyclerViewShowed = false;
-                    vFrameTabOne.setVisibility(View.VISIBLE);
-                    vFrameTabTwo.setVisibility(View.GONE);
-                    vFrameTabFour.setVisibility(View.GONE);
-                    vFrameTabNine.setVisibility(View.GONE);
+            }
 
-                    recyclerView.setVisibility(View.INVISIBLE);
-                } else if (jsonArray.length() == 2) {
-                    vFrameTabOne.setVisibility(View.GONE);
-                    vFrameTabTwo.setVisibility(View.VISIBLE);
-                    vFrameTabFour.setVisibility(View.GONE);
-                    vFrameTabNine.setVisibility(View.GONE);
-                    isRecyclerViewShowed = false;
-                    recyclerView.setVisibility(View.INVISIBLE);
-                } else if (jsonArray.length() == 4) {
-                    vFrameTabOne.setVisibility(View.GONE);
-                    vFrameTabTwo.setVisibility(View.GONE);
-                    vFrameTabFour.setVisibility(View.VISIBLE);
-                    vFrameTabNine.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.INVISIBLE);
-                    isRecyclerViewShowed = false;
-                } else if (jsonArray.length() == 3 || jsonArray.length() > 4 && jsonArray.length() <= 8) {
-                    vFrameTabOne.setVisibility(View.GONE);
-                    vFrameTabTwo.setVisibility(View.GONE);
-                    vFrameTabFour.setVisibility(View.GONE);
-                    vFrameTabNine.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.INVISIBLE);
-                    isRecyclerViewShowed = false;
+        for (int i = 0; i < itemList.size(); i++) {
+            if (itemList.size() == 1) {
+                resolveOneGrid(itemList);
+            } else if (itemList.size() == 2) {
+                if (i == 0)
+                    resolveTwoGridOne(itemList, i);
+                else
+                    resolveTwoGridTwo(itemList, i);
+            } else if (itemList.size() == 3) {
+                vFrameGridNineThree.setVisibility(View.INVISIBLE);
+                vFrameGridNineSix.setVisibility(View.VISIBLE);
+                vFrameGridNineNine.setVisibility(View.INVISIBLE);
+
+                vFrameGridNineNineOne.setVisibility(View.INVISIBLE);
+
+                if (i == 0)
+                    resolveNineGridFour(itemList, i);
+                else if (i == 1)
+                    resolveNineGridFive(itemList, i);
+                else if (i == 2)
+                    resolveNineGridSix(itemList, i);
+            } else if (itemList.size() == 4) {
+                if (i == 0)
+                    resolveFourGridOne(itemList, i);
+                else if (i == 1)
+                    resolveFourGridTwo(itemList, i);
+                else if (i == 2)
+                    resolveFourGridThree(itemList, i);
+                else if (i == 3)
+                    resolveFourGridFour(itemList, i);
+            } else if (itemList.size() > 4 && itemList.size() <= 8) {
+                if (itemList.size() == 5) {
+                    vFrameGridNineThree.setVisibility(View.VISIBLE);
+                    vFrameGridNineSix.setVisibility(View.VISIBLE);
+
+                    if (i == 0)
+                        resolveNineGridOne(itemList, i);
+                    else if (i == 1)
+                        resolveNineGridTwo(itemList, i);
+                    else if (i == 2)
+                        resolveNineGridThree(itemList, i);
+                    else if (i == 3)
+                        resolveNineGridFour(itemList, i);
+                    else if (i == 4)
+                        resolveNineGridSix(itemList, i);
+                } else if (itemList.size() == 6) {
+                    vFrameGridNineThree.setVisibility(View.VISIBLE);
+                    vFrameGridNineSix.setVisibility(View.VISIBLE);
+
+                    if (i == 0)
+                        resolveNineGridOne(itemList, i);
+                    else if (i == 1)
+                        resolveNineGridTwo(itemList, i);
+                    else if (i == 2)
+                        resolveNineGridThree(itemList, i);
+                    else if (i == 3)
+                        resolveNineGridFour(itemList, i);
+                    else if (i == 4)
+                        resolveNineGridFive(itemList, i);
+                    else if (i == 5)
+                        resolveNineGridSix(itemList, i);
+                } else if (itemList.size() == 7) {
+                    vFrameGridNineThree.setVisibility(View.VISIBLE);
+                    vFrameGridNineSix.setVisibility(View.VISIBLE);
+                    vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                    if (i == 0)
+                        resolveNineGridOne(itemList, i);
+                    else if (i == 1)
+                        resolveNineGridTwo(itemList, i);
+                    else if (i == 2)
+                        resolveNineGridThree(itemList, i);
+                    else if (i == 3)
+                        resolveNineGridFour(itemList, i);
+                    else if (i == 4)
+                        resolveNineGridFive(itemList, i);
+                    else if (i == 5)
+                        resolveNineGridSix(itemList, i);
+                    else if (i == 6)
+                        resolveNineGridEight(itemList, i);
+                } else if (itemList.size() == 8) {
+                    vFrameGridNineThree.setVisibility(View.VISIBLE);
+                    vFrameGridNineSix.setVisibility(View.VISIBLE);
+                    vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                    if (i == 0)
+                        resolveNineGridOne(itemList, i);
+                    else if (i == 1)
+                        resolveNineGridTwo(itemList, i);
+                    else if (i == 2)
+                        resolveNineGridThree(itemList, i);
+                    else if (i == 3)
+                        resolveNineGridFour(itemList, i);
+                    else if (i == 4)
+                        resolveNineGridFive(itemList, i);
+                    else if (i == 5)
+                        resolveNineGridSix(itemList, i);
+                    else if (i == 6)
+                        resolveNineGridSeven(itemList, i);
+                    else if (i == 7)
+                        resolveNineGridNine(itemList, i);
                 } else {
-                    vFrameTabOne.setVisibility(View.GONE);
-                    vFrameTabTwo.setVisibility(View.GONE);
-                    vFrameTabFour.setVisibility(View.GONE);
-                    vFrameTabNine.setVisibility(View.GONE);
-                    isRecyclerViewShowed = true;
-                    recyclerView.setVisibility(View.VISIBLE);
-                }
+                    vFrameGridNineThree.setVisibility(View.VISIBLE);
+                    vFrameGridNineSix.setVisibility(View.VISIBLE);
+                    vFrameGridNineNine.setVisibility(View.VISIBLE);
 
+                    if (i == 0)
+                        resolveNineGridOne(itemList, i);
+                    else if (i == 1)
+                        resolveNineGridTwo(itemList, i);
+                    else if (i == 2)
+                        resolveNineGridThree(itemList, i);
+                    else if (i == 3)
+                        resolveNineGridFour(itemList, i);
+                    else if (i == 4)
+                        resolveNineGridFive(itemList, i);
+                    else if (i == 5)
+                        resolveNineGridSix(itemList, i);
+                    else if (i == 6)
+                        resolveNineGridSeven(itemList, i);
+                    else if (i == 7)
+                        resolveNineGridEight(itemList, i);
+                    else if (i == 8)
+                        resolveNineGridNine(itemList, i);
+                }
+            }
+        }
+            Constants.map.put(itemList.size(), null);
+
+            if (itemList.size() == 1) {
+                isRecyclerViewShowed = false;
+                vFrameTabOne.setVisibility(View.VISIBLE);
+                vFrameTabTwo.setVisibility(View.GONE);
+                vFrameTabFour.setVisibility(View.GONE);
+                vFrameTabNine.setVisibility(View.GONE);
+
+                recyclerView.setVisibility(View.INVISIBLE);
+            } else if (itemList.size() == 2) {
+                vFrameTabOne.setVisibility(View.GONE);
+                vFrameTabTwo.setVisibility(View.VISIBLE);
+                vFrameTabFour.setVisibility(View.GONE);
+                vFrameTabNine.setVisibility(View.GONE);
+                isRecyclerViewShowed = false;
+                recyclerView.setVisibility(View.INVISIBLE);
+            } else if (itemList.size() == 4) {
+                vFrameTabOne.setVisibility(View.GONE);
+                vFrameTabTwo.setVisibility(View.GONE);
+                vFrameTabFour.setVisibility(View.VISIBLE);
+                vFrameTabNine.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.INVISIBLE);
+                isRecyclerViewShowed = false;
+            } else if (itemList.size() == 3 || itemList.size() > 4 && itemList.size() <= 8) {
+                vFrameTabOne.setVisibility(View.GONE);
+                vFrameTabTwo.setVisibility(View.GONE);
+                vFrameTabFour.setVisibility(View.GONE);
+                vFrameTabNine.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.INVISIBLE);
+                isRecyclerViewShowed = false;
+            } else {
+                vFrameTabOne.setVisibility(View.GONE);
+                vFrameTabTwo.setVisibility(View.GONE);
+                vFrameTabFour.setVisibility(View.GONE);
+                vFrameTabNine.setVisibility(View.GONE);
+                isRecyclerViewShowed = true;
+                recyclerView.setVisibility(View.VISIBLE);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -2459,8 +2242,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridOne, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabOne.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(0));
-            startActivity(intent);
+            intentTabMenu(im, 0);
         });
 
         addTabMenuBadger( im, tab_menu_main);
@@ -2480,8 +2262,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridTwoOne, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabTwoOne.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_21);
@@ -2501,8 +2282,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridTwoTwo, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabTwoTwo.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_22);
@@ -2522,8 +2302,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourOne, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabFourOne.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_41);
@@ -2543,8 +2322,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourTwo, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabFourTwo.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_42);
@@ -2564,8 +2342,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourThree, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabFourThree.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_43);
@@ -2585,8 +2362,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourFour, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabFourFour.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_44);
@@ -2608,8 +2384,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineOne, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabNineOne.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_91);
@@ -2631,8 +2406,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineTwo, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabNineTwo.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_92);
@@ -2654,8 +2428,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineThree, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabNineThree.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_93);
@@ -2677,8 +2450,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineFour, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabNineFour.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_94);
@@ -2700,8 +2472,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineFive, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabNineFive.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_95);
@@ -2723,8 +2494,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineSix, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabNineSix.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_96);
@@ -2746,8 +2516,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineSeven, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabNineSeven.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_97);
@@ -2769,8 +2538,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineEight, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabNineEight.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_98);
@@ -2792,11 +2560,42 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineNine, Fonts.FONT_ROBOTO_BOLD);
 
         vFrameClickTabNineNine.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            intentTabMenu(im, position);
         });
 
         addTabMenuBadger( im, tab_menu_99);
+    }
+
+    private void intentTabMenu(ItemMain im, int position){
+        if(adapter.getData().get(position).category_tab != null) {
+            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);
+        }else {
+            List<ItemMain> subItemList2 = new ArrayList<>();
+
+            String member = adapter.getData().get(position).status;
+            try {
+                JSONArray jsonArray = new JSONArray(member);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String id_tab_dftared = jsonArray.getString(i);
+                    for (int u = 0; u < subItemList.size(); u++) {
+                        if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                            subItemList2.add(subItemList.get(u));
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            ItemDialog dialog = new ItemDialog(this, adapter.getData().get(position).tab_name, subItemList2);
+            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
+            int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.50);
+            dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+            dialog.show();
+            dialog.getWindow().setLayout(width, height);
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
     }
 
     protected void resolveServices() {

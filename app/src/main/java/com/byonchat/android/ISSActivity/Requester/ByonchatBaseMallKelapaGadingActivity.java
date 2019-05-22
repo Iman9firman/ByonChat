@@ -92,7 +92,6 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
-                    Log.w("hasilny", response);
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
@@ -190,7 +189,6 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
             return;
         }
 
-        Log.w("kamis", idRequse);
     }
 
     protected void resolveToolbar() {
@@ -331,7 +329,6 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
     @Override
     public void onPositiveButtonClicked(int i, @NotNull String s) {
         String id = idRequest;
-        Log.w("sambo", id);
         Map<String, String> paramsLog = new HashMap<>();
         paramsLog.put("id", id);
         paramsLog.put("rating", i + "");
@@ -351,7 +348,6 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
                 response -> {
                     rdialog.dismiss();
                     if (hide) {
-                        Log.w("kabut", id);
                         Map<String, String> params = new HashMap<>();
                         params.put("id", id);
                         params.put("status", "6");

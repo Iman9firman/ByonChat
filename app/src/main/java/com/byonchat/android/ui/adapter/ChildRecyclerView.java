@@ -3,6 +3,7 @@ package com.byonchat.android.ui.adapter;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -92,11 +93,27 @@ public class ChildRecyclerView {
             child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
                 public void onClick(android.view.View v) {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("id", data.id);
-                    params.put("status", "5");
-                    getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
-
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle("Cancel");
+                    alertBuilder.setMessage("Reliever "+data.child_name);
+                    alertBuilder.setPositiveButton("By Reliever ",
+                            (dialogInterface, i) -> {
+                                Map<String, String> params = new HashMap<>();
+                                params.put("id", data.id);
+                                params.put("status", "5");
+                                getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
+                            });
+                    alertBuilder.setNegativeButton("By Requester",
+                            (dialogInterface, i) -> {
+                                Map<String, String> params = new HashMap<>();
+                                params.put("id", data.id);
+                                params.put("status", "5");
+                                params.put("opsi", "hapus");
+                                getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
+                            });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
                 }
             });
 

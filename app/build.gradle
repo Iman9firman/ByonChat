@@ -245,5 +245,6 @@ dependencies {
 
     compile 'com.github.HendrixString:Android-PdfMyXml:v1.0.1'
     compile 'com.muditsen.multilevelrecyclerview:multilevelview:1.0.0'
+    compile 'com.prolificinteractive:material-calendarview:1.4.3'
 }
 apply plugin: 'com.google.gms.google-services'

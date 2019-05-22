@@ -84,7 +84,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
     String subNamenya;
     int ketPosisi = 0;
     String pekerjaanNamenya;
-//    TextView /*valueAwal, valueAkhir*/;
+    //    TextView /*valueAwal, valueAkhir*/;
     EditText valueAwal, valueAkhir;
 
     ImageButton btnDateAwal, btnDateAkhir;
@@ -192,7 +192,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
 
         jumlah = (EditText) findViewById(R.id.txtKuota1Jumlah);
 //        keterangan = (EditText) findViewById(R.id.txtKeterangan);
-        spinnerKet = (Spinner) findViewById(R.id.spinKeterangan) ;
+        spinnerKet = (Spinner) findViewById(R.id.spinKeterangan);
         valueAkhir = (EditText) findViewById(R.id.value_akhir);
         valueAwal = (EditText) findViewById(R.id.value_awal);
         add = (Button) findViewById(R.id.btn_add_cild);
@@ -311,15 +311,15 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
             if (valueAwal.getText().toString().length() == 0) {
                 Toast.makeText(getContext(), "Harap masukan jam mulai kerja", Toast.LENGTH_SHORT).show();
                 return;
-            }else {
-                if (validateDateFormat(valueAwal.getText().toString()) == false){
+            } else {
+                if (validateDateFormat(valueAwal.getText().toString()) == false) {
                     Toast.makeText(getContext(), "Input Date tidak valid", Toast.LENGTH_SHORT).show();
                     valueAwal.setError("Format Date Salah");
                     return;
                 }
             }
 
-            if(spinnerKet.getSelectedItem().toString().equalsIgnoreCase("-Pilih keterangan-")){
+            if (spinnerKet.getSelectedItem().toString().equalsIgnoreCase("-Pilih keterangan-")) {
                 Toast.makeText(getContext(), "Harap masukan keterangan", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -327,8 +327,8 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
             if (valueAkhir.getText().toString().length() == 0) {
                 Toast.makeText(getContext(), "Harap masukan jam akhir kerja", Toast.LENGTH_SHORT).show();
                 return;
-            }else {
-                if (validateDateFormat(valueAkhir.getText().toString()) == false){
+            } else {
+                if (validateDateFormat(valueAkhir.getText().toString()) == false) {
                     Toast.makeText(getContext(), "Input Date tidak valid", Toast.LENGTH_SHORT).show();
                     valueAkhir.setError("Format Date Salah");
                     return;
@@ -340,6 +340,20 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
                 return;
             }
 
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                Date dateAwal = sdf.parse(valueAwal.getText().toString());
+                Date dateAkhir = sdf.parse(valueAkhir.getText().toString());
+
+                if (dateAwal.after(dateAkhir)) {
+                    Toast.makeText(getContext(), "Jadwal Akhir Kerja tidak boleh lebih kecil dari Jadwal Mulai Kerja", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            } catch (ParseException ex) {
+                Toast.makeText(getContext(), "Harap masukan data dengan benar", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             JSONObject jsonObject = new JSONObject();
             try {
@@ -358,7 +372,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
             roomsDB.open();
 //            SQLiteDatabase db = roomsDB.getWritableDatabase();
 //            db.execSQL('INSERT INTO strings (string_name) VALUES ('+jsonObject.toString()+')');
-            roomsDB.insertSaveString(jsonObject.toString()+"");
+            roomsDB.insertSaveString(jsonObject.toString() + "");
             roomsDB.close();
             listener.userSelectedAValue(jsonObject.toString());
             dismiss();
@@ -471,9 +485,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
 
         boolean valid = false;
 
-        SimpleDateFormat formatter = new SimpleDateFormat("YYYY-MM-DD HH:mm:ss");
-        //To make strict date format validation
-//        formatter.setLenient(false);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date parsedDate = null;
         try {
             parsedDate = formatter.parse(dateToValdate);

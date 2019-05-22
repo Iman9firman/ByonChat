@@ -77,7 +77,10 @@ public class Constants extends AppCompatActivity {
             + Message.TABLE_NAME
             + " WHERE status = ?";
 
-    public static String SQL_SELECT_TOTAL_BADGE_TAB_MENU= "SELECT count(*) total FROM tab_menu_badge"
+    public static String SQL_SELECT_TOTAL_BADGE_TAB_MENU = "SELECT count(*) total FROM tab_menu_badge"
+            + " WHERE id_tab = ?";
+
+    public static String SQL_DELETE_BADGE_TAB_MENU = "DELETE FROM tab_menu_badge"
             + " WHERE id_tab = ?";
 
     public static String URL_LAPOR_SELECTED = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/selectapop.php";

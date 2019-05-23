@@ -1461,35 +1461,12 @@ public class DialogFormChildMainLemindo extends DialogFragment {
             if (asIs < coloum.length) {
                 String titlle = jsonValue[asIs];
                 final Cursor c = mDB.getWritableDatabase().query(true, table, new String[]{coloum[asIs]}, where, null, null, null, null, null);
-
                 final ArrayList<String> spinnerArray = new ArrayList<String>();
-             /*   if (coloum[asIs].equalsIgnoreCase("unit_satuan")) {
-                    spinnerArray.add("--Please Select--");
-                   *//* final Cursor cu = mDB.getWritableDatabase().query(true, table, new String[]{"unit_kemasan"}, where, null, null, null, null, null);
-                    if (cu.moveToFirst()) {
-                        do {
-                            String column1 = cu.getString(0);
-                            spinnerArray.add(column1);
-                        } while (cu.moveToNext());
-                    }
-                    cu.close();*//*
-                    refresh("", "", "", "");
-                } else {
-                    if (coloum.length - 1 != asIs) {
-                        spinnerArray.add("--Please Select--");
-                        refresh("", "", "", "");
-                    } else {
-                        showSpinner = false;
-                    }
-                }
-*/
-
                 if (asIs == 3) {
-                    spinnerArray.add("--Please Select--");
+
                     Cursor cu = mDB.getWritableDatabase().query(true, table, new String[]{"unit_kemasan"}, where, null, null, null, null, null);
-                    Log.w("disini", cu.getCount() + "");
+                    spinnerArray.add("--Please Select--");
                     if (cu != null) {
-                        Log.w("disini", cu.getCount() + "");
                         if (cu.moveToFirst()) {
                             do {
                                 String column1 = cu.getString(0);
@@ -1504,7 +1481,9 @@ public class DialogFormChildMainLemindo extends DialogFragment {
                     }
                 } else {
                     if (coloum.length - 1 != asIs) {
-                        spinnerArray.add("--Please Select--");
+                        if (c.getCount() != 1) {
+                            spinnerArray.add("--Please Select--");
+                        }
                         refresh("", "", "", "");
                     } else {
                         showSpinner = false;

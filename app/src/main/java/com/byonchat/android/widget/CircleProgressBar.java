@@ -95,15 +95,15 @@ public class CircleProgressBar extends View {
         rectF = new RectF();
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(
                 attrs,
-                R.styleable.CircleProgressBar,
+                R.styleable.CircleProgressBar2,
                 0, 0);
         //Reading values from the XML layout
         try {
-            strokeWidth = typedArray.getDimension(R.styleable.CircleProgressBar_progressBarThickness, strokeWidth);
-            progress = typedArray.getFloat(R.styleable.CircleProgressBar_progress, progress);
-            color = typedArray.getInt(R.styleable.CircleProgressBar_progressbarColor, color);
-            min = typedArray.getInt(R.styleable.CircleProgressBar_min, min);
-            max = typedArray.getInt(R.styleable.CircleProgressBar_max, max);
+            strokeWidth = typedArray.getDimension(R.styleable.CircleProgressBar2_progressBarThickness, strokeWidth);
+            progress = typedArray.getFloat(R.styleable.CircleProgressBar2_progress, progress);
+            color = typedArray.getInt(R.styleable.CircleProgressBar2_progressbarColor, color);
+            min = typedArray.getInt(R.styleable.CircleProgressBar2_min, min);
+            max = typedArray.getInt(R.styleable.CircleProgressBar2_max, max);
         } finally {
             typedArray.recycle();
         }

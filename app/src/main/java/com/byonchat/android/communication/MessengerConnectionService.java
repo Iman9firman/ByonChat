@@ -78,6 +78,7 @@ import com.byonchat.android.provider.TimeLine;
 import com.byonchat.android.provider.TimeLineDB;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.ui.view.DialogAct;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.GetRealNameRoom;
@@ -2471,11 +2472,17 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     }
 
                     if(room.length == 5){
-                        databaseHelper.execSql("INSERT INTO tab_menu_badge (id_tab, jid, message) VALUES (?,?,?)",new String[]{room[2],databaseHelper.getMyContact().getJabberId(),room[3]});
-                        vo.setMessage("New task from : "+room[3]);
+                        if(room[4].equalsIgnoreCase("urgent")){
+                            DialogAct.startDialog(getApplicationContext(),60000,room[1],room[2],room[3],0);
+                        }
+
+                        databaseHelper.execSql("INSERT INTO tab_menu_badge (id_tab, jid, message) VALUES (?,?,?)",
+                                new String[]{room[2],databaseHelper.getMyContact().getJabberId(),room[3]});
+                        vo.setMessage(room[3]);
 
                         Intent intent = new Intent(ACTION_REFRESH_NOTIF_FORM);
                         intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                        intent.putExtra("TYPE_XZ","yes");
                         intent.putExtra(KEY_CONTACT_NAME, name + additionalInfo);
                         sendOrderedBroadcast(intent, null);
                         return;

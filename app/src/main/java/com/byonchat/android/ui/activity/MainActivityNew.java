@@ -12,6 +12,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -133,6 +134,8 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.internal.Util;
 
 public class MainActivityNew extends MainBaseActivityNew {
+
+    private static final int REQUEST_CODE_ASK_OVERLAY = 101010;
 
     @Override
     protected int getResourceLayout() {
@@ -429,6 +432,10 @@ public class MainActivityNew extends MainBaseActivityNew {
     protected void onResume() {
         super.onResume();
 //        assistant.start();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            openOverlaySettings();
+        }
 
         IntentFilter f = new IntentFilter(
                 MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
@@ -929,5 +936,14 @@ public class MainActivityNew extends MainBaseActivityNew {
 
         }
         Toast.makeText(this, "Shortcut Created", Toast.LENGTH_SHORT).show();
+    }
+
+    public void openOverlaySettings(){
+        Intent intent  = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,Uri.parse("package:${getPackageName()}"));
+        try {
+            startActivityForResult(intent,REQUEST_CODE_ASK_OVERLAY);
+        } catch ( ActivityNotFoundException e){
+            e.printStackTrace();
+        }
     }
 }

@@ -37,6 +37,7 @@ import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
@@ -93,13 +94,8 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
 
         if (vo != null) {
-            Log.w("sudah", "1");
-            Log.w("sudah1", vo.getMessage());
 //1_277091610admin//2595//8;List Pengiriman Mobil
             if (vo.getMessage().startsWith("bc://")) {
-
-                Log.w("sudah1", vo.getMessage());
-
                 builder.setSmallIcon(R.drawable.ic_notif);
                 builder.setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher));
                 builder.setContentTitle(name);
@@ -268,29 +264,39 @@ public class NotificationReceiver extends BroadcastReceiver {
                 String content = Message.parsedMessageBodyHtmlCode(vo, context);
                 builder.setContentText(content);
                 builder.setTicker("New message from " + name);
-                Intent destIntent = new Intent(context, ConversationActivity.class);
-                destIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, vo.getSource());
+                if(intent.getStringExtra("TYPE_XZ") != null){
+                    Contact contact = messengerHelper.getMyContact();
 
-                if (vo.isGroupChat()) {
-                    String nameAdd = vo.getSourceInfo();
-                    Contact contact = messengerHelper.getContact(vo.getSourceInfo());
-
-                    if (contact != null) {
-                        nameAdd = contact.getName();
-                    }
-
-                    if (nameAdd.equals(messengerHelper.getMyContact().getName())) nameAdd = "";
-                    String contentGroup = Message.parsedMessageBodyHtmlCode(vo, context);
-                    builder.setContentText(nameAdd + " : " + contentGroup);
-                    destIntent = new Intent(context, ConversationGroupActivity.class);
-                    destIntent.putExtra(ConversationGroupActivity.EXTRA_KEY_NEW_PERSON, "0");
-                    destIntent.putExtra(ConversationGroupActivity.EXTRA_KEY_STICKY, "0");
+                    Intent intentd = new Intent(context, MainActivityNew.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, contact.getJabberId());
+                    intent.putExtra("success", "oke");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
+                            intentd, PendingIntent.FLAG_UPDATE_CURRENT));
+                }else {
+                    Intent destIntent = new Intent(context, ConversationActivity.class);
+                    destIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, vo.getSource());
-                }
-                builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
-                        destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
+                    if (vo.isGroupChat()) {
+                        String nameAdd = vo.getSourceInfo();
+                        Contact contact = messengerHelper.getContact(vo.getSourceInfo());
+
+                        if (contact != null) {
+                            nameAdd = contact.getName();
+                        }
+                        if (nameAdd.equals(messengerHelper.getMyContact().getName())) nameAdd = "";
+                        String contentGroup = Message.parsedMessageBodyHtmlCode(vo, context);
+                        builder.setContentText(nameAdd + " : " + contentGroup);
+                        destIntent = new Intent(context, ConversationGroupActivity.class);
+                        destIntent.putExtra(ConversationGroupActivity.EXTRA_KEY_NEW_PERSON, "0");
+                        destIntent.putExtra(ConversationGroupActivity.EXTRA_KEY_STICKY, "0");
+                        destIntent.putExtra(ConversationActivity.KEY_JABBER_ID, vo.getSource());
+                    }
+                    builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
+                            destIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+                }
                 NotificationManager mgr = (NotificationManager) context
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -323,7 +329,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         } else if (name != null) {
             //add members
-            Log.w("sudah", "2");
             builder.setSmallIcon(R.drawable.ic_notif);
             builder.setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher));
             String isinya[] = name.split(";");
@@ -359,7 +364,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 }
 
             } else if (isinya.length == 1) {
-                Log.w("sudah", "3");
                 JSONObject jObject = null;
                 try {
                     jObject = new JSONObject(isinya[0]);
@@ -367,12 +371,10 @@ public class NotificationReceiver extends BroadcastReceiver {
                     e.printStackTrace();
                 }
                 if (jObject != null) {
-                    Log.w("sudah", "4");
                     try {
                         String username = jObject.getString("a");
                         String realname = jObject.getString("b");
                         if (username.equalsIgnoreCase("DATABASE")) {
-                            Log.w("sudah", "5");
                             builder.setContentTitle("Success");
                             builder.setContentText("DATABASE has been updated");
 
@@ -400,7 +402,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                             }
 
                         } else {
-                            Log.w("sudah", "6");
                             builder.setContentTitle("Success");
                             builder.setContentText("Refresh Room " + realname);
 
@@ -433,7 +434,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                         e.printStackTrace();
                     }
                 } else {
-                    Log.w("sudah", "7");
                     builder.setContentTitle("Success");
                     builder.setContentText(name);
                     builder.setContentIntent(PendingIntent.getActivity(context, Utility.generateRandomInt(),
@@ -458,7 +458,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                 }
 
             } else {
-                Log.w("sudah", "8");
                 builder.setContentTitle("Success");
                 builder.setContentText("success upload task");
                 builder.setTicker("TASK");
@@ -489,7 +488,6 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         }
         if (loc != null) {
-            Log.w("sudah", "9");
             String pesan[] = loc.split(";");
             GPSTracker gps = new GPSTracker(context);
             if (gps.canGetLocation()) {
@@ -513,7 +511,6 @@ public class NotificationReceiver extends BroadcastReceiver {
                     sendSMSMessage(planText);
                 }
             } else {
-                Log.w("ate", "sss1");
              /*   Intent i = new Intent();
                 i.setClassName("com.byonchat.android", "com.byonchat.android.DialogPopUpActivity");
                 intent.putExtra("pesan", loc);

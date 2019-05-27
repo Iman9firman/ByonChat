@@ -135,7 +135,7 @@ import okhttp3.internal.Util;
 
 public class MainActivityNew extends MainBaseActivityNew {
 
-    private static final int REQUEST_CODE_ASK_OVERLAY = 101010;
+    private static final int REQUEST_CODE_ASK_OVERLAY = 1121;
 
     @Override
     protected int getResourceLayout() {
@@ -532,10 +532,10 @@ public class MainActivityNew extends MainBaseActivityNew {
         adapter.setOnItemClickListener((view, position) -> {
             /*Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);*/
-            if(adapter.getData().get(position).category_tab != null) {
+            if (adapter.getData().get(position).category_tab != null) {
                 Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
                 startActivity(intent);
-            }else {
+            } else {
                 List<ItemMain> subItemList2 = new ArrayList<>();
 
                 String member = adapter.getData().get(position).status;
@@ -558,7 +558,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                 if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     width = (int) (getResources().getDisplayMetrics().widthPixels * 0.60);
                     height = (int) (getResources().getDisplayMetrics().heightPixels * 0.90);
-                }else{
+                } else {
                     width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
                     height = (int) (getResources().getDisplayMetrics().heightPixels * 0.50);
                 }
@@ -578,13 +578,13 @@ public class MainActivityNew extends MainBaseActivityNew {
         resolveOpenRooms();
         resolveRefreshGrid();
 
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             vFrameTabOne.setVisibility(View.INVISIBLE);
             vFrameTabTwo.setVisibility(View.INVISIBLE);
             vFrameTabFour.setVisibility(View.INVISIBLE);
             vFrameTabNine.setVisibility(View.INVISIBLE);
-        }else{
-            if(itemList.size() < 9){
+        } else {
+            if (itemList.size() < 9) {
                 recyclerView.setVisibility(View.INVISIBLE);
             }
         }
@@ -938,12 +938,23 @@ public class MainActivityNew extends MainBaseActivityNew {
         Toast.makeText(this, "Shortcut Created", Toast.LENGTH_SHORT).show();
     }
 
-    public void openOverlaySettings(){
-        Intent intent  = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,Uri.parse("package:${getPackageName()}"));
+    public void openOverlaySettings() {
+     /*   Intent intent  = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,Uri.parse("package:${getPackageName()}"));
         try {
             startActivityForResult(intent,REQUEST_CODE_ASK_OVERLAY);
         } catch ( ActivityNotFoundException e){
             e.printStackTrace();
+        }*/
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, REQUEST_CODE_ASK_OVERLAY);
+            }
         }
+
     }
+
+
 }

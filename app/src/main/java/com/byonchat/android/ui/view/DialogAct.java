@@ -34,8 +34,8 @@ import org.json.JSONException;
 import java.util.Date;
 
 /*
-* Created by Zharfan on 20/05/2019
-* */
+ * Created by Zharfan on 20/05/2019
+ * */
 public class DialogAct extends Activity {
 
     /*
@@ -89,7 +89,7 @@ public class DialogAct extends Activity {
     String urlImageLogo;
     String tabName;
 
-    public static void startDialog(Context context, long counterWhenBack, String username, String id_tab, String message, int counterForProgress){
+    public static void startDialog(Context context, long counterWhenBack, String username, String id_tab, String message, int counterForProgress) {
         /*
          * Static method for starting this dialog.
          * */
@@ -97,11 +97,11 @@ public class DialogAct extends Activity {
         intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        intent.putExtra(COUNTER_TIME,counterWhenBack);
+        intent.putExtra(COUNTER_TIME, counterWhenBack);
         intent.putExtra(USERNAME_CIRCLE, username);
-        intent.putExtra(ID_TAB_CIRCLE,id_tab);
-        intent.putExtra(COUNTER_PROG,counterForProgress);
-        intent.putExtra(MSG_CIRCLE,message);
+        intent.putExtra(ID_TAB_CIRCLE, id_tab);
+        intent.putExtra(COUNTER_PROG, counterForProgress);
+        intent.putExtra(MSG_CIRCLE, message);
         context.startActivity(intent);
     }
 
@@ -112,14 +112,14 @@ public class DialogAct extends Activity {
         setContentView(R.layout.layout_dialog_activity);
 
         //Setting views.
-        int width = (int)(getResources().getDisplayMetrics().widthPixels*0.70);
-        int height = (int)(getResources().getDisplayMetrics().heightPixels*0.35);
-        getWindow().setLayout(width,height);
+        int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.70);
+        int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.35);
+        getWindow().setLayout(width, height);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
         );
 
@@ -128,17 +128,17 @@ public class DialogAct extends Activity {
         pattern = new long[]{0, 250, 0, 250};
         setFinishOnTouchOutside(false);
         handler = new Handler();
-        if (getIntent() != null){
-            getCounterFromIntent = getIntent().getLongExtra(COUNTER_TIME,0);
-            counter = getIntent().getIntExtra(COUNTER_PROG,0);
+        if (getIntent() != null) {
+            getCounterFromIntent = getIntent().getLongExtra(COUNTER_TIME, 0);
+            counter = getIntent().getIntExtra(COUNTER_PROG, 0);
             id_tab = getIntent().getStringExtra(ID_TAB_CIRCLE);
             username = getIntent().getStringExtra(USERNAME_CIRCLE);
             message = getIntent().getStringExtra(MSG_CIRCLE);
         }
-        if (countDownTimer != null){
+        if (countDownTimer != null) {
             countDownTimer.cancel();
         }
-        vibratePlease(v,pattern);
+        vibratePlease(v, pattern);
 
         //database
         database = BotListDB.getInstance(getBaseContext());
@@ -161,7 +161,7 @@ public class DialogAct extends Activity {
         butClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (countDownTimer != null){
+                if (countDownTimer != null) {
                     countDownTimer.cancel();
                 }
                 finish();
@@ -180,7 +180,7 @@ public class DialogAct extends Activity {
                 intent.putExtra("success", "oke");
                 startActivity(intent);
 
-                if (countDownTimer != null){
+                if (countDownTimer != null) {
                     countDownTimer.cancel();
                 }
                 finish();
@@ -193,12 +193,12 @@ public class DialogAct extends Activity {
                  * If counter divide by 10 equals 0 or counter < 10 , then vibrate the device.
                  * If dialog was removed by home or back button, start another dialog.
                  * */
-                if (((int)(millisUntilFinished/1000) % 10 == 0) || (int)(millisUntilFinished/1000) < 10){
-                    if (isFinishing()){
+                if (((int) (millisUntilFinished / 1000) % 10 == 0) || (int) (millisUntilFinished / 1000) < 10) {
+                    if (isFinishing()) {
                         countDownTimer.cancel();
                         startDialog(getApplicationContext(), counterForBack, username, id_tab, message, counter);
                     } else {
-                        vibratePlease(v,pattern);
+                        vibratePlease(v, pattern);
                     }
                 }
                 /*
@@ -206,13 +206,13 @@ public class DialogAct extends Activity {
                  * */
                 String dateString = DateFormat.format("ss", new Date(millisUntilFinished)).toString();
                 counterForBack = millisUntilFinished;
-                openMessage.setText("Open ("+dateString+")");
+                openMessage.setText("Open (" + dateString + ")");
                 counter++;
                 /*
                  * Update circle progress bar with animation.
                  * */
-                progressBar.setProgressWithAnimation((float) counter*100/(60000/1000));
-                Log.w(TAG, "\nTick : " + (int)(millisUntilFinished/1000)+"\nCounter : "+ counter +"\nProgress : "+ (float) counter*100/(60000/1000)+"\nIntent : "+getCounterFromIntent);
+                progressBar.setProgressWithAnimation((float) counter * 100 / (60000 / 1000));
+                Log.w(TAG, "\nTick : " + (int) (millisUntilFinished / 1000) + "\nCounter : " + counter + "\nProgress : " + (float) counter * 100 / (60000 / 1000) + "\nIntent : " + getCounterFromIntent);
             }
 
             public void onFinish() {
@@ -226,53 +226,57 @@ public class DialogAct extends Activity {
                          * Wait for 2 sec until dialog dismiss itself.
                          * */
                         finish();
-                        handler.postDelayed(runnable,2000);
+                        handler.postDelayed(runnable, 2000);
                     }
                 };
-                handler.postDelayed(runnable,2000);
+                handler.postDelayed(runnable, 2000);
             }
 
         }.start();
     }
 
     private void getDataFromDB() {
-        /*
-         * Method for getting data from content that have been save in BotListDB
-         * */
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
-        content = content.replace("JSONnnye", "");
-        String[] bagibagi = content.split("@@@");
+        if (cur.getCount() > 0) {
+            String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
 
-        try {
-            JSONArray jsonArray = new JSONArray(bagibagi[0]);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
-                tabName = jsonArray.getJSONObject(i).getString("tab_name").toString();
-                String include_latlong = jsonArray.getJSONObject(i).getString("include_latlong").toString();
-                String include_pull = jsonArray.getJSONObject(i).getString("include_pull").toString();
-                String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
-                String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
-                String status = jsonArray.getJSONObject(i).getString("status").toString();
-                if (jsonArray.getJSONObject(i).has("icon_name")) {
-                    urlImageLogo = jsonArray.getJSONObject(i).getString("icon_name").toString();
-                }
+            if (content.startsWith("JSONnnye")) {
+                content = content.replace("JSONnnye", "");
+                String[] bagibagi = content.split("@@@");
+                content = bagibagi[0];
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+
+            try {
+                JSONArray jsonArray = new JSONArray(content);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
+                    tabName = jsonArray.getJSONObject(i).getString("tab_name").toString();
+                    String include_latlong = jsonArray.getJSONObject(i).getString("include_latlong").toString();
+                    String include_pull = jsonArray.getJSONObject(i).getString("include_pull").toString();
+                    String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
+                    String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
+                    String status = jsonArray.getJSONObject(i).getString("status").toString();
+                    if (jsonArray.getJSONObject(i).has("icon_name")) {
+                        urlImageLogo = jsonArray.getJSONObject(i).getString("icon_name").toString();
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     private void vibratePlease(Vibrator v, long[] pattern) {
         /*
          * Method for vibrating the device with custom pattern , support all build version android.
          * */
-        if (v != null){
-            if (v.hasVibrator()){
+        if (v != null) {
+            if (v.hasVibrator()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    v.vibrate(VibrationEffect.createWaveform(pattern,-1));
+                    v.vibrate(VibrationEffect.createWaveform(pattern, -1));
                 } else {
-                    v.vibrate(pattern,-1);
+                    v.vibrate(pattern, -1);
                 }
             }
         }

@@ -9316,6 +9316,18 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         errorReq.add(value.get(4).toString());
                                                     }
 
+                                                } else if (value.get(2).toString().equalsIgnoreCase("load_dropdown_k")) {
+                                                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("--Please Select--")) {
+                                                        berhenti = true;
+                                                        errorReq.add(value.get(4).toString());
+                                                    }
+
+                                                } else if (value.get(2).toString().equalsIgnoreCase("dropdown_views")) {
+                                                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("--Please Select--")) {
+                                                        berhenti = true;
+                                                        errorReq.add(value.get(4).toString());
+                                                    }
+
                                                 } else if (value.get(2).toString().equalsIgnoreCase("dropdown")) {
                                                     if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("--Please Select--")) {
                                                         berhenti = true;

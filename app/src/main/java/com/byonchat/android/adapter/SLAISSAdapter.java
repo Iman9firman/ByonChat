@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -158,13 +159,18 @@ public class SLAISSAdapter extends MultiLevelAdapter {
             mHolder.buttonPicker.setVisibility(View.GONE);
             setExpandButton(mHolder.imgArrow, mItem.isExpanded());
             mHolder.imgArrow.setVisibility(View.VISIBLE);
+            mHolder.openYesNo.setVisibility(View.GONE);
         } else {
             mHolder.imgArrow.setVisibility(View.GONE);
+            mHolder.buttonPicker.setVisibility(View.GONE);
+            mHolder.openYesNo.setVisibility(View.VISIBLE);
             if (checkDB(idDetailForm, mHolder.textId.getText().toString())) {
                 if (getOkFromDB(idDetailForm, mHolder.textId.getText().toString()) == 1) {
-                    mHolder.buttonPicker.setBackground(mActivity.getDrawable(R.drawable.check_ok));
+                    mHolder.imgArrowYes.setBackground(mActivity.getDrawable(R.drawable.check_ok));
+                    mHolder.imgArrowNo.setBackground(mActivity.getDrawable(R.drawable.nopemcil));
                 } else {
-                    mHolder.buttonPicker.setBackground(mActivity.getDrawable(R.drawable.check_no));
+                    mHolder.imgArrowNo.setBackground(mActivity.getDrawable(R.drawable.check_no));
+                    mHolder.imgArrowYes.setBackground(mActivity.getDrawable(R.drawable.pemcil));
                 }
 
                 if (getImgeB(idDetailForm, mHolder.textId.getText().toString()) != null) {
@@ -178,7 +184,8 @@ public class SLAISSAdapter extends MultiLevelAdapter {
                 mHolder.textComment.setText(getComment(idDetailForm, mHolder.textId.getText().toString()));
 
             } else {
-                mHolder.buttonPicker.setBackground(mActivity.getDrawable(R.drawable.pemcil));
+                mHolder.imgArrowYes.setBackground(mActivity.getDrawable(R.drawable.pemcil));
+                mHolder.imgArrowNo.setBackground(mActivity.getDrawable(R.drawable.nopemcil));
             }
         }
 
@@ -195,6 +202,8 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         private ImageButton pictPicker;
         private ImageButton buttonPicker;
         private ImageView imgArrow;
+        private LinearLayout openYesNo, buttonPickerYes, buttonPickerNo;
+        private ImageView imgArrowYes, imgArrowNo;
 
         ISSHolder(final View v) {
             super(v);
@@ -203,8 +212,13 @@ public class SLAISSAdapter extends MultiLevelAdapter {
             textId = v.findViewById(R.id.id_item);
             textComment = v.findViewById(R.id.comment_item);
             buttonPicker = v.findViewById(R.id.picker_item);
+            buttonPickerYes = v.findViewById(R.id.picker_item_yes);
+            buttonPickerNo = v.findViewById(R.id.picker_item_no);
             pictPicker = v.findViewById(R.id.pict_item);
             imgArrow = v.findViewById(R.id.arrow_item);
+            imgArrowNo = v.findViewById(R.id.arrow_item_no);
+            imgArrowYes = v.findViewById(R.id.arrow_item_yes);
+            openYesNo = v.findViewById(R.id.pickYesNo);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -215,30 +229,31 @@ public class SLAISSAdapter extends MultiLevelAdapter {
                 }
             });
 
-            buttonPicker.setOnClickListener(new View.OnClickListener() {
+            buttonPickerYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RadioButtonDialog radioButtonDialog;
                     if (checkDB(idDetailForm, textId.getText().toString())) {
-                        radioButtonDialog = new RadioButtonDialog(mActivity, getOkFromDB(idDetailForm, textId.getText().toString()), new RadioButtonDialog.MyRadioDialogListener() {
-                            @Override
-                            public void userSubmit(int value) {
-                                updateDB(idDetailForm, textId.getText().toString(), value, null, null);
-                                notifyDataSetChanged();
-                                listener.onChecked(getCountDB(idDetailForm));
-                            }
-                        });
-                        radioButtonDialog.show();
+                        updateDB(idDetailForm, textId.getText().toString(), 1, null, null);
+                        notifyDataSetChanged();
+                        listener.onChecked(getCountDB(idDetailForm));
                     } else {
-                        radioButtonDialog = new RadioButtonDialog(mActivity, -1, new RadioButtonDialog.MyRadioDialogListener() {
-                            @Override
-                            public void userSubmit(int value) {
-                                insertDB(idDetailForm, textId.getText().toString(), value, null, null);
-                                notifyDataSetChanged();
-                                listener.onChecked(getCountDB(idDetailForm));
-                            }
-                        });
-                        radioButtonDialog.show();
+                        insertDB(idDetailForm, textId.getText().toString(), 1, null, null);
+                        notifyDataSetChanged();
+                        listener.onChecked(getCountDB(idDetailForm));
+                    }
+                }
+            });
+            buttonPickerNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (checkDB(idDetailForm, textId.getText().toString())) {
+                        updateDB(idDetailForm, textId.getText().toString(), 0, null, null);
+                        notifyDataSetChanged();
+                        listener.onChecked(getCountDB(idDetailForm));
+                    } else {
+                        insertDB(idDetailForm, textId.getText().toString(), 0, null, null);
+                        notifyDataSetChanged();
+                        listener.onChecked(getCountDB(idDetailForm));
                     }
                 }
             });

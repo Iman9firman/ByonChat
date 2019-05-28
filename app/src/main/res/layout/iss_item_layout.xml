@@ -21,8 +21,54 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent=".85" />
+        app:layout_constraintWidth_percent=".70" />
 
+    <LinearLayout
+        android:id="@+id/pickYesNo"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        android:padding="4dp"
+        android:text="Title"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@id/title_item"
+        app:layout_constraintLeft_toRightOf="@id/title_item"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".30"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/picker_item_yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/arrow_item_yes"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:scaleType="center" />
+            <TextView
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
+                android:text="Yes"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/picker_item_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/arrow_item_no"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:scaleType="center" />
+            <TextView
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
+                android:text="No"/>
+        </LinearLayout>
+    </LinearLayout>
     <ImageButton
         android:id="@+id/picker_item"
         android:layout_width="36dp"
@@ -30,7 +76,6 @@
         android:scaleType="center"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="@id/title_item"
-        app:layout_constraintLeft_toRightOf="@id/title_item"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +85,6 @@
         android:layout_height="36dp"
         android:scaleType="center"
         app:layout_constraintBottom_toBottomOf="@id/title_item"
-        app:layout_constraintLeft_toRightOf="@id/title_item"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_arrow_down" />

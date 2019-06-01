@@ -9800,16 +9800,11 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 11) {
-            Log.w("hasilJepret", "1");
             if (resultCode == RESULT_OK) {
-                Log.w("hasilJepret", "2");
                 String returnString = data.getStringExtra("PICTURE");
-                Log.w("hasilJepret2", returnString);
                 if (decodeFile(returnString)) {
-                    Log.w("hasilJepret", "3");
                     final File f = new File(returnString);
                     if (f.exists()) {
-                        Log.w("hasilJepret", "4");
                         FileInputStream inputStream = null;
                         try {
                             inputStream = new FileInputStream(f);
@@ -9869,18 +9864,15 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     }
 
                 } else {
-                    Log.w("hasilJepret", "5");
                     Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
                 }
 
             } else if (resultCode == RESULT_CANCELED) {
-                Log.w("hasilJepret", "6");
                 if (result == null) {
                     //     btnPhoto.setVisibility(View.VISIBLE);
                 }
                 Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
             } else {
-                Log.w("hasilJepret", "7");
                 if (result == null) {
                     // btnPhoto.setVisibility(View.VISIBLE);
                 }

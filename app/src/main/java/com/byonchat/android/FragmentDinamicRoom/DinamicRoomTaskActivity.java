@@ -5362,27 +5362,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                         final List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(String.valueOf(count));
-
-
-                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        params2.setMargins(30, 10, 30, 0);
-                        textView.setLayoutParams(params2);
-                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                        linearLayout.addView(textView);
-
-                        imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
-                        imageView[count].setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        params.setMargins(5, 15, 0, 0);
-                        imageView[count].setLayoutParams(params);
-                        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                        linearLayout.addView(imageView[count], params);
-
-
+                        valSetOne.add(String.valueOf(count));//0
                         final int finalI26 = i;
-
 
                         if (JcontentBawaan.has(name)) {
                             if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
@@ -5395,11 +5376,27 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 }
                             }
                         }
-                        valSetOne.add(required);
-                        valSetOne.add(type);
-                        valSetOne.add(name);
-                        valSetOne.add(label);
-                        valSetOne.add(String.valueOf(i));
+
+                        valSetOne.add(required);//3
+                        valSetOne.add(type);//4
+                        valSetOne.add(name);//5
+                        valSetOne.add(label);//6
+                        valSetOne.add(String.valueOf(i));//7
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));//1
+                        linearLayout.addView(textView);
+
+                        imageView[count] = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
+                        imageView[count].setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        params.setMargins(5, 15, 0, 0);
+                        imageView[count].setLayoutParams(params);
+                        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));//2
+                        linearLayout.addView(imageView[count], params);
 
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
@@ -5426,6 +5423,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                             }
                         });
+
+
+
 
                     } else if (type.equalsIgnoreCase("distance_estimation")) {
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);

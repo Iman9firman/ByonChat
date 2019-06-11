@@ -230,6 +230,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 Contact contact = messengerHelper.getMyContact();
                 nameValuePairs.add(new BasicNameValuePair("app_version", getString(R.string.app_version)));
                 nameValuePairs.add(new BasicNameValuePair("app_company", getString(R.string.app_company)));
+                nameValuePairs.add(new BasicNameValuePair("id_client", getString(R.string.app_company)));
                 nameValuePairs.add(new BasicNameValuePair("bc_user", contact.getJabberId()));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 

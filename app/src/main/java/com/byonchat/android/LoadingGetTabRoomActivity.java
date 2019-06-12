@@ -227,6 +227,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 nameValuePairs.add(new BasicNameValuePair("app_version", getString(R.string.app_version)));
                 nameValuePairs.add(new BasicNameValuePair("app_company", getString(R.string.app_company)));
                 nameValuePairs.add(new BasicNameValuePair("bc_user", contact.getJabberId()));
+                nameValuePairs.add(new BasicNameValuePair("id_client", getString(R.string.id_client)));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 // Execute HTTP Post Request

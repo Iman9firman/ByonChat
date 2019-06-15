@@ -2,6 +2,7 @@ package com.byonchat.android.widget;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -20,7 +21,8 @@ import java.util.List;
 
 import io.blackbox_vision.wheelview.view.WheelView;
 
-public class TimeDialog extends Dialog implements View.OnClickListener {
+public class
+TimeDialog extends Dialog implements View.OnClickListener {
 
     WheelView wheelViewHour, wheelViewMinutes;
     Button butCancel, butSubmit;
@@ -28,16 +30,25 @@ public class TimeDialog extends Dialog implements View.OnClickListener {
     MyTimeDialogListener listener;
     String title;
 
+    Context context;
+
+
     public TimeDialog(Activity activity, String title) {
         super(activity);
         this.title = title;
+        context = activity;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.timedialog_layout);
+
+        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.80);
+        int height = (int) (context.getResources().getDisplayMetrics().heightPixels * 0.45);
+        getWindow().setLayout(width, height);
 
         textTitle = (TextView) findViewById(R.id.tv_picktime_td);
         wheelViewHour = (WheelView) findViewById(R.id.hour_td);

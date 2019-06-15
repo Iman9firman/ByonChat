@@ -1,38 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_gravity="center_horizontal"
-    android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible">
-
-        <FrameLayout
-            android:id="@+id/linear_name"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/margin1"
-            android:background="@drawable/dialog_voucher_title_rounded"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_horizontal"
-                android:textColor="@android:color/black" />
-        </FrameLayout>
-    </RelativeLayout>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.constraint.ConstraintLayout
-        android:padding="8dp"
+        android:layout_margin="8dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp">
+        android:layout_height="0dp"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent=".8"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tv_picktime_td"
@@ -46,21 +26,37 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_margin="8dp"/>
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:id="@+id/timelayout_td"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent=".5"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_picktime_td"
-            android:layout_margin="32dp">
+            android:layout_margin="8dp">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guide_1_tdl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".45"/>
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guide_2_tdl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".55"/>
 
             <io.blackbox_vision.wheelview.view.WheelView
                 android:id="@+id/hour_td"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="0dp"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent=".3"
+                android:layout_height="0dp"
                 android:layout_margin="4dp"
                 app:canLoop="true"
                 app:centerTextColor="#ff000000"
@@ -68,19 +64,28 @@
                 app:initPosition="3"
                 app:lineColor="@color/colorPrimary"
                 app:textSize="25sp"
-                app:topBottomTextColor="#ffafafaf" />
+                app:topBottomTextColor="#ffafafaf"
+                app:layout_constraintRight_toRightOf="@id/guide_1_tdl"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:gravity="center"
                 android:text=":"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="@id/guide_1_tdl"
+                app:layout_constraintRight_toRightOf="@id/guide_2_tdl"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <io.blackbox_vision.wheelview.view.WheelView
                 android:id="@+id/minutes_td"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="0dp"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent=".3"
+                android:layout_height="0dp"
                 android:layout_margin="4dp"
                 app:canLoop="true"
                 app:centerTextColor="#ff000000"
@@ -88,8 +93,11 @@
                 app:initPosition="3"
                 app:lineColor="@color/colorPrimary"
                 app:textSize="25sp"
-                app:topBottomTextColor="#ffafafaf" />
-        </LinearLayout>
+                app:topBottomTextColor="#ffafafaf"
+                app:layout_constraintLeft_toLeftOf="@id/guide_2_tdl"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </android.support.constraint.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,32 +107,29 @@
             app:layout_constraintTop_toBottomOf="@id/timelayout_td"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:layout_margin="32dp">
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="8dp">
 
             <Button
                 android:id="@+id/btn_set_td"
-                android:textColor="@drawable/selector_txt_blue_white"
                 android:textSize="14sp"
-                android:layout_width="@dimen/margin100"
-                android:layout_height="@dimen/margin30"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
                 android:padding="5dp"
-                android:background="@drawable/oval_btn_room"
                 android:textAllCaps="false"
                 android:text="Ok" />
 
             <Button
-                android:layout_marginLeft="@dimen/margin10"
+                android:layout_marginLeft="10dp"
                 android:id="@+id/btn_cancel_td"
-                android:textColor="@drawable/selector_txt_blue_white"
                 android:textSize="14sp"
-                android:layout_width="@dimen/margin100"
-                android:layout_height="@dimen/margin30"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
                 android:padding="5dp"
-                android:background="@drawable/oval_btn_room"
                 android:textAllCaps="false"
                 android:text="Cancel" />
         </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

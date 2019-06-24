@@ -123,7 +123,7 @@ public class MapsViewActivity extends AppCompatActivity {
         mapView.setMultiTouchControls(true);
 
         IMapController mapController = mapView.getController();
-        mapController.setZoom(10);
+        mapController.setZoom(11.3);
 
         RotationGestureOverlay rotationGestureOverlay = new RotationGestureOverlay(this, mapView);
         rotationGestureOverlay.setEnabled(true);
@@ -138,9 +138,12 @@ public class MapsViewActivity extends AppCompatActivity {
             locationPoint = new GeoPoint(LAT, LNG);
             mapController.setCenter(locationPoint);
 
+            //Office
             AccuracyOverlay accuracyOverlay = new AccuracyOverlay(locationPoint, 20000);
             Marker marker = new Marker(mapView);
             marker.setPosition(locationPoint);
+            marker.setTitle(getIntent().getStringExtra("XTRA_NAME"));
+            marker.setIcon(getResources().getDrawable(R.drawable.iss_ico_loc));
             mapView.getOverlays().add(accuracyOverlay);
             mapView.getOverlays().add(marker);
 
@@ -149,7 +152,7 @@ public class MapsViewActivity extends AppCompatActivity {
             for (int a = 0; a < relieverList.size(); a++) {
                 Marker m = new Marker(mapView);
                 m.setPosition(new GeoPoint(Double.valueOf(relieverList.get(a).getRelieverLastLat()), Double.valueOf(relieverList.get(a).getRelieverLastLng())));
-                m.setIcon(getResources().getDrawable(R.drawable.person));
+                m.setIcon(getResources().getDrawable(R.drawable.iss_ico_all));
                 m.setTitle(relieverList.get(a).getRelieverName() + "\n" + df.format(Float.valueOf(relieverList.get(a).getRelieverDistance())) + " km");
                 mapView.getOverlays().add(m);
             }

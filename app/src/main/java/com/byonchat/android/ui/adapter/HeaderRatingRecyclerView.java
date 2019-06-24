@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,16 +57,17 @@ public class HeaderRatingRecyclerView {
     TextView totalReq;
 
     @View(R.id.spinnerGender)
-    SearchableSpinner header_gender;
+    Spinner header_gender;
 
     private Context mContext;
-    private String headerName, lat, relieverDetail, totals;
+    private String headerName, lat, relieverDetail, totals, gender_pos;
 
     public OnSpinnerChangeListener onChanger;
 
-    public HeaderRatingRecyclerView(Context context, String headerName, String latlong, String _relieverDetail, String total, OnSpinnerChangeListener onChanger) {
+    public HeaderRatingRecyclerView(Context context, String gender_pos, String headerName, String latlong, String _relieverDetail, String total, OnSpinnerChangeListener onChanger) {
         this.mContext = context;
         this.headerName = headerName;
+        this.gender_pos = gender_pos;
         this.lat = latlong;
         this.relieverDetail = _relieverDetail;
         this.relieverDetail = _relieverDetail;
@@ -82,6 +85,7 @@ public class HeaderRatingRecyclerView {
             public void onClick(android.view.View v) {
                 Log.w("kaka", "sisp");
                 Intent maps = new Intent(mContext, MapsViewActivity.class);
+                maps.putExtra("XTRA_NAME",headerName.split(" - ")[0]);
                 maps.putExtra(XTRA_RELIEVER_JSON, relieverDetail);
                 maps.putExtra(XTRA_LATITUDE, lat.split(":")[0]);
                 maps.putExtra(XTRA_LONGITUDE, lat.split(":")[1]);
@@ -100,17 +104,35 @@ public class HeaderRatingRecyclerView {
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(mContext, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         header_gender.setAdapter(spinnerArrayAdapter);
+
+        if(gender_pos.equalsIgnoreCase("Laki - laki")){
+            header_gender.setSelection(1);
+        }else if(gender_pos.equalsIgnoreCase("Perempuan")){
+            header_gender.setSelection(2);
+        }else {
+            header_gender.setSelection(0);
+        }
+
+        header_gender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
+                onChanger.onItemChanges(position, header_gender.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Expand
     private void onExpand() {
         header_img_arrow.setRotation(180);
-        vFrameTotal.setVisibility(android.view.View.VISIBLE);
     }
 
     @Collapse
     private void onCollapse() {
-        vFrameTotal.setVisibility(android.view.View.GONE);
         header_img_arrow.setRotation(0);
     }
 

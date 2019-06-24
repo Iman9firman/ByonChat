@@ -51,6 +51,7 @@ public class RelieverDetailActivity extends AppCompatActivity {
     CircularImageView image_detailReliever;
     RatingBar rating_detailReliever;
     TextView text_name_real_detailReliever, text_birthDate_real_detailReliever, text_address_real_detailReliever, text_jobExp_real_detailReliever, text_nik_detailreleiver;
+    TextView text_bc_user, text_email, text_gender, text_total_kerja;
     ImageView chat_this;
     String nama, noHp;
 
@@ -75,6 +76,11 @@ public class RelieverDetailActivity extends AppCompatActivity {
         text_address_real_detailReliever = (TextView) findViewById(R.id.text_address_real_detailReliever);
         text_jobExp_real_detailReliever = (TextView) findViewById(R.id.text_jobExp_real_detailReliever);
         text_nik_detailreleiver = (TextView) findViewById(R.id.text_nik_detailReliever);
+
+        text_bc_user  = (TextView) findViewById(R.id.text_real_number);
+        text_email  = (TextView) findViewById(R.id.text_real_email);
+        text_gender  = (TextView) findViewById(R.id.text_real_gender);
+        text_total_kerja  = (TextView) findViewById(R.id.text_real_total_kerja);
         chat_this = (ImageView) findViewById(R.id.chat_this);
 
         String aa = getIntent().getStringExtra("IDRELIEVER");
@@ -95,13 +101,12 @@ public class RelieverDetailActivity extends AppCompatActivity {
                 ChatParty sample = new Contact(nama,noHp,"");
                 IconItem item = new IconItem(noHp,nama,"","",sample);
                 if (item.getJabberId().equalsIgnoreCase("")) {
+                    Toast.makeText(getApplicationContext(),"Nomor telepon reliever ini belum terdaftar",Toast.LENGTH_SHORT).show();
                 } else {
                     Intent intent = new Intent(getApplicationContext(), ConversationActivity.class);
                     String jabberId = item.getJabberId();
                     intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
                     intent.putExtra(Constants.EXTRA_ITEM, item);
-//                    intent.putExtra(Constants.EXTRA_COLOR, "000000");
-//                    intent.putExtra(Constants.EXTRA_COLORTEXT, "000000");
                     startActivity(intent);
                 }
             }
@@ -144,6 +149,14 @@ public class RelieverDetailActivity extends AppCompatActivity {
                         String nik = jOb.getString("nik");
                         String alamat = jOb.getString("alamat");
                         String join_date = jOb.getString("join_date");
+                        String nohape = jOb.getString("no_hp");
+                        String total_kerja = jOb.getString("total_kerja");
+                        String gender;
+                        if(jOb.has("gender")) {
+                            gender = jOb.getString("gender");
+                        }else {
+                            gender = "-";
+                        }
 
                         if (foto.equalsIgnoreCase("-") || foto.equalsIgnoreCase("")) {
                             foto = "https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + noHp + ".jpg";
@@ -151,12 +164,22 @@ public class RelieverDetailActivity extends AppCompatActivity {
 
                         Picasso.with(RelieverDetailActivity.this.getApplicationContext()).load(foto).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(image_detailReliever);
 
+                        Log.w("Official rating",rat+"   "+rating);
                         text_name_real_detailReliever.setText(nama);
+                        text_nik_detailreleiver.setText(nik);
+                        rating_detailReliever.setRating(rating);
                         text_birthDate_real_detailReliever.setText(ttl);
                         text_address_real_detailReliever.setText(alamat);
                         text_jobExp_real_detailReliever.setText("Sejak " + join_date);
-                        text_nik_detailreleiver.setText(nik);
-                        rating_detailReliever.setRating(rating);
+                        text_bc_user.setText("+"+nohape);
+                        text_gender.setText(gender);
+                        text_email.setText(email);
+
+                        if(total_kerja.equalsIgnoreCase("0") || total_kerja.equalsIgnoreCase("")){
+                            text_total_kerja.setText("pekerja baru");
+                        }else {
+                            text_total_kerja.setText(total_kerja + "x bekerja");
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();

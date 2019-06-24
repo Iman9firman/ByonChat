@@ -92,6 +92,8 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
     @NonNull
     protected Button vBtnSubmit;
 
+    String selectedGender0 = "Tampilkan semua";
+    public static Map<Integer, String> map_gender = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,10 +175,9 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
     protected void resolveListHistory() {
         vList.removeAllViews();
+        items.clear();
 
-        Log.w("inecn",itemData);
         try {
-            final String[] selectedGender = {"-"};
             JSONArray jsonArraySatu = new JSONArray(itemData);
             for (int i = 0; i < jsonArraySatu.length(); i++) {
                 idRequest = jsonArraySatu.getJSONObject(i).getString("id_request");
@@ -184,12 +185,30 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
                 for (int ia = 0; ia < jsonArrayDua.length(); ia++) {
 
-                    vList.addView(new HeaderRatingRecyclerView(RequesterBaseRatingActivity.this, jsonArraySatu.getJSONObject(i).getString("nama_jjt") + " - "
+                    if(map_gender.size() != 0){
+                        selectedGender0 = map_gender.get(ia);
+                    }
+
+                    if(selectedGender0 == null){
+                        selectedGender0 = "Tampilkan semua";
+                    }
+
+                    int finalIa = ia;
+                    vList.addView(new HeaderRatingRecyclerView(RequesterBaseRatingActivity.this, selectedGender0,jsonArraySatu.getJSONObject(i).getString("nama_jjt") + " - "
                             + jsonArrayDua.getJSONObject(ia).getString("nama_pekerjaan"), jsonArraySatu.getJSONObject(i).getString("jjt_lat") + ":" + jsonArraySatu.getJSONObject(i).getString("jjt_long"), jsonArrayDua.getJSONObject(ia).getString("request_detail"), jsonArrayDua.getJSONObject(ia).getString("jumlah"),
-                            new HeaderRatingRecyclerView.OnSpinnerChangeListener(){
+                            new HeaderRatingRecyclerView.OnSpinnerChangeListener() {
                                 @Override
                                 public void onItemChanges(int position, String gender) {
-                                    selectedGender[0] = gender;
+
+                                    if(map_gender.get(finalIa) == null) {
+                                        map_gender.put(finalIa, gender);
+                                        resolveListHistory();
+                                    }
+
+                                    if(!map_gender.get(finalIa).equalsIgnoreCase(gender)) {
+                                        map_gender.put(finalIa, gender);
+                                        resolveListHistory();
+                                    }
                                 }
                             }));
 
@@ -203,65 +222,26 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
                         for (int j = 0; j < jsonArrayTiga.length(); j++) {
                             JSONObject jOb = jsonArrayTiga.getJSONObject(j);
-                            String id = jOb.getString("id_request_detail");
-
-                            String name = jOb.getString("nama");
-                            String id_reliever = jOb.getString("id_reliever");
-                            String distance = jOb.getString("jarak");
-                            String total = jOb.getString("total_kerja");
-                            String status = jOb.getString("status");
-                            String contact = jOb.getString("hp");
-                            String location = jOb.getString("lat") + ":" + jOb.getString("long");
-                            String rating = jOb.getString("rating");
                             String gender = "-";
-                            if(jOb.has("gender")){
+                            if (jOb.has("gender")) {
                                 gender = jOb.getString("gender");
                             }
 
-                            int titik = distance.length() - distance.indexOf(".");
-                            if (titik > 4) {
-                                titik = 4;
-                            }
-
-                            MkgServices data = new MkgServices();
-                            data.header_id = ia;
-                            data.id = id;
-                            data.id_reliever = id_reliever;
-                            data.child_name = name;
-                            data.child_distance = distance.substring(0, distance.indexOf(".") + titik) + " KM";
-                            data.child_status = status;
-                            data.child_contact = contact;
-                            data.child_gender = gender;
-                            data.child_location = location;
-                            data.child_rating = rating;
-                            data.total_kerja = total;
-                            data.isChecked = false;
-
-                            if(selectedGender[0].equalsIgnoreCase("-")) {
-                                items.add(data);
-                            }else {
-                                if(data.child_gender.equalsIgnoreCase(selectedGender[0])){
-                                    items.add(data);
-                                }
-                            }
-                            vList.addView(new ChildRatingRecyclerView(RequesterBaseRatingActivity.this, j, data, new ChildRatingRecyclerView.OnCheckedChangeListener() {
-
-                                @Override
-                                public void onItemClick(int position, MkgServices datas, Boolean check) {
-                                    List<MkgServices> selected = new ArrayList<>();
-                                    int size = items.size();
-                                    for (int is = size - 1; is >= 0; is--) {
-                                        if (items.get(is).id.equalsIgnoreCase(datas.id)) {
-                                            items.get(is).isChecked = !datas.isChecked();
-                                            data.isChecked = check;
-                                        }
-                                        selected.add(items.get(is));
+                            if(map_gender.size() != 0) {
+                                if (map_gender.get(ia).equalsIgnoreCase("Laki - laki")) {
+                                    if (!gender.equalsIgnoreCase("Female")) {
+                                        buildChildRelieverList(jsonArrayTiga, j, ia);
                                     }
-                                    for (int oio = 0; oio < selected.size(); oio++) {
+                                } else if (map_gender.get(ia).equalsIgnoreCase("Perempuan")) {
+                                    if (!gender.equalsIgnoreCase("Male")) {
+                                        buildChildRelieverList(jsonArrayTiga, j, ia);
                                     }
-                                    unSelectedItems = getSelectedList(selected);
+                                } else {
+                                    buildChildRelieverList(jsonArrayTiga, j, ia);
                                 }
-                            }));
+                            } else {
+                                buildChildRelieverList(jsonArrayTiga, j, ia);
+                            }
                         }
 
                         if (Integer.valueOf(jsonArrayDua.getJSONObject(ia).getString("jumlah")) > jsonArrayTiga.length()) {
@@ -272,6 +252,13 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
                             reportToResources.add(paramss);
 
+                        } else if (items.size() == 0) {
+                            vList.addView(new NotifikasinoresultView(RequesterBaseRatingActivity.this, "Reliever " + map_gender.get(ia) +" tidak ditemukan di Posisi ini"));
+                            Map<String, String> paramss = new HashMap<>();
+                            paramss.put("id_sub_request", jsonArrayDua.getJSONObject(ia).getString("id_sub_request"));
+                            paramss.put("jumlah", jsonArrayDua.getJSONObject(ia).getString("jumlah"));
+
+                            reportToResources.add(paramss);
                         }
 
                     } else {
@@ -288,9 +275,80 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
                 }
             }
         } catch (JSONException e) {
-            Log.w("hasudl", e.toString());
+            e.printStackTrace();
+        } catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    /* Ketika menambahkan view ListReliever
+     *
+     */
+    private void buildChildRelieverList(JSONArray jsonArrayTiga, int j, int ia) throws JSONException {
+        JSONObject jOb = jsonArrayTiga.getJSONObject(j);
+
+        String id = jOb.getString("id_request_detail");
+        String name = jOb.getString("nama");
+        String id_reliever = jOb.getString("id_reliever");
+        String distance = jOb.getString("jarak");
+        String total = jOb.getString("total_kerja");
+        String status = jOb.getString("status");
+        String contact = jOb.getString("hp");
+        String location = jOb.getString("lat") + ":" + jOb.getString("long");
+        String rating = jOb.getString("rating");
+        String gender = "-";
+        if (jOb.has("gender")) {
+            gender = jOb.getString("gender");
+        }
+
+        int titik = distance.length() - distance.indexOf(".");
+        if (titik > 4) {
+            titik = 4;
+        }
+
+        boolean data_checked = false;
+        if(unSelectedItems.size() != 0){
+            for (int yy = 0; yy < unSelectedItems.size(); yy++) {
+                if (unSelectedItems.get(yy).id.equalsIgnoreCase(id)){
+                    data_checked = true;
+                }
+            }
+        }
+
+        MkgServices data = new MkgServices();
+        data.header_id = ia;
+        data.id = id;
+        data.id_reliever = id_reliever;
+        data.child_name = name;
+        data.child_distance = distance.substring(0, distance.indexOf(".") + titik) + " KM";
+        data.child_status = status;
+        data.child_contact = contact;
+        data.child_gender = gender;
+        data.child_location = location;
+        data.child_rating = rating;
+        data.total_kerja = total;
+        data.isChecked = data_checked;
+
+        items.add(data);
+
+        vList.addView(new ChildRatingRecyclerView(RequesterBaseRatingActivity.this, data, new ChildRatingRecyclerView.OnCheckedChangeListener() {
+
+            @Override
+            public void onItemClick(int position, MkgServices datas, Boolean check) {
+                List<MkgServices> selected = new ArrayList<>();
+                int size = items.size();
+                for (int is = size - 1; is >= 0; is--) {
+                    if (items.get(is).id.equalsIgnoreCase(datas.id)) {
+                        items.get(is).isChecked = !datas.isChecked();
+                        data.isChecked = check;
+                    }
+                    selected.add(items.get(is));
+                }
+                for (int oio = 0; oio < selected.size(); oio++) {
+                }
+                unSelectedItems = getSelectedList(selected);
+            }
+        }));
     }
 
     public int getCountCheck(int idHeader) {

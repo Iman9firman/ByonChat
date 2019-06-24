@@ -62,7 +62,7 @@ public class ChildRatingRecyclerView {
 
     private OnCheckedChangeListener itemClickListener;
 
-    public ChildRatingRecyclerView(RequesterBaseRatingActivity mContext, int j, MkgServices data, OnCheckedChangeListener checkedChangeListener) {
+    public ChildRatingRecyclerView(RequesterBaseRatingActivity mContext, MkgServices data, OnCheckedChangeListener checkedChangeListener) {
         this.mContext = mContext;
         this.data = data;
         this.position = position;
@@ -82,11 +82,12 @@ public class ChildRatingRecyclerView {
             child_text_total.setText(data.total_kerja + " x bekerja");
         }
 
-        if(!data.child_gender.equalsIgnoreCase("-")){
+        if (!data.child_gender.equalsIgnoreCase("null")){
             int drowabel = 0;
-            if(data.child_gender.equalsIgnoreCase("L")){
+            child_gender.setVisibility(android.view.View.VISIBLE);
+            if (data.child_gender.equalsIgnoreCase("Male")){
                 drowabel = R.drawable.ic_male;
-            }else {
+            } else if (data.child_gender.equalsIgnoreCase("Female")){
                 drowabel = R.drawable.ic_female;
             }
 

@@ -29,7 +29,7 @@
             android:weightSum="10"
             android:orientation="horizontal">
 
-            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+            <Spinner
                 android:id="@+id/spinnerGender"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

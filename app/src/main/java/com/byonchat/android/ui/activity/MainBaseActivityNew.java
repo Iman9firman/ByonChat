@@ -1382,7 +1382,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                 }
             }
         }
-            Constants.map.put(itemList.size(), null);
+         //   Constants.map.put(itemList.size(), null);
 
             if (itemList.size() == 1) {
                 isRecyclerViewShowed = false;

@@ -87,6 +87,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:persistent="true"
+        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 

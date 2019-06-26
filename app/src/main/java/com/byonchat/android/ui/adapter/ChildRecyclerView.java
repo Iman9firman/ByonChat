@@ -96,7 +96,7 @@ public class ChildRecyclerView {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
                     alertBuilder.setCancelable(true);
                     alertBuilder.setTitle("Cancel");
-                    alertBuilder.setMessage("Reliever "+data.child_name);
+                    alertBuilder.setMessage("Reliever " + data.child_name);
                     alertBuilder.setPositiveButton("By Reliever ",
                             (dialogInterface, i) -> {
                                 Map<String, String> params = new HashMap<>();
@@ -189,7 +189,7 @@ public class ChildRecyclerView {
 
         child_text_status.setText(status);
 
-        child_text_distance.setText("");
+        child_text_distance.setText(data.child_distance);
     }
 
 

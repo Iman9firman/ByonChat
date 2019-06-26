@@ -1003,12 +1003,12 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             boolean grouping = false;
 
             JSONArray jsonArray;
-            if(content.startsWith("JSONnnye")) {
+            if (content.startsWith("JSONnnye")) {
                 content = content.replace("JSONnnye", "");
 
                 String[] bagibagi = content.split("@@@");
                 JSONArray jAAr = new JSONArray(bagibagi[1]);
-                Log.w("Bebau kesukan","satu  -->  "+jAAr);
+                Log.w("Bebau kesukan", "satu  -->  " + jAAr);
                 for (int on = 0; on < jAAr.length(); on++) {
                     JSONObject jsonObject = /*new JSONObject(bagibagi[1]);*/jAAr.getJSONObject(on);
                     String title1 = jsonObject.getString("name");
@@ -1025,7 +1025,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
                 jsonArray = new JSONArray(bagibagi[0]);
                 grouping = true;
-            }else {
+            } else {
                 jsonArray = new JSONArray(content);
                 grouping = false;
             }
@@ -1229,8 +1229,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                 }
 
 
-
-                if(grouping == true) {
+                if (grouping == true) {
                     itemList.add(itemMain);
                     positionList.add(title);
                     for (int s1 = 0; s1 < itemList.size(); s1++) {
@@ -1248,141 +1247,141 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                     }
 
                     subItemList.add(itemMain);
-                }else{
-                    itemList.add(i, itemMain);
-                    positionList.add(i,title);
-                }
-
-            }
-
-        for (int i = 0; i < itemList.size(); i++) {
-            if (itemList.size() == 1) {
-                resolveOneGrid(itemList);
-            } else if (itemList.size() == 2) {
-                if (i == 0)
-                    resolveTwoGridOne(itemList, i);
-                else
-                    resolveTwoGridTwo(itemList, i);
-            } else if (itemList.size() == 3) {
-                vFrameGridNineThree.setVisibility(View.INVISIBLE);
-                vFrameGridNineSix.setVisibility(View.VISIBLE);
-                vFrameGridNineNine.setVisibility(View.INVISIBLE);
-
-                vFrameGridNineNineOne.setVisibility(View.INVISIBLE);
-
-                if (i == 0)
-                    resolveNineGridFour(itemList, i);
-                else if (i == 1)
-                    resolveNineGridFive(itemList, i);
-                else if (i == 2)
-                    resolveNineGridSix(itemList, i);
-            } else if (itemList.size() == 4) {
-                if (i == 0)
-                    resolveFourGridOne(itemList, i);
-                else if (i == 1)
-                    resolveFourGridTwo(itemList, i);
-                else if (i == 2)
-                    resolveFourGridThree(itemList, i);
-                else if (i == 3)
-                    resolveFourGridFour(itemList, i);
-            } else if (itemList.size() > 4 && itemList.size() <= 8) {
-                if (itemList.size() == 5) {
-                    vFrameGridNineThree.setVisibility(View.VISIBLE);
-                    vFrameGridNineSix.setVisibility(View.VISIBLE);
-
-                    if (i == 0)
-                        resolveNineGridOne(itemList, i);
-                    else if (i == 1)
-                        resolveNineGridTwo(itemList, i);
-                    else if (i == 2)
-                        resolveNineGridThree(itemList, i);
-                    else if (i == 3)
-                        resolveNineGridFour(itemList, i);
-                    else if (i == 4)
-                        resolveNineGridSix(itemList, i);
-                } else if (itemList.size() == 6) {
-                    vFrameGridNineThree.setVisibility(View.VISIBLE);
-                    vFrameGridNineSix.setVisibility(View.VISIBLE);
-
-                    if (i == 0)
-                        resolveNineGridOne(itemList, i);
-                    else if (i == 1)
-                        resolveNineGridTwo(itemList, i);
-                    else if (i == 2)
-                        resolveNineGridThree(itemList, i);
-                    else if (i == 3)
-                        resolveNineGridFour(itemList, i);
-                    else if (i == 4)
-                        resolveNineGridFive(itemList, i);
-                    else if (i == 5)
-                        resolveNineGridSix(itemList, i);
-                } else if (itemList.size() == 7) {
-                    vFrameGridNineThree.setVisibility(View.VISIBLE);
-                    vFrameGridNineSix.setVisibility(View.VISIBLE);
-                    vFrameGridNineNine.setVisibility(View.VISIBLE);
-
-                    if (i == 0)
-                        resolveNineGridOne(itemList, i);
-                    else if (i == 1)
-                        resolveNineGridTwo(itemList, i);
-                    else if (i == 2)
-                        resolveNineGridThree(itemList, i);
-                    else if (i == 3)
-                        resolveNineGridFour(itemList, i);
-                    else if (i == 4)
-                        resolveNineGridFive(itemList, i);
-                    else if (i == 5)
-                        resolveNineGridSix(itemList, i);
-                    else if (i == 6)
-                        resolveNineGridEight(itemList, i);
-                } else if (itemList.size() == 8) {
-                    vFrameGridNineThree.setVisibility(View.VISIBLE);
-                    vFrameGridNineSix.setVisibility(View.VISIBLE);
-                    vFrameGridNineNine.setVisibility(View.VISIBLE);
-
-                    if (i == 0)
-                        resolveNineGridOne(itemList, i);
-                    else if (i == 1)
-                        resolveNineGridTwo(itemList, i);
-                    else if (i == 2)
-                        resolveNineGridThree(itemList, i);
-                    else if (i == 3)
-                        resolveNineGridFour(itemList, i);
-                    else if (i == 4)
-                        resolveNineGridFive(itemList, i);
-                    else if (i == 5)
-                        resolveNineGridSix(itemList, i);
-                    else if (i == 6)
-                        resolveNineGridSeven(itemList, i);
-                    else if (i == 7)
-                        resolveNineGridNine(itemList, i);
                 } else {
-                    vFrameGridNineThree.setVisibility(View.VISIBLE);
+                    itemList.add(i, itemMain);
+                    positionList.add(i, title);
+                }
+
+            }
+
+            for (int i = 0; i < itemList.size(); i++) {
+                if (itemList.size() == 1) {
+                    resolveOneGrid(itemList);
+                } else if (itemList.size() == 2) {
+                    if (i == 0)
+                        resolveTwoGridOne(itemList, i);
+                    else
+                        resolveTwoGridTwo(itemList, i);
+                } else if (itemList.size() == 3) {
+                    vFrameGridNineThree.setVisibility(View.INVISIBLE);
                     vFrameGridNineSix.setVisibility(View.VISIBLE);
-                    vFrameGridNineNine.setVisibility(View.VISIBLE);
+                    vFrameGridNineNine.setVisibility(View.INVISIBLE);
+
+                    vFrameGridNineNineOne.setVisibility(View.INVISIBLE);
 
                     if (i == 0)
-                        resolveNineGridOne(itemList, i);
-                    else if (i == 1)
-                        resolveNineGridTwo(itemList, i);
-                    else if (i == 2)
-                        resolveNineGridThree(itemList, i);
-                    else if (i == 3)
                         resolveNineGridFour(itemList, i);
-                    else if (i == 4)
+                    else if (i == 1)
                         resolveNineGridFive(itemList, i);
-                    else if (i == 5)
+                    else if (i == 2)
                         resolveNineGridSix(itemList, i);
-                    else if (i == 6)
-                        resolveNineGridSeven(itemList, i);
-                    else if (i == 7)
-                        resolveNineGridEight(itemList, i);
-                    else if (i == 8)
-                        resolveNineGridNine(itemList, i);
+                } else if (itemList.size() == 4) {
+                    if (i == 0)
+                        resolveFourGridOne(itemList, i);
+                    else if (i == 1)
+                        resolveFourGridTwo(itemList, i);
+                    else if (i == 2)
+                        resolveFourGridThree(itemList, i);
+                    else if (i == 3)
+                        resolveFourGridFour(itemList, i);
+                } else if (itemList.size() > 4 && itemList.size() <= 8) {
+                    if (itemList.size() == 5) {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridSix(itemList, i);
+                    } else if (itemList.size() == 6) {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridFive(itemList, i);
+                        else if (i == 5)
+                            resolveNineGridSix(itemList, i);
+                    } else if (itemList.size() == 7) {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+                        vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridFive(itemList, i);
+                        else if (i == 5)
+                            resolveNineGridSix(itemList, i);
+                        else if (i == 6)
+                            resolveNineGridEight(itemList, i);
+                    } else if (itemList.size() == 8) {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+                        vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridFive(itemList, i);
+                        else if (i == 5)
+                            resolveNineGridSix(itemList, i);
+                        else if (i == 6)
+                            resolveNineGridSeven(itemList, i);
+                        else if (i == 7)
+                            resolveNineGridNine(itemList, i);
+                    } else {
+                        vFrameGridNineThree.setVisibility(View.VISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+                        vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 4)
+                            resolveNineGridFive(itemList, i);
+                        else if (i == 5)
+                            resolveNineGridSix(itemList, i);
+                        else if (i == 6)
+                            resolveNineGridSeven(itemList, i);
+                        else if (i == 7)
+                            resolveNineGridEight(itemList, i);
+                        else if (i == 8)
+                            resolveNineGridNine(itemList, i);
+                    }
                 }
             }
-        }
-         //   Constants.map.put(itemList.size(), null);
+            //   Constants.map.put(itemList.size(), null);
 
             if (itemList.size() == 1) {
                 isRecyclerViewShowed = false;
@@ -1630,7 +1629,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     public void addTabMenuBadger(ItemMain itemMain, CounterFab itemBadger) {
         int badgeCount = 0;
 
-        if(itemMain.category_tab == null){
+        if (itemMain.category_tab == null) {
             String member = itemMain.status;
             try {
                 JSONArray jsonArray = new JSONArray(member);
@@ -1649,7 +1648,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }else {
+        } else {
             Cursor cursor = Byonchat.getMessengerHelper().query(
                     SQL_SELECT_TOTAL_BADGE_TAB_MENU,
                     new String[]{String.valueOf(itemMain.id_rooms_tab)});
@@ -2242,7 +2241,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         resolveRefreshGrid();
         resolveShowRecyclerView();
 
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             recyclerView.setVisibility(View.VISIBLE);
             vFrameTabOne.setVisibility(View.INVISIBLE);
             vFrameTabTwo.setVisibility(View.INVISIBLE);
@@ -2268,7 +2267,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, 0);
         });
 
-        addTabMenuBadger( im, tab_menu_main);
+        addTabMenuBadger(im, tab_menu_main);
     }
 
     protected void resolveTwoGridOne(List<ItemMain> itemList, int position) {
@@ -2288,7 +2287,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_21);
+        addTabMenuBadger(im, tab_menu_21);
     }
 
     protected void resolveTwoGridTwo(List<ItemMain> itemList, int position) {
@@ -2308,7 +2307,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_22);
+        addTabMenuBadger(im, tab_menu_22);
     }
 
     protected void resolveFourGridOne(List<ItemMain> itemList, int position) {
@@ -2328,7 +2327,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_41);
+        addTabMenuBadger(im, tab_menu_41);
     }
 
     protected void resolveFourGridTwo(List<ItemMain> itemList, int position) {
@@ -2348,7 +2347,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_42);
+        addTabMenuBadger(im, tab_menu_42);
     }
 
     protected void resolveFourGridThree(List<ItemMain> itemList, int position) {
@@ -2368,7 +2367,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_43);
+        addTabMenuBadger(im, tab_menu_43);
     }
 
     protected void resolveFourGridFour(List<ItemMain> itemList, int position) {
@@ -2388,7 +2387,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_44);
+        addTabMenuBadger(im, tab_menu_44);
     }
 
     protected void resolveNineGridOne(List<ItemMain> itemList, int position) {
@@ -2410,7 +2409,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_91);
+        addTabMenuBadger(im, tab_menu_91);
     }
 
     protected void resolveNineGridTwo(List<ItemMain> itemList, int position) {
@@ -2432,7 +2431,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_92);
+        addTabMenuBadger(im, tab_menu_92);
     }
 
     protected void resolveNineGridThree(List<ItemMain> itemList, int position) {
@@ -2454,7 +2453,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_93);
+        addTabMenuBadger(im, tab_menu_93);
     }
 
     protected void resolveNineGridFour(List<ItemMain> itemList, int position) {
@@ -2476,7 +2475,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_94);
+        addTabMenuBadger(im, tab_menu_94);
     }
 
     protected void resolveNineGridFive(List<ItemMain> itemList, int position) {
@@ -2498,7 +2497,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_95);
+        addTabMenuBadger(im, tab_menu_95);
     }
 
     protected void resolveNineGridSix(List<ItemMain> itemList, int position) {
@@ -2520,7 +2519,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_96);
+        addTabMenuBadger(im, tab_menu_96);
     }
 
     protected void resolveNineGridSeven(List<ItemMain> itemList, int position) {
@@ -2542,7 +2541,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_97);
+        addTabMenuBadger(im, tab_menu_97);
     }
 
     protected void resolveNineGridEight(List<ItemMain> itemList, int position) {
@@ -2564,7 +2563,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_98);
+        addTabMenuBadger(im, tab_menu_98);
     }
 
     protected void resolveNineGridNine(List<ItemMain> itemList, int position) {
@@ -2586,14 +2585,14 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             intentTabMenu(im, position);
         });
 
-        addTabMenuBadger( im, tab_menu_99);
+        addTabMenuBadger(im, tab_menu_99);
     }
 
-    private void intentTabMenu(ItemMain im, int position){
-        if(adapter.getData().get(position).category_tab != null) {
+    private void intentTabMenu(ItemMain im, int position) {
+        if (adapter.getData().get(position).category_tab != null) {
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
-        }else {
+        } else {
             List<ItemMain> subItemList2 = new ArrayList<>();
 
             String member = adapter.getData().get(position).status;
@@ -2771,7 +2770,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     }
 
     private void parseJSON(String allres, String result) {
-        Log.w("Res LOgs harusee", result);
+        Log.w("Resharusee", result);
         String[] dataLOG = new String[0];
         try {
             JSONObject start = new JSONObject(result);
@@ -2809,6 +2808,26 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             String LIST_REQ_ROLE = jsonObject.getString("LIST_REQUESTER_ROLE");
             String MY_ROLE = jsonObject.getString("MYROLE");
 
+            String EMP_JJT_SUBORDINAT = "";
+            if (jsonObject.has("EMP_JJT_SUBORDINAT")) {
+                EMP_JJT_SUBORDINAT = jsonObject.getString("EMP_JJT_SUBORDINAT");
+                JSONArray arrNew = new JSONArray();
+
+                JSONArray arr = new JSONArray(EMPLOYEE_MULTICOST);
+                for (int as = 0; as < arr.length(); as++) {
+                    JSONObject jo = arr.getJSONObject(as);
+                    arrNew.put(jo);
+                }
+
+                JSONArray arrSub = new JSONArray(EMP_JJT_SUBORDINAT);
+                for (int asSub = 0; asSub < arrSub.length(); asSub++) {
+                    JSONObject joSub = arrSub.getJSONObject(asSub);
+                    arrNew.put(joSub);
+                }
+
+                EMPLOYEE_MULTICOST = arrNew.toString();
+            }
+
             dataLOG = new String[]{token, status, USERNAME, EMPLOYEE_NAME, EMPLOYEE_EMAIL, EMPLOYEE_NIK,
                     EMPLOYEE_JT, EMPLOYEE_MULTICOST, EMPLOYEE_PHONE, EMPLOYEE_PHOTOS, ATASAN_1_USERNAME,
                     ATASAN_1_EMAIL, ATASAN_1_NIK, ATASAN_1_JT, ATASAN_1_NAMA, ATASAN_1_PHONE, DIVISION_CODE,
@@ -2817,6 +2836,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                     LIST_REQ_ROLE, MY_ROLE};
 
             UserDB dbHelper = new UserDB(this);
+            dbHelper.deleteUser();
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
 

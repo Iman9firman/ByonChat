@@ -139,7 +139,12 @@ public class UserDB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public String getColValue(String keyword){
+    public boolean deleteUser() {
+        return getDatabase().delete(TABLE_ISS, null, null) > 0;
+    }
+
+
+    public String getColValue(String keyword) {
         Cursor cursor = getDatabase().query(TABLE_ISS, new String[]
                 {
                         keyword,

@@ -91,7 +91,6 @@ public class RelieverDetailActivity extends AppCompatActivity {
 
         } else {
             Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
-            Log.w("popps 1","here");
             finish();
         }
 
@@ -125,11 +124,9 @@ public class RelieverDetailActivity extends AppCompatActivity {
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
-                    Log.w("nupo", response + "");
                     try {
                         JSONObject jsonObject = new JSONObject(response);
 
-                        Log.w("nututr", jsonObject + "");
 //                        JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
 //                        if (jsonArray.length() > 0) {
 //                            for (int i = 0; i < jsonArray.length(); i++) {
@@ -164,7 +161,6 @@ public class RelieverDetailActivity extends AppCompatActivity {
 
                         Picasso.with(RelieverDetailActivity.this.getApplicationContext()).load(foto).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(image_detailReliever);
 
-                        Log.w("Official rating",rat+"   "+rating);
                         text_name_real_detailReliever.setText(nama);
                         text_nik_detailreleiver.setText(nik);
                         rating_detailReliever.setRating(rating);
@@ -183,16 +179,13 @@ public class RelieverDetailActivity extends AppCompatActivity {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.w("nupo2", e + "");
                         Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
-                        Log.w("popps 2","here");
                         finish();
                     }
 
                 },
                 error -> {
                     Toast.makeText(getApplicationContext(), "Periksa kembali jaringan anda", Toast.LENGTH_SHORT).show();
-                    Log.w("popps 3","here");
                     finish();
                     rdialog.dismiss();
                 }

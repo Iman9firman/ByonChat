@@ -206,13 +206,34 @@ public class LoginISS extends AppCompatActivity {
             String LIST_REQ_ROLE = jsonObject.getString("LIST_REQUESTER_ROLE");
             String MY_ROLE = jsonObject.getString("MYROLE");
 
+            String EMP_JJT_SUBORDINAT = "";
+            if (jsonObject.has("EMP_JJT_SUBORDINAT")) {
+                EMP_JJT_SUBORDINAT = jsonObject.getString("EMP_JJT_SUBORDINAT");
+                JSONArray arrNew = new JSONArray();
+
+                JSONArray arr = new JSONArray(EMPLOYEE_MULTICOST);
+                for (int as = 0; as < arr.length(); as++) {
+                    JSONObject jo = arr.getJSONObject(as);
+                    arrNew.put(jo);
+                }
+
+                JSONArray arrSub = new JSONArray(EMP_JJT_SUBORDINAT);
+                for (int asSub = 0; asSub < arrSub.length(); asSub++) {
+                    JSONObject joSub = arrSub.getJSONObject(asSub);
+                    arrNew.put(joSub);
+                }
+
+                EMPLOYEE_MULTICOST = arrNew.toString();
+            }
+
             dataLOG = new String[]{token, status, USERNAME, EMPLOYEE_NAME, EMPLOYEE_EMAIL, EMPLOYEE_NIK,
                     EMPLOYEE_JT, EMPLOYEE_MULTICOST, EMPLOYEE_PHONE, EMPLOYEE_PHOTOS, ATASAN_1_USERNAME,
                     ATASAN_1_EMAIL, ATASAN_1_NIK, ATASAN_1_JT, ATASAN_1_NAMA, ATASAN_1_PHONE, DIVISION_CODE,
                     DIVISION_NAME, DEPARTEMEN_CODE, DEPARTEMEN_NAME, ATASAN_2_USERNAME, ATASAN_2_EMAIL,
                     ATASAN_2_NIK, ATASAN_2_JT, ATASAN_2_NAMA, ATASAN_2_PHONE, LIST_APPROVE_ROLE1, LIST_APPROVE_ROLE2,
                     LIST_REQ_ROLE, MY_ROLE};
-
+            
+            dbHelper.deleteUser();
             db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
 
 

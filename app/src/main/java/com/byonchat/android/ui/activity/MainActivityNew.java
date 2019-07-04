@@ -93,6 +93,7 @@ import com.byonchat.android.communication.MyBroadcastReceiver;
 import com.byonchat.android.communication.MyJobService;
 import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.communication.WhatsAppJobService;
+import com.byonchat.android.helpers.AutoUpdate;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
 import com.byonchat.android.local.Byonchat;
@@ -101,6 +102,8 @@ import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.Skin;
+import com.byonchat.android.provider.UpdateList;
+import com.byonchat.android.provider.UpdateListDB;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
@@ -108,6 +111,7 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
+import com.byonchat.android.view.UpdateView;
 import com.byonchat.android.widget.BadgeView;
 import com.eightbitlab.supportrenderscriptblur.SupportRenderScriptBlur;
 import com.google.gson.Gson;
@@ -123,8 +127,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -347,10 +355,64 @@ public class MainActivityNew extends MainBaseActivityNew {
         super.onViewReady(savedInstanceState);
         resolveRoomConfig();
 
+        resolveVersion();
         resolveView();
         resolveAnimation();
         resolveListRooms();
         resolveOpenRooms();
+    }
+
+    protected void resolveVersion(){
+        /*IntervalDB db = new IntervalDB(getApplicationContext());
+        db.open();
+        Cursor cursor = db.getSingleContact(28);
+        if(cursor.getCount()>0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+            try {
+                Date d = sdf.parse(cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)));
+                Date c = Calendar.getInstance().getTime();
+
+                long diff = c.getTime() - d.getTime();
+
+                long jarak = 15-diff;
+                if(jarak <= 15){
+                    Intent acxs = new Intent(this, UpdateView.class);
+                    startActivity(acxs);
+                }
+
+            } catch (ParseException ex) {
+                Log.w("Exception", ex.getLocalizedMessage());
+            }
+
+        }
+        cursor.close();
+        db.close();*/
+
+        UpdateListDB db = new UpdateListDB(getApplicationContext());
+        db.open();
+
+        Cursor crs = db.getUnrefreshedData("1");
+        while (crs.moveToNext()) {
+            if(crs.getString(crs.getColumnIndex(UpdateListDB.UPD_NAME)).equalsIgnoreCase("refresh_version")){
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+                try {
+                    Date d = sdf.parse(crs.getString(crs.getColumnIndexOrThrow(UpdateListDB.UPD_DATE_EXP)));
+                    Date c = Calendar.getInstance().getTime();
+
+                    long diff = c.getTime() - d.getTime();
+
+                    long jarak = 15-diff;
+                    if (jarak <= 15){
+                        Intent acxs = new Intent(this, UpdateView.class);
+                        startActivity(acxs);
+                    }
+
+                } catch (ParseException ex) {
+                    Log.w("Exception", ex.getLocalizedMessage());
+                }
+            }
+        }
+        db.close();
     }
 
     protected void resolveRoomConfig() {

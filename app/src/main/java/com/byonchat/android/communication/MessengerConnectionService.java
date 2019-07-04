@@ -37,6 +37,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
@@ -45,22 +46,28 @@ import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.ConversationGroupActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
+import com.byonchat.android.LoadingGetTabRoomActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.application.Application;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.ItemListMemberCard;
+import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.BlockListDB;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
+import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.DataBaseDropDown;
+import com.byonchat.android.provider.DataBaseHelper;
 import com.byonchat.android.provider.FilesURL;
 import com.byonchat.android.provider.FilesURLDatabaseHelper;
 import com.byonchat.android.provider.Group;
@@ -76,6 +83,8 @@ import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.provider.TimeLine;
 import com.byonchat.android.provider.TimeLineDB;
+import com.byonchat.android.provider.UpdateList;
+import com.byonchat.android.provider.UpdateListDB;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
 import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.AllAboutUploadTask;
@@ -192,6 +201,7 @@ import org.jivesoftware.smackx.xroster.provider.RosterExchangeProvider;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -2117,6 +2127,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
     public void onMessageReceived(final Message vo/*,String aaa*/) {
         Log.w("alhamdulillah", "supaya satu");
+        Log.w("alhamdulillah", "supaya satu  -->   "+vo.getMessage() );
 
         ArrayList<String> listblock = new ArrayList<String>();
 
@@ -2427,6 +2438,105 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                 name = contact.getName();
             }
         }
+
+        if (vo.getType().equalsIgnoreCase(Message.TYPE_TEXT) && vo.getMessage().startsWith("upd://")) {
+            String url_tembak;
+
+            Log.w("alhamdulillah kesiniziz",vo.getMessage());
+            UpdateListDB dtbs = new UpdateListDB(getApplicationContext());
+            dtbs.open();
+
+            String updating[] = vo.getMessage().split("://");
+
+            String resource = vo.getMessage().replace("upd://","");
+            try {
+                JSONObject update = new JSONObject(resource);
+                String type_update = update.getString("type");
+
+                String username_room = "";
+                if(update.has("username_room")){
+                    username_room = update.getString("username_room");
+                }
+
+                String id_tab = "";
+                if(update.has("id_rooms_tab")){
+                    id_tab = update.getString("id_rooms_tab");
+                }
+
+                String parent_id = "";
+                if(update.has("parent_id")){
+                    parent_id = update.getString("parent_id");
+                }
+
+                String id_list_push = "";
+                if(update.has("id_list_push")){
+                    id_list_push = update.getString("id_list_push");
+                }
+
+                String link_tembak = "";
+                if(update.has("url_tembak")){
+                    link_tembak = update.getString("url_tembak");
+                }
+
+                String fromlist = "";
+                if(update.has("from_list")){
+                    fromlist = update.getString("from_list");
+                }
+
+                String version = "";
+                if(update.has("version")){
+                    version = update.getString("version");
+                }
+
+                String company = "";
+                if(update.has("company")){
+                    company = update.getString("company");
+                }
+
+                if (type_update.equalsIgnoreCase("refresh_tab")) {
+                    String finalPath = "/bc_voucher_client/webservice/get_tab_rooms.php";
+                    String linkPath = "https://" + MessengerConnectionService.HTTP_SERVER;
+                    String GETTAB = linkPath + finalPath;
+
+                    UpdateList data_upd = new UpdateList(type_update, username_room, "0");
+                    dtbs.insertRooms(data_upd);
+
+                    new RefreshTab().execute(GETTAB, username_room, type_update);
+
+                } else if (type_update.equalsIgnoreCase("refresh_form")) {
+
+                    UpdateList data_upd = new UpdateList(type_update, username_room, id_tab, parent_id, id_list_push, link_tembak, fromlist, "0");
+                    dtbs.insertRooms(data_upd);
+
+                    refreshForm(data_upd);
+
+                } else if (type_update.equalsIgnoreCase("refresh_list")) {
+
+                    UpdateList data_upd = new UpdateList(type_update, username_room, id_tab, parent_id, id_list_push, link_tembak, fromlist, "0");
+                    dtbs.insertRooms(data_upd);
+
+                    refreshList(data_upd);
+
+                } else if (type_update.equalsIgnoreCase("refresh_version")) {
+
+                    if (Integer.parseInt(getString(R.string.app_version)) < Integer.parseInt(updating[2])) {
+                        Date c = Calendar.getInstance().getTime();
+
+                        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                        String formattedDate = df.format(c);
+
+                        UpdateList data_upd = new UpdateList(type_update, version, company, "", "urgent", formattedDate, "");
+                        dtbs.insertRooms(data_upd);
+
+                    }
+                }
+                dtbs.close();
+
+            }catch (JSONException e){
+
+            }
+        }
+
         Boolean insert = true;
         if (send) {
             if (vo.getType().equalsIgnoreCase(Message.TYPE_TEXT) && vo.getMessage().startsWith("bc://")) {
@@ -2753,7 +2863,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     intent.putExtra(KEY_MESSAGE_OBJECT, voc);
                     sendOrderedBroadcast(intent, null);
                 }
-
 
             }
 
@@ -5687,6 +5796,505 @@ Log.w("every",co.getJabberId());
             }
             return !mockLocation.equals("0");
         }
+    }
+
+
+    private class RefreshTab extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0], params[1], params[2]);
+            return null;
+        }
+
+        protected void onProgressUpdate(String... string) {
+        }
+
+        public void postData(String valueIWantToSend, String usr, String upd_type) {
+            // Create a new HttpClient and Post Header
+
+            try {
+                HttpParams httpParameters = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
+                HttpConnectionParams.setSoTimeout(httpParameters, 20000);
+                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpPost httppost = new HttpPost(valueIWantToSend);
+
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("username_room", usr));
+                MessengerDatabaseHelper messengerHelper = null;
+                if (messengerHelper == null) {
+                    messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+                }
+
+                Contact contact = messengerHelper.getMyContact();
+                nameValuePairs.add(new BasicNameValuePair("app_version", getString(R.string.app_version)));
+                nameValuePairs.add(new BasicNameValuePair("app_company", getString(R.string.app_company)));
+                nameValuePairs.add(new BasicNameValuePair("bc_user", contact.getJabberId()));
+                nameValuePairs.add(new BasicNameValuePair("id_client", getString(R.string.id_client)));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                // Execute HTTP Post Request
+                HttpResponse response = httpclient.execute(httppost);
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200) {
+                    HttpEntity entity = response.getEntity();
+                    String data = EntityUtils.toString(entity);
+
+                    Log.w("ww", data);
+
+                    try {
+                        JSONObject jsonRootObject = new JSONObject(data);
+                        String username = jsonRootObject.getString("username_room");
+                        String content = jsonRootObject.getString("tab_room");
+                        String realname = jsonRootObject.getString("nama_display");
+                        String icon = jsonRootObject.getString("icon"); // byonchat
+                        String backdrop = jsonRootObject.getString("backdrop")
+                                .equalsIgnoreCase("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/") ? ""
+                                : jsonRootObject.getString("backdrop"); //null default kita
+                        String color = jsonRootObject.getString("color")
+                                .equalsIgnoreCase("null") ? "FFFFFF"
+                                : jsonRootObject.getString("color");  //null putih
+                        String lastUpdate = jsonRootObject.getString("last_update");
+                        String firstTab = jsonRootObject.getString("current_tab");
+                        String textColor = jsonRootObject.getString("color_text")
+                                .equalsIgnoreCase("null") ? "000000"
+                                : jsonRootObject.getString("color_text"); //null hitam
+                        String description = jsonRootObject.getString("description");
+                        String officer = jsonRootObject.getString("officer");
+                        String protect = "0";
+
+                        Log.w("skidrow", color + " -- " + icon + " -- " + textColor + " -- " + backdrop);
+                        if (jsonRootObject.has("password_protected")) {
+                            protect = jsonRootObject.getString("password_protected");
+                        }
+
+
+                        //ini untuk delete
+                        botListDB.deleteRoomsbyTAB(username);
+                        String lu = "";
+                        Cursor cursor = botListDB.getSingleRoom(username);
+
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        Calendar cal = Calendar.getInstance();
+                        String time_str = dateFormat.format(cal.getTime());
+                        if (cursor.getCount() > 0) {
+                            lu = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_LASTUPDATE));
+                            if (!lu.equalsIgnoreCase(lastUpdate)) {
+                                botListDB.deleteRoomsbyTAB(username);
+                                Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, "https://bb.byonchat.com", protect), backdrop, lastUpdate, icon, firstTab, time_str);
+                                botListDB.insertRooms(rooms);
+                            }
+                        } else {
+                            Rooms rooms = new Rooms(username, realname, content, jsonCreateType(color, textColor, description, officer, "https://bb.byonchat.com", protect), backdrop, lastUpdate, icon, firstTab, time_str);
+                            botListDB.insertRooms(rooms);
+                        }
+                        cursor.close();
+
+                        Log.w("Berhasil alhamdulillah", jsonCreateType(color, textColor, description, officer, valueIWantToSend, "1"));
+                        //logout iss
+
+                        UpdateListDB dtbs = new UpdateListDB(getApplicationContext());
+                        new Validations().getInstance(getApplicationContext()).removeById(26);
+                        new Validations().getInstance(getApplicationContext()).removeById(25);
+                        dtbs.open();
+                        dtbs.updateRoomsByUsername(username, upd_type);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.w("Hanyajika balik",e.getMessage());
+                    }
+                }
+
+            } catch (ConnectTimeoutException e) {
+                e.printStackTrace();
+                Log.w("Hanyajika balik1",e.getMessage());
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
+                Log.w("Hanyajika balik2",e.getMessage());
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                Log.w("Hanyajika balik3",e.getMessage());
+            }
+        }
+
+    }
+
+    private String jsonCreateType(String idContent, String type, String desc, String of, String ss, String pro) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("a", idContent);
+            obj.put("b", type);
+            obj.put("c", desc);
+            obj.put("d", of);
+            obj.put("e", ss);
+            obj.put("p", pro);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return obj.toString();
+    }
+
+    private void refreshForm(UpdateList updateList) {
+        String idDetail = "";
+        if(!updateList.getparent_id().equalsIgnoreCase("")){
+            idDetail = updateList.getparent_id() + "|" + updateList.getid_list_push();
+        }
+
+        Cursor cursor = botListDB.getSingleRoomDetailForm(updateList.getusername(), updateList.getid_tab());
+        if (cursor.getCount() > 0) {
+            DataBaseHelper.getInstance(getApplicationContext()).deleteAllrow("room", updateList.getusername(), updateList.getid_tab());
+        }
+        botListDB.deleteFormDetail(updateList.getusername(), updateList.getid_tab());
+
+        if (updateList.getusername() != null) {
+            new RefreshForm(this).execute(updateList.getlink_tembak(), updateList.getusername(), updateList.getid_tab(), idDetail, updateList.getfromlist());
+        }
+    }
+
+    private class RefreshForm extends AsyncTask<String, String, String> {
+        String error = "";
+        private Context context;
+
+        public RefreshForm(Context activity) {
+            context = activity;
+        }
+
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0], params[1], params[2], params[3], params[4]);
+            Log.w("sudiCek 1",params[0]);
+            Log.w("sudiCek 2",params[1]);
+            Log.w("sudiCek 3",params[2]);
+            Log.w("sudiCek 4",params[3]);
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+            if (error.length() > 0) {
+                Toast.makeText(context, error, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(context, "Form success download.", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+        protected void onProgressUpdate(String... string) {
+        }
+
+        public void postData(String valueIWantToSend, String usr, String idr, String pId, String fromList) {
+            // Create a new HttpClient and Post Header
+
+            try {
+                HttpParams httpParameters = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
+                HttpConnectionParams.setSoTimeout(httpParameters, 15000);
+                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpPost httppost = new HttpPost(valueIWantToSend);
+
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("username_room", usr));
+                nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", idr));
+
+                if (pId != null || !pId.equalsIgnoreCase("")) {
+                    String[] ff = pId.split("\\|");
+                    if (ff.length == 2) {
+                        nameValuePairs.add(new BasicNameValuePair("parent_id", ff[1]));
+                        nameValuePairs.add(new BasicNameValuePair("id_list_push", ff[0]));
+                    }
+                }
+
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                // Execute HTTP Post Request
+                HttpResponse response = httpclient.execute(httppost);
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200) {
+                    HttpEntity entity = response.getEntity();
+                    String data = EntityUtils.toString(entity);
+
+                    Log.w("sudiBU", data);
+
+                    try {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        Calendar cal = Calendar.getInstance();
+                        String time_str = dateFormat.format(cal.getTime());
+                        JSONObject jsonRootObject = new JSONObject(data);
+                        String username = jsonRootObject.getString("username_room");
+                        String id_rooms_tab = jsonRootObject.getString("id_rooms_tab");
+
+                        String attachment = jsonRootObject.getString("attachment");
+                        String content = jsonRootObject.getString("data");
+                        String include_assignto = jsonRootObject.getString("include_assignto");
+
+                        JSONObject jsonObject = new JSONObject();
+                        if (data.contains("include_status_task")) {
+                            String include_status_task = jsonRootObject.getString("include_status_task");
+                            jsonObject.put("status_task", include_status_task);
+                        }
+
+                        if (jsonRootObject.has("label_status_approve")) {
+                            String label_status_approve = jsonRootObject.getString("label_status_approve");
+                            jsonObject.put("approve", label_status_approve);
+                        }
+
+                        if (jsonRootObject.has("label_status_reject")) {
+                            String label_status_reject = jsonRootObject.getString("label_status_reject");
+                            jsonObject.put("reject", label_status_reject);
+                        }
+
+                        if (jsonRootObject.has("label_status_done")) {
+                            String label_status_done = jsonRootObject.getString("label_status_done");
+                            jsonObject.put("done", label_status_done);
+                        }
+
+                        String api_officers = jsonRootObject.getString("api_officers");
+
+                        String from_list = "";
+                        if(!fromList.equalsIgnoreCase("")){
+                            if(fromList.equalsIgnoreCase("1") || fromList.equalsIgnoreCase("3")){
+                                from_list = "hide";
+                            }else if(fromList.equalsIgnoreCase("4") || fromList.equalsIgnoreCase("5")){
+                                from_list = "hideMultiple";
+                            }else if(fromList.equalsIgnoreCase("6") || fromList.equalsIgnoreCase("7")){
+                                from_list = "showMultiple";
+                            } else {
+                                from_list = "show";
+                            }
+                        }
+
+                        botListDB.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from_list);
+                        boolean loadListPull = false;
+                        if (!pId.equalsIgnoreCase("")) {
+                            if (from_list.equalsIgnoreCase("1") || from_list.equalsIgnoreCase("3") || from_list.equalsIgnoreCase("5")) {
+                                loadListPull = true;
+                            } else if (from_list.equalsIgnoreCase("showMultiple")) {
+                                String[] ff = pId.split("\\|");
+                                if (ff.length == 2) {
+                                    loadListPull = true;
+                                }
+                            }
+                        }
+
+                        if (loadListPull) {
+                            RoomsDetail orderModel = new RoomsDetail(pId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
+                            botListDB.insertRoomsDetail(orderModel);
+                        }
+
+                        String ccc = jsonDuaObject(content, attachment, api_officers, jsonObject.toString(), context.getResources().getString(R.string.app_version));
+                        if (include_assignto.equalsIgnoreCase("0")) {
+                            ccc = jsonDuaObject(content, attachment, "", jsonObject.toString(), context.getResources().getString(R.string.app_version));
+                        }
+
+                        String bawaDariBelakang = "";
+                        if (jsonRootObject.has("anothers")) {
+                            JSONObject tambahan = new JSONObject("{}");
+                            if (jsonRootObject.has("alasan_reject")) {
+                                if (jsonRootObject.has("anothers")) {
+                                    String anothers = jsonRootObject.getString("anothers");
+                                    if (!anothers.equalsIgnoreCase("[]")) {
+
+                                        Object json = new JSONTokener(jsonRootObject.getString("alasan_reject")).nextValue();
+                                        if (json instanceof JSONObject) {
+                                            if (jsonRootObject.getJSONObject("alasan_reject").has("message")) {
+                                                tambahan = new JSONObject(anothers);
+                                                tambahan.put("message", jsonRootObject.getJSONObject("alasan_reject").getString("message"));
+                                                bawaDariBelakang = tambahan.toString();
+                                            } else {
+                                                bawaDariBelakang = "{}";
+                                            }
+                                        } else {
+                                            bawaDariBelakang = "{}";
+                                        }
+                                    } else {
+                                        bawaDariBelakang = "{}";
+                                    }
+                                }
+                            }
+                        }
+
+                        RoomsDetail orderModel = new RoomsDetail(username, id_rooms_tab, username, ccc, bawaDariBelakang, time_str, "form");
+                        botListDB.insertRoomsDetail(orderModel);
+
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        Log.w("sudiRor", e.getMessage() + "");
+                        error = "Tolong periksa koneksi internet. (1)";
+                    }
+                } else {
+                    // TODO Auto-generated catch block
+                    error = "Tolong periksa koneksi internet. (2)";
+                }
+
+            } catch (ConnectTimeoutException e) {
+                // TODO Auto-generated catch block
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+            }
+        }
+
+    }
+
+
+    private String jsonDuaObject(String a, String b, String c, String d, String ver) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("aa", a);
+            obj.put("bb", b);
+
+            if (!c.equalsIgnoreCase("")) {
+                obj.put("cc", c);
+            }
+
+            if (!d.equalsIgnoreCase("")) {
+                obj.put("dd", d);
+            }
+
+            obj.put("ver", ver);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return obj.toString();
+    }
+
+    public void refreshList(UpdateList updateList) {
+        String idDetail = "";
+        if(!updateList.getparent_id().equalsIgnoreCase("")){
+            idDetail = updateList.getparent_id() + "|" + updateList.getid_list_push();
+        }
+
+        new RefreshList(this).execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/list_task_pull.php", updateList.getusername(),
+                updateList.getid_tab(), idDetail, updateList.getfromlist());
+    }
+
+    private class RefreshList extends AsyncTask<String, String, String> {
+        String error = "";
+        private Context context;
+
+        public RefreshList(Context activity) {
+            context = activity;
+        }
+
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0], params[1], params[2], params[3], params[4]);
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+            if (error.length() > 0) {
+                // Toast.makeText(context, error, Toast.LENGTH_LONG).show();
+            }
+        }
+
+        protected void onProgressUpdate(String... string) {
+        }
+
+        public void postData(String valueIWantToSend, String usr, String idr, String pId, String from) {
+            try {
+                HttpParams httpParameters = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
+                HttpConnectionParams.setSoTimeout(httpParameters, 15000);
+                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpPost httppost = new HttpPost(valueIWantToSend);
+
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("username_room", usr));
+                nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", idr));
+
+                if (pId != null || !pId.equalsIgnoreCase("")) {
+                    String[] ff = pId.split("\\|");
+                    if (ff.length == 2) {
+                        nameValuePairs.add(new BasicNameValuePair("parent_id", ff[1]));
+                        nameValuePairs.add(new BasicNameValuePair("id_list_push", ff[0]));
+                    }
+                }
+
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                // Execute HTTP Post Request
+                HttpResponse response = httpclient.execute(httppost);
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200) {
+                    HttpEntity entity = response.getEntity();
+                    String data = EntityUtils.toString(entity);
+                    try {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                        Calendar cal = Calendar.getInstance();
+                        String time_str = dateFormat.format(cal.getTime());
+                        JSONObject jsonRootObject = new JSONObject(data);
+                        String username = jsonRootObject.getString("username_room");
+                        String id_rooms_tab = jsonRootObject.getString("id_rooms_tab");
+                        String attachment = jsonRootObject.getString("attachment");
+                        String content = jsonRootObject.getString("data");
+                        String anothers = "";
+                        if (jsonRootObject.has("anothers")) {
+                            anothers = jsonRootObject.getString("anothers");
+                        }
+
+                        Log.w("content", content);
+
+                        botListDB.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from);
+                        boolean loadListPull = true;
+
+                        if (loadListPull) {
+                            RoomsDetail orderModel = new RoomsDetail(pId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
+                            botListDB.insertRoomsDetail(orderModel);
+                        }
+
+                        String ccc = content;
+                        if (!attachment.equalsIgnoreCase("")) {
+                            ccc = jsonDuaObjectList(content, attachment);
+                        }
+                        RoomsDetail orderModel = new RoomsDetail(username, id_rooms_tab, username, ccc, anothers, time_str, "form");
+                        botListDB.insertRoomsDetail(orderModel);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        error = "Tolong periksa koneksi internet.";
+                    }
+                } else {
+                    error = "Tolong periksa koneksi internet.";
+                }
+
+            } catch (ConnectTimeoutException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+            }
+        }
+
+    }
+
+    private String jsonDuaObjectList(String a, String b) {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("aa", a);
+            obj.put("bb", b);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return obj.toString();
     }
 
 }

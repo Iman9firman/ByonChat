@@ -1,21 +1,17 @@
 package com.byonchat.android.FragmentDinamicRoom;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.Html;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,9 +20,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,22 +31,15 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.byonchat.android.DialogFormChildMain;
 import com.byonchat.android.DialogFormChildMainRequester;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.ISSActivity.Requester.RequesterRatingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.helpers.Constants;
-import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDB;
-import com.byonchat.android.provider.RoomsDetail;
-import com.byonchat.android.tabRequest.MapsViewActivity;
-import com.byonchat.android.utils.ValidationsKey;
-import com.byonchat.android.widget.CalendarDialog;
-import com.itextpdf.text.pdf.parser.Line;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.json.JSONArray;
@@ -61,8 +48,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import me.zharfan.osmplaces.activity.PlacePickerActivity;
+import me.zharfan.osmplaces.utils.PlacePicker;
 
 public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
@@ -72,9 +61,14 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
     ArrayList<String> keperluan = new ArrayList<>();
     ArrayList<String> dua = new ArrayList<>();
     SearchableSpinner spinner;
+    ArrayAdapter<String> spinnerArrayAdapter;
     View line_bottom;
     String lat_long;
+    int itemId;
+    ArrayList<String> spinnerArray;
+    ArrayList<String> latlongArray;
 
+    MessengerDatabaseHelper messengerHelper;
 
     @Override
     protected void onPause() {
@@ -84,6 +78,9 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        if (messengerHelper == null) {
+            messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+        }
         refresh();
         super.onResume();
     }
@@ -112,12 +109,16 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
         Button btnAddCild = (Button) findViewById(R.id.btn_add_cild);
 
+        messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+        Contact contact = messengerHelper.getMyContact();
+
         UserDB db = UserDB.getInstance(getApplicationContext());
         Cursor cursor = db.getSingle();
         if (cursor.getCount() > 0) {
             String content = cursor.getString(cursor.getColumnIndexOrThrow(UserDB.EMPLOYEE_MULTICOST));
 
-            ArrayList<String> spinnerArray = new ArrayList<String>();
+            spinnerArray = new ArrayList<>();
+            latlongArray = new ArrayList<>();
 
             try {
                 JSONArray arr = new JSONArray(content);
@@ -125,22 +126,39 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                 for (int as = 0; as < arr.length(); as++) {
                     JSONObject jo = arr.getJSONObject(as);
                     String cost_center = jo.getString("costcenter");
-                    lat_long = jo.getString("latlng");
+                    String latlong = jo.getString("latlng");
 
-                    if (lat_long.equalsIgnoreCase("")) {
-                        lat_long = "-6.1989168,106.7591713";
-                    }
+//                    if (lat_long.equalsIgnoreCase("")) {
+//                        lat_long = "-6.1989168,106.7591713";
+//                    }
 
                     spinnerArray.add(cost_center.substring(0, cost_center.indexOf("[")));
+                    latlongArray.add(latlong);
                     dua.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
                 }
-                ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray); //selected item will look like a spinner set from XML
-                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerArrayAdapter = new ArrayAdapter<>(this, R.layout.simple_spinner_item_black, spinnerArray);
+                spinnerArrayAdapter.setDropDownViewResource(R.layout.simple_spinner_item_black);
                 spinner.setAdapter(spinnerArrayAdapter);
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        lat_long =latlongArray.get(position);
+                        if (lat_long.equals("")){
+                            itemId = position;
+                            PlacePickerActivity.Builder picker = new PlacePickerActivity.Builder(DinamicRoomSearchTaskActivity.this,175).setByonchatId(contact.getJabberId());
+                            new PlacePicker(picker.build()).launchPlacePicker();
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
 
             } catch (Exception e) {
             }
@@ -169,51 +187,50 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (NetworkInternetConnectionStatus.getInstance(DinamicRoomSearchTaskActivity.this).isOnline(DinamicRoomSearchTaskActivity.this)) {
-                    try {
-                        if (!keperluan.isEmpty()) {
-                            JSONArray jsonArray = new JSONArray();
-                            for (String kk : keperluan) {
-                                JSONObject joo = new JSONObject(kk);
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("id_pekerjaan", joo.getString("idSub"));
-                                jsonObject.put("mulai", joo.getString("jadwalMulai"));
-                                jsonObject.put("selesai", joo.getString("jadwalAkhir"));
-                                jsonObject.put("jumlah", joo.getString("jumlah"));
-                                jsonObject.put("keterangan", joo.getString("keterangan"));
-
-                                jsonArray.put(jsonObject);
-                            }
-                            MessengerDatabaseHelper messengerHelper = null;
-                            if (messengerHelper == null) {
-                                messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
-                            }
-
-                            Contact contact = messengerHelper.getMyContact();
-                            Map<String, String> params = new HashMap<>();
-
-                            params.put("jjt_nama", spinner.getSelectedItem().toString().replace(dua.get(spinner.getSelectedItemPosition()) + "-", ""));
-                            params.put("jjt", dua.get(spinner.getSelectedItemPosition()));
-                            String[] latlongS = lat_long.split(",");
-
-                            params.put("lat", latlongS[0]);//latlong
-                            params.put("long", latlongS[1]);//latlong
-
-                            params.put("data", jsonArray.toString());
-                            params.put("bc_user", contact.getJabberId());
-
-                            getSubPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Request", params);
-
-                        } else {
-                            Toast.makeText(DinamicRoomSearchTaskActivity.this, "Harap pilih reliever yang dibutuhkan", Toast.LENGTH_SHORT).show();
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                if (lat_long.equals("")){
+                    PlacePickerActivity.Builder picker = new PlacePickerActivity.Builder(DinamicRoomSearchTaskActivity.this,175).setByonchatId(contact.getJabberId());
+                    new PlacePicker(picker.build()).launchPlacePicker();
                 } else {
-                    Toast.makeText(DinamicRoomSearchTaskActivity.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
-                    finish();
+                    if (NetworkInternetConnectionStatus.getInstance(DinamicRoomSearchTaskActivity.this).isOnline(DinamicRoomSearchTaskActivity.this)) {
+                        try {
+                            if (!keperluan.isEmpty()) {
+                                JSONArray jsonArray = new JSONArray();
+                                for (String kk : keperluan) {
+                                    JSONObject joo = new JSONObject(kk);
+                                    JSONObject jsonObject = new JSONObject();
+                                    jsonObject.put("id_pekerjaan", joo.getString("idSub"));
+                                    jsonObject.put("mulai", joo.getString("jadwalMulai"));
+                                    jsonObject.put("selesai", joo.getString("jadwalAkhir"));
+                                    jsonObject.put("jumlah", joo.getString("jumlah"));
+                                    jsonObject.put("keterangan", joo.getString("keterangan"));
+
+                                    jsonArray.put(jsonObject);
+                                }
+                                Map<String, String> params = new HashMap<>();
+
+                                params.put("jjt_nama", spinner.getSelectedItem().toString().replace(dua.get(spinner.getSelectedItemPosition()) + "-", ""));
+                                params.put("jjt", dua.get(spinner.getSelectedItemPosition()));
+                                String[] latlongS = "adsasd,dasdad".split(",");
+
+                                params.put("lat", latlongS[0]);//latlong
+                                params.put("long", latlongS[1]);//latlong
+
+                                params.put("data", jsonArray.toString());
+                                params.put("bc_user", contact.getJabberId());
+
+                                getSubPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Request", params);
+
+                            } else {
+                                Toast.makeText(DinamicRoomSearchTaskActivity.this, "Harap pilih reliever yang dibutuhkan", Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(DinamicRoomSearchTaskActivity.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 }
             }
         });
@@ -370,4 +387,22 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 175){
+            if(resultCode == Activity.RESULT_OK){
+                Double lat = data.getDoubleExtra(PlacePickerActivity.LAT,0.0);
+                Double lng = data.getDoubleExtra(PlacePickerActivity.LONG,0.0);
+                latlongArray.remove(itemId);
+                latlongArray.add(itemId,lat+","+lng);
+                lat_long = lat+","+lng;
+
+            } else if(resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(),"Canceled",Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
 }

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.byonchat.android"> <!-- OCR Library -->
-    <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary" />
+    <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary,me.zharfan.osmplaces"/>
 
     <uses-feature
         android:name="android.hardware.bluetooth"

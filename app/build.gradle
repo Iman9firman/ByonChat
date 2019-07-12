@@ -235,6 +235,10 @@ dependencies {
     //OpenStreetMap
     compile 'org.osmdroid:osmdroid-android:6.0.3'
     compile 'com.github.MKergall:osmbonuspack:6.5.3'
+//    compile project(path: ':zhar_osm_lib')
+    compile (name : 'zhar_osm_lib', ext: 'aar')
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.1'
+    compile "org.jetbrains.anko:anko:0.10.8"
 
     compile 'com.github.BlackBoxVision:material-wheel-view:v0.0.1'
 

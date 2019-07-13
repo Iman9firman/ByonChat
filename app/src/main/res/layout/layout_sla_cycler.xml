@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="8dp">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_1_slacyc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".05"/>
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_2_slacyc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".9"/>
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_3_slacyc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".8"/>
+
+    <TextView
+        android:id="@+id/content_slacyc"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:text="This is the text"
+        android:textSize="14sp"
+        android:singleLine="true"
+        app:layout_constraintLeft_toLeftOf="@id/guide_1_slacyc"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="@id/guide_3_slacyc"
+        android:layout_marginTop="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"/>
+    
+    <TextView
+        android:id="@+id/count_slacyc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_background"
+        android:textSize="10sp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="4dp"
+        android:textColor="#000000"
+        app:layout_constraintTop_toTopOf="@id/content_slacyc"
+        app:layout_constraintBottom_toBottomOf="@id/content_slacyc"
+        app:layout_constraintLeft_toLeftOf="@id/guide_3_slacyc"
+        app:layout_constraintRight_toRightOf="@id/guide_2_slacyc"/>
+
+    <ImageView
+        android:id="@+id/next_slacyc"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/back"
+        android:scaleType="centerInside"
+        android:tint="@color/carbon_black"
+        android:rotation="180"
+        android:padding="4dp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="@id/guide_2_slacyc"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/count_slacyc"
+        app:layout_constraintBottom_toBottomOf="@id/count_slacyc"/>
+
+    <TextView
+        android:id="@+id/note_slacyc"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:hint="note"
+        android:background="@drawable/backgroud_conversation"
+        app:layout_constraintTop_toBottomOf="@id/content_slacyc"
+        app:layout_constraintLeft_toLeftOf="@id/guide_1_slacyc"
+        app:layout_constraintRight_toRightOf="@id/guide_3_slacyc"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="4dp"
+        android:gravity="left|top"
+        android:visibility="gone"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/layout_yes_no_slacyc"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="@id/guide_3_slacyc"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/content_slacyc"
+        android:visibility="gone">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guide_4_slacyc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".5"/>
+
+        <TextView
+            android:id="@+id/id_slacyc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"/>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/yes_slacyc"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="2dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/guide_4_slacyc">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guide_5_slacyc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".4"/>
+
+            <ImageView
+                android:id="@+id/img_yes_slacyc"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/pemcil"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="@id/guide_5_slacyc"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="Yes"
+                android:gravity="center"
+                app:layout_constraintLeft_toLeftOf="@id/guide_5_slacyc"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/no_slacyc"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toTopOf="@id/guide_4_slacyc"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guide_6_slacyc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".4"/>
+
+            <ImageView
+                android:id="@+id/img_no_slacyc"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/nopemcil"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="@id/guide_6_slacyc"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="No"
+                android:gravity="center"
+                app:layout_constraintLeft_toLeftOf="@id/guide_6_slacyc"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <ImageButton
+        android:id="@+id/pict_slacyc"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_att_gallery"
+        app:layout_constraintBottom_toBottomOf="@id/note_slacyc"
+        app:layout_constraintLeft_toLeftOf="@id/guide_3_slacyc"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/note_slacyc"
+        android:visibility="gone"/>
+
+</android.support.constraint.ConstraintLayout>

@@ -146,10 +146,10 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        lat_long =latlongArray.get(position);
-                        if (lat_long.equals("")){
+                        lat_long = latlongArray.get(position);
+                        if (lat_long.equals("")) {
                             itemId = position;
-                            PlacePickerActivity.Builder picker = new PlacePickerActivity.Builder(DinamicRoomSearchTaskActivity.this,175).setByonchatId(contact.getJabberId());
+                            PlacePickerActivity.Builder picker = new PlacePickerActivity.Builder(DinamicRoomSearchTaskActivity.this, 175).setByonchatId(contact.getJabberId());
                             new PlacePicker(picker.build()).launchPlacePicker();
                         }
                     }
@@ -187,8 +187,8 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (lat_long.equals("")){
-                    PlacePickerActivity.Builder picker = new PlacePickerActivity.Builder(DinamicRoomSearchTaskActivity.this,175).setByonchatId(contact.getJabberId());
+                if (lat_long.equals("")) {
+                    PlacePickerActivity.Builder picker = new PlacePickerActivity.Builder(DinamicRoomSearchTaskActivity.this, 175).setByonchatId(contact.getJabberId());
                     new PlacePicker(picker.build()).launchPlacePicker();
                 } else {
                     if (NetworkInternetConnectionStatus.getInstance(DinamicRoomSearchTaskActivity.this).isOnline(DinamicRoomSearchTaskActivity.this)) {
@@ -210,7 +210,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
 
                                 params.put("jjt_nama", spinner.getSelectedItem().toString().replace(dua.get(spinner.getSelectedItemPosition()) + "-", ""));
                                 params.put("jjt", dua.get(spinner.getSelectedItemPosition()));
-                                String[] latlongS = "adsasd,dasdad".split(",");
+                                String[] latlongS = lat_long.split(",");
 
                                 params.put("lat", latlongS[0]);//latlong
                                 params.put("long", latlongS[1]);//latlong
@@ -391,16 +391,16 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 175){
-            if(resultCode == Activity.RESULT_OK){
-                Double lat = data.getDoubleExtra(PlacePickerActivity.LAT,0.0);
-                Double lng = data.getDoubleExtra(PlacePickerActivity.LONG,0.0);
+        if (requestCode == 175) {
+            if (resultCode == Activity.RESULT_OK) {
+                Double lat = data.getDoubleExtra(PlacePickerActivity.LAT, 0.0);
+                Double lng = data.getDoubleExtra(PlacePickerActivity.LONG, 0.0);
                 latlongArray.remove(itemId);
-                latlongArray.add(itemId,lat+","+lng);
-                lat_long = lat+","+lng;
+                latlongArray.add(itemId, lat + "," + lng);
+                lat_long = lat + "," + lng;
 
-            } else if(resultCode == Activity.RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(),"Canceled",Toast.LENGTH_SHORT).show();
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), "Canceled", Toast.LENGTH_SHORT).show();
             }
         }
 

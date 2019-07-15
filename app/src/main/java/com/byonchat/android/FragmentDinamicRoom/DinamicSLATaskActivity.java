@@ -40,6 +40,7 @@ import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -104,12 +105,14 @@ import com.byonchat.android.DownloadFileByonchat;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.DownloadUtilsActivity;
 import com.byonchat.android.FragmentSLA.ZhOneFragment;
+import com.byonchat.android.FragmentSetting.AboutSettingFragment;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.ReaderOcr;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.adapter.ExpandableListAdapter;
 import com.byonchat.android.adapter.SLAISSAdapter;
+import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.createMeme.FilteringImage;
@@ -133,9 +136,11 @@ import com.byonchat.android.provider.RadioButtonCheckDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.tempSchedule.MyEventDatabase;
 import com.byonchat.android.utils.AllAboutUploadTask;
+import com.byonchat.android.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.GenerateQR;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.LocationAssistant;
 import com.byonchat.android.utils.MediaProcessingUtil;
@@ -161,13 +166,19 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
@@ -186,6 +197,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -212,6 +224,7 @@ import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
+import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POSDETAIL;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_COMMENT;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID_DETAIL;
@@ -1885,7 +1898,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             valSetOne2.add("Pembobotan");
             valSetOne2.add(String.valueOf(1));
 
-            if (idTab.equalsIgnoreCase("2613")){
+            if (idTab.equalsIgnoreCase("2613")) {
                 showButton = false;
             }
 
@@ -1909,7 +1922,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66985", "text", "0"));
 
-                    if (idTab.equalsIgnoreCase("2613")){
+                    if (idTab.equalsIgnoreCase("2613")) {
                         if (spinnerArraySla.get(myPosition).equalsIgnoreCase("--Please Select--")) {
                             recyclerView.setVisibility(View.GONE);
                             textProgress.setVisibility(View.GONE);
@@ -2097,10 +2110,15 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                             }
 
                                         } while (css.moveToNext());
+
                                         hasilCOnvert.put("data", satu);
 
+                                        Log.w("sangkur", makeJJTFrame(hasilCOnvert.toString()));
+
+                                        new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/iss/kerangka_jjt.php", assup, makeJJTFrame(hasilCOnvert.toString()));
+
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
-                                        loadFragment(new ZhOneFragment(spinnerArraySla.get(myPosition),hasilCOnvert.toString(),idDetail,passGrade));
+                                        loadFragment(new ZhOneFragment(spinnerArraySla.get(myPosition), hasilCOnvert.toString(), idDetail, passGrade));
 //                                    largeLog("ivana",hasilCOnvert.toString());
                                         adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
                                             @Override
@@ -2225,7 +2243,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 return;
                             }
                         }
-                    } else if (idTab.equalsIgnoreCase("3336")){
+                    } else if (idTab.equalsIgnoreCase("3336")) {
                         if (spinnerArraySla.get(myPosition).equalsIgnoreCase("--Please Select--")) {
                             if (cEdit.getCount() > 0) {
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
@@ -8617,7 +8635,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                 }
                                             } else {
                                                 if (value.get(2).toString().equalsIgnoreCase("dropdown_form")) {
-                                                    if (idTab.equalsIgnoreCase("2613")){
+                                                    if (idTab.equalsIgnoreCase("2613")) {
                                                         String sayaJA = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
                                                         RadioButtonCheckDB database = new RadioButtonCheckDB(activity);
                                                         SQLiteDatabase dbSLAA = database.getReadableDatabase();
@@ -8756,15 +8774,15 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     value.get(2).toString().equalsIgnoreCase("phone_number") ||
                                                     value.get(2).toString().equalsIgnoreCase("currency")) {
                                                 String aa = value.get(0).toString();
-                                                if (idTab.equalsIgnoreCase("2613")){
+                                                if (idTab.equalsIgnoreCase("2613")) {
                                                     errorReq.add("JJT");
                                                     berhenti = true;
                                                 }
                                             } else if (value.get(2).toString().equalsIgnoreCase("attach_api")) {
                                                 //tidak ada action
                                             } else {
-                                                if (value.get(4).equalsIgnoreCase("Pembobotan")){
-                                                    if (idTab.equalsIgnoreCase("2613")){
+                                                if (value.get(4).equalsIgnoreCase("Pembobotan")) {
+                                                    if (idTab.equalsIgnoreCase("2613")) {
                                                         berhenti = true;
                                                         errorReq.add(value.get(4).toString());
                                                     }
@@ -12771,16 +12789,49 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         fragmentTransaction.commit(); // save the changes
     }
 
-    public void submitSLA(String jsonSLA){
+    public void submitSLA(String jsonSLA) {
         if (db == null) {
             db = BotListDB.getInstance(context);
         }
-        Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66989", "zhar_sla", "1"));
+
+        Cursor cEdit2a = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "utility", "");
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("fromList", fromList);
+            jsonObject.put("calendar", calendar);
+            jsonObject.put("isReject", isReject);
+            jsonObject.put("customersId", customersId);
+            jsonObject.put("startDate", startDate);
+            jsonObject.put("idListTaskMasterForm", idListTaskMasterForm);
+            if (includeStatus) {
+                jsonObject.put("includeStatus", includeStatus);
+                jsonObject.put("labelDone", labelDone);
+                jsonObject.put("labelApprove", labelApprove);
+            }
+            if (!linkGetAsignTo.equalsIgnoreCase("")) {
+                jsonObject.put("linkGetAsignTo", linkGetAsignTo);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (cEdit2a.getCount() > 0) {
+            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), "", "", "utility");
+            db.updateDetailRoomWithFlagContent(orderModel);
+
+        } else {
+            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), "", "", "utility");
+            db.insertRoomsDetail(orderModel);
+        }
+
+        Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66989", "dropdown_form", "1"));
         if (cEdit2.getCount() > 0) {
-            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonSLA, jsonCreateType("66989", "zhar_sla", "1"), "forn_isian", "cild");
+            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonSLA, jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
             db.updateDetailRoomWithFlagContent(orderModel);
         } else {
-            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonSLA, jsonCreateType("66989", "zhar_sla", "1"), "forn_isian", "cild");
+            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonSLA, jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
             db.insertRoomsDetail(orderModel);
 
         }
@@ -12790,6 +12841,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             String dateString = hourFormat.format(date);
             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
             db.updateDetailRoomWithFlagContentParent(orderModel);
+
+            Log.w("idTab", idTab);
 
             new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(DinamicSLATaskActivity.this, idDetail, username, idTab, JcontentBawaanReject);
         } else {
@@ -12801,6 +12854,179 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             finish();
         }
     }
+
+    private String makeJJTFrame(String jjt) {
+        DecimalFormat decimal = new DecimalFormat("#.##");
+        String hasil = null;
+        JSONArray aa = new JSONArray();
+        JSONObject aao;
+        JSONArray bb = new JSONArray();
+        JSONObject bbo;
+        JSONArray cc = new JSONArray();
+        JSONObject cco;
+        JSONArray dd = new JSONArray();
+        JSONObject ddo;
+        JSONArray ee = new JSONArray();
+        JSONObject eeo;
+        try {
+            JSONObject objParent = new JSONObject(jjt);
+            JSONArray bbb = objParent.getJSONArray("data");
+            for (int a = 0; a < bbb.length(); a++) {
+                JSONObject bbbo = bbb.getJSONObject(a);
+                String idPembobotan = bbbo.getString("id");
+                Double bobotPembobotan = Double.valueOf(bbbo.getString("bobot"));
+                JSONArray ccc = bbbo.getJSONArray("data");
+                for (int b = 0; b < ccc.length(); b++) {
+                    JSONObject ccco = ccc.getJSONObject(b);
+                    String idSection = ccco.getString("id");
+                    Double bobotSection = bobotPembobotan / ccc.length();
+                    JSONArray ddd = ccco.getJSONArray("data");
+                    for (int c = 0; c < ddd.length(); c++) {
+                        JSONObject dddo = ddd.getJSONObject(c);
+                        String idSubSection = dddo.getString("id");
+                        Double bobotSubSection = bobotSection / ddd.length();
+                        JSONArray eee = dddo.getJSONArray("data");
+                        for (int d = 0; d < eee.length(); d++) {
+                            JSONObject eeeo = eee.getJSONObject(d);
+                            String idPertanyaan = eeeo.getString("id");
+                            Double bobotPertanyaan = bobotSubSection / eee.length();
+                            eeo = new JSONObject();
+                            eeo.put("id", idPertanyaan);
+                            eeo.put("v", "");
+                            eeo.put("f", "");
+                            eeo.put("n", "");
+                            eeo.put("b", decimal.format(bobotPertanyaan));
+                            ee.put(eeo);
+                        }
+                        ddo = new JSONObject();
+                        ddo.put("id", idSubSection);
+                        ddo.put("pertanyaan", ee);
+                        dd.put(ddo);
+                    }
+                    cco = new JSONObject();
+                    cco.put("id", idSection);
+                    cco.put("subsection", dd);
+                    cc.put(cco);
+                }
+                bbo = new JSONObject();
+                bbo.put("id", idPembobotan);
+                bbo.put("section", cc);
+                bb.put(bbo);
+            }
+            aao = new JSONObject();
+            aao.put("grade", "");
+            aao.put("pembobotan", bb);
+            aa.put(aao);
+            hasil = aa.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return hasil;
+    }
+
+
+    private class posTask extends AsyncTask<String, Integer, String> {
+
+        String error = "";
+        long totalSize = 0;
+        File gpxfile = null;
+        ProgressDialog rdialog = null;
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0], params[1], params[2]);
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            rdialog = new ProgressDialog(DinamicSLATaskActivity.this);
+            rdialog.setMessage("Loading...");
+            rdialog.show();
+
+        }
+
+        protected void onPostExecute(String result) {
+            rdialog.dismiss();
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+
+        }
+
+        public void postData(String valueIWantToSend, final String kodeJJt, final String content) {
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(valueIWantToSend);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+
+                ContentType contentType = ContentType.create("multipart/form-data");
+                entity.addPart("kodejjt", new StringBody(kodeJJt));
+
+
+                try {
+                    File root = new File(Environment.getExternalStorageDirectory(), "ByonChat_Upload");
+                    if (!root.exists()) {
+                        root.mkdirs();
+                    }
+                    gpxfile = new File(root, kodeJJt + ".json");
+                    FileWriter writer = new FileWriter(gpxfile);
+                    writer.append(content);
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                entity.addPart("file_json", new FileBody(gpxfile, contentType, gpxfile.getName()));
+
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    if (gpxfile.exists()) {
+                        gpxfile.delete();
+                    }
+
+                    final String data = EntityUtils.toString(r_entity);
+
+                    Log.w("hasil", data);
+                } else {
+                    if (gpxfile.exists()) {
+                        gpxfile.delete();
+                    }
+                }
+
+            } catch (ClientProtocolException e) {
+                if (gpxfile.exists()) {
+                    gpxfile.delete();
+                }
+            } catch (IOException e) {
+                if (gpxfile.exists()) {
+                    gpxfile.delete();
+                }
+
+            }
+        }
+    }
+
+
 }
 
 

@@ -145,7 +145,7 @@ public class UpdateListDB extends SQLiteOpenHelper {
             cv.put(UPD_APP_VERSION, contactBot.getVersion());
             cv.put(UPD_APP_COMPANY, contactBot.getCompany());
             cv.put(UPD_STATUS, contactBot.getstatus());
-            cv.put(UPD_REQ, contactBot.getUpdate_req());
+            cv.put(UPD_TARGET_URL, contactBot.getlink_tembak());
             cv.put(UPD_DATE, contactBot.getDate_received());
             cv.put(UPD_DATE_EXP, contactBot.getDate_expired());
         }
@@ -155,15 +155,26 @@ public class UpdateListDB extends SQLiteOpenHelper {
     public void updateRoomsByUsername(String username, String type_name){
         ContentValues cv = new ContentValues();
         cv.put(UPD_STATUS, "1");
-//        mDb.update(UPD_TABLE,  cv, UPD_USER + "= '"+username+"'", null);
         mDb.update(UPD_TABLE,  cv,  UPD_USER + " = ? AND " + UPD_NAME + " = ?", new String[]{username, type_name});
+    }
+
+    public void updateTabsByUsernAndIdtab(String username, String idtab, String type_name){
+        ContentValues cv = new ContentValues();
+        cv.put(UPD_STATUS, "1");
+        mDb.update(UPD_TABLE,  cv,  UPD_USER + " = ? AND " + UPD_IDTAB + " = ? AND " + UPD_NAME + " = ?", new String[]{username, idtab, type_name});
+    }
+
+    public void updateVersionByCompany(String company, String version, String type_name){
+        ContentValues cv = new ContentValues();
+        cv.put(UPD_STATUS, "1");
+        mDb.update(UPD_TABLE,  cv,  UPD_APP_COMPANY + " = ? AND " + UPD_APP_VERSION + " = ? AND " + UPD_NAME + " = ?", new String[]{company, version, type_name});
     }
 
     public Cursor getUnrefreshedData(String status)
     {
         Cursor cursor = mDb.query(UPD_TABLE, new String[]
                 {
-                        UPD_NAME, UPD_USER, UPD_IDTAB, UPD_PARENT_ID, UPD_ID_LIST_PUSH, UPD_TARGET_URL
+                        UPD_NAME, UPD_USER, UPD_IDTAB, UPD_PARENT_ID, UPD_ID_LIST_PUSH, UPD_TARGET_URL, UPD_DATE_EXP, UPD_APP_VERSION, UPD_APP_COMPANY
                 },UPD_STATUS + " = " + status, null, null, null, null);
 
         if (cursor != null)

@@ -93,7 +93,6 @@ import com.byonchat.android.communication.MyBroadcastReceiver;
 import com.byonchat.android.communication.MyJobService;
 import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.communication.WhatsAppJobService;
-import com.byonchat.android.helpers.AutoUpdate;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
 import com.byonchat.android.local.Byonchat;
@@ -111,7 +110,7 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
-import com.byonchat.android.view.UpdateView;
+import com.byonchat.android.view.UpdateViewDialog;
 import com.byonchat.android.widget.BadgeView;
 import com.eightbitlab.supportrenderscriptblur.SupportRenderScriptBlur;
 import com.google.gson.Gson;
@@ -355,7 +354,6 @@ public class MainActivityNew extends MainBaseActivityNew {
         super.onViewReady(savedInstanceState);
         resolveRoomConfig();
 
-        resolveVersion();
         resolveView();
         resolveAnimation();
         resolveListRooms();
@@ -363,55 +361,32 @@ public class MainActivityNew extends MainBaseActivityNew {
     }
 
     protected void resolveVersion(){
-        /*IntervalDB db = new IntervalDB(getApplicationContext());
-        db.open();
-        Cursor cursor = db.getSingleContact(28);
-        if(cursor.getCount()>0) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
-            try {
-                Date d = sdf.parse(cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)));
-                Date c = Calendar.getInstance().getTime();
-
-                long diff = c.getTime() - d.getTime();
-
-                long jarak = 15-diff;
-                if(jarak <= 15){
-                    Intent acxs = new Intent(this, UpdateView.class);
-                    startActivity(acxs);
-                }
-
-            } catch (ParseException ex) {
-                Log.w("Exception", ex.getLocalizedMessage());
-            }
-
-        }
-        cursor.close();
-        db.close();*/
-
         UpdateListDB db = new UpdateListDB(getApplicationContext());
         db.open();
 
-        Cursor crs = db.getUnrefreshedData("1");
+        Cursor crs = db.getUnrefreshedData("0");
         while (crs.moveToNext()) {
             if(crs.getString(crs.getColumnIndex(UpdateListDB.UPD_NAME)).equalsIgnoreCase("refresh_version")){
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 try {
                     Date d = sdf.parse(crs.getString(crs.getColumnIndexOrThrow(UpdateListDB.UPD_DATE_EXP)));
                     Date c = Calendar.getInstance().getTime();
 
-                    long diff = c.getTime() - d.getTime();
+                    long diff = d.getTime() - c.getTime();
 
-                    long jarak = 15-diff;
-                    if (jarak <= 15){
-                        Intent acxs = new Intent(this, UpdateView.class);
-                        startActivity(acxs);
-                    }
+                    UpdateViewDialog dialog = new UpdateViewDialog(this);
+                    dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+                    dialog.show();
+                    dialog.setCancelable(false);
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
                 } catch (ParseException ex) {
                     Log.w("Exception", ex.getLocalizedMessage());
                 }
             }
         }
+        crs.close();
         db.close();
     }
 
@@ -484,6 +459,7 @@ public class MainActivityNew extends MainBaseActivityNew {
         addShortcutBadger(getApplicationContext());
 
         onHomeRefresh();
+        resolveVersion();
     }
 
     @Override

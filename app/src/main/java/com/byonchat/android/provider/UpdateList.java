@@ -36,12 +36,12 @@ public class UpdateList {
         this.status = nstatus;
     }
 
-    public UpdateList(String ntype_name, String version, String company, String nstatus, String update_req, String date_received, String date_expired) {
+    public UpdateList(String ntype_name, String link_tembak, String version, String company, String nstatus, String date_received, String date_expired) {
         this.type_name = ntype_name;
+        this.link_tembak = link_tembak;
         this.version = version;
         this.company = company;
         this.status = nstatus;
-        this.update_req = update_req;
         this.date_received = date_received;
         this.date_expired = date_expired;
     }

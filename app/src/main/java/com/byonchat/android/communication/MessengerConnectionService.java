@@ -46,6 +46,7 @@ import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
 import android.text.Html;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -104,6 +105,7 @@ import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
+import com.byonchat.android.view.UpdateViewDialog;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -2493,6 +2495,13 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     company = update.getString("company");
                 }
 
+                String due_date = "";
+                if(update.has("due_date")){
+                    due_date = update.getString("due_date");
+                }
+
+                Log.w("alhamdulillah kesiniziz",type_update +" - - - "+ version +" - - - "+ due_date);
+
                 if (type_update.equalsIgnoreCase("refresh_tab")) {
                     String finalPath = "/bc_voucher_client/webservice/get_tab_rooms.php";
                     String linkPath = "https://" + MessengerConnectionService.HTTP_SERVER;
@@ -2519,14 +2528,32 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
                 } else if (type_update.equalsIgnoreCase("refresh_version")) {
 
-                    if (Integer.parseInt(getString(R.string.app_version)) < Integer.parseInt(updating[2])) {
+                    if(!getString(R.string.app_version).equalsIgnoreCase(version)){
                         Date c = Calendar.getInstance().getTime();
 
-                        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         String formattedDate = df.format(c);
 
-                        UpdateList data_upd = new UpdateList(type_update, version, company, "", "urgent", formattedDate, "");
+                        long countDate = 0;
+                        try {
+                            Date date = df.parse(due_date);
+
+                            countDate = date.getTime() - c.getTime();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        UpdateList data_upd = new UpdateList(type_update, link_tembak, version, company, "0", formattedDate, due_date);
                         dtbs.insertRooms(data_upd);
+
+                        if(countDate <= 0){
+                            UpdateViewDialog dialog = new UpdateViewDialog(this);
+                            dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+                            dialog.show();
+                            dialog.setCancelable(false);
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                        }
 
                     }
                 }
@@ -5950,7 +5977,8 @@ Log.w("every",co.getJabberId());
         botListDB.deleteFormDetail(updateList.getusername(), updateList.getid_tab());
 
         if (updateList.getusername() != null) {
-            new RefreshForm(this).execute(updateList.getlink_tembak(), updateList.getusername(), updateList.getid_tab(), idDetail, updateList.getfromlist());
+            new RefreshForm(this).execute(updateList.getlink_tembak(), updateList.getusername(), updateList.getid_tab(),
+                    idDetail, updateList.getfromlist(), updateList.gettype_name());
         }
     }
 
@@ -5968,11 +5996,7 @@ Log.w("every",co.getJabberId());
         @Override
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
-            postData(params[0], params[1], params[2], params[3], params[4]);
-            Log.w("sudiCek 1",params[0]);
-            Log.w("sudiCek 2",params[1]);
-            Log.w("sudiCek 3",params[2]);
-            Log.w("sudiCek 4",params[3]);
+            postData(params[0], params[1], params[2], params[3], params[4], params[5]);
             return null;
         }
 
@@ -5988,7 +6012,7 @@ Log.w("every",co.getJabberId());
         protected void onProgressUpdate(String... string) {
         }
 
-        public void postData(String valueIWantToSend, String usr, String idr, String pId, String fromList) {
+        public void postData(String valueIWantToSend, String usr, String idr, String pId, String fromList, String ty_pe) {
             // Create a new HttpClient and Post Header
 
             try {
@@ -6123,6 +6147,10 @@ Log.w("every",co.getJabberId());
                         RoomsDetail orderModel = new RoomsDetail(username, id_rooms_tab, username, ccc, bawaDariBelakang, time_str, "form");
                         botListDB.insertRoomsDetail(orderModel);
 
+                        UpdateListDB dtbs = new UpdateListDB(context);
+                        dtbs.open();
+                        dtbs.updateTabsByUsernAndIdtab(username, idr, ty_pe);
+
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         Log.w("sudiRor", e.getMessage() + "");
@@ -6174,8 +6202,8 @@ Log.w("every",co.getJabberId());
             idDetail = updateList.getparent_id() + "|" + updateList.getid_list_push();
         }
 
-        new RefreshList(this).execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/list_task_pull.php", updateList.getusername(),
-                updateList.getid_tab(), idDetail, updateList.getfromlist());
+        new RefreshList(this).execute(updateList.getlink_tembak(), updateList.getusername(),
+                updateList.getid_tab(), idDetail, updateList.getfromlist(), updateList.gettype_name());
     }
 
     private class RefreshList extends AsyncTask<String, String, String> {
@@ -6192,7 +6220,7 @@ Log.w("every",co.getJabberId());
         @Override
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
-            postData(params[0], params[1], params[2], params[3], params[4]);
+            postData(params[0], params[1], params[2], params[3], params[4], params[5]);
             return null;
         }
 
@@ -6205,7 +6233,7 @@ Log.w("every",co.getJabberId());
         protected void onProgressUpdate(String... string) {
         }
 
-        public void postData(String valueIWantToSend, String usr, String idr, String pId, String from) {
+        public void postData(String valueIWantToSend, String usr, String idr, String pId, String from, String ty_pe) {
             try {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
@@ -6248,7 +6276,7 @@ Log.w("every",co.getJabberId());
                             anothers = jsonRootObject.getString("anothers");
                         }
 
-                        Log.w("content", content);
+                        Log.w("Refrres content", content);
 
                         botListDB.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from);
                         boolean loadListPull = true;
@@ -6265,6 +6293,9 @@ Log.w("every",co.getJabberId());
                         RoomsDetail orderModel = new RoomsDetail(username, id_rooms_tab, username, ccc, anothers, time_str, "form");
                         botListDB.insertRoomsDetail(orderModel);
 
+                        UpdateListDB dtbs = new UpdateListDB(context);
+                        dtbs.open();
+                        dtbs.updateTabsByUsernAndIdtab(username, idr, ty_pe);
 
                     } catch (JSONException e) {
                         e.printStackTrace();

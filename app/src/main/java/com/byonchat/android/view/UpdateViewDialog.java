@@ -1,5 +1,7 @@
 package com.byonchat.android.view;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,7 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -18,12 +19,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.byonchat.android.FragmentSetting.AboutSettingFragment;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
-import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.provider.UpdateListDB;
 import com.byonchat.android.utils.HttpHelper;
+import com.byonchat.android.utils.Validations;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -54,56 +55,60 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-
-public class UpdateView extends AppCompatActivity {
+public class UpdateViewDialog extends Dialog {
+    Context context;
     TextView tvText;
     Button later, update;
-    public final static String REQUEST_VERSION = "https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/api_luar/api_version.php";
-    MessengerDatabaseHelper messengerHelper;
     private static final String SD_CARD_FOLDER = "ByonChatAPK";
 
-    ProgressBar progressBar;
-    Button btnCekUpdate;
-    TextView textView2;
-    searchRequest task;
     DownloadFromURL taskDownload;
+    String link_update;
+    String company, version, type_update;
+    boolean permanent = false;
 
+    public UpdateViewDialog(Context context) {
+        super(context);
+        this.context = context;
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.update_view_layout);
 
         if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.iss_default));
-            getWindow().setStatusBarColor(getResources().getColor(R.color.iss_default));
+            getWindow().setNavigationBarColor(context.getResources().getColor(R.color.iss_default));
+            getWindow().setStatusBarColor(context.getResources().getColor(R.color.iss_default));
         }
 
         tvText = (TextView) findViewById(R.id.tvText);
         later = (Button) findViewById(R.id.laterBtn);
         update = (Button) findViewById(R.id.updateBtn);
 
-        IntervalDB db = new IntervalDB(getApplicationContext());
+        UpdateListDB db = new UpdateListDB(context);
         db.open();
-        Cursor cursor = db.getSingleContact(28);
+        Cursor cursor = db.getUnrefreshedData("0");
         if(cursor.getCount()>0) {
-//            db.deleteContact(12);
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
-                Date d = sdf.parse(cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)));
+                link_update = cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_TARGET_URL));
+                Date d = sdf.parse(cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_DATE_EXP)));
                 Date c = Calendar.getInstance().getTime();
+                company = cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_APP_COMPANY));
+                version = cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_APP_VERSION));
+                type_update = cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_NAME));
 
-                long diff = c.getTime() - d.getTime();
 
-                long jarak = 15-diff;
-                if(jarak < 15){
-                    tvText.setText("Update aplikasi terbaru telah tersedia, harap segera melakukan update. Anda memiliki " +
-                            jarak + " hari lagi untuk segera melakukan update.");
-                }
+                long diff = d.getTime() - c.getTime();
 
-                if( jarak == 0){
+                if (diff <= 0) {
                     tvText.setText("Aplikasi anda telah kadaluarsa. Harap melakukan update");
-                }
+                    permanent = true;
+                }else {
 
+                    tvText.setText("Update aplikasi terbaru telah tersedia, harap segera melakukan update. Anda memiliki " +
+                            diff + " hari lagi untuk segera melakukan update.");
+                    permanent = false;
+                }
             } catch (ParseException ex) {
                 Log.w("Exception", ex.getLocalizedMessage());
             }
@@ -116,14 +121,19 @@ public class UpdateView extends AppCompatActivity {
         later.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if(!permanent) {
+                    dismiss();
+                }else {
+                    Toast.makeText(context,"Update required to continue!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                task = new searchRequest(getApplicationContext());
-                task.execute(getString(R.string.app_version), getString(R.string.app_company));
+                taskDownload = new DownloadFromURL();
+                taskDownload.execute(link_update);
+
             }
         });
     }
@@ -142,101 +152,15 @@ public class UpdateView extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-
-    class searchRequest extends AsyncTask<String, Void, String> {
-
-        private static final int REGISTRATION_TIMEOUT = 3 * 1000;
-        private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
-        private Context mContext;
-        private String content = null;
-
-        public searchRequest(Context context) {
-            this.mContext = context;
-            progressBar.setVisibility(View.VISIBLE);
-            btnCekUpdate.setVisibility(View.INVISIBLE);
-            progressBar.setIndeterminate(true);
-        }
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        InputStreamReader reader = null;
-
-        protected String doInBackground(String... key) {
-
-            try {
-
-
-                HttpClient httpClient = HttpHelper
-                        .createHttpClient(mContext);
-                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
-                        1);
-
-                nameValuePairs.add(new BasicNameValuePair("username", messengerHelper.getMyContact().getJabberId()));
-                nameValuePairs.add(new BasicNameValuePair("version", key[0]));
-                nameValuePairs.add(new BasicNameValuePair("company", key[1]));
-
-                HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
-                HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
-                ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
-
-                HttpPost post = new HttpPost(REQUEST_VERSION);
-                post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-
-                //Response from the Http Request
-                response = httpclient.execute(post);
-                StatusLine statusLine = response.getStatusLine();
-
-                //Check the Http Request for success
-
-                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    response.getEntity().writeTo(out);
-                    out.close();
-                    content = out.toString();
-                } else {
-                    //Closes the connection.
-                    content = statusLine.getReasonPhrase();
-                    response.getEntity().getContent().close();
-                    throw new IOException(content);
-                }
-
-            } catch (ClientProtocolException e) {
-                content = e.getMessage();
-            } catch (IOException e) {
-                content = e.getMessage();
-            } catch (Exception e) {
-            }
-
-            return content;
-        }
-
-        protected void onCancelled() {
-        }
-
-        protected void onPostExecute(String content) {
-            if (content.contains("http://app.byonchat.com/download_bc/")) {
-                taskDownload = new DownloadFromURL();
-                taskDownload.execute(content);
-            } else {
-                progressBar.setVisibility(View.INVISIBLE);
-                btnCekUpdate.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(), "Ini adalah versi terbaru", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-    }
-
     class DownloadFromURL extends AsyncTask<String, Integer, Boolean> {
+        String error = "";
+        private ProgressDialog dialog = new ProgressDialog(context);
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            dialog.setMessage("Doing something, please wait.");
+            dialog.show();
         }
 
         @Override
@@ -279,10 +203,12 @@ public class UpdateView extends AppCompatActivity {
                     content.close();
                     return true;
                 } catch (Exception e) {
+                    error = e.getMessage();
                     if (content != null) {
                         try {
                             content.close();
                         } catch (IOException e1) {
+                            error = e.getMessage();
                             return false;
                         }
                     }
@@ -290,28 +216,34 @@ public class UpdateView extends AppCompatActivity {
                 }
 
             } catch (Exception e) {
+                error = e.getMessage();
                 return false;
             }
         }
 
         protected void onProgressUpdate(Integer... values) {
-            progressBar.setIndeterminate(false);
-            progressBar.setProgress(values[0]);
         }
 
 
         @Override
         protected void onPostExecute(Boolean result) {
-            btnCekUpdate.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.INVISIBLE);
             if (result.equals(Boolean.TRUE)) {
+                UpdateListDB dtbs = new UpdateListDB(context);
+                dtbs.open();
+                dtbs.updateVersionByCompany(company, version, type_update);
+                dtbs.close();
+
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Uri uri = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/ByonChat.apk"));
+                    Uri uri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/ByonChat.apk"));
                     intent.setDataAndType(uri, "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    startActivity(intent);
+                    context.startActivity(intent);
 
                 } else {
 
@@ -319,12 +251,17 @@ public class UpdateView extends AppCompatActivity {
                     intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/ByonChat.apk")),
                             "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    context.startActivity(intent);
                 }
+                dismiss();
 
             } else {
-                Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+                Toast.makeText(context, "Download Failed, Please try again!" + error, Toast.LENGTH_LONG).show();
             }
         }
     }
 }
+

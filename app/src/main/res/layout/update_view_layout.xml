@@ -3,24 +3,8 @@
     xmlns:card_view="http://schemas.android.com/tools"
     android:id="@+id/all_background"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#022b95"
+    android:layout_height="wrap_content"
     android:padding="20dp">
-
-
-    <TextView
-        android:id="@+id/login_roomname"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="Login to ByonChat"
-        android:textColor="@color/carbon_white"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
-
     <android.support.v7.widget.CardView
         android:id="@+id/content_main"
         android:layout_width="match_parent"
@@ -43,67 +27,61 @@
             android:paddingBottom="@dimen/margin20"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="fill_parent"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/byonchat01" />
+                android:text="Update Required!"
+                android:textSize="@dimen/text16"
+                android:textStyle="bold"
+                android:textAlignment="center"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin20"
-                android:layout_marginBottom="@dimen/margin20">
+                android:layout_marginTop="@dimen/margin5"
+                android:layout_marginBottom="@dimen/margin10">
 
                 <TextView
                     android:id="@+id/tvText"
+                    android:gravity="center"
+                    android:text="Need update now"
+                    android:textSize="@dimen/text16"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
             </RelativeLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/etAccLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/login_acc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Account" />
-            </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin30"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/margin10"
                 android:layout_marginLeft="@dimen/margin10"
                 android:layout_marginRight="@dimen/margin10"
                 android:weightSum="2">
 
                 <Button
                     android:id="@+id/laterBtn"
-                    android:layout_centerInParent="true"
                     android:text="Later"
-                    style="@style/btn_submit_v11"
+                    style="@style/btn_submit_v11_f"
+                    android:textColor="@color/black_overlay"
                     android:layout_weight="1"
-                    android:layout_marginRight="@dimen/margin5"/>
+                    android:layout_marginRight="@dimen/margin5"
+                    android:layout_marginLeft="@dimen/margin5"/>
 
                 <Button
                     android:id="@+id/updateBtn"
-                    android:layout_centerInParent="true"
                     android:text="Update"
                     style="@style/btn_submit_v11"
                     android:layout_weight="1"
+                    android:layout_marginRight="@dimen/margin5"
                     android:layout_marginLeft="@dimen/margin5"/>
             </LinearLayout>
 
         </LinearLayout>
 
     </android.support.v7.widget.CardView>
-
 
 </RelativeLayout>

@@ -434,9 +434,11 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onPause() {
         unregisterReceiver(broadcastHandler);
-        assistant.stop();
-        numbers.clear();
-        appBarLayout.removeOnOffsetChangedListener(this);
+        if (lanjut){
+            assistant.stop();
+            numbers.clear();
+            appBarLayout.removeOnOffsetChangedListener(this);
+        }
         super.onPause();
     }
 
@@ -456,10 +458,12 @@ public class MainActivityNew extends MainBaseActivityNew {
                 .cancel(NotificationReceiver.NOTIFY_ID);
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
                 .cancel(NotificationReceiver.NOTIFY_ID_CARD);
-        addShortcutBadger(getApplicationContext());
+        if (lanjut){
+            addShortcutBadger(getApplicationContext());
 
-        onHomeRefresh();
-        resolveVersion();
+            onHomeRefresh();
+            resolveVersion();
+        }
     }
 
     @Override

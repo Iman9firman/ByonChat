@@ -1,5 +1,6 @@
 package com.byonchat.android.ui.activity;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -50,6 +51,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.multidex.MultiDex;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -151,6 +153,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -527,6 +530,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected int i = 0;
     Boolean loginIss = true;
 
+    protected boolean lanjut = false;
+
     protected SQLiteDatabase sqLiteDatabase;
 
     @Override
@@ -538,11 +543,86 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!checkAndRequestPermissions()){
+            return;
+        } else {
+            lanjut = true;
+        }
         onSetStatusBarColor();
         setContentView(getResourceLayout());
         onSetupRoom();
         onLoadView();
         onViewReady(savedInstanceState);
+    }
+
+    protected Boolean checkAndRequestPermissions(){
+
+        final int permissionReadContact = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
+        final int permissionWriteContact = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS);
+        final int permissionCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        final int permissionCallPhone = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+        final int permissionReadPhoneState = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+        final int permissionWriteExtStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        final int permissionReadExtStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        final ArrayList<String> listPermissionsNeeded = new ArrayList<>();
+
+        if (permissionReadContact != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_CONTACTS);
+        }
+        if (permissionWriteContact != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_CONTACTS);
+        }
+        if (permissionCamera != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (permissionCallPhone != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CALL_PHONE);
+        }
+        if (permissionReadPhoneState != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if (permissionWriteExtStorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (permissionReadExtStorage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
+        if (listPermissionsNeeded.size() > 0) {
+            String[] mStringArray = new String[listPermissionsNeeded.size()];
+            mStringArray = listPermissionsNeeded.toArray(mStringArray);
+            ActivityCompat.requestPermissions(this, mStringArray, 194);
+            return false;
+        }
+
+        return true;
+    }
+
+    protected void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", okListener)
+                .create()
+                .show();
+    }
+
+    protected void explain(String msg) {
+        new AlertDialog.Builder(this)
+                .setMessage(msg)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:com.byonchat.android")));
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).show();
     }
 
     protected void onSetStatusBarColor() {
@@ -1481,6 +1561,50 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 resolveServices();
             } else {
                 Toast.makeText(getApplicationContext(), getString(R.string.permission_request_title), Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == 194){
+            final HashMap<String,Integer> perms = new HashMap<>();
+
+            perms.put(Manifest.permission.WRITE_CONTACTS,PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.READ_CONTACTS,PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.CALL_PHONE,PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.READ_PHONE_STATE,PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE,PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.READ_EXTERNAL_STORAGE,PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.CAMERA,PackageManager.PERMISSION_GRANTED);
+
+            if (grantResults.length > 0) {
+                for (int i = 0 ; i < permissions.length ; i++){
+                    perms.put(permissions[i],grantResults[i]);
+                }
+
+                if (perms.get(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                        perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    recreate();
+                } else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)
+                            || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                            || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
+                        showDialogOK("Service Permissions are required for this app", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == DialogInterface.BUTTON_POSITIVE){
+                                    checkAndRequestPermissions();
+                                } else if (which == DialogInterface.BUTTON_NEGATIVE){
+                                    finish();
+                                }
+                            }
+                        });
+                    } else {
+                        explain("You need to give some mandatory permissions to continue. Do you want to go to app settings?");
+                    }
+                }
             }
         }
     }

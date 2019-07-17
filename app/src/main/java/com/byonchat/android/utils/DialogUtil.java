@@ -74,20 +74,20 @@ public class DialogUtil {
 
 
         if (!imaaa.equalsIgnoreCase("") && imaaa.endsWith(".jpg")) {
-            Log.w("da",imaaa);
+            Log.w("da", imaaa);
             relativeImage.setVisibility(View.VISIBLE);
             ImageView iam = (ImageView) form.findViewById(R.id.image);
             Picasso.with(activity).load(imaaa).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(iam);
 
             iam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //
-                Intent intent = new Intent(activity, ZoomImageViewActivity.class);
-                intent.putExtra(ZoomImageViewActivity.KEY_FILE, imaaa);
-                activity.startActivity(intent);
-            }
-        });
+                @Override
+                public void onClick(View v) {
+                    //
+                    Intent intent = new Intent(activity, ZoomImageViewActivity.class);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, imaaa);
+                    activity.startActivity(intent);
+                }
+            });
 
         }
 
@@ -154,7 +154,7 @@ public class DialogUtil {
     }
 
     public static AlertDialog.Builder generateAlertDialogLeftImage(final Activity activity,
-                                                                   final String title, String message, String viewMessage, String viewTitle) {
+                                                                   final String title, String message, String viewMessage, String viewTitle, String username) {
         View form = activity.getLayoutInflater().inflate(
                 R.layout.custom_information_left, null);
         TextView tvN = (TextView) form.findViewById(R.id.name);
@@ -167,9 +167,9 @@ public class DialogUtil {
         ss.setText(viewTitle != null ? viewTitle : "");
         viewHarga.setText(viewMessage != null ? viewMessage : "");
         iama.setVisibility(View.VISIBLE);
-        Picasso.with(activity).load("https://bb.byonchat.com/bc_voucher_client/images/list_task/" + title.split(";")[0]).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(iam);
+        Log.w("INI LISJ", new ValidationsKey().getInstance(activity).getTargetUrl(username) + "/bc_voucher_client/images/list_task/" + title.split(";")[0]);
+        Picasso.with(activity).load(new ValidationsKey().getInstance(activity).getTargetUrl(username) + "/bc_voucher_client/images/list_task/" + title.split(";")[0]).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(iam);
 
-        Log.w("od", "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + title.split(";")[0]);
         tvN.setVisibility(View.GONE);
         if (message.equalsIgnoreCase("")) {
             viewHarga.setVisibility(View.GONE);
@@ -182,7 +182,7 @@ public class DialogUtil {
             public void onClick(View v) {
                 //
                 Intent intent = new Intent(activity, ZoomImageViewActivity.class);
-                intent.putExtra(ZoomImageViewActivity.KEY_FILE, "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + title.split(";")[0]);
+                intent.putExtra(ZoomImageViewActivity.KEY_FILE, new ValidationsKey().getInstance(activity).getTargetUrl(username) + "/bc_voucher_client/images/list_task/" + title.split(";")[0]);
                 activity.startActivity(intent);
             }
         });

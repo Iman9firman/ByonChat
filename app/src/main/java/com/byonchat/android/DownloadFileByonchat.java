@@ -75,6 +75,7 @@ public class DownloadFileByonchat extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Context... params) {
             try {
+                Log.w("DOWNLOAD_PATH", DOWNLOAD_PATH);
                 File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
                 File dbDownloadPath = new File(oldFolder, NEW_NAME_FILE);
                 if (!oldFolder.exists()) {
@@ -140,34 +141,34 @@ public class DownloadFileByonchat extends AppCompatActivity {
                 File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
                 File oldFile = new File(oldFolder, NEW_NAME_FILE);
 
-                if(getIntent().getStringExtra("download") != null ){
+                if (getIntent().getStringExtra("download") != null) {
                     try {
-                        createPdfFooter(oldFile+"", oldFolder +"/ISS_"+NEW_NAME_FILE,getIntent().getStringExtra("download"));
+                        createPdfFooter(oldFile + "", oldFolder + "/ISS_" + NEW_NAME_FILE, getIntent().getStringExtra("download"));
 
-                        Toast.makeText(getApplicationContext(),"Successfully Downloaded",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Successfully Downloaded", Toast.LENGTH_SHORT).show();
 
-                        if(oldFile.exists()){
+                        if (oldFile.exists()) {
                             try {
                                 oldFile.delete();
 
-                                if(getIntent().getStringExtra("approving") != null) {
+                                if (getIntent().getStringExtra("approving") != null) {
                                     String apa = getIntent().getStringExtra("approving");
-                                    Log.w("Parking lot prestice",apa);
+                                    Log.w("Parking lot prestice", apa);
                                     Map<String, String> params = new HashMap<>();
                                     params.put("id_history", apa);
                                     params.put("status", 1 + "");
 
                                     getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Approval/update", params, true);
                                 }
-                            }catch (Exception e){
-                                Log.e("Error hereee","get "+e.getMessage());
+                            } catch (Exception e) {
+                                Log.e("Error hereee", "get " + e.getMessage());
                             }
                         }
 
-                    }catch (Exception e){
-                        Log.e("Error hereee","get "+e.getMessage());
+                    } catch (Exception e) {
+                        Log.e("Error hereee", "get " + e.getMessage());
                     }
-                }else {
+                } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -283,11 +284,11 @@ public class DownloadFileByonchat extends AppCompatActivity {
             }
         } else {
 
-            if(getIntent().getStringExtra("download") != null ){
+            if (getIntent().getStringExtra("download") != null) {
 
-                File baru = new File(oldFolder, "ISS_"+NEW_NAME_FILE);
+                File baru = new File(oldFolder, "ISS_" + NEW_NAME_FILE);
 
-                if(baru.exists()) {
+                if (baru.exists()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -308,7 +309,7 @@ public class DownloadFileByonchat extends AppCompatActivity {
                         intent.setDataAndType(data, type);
                         startActivity(intent);
                     }
-                }else {
+                } else {
                     if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                         Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
                         finish();
@@ -316,7 +317,7 @@ public class DownloadFileByonchat extends AppCompatActivity {
                     DownloadFile mDatabaseOpenTask = new DownloadFile();
                     mDatabaseOpenTask.execute(new Context[]{this});
                 }
-            }else {
+            } else {
                 if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
                     finish();
@@ -331,14 +332,14 @@ public class DownloadFileByonchat extends AppCompatActivity {
 
         PdfReader reader = new PdfReader(originPath);
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(destPath));
-        Phrase footer = new Phrase(text, new Font(Font.FontFamily.UNDEFINED, 10,0,BaseColor.RED));
+        Phrase footer = new Phrase(text, new Font(Font.FontFamily.UNDEFINED, 10, 0, BaseColor.RED));
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
             float x1 = 10;
-            float x2 = reader.getPageSize(i).getWidth()-10;
+            float x2 = reader.getPageSize(i).getWidth() - 10;
             float y1 = reader.getPageSize(i).getBottom(10);
             float y2 = reader.getPageSize(i).getBottom(60);
             ColumnText ct = new ColumnText(stamper.getOverContent(i));
-            ct.setSimpleColumn(footer,x1,y1,x2,y2,15,Element.ALIGN_RIGHT);
+            ct.setSimpleColumn(footer, x1, y1, x2, y2, 15, Element.ALIGN_RIGHT);
             ct.go();
         }
         stamper.close();
@@ -346,18 +347,18 @@ public class DownloadFileByonchat extends AppCompatActivity {
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        Log.w("start prestice","FYTSX");
+        Log.w("start prestice", "FYTSX");
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
-                    Log.w("sukses prestice",response);
+                    Log.w("sukses prestice", response);
                     if (hide) {
                     }
 
                 },
                 error -> {
-                    Log.w("error prestice",error);
+                    Log.w("error prestice", error);
                 }
         ) {
 

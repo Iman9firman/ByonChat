@@ -922,6 +922,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             JSONArray jsonarray = new JSONArray(value);
 
                                             if (Integer.valueOf(iidd) >= 2092) {
+                                                Log.w("POHO", "kumaha1");
                                                 for (int aaa = 0; aaa < jsonarray.length(); aaa++) {
                                                     JSONObject jsonobject = jsonarray.getJSONObject(aaa);
                                                     String urutan = jsonobject.getString("urutan");
@@ -1027,6 +1028,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 }
 
                                             } else {
+                                                Log.w("POHO", "kumaha2");
                                                 for (int aaa = 0; aaa < jsonarray.length(); aaa++) {
                                                     JSONObject jsonobject = jsonarray.getJSONObject(aaa);
                                                     String urutan = jsonobject.getString("urutan");
@@ -1249,11 +1251,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                                                             ModelFormChild modelFormChild = rowItems.get(position);
                                                             if (labelDialog.size() == 1) {
-                                                                DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", labelDialog.get(0) != null ? labelDialog.get(0) : "").show();
+                                                                DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", labelDialog.get(0) != null ? labelDialog.get(0) : "", username).show();
                                                             } else if (labelDialog.size() > 1) {
-                                                                DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), labelDialog.get(1) != null ? labelDialog.get(1) : "", labelDialog.get(0) != null ? labelDialog.get(0) : "").show();
+                                                                DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), labelDialog.get(1) != null ? labelDialog.get(1) : "", labelDialog.get(0) != null ? labelDialog.get(0) : "", username).show();
                                                             } else {
-                                                                DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", "").show();
+                                                                DialogUtil.generateAlertDialogLeftImage(DinamicRoomTaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", "", username).show();
                                                             }
                                                         }
                                                     });
@@ -2012,7 +2014,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         btnOption.setText("Open");
                         final TextView valueFile = (TextView) linearEstimasi[count].findViewById(R.id.value);
                         valueFile.setText(valueP);
-                        if (urlP.equalsIgnoreCase("https://bb.byonchat.com/bc_voucher_client/public/list_task/document_preview/Document_27122018_164006_dyhW8uilXa.pdf")) {
+                        if (urlP.contains("Document_27122018_164006_dyhW8uilXa.pdf")) {
                             valueFile.setText(getOficer("lokasi").replace(" ", "_") + ".pdf");
                         }
 
@@ -2022,8 +2024,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(context, DownloadFileByonchat.class);
-                                if (urlP.equalsIgnoreCase("https://bb.byonchat.com/bc_voucher_client/public/list_task/document_preview/Document_27122018_164006_dyhW8uilXa.pdf")) {
-                                    String urlPaa = "https://bb.byonchat.com/bc_voucher_client/public/list_task/document_preview/";
+                                if (urlP.contains("Document_27122018_164006_dyhW8uilXa.pdf")) {
+                                    String urlPaa = new ValidationsKey().getInstance(activity).getTargetUrl(username) + "/bc_voucher_client/public/list_task/document_preview/";
 
                                     intent.putExtra("path", urlPaa + getOficer("lokasi").replace(" ", "_") + ".pdf");
                                     intent.putExtra("nama_file", getOficer("lokasi").replace(" ", "_") + ".pdf");
@@ -2473,6 +2475,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("form_child")) {
+
                         boolean spk = false;
 
                         final String formChild = jsonArray.getJSONObject(i).getString("form_child").toString();
@@ -3316,8 +3319,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     e.printStackTrace();
                                 }
                             } else {
-                                //
-
                                 if (idListTaskMasterForm.equalsIgnoreCase("66900")) {
                                     spk = true;
                                 }
@@ -5372,7 +5373,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     if (required.equalsIgnoreCase("1")) {
                                         required = "0";
                                     }
-                                    Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
+                                    //,username
+                                    Picasso.with(context).load(new ValidationsKey().getInstance(activity).getTargetUrl(username) + "/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
                                 }
                             }
                         }
@@ -5423,8 +5425,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                             }
                         });
-
-
 
 
                     } else if (type.equalsIgnoreCase("distance_estimation")) {
@@ -6907,6 +6907,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
                             final JSONObject jObject = new JSONObject(value);
                             String url = jObject.getString("url");
+                            Log.w("GlenF", url);
                             String table = jsonArray.getJSONObject(i).getString("formula").toString().replace(";SELECT kelas, COUNT(*) AS jumlah FROM siswa GROUP BY kelas ORDER BY kelas ASC", "");
 
                             final ArrayList<String> kolom = new ArrayList<>();
@@ -6973,6 +6974,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     }
 
                                     final String whereDone = where;
+
+                                    Log.w("SObami", whereDone);
 
                                     linearEstimasi[count].removeAllViews();
 

@@ -1247,11 +1247,11 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                                                             ModelFormChild modelFormChild = rowItems.get(position);
                                                             if (labelDialog.size() == 1) {
-                                                                DialogUtil.generateAlertDialogLeftImage(DinamicSLATaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", labelDialog.get(0) != null ? labelDialog.get(0) : "").show();
+                                                                DialogUtil.generateAlertDialogLeftImage(DinamicSLATaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", labelDialog.get(0) != null ? labelDialog.get(0) : "",username).show();
                                                             } else if (labelDialog.size() > 1) {
-                                                                DialogUtil.generateAlertDialogLeftImage(DinamicSLATaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), labelDialog.get(1) != null ? labelDialog.get(1) : "", labelDialog.get(0) != null ? labelDialog.get(0) : "").show();
+                                                                DialogUtil.generateAlertDialogLeftImage(DinamicSLATaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), labelDialog.get(1) != null ? labelDialog.get(1) : "", labelDialog.get(0) != null ? labelDialog.get(0) : "",username).show();
                                                             } else {
-                                                                DialogUtil.generateAlertDialogLeftImage(DinamicSLATaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", "").show();
+                                                                DialogUtil.generateAlertDialogLeftImage(DinamicSLATaskActivity.this, modelFormChild.getTitle(), modelFormChild.getDetail(), "", "",username).show();
                                                             }
                                                         }
                                                     });

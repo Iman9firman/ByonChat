@@ -5366,18 +5366,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(String.valueOf(count));//0
                         final int finalI26 = i;
 
-                        if (JcontentBawaan.has(name)) {
-                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
-                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
-                                if (values.has("value")) {
-                                    if (required.equalsIgnoreCase("1")) {
-                                        required = "0";
-                                    }
-                                    //,username
-                                    Picasso.with(context).load(new ValidationsKey().getInstance(activity).getTargetUrl(username) + "/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
-                                }
-                            }
-                        }
+
 
                         valSetOne.add(required);//3
                         valSetOne.add(type);//4
@@ -5401,6 +5390,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         linearLayout.addView(imageView[count], params);
 
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                        if (JcontentBawaan.has(name)) {
+                            if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
+                                JSONObject values = new JSONObject(JcontentBawaan.getString(name));
+                                if (values.has("value")) {
+                                    if (required.equalsIgnoreCase("1")) {
+                                        required = "0";
+                                    }
+                                    //,username
+                                    Picasso.with(context).load(new ValidationsKey().getInstance(activity).getTargetUrl(username) + "/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
+                                }
+                            }
+                        }
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {

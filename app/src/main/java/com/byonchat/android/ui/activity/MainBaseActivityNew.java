@@ -1940,6 +1940,12 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void RefreshRoom() {
+
+        File newDB = new File(DataBaseDropDown.getDatabaseFolder() + "sqlite_honda.sqlite");
+        if (newDB.exists()) {
+            newDB.delete();
+        }
+
         vSwipeRefresh.setRefreshing(false);
         Byonchat.getRoomsDB().open();
         botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
@@ -2017,11 +2023,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
             String targetURL = jObj.getString("path");
 
-            Log.w("Stats sweeping 1", targetURL);
             if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
                 finish();
                 Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                Log.w("Stats sweeping 2", username);
                 startActivity(ii);
             } else {
                 Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
@@ -2029,7 +2033,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.w("Stats sweeping Error", e);
         }
     }
 

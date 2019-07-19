@@ -46,6 +46,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POSDETAIL;
+import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POSDETAILSLA;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POST_FOTO;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLDETAIL;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLMULIPLEDETAIL;
@@ -148,10 +149,12 @@ public class AllAboutUploadTask {
                 uploadFileChild("pertama");
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.w("Sini", "satu");
                 taskCompleted.onTaskCompleted(20, "proses");
             }
 
         } else {
+            Log.w("Sini", "dua");
             taskCompleted.onTaskCompleted(20, "proses");
         }
 
@@ -433,11 +436,20 @@ public class AllAboutUploadTask {
 
         if (listUpload.size() == 0) {
             if (fromList.equalsIgnoreCase("show")) {
+                Log.w("kesini!","1");
+                if (idTab.equalsIgnoreCase("2613")){
+                    new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAILSLA, username, idTab, idDetail);
+                }else{
+                    new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
+                }
                 new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
             } else if (fromList.equalsIgnoreCase("hide")) {
+                Log.w("kesini!","2");
                 new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLDETAIL, username, idTab, idDetail);
             } else {
+                Log.w("kesini!","3");
                 if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
+                    Log.w("kesini!","4");
                     String[] ff = idDetail.split("\\|");
                     if (ff.length == 2) {
                         if (patokanUpload.length() > 0) {

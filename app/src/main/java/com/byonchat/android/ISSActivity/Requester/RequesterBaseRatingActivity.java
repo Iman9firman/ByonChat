@@ -176,6 +176,9 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
     protected void resolveListHistory() {
         vList.removeAllViews();
         items.clear();
+        maxSelected.clear();
+        tersedia.clear();
+        namaPekerjaan.clear();
 
         try {
             JSONArray jsonArraySatu = new JSONArray(itemData);

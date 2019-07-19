@@ -89,6 +89,7 @@ import com.byonchat.android.MainSettingActivity;
 import com.byonchat.android.NewSearchRoomActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.RegistrationActivity;
+import com.byonchat.android.Sample.FormSubmitScheduleSLA;
 import com.byonchat.android.UpdateProfileActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.MyBroadcastReceiver;
@@ -103,6 +104,7 @@ import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.Skin;
+import com.byonchat.android.provider.UpdateListDB;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
@@ -111,6 +113,7 @@ import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
 import com.byonchat.android.view.ItemDialog;
+import com.byonchat.android.view.UpdateViewDialog;
 import com.byonchat.android.widget.BadgeView;
 import com.eightbitlab.supportrenderscriptblur.SupportRenderScriptBlur;
 import com.google.gson.Gson;
@@ -126,8 +129,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -452,6 +459,38 @@ public class MainActivityNew extends MainBaseActivityNew {
         addShortcutBadger(getApplicationContext());
 
         onHomeRefresh();
+        resolveVersion();
+    }
+
+    protected void resolveVersion(){
+        UpdateListDB db = new UpdateListDB(getApplicationContext());
+        db.open();
+
+        Cursor crs = db.getUnrefreshedData("0");
+        while (crs.moveToNext()) {
+            if(crs.getString(crs.getColumnIndex(UpdateListDB.UPD_NAME)).equalsIgnoreCase("refresh_version")){
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                try {
+                    Date d = sdf.parse(crs.getString(crs.getColumnIndexOrThrow(UpdateListDB.UPD_DATE_EXP)));
+                    Date c = Calendar.getInstance().getTime();
+
+                    long diff = d.getTime() - c.getTime();
+
+                    if(diff <= 0) {
+                        UpdateViewDialog dialog = new UpdateViewDialog(this);
+                        dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+                        dialog.show();
+                        dialog.setCancelable(false);
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                    }
+                } catch (ParseException ex) {
+                    Log.w("Exception", ex.getLocalizedMessage());
+                }
+            }
+        }
+        crs.close();
+        db.close();
     }
 
     @Override

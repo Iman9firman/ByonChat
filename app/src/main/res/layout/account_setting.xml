@@ -60,27 +60,7 @@
                 android:background="@drawable/backgroud_white"
                 >
                 <TableRow  >
-                    <TextView
-                        android:paddingTop="12dp"
-                        android:paddingLeft="12dp"
-                        android:paddingRight="12dp"
-                        android:layout_width="wrap_content"
-                        style="@style/TextLightBlue"
-                        android:text="Nomer ByonChat"
-                        />
-                    <EditText
-                        android:paddingLeft="12dp"
-                        android:paddingRight="5dp"
-                        android:paddingBottom="15dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/bcUser_txt"
-                        android:hint="Not Set"
-                        android:paddingTop="8dp"
-                        android:background="@null"
-                        style="@style/TextRegularGrayMedium"
-                        android:maxLength="30"
-                        />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

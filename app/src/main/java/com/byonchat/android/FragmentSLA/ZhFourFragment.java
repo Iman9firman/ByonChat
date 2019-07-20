@@ -180,7 +180,7 @@ public class ZhFourFragment extends Fragment {
 
                             Log.w("ivana", "JSON : "+arrayParent.toString());
 //                            Toast.makeText(getContext(),"Submit success",Toast.LENGTH_SHORT).show();
-                            ((DinamicSLATaskActivity)getActivity()).submitSLA(arrayParent.toString());
+                           // ((DinamicSLATaskActivity)getActivity()).submitSLA(arrayParent.toString());
                         } else {
                             Toast.makeText(getContext(),"Harap isi note dan gambar jika memilih 'No' .",Toast.LENGTH_SHORT).show();
                         }

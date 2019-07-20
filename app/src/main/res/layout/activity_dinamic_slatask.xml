@@ -85,15 +85,6 @@
                 android:layout_marginBottom="@dimen/margin10"
                 tools:ignore="MissingConstraints" />
 
-            <FrameLayout
-                android:id="@+id/container_sla"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin5"
-                android:layout_marginTop="@dimen/margin10"
-                android:layout_marginRight="@dimen/margin5"
-                android:layout_marginBottom="@dimen/margin10"
-                android:visibility="gone"/>
         </LinearLayout>
 
     </LinearLayout>

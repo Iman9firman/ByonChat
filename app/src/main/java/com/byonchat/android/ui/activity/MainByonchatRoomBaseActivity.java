@@ -633,7 +633,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 if (value.get(5).toString().equalsIgnoreCase("show") || value.get(5).toString().equalsIgnoreCase("showMultiple")) {
                     vFloatingButton.show();
                     Intent intent = new Intent(getApplicationContext(), DinamicRoomTaskActivity.class);
-                    if (value.get(2).toString().equalsIgnoreCase("2613")||value.get(2).toString().equalsIgnoreCase("3336")) {
+                    if (value.get(2).toString().equalsIgnoreCase("2613")) {
                         intent = new Intent(getApplicationContext(), DinamicSLATaskActivity.class);
                     }
 

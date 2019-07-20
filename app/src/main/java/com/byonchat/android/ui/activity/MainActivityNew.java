@@ -89,7 +89,6 @@ import com.byonchat.android.MainSettingActivity;
 import com.byonchat.android.NewSearchRoomActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.RegistrationActivity;
-import com.byonchat.android.Sample.FormSubmitScheduleSLA;
 import com.byonchat.android.UpdateProfileActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.MyBroadcastReceiver;

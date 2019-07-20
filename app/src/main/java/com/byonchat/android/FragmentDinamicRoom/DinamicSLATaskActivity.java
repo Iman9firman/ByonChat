@@ -39,9 +39,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.PermissionChecker;
@@ -75,7 +73,6 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -103,7 +100,6 @@ import com.byonchat.android.DialogFormChildMainNew;
 import com.byonchat.android.DownloadFileByonchat;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.DownloadUtilsActivity;
-import com.byonchat.android.FragmentSLA.ZhOneFragment;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.ReaderOcr;
@@ -231,7 +227,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     SearchableSpinner spinner;
     private SLAISSAdapter adapter;
     private List<SLAISSItem> itemList = new ArrayList<>();
-    private FrameLayout container;
 
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
@@ -1863,11 +1858,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
             textProgress = findViewById(R.id.progress_sla);
-            container = findViewById(R.id.container_sla);
-            ViewGroup.LayoutParams layoutParams = container.getLayoutParams();
-            layoutParams.height = (int) (getResources().getDisplayMetrics().heightPixels * 0.8);
-            layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            container.setLayoutParams(layoutParams);
+
 
             final List<String> valSetOne1 = new ArrayList<String>();
             valSetOne1.add(String.valueOf(0));
@@ -1884,10 +1875,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             valSetOne2.add("forn_isian");
             valSetOne2.add("Pembobotan");
             valSetOne2.add(String.valueOf(1));
-
-            if (idTab.equalsIgnoreCase("2613")){
-                showButton = false;
-            }
 
             hashMap.put(Integer.parseInt("66985"), valSetOne1);
             hashMap.put(Integer.parseInt("66989"), valSetOne2);
@@ -1909,132 +1896,159 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66985", "text", "0"));
 
-                    if (idTab.equalsIgnoreCase("2613")){
-                        if (spinnerArraySla.get(myPosition).equalsIgnoreCase("--Please Select--")) {
-                            recyclerView.setVisibility(View.GONE);
-                            textProgress.setVisibility(View.GONE);
-                            container.setVisibility(View.GONE);
-                            if (cEdit.getCount() > 0) {
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
-                                db.deleteDetailRoomWithFlagContent(orderModel);
-                            }
+                    if (spinnerArraySla.get(myPosition).equalsIgnoreCase("--Please Select--")) {
+                        recyclerView.setVisibility(View.GONE);
+                        textProgress.setVisibility(View.GONE);
+                        if (cEdit.getCount() > 0) {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                            db.deleteDetailRoomWithFlagContent(orderModel);
+                        }
+                    } else {
+
+                        String assup = duaJJt.get(myPosition - 1);
+
+                        if (cEdit.getCount() > 0) {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                            db.updateDetailRoomWithFlagContent(orderModel);
                         } else {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                            db.insertRoomsDetail(orderModel);
 
-                            String assup = duaJJt.get(myPosition - 1);
+                        }
 
-                            if (cEdit.getCount() > 0) {
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
-                                db.updateDetailRoomWithFlagContent(orderModel);
-                            } else {
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
-                                db.insertRoomsDetail(orderModel);
 
+                        DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(context, "sqlite_iss");
+
+
+                        String asiop[] = {"jt.id AS id_jjt", "pb.id AS id_pembobotan", "pb.nama_pembobotan AS nama_pembobotan", "pb.grade AS grade"
+                                , "s.id AS id_section", "s.title AS title_section", "ss.id AS id_subsection", "ss.title AS title_subsection", "p.id AS id_pertanyaan", "p.pertanyaan AS pertanyaan", "jt.pass_grade AS pass_gradeNya"};
+
+                        String asiap = "jjt jt\n" +
+                                "INNER JOIN jjt_checklists jtc ON jt.id=jtc.id_jjt\n" +
+                                "INNER JOIN pembobotan pb ON pb.id=jtc.id_pembobotan\n" +
+                                "INNER JOIN pembobotan_checklists pc ON pb.id=pc.id_pembobotan\n" +
+                                "INNER JOIN section s ON s.id=pc.id_section\n" +
+                                "INNER JOIN section_checklists sc ON s.id=sc.id_section\n" +
+                                "INNER JOIN sub_section ss ON ss.id=sc.id_subsection\n" +
+                                "INNER JOIN subsection_checklists sbc ON ss.id=sbc.id_subsection\n" +
+                                "INNER JOIN pertanyaan p ON p.id=sbc.id_pertanyaan";
+                        String passGrade = "0";
+                        if (mDBDquerySLA.getWritableDatabase() != null) {
+                            // Log.w("Jambore", tableExists(mDBDquerySLA, "pass_grade") + "");
+                            String see[] = {"COUNT(*)"};
+
+                            final Cursor curCek = mDBDquerySLA.getWritableDatabase().query(true, "sqlite_master", see, "type = ? AND name = ?", new String[]{"table", "pass_grade"}, null, null, null, null);
+
+                            if (curCek.moveToFirst()) {
+                                if (curCek.getCount() == 0) {
+                                    if (deleteContent) {
+                                        db.deleteRoomsDetailbyId(idDetail, idTab, username);
+                                    }
+                                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                        Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }
+
+                                    finish();
+                                    Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
+                                    intent.putExtra("name_db", "sqlite_iss");
+                                    intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                                    startActivity(intent);
+                                    return;
+                                }
                             }
 
+                            final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + assup + "'", null, null, null, null, null);
 
-                            DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(context, "sqlite_iss");
+                            if (css.moveToFirst()) {
+                                textProgress.setVisibility(View.VISIBLE);
+                                recyclerView.setVisibility(View.VISIBLE);
+                                String bobotIdOld = "";
+                                String sectionOld = "";
+                                String subSectionOld = "";
 
+                                try {
+                                    JSONObject hasilCOnvert = new JSONObject();
+                                    JSONArray satu = new JSONArray();
+                                    JSONArray dua = new JSONArray();
+                                    JSONArray tiga = new JSONArray();
+                                    JSONArray empat = new JSONArray();
 
-                            String asiop[] = {"jt.id AS id_jjt", "pb.id AS id_pembobotan", "pb.nama_pembobotan AS nama_pembobotan", "pb.grade AS grade"
-                                    , "s.id AS id_section", "s.title AS title_section", "ss.id AS id_subsection", "ss.title AS title_subsection", "p.id AS id_pertanyaan", "p.pertanyaan AS pertanyaan", "jt.pass_grade AS pass_gradeNya"};
+                                    do {
+                                        String idBobot = css.getString(1);
+                                        String idSection = css.getString(4);
+                                        String idSubSection = css.getString(6);
+                                        String idPertanyaan = css.getString(8);
 
-                            String asiap = "jjt jt\n" +
-                                    "INNER JOIN jjt_checklists jtc ON jt.id=jtc.id_jjt\n" +
-                                    "INNER JOIN pembobotan pb ON pb.id=jtc.id_pembobotan\n" +
-                                    "INNER JOIN pembobotan_checklists pc ON pb.id=pc.id_pembobotan\n" +
-                                    "INNER JOIN section s ON s.id=pc.id_section\n" +
-                                    "INNER JOIN section_checklists sc ON s.id=sc.id_section\n" +
-                                    "INNER JOIN sub_section ss ON ss.id=sc.id_subsection\n" +
-                                    "INNER JOIN subsection_checklists sbc ON ss.id=sbc.id_subsection\n" +
-                                    "INNER JOIN pertanyaan p ON p.id=sbc.id_pertanyaan";
-                            String passGrade = "0";
-                            if (mDBDquerySLA.getWritableDatabase() != null) {
-                                // Log.w("Jambore", tableExists(mDBDquerySLA, "pass_grade") + "");
-                                String see[] = {"COUNT(*)"};
-
-                                final Cursor curCek = mDBDquerySLA.getWritableDatabase().query(true, "sqlite_master", see, "type = ? AND name = ?", new String[]{"table", "pass_grade"}, null, null, null, null);
-
-                                if (curCek.moveToFirst()) {
-                                    if (curCek.getCount() == 0) {
-                                        if (deleteContent) {
-                                            db.deleteRoomsDetailbyId(idDetail, idTab, username);
-                                        }
-                                        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                                            Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
-                                            finish();
-                                        }
-
-                                        finish();
-                                        Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
-                                        intent.putExtra("name_db", "sqlite_iss");
-                                        intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
-                                        startActivity(intent);
-                                        return;
-                                    }
-                                }
-
-                                final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + assup + "'", null, null, null, null, null);
-
-                                if (css.moveToFirst()) {
-                                    textProgress.setVisibility(View.VISIBLE);
-                                    recyclerView.setVisibility(View.GONE);
-                                    container.setVisibility(View.VISIBLE);
-                                    String bobotIdOld = "";
-                                    String sectionOld = "";
-                                    String subSectionOld = "";
-
-                                    try {
-                                        JSONObject hasilCOnvert = new JSONObject();
-                                        JSONArray satu = new JSONArray();
-                                        JSONArray dua = new JSONArray();
-                                        JSONArray tiga = new JSONArray();
-                                        JSONArray empat = new JSONArray();
-
-                                        do {
-                                            String idBobot = css.getString(1);
-                                            String idSection = css.getString(4);
-                                            String idSubSection = css.getString(6);
-                                            String idPertanyaan = css.getString(8);
-
-                                            String namaBobot = css.getString(2);
-                                            String bobotNya = css.getString(3);
-                                            String namaSection = css.getString(5);
-                                            String namaSubSection = css.getString(7);
-                                            String itemTobe = css.getString(9);
-                                            passGrade = css.getString(10);
+                                        String namaBobot = css.getString(2);
+                                        String bobotNya = css.getString(3);
+                                        String namaSection = css.getString(5);
+                                        String namaSubSection = css.getString(7);
+                                        String itemTobe = css.getString(9);
+                                        passGrade = css.getString(10);
 
 
-                                            if (bobotIdOld.equalsIgnoreCase(idBobot)) {
-                                                if (sectionOld.equalsIgnoreCase(idSection)) {
-                                                    if (subSectionOld.equalsIgnoreCase(idSubSection)) {
-                                                        JSONObject ppObject = new JSONObject();
-                                                        ppObject.put("id", idPertanyaan);
-                                                        ppObject.put("label", itemTobe);
-                                                        ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
-                                                        empat.put(ppObject);
+                                        if (bobotIdOld.equalsIgnoreCase(idBobot)) {
+                                            if (sectionOld.equalsIgnoreCase(idSection)) {
+                                                if (subSectionOld.equalsIgnoreCase(idSubSection)) {
+                                                    JSONObject ppObject = new JSONObject();
+                                                    ppObject.put("id", idPertanyaan);
+                                                    ppObject.put("label", itemTobe);
+                                                    ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
+                                                    empat.put(ppObject);
 
-                                                    } else {
-                                                        subSectionOld = idSubSection;
-                                                        empat = new JSONArray();
-
-                                                        JSONObject ppObject = new JSONObject();
-                                                        ppObject.put("id", idPertanyaan);
-                                                        ppObject.put("label", itemTobe);
-                                                        ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
-                                                        empat.put(ppObject);
-
-                                                        JSONObject empatObject = new JSONObject();
-                                                        empatObject.put("id", idSubSection);
-                                                        empatObject.put("label", namaSubSection);
-                                                        empatObject.put("data", empat);
-                                                        tiga.put(empatObject);
-                                                    }
                                                 } else {
                                                     subSectionOld = idSubSection;
-                                                    sectionOld = idSection;
-
                                                     empat = new JSONArray();
+
+                                                    JSONObject ppObject = new JSONObject();
+                                                    ppObject.put("id", idPertanyaan);
+                                                    ppObject.put("label", itemTobe);
+                                                    ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
+                                                    empat.put(ppObject);
+
+                                                    JSONObject empatObject = new JSONObject();
+                                                    empatObject.put("id", idSubSection);
+                                                    empatObject.put("label", namaSubSection);
+                                                    empatObject.put("data", empat);
+                                                    tiga.put(empatObject);
+                                                }
+                                            } else {
+                                                subSectionOld = idSubSection;
+                                                sectionOld = idSection;
+
+                                                empat = new JSONArray();
+                                                tiga = new JSONArray();
+
+                                                JSONObject ppObject = new JSONObject();
+                                                ppObject.put("id", idPertanyaan);
+                                                ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
+                                                ppObject.put("label", itemTobe);
+                                                empat.put(ppObject);
+
+                                                JSONObject empatObject = new JSONObject();
+                                                empatObject.put("id", idSubSection);
+                                                empatObject.put("label", namaSubSection);
+                                                empatObject.put("data", empat);
+                                                tiga.put(empatObject);
+
+                                                JSONObject tigaObject = new JSONObject();
+                                                tigaObject.put("id", idSection);
+                                                tigaObject.put("label", namaSection);
+                                                tigaObject.put("data", tiga);
+                                                dua.put(tigaObject);
+
+                                            }
+                                        } else {
+                                            bobotIdOld = idBobot;
+                                            if (!sectionOld.equalsIgnoreCase(idSection)) {
+                                                sectionOld = idSection;
+                                                if (!subSectionOld.equalsIgnoreCase(idSubSection)) {
+                                                    subSectionOld = idSubSection;
+                                                    dua = new JSONArray();
                                                     tiga = new JSONArray();
+                                                    empat = new JSONArray();
+
 
                                                     JSONObject ppObject = new JSONObject();
                                                     ppObject.put("id", idPertanyaan);
@@ -2054,158 +2068,110 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     tigaObject.put("data", tiga);
                                                     dua.put(tigaObject);
 
+                                                    JSONObject duaObject = new JSONObject();
+                                                    duaObject.put("id", idBobot);
+                                                    duaObject.put("label", namaBobot);
+                                                    duaObject.put("bobot", bobotNya);
+                                                    duaObject.put("data", dua);
+
+                                                    satu.put(duaObject);
                                                 }
-                                            } else {
-                                                bobotIdOld = idBobot;
-                                                if (!sectionOld.equalsIgnoreCase(idSection)) {
-                                                    sectionOld = idSection;
-                                                    if (!subSectionOld.equalsIgnoreCase(idSubSection)) {
-                                                        subSectionOld = idSubSection;
-                                                        dua = new JSONArray();
-                                                        tiga = new JSONArray();
-                                                        empat = new JSONArray();
-
-
-                                                        JSONObject ppObject = new JSONObject();
-                                                        ppObject.put("id", idPertanyaan);
-                                                        ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
-                                                        ppObject.put("label", itemTobe);
-                                                        empat.put(ppObject);
-
-                                                        JSONObject empatObject = new JSONObject();
-                                                        empatObject.put("id", idSubSection);
-                                                        empatObject.put("label", namaSubSection);
-                                                        empatObject.put("data", empat);
-                                                        tiga.put(empatObject);
-
-                                                        JSONObject tigaObject = new JSONObject();
-                                                        tigaObject.put("id", idSection);
-                                                        tigaObject.put("label", namaSection);
-                                                        tigaObject.put("data", tiga);
-                                                        dua.put(tigaObject);
-
-                                                        JSONObject duaObject = new JSONObject();
-                                                        duaObject.put("id", idBobot);
-                                                        duaObject.put("label", namaBobot);
-                                                        duaObject.put("bobot", bobotNya);
-                                                        duaObject.put("data", dua);
-
-                                                        satu.put(duaObject);
-                                                    }
-                                                }
-
                                             }
-
-                                        } while (css.moveToNext());
-                                        hasilCOnvert.put("data", satu);
-
-                                        itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
-                                        loadFragment(new ZhOneFragment(spinnerArraySla.get(myPosition),hasilCOnvert.toString(),idDetail,passGrade));
-//                                    largeLog("ivana",hasilCOnvert.toString());
-                                        adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
-                                            @Override
-                                            public void onChecked(int count) {
-                                                textProgress.setText(count + "/" + countCheck);
-                                            }
-                                        });
-                                        recyclerView.setAdapter(adapter);
-                                        recyclerView.setAccordion(false);
-                                        recyclerView.removeItemClickListeners();
-
-                                        adapter.notifyDataSetChanged();
-
-
-                                        JSONObject levelBobot1 = hasilCOnvert;
-
-                                        JSONArray saveSLADetail = new JSONArray();
-                                        JSONArray level1Array = levelBobot1.getJSONArray("data");
-                                        for (int oneL = 0; oneL < level1Array.length(); oneL++) {
-                                            JSONObject objectOne = level1Array.getJSONObject(oneL);
-                                            String id = objectOne.getString("id");
-
-                                            String bobot = objectOne.getString("bobot");
-                                            JSONArray level2Array = objectOne.getJSONArray("data");
-                                            Double bbt = Double.valueOf(bobot) / level2Array.length();
-
-                                            JSONObject detailing1 = new JSONObject();
-                                            detailing1.put("id", id);
-                                            JSONArray data1 = new JSONArray();
-
-                                            for (int twoL = 0; twoL < level2Array.length(); twoL++) {
-                                                JSONObject objectTwo = level2Array.getJSONObject(twoL);
-                                                String id2 = objectTwo.getString("id");
-                                                String lb2 = objectTwo.getString("label");
-                                                JSONArray level3Array = objectTwo.getJSONArray("data");
-                                                Double bbt2 = bbt / level3Array.length();
-
-                                                JSONObject detailing2 = new JSONObject();
-                                                detailing2.put("id", id2);
-                                                JSONArray data2 = new JSONArray();
-
-                                                for (int threeL = 0; threeL < level3Array.length(); threeL++) {
-                                                    JSONObject objectThree = level3Array.getJSONObject(threeL);
-                                                    String id3 = objectThree.getString("id");
-                                                    JSONArray level4Array = objectThree.getJSONArray("data");
-                                                    Double bbt3 = bbt2 / level4Array.length();
-
-                                                    JSONObject detailing3 = new JSONObject();
-                                                    detailing3.put("id", id3);
-
-                                                    JSONArray data3 = new JSONArray();
-                                                    for (int fourL = 0; fourL < level4Array.length(); fourL++) {
-                                                        JSONObject objectFour = level4Array.getJSONObject(fourL);
-                                                        String id4 = objectFour.getString("id");
-                                                        String lb4 = objectFour.getString("label");
-                                                        JSONObject detailing = new JSONObject();
-                                                        detailing.put("id", id4);
-                                                        detailing.put("label", lb2 + " - " + lb4);
-                                                        detailing.put("bt", df2.format(bbt3));
-                                                        data3.put(detailing);
-                                                    }
-                                                    detailing3.put("data", data3);
-                                                    data2.put(detailing3);
-                                                }
-                                                detailing2.put("data", data2);
-                                                data1.put(detailing2);
-                                            }
-                                            detailing1.put("data", data1);
-                                            detailing1.put("bobot", bobot);
-                                            detailing1.put("gr", passGrade);
-
-
-                                            saveSLADetail.put(detailing1);
-                                        }
-
-
-                                        Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66989", "dropdown_form", "1"));
-                                        if (cEdit2.getCount() > 0) {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, saveSLADetail.toString(), jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
-                                            db.updateDetailRoomWithFlagContent(orderModel);
-                                        } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, saveSLADetail.toString(), jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
-                                            db.insertRoomsDetail(orderModel);
 
                                         }
 
-                                    } catch (Exception e) {
+                                    } while (css.moveToNext());
+                                    hasilCOnvert.put("data", satu);
+
+
+                                    itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
+                                    adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
+                                        @Override
+                                        public void onChecked(int count) {
+                                            textProgress.setText(count + "/" + countCheck);
+                                        }
+                                    });
+                                    recyclerView.setAdapter(adapter);
+                                    recyclerView.setAccordion(false);
+                                    recyclerView.removeItemClickListeners();
+
+                                    adapter.notifyDataSetChanged();
+
+
+                                    JSONObject levelBobot1 = hasilCOnvert;
+
+                                    JSONArray saveSLADetail = new JSONArray();
+                                    JSONArray level1Array = levelBobot1.getJSONArray("data");
+                                    for (int oneL = 0; oneL < level1Array.length(); oneL++) {
+                                        JSONObject objectOne = level1Array.getJSONObject(oneL);
+                                        String id = objectOne.getString("id");
+
+                                        String bobot = objectOne.getString("bobot");
+                                        JSONArray level2Array = objectOne.getJSONArray("data");
+                                        Double bbt = Double.valueOf(bobot) / level2Array.length();
+
+                                        JSONObject detailing1 = new JSONObject();
+                                        detailing1.put("id", id);
+                                        JSONArray data1 = new JSONArray();
+
+                                        for (int twoL = 0; twoL < level2Array.length(); twoL++) {
+                                            JSONObject objectTwo = level2Array.getJSONObject(twoL);
+                                            String id2 = objectTwo.getString("id");
+                                            String lb2 = objectTwo.getString("label");
+                                            JSONArray level3Array = objectTwo.getJSONArray("data");
+                                            Double bbt2 = bbt / level3Array.length();
+
+                                            JSONObject detailing2 = new JSONObject();
+                                            detailing2.put("id", id2);
+                                            JSONArray data2 = new JSONArray();
+
+                                            for (int threeL = 0; threeL < level3Array.length(); threeL++) {
+                                                JSONObject objectThree = level3Array.getJSONObject(threeL);
+                                                String id3 = objectThree.getString("id");
+                                                JSONArray level4Array = objectThree.getJSONArray("data");
+                                                Double bbt3 = bbt2 / level4Array.length();
+
+                                                JSONObject detailing3 = new JSONObject();
+                                                detailing3.put("id", id3);
+
+                                                JSONArray data3 = new JSONArray();
+                                                for (int fourL = 0; fourL < level4Array.length(); fourL++) {
+                                                    JSONObject objectFour = level4Array.getJSONObject(fourL);
+                                                    String id4 = objectFour.getString("id");
+                                                    String lb4 = objectFour.getString("label");
+                                                    JSONObject detailing = new JSONObject();
+                                                    detailing.put("id", id4);
+                                                    detailing.put("label", lb2 + " - " + lb4);
+                                                    detailing.put("bt", df2.format(bbt3));
+                                                    data3.put(detailing);
+                                                }
+                                                detailing3.put("data", data3);
+                                                data2.put(detailing3);
+                                            }
+                                            detailing2.put("data", data2);
+                                            data1.put(detailing2);
+                                        }
+                                        detailing1.put("data", data1);
+                                        detailing1.put("bobot", bobot);
+                                        detailing1.put("gr", passGrade);
+
+
+                                        saveSLADetail.put(detailing1);
+                                    }
+
+
+                                    Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66989", "dropdown_form", "1"));
+                                    if (cEdit2.getCount() > 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, saveSLADetail.toString(), jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
+                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                    } else {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, saveSLADetail.toString(), jsonCreateType("66989", "dropdown_form", "1"), "forn_isian", "cild");
+                                        db.insertRoomsDetail(orderModel);
 
                                     }
 
-                                } else {
-                                    if (deleteContent) {
-                                        db.deleteRoomsDetailbyId(idDetail, idTab, username);
-                                    }
-                                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                                        Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
-                                        finish();
-                                    }
+                                } catch (Exception e) {
 
-                                    finish();
-                                    Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
-                                    intent.putExtra("name_db", "sqlite_iss");
-                                    intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
-                                    startActivity(intent);
-                                    return;
                                 }
 
                             } else {
@@ -2224,24 +2190,22 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 startActivity(intent);
                                 return;
                             }
-                        }
-                    } else if (idTab.equalsIgnoreCase("3336")){
-                        if (spinnerArraySla.get(myPosition).equalsIgnoreCase("--Please Select--")) {
-                            if (cEdit.getCount() > 0) {
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)), jsonCreateType("66985", "text", "0"), "jjt", "cild");
-                                db.deleteDetailRoomWithFlagContent(orderModel);
-                            }
+
                         } else {
-                            String assup = duaJJt.get(myPosition - 1);
-
-                            if (cEdit.getCount() > 0) {
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
-                                db.updateDetailRoomWithFlagContent(orderModel);
-                            } else {
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
-                                db.insertRoomsDetail(orderModel);
-
+                            if (deleteContent) {
+                                db.deleteRoomsDetailbyId(idDetail, idTab, username);
                             }
+                            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
+                                finish();
+                            }
+
+                            finish();
+                            Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
+                            intent.putExtra("name_db", "sqlite_iss");
+                            intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                            startActivity(intent);
+                            return;
                         }
                     }
                 }
@@ -8617,78 +8581,75 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                 }
                                             } else {
                                                 if (value.get(2).toString().equalsIgnoreCase("dropdown_form")) {
-                                                    if (idTab.equalsIgnoreCase("2613")){
-                                                        String sayaJA = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-                                                        RadioButtonCheckDB database = new RadioButtonCheckDB(activity);
-                                                        SQLiteDatabase dbSLAA = database.getReadableDatabase();
+                                                    String sayaJA = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                                                    RadioButtonCheckDB database = new RadioButtonCheckDB(activity);
+                                                    SQLiteDatabase dbSLAA = database.getReadableDatabase();
 
 
-                                                        try {
-                                                            JSONArray jsonArray = new JSONArray(sayaJA);
+                                                    try {
+                                                        JSONArray jsonArray = new JSONArray(sayaJA);
 
-                                                            String noSatu = "";
-                                                            String noDua = "";
-                                                            String noTiga = "";
-                                                            String noEmpat = "";
+                                                        String noSatu = "";
+                                                        String noDua = "";
+                                                        String noTiga = "";
+                                                        String noEmpat = "";
 
-                                                            for (int oneL = 0; oneL < jsonArray.length(); oneL++) {
-                                                                String id = jsonArray.getJSONObject(oneL).getString("id");
-                                                                JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
-                                                                noSatu = String.valueOf(oneL + 1);
-                                                                for (int twoL = 0; twoL < data1.length(); twoL++) {
-                                                                    String id2 = data1.getJSONObject(twoL).getString("id");
-                                                                    JSONArray data2 = data1.getJSONObject(twoL).getJSONArray("data");
-                                                                    noDua = String.valueOf(twoL + 1);
-                                                                    for (int threeL = 0; threeL < data2.length(); threeL++) {
-                                                                        String id3 = data2.getJSONObject(threeL).getString("id");
-                                                                        JSONArray data3 = data2.getJSONObject(threeL).getJSONArray("data");
-                                                                        noTiga = String.valueOf(threeL + 1);
-                                                                        for (int fourL = 0; fourL < data3.length(); fourL++) {
-                                                                            noEmpat = String.valueOf(fourL + 1);
+                                                        for (int oneL = 0; oneL < jsonArray.length(); oneL++) {
+                                                            String id = jsonArray.getJSONObject(oneL).getString("id");
+                                                            JSONArray data1 = jsonArray.getJSONObject(oneL).getJSONArray("data");
+                                                            noSatu = String.valueOf(oneL + 1);
+                                                            for (int twoL = 0; twoL < data1.length(); twoL++) {
+                                                                String id2 = data1.getJSONObject(twoL).getString("id");
+                                                                JSONArray data2 = data1.getJSONObject(twoL).getJSONArray("data");
+                                                                noDua = String.valueOf(twoL + 1);
+                                                                for (int threeL = 0; threeL < data2.length(); threeL++) {
+                                                                    String id3 = data2.getJSONObject(threeL).getString("id");
+                                                                    JSONArray data3 = data2.getJSONObject(threeL).getJSONArray("data");
+                                                                    noTiga = String.valueOf(threeL + 1);
+                                                                    for (int fourL = 0; fourL < data3.length(); fourL++) {
+                                                                        noEmpat = String.valueOf(fourL + 1);
 
-                                                                            String id4 = data3.getJSONObject(fourL).getString("id");
-                                                                            String lb4 = data3.getJSONObject(fourL).getString("label");
-                                                                            String bt4 = data3.getJSONObject(fourL).getString("bt");
+                                                                        String id4 = data3.getJSONObject(fourL).getString("id");
+                                                                        String lb4 = data3.getJSONObject(fourL).getString("label");
+                                                                        String bt4 = data3.getJSONObject(fourL).getString("bt");
 
-                                                                            String idCheck = id + "-" + id2 + "-" + id3 + "-" + id4;
+                                                                        String idCheck = id + "-" + id2 + "-" + id3 + "-" + id4;
 
-                                                                            boolean isExist = false;
+                                                                        boolean isExist = false;
 
-                                                                            Cursor cursor = dbSLAA.rawQuery("SELECT * FROM " + TABLE_NAME
-                                                                                    + " WHERE id_detail ='" + idDetail + "' AND id_item =?", new String[]{String.valueOf(idCheck)});
-                                                                            while (cursor.moveToNext()) {
-                                                                                isExist = true;
-                                                                            }
-                                                                            cursor.close();
+                                                                        Cursor cursor = dbSLAA.rawQuery("SELECT * FROM " + TABLE_NAME
+                                                                                + " WHERE id_detail ='" + idDetail + "' AND id_item =?", new String[]{String.valueOf(idCheck)});
+                                                                        while (cursor.moveToNext()) {
+                                                                            isExist = true;
+                                                                        }
+                                                                        cursor.close();
 
-                                                                            if (!isExist) {
-                                                                                berhenti = true;
-                                                                                errorReq.add(noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + lb4);
-                                                                            } else {
+                                                                        if (!isExist) {
+                                                                            berhenti = true;
+                                                                            errorReq.add(noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + lb4);
+                                                                        } else {
 
-                                                                                Cursor cursorD = dbSLAA.query(TABLE_NAME,
-                                                                                        new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
-                                                                                        COLUMN_ID_DETAIL + "='" + idDetail + "' AND " + COLUMN_ID + " =?",
-                                                                                        new String[]{idCheck}, null, null, null, null);
-                                                                                while (cursorD.moveToNext()) {
-                                                                                    int ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
-                                                                                    String img = cursorD.getString(cursorD.getColumnIndex(COLUMN_IMG));
-                                                                                    String com = cursorD.getString(cursorD.getColumnIndex(COLUMN_COMMENT));
+                                                                            Cursor cursorD = dbSLAA.query(TABLE_NAME,
+                                                                                    new String[]{COLUMN_ID, COLUMN_OK, COLUMN_IMG, COLUMN_COMMENT},
+                                                                                    COLUMN_ID_DETAIL + "='" + idDetail + "' AND " + COLUMN_ID + " =?",
+                                                                                    new String[]{idCheck}, null, null, null, null);
+                                                                            while (cursorD.moveToNext()) {
+                                                                                int ok = cursorD.getInt(cursorD.getColumnIndex(COLUMN_OK));
+                                                                                String img = cursorD.getString(cursorD.getColumnIndex(COLUMN_IMG));
+                                                                                String com = cursorD.getString(cursorD.getColumnIndex(COLUMN_COMMENT));
 
-                                                                                    if (ok == 0) {
-                                                                                        if (img == null && com == null) {
-                                                                                            berhenti = true;
-                                                                                            errorReq.add("Tambahkan comment atau foto : " + noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + lb4);
-                                                                                        }
+                                                                                if (ok == 0) {
+                                                                                    if (img == null && com == null) {
+                                                                                        berhenti = true;
+                                                                                        errorReq.add("Tambahkan comment atau foto : " + noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + lb4);
                                                                                     }
-
                                                                                 }
-                                                                                cursorD.close();
 
                                                                             }
-
+                                                                            cursorD.close();
 
                                                                         }
+
 
                                                                     }
 
@@ -8696,11 +8657,12 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                             }
 
-
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                            Log.w("jojon", e.getMessage());
                                                         }
+
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                        Log.w("jojon", e.getMessage());
                                                     }
                                                 } else if (value.get(2).toString().equalsIgnoreCase("phone_number")) {
                                                     String saya = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
@@ -8756,22 +8718,13 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     value.get(2).toString().equalsIgnoreCase("phone_number") ||
                                                     value.get(2).toString().equalsIgnoreCase("currency")) {
                                                 String aa = value.get(0).toString();
-                                                if (idTab.equalsIgnoreCase("2613")){
-                                                    errorReq.add("JJT");
-                                                    berhenti = true;
-                                                }
+                                                errorReq.add("JJT");
+                                                berhenti = true;
                                             } else if (value.get(2).toString().equalsIgnoreCase("attach_api")) {
                                                 //tidak ada action
                                             } else {
-                                                if (value.get(4).equalsIgnoreCase("Pembobotan")){
-                                                    if (idTab.equalsIgnoreCase("2613")){
-                                                        berhenti = true;
-                                                        errorReq.add(value.get(4).toString());
-                                                    }
-                                                } else {
-                                                    berhenti = true;
-                                                    errorReq.add(value.get(4).toString());
-                                                }
+                                                berhenti = true;
+                                                errorReq.add(value.get(4).toString());
                                             }
                                         }
                                     }
@@ -12750,56 +12703,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
 
         return show;
-    }
-
-    public static void largeLog(String tag, String content) {
-        if (content.length() > 4000) {
-            Log.d(tag, content.substring(0, 4000));
-            largeLog(tag, content.substring(4000));
-        } else {
-            Log.d(tag, content);
-        }
-    }
-
-    private void loadFragment(Fragment fragment) {
-        // create a FragmentManager
-        FragmentManager fm = getSupportFragmentManager();
-        // create a FragmentTransaction to begin the transaction and replace the Fragment
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        // replace the FrameLayout with new Fragment
-        fragmentTransaction.replace(R.id.container_sla, fragment);
-        fragmentTransaction.commit(); // save the changes
-    }
-
-    public void submitSLA(String jsonSLA){
-        if (db == null) {
-            db = BotListDB.getInstance(context);
-        }
-        Cursor cEdit2 = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66989", "zhar_sla", "1"));
-        if (cEdit2.getCount() > 0) {
-            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonSLA, jsonCreateType("66989", "zhar_sla", "1"), "forn_isian", "cild");
-            db.updateDetailRoomWithFlagContent(orderModel);
-        } else {
-            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonSLA, jsonCreateType("66989", "zhar_sla", "1"), "forn_isian", "cild");
-            db.insertRoomsDetail(orderModel);
-
-        }
-
-        if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-            long date = System.currentTimeMillis();
-            String dateString = hourFormat.format(date);
-            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
-            db.updateDetailRoomWithFlagContentParent(orderModel);
-
-            new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(DinamicSLATaskActivity.this, idDetail, username, idTab, JcontentBawaanReject);
-        } else {
-            long date = System.currentTimeMillis();
-            String dateString = hourFormat.format(date);
-            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "3", null, "parent");
-            db.updateDetailRoomWithFlagContentParent(orderModel);
-            Toast.makeText(context, "No Internet Akses", Toast.LENGTH_SHORT).show();
-            finish();
-        }
     }
 }
 

@@ -104,7 +104,8 @@ public class LoginISS extends AppCompatActivity {
                     new Validations().getInstance(getApplicationContext()).setString(userID.getText().toString(), 28);
                     new Validations().getInstance(getApplicationContext()).setString(passID.getText().toString(), 29);
 
-                    params.put("bc_user", dbhelper.getMyContact().getJabberId());
+                    //  params.put("bc_user", dbhelper.getMyContact().getJabberId());
+                    params.put("bc_user", "6281585597682");
 
                    /* if (userID.getText().toString().equalsIgnoreCase("1701793")) {
                         params.put("bc_user", "6285697223760");//busiti
@@ -232,7 +233,7 @@ public class LoginISS extends AppCompatActivity {
                     DIVISION_NAME, DEPARTEMEN_CODE, DEPARTEMEN_NAME, ATASAN_2_USERNAME, ATASAN_2_EMAIL,
                     ATASAN_2_NIK, ATASAN_2_JT, ATASAN_2_NAMA, ATASAN_2_PHONE, LIST_APPROVE_ROLE1, LIST_APPROVE_ROLE2,
                     LIST_REQ_ROLE, MY_ROLE};
-            
+
             dbHelper.deleteUser();
             db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
 

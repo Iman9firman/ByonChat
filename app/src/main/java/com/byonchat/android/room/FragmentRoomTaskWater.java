@@ -253,8 +253,6 @@ public class FragmentRoomTaskWater extends Fragment {
 
             String titLes = Message.parsedMessageText(JsonToStringKey(title));
 
-            Log.w("2abubu", titLes);
-
             if (titLes.contains("https")) {
                 titLes = desc;
                 desc = "";
@@ -268,7 +266,7 @@ public class FragmentRoomTaskWater extends Fragment {
             }
 
         }
-        Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
+        //Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
         requestKey();
     }
 
@@ -703,7 +701,7 @@ public class FragmentRoomTaskWater extends Fragment {
 
         }
 
-        Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
+       // Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
         myadapter.notifyDataSetChanged();
     }
 

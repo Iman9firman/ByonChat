@@ -141,7 +141,6 @@ public class FragmentRoomMultipleTask extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        Log.w("saya", "disini : " + title);
         if (dbhelper == null) {
             dbhelper = MessengerDatabaseHelper.getInstance(mContext.getApplicationContext());
         }
@@ -242,7 +241,6 @@ public class FragmentRoomMultipleTask extends Fragment {
     }
 
     public String abs(String ctn, String type) {
-        Log.w("hasilABS", type + "::" + ctn);
         String content = ctn;
         if (type != null) {
             if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
@@ -388,7 +386,6 @@ public class FragmentRoomMultipleTask extends Fragment {
 
         protected String doInBackground(String... key) {
             try {
-                Log.w("hallo", linkTembak);
                 HttpClient httpClient = HttpHelper
                         .createHttpClient(mContext);
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
@@ -417,7 +414,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                     response.getEntity().writeTo(out);
                     out.close();
                     content = out.toString();
-                    Log.w("kasus", content);
                     JSONObject result = new JSONObject(content.toString());
 
                     JSONArray menuitemArray = result.getJSONArray("list_pull");
@@ -452,8 +448,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 report_status = oParent.getString("report_status");
                             }
 
-                            Log.w("subami1", report_status);
-                            Log.w("subami2", is_reject);
 
                             Cursor cursorParent = botListDB.getSingleRoomDetailFormWithFlag(id + "|" + parent_id, username, idTab, "parent");
 
@@ -539,8 +533,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                         if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                             requestKey();
                         } else {
-                            Log.w("sekitar", "ur");
-
                             refreshList();
                             swipeRefreshLayout.setRefreshing(false);
                             Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -582,7 +574,6 @@ public class FragmentRoomMultipleTask extends Fragment {
 
     public String va(RoomsDetail roomsDetail) {
         String content = roomsDetail.getContent();
-        Log.w("type2", roomsDetail.getFlag_tab() + "::" + content);
         if (roomsDetail.getFlag_tab().equalsIgnoreCase("rear_camera") || roomsDetail.getFlag_tab().equalsIgnoreCase("front_camera")) {
             Random random = new SecureRandom();
             char[] result = new char[6];
@@ -668,11 +659,11 @@ public class FragmentRoomMultipleTask extends Fragment {
 
 
         listItem2 = botListDB.allRoomDetailFormWithFlag("", username, idTab, "parent");
-        Log.w("subasa : " + title, listItem2.size() + "");
 //coba disini hampir bisa
         int b = 0;
 
         for (RoomsDetail aa : listItem2) {
+
             b++;
             ArrayList<RoomsDetail> listItem3 = botListDB.allRoomDetailFormWithFlag(aa.getId(), username, idTab, "list");
             String title = "";
@@ -738,26 +729,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                     }
 
                 } else {
-                    /*JSONObject jO = null;
-                    try {
-                        jO = new JSONObject(roomsDetail2.getContent());
-                        String content = "";
-                        if (jO.has("aa")) {
-                            content = jO.getString("aa");
-                        }
-
-                        if (jO.has("bb")) {
-                            statusBaru = jO.getString("bb");
-                        }
-
-                        title = abs(content, roomsDetail2.getFlag_tab());
-
-                    } catch (JSONException e) {
-                        title = abs(roomsDetail2.getContent(), roomsDetail2.getFlag_tab());
-                        e.printStackTrace();
-                    }
-
-                    desc = abs(roomsDetail1.getContent(), roomsDetail1.getFlag_tab());*/
                     JSONObject jO = null;
 
                     for (int i = 0; i < listItem3.size(); i++) {
@@ -821,7 +792,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
         }
 
-        Collections.sort(listItem, new Sortiran());
+       // Collections.sort(listItem, new Sortiran());
         myadapter.notifyDataSetChanged();
     }
 
@@ -888,7 +859,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                         if (status == 200) {
                             HttpEntity entity = response.getEntity();
                             String data = EntityUtils.toString(entity);
-                            Log.w("bersama", data);
 
                             try {
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -934,7 +904,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 db.insertRoomsDetail(orderModel);
 
 
-                                Log.w("IK : ", content);
 
                                 String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString(), context.getResources().getString(R.string.app_version));
                                 if (include_assignto.equalsIgnoreCase("0")) {
@@ -997,15 +966,12 @@ public class FragmentRoomMultipleTask extends Fragment {
         try {
             obj.put("aa", a);
             obj.put("bb", b);
-            Log.w("adabdi1", c);
 
             if (!c.equalsIgnoreCase("")) {
-                Log.w("adabdi2", c);
                 obj.put("cc", c);
             }
 
             if (!d.equalsIgnoreCase("")) {
-                Log.w("adabdi2", d);
                 obj.put("dd", d);
             }
 
@@ -1019,7 +985,7 @@ public class FragmentRoomMultipleTask extends Fragment {
     }
 
 
-    static class Sortiran implements Comparator<ContentRoom> {
+  /*  static class Sortiran implements Comparator<ContentRoom> {
 
         @Override
         public int compare(ContentRoom e1, ContentRoom e2) {
@@ -1031,7 +997,7 @@ public class FragmentRoomMultipleTask extends Fragment {
                 return 1;
             }
         }
-    }
+    }*/
 
     private String jsonDuaObject(String a, String b) {
         JSONObject obj = new JSONObject();

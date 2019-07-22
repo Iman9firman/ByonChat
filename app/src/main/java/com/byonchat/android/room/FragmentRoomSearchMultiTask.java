@@ -517,7 +517,7 @@ public class FragmentRoomSearchMultiTask extends Fragment {
                 }
 
 
-                Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
+                /*Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());*/
                 myadapter.notifyDataSetChanged();
 
                 swipeRefreshLayout.setRefreshing(false);

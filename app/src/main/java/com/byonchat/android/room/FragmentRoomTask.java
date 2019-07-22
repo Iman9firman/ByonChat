@@ -162,7 +162,7 @@ public class FragmentRoomTask extends Fragment {
         }
 
 
-        Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
+        //Collections.sort(listItem, new FragmentRoomMultipleTask.Sortiran());
 
         if (myadapter != null) {
             myadapter = null;

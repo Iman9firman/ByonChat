@@ -30,7 +30,7 @@ public class UpdateListDB extends SQLiteOpenHelper {
     private static UpdateListDB instance;
 
     private static final String DATABASE_NAME = "UpdateList.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String UPD_TABLE = "updatelist";
     private static final String SAVE_STRING = "strings";
 

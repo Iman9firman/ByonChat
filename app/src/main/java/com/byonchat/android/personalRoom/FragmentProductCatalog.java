@@ -37,6 +37,7 @@ import com.byonchat.android.personalRoom.model.PictureModel;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.ui.activity.AddBottomCatalogue;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.EndlessRecyclerViewScrollListener;
 import com.byonchat.android.utils.ImageFilePath;
@@ -267,7 +268,9 @@ public class FragmentProductCatalog extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         final PictureModel item = pictureModels.get(position);
-                        Intent intent = new Intent(mContext, DownloadFileByonchat.class);
+//                        Intent intent = new Intent(mContext, FragmentMyCardID.class);
+                        Intent intent = new Intent(mContext, AddBottomCatalogue.class);
+                        intent.putExtra("username",username);
                         intent.putExtra("path", item.getUrl());
                         intent.putExtra("nama_file", item.getTitle());
                         mContext.startActivity(intent);

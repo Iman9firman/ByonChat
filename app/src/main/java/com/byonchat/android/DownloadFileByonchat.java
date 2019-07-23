@@ -24,13 +24,16 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.personalRoom.utils.CloudStorageActivity;
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 
@@ -42,6 +45,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -169,25 +173,30 @@ public class DownloadFileByonchat extends AppCompatActivity {
                         Log.e("Error hereee", "get " + e.getMessage());
                     }
                 } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
-                        intent.setData(uri);
-                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivity(intent);
+                    if(getIntent().getStringExtra("add_merge") != null){
+                        prepareMerging(oldFile.getPath(), getIntent().getStringExtra("add_merge"));
+                    }else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
+                            intent.setData(uri);
+                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            startActivity(intent);
 
-                    } else {
+                        } else {
+                            String exten = oldFile.getAbsolutePath().substring(oldFile.getAbsolutePath().lastIndexOf(".")).replace(".","");
 
-                        MimeTypeMap map = MimeTypeMap.getSingleton();
-                        String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-                        String type = map.getMimeTypeFromExtension(ext);
-                        if (type == null)
-                            type = "*/*";
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        Uri data = Uri.fromFile(oldFile);
-                        intent.setDataAndType(data, type);
-                        startActivity(intent);
+                            MimeTypeMap map = MimeTypeMap.getSingleton();
+                            String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
+                            String type = map.getMimeTypeFromExtension(exten);
+                            if (type == null)
+                                type = "*/*";
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            Uri data = Uri.fromFile(oldFile);
+                            intent.setDataAndType(data, type);
+                            startActivity(intent);
+                        }
                     }
                 }
 
@@ -248,31 +257,35 @@ public class DownloadFileByonchat extends AppCompatActivity {
             NEW_NAME_FILE = NAME_FILE;
         }
 
-
         File oldFile = new File(oldFolder, NEW_NAME_FILE);
         if (oldFile.exists()) {
             if (getIntent().getStringExtra("remove") == null) {
                 finish();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                if(getIntent().getStringExtra("add_merge") != null){
+                    prepareMerging(oldFile.getPath(), getIntent().getStringExtra("add_merge"));
+                }else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                    Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
-                    intent.setData(uri);
-                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    startActivity(intent);
+                        Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
+                        intent.setData(uri);
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(intent);
 
-                } else {
+                    } else {
+                        String exten = oldFile.getAbsolutePath().substring(oldFile.getAbsolutePath().lastIndexOf(".")).replace(".","");
 
-                    MimeTypeMap map = MimeTypeMap.getSingleton();
-                    String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-                    String type = map.getMimeTypeFromExtension(ext);
-                    if (type == null)
-                        type = "*/*";
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    Uri data = Uri.fromFile(oldFile);
-                    intent.setDataAndType(data, type);
-                    startActivity(intent);
+                        MimeTypeMap map = MimeTypeMap.getSingleton();
+                        String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
+                        String type = map.getMimeTypeFromExtension(exten);
+                        if (type == null)
+                            type = "*/*";
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        Uri data = Uri.fromFile(oldFile);
+                        intent.setDataAndType(data, type);
+                        startActivity(intent);
+                    }
                 }
             } else {
                 if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -283,7 +296,6 @@ public class DownloadFileByonchat extends AppCompatActivity {
                 mDatabaseOpenTask.execute(new Context[]{this});
             }
         } else {
-
             if (getIntent().getStringExtra("download") != null) {
 
                 File baru = new File(oldFolder, "ISS_" + NEW_NAME_FILE);
@@ -298,7 +310,6 @@ public class DownloadFileByonchat extends AppCompatActivity {
                         startActivity(intent);
 
                     } else {
-
                         MimeTypeMap map = MimeTypeMap.getSingleton();
                         String ext = MimeTypeMap.getFileExtensionFromUrl(baru.getName());
                         String type = map.getMimeTypeFromExtension(ext);
@@ -347,7 +358,6 @@ public class DownloadFileByonchat extends AppCompatActivity {
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        Log.w("start prestice", "FYTSX");
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
@@ -369,6 +379,67 @@ public class DownloadFileByonchat extends AppCompatActivity {
             }
         };
         queue.add(sr);
+    }
+
+    private void prepareMerging(String path1, String path2) {
+        String fileOne = path1;
+        String Nama_Merge = path1.replace("/storage/emulated/0/ByonChatDoc/","");
+        String fileTwo = path2;
+        File hasil = new File(Environment.getExternalStorageDirectory(), Nama_Merge);
+        hasil.getParentFile().mkdirs();
+        String fileHasil = hasil.getAbsolutePath();
+
+        try {
+            FileInputStream fisOne = new FileInputStream(fileOne);
+            FileInputStream fisTwo = new FileInputStream(fileTwo);
+            FileOutputStream fosHasil = new FileOutputStream(fileHasil);
+
+            mergePdfFiles(fisOne, fisTwo, fosHasil);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        File outputFile = hasil;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Log.e("Krieve", "5");
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", outputFile);
+            intent.setData(uri);
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(intent);
+
+        } else {
+            String exten = outputFile.getAbsolutePath().substring(outputFile.getAbsolutePath().lastIndexOf(".")).replace(".","");
+
+            MimeTypeMap map = MimeTypeMap.getSingleton();
+            String type = map.getMimeTypeFromExtension(exten);
+            if (type == null)
+                type = "application/pdf";
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri data = Uri.fromFile(outputFile);
+            intent.setDataAndType(data, type);
+            startActivity(intent);
+        }
+
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        String ext = MimeTypeMap.getFileExtensionFromUrl(outputFile.getName());
+        String type = map.getMimeTypeFromExtension(ext);
+    }
+
+    private void mergePdfFiles(FileInputStream isOne, FileInputStream isTwo, FileOutputStream hasil) throws Exception {
+        PdfReader one = new PdfReader(isOne);
+        PdfReader two = new PdfReader(isTwo);
+        Document document = new Document();
+        PdfCopy copy = new PdfCopy(document, hasil);
+        document.open();
+        copy.addDocument(one);
+        copy.addDocument(two);
+        document.close();
+        one.close();
+        two.close();
     }
 
 }

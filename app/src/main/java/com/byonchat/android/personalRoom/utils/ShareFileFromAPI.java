@@ -151,7 +151,7 @@ public class ShareFileFromAPI extends AppCompatActivity {
                             share.setType("image/jpg");
                         }
                         share.putExtra(Intent.EXTRA_STREAM, uri);
-                        share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
+//                        share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
                         startActivity(share);
                     }else{
                         prepareMerging(uri);
@@ -245,7 +245,7 @@ public class ShareFileFromAPI extends AppCompatActivity {
                         share.setType("image/jpg");
                     }
                     share.putExtra(Intent.EXTRA_STREAM, uri);
-                    share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
+//                    share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
                     startActivity(share);
                 }else{
                     prepareMerging(uri);

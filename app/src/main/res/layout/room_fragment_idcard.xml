@@ -13,6 +13,14 @@
         android:layout_height="match_parent"
         android:layout_gravity="center">
 
+        <RelativeLayout
+            android:id="@+id/hidenned"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_load_contact_top"
+            android:elevation="@dimen/text16"/>
+
         <android.support.v7.widget.CardView
             android:id="@+id/namecard_main"
             android:layout_width="wrap_content"

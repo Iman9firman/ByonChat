@@ -16,9 +16,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,23 +71,24 @@ public class SLACyclerAdapter extends RecyclerView.Adapter<SLACyclerAdapter.SLAC
     @Override
     public void onBindViewHolder(SLACyclerHolder holder, int position) {
         SLAModel item = mData.get(position);
-        holder.textTitle.setText(item.getTitle());
         holder.textCount.setText(""+item.getCount());
         if (item.isItemToBeCheck()){
+            holder.textContent.setText(item.getTitle());
             holder.textId.setText(String.valueOf(item.getDaleman()));
             holder.picturePicker.setVisibility(View.VISIBLE);
-            holder.yesNoLayout.setVisibility(View.VISIBLE);
+            holder.itemLayout.setVisibility(View.VISIBLE);
+            holder.nextLayout.setVisibility(View.GONE);
             holder.note.setVisibility(View.VISIBLE);
             holder.next.setVisibility(View.GONE);
             holder.textCount.setVisibility(View.GONE);
 
             if (checkDB(idDetailForm, holder.textId.getText().toString())) {
                 if (getOkFromDB(idDetailForm, holder.textId.getText().toString()) == 1) {
-                    holder.yes.setImageDrawable(activity.getDrawable(R.drawable.check_ok));
-                    holder.no.setImageDrawable(activity.getDrawable(R.drawable.nopemcil));
+                    holder.yes.setBackgroundColor(activity.getResources().getColor(R.color.color_primary_green));
+                    holder.no.setBackgroundColor(activity.getResources().getColor(R.color.grey));
                 } else {
-                    holder.no.setImageDrawable(activity.getDrawable(R.drawable.check_no));
-                    holder.yes.setImageDrawable(activity.getDrawable(R.drawable.pemcil));
+                    holder.no.setBackgroundColor(activity.getResources().getColor(R.color.color_primary_red));
+                    holder.yes.setBackgroundColor(activity.getResources().getColor(R.color.grey));
                 }
 
                 if (getImgeB(idDetailForm, holder.textId.getText().toString()) != null) {
@@ -99,15 +102,20 @@ public class SLACyclerAdapter extends RecyclerView.Adapter<SLACyclerAdapter.SLAC
                 holder.note.setText(getComment(idDetailForm, holder.textId.getText().toString()));
 
             } else {
-                holder.yes.setImageDrawable(activity.getDrawable(R.drawable.pemcil));
-                holder.no.setImageDrawable(activity.getDrawable(R.drawable.nopemcil));
+                holder.yes.setBackgroundColor(activity.getResources().getColor(R.color.grey));
+                holder.no.setBackgroundColor(activity.getResources().getColor(R.color.grey));
             }
         } else {
+            holder.textTitle.setText(item.getTitle());
             holder.next.setVisibility(View.VISIBLE);
             holder.textCount.setVisibility(View.VISIBLE);
-            holder.picturePicker.setVisibility(View.GONE);
-            holder.yesNoLayout.setVisibility(View.GONE);
+            holder.picturePicker.setVisibility(View.INVISIBLE);
+            holder.itemLayout.setVisibility(View.GONE);
+            holder.nextLayout.setVisibility(View.VISIBLE);
             holder.note.setVisibility(View.GONE);
+        }
+        if (item.getCount() == 0){
+            holder.textCount.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -120,26 +128,27 @@ public class SLACyclerAdapter extends RecyclerView.Adapter<SLACyclerAdapter.SLAC
 
     // stores and recycles views as they are scrolled off screen
     public class SLACyclerHolder extends RecyclerView.ViewHolder{
-        TextView textTitle,textCount,note,textId;
-        ImageView next,yes,no;
-        ConstraintLayout yesNoLayout,yesLayout,noLayout;
+        TextView textTitle,textContent,textCount,note,textId;
+        ImageView next;
+        ConstraintLayout itemLayout,nextLayout;
+        Button yes,no;
         ImageButton picturePicker;
 
         SLACyclerHolder(View itemView) {
             super(itemView);
-            textTitle = itemView.findViewById(R.id.content_slacyc);
+            textTitle = itemView.findViewById(R.id.title_slacyc);
+            textContent = itemView.findViewById(R.id.content_slacyc);
             textCount = itemView.findViewById(R.id.count_slacyc);
             textId = itemView.findViewById(R.id.id_slacyc);
             next = itemView.findViewById(R.id.next_slacyc);
-            yes = itemView.findViewById(R.id.img_yes_slacyc);
-            no = itemView.findViewById(R.id.img_no_slacyc);
-            yesNoLayout = itemView.findViewById(R.id.layout_yes_no_slacyc);
-            yesLayout = itemView.findViewById(R.id.yes_slacyc);
-            noLayout = itemView.findViewById(R.id.no_slacyc);
+            itemLayout = itemView.findViewById(R.id.layout_item);
+            nextLayout = itemView.findViewById(R.id.layout_next);
+            yes = itemView.findViewById(R.id.yes_slacyc);
+            no = itemView.findViewById(R.id.no_slacyc);
             picturePicker = itemView.findViewById(R.id.pict_slacyc);
             note = itemView.findViewById(R.id.note_slacyc);
 
-            yesLayout.setOnClickListener(v -> {
+            yes.setOnClickListener(v -> {
                 if (checkDB(idDetailForm, textId.getText().toString())) {
                     updateDB(idDetailForm, textId.getText().toString(), 1, null, null);
                     notifyDataSetChanged();
@@ -148,7 +157,7 @@ public class SLACyclerAdapter extends RecyclerView.Adapter<SLACyclerAdapter.SLAC
                     notifyDataSetChanged();
                 }
             });
-            noLayout.setOnClickListener(v -> {
+            no.setOnClickListener(v -> {
                 if (checkDB(idDetailForm, textId.getText().toString())) {
                     updateDB(idDetailForm, textId.getText().toString(), 0, null, null);
                     notifyDataSetChanged();

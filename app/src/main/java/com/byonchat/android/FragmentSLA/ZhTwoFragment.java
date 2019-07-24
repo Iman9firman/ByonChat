@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,7 @@ public class ZhTwoFragment extends Fragment {
     TextView textTitle;
     Button submit;
     ImageButton back;
-    String title,content,idDetailForm,passGrade,bobot;
+    String title,content,idDetailForm,passGrade,bobot,fromId;
     SLACyclerAdapter adapter;
     Double value;
 
@@ -46,13 +47,14 @@ public class ZhTwoFragment extends Fragment {
     }
 
     @SuppressLint("ValidFragment")
-    public ZhTwoFragment(String title , String content , String idDetailForm , Double value , String passGrade , String bobot){
+    public ZhTwoFragment(String title , String content , String idDetailForm , Double value , String passGrade , String bobot , String fromId){
         this.title = title;
         this.idDetailForm = idDetailForm;
         this.content = content;
         this.value = value;
         this.passGrade = passGrade;
         this.bobot = bobot;
+        this.fromId = fromId;
     }
 
 
@@ -79,7 +81,7 @@ public class ZhTwoFragment extends Fragment {
                 JSONArray data = new JSONArray(content);
                 for (int i = 0 ; i<data.length() ; i++){
                     JSONObject childObj = data.getJSONObject(i);
-                    String id = childObj.getString("id");
+                    String id = this.fromId+"-"+childObj.getString("id");
                     String label = childObj.getString("label");
                     String content = childObj.getJSONArray("data").toString();
                     JSONArray counting = new JSONArray(content);
@@ -91,7 +93,10 @@ public class ZhTwoFragment extends Fragment {
                             counter++;
                         }
                     }
-                    itemList.add(new SLAModel(label,content,counter,value/data.length(),false));
+                    SLAModel model = new SLAModel(label,content,counter,value/data.length(),false);
+                    this.fromId = id;
+                    model.setId(id);
+                    itemList.add(model);
                 }
             } catch (JSONException e){
                 e.printStackTrace();
@@ -117,7 +122,7 @@ public class ZhTwoFragment extends Fragment {
             slaCycler.addItemDecoration(dividerItemDecoration);
             adapter = new SLACyclerAdapter(getActivity(),itemList,idDetailForm);
             adapter.setClickListener((item, position) -> {
-                loadFragmentFromFragment(ZhTwoFragment.this,new ZhThreeFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot),"ZhThree");
+                loadFragmentFromFragment(ZhTwoFragment.this,new ZhThreeFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot,fromId),"ZhThree");
             });
             slaCycler.setAdapter(adapter);
             slaCycler.getAdapter().notifyDataSetChanged();

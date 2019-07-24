@@ -78,7 +78,7 @@ public class ZhOneFragment extends Fragment {
             slaCycler.addItemDecoration(dividerItemDecoration);
             adapter = new SLACyclerAdapter(getActivity(),itemList,idDetailForm);
             adapter.setClickListener((item, position) -> {
-                loadFragmentFromFragment(ZhOneFragment.this,new ZhTwoFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot),"ZhTwo");
+                loadFragmentFromFragment(ZhOneFragment.this,new ZhTwoFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot,item.getId()),"ZhTwo");
 
             });
             slaCycler.setAdapter(adapter);
@@ -109,7 +109,10 @@ public class ZhOneFragment extends Fragment {
                             }
                         }
                     }
-                    itemList.add(new SLAModel(label,content,counter,bobot,false));
+                    SLAModel model = new SLAModel(label,content,counter,bobot,false);
+                    Log.w("ivana", "1 id : "+id );
+                    model.setId(id);
+                    itemList.add(model);
                 }
                 if (slaCycler.getAdapter() != null){
                     slaCycler.getAdapter().notifyDataSetChanged();

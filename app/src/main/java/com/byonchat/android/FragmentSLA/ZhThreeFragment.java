@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.FragmentSLA.adapter.SLACyclerAdapter;
 import com.byonchat.android.FragmentSLA.model.SLAModel;
 import com.byonchat.android.R;
@@ -25,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static com.byonchat.android.FragmentSLA.ZhOneFragment.loadFragmentFromFragment;
@@ -35,7 +37,7 @@ public class ZhThreeFragment extends Fragment {
     TextView textTitle;
     Button submit;
     ImageButton back;
-    String title,content,idDetailForm,passGrade,bobot;
+    String title,content,idDetailForm,passGrade,bobot,fromId;
     SLACyclerAdapter adapter;
     Double value;
 
@@ -44,13 +46,14 @@ public class ZhThreeFragment extends Fragment {
     }
 
     @SuppressLint("ValidFragment")
-    public ZhThreeFragment(String title , String content , String idDetailForm , Double value , String passGrade , String bobot){
+    public ZhThreeFragment(String title , String content , String idDetailForm , Double value , String passGrade , String bobot , String fromId){
         this.title = title;
         this.idDetailForm = idDetailForm;
         this.content = content;
         this.value = value;
         this.passGrade = passGrade;
         this.bobot = bobot;
+        this.fromId = fromId;
     }
 
 
@@ -77,7 +80,7 @@ public class ZhThreeFragment extends Fragment {
                 JSONArray data = new JSONArray(content);
                 for (int i = 0 ; i<data.length() ; i++){
                     JSONObject childObj = data.getJSONObject(i);
-                    String id = childObj.getString("id");
+                    String id = this.fromId+"-"+childObj.getString("id");
                     String label = childObj.getString("label");
                     String content = childObj.getJSONArray("data").toString();
                     JSONArray counting = new JSONArray(content);
@@ -85,7 +88,16 @@ public class ZhThreeFragment extends Fragment {
                     for (int j = 0 ; j<counting.length() ; j++){
                         counter++;
                     }
-                    itemList.add(new SLAModel(label,content,counter,value/data.length(),false));
+                    ArrayList<String> listId = ((DinamicSLATaskActivity)getActivity()).getListSubmittedId();
+                    for (int k = 0; k<listId.size() ; k++){
+                        Log.w("ivana", "id : "+id+" - listId : "+listId.get(k));
+                        if (id.equalsIgnoreCase(listId.get(k))){
+                            itemList.add(new SLAModel(label,content,0,value/data.length(),false));
+                        }
+                        else {
+                            itemList.add(new SLAModel(label,content,counter,value/data.length(),false));
+                        }
+                    }
                 }
             } catch (JSONException e){
                 e.printStackTrace();
@@ -111,7 +123,11 @@ public class ZhThreeFragment extends Fragment {
             slaCycler.addItemDecoration(dividerItemDecoration);
             adapter = new SLACyclerAdapter(getActivity(),itemList,idDetailForm);
             adapter.setClickListener((item, position) -> {
-                loadFragmentFromFragment(ZhThreeFragment.this,new ZhFourFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot),"ZhFour");
+                if (item.getCount() != 0){
+                    loadFragmentFromFragment(ZhThreeFragment.this,new ZhFourFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot),"ZhFour");
+                } else {
+                    Toast.makeText(getContext(),"Sudah dikerjakan",Toast.LENGTH_SHORT).show();
+                }
             });
             slaCycler.setAdapter(adapter);
             slaCycler.getAdapter().notifyDataSetChanged();

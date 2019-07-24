@@ -436,20 +436,19 @@ public class AllAboutUploadTask {
 
         if (listUpload.size() == 0) {
             if (fromList.equalsIgnoreCase("show")) {
-                Log.w("kesini!","1");
-                if (idTab.equalsIgnoreCase("2613")){
+                Log.w("kesini!", "1");
+                if (idTab.equalsIgnoreCase("2613")) {
                     new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAILSLA, username, idTab, idDetail);
-                }else{
+                } else {
                     new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
                 }
-                new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);
             } else if (fromList.equalsIgnoreCase("hide")) {
-                Log.w("kesini!","2");
+                Log.w("kesini!", "2");
                 new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + PULLDETAIL, username, idTab, idDetail);
             } else {
-                Log.w("kesini!","3");
+                Log.w("kesini!", "3");
                 if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
-                    Log.w("kesini!","4");
+                    Log.w("kesini!", "4");
                     String[] ff = idDetail.split("\\|");
                     if (ff.length == 2) {
                         if (patokanUpload.length() > 0) {
@@ -935,6 +934,7 @@ public class AllAboutUploadTask {
 
                         }
                     } else {
+                        Log.w("ivana", "1 : " + list.get(u).getFlag_tab() + " - 2 : " + list.get(u).getContent());
                         jsonArrayKey.put(list.get(u).getFlag_tab());
                         jsonArrayValue.put(list.get(u).getContent());
                         jsonArrayDate.put("");
@@ -955,6 +955,7 @@ public class AllAboutUploadTask {
                         if (!root.exists()) {
                             root.mkdirs();
                         }
+                        Log.w("ivana", jsonObject.toString());
                         gpxfile = new File(root, usr + idr + idDetail + ".json");
                         FileWriter writer = new FileWriter(gpxfile);
                         writer.append(jsonObject.toString());

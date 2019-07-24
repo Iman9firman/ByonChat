@@ -1,6 +1,7 @@
 package com.byonchat.android.FragmentSLA.model;
 
 public class SLAModel {
+    private String id;
     private String title;
     private String daleman;
     private int count;
@@ -53,5 +54,13 @@ public class SLAModel {
 
     public void setItemToBeCheck(boolean itemToBeCheck) {
         isItemToBeCheck = itemToBeCheck;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

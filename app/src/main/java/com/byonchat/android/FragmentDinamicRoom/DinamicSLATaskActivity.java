@@ -245,6 +245,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     private SLAISSAdapter adapter;
     private List<SLAISSItem> itemList = new ArrayList<>();
     private FrameLayout container;
+    public ArrayList<String> listSubmittedId = new ArrayList<>();
 
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
@@ -470,7 +471,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             };
             telephonyManager.listen(callStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         }
-
 
         assistant.start();
         IntentFilter filter = new IntentFilter("android.location.PROVIDERS_CHANGED");
@@ -1934,11 +1934,14 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         } else {
 
                             String assup = duaJJt.get(myPosition - 1);
+                            Log.w("ivana", "assup : "+assup);
 
                             if (cEdit.getCount() > 0) {
+                                Log.w("ivana", "> 0 : "+String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup );
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
                                 db.updateDetailRoomWithFlagContent(orderModel);
                             } else {
+                                Log.w("ivana", "< 0 : "+String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup );
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
                                 db.insertRoomsDetail(orderModel);
 
@@ -2118,8 +2121,9 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/iss/kerangka_jjt.php", assup, makeJJTFrame(hasilCOnvert.toString()));
 
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
+                                        listSubmittedId.add("50-67-125");
                                         loadFragment(new ZhOneFragment(spinnerArraySla.get(myPosition), hasilCOnvert.toString(), idDetail, passGrade));
-//                                    largeLog("ivana",hasilCOnvert.toString());
+                                        largeLog("ivana",hasilCOnvert.toString());
                                         adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
                                             @Override
                                             public void onChecked(int count) {
@@ -13024,6 +13028,81 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
             }
         }
+    }
+
+    private class apiLookUp extends AsyncTask<String, Integer, String> {
+
+        String error = "";
+        long totalSize = 0;
+        ProgressDialog rdialog = null;
+
+        @Override
+        protected String doInBackground(String... params) {
+            postData(params[0], params[1]);
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            rdialog = new ProgressDialog(DinamicSLATaskActivity.this);
+            rdialog.setMessage("Loading...");
+            rdialog.show();
+
+        }
+
+        protected void onPostExecute(String result) {
+            rdialog.dismiss();
+            Log.w("ivana", "result : "+result);
+            //nih if result itu json dan tidak kosong , add ke listSubmittedId.
+            //tp kalau json kosong , jalankan post jjt frame.
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+
+        }
+
+        public String postData(String valueIWantToSend, final String kodeJJt) {
+            String hasil = "";
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(valueIWantToSend);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                entity.addPart("kode_jjt", new StringBody(kodeJJt));
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    hasil = EntityUtils.toString(r_entity);
+                }
+
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+                return hasil;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return hasil;
+            }
+            return hasil;
+        }
+    }
+
+    public ArrayList<String> getListSubmittedId() {
+        return listSubmittedId;
     }
 
 

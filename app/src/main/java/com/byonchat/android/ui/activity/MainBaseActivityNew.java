@@ -544,6 +544,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     protected int room_id;
     protected String roomid = "";
     protected int i = 0;
+    protected ProgressDialog dialog;
 //    Boolean loginIss = true;
 
     protected SQLiteDatabase sqLiteDatabase;
@@ -1918,12 +1919,28 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     protected void RefreshRoom() {
         if (title.equalsIgnoreCase("ISS INDONESIA")) {
             vSwipeRefresh.setRefreshing(false);
-            Map<String, String> params = new HashMap<>();
-            params.put("username", new Validations().getInstance(getApplicationContext()).getString(28));
-            params.put("password", new Validations().getInstance(getApplicationContext()).getString(29));
-            params.put("bc_user", Byonchat.getMessengerHelper().getMyContact().getJabberId());
+            AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
+            alertbox.setTitle("Refresh Room ISS INDONESIA");
+            alertbox.setMessage("Are you sure you want to Refresh?");
+            alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
+                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
 
-            LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
+                    dialog = ProgressDialog.show(MainBaseActivityNew.this, "",
+                            "Loading. Please wait...", true);
+                    Map<String, String> params = new HashMap<>();
+                    params.put("username", new Validations().getInstance(getApplicationContext()).getString(28));
+                    params.put("password", new Validations().getInstance(getApplicationContext()).getString(29));
+                    params.put("bc_user", Byonchat.getMessengerHelper().getMyContact().getJabberId());
+
+                    LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
+                }
+            });
+            alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
+            });
+            alertbox.show();
         } else {
             vSwipeRefresh.setRefreshing(false);
             Byonchat.getRoomsDB().open();
@@ -2727,6 +2744,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
+                    if (dialog != null){
+                        dialog.hide();
+                    }
                     if (hide) {
                         try {
                             JSONObject jsonRootObject = new JSONObject(response);
@@ -2739,6 +2759,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
                 },
                 error -> {
+                    if (dialog != null){
+                        dialog.hide();
+                    }
                     Toast.makeText(getApplicationContext(), "Please Try Again : because, " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         ) {

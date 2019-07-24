@@ -9,65 +9,97 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:paddingBottom="20dp"
-        >
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@drawable/backgroud_white"
-            android:id="@+id/btn_banner"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             android:layout_marginTop="10dp"
-            android:visibility="gone"
+            android:paddingBottom="20dp"
             >
-            <TextView
-                android:paddingTop="12dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:paddingBottom="15dp"
-                android:layout_width="wrap_content"
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Show Ads"
-                style="@style/TextLightBlue"
-                />
-            <Switch
-                android:layout_alignParentRight="true"
-                android:paddingTop="12dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:paddingBottom="15dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/switchBanner"
-                android:background="@null"
-                style="@style/TextRegularGrayMedium"
-                tools:ignore="NewApi" />
-        </RelativeLayout>
-        <TableLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/backgroud_white"
-            >
-            <TableRow  >
+                android:orientation="horizontal"
+                android:background="@drawable/backgroud_white"
+                android:id="@+id/btn_banner"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                >
                 <TextView
                     android:paddingTop="12dp"
                     android:paddingLeft="12dp"
                     android:paddingRight="12dp"
+                    android:paddingBottom="15dp"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Show Ads"
                     style="@style/TextLightBlue"
-                    android:text="Display Name"
                     />
+                <Switch
+                    android:layout_alignParentRight="true"
+                    android:paddingTop="12dp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:paddingBottom="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/switchBanner"
+                    android:background="@null"
+                    style="@style/TextRegularGrayMedium"
+                    tools:ignore="NewApi" />
+            </RelativeLayout>
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/backgroud_white"
+                >
+                <TableRow  >
+                    <TextView
+                        android:paddingTop="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:layout_width="wrap_content"
+                        style="@style/TextLightBlue"
+                        android:text="Nomer ByonChat"
+                        />
+                    <EditText
+                        android:paddingLeft="12dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="15dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/bcUser_txt"
+                        android:hint="Not Set"
+                        android:paddingTop="8dp"
+                        android:background="@null"
+                        style="@style/TextRegularGrayMedium"
+                        android:maxLength="30"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        style="@style/TextRegularGrayMedium"
+                        android:id="@+id/txt_count_name"
+                        />
+
+                </TableRow>
+
+                <TableRow  >
+                    <TextView
+                        android:paddingTop="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:layout_width="wrap_content"
+                        style="@style/TextLightBlue"
+                        android:text="Display Name"
+                        />
                     <EditText
                         android:paddingLeft="12dp"
                         android:paddingRight="5dp"
@@ -81,141 +113,141 @@
                         style="@style/TextRegularGrayMedium"
                         android:maxLength="30"
                         />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="10dp"
-                    style="@style/TextRegularGrayMedium"
-                    android:id="@+id/txt_count_name"
-                    />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        style="@style/TextRegularGrayMedium"
+                        android:id="@+id/txt_count_name"
+                        />
 
-            </TableRow>
-            <TableRow  >
-                <TextView
-                    android:paddingTop="12dp"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:layout_width="wrap_content"
-                    android:text="Gender"
-                    style="@style/TextLightBlue"
-                    />
-                <Spinner
-                    android:id="@+id/textGender"
-                    android:layout_weight="1"
-                    android:layout_height="40dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    style="@style/TextRegularGrayMedium"
-                    />
-            </TableRow>
-            <TableRow >
-                <TextView
-                    android:paddingTop="12dp"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:layout_width="wrap_content"
-                    android:text="Birth Date"
-                    style="@style/TextLightBlue"
-                    />
-                <EditText
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:paddingBottom="15dp"
-                    android:layout_weight="1"
-                    android:id="@+id/txt_birth"
-                    android:hint="Not Set"
-                    android:background="@null"
-                    android:paddingTop="8dp"
-                    android:gravity="left"
-                    android:editable="false"
-                    style="@style/TextRegularGrayMedium"
-                    />
-            </TableRow>
-            <TableRow >
-                <TextView
-                    android:paddingTop="12dp"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:layout_width="wrap_content"
-                    android:text="City"
-                    style="@style/TextLightBlue"
-                    />
-                <EditText
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:paddingBottom="15dp"
-                    android:maxLength="99"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/txt_city"
-                    android:hint="Not Set"
-                    android:paddingTop="8dp"
-                    android:background="@null"
-                    style="@style/TextRegularGrayMedium"
-                    />
-            </TableRow>
-            <TableRow  android:layout_marginBottom="15dp">
-                <TextView
-                    android:paddingTop="12dp"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:layout_width="wrap_content"
-                    android:text="Email"
-                    style="@style/TextLightBlue"
-                    />
-                <EditText
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:paddingBottom="15dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/txt_email"
-                    android:hint="Not Set"
-                    android:paddingTop="8dp"
-                    android:background="@null"
-                    android:maxLength="99"
-                    style="@style/TextRegularGrayMedium"
-                    />
-            </TableRow>
+                </TableRow>
+                <TableRow  >
+                    <TextView
+                        android:paddingTop="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:layout_width="wrap_content"
+                        android:text="Gender"
+                        style="@style/TextLightBlue"
+                        />
+                    <Spinner
+                        android:id="@+id/textGender"
+                        android:layout_weight="1"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        style="@style/TextRegularGrayMedium"
+                        />
+                </TableRow>
+                <TableRow >
+                    <TextView
+                        android:paddingTop="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:layout_width="wrap_content"
+                        android:text="Birth Date"
+                        style="@style/TextLightBlue"
+                        />
+                    <EditText
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:paddingBottom="15dp"
+                        android:layout_weight="1"
+                        android:id="@+id/txt_birth"
+                        android:hint="Not Set"
+                        android:background="@null"
+                        android:paddingTop="8dp"
+                        android:gravity="left"
+                        android:editable="false"
+                        style="@style/TextRegularGrayMedium"
+                        />
+                </TableRow>
+                <TableRow >
+                    <TextView
+                        android:paddingTop="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:layout_width="wrap_content"
+                        android:text="City"
+                        style="@style/TextLightBlue"
+                        />
+                    <EditText
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:paddingBottom="15dp"
+                        android:maxLength="99"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txt_city"
+                        android:hint="Not Set"
+                        android:paddingTop="8dp"
+                        android:background="@null"
+                        style="@style/TextRegularGrayMedium"
+                        />
+                </TableRow>
+                <TableRow  android:layout_marginBottom="15dp">
+                    <TextView
+                        android:paddingTop="12dp"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:layout_width="wrap_content"
+                        android:text="Email"
+                        style="@style/TextLightBlue"
+                        />
+                    <EditText
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:paddingBottom="15dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txt_email"
+                        android:hint="Not Set"
+                        android:paddingTop="8dp"
+                        android:background="@null"
+                        android:maxLength="99"
+                        style="@style/TextRegularGrayMedium"
+                        />
+                </TableRow>
 
-        </TableLayout>
+            </TableLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone"
                 android:orientation="horizontal">
-            <TextView
-                android:paddingTop="12dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username Facebook"
-                style="@style/TextLightBlue"
-                />
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="0.5dp"
-                android:background="#ffd7d7d7"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginLeft="12dp"
-                />
-            <EditText
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:paddingBottom="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/txt_facebook"
-                android:hint="Not Set"
-                android:background="@null"
-                android:paddingTop="8dp"
-                style="@style/TextRegularGrayMedium"
-                />
-        </LinearLayout>
+                <TextView
+                    android:paddingTop="12dp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username Facebook"
+                    style="@style/TextLightBlue"
+                    />
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#ffd7d7d7"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginLeft="12dp"
+                    />
+                <EditText
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:paddingBottom="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txt_facebook"
+                    android:hint="Not Set"
+                    android:background="@null"
+                    android:paddingTop="8dp"
+                    style="@style/TextRegularGrayMedium"
+                    />
+            </LinearLayout>
 
-    </LinearLayout>
-  </ScrollView>
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

@@ -17,6 +17,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -52,6 +53,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -66,23 +68,22 @@ public class AccountSettingActivity extends AppCompatActivity {
 
     private MessengerDatabaseHelper dbhelper;
     private Contact contact;
-    public static final String URL_PROFILE = "https://"+ MessengerConnectionService.HTTP_SERVER+"/profile/";
-    private static final String TXTNAME = "Display Name";
-    private static final String TXTEMAIL = "Email";
-    private static final String TXTFACEBOOK = "Facebook";
+    public static final String URL_PROFILE = "https://" + MessengerConnectionService.HTTP_SERVER + "/profile/";
+    public static final String URL_GETVALID = "https://" + MessengerConnectionService.HTTP_SERVER + "/bc_client/bc_voucher_client/webservice/list_api/cek_user_valid.php";
     private EditText textName;
     private Spinner textGender;
     private EditText textBirth;
     private EditText textEmail;
     private EditText textFacebook;
     private EditText textCity;
+    private EditText bcUser_txt;
     private TextView textCountName;
     private Switch switchBanner;
     protected ProgressDialog pdialog;
-    int yearDefault,mYear, mMonth, mDay;
+    int yearDefault, mYear, mMonth, mDay;
     static final int DATE_DIALOG_ID = 1;
-    private String[] arrMonth = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
-    String[] gender = {"Male","Female"};
+    private String[] arrMonth = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    String[] gender = {"Male", "Female"};
 
 
     @Override
@@ -90,27 +91,27 @@ public class AccountSettingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-      //  getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header());
+        //  getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header());
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
 
-
-    public void initView(){
+    public void initView() {
         setContentView(R.layout.account_setting);
         textGender = (Spinner) findViewById(R.id.textGender);
-        ArrayAdapter<String> adapter= new ArrayAdapter<String>(this,
-                R.layout.spinner_gender ,gender);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                R.layout.spinner_gender, gender);
 
         textGender.setAdapter(adapter);
 
-        textName =(EditText)findViewById(R.id.txt_name);
-        textCountName =(TextView)findViewById(R.id.txt_count_name);
-        textBirth =(EditText)findViewById(R.id.txt_birth);
-        textEmail =(EditText)findViewById(R.id.txt_email);
-        textCity=(EditText)findViewById(R.id.txt_city);
-        textFacebook =(EditText)findViewById(R.id.txt_facebook);
-        switchBanner = (Switch)findViewById(R.id.switchBanner);
+        bcUser_txt = (EditText) findViewById(R.id.bcUser_txt);
+        textName = (EditText) findViewById(R.id.txt_name);
+        textCountName = (TextView) findViewById(R.id.txt_count_name);
+        textBirth = (EditText) findViewById(R.id.txt_birth);
+        textEmail = (EditText) findViewById(R.id.txt_email);
+        textCity = (EditText) findViewById(R.id.txt_city);
+        textFacebook = (EditText) findViewById(R.id.txt_facebook);
+        switchBanner = (Switch) findViewById(R.id.switchBanner);
 
         textName.addTextChangedListener(mTextEditorWatcher);
 
@@ -133,7 +134,7 @@ public class AccountSettingActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         if (dbhelper == null) {
@@ -148,45 +149,46 @@ public class AccountSettingActivity extends AppCompatActivity {
             pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         }
         initView();
-        if (cekLoad()){
-            if(isNetworkConnectionAvailable()){
+        if (cekLoad()) {
+            if (isNetworkConnectionAvailable()) {
                 setContentView(R.layout.loading_screen);
-                if(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())){
+                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
                     String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
-                    if (!key.equalsIgnoreCase("null")){
+                    if (!key.equalsIgnoreCase("null")) {
                         new getProfile(getApplicationContext()).execute(key);
                     }
                 }
             }
-        }else{
+        } else {
             setSetting();
         }
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public void setSetting(){
+    public void setSetting() {
+        bcUser_txt.setText(contact.getJabberId());
         textName.setText(contact.getRealname());
         textName.setSelection(textName.length());
-        textCountName.setText(String.valueOf(30-textName.length()));
+        textCountName.setText(String.valueOf(30 - textName.length()));
         setDate(contact.getBirthdate());
         textEmail.setText(contact.getEmail());
         textFacebook.setText(contact.getFacebookid());
         textCity.setText(contact.getCity());
-        if(new Validations().getInstance(getApplicationContext()).getShow(8)){
+        if (new Validations().getInstance(getApplicationContext()).getShow(8)) {
             switchBanner.setChecked(true);
-        }else{
+        } else {
             switchBanner.setChecked(false);
         }
-        if(contact.getGender()!=null){
-            if(contact.getGender().equals("Male")){
+        if (contact.getGender() != null) {
+            if (contact.getGender().equals("Male")) {
                 textGender.setSelection(0);
-            }else{
+            } else {
                 textGender.setSelection(1);
             }
         }
     }
 
-    private final TextWatcher mTextEditorWatcher=new TextWatcher() {
+    private final TextWatcher mTextEditorWatcher = new TextWatcher() {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -204,13 +206,13 @@ public class AccountSettingActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
             // TODO Auto-generated method stub
-            textCountName.setText(String.valueOf(30-s.length()));
+            textCountName.setText(String.valueOf(30 - s.length()));
         }
     };
 
-    public boolean cekLoad(){
+    public boolean cekLoad() {
         boolean load = false;
-        if((contact.getRealname()==null)&&(contact.getGender()==null)&&(contact.getBirthdate()==null)&&(contact.getEmail()==null)&&(contact.getFacebookid()==null)){
+        if ((contact.getRealname() == null) && (contact.getGender() == null) && (contact.getBirthdate() == null) && (contact.getEmail() == null) && (contact.getFacebookid() == null)) {
             load = true;
         }
         return load;
@@ -245,7 +247,23 @@ public class AccountSettingActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isNetworkConnectionAvailable()){
+
+
+                if (!dbhelper.getMyContact().getJabberId().equalsIgnoreCase(bcUser_txt.getText().toString()) && bcUser_txt.getText().toString().length() > 0) {
+
+                    if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                        pdialog.show();
+                        new cekValidUser(getApplicationContext(), bcUser_txt.getText().toString()).execute();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), " Gagal, Coba kembali", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+
+                /*if (isNetworkConnectionAvailable()) {
                     textEmail.setError(null);
                     textBirth.setError(null);
                     String a = textName.getText().toString();
@@ -254,35 +272,35 @@ public class AccountSettingActivity extends AppCompatActivity {
                     String d = textEmail.getText().toString();
                     String e = textFacebook.getText().toString();
                     String f = textCity.getText().toString();
-                    if(cekUpdate(contact,a,b,c,d,e,f)){
-                        if(validDate(textBirth.getText().toString(),yearDefault)){
-                            if(validEmail(textEmail.getText().toString())){
+                    if (cekUpdate(contact, a, b, c, d, e, f)) {
+                        if (validDate(textBirth.getText().toString(), yearDefault)) {
+                            if (validEmail(textEmail.getText().toString())) {
                                 pdialog.show();
                                 String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
-                                if (key.equalsIgnoreCase("null")){
-                                //    Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                                if (key.equalsIgnoreCase("null")) {
+                                    //    Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
                                     pdialog.dismiss();
-                                }else{
+                                } else {
                                     new updateProfile(getApplicationContext()).execute(key);
                                 }
-                            }else{
+                            } else {
                                 textEmail.setError("Email not valid");
                             }
-                        }else{
+                        } else {
                             textBirth.setError("Birth date not valid");
                         }
-                    }else{
+                    } else {
                         Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                         if (switchBanner.isChecked()) {
                             new Validations().getInstance(getApplicationContext()).setShow(8);
-                        }else{
+                        } else {
                             new Validations().getInstance(getApplicationContext()).setNotShow(8);
                         }
                         finish();
                     }
-                }else{
-                    Toast.makeText(getApplicationContext(),"No internet connection",Toast.LENGTH_SHORT).show();
-                }
+                } else {
+                    Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+                }*/
             }
         });
     }
@@ -296,7 +314,7 @@ public class AccountSettingActivity extends AppCompatActivity {
         int id = item.getItemId();
         Intent intent;
         //noinspection SimplifiableIfStatement
-        if ( id== android.R.id.home){
+        if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }
@@ -305,24 +323,22 @@ public class AccountSettingActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected Dialog onCreateDialog(int id)
-    {
+    protected Dialog onCreateDialog(int id) {
         return new DatePickerDialog(
                 this, mDateSetListener, mYear, mMonth, mDay);
 
     }
 
     private DatePickerDialog.OnDateSetListener mDateSetListener =
-            new DatePickerDialog.OnDateSetListener()
-            {
+            new DatePickerDialog.OnDateSetListener() {
 
                 @Override
-                public void onDateSet(DatePicker view, int year, int monthOfYear,int dayOfMonth) {
+                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                     mYear = year;
                     mMonth = monthOfYear;
                     mDay = dayOfMonth;
                     String sdate = LPad(mDay + "", "0", 2) + " " + arrMonth[mMonth] + " " + mYear;
-                    if(year>yearDefault){
+                    if (year > yearDefault) {
                         textBirth.setError("Birth date not valid");
                     }
                     textBirth.setText(sdate);
@@ -337,62 +353,62 @@ public class AccountSettingActivity extends AppCompatActivity {
         return new String(sret);
     }
 
-    public static String getDate(String date){
+    public static String getDate(String date) {
         String mDate = date;
-        if(date!=null&&date.length()>0){
+        if (date != null && date.length() > 0) {
             String tglLahir[] = date.split(" ");
             String bulan = "1";
-            String[] arr = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+            String[] arr = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
             int a = 1;
-            for(String b :arr ){
-                if(b.equalsIgnoreCase(tglLahir[1])){
+            for (String b : arr) {
+                if (b.equalsIgnoreCase(tglLahir[1])) {
                     bulan = String.valueOf(a);
                 }
                 a++;
             }
-            mDate=  tglLahir[2] + "-"+bulan+"-"+tglLahir[0];
+            mDate = tglLahir[2] + "-" + bulan + "-" + tglLahir[0];
         }
         return mDate;
     }
 
-    public void setDate(String date){
-        if(date!=null&&date.length()>0){
+    public void setDate(String date) {
+        if (date != null && date.length() > 0) {
             String tglLahir[] = date.split("-");
             String sdate = date;
-            if(tglLahir.length==3){
-                sdate = LPad(tglLahir[2] + "", "0", 2) +" " + arrMonth[Integer.valueOf(tglLahir[1])-1] + " " + tglLahir[0];
+            if (tglLahir.length == 3) {
+                sdate = LPad(tglLahir[2] + "", "0", 2) + " " + arrMonth[Integer.valueOf(tglLahir[1]) - 1] + " " + tglLahir[0];
             }
             textBirth.setText(sdate);
         }
     }
 
-    public static Boolean  validDate(String date,int yearDefault){
+    public static Boolean validDate(String date, int yearDefault) {
         boolean valid = true;
-        if(date!=null&&date.length()>0) {
+        if (date != null && date.length() > 0) {
             String tglLahir[] = date.split(" ");
-            if(Integer.valueOf(tglLahir[2])>yearDefault){
+            if (Integer.valueOf(tglLahir[2]) > yearDefault) {
                 valid = false;
             }
-        }else{
+        } else {
             valid = false;
         }
         return valid;
     }
 
-    public static Boolean  cekUpdate(Contact contact,String name,String gender,String birth,String email,String facebookId,String city){
+    public static Boolean cekUpdate(Contact contact, String name, String gender, String birth, String email, String facebookId, String city) {
         boolean valid = false;
-        if(!name.equals(contact.getRealname())) valid = true;
-        if(!gender.equals(contact.getGender())) valid = true;
-        if(!birth.equals(contact.getBirthdate())) valid = true;
-        if(!email.equals(contact.getEmail())) valid = true;
-        if(!facebookId.equals(contact.getFacebookid())) valid = true;
-        if(!city.equals(contact.getCity())) valid = true;
+        if (!name.equals(contact.getRealname())) valid = true;
+        if (!gender.equals(contact.getGender())) valid = true;
+        if (!birth.equals(contact.getBirthdate())) valid = true;
+        if (!email.equals(contact.getEmail())) valid = true;
+        if (!facebookId.equals(contact.getFacebookid())) valid = true;
+        if (!city.equals(contact.getCity())) valid = true;
         return valid;
     }
 
-    public static Boolean  validEmail(String email){
+    public static Boolean validEmail(String email) {
         boolean valid = true;
-        if(email!=null&&email.length()>0) {
+        if (email != null && email.length() > 0) {
             valid = android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
         }
         return valid;
@@ -411,9 +427,9 @@ public class AccountSettingActivity extends AppCompatActivity {
         private String content = null;
         private boolean error = false;
         String gender;
-        String email ;
-        String facebookId ;
-        String city ;
+        String email;
+        String facebookId;
+        String city;
         String realname;
         String tanggal;
         String code2;
@@ -451,10 +467,10 @@ public class AccountSettingActivity extends AppCompatActivity {
                 nameValuePairs.add(new BasicNameValuePair("action", "create"));
 
 
-                nameValuePairs.add(new BasicNameValuePair("tgl_lahir",getDate(tanggal)));
+                nameValuePairs.add(new BasicNameValuePair("tgl_lahir", getDate(tanggal)));
                 nameValuePairs.add(new BasicNameValuePair("email", email));
-                nameValuePairs.add(new BasicNameValuePair("realname",realname ));
-                nameValuePairs.add(new BasicNameValuePair("facebook_id",facebookId ));
+                nameValuePairs.add(new BasicNameValuePair("realname", realname));
+                nameValuePairs.add(new BasicNameValuePair("facebook_id", facebookId));
                 nameValuePairs.add(new BasicNameValuePair("gender", gender));
                 nameValuePairs.add(new BasicNameValuePair("kota", city));
 
@@ -481,7 +497,7 @@ public class AccountSettingActivity extends AppCompatActivity {
 
                     code2 = jObject.getString("code");
                     desc = jObject.getString("description");
-                    if(!code2.equalsIgnoreCase("200")) error=true;
+                    if (!code2.equalsIgnoreCase("200")) error = true;
                 } else {
                     content = statusLine.getReasonPhrase();
                     response.getEntity().getContent().close();
@@ -489,7 +505,7 @@ public class AccountSettingActivity extends AppCompatActivity {
                 }
 
             } catch (ClientProtocolException e) {
-                content =  e.getMessage();
+                content = e.getMessage();
                 error = true;
             } catch (IOException e) {
                 content = e.getMessage();
@@ -508,24 +524,24 @@ public class AccountSettingActivity extends AppCompatActivity {
         protected void onPostExecute(String content) {
             pdialog.dismiss();
             if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
+                if (content.contains("invalid_key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                         pdialog.show();
                         String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
-                           // Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                        if (key.equalsIgnoreCase("null")) {
+                            // Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
                             pdialog.dismiss();
-                        }else{
+                        } else {
                             new updateProfile(mContext).execute(key);
                         }
-                    }else{
+                    } else {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(mContext, R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                if(code2.equalsIgnoreCase("200")){
+                if (code2.equalsIgnoreCase("200")) {
                     Contact c = dbhelper.getMyContact();
                     c.setRealname(realname);
                     c.setGender(gender);
@@ -537,16 +553,262 @@ public class AccountSettingActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                     if (switchBanner.isChecked()) {
                         new Validations().getInstance(mContext).setShow(8);
-                    }else{
+                    } else {
                         new Validations().getInstance(mContext).setNotShow(8);
                     }
                     finish();
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext(), desc, Toast.LENGTH_SHORT).show();
                 }
             }
         }
 
+    }
+
+    class cekValidUser extends AsyncTask<String, Void, String> {
+
+        private static final int REGISTRATION_TIMEOUT = 3 * 1000;
+        private static final int WAIT_TIMEOUT = 30 * 1000;
+        private final HttpClient httpclient = new DefaultHttpClient();
+
+        final HttpParams params = httpclient.getParams();
+        HttpResponse response;
+        private JSONObject jObject;
+        private Context mContext;
+        private String content = null;
+        private boolean error = false;
+        String code2;
+        String desc;
+        String nomerChange;
+
+        public cekValidUser(Context context, String _nomerChange) {
+            this.mContext = context;
+            this.nomerChange = _nomerChange;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        InputStreamReader reader = null;
+
+        protected String doInBackground(String... key) {
+
+            try {
+
+                HttpClient httpClient = HttpHelper
+                        .createHttpClient(getApplicationContext());
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+                        1);
+
+                nameValuePairs.add(new BasicNameValuePair("bc_user", nomerChange));
+                nameValuePairs.add(new BasicNameValuePair("id_client", "106"));
+
+                HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+                ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+
+                HttpPost post = new HttpPost(URL_GETVALID);
+                post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+
+                //Response from the Http Request
+                response = httpclient.execute(post);
+                StatusLine statusLine = response.getStatusLine();
+
+                //Check the Http Request for success
+
+                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    out.close();
+                    content = out.toString();
+                    jObject = new JSONObject(content);
+
+                    code2 = jObject.getString("code");
+                    desc = jObject.getString("description");
+                    if (!code2.equalsIgnoreCase("200")) error = true;
+                } else {
+                    content = statusLine.getReasonPhrase();
+                    response.getEntity().getContent().close();
+                    throw new IOException(content);
+                }
+
+            } catch (ClientProtocolException e) {
+                content = e.getMessage();
+                error = true;
+            } catch (IOException e) {
+                content = e.getMessage();
+                error = true;
+            } catch (Exception e) {
+                error = true;
+            }
+
+            return content;
+        }
+
+        protected void onCancelled() {
+            pdialog.dismiss();
+        }
+
+        protected void onPostExecute(String content) {
+            pdialog.dismiss();
+            try {
+                JSONObject jsonObject = new JSONObject(content);
+                if (jsonObject.has("status")) {
+                    if (jsonObject.getString("status").equalsIgnoreCase("true")) {
+
+                        Contact c = dbhelper.getMyContact();
+                        c.setJabberId(nomerChange);
+                        dbhelper.updateData(c);
+                        Toast.makeText(getApplicationContext(), "Berhasil,Harap buka kembali", Toast.LENGTH_SHORT).show();
+                        finishAffinity();
+                        return;
+                    }
+                }
+                Toast.makeText(getApplicationContext(), "Nomer yang anda masukan salah", Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "terjadi kesalahan harap coba lagi", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
+        class getProfile extends AsyncTask<String, Void, String> {
+
+            private static final int REGISTRATION_TIMEOUT = 3 * 1000;
+            private static final int WAIT_TIMEOUT = 30 * 1000;
+            private final HttpClient httpclient = new DefaultHttpClient();
+
+            final HttpParams params = httpclient.getParams();
+            HttpResponse response;
+            private JSONObject jObject;
+            private Context mContext;
+            private String content = null;
+            private boolean error = false;
+            String code2 = "";
+            String desc = "";
+
+            public getProfile(Context context) {
+                this.mContext = context;
+
+            }
+
+            @Override
+            protected void onPreExecute() {
+            }
+
+            InputStreamReader reader = null;
+
+            protected String doInBackground(String... key) {
+
+                try {
+                    Contact contact = dbhelper.getMyContact();
+                    HttpClient httpClient = HttpHelper
+                            .createHttpClient(getApplicationContext());
+                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+                            1);
+
+                    nameValuePairs.add(new BasicNameValuePair("username", contact.getJabberId()));
+                    nameValuePairs.add(new BasicNameValuePair("key", key[0]));
+
+                    HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
+                    HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+                    ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+
+                    HttpPost post = new HttpPost(URL_PROFILE);
+                    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+
+                    //Response from the Http Request
+                    response = httpclient.execute(post);
+                    StatusLine statusLine = response.getStatusLine();
+
+                    if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        response.getEntity().writeTo(out);
+                        out.close();
+                        content = out.toString();
+                        jObject = new JSONObject(content);
+
+                        if (content.contains("\"code\":404")) {
+                            code2 = jObject.getString("code");
+                            desc = jObject.getString("description");
+                            error = true;
+                        } else {
+                            if (content.contains("\"username\":")) {
+                                String realname = "";
+                                String gender = "";
+                                String email = "";
+                                String facebookId = "";
+                                String birth = "";
+                                String city = "";
+
+                                realname = jObject.getString("realname").toString();
+                                gender = jObject.getString("gender").toString();
+                                email = jObject.getString("email").toString();
+                                facebookId = jObject.getString("facebook_id").toString();
+                                birth = jObject.getString("tgl_lahir").toString();
+                                city = jObject.getString("kota").toString();
+
+                                Contact c = dbhelper.getMyContact();
+                                c.setRealname(realname);
+                                c.setGender(gender);
+                                c.setBirthdate(birth);
+                                c.setEmail(email);
+                                c.setFacebookid(facebookId);
+                                c.setCity(city);
+                                dbhelper.updateData(c);
+                            }
+                        }
+
+                    } else {
+                        //Closes the connection.
+                        error = true;
+                        desc = statusLine.getReasonPhrase();
+                        content = statusLine.getReasonPhrase();
+                        response.getEntity().getContent().close();
+                        throw new IOException(content);
+                    }
+
+                } catch (ClientProtocolException e) {
+                    desc = e.getMessage();
+                    content = e.getMessage();
+                    error = true;
+                } catch (IOException e) {
+                    desc = e.getMessage();
+                    content = e.getMessage();
+                    error = true;
+                } catch (Exception e) {
+                    error = true;
+                }
+
+                return content;
+            }
+
+            protected void onCancelled() {
+            }
+
+            protected void onPostExecute(String content) {
+                initView();
+                if (error) {
+                    if (desc.equalsIgnoreCase("Invalid Login Key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (!key.equalsIgnoreCase("null")) {
+                                new getProfile(mContext).execute(key);
+                            }
+                        }
+                    } else {
+                        Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    setSetting();
+                }
+            }
+
+        }
     }
 
     class getProfile extends AsyncTask<String, Void, String> {
@@ -585,7 +847,7 @@ public class AccountSettingActivity extends AppCompatActivity {
                         1);
 
                 nameValuePairs.add(new BasicNameValuePair("username", contact.getJabberId()));
-                nameValuePairs.add(new BasicNameValuePair("key",key[0]));
+                nameValuePairs.add(new BasicNameValuePair("key", key[0]));
 
                 HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
                 HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
@@ -606,18 +868,18 @@ public class AccountSettingActivity extends AppCompatActivity {
                     content = out.toString();
                     jObject = new JSONObject(content);
 
-                    if(content.contains("\"code\":404")){
+                    if (content.contains("\"code\":404")) {
                         code2 = jObject.getString("code");
                         desc = jObject.getString("description");
                         error = true;
-                    }else {
-                        if (content.contains("\"username\":")){
+                    } else {
+                        if (content.contains("\"username\":")) {
                             String realname = "";
                             String gender = "";
-                            String email  = "";
-                            String facebookId  = "";
-                            String birth  = "";
-                            String city  = "";
+                            String email = "";
+                            String facebookId = "";
+                            String birth = "";
+                            String city = "";
 
                             realname = jObject.getString("realname").toString();
                             gender = jObject.getString("gender").toString();
@@ -647,8 +909,8 @@ public class AccountSettingActivity extends AppCompatActivity {
                 }
 
             } catch (ClientProtocolException e) {
-                desc =  e.getMessage();
-                content =  e.getMessage();
+                desc = e.getMessage();
+                content = e.getMessage();
                 error = true;
             } catch (IOException e) {
                 desc = e.getMessage();
@@ -667,21 +929,20 @@ public class AccountSettingActivity extends AppCompatActivity {
         protected void onPostExecute(String content) {
             initView();
             if (error) {
-                if(desc.equalsIgnoreCase("Invalid Login Key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
+                if (desc.equalsIgnoreCase("Invalid Login Key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                         String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (!key.equalsIgnoreCase("null")){
+                        if (!key.equalsIgnoreCase("null")) {
                             new getProfile(mContext).execute(key);
                         }
                     }
-                }else {
-                    Toast.makeText(mContext,desc, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
                 }
-            }else {
+            } else {
                 setSetting();
             }
         }
 
     }
 }
-

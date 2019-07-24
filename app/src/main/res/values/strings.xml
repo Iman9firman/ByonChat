@@ -1,7 +1,7 @@
 <resources>
     <string name="hallo">hallo</string>
     <string name="app_name">ByonChat</string>
-    <string name="app_version">2.6.2.8</string>
+    <string name="app_version">2.6.2.9</string>
     <string name="app_company">honda</string>
     <string name="id_client">106</string>
     <string name="action_settings">Settings</string>

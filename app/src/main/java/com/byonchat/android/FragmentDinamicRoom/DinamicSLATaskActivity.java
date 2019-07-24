@@ -12958,6 +12958,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
         protected void onPostExecute(String result) {
             rdialog.dismiss();
+            loadFragment(new ZhOneFragment(a,be , idDetail, c));
         }
 
         protected void onProgressUpdate(Integer... progress) {

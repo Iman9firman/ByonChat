@@ -75,6 +75,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.byonchat.android.AccountSettingActivity;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.ByonChatMainRoomActivity;
@@ -670,7 +671,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                             shareIt();
                             break;
                         case R.id.nav_item_three:
-                            Intent intent2 = new Intent(getApplicationContext(), MainSettingActivity.class);
+                            Intent intent2 = new Intent(getApplicationContext(), AccountSettingActivity.class);
                             intent2.putExtra(Constants.EXTRA_COLOR, color);
                             intent2.putExtra(Constants.EXTRA_COLORTEXT, colorText);
                             startActivity(intent2);

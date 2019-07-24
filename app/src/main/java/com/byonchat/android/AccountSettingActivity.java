@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -149,7 +150,7 @@ public class AccountSettingActivity extends AppCompatActivity {
             pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         }
         initView();
-        if (cekLoad()) {
+        /*if (cekLoad()) {
             if (isNetworkConnectionAvailable()) {
                 setContentView(R.layout.loading_screen);
                 if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
@@ -161,31 +162,25 @@ public class AccountSettingActivity extends AppCompatActivity {
             }
         } else {
             setSetting();
-        }
+        }*/
+        setSetting();
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void setSetting() {
         bcUser_txt.setText(contact.getJabberId());
-        textName.setText(contact.getRealname());
-        textName.setSelection(textName.length());
-        textCountName.setText(String.valueOf(30 - textName.length()));
-        setDate(contact.getBirthdate());
-        textEmail.setText(contact.getEmail());
-        textFacebook.setText(contact.getFacebookid());
-        textCity.setText(contact.getCity());
-        if (new Validations().getInstance(getApplicationContext()).getShow(8)) {
-            switchBanner.setChecked(true);
-        } else {
-            switchBanner.setChecked(false);
-        }
-        if (contact.getGender() != null) {
-            if (contact.getGender().equals("Male")) {
-                textGender.setSelection(0);
-            } else {
-                textGender.setSelection(1);
-            }
-        }
+        bcUser_txt.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(bcUser_txt, InputMethodManager.SHOW_IMPLICIT);
+
+        textName.setVisibility(View.GONE);
+        textCountName.setVisibility(View.GONE);
+        textEmail.setVisibility(View.GONE);
+        textFacebook.setVisibility(View.GONE);
+        textCity.setVisibility(View.GONE);
+        textGender.setVisibility(View.GONE);
+        switchBanner.setVisibility(View.GONE);
+
     }
 
     private final TextWatcher mTextEditorWatcher = new TextWatcher() {

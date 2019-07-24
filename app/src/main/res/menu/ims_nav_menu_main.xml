@@ -15,7 +15,7 @@
             android:id="@+id/nav_item_three"
             android:icon="@drawable/baseline_settings_black_24"
             android:iconTint="@color/textColorSecondary"
-            android:title="Setting" />
+            android:title="Change Number" />
         <item
             android:id="@+id/nav_item_four"
             android:icon="@drawable/ic_mood_black_24dp"

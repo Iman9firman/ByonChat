@@ -326,7 +326,7 @@
         <activity
             android:name=".AccountSettingActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_acount_setting" />
+            android:label="Change Number" />
 
         <provider
             android:name=".sync.BCContentProvider"

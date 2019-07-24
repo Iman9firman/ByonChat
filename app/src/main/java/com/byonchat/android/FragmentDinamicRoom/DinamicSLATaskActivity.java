@@ -246,6 +246,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     private List<SLAISSItem> itemList = new ArrayList<>();
     private FrameLayout container;
     public ArrayList<String> listSubmittedId = new ArrayList<>();
+    private String a,be,c,d;
 
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
@@ -2118,11 +2119,14 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                         Log.w("sangkur", makeJJTFrame(hasilCOnvert.toString()));
 
-                                        new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/iss/kerangka_jjt.php", assup, makeJJTFrame(hasilCOnvert.toString()));
+                                        a = spinnerArraySla.get(myPosition);
+                                        be = hasilCOnvert.toString();
+                                        c = passGrade;
+                                        d = assup;
+//                                        new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/iss/kerangka_jjt.php", assup, makeJJTFrame(hasilCOnvert.toString()));
+                                        new apiLookUp().execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt",d);
 
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
-                                        listSubmittedId.add("50-67-125");
-                                        loadFragment(new ZhOneFragment(spinnerArraySla.get(myPosition), hasilCOnvert.toString(), idDetail, passGrade));
                                         largeLog("ivana",hasilCOnvert.toString());
                                         adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
                                             @Override
@@ -13038,8 +13042,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
         @Override
         protected String doInBackground(String... params) {
-            postData(params[0], params[1]);
-            return null;
+            return postData(params[0], params[1]);
         }
 
         @Override
@@ -13054,8 +13057,22 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         protected void onPostExecute(String result) {
             rdialog.dismiss();
             Log.w("ivana", "result : "+result);
-            //nih if result itu json dan tidak kosong , add ke listSubmittedId.
-            //tp kalau json kosong , jalankan post jjt frame.
+            if (!result.equals("")){
+                if (!result.equals("[]")){
+                    try {
+                        JSONArray arr = new JSONArray(result);
+                        for (int i = 0 ; i < arr.length() ; i++){
+                            String id = arr.getString(i);
+                            listSubmittedId.add(id);
+                        }
+                        loadFragment(new ZhOneFragment(a,be , idDetail, c));
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                } else {
+                    new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/iss/kerangka_jjt.php", d, makeJJTFrame(be));
+                }
+            }
         }
 
         protected void onProgressUpdate(Integer... progress) {
@@ -13086,8 +13103,10 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 HttpEntity r_entity = response.getEntity();
 
                 int statusCode = response.getStatusLine().getStatusCode();
+                Log.w("ivana", "code : "+statusCode);
                 if (statusCode == 200) {
                     hasil = EntityUtils.toString(r_entity);
+                    Log.w("ivana", "hasil : "+hasil);
                 }
 
             } catch (ClientProtocolException e) {

@@ -77,6 +77,7 @@ public class ZhThreeFragment extends Fragment {
         ArrayList<SLAModel> itemList = new ArrayList<>();
         if (content != null){
             try {
+                ArrayList<String> listId = ((DinamicSLATaskActivity)getActivity()).getListSubmittedId();
                 JSONArray data = new JSONArray(content);
                 for (int i = 0 ; i<data.length() ; i++){
                     JSONObject childObj = data.getJSONObject(i);
@@ -88,14 +89,13 @@ public class ZhThreeFragment extends Fragment {
                     for (int j = 0 ; j<counting.length() ; j++){
                         counter++;
                     }
-                    ArrayList<String> listId = ((DinamicSLATaskActivity)getActivity()).getListSubmittedId();
+                    SLAModel model = new SLAModel(label,content,counter,value/data.length(),false);
+                    itemList.add(model);
                     for (int k = 0; k<listId.size() ; k++){
                         Log.w("ivana", "id : "+id+" - listId : "+listId.get(k));
                         if (id.equalsIgnoreCase(listId.get(k))){
+                            itemList.remove(model);
                             itemList.add(new SLAModel(label,content,0,value/data.length(),false));
-                        }
-                        else {
-                            itemList.add(new SLAModel(label,content,counter,value/data.length(),false));
                         }
                     }
                 }

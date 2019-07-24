@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.FragmentSLA.adapter.SLACyclerAdapter;
 import com.byonchat.android.FragmentSLA.model.SLAModel;
 import com.byonchat.android.R;
@@ -87,6 +88,7 @@ public class ZhOneFragment extends Fragment {
 
         if (content != null){
             try {
+                ArrayList<String> listId = ((DinamicSLATaskActivity)getActivity()).getListSubmittedId();
                 JSONObject obj = new JSONObject(content);
                 JSONArray data = obj.getJSONArray("data");
                 for (int i = 0 ; i<data.length() ; i++){

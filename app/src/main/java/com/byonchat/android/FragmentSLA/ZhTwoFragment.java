@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.FragmentSLA.adapter.SLACyclerAdapter;
 import com.byonchat.android.FragmentSLA.model.SLAModel;
 import com.byonchat.android.R;
@@ -59,8 +60,7 @@ public class ZhTwoFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_zh_sla, container, false);
         submit = view.findViewById(R.id.submit_zhsla);
@@ -78,6 +78,7 @@ public class ZhTwoFragment extends Fragment {
         ArrayList<SLAModel> itemList = new ArrayList<>();
         if (content != null){
             try {
+                ArrayList<String> listId = ((DinamicSLATaskActivity)getActivity()).getListSubmittedId();
                 JSONArray data = new JSONArray(content);
                 for (int i = 0 ; i<data.length() ; i++){
                     JSONObject childObj = data.getJSONObject(i);
@@ -88,13 +89,21 @@ public class ZhTwoFragment extends Fragment {
                     int counter = 0;
                     for (int j = 0 ; j<counting.length() ; j++){
                         JSONObject child1 = counting.getJSONObject(j);
+                        String id2 = child1.getString("id");
                         JSONArray contentCh1 = child1.getJSONArray("data");
                         for (int k = 0 ; k<contentCh1.length() ; k++){
+                            String id3 = id+"-"+id2;
                             counter++;
+                            if (listId.size() != 0){
+                                for (int m = 0 ; m < listId.size() ; m++){
+                                    if (listId.get(m).equalsIgnoreCase(id3)){
+                                        counter--;
+                                    }
+                                }
+                            }
                         }
                     }
                     SLAModel model = new SLAModel(label,content,counter,value/data.length(),false);
-                    this.fromId = id;
                     model.setId(id);
                     itemList.add(model);
                 }
@@ -122,7 +131,7 @@ public class ZhTwoFragment extends Fragment {
             slaCycler.addItemDecoration(dividerItemDecoration);
             adapter = new SLACyclerAdapter(getActivity(),itemList,idDetailForm);
             adapter.setClickListener((item, position) -> {
-                loadFragmentFromFragment(ZhTwoFragment.this,new ZhThreeFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot,fromId),"ZhThree");
+                loadFragmentFromFragment(ZhTwoFragment.this,new ZhThreeFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot,item.getId()),"ZhThree");
             });
             slaCycler.setAdapter(adapter);
             slaCycler.getAdapter().notifyDataSetChanged();

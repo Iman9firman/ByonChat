@@ -54,8 +54,7 @@ public class ZhOneFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_zh_sla, container, false);
         submit = view.findViewById(R.id.submit_zhsla);
@@ -102,17 +101,26 @@ public class ZhOneFragment extends Fragment {
                     int counter = 0;
                     for (int j = 0 ; j<counting.length() ; j++){
                         JSONObject child1 = counting.getJSONObject(j);
+                        String id2 = child1.getString("id");
                         JSONArray contentCh1 = child1.getJSONArray("data");
                         for (int k = 0 ; k<contentCh1.length() ; k++){
                             JSONObject child2 = contentCh1.getJSONObject(k);
+                            String id3 = child2.getString("id");
                             JSONArray contentCh2 = child2.getJSONArray("data");
                             for (int l = 0 ; l<contentCh2.length();l++){
+                                String id4 = id+"-"+id2+"-"+id3;
                                 counter++;
+                                if (listId.size() != 0){
+                                    for (int m = 0 ; m < listId.size() ; m++){
+                                        if (listId.get(m).equalsIgnoreCase(id4)){
+                                            counter--;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                     SLAModel model = new SLAModel(label,content,counter,bobot,false);
-                    Log.w("ivana", "1 id : "+id );
                     model.setId(id);
                     itemList.add(model);
                 }

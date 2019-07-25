@@ -104,6 +104,7 @@ import com.byonchat.android.DialogFormChildMainNew;
 import com.byonchat.android.DownloadFileByonchat;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.DownloadUtilsActivity;
+import com.byonchat.android.FragmentSLA.ZhFourFragment;
 import com.byonchat.android.FragmentSLA.ZhOneFragment;
 import com.byonchat.android.FragmentSetting.AboutSettingFragment;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
@@ -1935,14 +1936,11 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         } else {
 
                             String assup = duaJJt.get(myPosition - 1);
-                            Log.w("ivana", "assup : "+assup);
 
                             if (cEdit.getCount() > 0) {
-                                Log.w("ivana", "> 0 : "+String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup );
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
                                 db.updateDetailRoomWithFlagContent(orderModel);
                             } else {
-                                Log.w("ivana", "< 0 : "+String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup );
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
                                 db.insertRoomsDetail(orderModel);
 
@@ -1993,7 +1991,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + assup + "'", null, null, null, null, null);
 
                                 if (css.moveToFirst()) {
-                                    textProgress.setVisibility(View.VISIBLE);
+                                    textProgress.setVisibility(View.GONE);
                                     recyclerView.setVisibility(View.GONE);
                                     container.setVisibility(View.VISIBLE);
                                     String bobotIdOld = "";
@@ -2127,7 +2125,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         new apiLookUp().execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt",d);
 
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
-                                        largeLog("ivana",hasilCOnvert.toString());
+//                                        largeLog("ivana",hasilCOnvert.toString());
                                         adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
                                             @Override
                                             public void onChecked(int count) {
@@ -9891,7 +9889,10 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             } else {
                                 adapter.updateDB(valueIdValue.getIdDetail().split(";")[0], valueIdValue.getIdDetail().split(";")[1], Integer.valueOf(valueIdValue.getExpandedListText()), f.getAbsolutePath(), null);
                             }
-
+                            Fragment frag = getSupportFragmentManager().findFragmentById(R.id.container_sla);
+                            if (frag instanceof ZhFourFragment){
+                                ((ZhFourFragment) frag).getAdapter().notifyDataSetChanged();
+                            }
                             adapter.notifyDataSetChanged();
 
                         } else {
@@ -13057,7 +13058,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
         protected void onPostExecute(String result) {
             rdialog.dismiss();
-            Log.w("ivana", "result : "+result);
             if (!result.equals("")){
                 if (!result.equals("[]")){
                     try {
@@ -13104,10 +13104,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 HttpEntity r_entity = response.getEntity();
 
                 int statusCode = response.getStatusLine().getStatusCode();
-                Log.w("ivana", "code : "+statusCode);
                 if (statusCode == 200) {
                     hasil = EntityUtils.toString(r_entity);
-                    Log.w("ivana", "hasil : "+hasil);
                 }
 
             } catch (ClientProtocolException e) {
@@ -13125,7 +13123,17 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         return listSubmittedId;
     }
 
+    public String getUsername() {
+        return username;
+    }
 
+    public String getIdTab() {
+        return idTab;
+    }
+
+    public String getIdDetail() {
+        return idDetail;
+    }
 }
 
 

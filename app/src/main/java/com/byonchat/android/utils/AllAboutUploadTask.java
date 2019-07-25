@@ -934,7 +934,6 @@ public class AllAboutUploadTask {
 
                         }
                     } else {
-                        Log.w("ivana", "1 : " + list.get(u).getFlag_tab() + " - 2 : " + list.get(u).getContent());
                         jsonArrayKey.put(list.get(u).getFlag_tab());
                         jsonArrayValue.put(list.get(u).getContent());
                         jsonArrayDate.put("");
@@ -955,7 +954,6 @@ public class AllAboutUploadTask {
                         if (!root.exists()) {
                             root.mkdirs();
                         }
-                        Log.w("ivana", jsonObject.toString());
                         gpxfile = new File(root, usr + idr + idDetail + ".json");
                         FileWriter writer = new FileWriter(gpxfile);
                         writer.append(jsonObject.toString());

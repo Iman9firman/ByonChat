@@ -92,7 +92,6 @@ public class ZhThreeFragment extends Fragment {
                     SLAModel model = new SLAModel(label,content,counter,value/data.length(),false);
                     itemList.add(model);
                     for (int k = 0; k<listId.size() ; k++){
-                        Log.w("ivana", "id : "+id+" - listId : "+listId.get(k));
                         if (id.equalsIgnoreCase(listId.get(k))){
                             itemList.remove(model);
                             itemList.add(new SLAModel(label,content,0,value/data.length(),false));

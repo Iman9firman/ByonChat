@@ -4,6 +4,7 @@ package com.byonchat.android.FragmentSLA;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,14 +25,29 @@ import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.FragmentSLA.adapter.SLACyclerAdapter;
 import com.byonchat.android.FragmentSLA.model.SLAModel;
 import com.byonchat.android.R;
+import com.byonchat.android.model.SLAmodelNew;
 import com.byonchat.android.provider.RadioButtonCheckDB;
+import com.byonchat.android.ui.activity.PustSLAFollowUpActivity;
+import com.byonchat.android.utils.AndroidMultiPartEntity;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_COMMENT;
@@ -40,6 +56,7 @@ import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID_DETAIL;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_IMG;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_OK;
 import static com.byonchat.android.provider.RadioButtonCheckDB.TABLE_NAME;
+import static com.byonchat.android.ui.activity.PustSLAFollowUpActivity.resizeAndCompressImageBeforeSend;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,6 +70,11 @@ public class ZhFourFragment extends Fragment {
     String title,content,idDetailForm,passGrade,bobot;
     SLACyclerAdapter adapter;
     Double value;
+
+    ArrayList<SLAModel> itemList = new ArrayList<>();
+    ArrayList<String> imgList = new ArrayList<>();
+    int counter = 0;
+    String id1=null,id2=null,id3=null,id4=null;
 
     DecimalFormat decimal = new DecimalFormat("#.##");
 
@@ -89,7 +111,6 @@ public class ZhFourFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayList<SLAModel> itemList = new ArrayList<>();
         if (content != null){
             try {
                 JSONArray data = new JSONArray(content);
@@ -109,7 +130,6 @@ public class ZhFourFragment extends Fragment {
             submit.setOnClickListener(v -> {
                 boolean letsGo = true;
                 String[] ids = null;
-                String id1=null,id2=null,id3=null,id4=null;
                 for (int i = 0 ; i<itemList.size() ; i++){
                     String idContent = itemList.get(i).getDaleman();
                     if (i == 0){
@@ -122,67 +142,82 @@ public class ZhFourFragment extends Fragment {
                 }
                 if (letsGo){
                     try {
-                        JSONArray arrayPertanyaan = new JSONArray();
-                        List<Integer> lolos = new ArrayList<>();
                         for (int z = 0 ; z<itemList.size() ; z++){
-                            JSONObject objPertanyaan = new JSONObject();
                             String idContent = itemList.get(z).getDaleman();
-                            String[] id = idContent.split("-");
-                            id4 = id[3];
-                            int value = getOkFromDB(idDetailForm,idContent);
-                            String img = getImgeB(idDetailForm, idContent);
-                            String cmnt = getComment(idDetailForm,idContent);
-                            if (value == 0){
-                                if (img != null && cmnt != null){
-                                    objPertanyaan.put("id",id4);
-                                    objPertanyaan.put("v",value);
-                                    objPertanyaan.put("f",img);
-                                    objPertanyaan.put("n",cmnt);
-                                    objPertanyaan.put("b",decimal.format(itemList.get(z).getValue()));
-                                    arrayPertanyaan.put(objPertanyaan);
-                                } else {
-                                    lolos.add(z);
-                                }
-                            } else {
-                                objPertanyaan.put("id",id4);
-                                objPertanyaan.put("v",value);
-                                objPertanyaan.put("f", img == null ? "" : img);
-                                objPertanyaan.put("n", cmnt == null ? "" : cmnt);
-                                objPertanyaan.put("b",decimal.format(itemList.get(z).getValue()));
-                                arrayPertanyaan.put(objPertanyaan);
+                            String image = getImgeB(idDetailForm,idContent);
+                            if (image != "" && image != null){
+                                imgList.add(image);
                             }
                         }
-                        if (!(lolos.size() > 0)){
-                            JSONArray arraySubsection = new JSONArray();
-                            JSONObject objSubsection = new JSONObject();
-                            objSubsection.put("id",id3);
-                            objSubsection.put("pertanyaan",arrayPertanyaan);
-                            arraySubsection.put(objSubsection);
 
-                            JSONArray arraySection = new JSONArray();
-                            JSONObject objSection = new JSONObject();
-                            objSection.put("id",id2);
-                            objSection.put("subsection",arraySubsection);
-                            arraySection.put(objSection);
-
-                            JSONArray arrayPembobotan = new JSONArray();
-                            JSONObject objPembobotan = new JSONObject();
-                            objPembobotan.put("id",id1);
-                            objPembobotan.put("bobot",bobot);
-                            objPembobotan.put("section",arraySection);
-                            arrayPembobotan.put(objPembobotan);
-
-                            JSONArray arrayParent = new JSONArray();
-                            JSONObject objParent = new JSONObject();
-                            objParent.put("grade",passGrade);
-                            objParent.put("pembobotan",arrayPembobotan);
-                            arrayParent.put(objParent);
-
-                            Log.w("ivana", "JSON : "+arrayParent.toString());
-//                            Toast.makeText(getContext(),"Submit success",Toast.LENGTH_SHORT).show();
-                            ((DinamicSLATaskActivity)getActivity()).submitSLA(arrayParent.toString());
+                        if (imgList.size() > 0){
+                            new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                    ((DinamicSLATaskActivity) getActivity()).getUsername(),
+                                    "2613",
+                                    "66989",
+                                    imgList.get(0),
+                                    itemList.get(0).getDaleman());
                         } else {
-                            Toast.makeText(getContext(),"Harap isi note dan gambar jika memilih 'No' .",Toast.LENGTH_SHORT).show();
+                            JSONArray arrayPertanyaan = new JSONArray();
+                            List<Integer> lolos = new ArrayList<>();
+                            for (int ivana = 0 ; ivana<itemList.size() ; ivana++){
+                                JSONObject objPertanyaan = new JSONObject();
+                                String idContent = itemList.get(ivana).getDaleman();
+                                String[] id = idContent.split("-");
+                                id4 = id[3];
+                                int value = getOkFromDB(idDetailForm,idContent);
+                                String img = getImgeB(idDetailForm, idContent);
+                                String cmnt = getComment(idDetailForm,idContent);
+                                if (value == 0){
+                                    if (img != null && cmnt != null){
+                                        objPertanyaan.put("id",id4);
+                                        objPertanyaan.put("v",value);
+                                        objPertanyaan.put("f",itemList.get(ivana).getImg());
+                                        objPertanyaan.put("n",cmnt);
+                                        objPertanyaan.put("b",decimal.format(itemList.get(ivana).getValue()));
+                                        arrayPertanyaan.put(objPertanyaan);
+                                    } else {
+                                        lolos.add(ivana);
+                                    }
+                                } else {
+                                    objPertanyaan.put("id",id4);
+                                    objPertanyaan.put("v",value);
+                                    objPertanyaan.put("f", img == null ? "" : itemList.get(ivana).getImg());
+                                    objPertanyaan.put("n", cmnt == null ? "" : cmnt);
+                                    objPertanyaan.put("b",decimal.format(itemList.get(ivana).getValue()));
+                                    arrayPertanyaan.put(objPertanyaan);
+                                }
+                            }
+                            if (!(lolos.size() > 0)){
+                                JSONArray arraySubsection = new JSONArray();
+                                JSONObject objSubsection = new JSONObject();
+                                objSubsection.put("id",id3);
+                                objSubsection.put("pertanyaan",arrayPertanyaan);
+                                arraySubsection.put(objSubsection);
+
+                                JSONArray arraySection = new JSONArray();
+                                JSONObject objSection = new JSONObject();
+                                objSection.put("id",id2);
+                                objSection.put("subsection",arraySubsection);
+                                arraySection.put(objSection);
+
+                                JSONArray arrayPembobotan = new JSONArray();
+                                JSONObject objPembobotan = new JSONObject();
+                                objPembobotan.put("id",id1);
+                                objPembobotan.put("bobot",bobot);
+                                objPembobotan.put("section",arraySection);
+                                arrayPembobotan.put(objPembobotan);
+
+                                JSONArray arrayParent = new JSONArray();
+                                JSONObject objParent = new JSONObject();
+                                objParent.put("grade",passGrade);
+                                objParent.put("pembobotan",arrayPembobotan);
+                                arrayParent.put(objParent);
+//                            Toast.makeText(getContext(),"Submit success",Toast.LENGTH_SHORT).show();
+                                ((DinamicSLATaskActivity)getActivity()).submitSLA(arrayParent.toString());
+                            } else {
+                                Toast.makeText(getContext(),"Harap isi note dan gambar jika memilih 'No' .",Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                     } catch (JSONException e){
@@ -291,4 +326,176 @@ public class ZhFourFragment extends Fragment {
         return ok;
     }
 
+    public SLACyclerAdapter getAdapter() {
+        return adapter;
+    }
+
+    private class UploadFileToServerCild extends AsyncTask<String, Integer, String> {
+        long totalSize = 0;
+        String ii;
+        String id;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.w("segituStart", "de");
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5]);
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+        @SuppressWarnings("deprecation")
+        private String uploadFile(String URL, String username, String id_room, String id_list, String value, String ids) {
+            String responseString = null;
+            ii = value;
+            id = ids;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(URL);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                java.io.File sourceFile = new java.io.File(resizeAndCompressImageBeforeSend(getContext(), ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
+
+                if (!sourceFile.exists()) {
+                    return "File not exists";
+                }
+
+                ContentType contentType = ContentType.create("image/jpeg");
+                entity.addPart("username_room", new StringBody(username));
+                entity.addPart("id_rooms_tab", new StringBody(id_room));
+                entity.addPart("id_list_task", new StringBody(id_list));
+                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
+
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    String _response = EntityUtils.toString(r_entity); // content will be consume only once
+                    return _response;
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                String message = jsonObject.getString("message");
+                if (message.length() == 0) {
+                    String fileNameServer = jsonObject.getString("filename");
+                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
+                    for (int i = 0 ; i<itemList.size() ; i++){
+                        if (itemList.get(i).getDaleman().equalsIgnoreCase(id)){
+                            itemList.get(i).setImg(filePhott);
+                        }
+                    }
+                }
+                counter++;
+
+                if (counter < imgList.size()){
+                    new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                            ((DinamicSLATaskActivity) getActivity()).getUsername(),
+                            "2613",
+                            "66989",
+                            imgList.get(counter),
+                            itemList.get(counter).getDaleman());
+                } else {
+                    JSONArray arrayPertanyaan = new JSONArray();
+                    List<Integer> lolos = new ArrayList<>();
+                    for (int ivana = 0 ; ivana<itemList.size() ; ivana++){
+                        JSONObject objPertanyaan = new JSONObject();
+                        String idContent = itemList.get(ivana).getDaleman();
+                        String[] id = idContent.split("-");
+                        id4 = id[3];
+                        int value = getOkFromDB(idDetailForm,idContent);
+                        String img = getImgeB(idDetailForm, idContent);
+                        String cmnt = getComment(idDetailForm,idContent);
+                        if (value == 0){
+                            if (img != null && cmnt != null){
+                                objPertanyaan.put("id",id4);
+                                objPertanyaan.put("v",value);
+                                objPertanyaan.put("f",itemList.get(ivana).getImg());
+                                objPertanyaan.put("n",cmnt);
+                                objPertanyaan.put("b",decimal.format(itemList.get(ivana).getValue()));
+                                arrayPertanyaan.put(objPertanyaan);
+                            } else {
+                                lolos.add(ivana);
+                            }
+                        } else {
+                            objPertanyaan.put("id",id4);
+                            objPertanyaan.put("v",value);
+                            objPertanyaan.put("f", img == null ? "" : itemList.get(ivana).getImg());
+                            objPertanyaan.put("n", cmnt == null ? "" : cmnt);
+                            objPertanyaan.put("b",decimal.format(itemList.get(ivana).getValue()));
+                            arrayPertanyaan.put(objPertanyaan);
+                        }
+                    }
+                    if (!(lolos.size() > 0)){
+                        JSONArray arraySubsection = new JSONArray();
+                        JSONObject objSubsection = new JSONObject();
+                        objSubsection.put("id",id3);
+                        objSubsection.put("pertanyaan",arrayPertanyaan);
+                        arraySubsection.put(objSubsection);
+
+                        JSONArray arraySection = new JSONArray();
+                        JSONObject objSection = new JSONObject();
+                        objSection.put("id",id2);
+                        objSection.put("subsection",arraySubsection);
+                        arraySection.put(objSection);
+
+                        JSONArray arrayPembobotan = new JSONArray();
+                        JSONObject objPembobotan = new JSONObject();
+                        objPembobotan.put("id",id1);
+                        objPembobotan.put("bobot",bobot);
+                        objPembobotan.put("section",arraySection);
+                        arrayPembobotan.put(objPembobotan);
+
+                        JSONArray arrayParent = new JSONArray();
+                        JSONObject objParent = new JSONObject();
+                        objParent.put("grade",passGrade);
+                        objParent.put("pembobotan",arrayPembobotan);
+                        arrayParent.put(objParent);
+//                            Toast.makeText(getContext(),"Submit success",Toast.LENGTH_SHORT).show();
+                        ((DinamicSLATaskActivity)getActivity()).submitSLA(arrayParent.toString());
+                    } else {
+                        Toast.makeText(getContext(),"Harap isi note dan gambar jika memilih 'No' .",Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
+            super.onPostExecute(result);
+        }
+    }
 }

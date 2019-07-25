@@ -7,6 +7,7 @@ public class SLAModel {
     private int count;
     private Double value;
     private boolean isItemToBeCheck;
+    private String img;
 
     public SLAModel(String title,String content,int count,Double value,boolean isItemToBeCheck){
         this.title = title;
@@ -62,5 +63,13 @@ public class SLAModel {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 }

@@ -140,6 +140,7 @@ public class ShareFileFromAPI extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Uri uri = FileProvider.getUriForFile(ShareFileFromAPI.this, getPackageName() + ".provider", oldFile);
                     if(CARD_PATH == null) {
+                        Log.w("CekOnPlace","5");
                         Intent share = new Intent();
                         share.setAction(Intent.ACTION_SEND);
 //                    share.setType("application/pdf");
@@ -151,25 +152,34 @@ public class ShareFileFromAPI extends AppCompatActivity {
                             share.setType("image/jpg");
                         }
                         share.putExtra(Intent.EXTRA_STREAM, uri);
-//                        share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
                         startActivity(share);
                     }else{
+                        Log.w("CekOnPlace","6");
                         prepareMerging(uri);
                     }
                 } else {
 
+                    String exten = oldFile.getAbsolutePath().substring(oldFile.getAbsolutePath().lastIndexOf(".")).replace(".","");
+
                     MimeTypeMap map = MimeTypeMap.getSingleton();
                     String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-                    String type = map.getMimeTypeFromExtension(ext);
+                    String type = map.getMimeTypeFromExtension(exten);
                     if (type == null)
                         type = "*/*";
                     if(CARD_PATH == null) {
+                        Log.w("CekOnPlace","7");
+                        Uri data = Uri.fromFile(oldFile);
+//                        Intent share = new Intent();
+//                        share.setAction(Intent.ACTION_SEND);
+//                        share.setDataAndType(data, type);
+//                        startActivity(share);
                         Intent share = new Intent();
                         share.setAction(Intent.ACTION_SEND);
-                        Uri data = Uri.fromFile(oldFile);
-                        share.setDataAndType(data, type);
+                        share.setType(type);
+                        share.putExtra(Intent.EXTRA_STREAM, data);
                         startActivity(share);
                     }else{
+                        Log.w("CekOnPlace","8");
                         Uri data = Uri.fromFile(oldFile);
                         prepareMerging(data);
                     }
@@ -235,8 +245,11 @@ public class ShareFileFromAPI extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 Uri uri = FileProvider.getUriForFile(ShareFileFromAPI.this, getPackageName() + ".provider", oldFile);
                 if(CARD_PATH == null) {
+                    Log.w("CekOnPlace","1");
+
                     Intent share = new Intent();
                     share.setAction(Intent.ACTION_SEND);
+//                    share.setType("application/pdf");
                     if (extension.equals(".pdf")) {
                         share.setType("application/pdf");
                     } else if (extension.equals(".mp4")) {
@@ -245,25 +258,35 @@ public class ShareFileFromAPI extends AppCompatActivity {
                         share.setType("image/jpg");
                     }
                     share.putExtra(Intent.EXTRA_STREAM, uri);
-//                    share.setPackage("com.whatsapp"); //UNTUK SHARE KE WHATSAPP ONLY
                     startActivity(share);
+                    //0838 0720 6424
                 }else{
+                    Log.w("CekOnPlace","2");
                     prepareMerging(uri);
                 }
             } else {
+                String exten = oldFile.getAbsolutePath().substring(oldFile.getAbsolutePath().lastIndexOf(".")).replace(".","");
 
                 MimeTypeMap map = MimeTypeMap.getSingleton();
                 String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-                String type = map.getMimeTypeFromExtension(ext);
+                String type = map.getMimeTypeFromExtension(exten);
                 if (type == null)
                     type = "*/*";
                 if(CARD_PATH == null) {
+                    Log.w("CekOnPlace","3");
+                    Log.w("CekOnPlace","3"+type);
+                    Uri data = Uri.fromFile(oldFile);
+
+//                    Intent share = new Intent();
+//                    share.setAction(Intent.ACTION_SEND);
+//                    share.setDataAndType(data, type);
                     Intent share = new Intent();
                     share.setAction(Intent.ACTION_SEND);
-                    Uri data = Uri.fromFile(oldFile);
-                    share.setDataAndType(data, type);
+                    share.setType(type);
+                    share.putExtra(Intent.EXTRA_STREAM, data);
                     startActivity(share);
                 }else {
+                    Log.w("CekOnPlace","4");
                     Uri data = Uri.fromFile(oldFile);
                     prepareMerging(data);
                 }

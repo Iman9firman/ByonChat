@@ -9893,7 +9893,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             if (frag instanceof ZhFourFragment){
                                 ((ZhFourFragment) frag).getAdapter().notifyDataSetChanged();
                             }
-                            adapter.notifyDataSetChanged();
+//                            adapter.notifyDataSetChanged();
 
                         } else {
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
@@ -11027,6 +11027,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
 
         CameraActivity.Builder start = new CameraActivity.Builder(activity, 11);
+        start.setPackageName(activity.getPackageName());
         start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
         start.setCameraFace(CameraActivity.CAMERA_REAR);
         start.setFlashMode(CameraActivity.FLASH_OFF);

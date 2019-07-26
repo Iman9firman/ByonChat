@@ -165,6 +165,11 @@ public class SLACyclerAdapter extends RecyclerView.Adapter<SLACyclerAdapter.SLAC
                     insertDB(idDetailForm, textId.getText().toString(), 0, null, null);
                     notifyDataSetChanged();
                 }
+                if (getImgeB(idDetailForm, textId.getText().toString()) == null){
+                    AddChildFotoExModel aaa = new AddChildFotoExModel(idDetailForm + ";" + textId.getText().toString(), "", "", "cild", "update", getAdapterPosition(), String.valueOf(getOkFromDB(idDetailForm, textId.getText().toString())), 0, "add", "");
+                    ((DinamicSLATaskActivity) activity).yourActivityMethod(aaa);
+                }
+
             });
             picturePicker.setOnClickListener(v -> {
                 if (checkDB(idDetailForm, textId.getText().toString())) {

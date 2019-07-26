@@ -6,9 +6,9 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:visibility="invisible"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="invisible">
 
         <FrameLayout
             android:id="@+id/linear_name"
@@ -26,32 +26,44 @@
                 android:textColor="@android:color/black" />
         </FrameLayout>
     </RelativeLayout>
+
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_gravity="center_horizontal"
-        >
+        android:layout_gravity="center_horizontal">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
             android:background="@drawable/backgroud_white"
-            android:layout_height="match_parent">
+            android:orientation="vertical">
+
             <LinearLayout
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:layout_margin="@dimen/margin10"
+                android:id="@+id/linear"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin10"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:orientation="vertical"
-                android:weightSum="1"
-                android:id="@+id/linear">
-                    <com.byonchat.android.ui.view.ByonchatRecyclerView
-                        android:id="@+id/list_all"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scrollbars="vertical">
+                android:weightSum="1">
 
-                    </com.byonchat.android.ui.view.ByonchatRecyclerView>
+                <com.byonchat.android.ui.view.ByonchatRecyclerView
+                    android:id="@+id/list_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical">
+
+                </com.byonchat.android.ui.view.ByonchatRecyclerView>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/layoutForCheck"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
             </LinearLayout>
 
             <LinearLayout
@@ -65,14 +77,14 @@
                 <Button
                     android:id="@+id/btn_cancel"
                     style="@style/btn_submit_v111"
-                    android:text="Cancel"
-                    android:layout_marginRight="5dp"/>
+                    android:layout_marginRight="5dp"
+                    android:text="Cancel" />
 
                 <Button
                     android:id="@+id/btn_submit"
                     style="@style/btn_submit_v111"
-                    android:text="Submit"
-                    android:layout_marginLeft="5dp"/>
+                    android:layout_marginLeft="5dp"
+                    android:text="Submit" />
             </LinearLayout>
 
 

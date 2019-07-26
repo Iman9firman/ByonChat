@@ -1,8 +1,10 @@
 package com.byonchat.android.ui.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -23,12 +25,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.Html;
+import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -36,7 +48,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.CaptureSignature;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
+import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.data.model.File;
@@ -45,6 +59,7 @@ import com.byonchat.android.model.Photo;
 import com.byonchat.android.model.SLAmodelNew;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.DataBaseDropDown;
+import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
@@ -100,6 +115,8 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     Integer totalUpload = 0;
     BotListDB db;
     private String basejson;
+    LinearLayout layoutForCheck;
+    private static final int SIGNATURE_ACTIVITY = 1205;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,9 +128,182 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         db = BotListDB.getInstance(getApplicationContext());
         vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
+
+        layoutForCheck = (LinearLayout) findViewById(R.id.layoutForCheck);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
         basejson = getIntent().getStringExtra("data");
+
+
+        TextView textView = new TextView(PushSLAVerificationActivity.this);
+        textView.setText("Verified by");
+        textView.setTextSize(15);
+
+        EditText et = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+        et.setHint("NIK");
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params1.setMargins(30, 10, 30, 0);
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        params2.setMargins(30, 10, 30, 40);
+
+        EditText et2 = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+        et2.setHint("Name");
+
+
+        TextView textViewDua = new TextView(PushSLAVerificationActivity.this);
+        textViewDua.setText(Html.fromHtml("Signature"));
+        textViewDua.setTextSize(15);
+
+
+        ImageView imageView = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
+        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(5, 15, 0, 0);
+
+        imageView.setLayoutParams(params);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getApplicationContext(), CaptureSignature.class);
+                startActivityForResult(intent, SIGNATURE_ACTIVITY);
+
+            }
+        });
+
+
+        TextView textViewTiga = new TextView(PushSLAVerificationActivity.this);
+        textViewTiga.setText("Photo");
+        textViewTiga.setTextSize(15);
+
+        ImageView imageViewDua = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
+        int width = getWindowManager().getDefaultDisplay().getWidth();
+        RelativeLayout.LayoutParams paramsDua = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
+        paramsDua.setMargins(5, 15, 0, 0);
+        imageViewDua.setLayoutParams(paramsDua);
+        paramsDua.addRule(RelativeLayout.CENTER_IN_PARENT);
+
+
+        layoutForCheck.addView(textView, params1);
+        layoutForCheck.addView(et, params2);
+        layoutForCheck.addView(et2, params2);
+        layoutForCheck.addView(textViewDua, params1);
+        layoutForCheck.addView(imageView, params2);
+        layoutForCheck.addView(textViewTiga, params1);
+        layoutForCheck.addView(imageViewDua, paramsDua);
+
+        /*
+        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+        if (cursorCild.getCount() > 0) {
+
+            if (Message.isJSONValid(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)))) {
+                JSONObject jObject = null;
+                try {
+                    jObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                if (jObject != null) {
+                    try {
+                        String a = jObject.getString("a");
+                        imageView[count].setImageBitmap(decodeBase64(a));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                imageView[count].setImageBitmap(decodeBase64(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT))));
+            }
+        }
+
+
+        hashMap.put(Integer.parseInt(idListTask), valSetOne);
+*/
+
+       /* final int finalI4 = i;
+        imageView[count].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI4)));
+                if (cursorCild.getCount() > 0) {
+                    Intent intent = new Intent(context, ZoomImageViewActivity.class);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, ZoomImageViewActivity.FROM);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_A, idDetail);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_B, username);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_C, idTab);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_D, "cild");
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type, String.valueOf(finalI4)));
+                    startActivity(intent);
+                } else {
+                    int facing = 0;
+                    if (type.equalsIgnoreCase("front_camera")) {
+                        facing = 1;
+                    }
+                    captureGalery(idDetail, username, idTab, idListTask, type, name, flag, facing, String.valueOf(finalI4));
+                }
+
+            }
+        });*/
+
+        /*final String finalLabel = label;
+        final int finalI5 = i;
+        imageView[count].setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder builderSingle = new AlertDialog.Builder(
+                        DinamicSLATaskActivity.this);
+                builderSingle.setTitle("Select an action " + Html.fromHtml(finalLabel));
+                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                        DinamicSLATaskActivity.this,
+                        android.R.layout.simple_list_item_1);
+
+
+                final Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI5)));
+                if (cursorCild.getCount() > 0) {
+                    arrayAdapter.add("Retake");
+                    arrayAdapter.add("Delete");
+                    arrayAdapter.add("View");
+                } else {
+                    arrayAdapter.add("Capture");
+                }
+                builderSingle.setAdapter(arrayAdapter,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String listName = arrayAdapter.getItem(which);
+                                if (listName.equalsIgnoreCase("Retake") || listName.equalsIgnoreCase("Capture")) {
+                                    int facing = 0;
+                                    if (type.equalsIgnoreCase("front_camera")) {
+                                        facing = 1;
+                                    }
+                                    captureGalery(idDetail, username, idTab, idListTask, type, name, flag, facing, String.valueOf(finalI5));
+                                } else if (listName.equalsIgnoreCase("Delete")) {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI5)), name, "cild");
+
+                                    db.deleteDetailRoomWithFlagContent(orderModel);
+                                    finish();
+                                    Intent aa = getIntent();
+                                    aa.putExtra("idTask", idDetail);
+                                    startActivity(getIntent());
+                                } else if (listName.equalsIgnoreCase("View")) {
+                                    Intent intent = new Intent(context, ZoomImageViewActivity.class);
+                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, ZoomImageViewActivity.FROM);
+                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_A, idDetail);
+                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_B, username);
+                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_C, idTab);
+                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_D, "cild");
+                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type, String.valueOf(finalI5)));
+                                    startActivity(intent);
+                                }
+                            }
+                        });
+                builderSingle.show();
+                return true;
+            }
+        });*/
+
 
         resolveData();
         resolveListFile();
@@ -493,7 +683,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });

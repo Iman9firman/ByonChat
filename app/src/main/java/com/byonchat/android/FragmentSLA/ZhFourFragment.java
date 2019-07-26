@@ -2,6 +2,7 @@ package com.byonchat.android.FragmentSLA;
 
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -75,6 +76,7 @@ public class ZhFourFragment extends Fragment {
     ArrayList<String> imgList = new ArrayList<>();
     int counter = 0;
     String id1=null,id2=null,id3=null,id4=null;
+    ProgressDialog dialog = null;
 
     DecimalFormat decimal = new DecimalFormat("#.##");
 
@@ -141,28 +143,31 @@ public class ZhFourFragment extends Fragment {
                     letsGo = checkDB(idDetailForm,idContent);
                 }
                 if (letsGo){
-                    try {
+                try {
                         for (int z = 0 ; z<itemList.size() ; z++){
                             String idContent = itemList.get(z).getDaleman();
                             String image = getImgeB(idDetailForm,idContent);
                             if (image != "" && image != null){
-                                imgList.add(image);
+                                imgList.add(image+";;"+idContent);
                             }
                         }
 
                         if (imgList.size() > 0){
+                            dialog = new ProgressDialog(getContext());
+                            dialog.setMessage("Uploading Image ...");
+                            dialog.show();
                             new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
                                     ((DinamicSLATaskActivity) getActivity()).getUsername(),
                                     "2613",
                                     "66989",
-                                    imgList.get(0),
-                                    itemList.get(0).getDaleman());
+                                    imgList.get(0).split(";;")[0],
+                                    imgList.get(0).split(";;")[1]);
                         } else {
                             JSONArray arrayPertanyaan = new JSONArray();
                             List<Integer> lolos = new ArrayList<>();
-                            for (int ivana = 0 ; ivana<itemList.size() ; ivana++){
+                            for (int iv = 0 ; iv<itemList.size() ; iv++){
                                 JSONObject objPertanyaan = new JSONObject();
-                                String idContent = itemList.get(ivana).getDaleman();
+                                String idContent = itemList.get(iv).getDaleman();
                                 String[] id = idContent.split("-");
                                 id4 = id[3];
                                 int value = getOkFromDB(idDetailForm,idContent);
@@ -172,19 +177,19 @@ public class ZhFourFragment extends Fragment {
                                     if (img != null && cmnt != null){
                                         objPertanyaan.put("id",id4);
                                         objPertanyaan.put("v",value);
-                                        objPertanyaan.put("f",itemList.get(ivana).getImg());
+                                        objPertanyaan.put("f",itemList.get(iv).getImg());
                                         objPertanyaan.put("n",cmnt);
-                                        objPertanyaan.put("b",decimal.format(itemList.get(ivana).getValue()));
+                                        objPertanyaan.put("b",decimal.format(itemList.get(iv).getValue()));
                                         arrayPertanyaan.put(objPertanyaan);
                                     } else {
-                                        lolos.add(ivana);
+                                        lolos.add(iv);
                                     }
                                 } else {
                                     objPertanyaan.put("id",id4);
                                     objPertanyaan.put("v",value);
-                                    objPertanyaan.put("f", img == null ? "" : itemList.get(ivana).getImg());
+                                    objPertanyaan.put("f", img == null ? "" : itemList.get(iv).getImg());
                                     objPertanyaan.put("n", cmnt == null ? "" : cmnt);
-                                    objPertanyaan.put("b",decimal.format(itemList.get(ivana).getValue()));
+                                    objPertanyaan.put("b",decimal.format(itemList.get(iv).getValue()));
                                     arrayPertanyaan.put(objPertanyaan);
                                 }
                             }
@@ -338,7 +343,6 @@ public class ZhFourFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.w("segituStart", "de");
         }
 
         @Override
@@ -347,6 +351,7 @@ public class ZhFourFragment extends Fragment {
         }
 
         protected void onProgressUpdate(Integer... progress) {
+
         }
 
         @SuppressWarnings("deprecation")
@@ -412,10 +417,9 @@ public class ZhFourFragment extends Fragment {
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
                     String fileNameServer = jsonObject.getString("filename");
-                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
                     for (int i = 0 ; i<itemList.size() ; i++){
                         if (itemList.get(i).getDaleman().equalsIgnoreCase(id)){
-                            itemList.get(i).setImg(filePhott);
+                            itemList.get(i).setImg(fileNameServer);
                         }
                     }
                 }
@@ -426,14 +430,17 @@ public class ZhFourFragment extends Fragment {
                             ((DinamicSLATaskActivity) getActivity()).getUsername(),
                             "2613",
                             "66989",
-                            imgList.get(counter),
-                            itemList.get(counter).getDaleman());
+                            imgList.get(counter).split(";;")[0],
+                            imgList.get(counter).split(";;")[1]);
                 } else {
+                    if (dialog != null){
+                        dialog.hide();
+                    }
                     JSONArray arrayPertanyaan = new JSONArray();
                     List<Integer> lolos = new ArrayList<>();
-                    for (int ivana = 0 ; ivana<itemList.size() ; ivana++){
+                    for (int iv = 0 ; iv<itemList.size() ; iv++){
                         JSONObject objPertanyaan = new JSONObject();
-                        String idContent = itemList.get(ivana).getDaleman();
+                        String idContent = itemList.get(iv).getDaleman();
                         String[] id = idContent.split("-");
                         id4 = id[3];
                         int value = getOkFromDB(idDetailForm,idContent);
@@ -443,19 +450,19 @@ public class ZhFourFragment extends Fragment {
                             if (img != null && cmnt != null){
                                 objPertanyaan.put("id",id4);
                                 objPertanyaan.put("v",value);
-                                objPertanyaan.put("f",itemList.get(ivana).getImg());
+                                objPertanyaan.put("f",itemList.get(iv).getImg());
                                 objPertanyaan.put("n",cmnt);
-                                objPertanyaan.put("b",decimal.format(itemList.get(ivana).getValue()));
+                                objPertanyaan.put("b",decimal.format(itemList.get(iv).getValue()));
                                 arrayPertanyaan.put(objPertanyaan);
                             } else {
-                                lolos.add(ivana);
+                                lolos.add(iv);
                             }
                         } else {
                             objPertanyaan.put("id",id4);
                             objPertanyaan.put("v",value);
-                            objPertanyaan.put("f", img == null ? "" : itemList.get(ivana).getImg());
+                            objPertanyaan.put("f", img == null ? "" : itemList.get(iv).getImg());
                             objPertanyaan.put("n", cmnt == null ? "" : cmnt);
-                            objPertanyaan.put("b",decimal.format(itemList.get(ivana).getValue()));
+                            objPertanyaan.put("b",decimal.format(itemList.get(iv).getValue()));
                             arrayPertanyaan.put(objPertanyaan);
                         }
                     }

@@ -102,6 +102,8 @@ import java.util.Map;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
+import static com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity.decodeBase64;
+
 public class PushSLAVerificationActivity extends AppCompatActivity {
     String task_id, id_task, id_task_list, id_rooms_tab;
     String name_title;
@@ -117,6 +119,11 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     private String basejson;
     LinearLayout layoutForCheck;
     private static final int SIGNATURE_ACTIVITY = 1205;
+    ImageView imageViewSignature, imageviewPhoto;
+
+    String myBase64Image = "";
+    String resultSignature = "";
+    EditText et, et2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,14 +146,14 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         textView.setText("Verified by");
         textView.setTextSize(15);
 
-        EditText et = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+        et = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
         et.setHint("NIK");
         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params1.setMargins(30, 10, 30, 0);
         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params2.setMargins(30, 10, 30, 40);
 
-        EditText et2 = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+        et2 = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
         et2.setHint("Name");
 
 
@@ -155,14 +162,14 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         textViewDua.setTextSize(15);
 
 
-        ImageView imageView = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
-        imageView.setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
+        imageViewSignature = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
+        imageViewSignature.setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(5, 15, 0, 0);
 
-        imageView.setLayoutParams(params);
+        imageViewSignature.setLayoutParams(params);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
-        imageView.setOnClickListener(new View.OnClickListener() {
+        imageViewSignature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -177,11 +184,11 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         textViewTiga.setText("Photo");
         textViewTiga.setTextSize(15);
 
-        ImageView imageViewDua = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
+        imageviewPhoto = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
         int width = getWindowManager().getDefaultDisplay().getWidth();
         RelativeLayout.LayoutParams paramsDua = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
         paramsDua.setMargins(5, 15, 0, 0);
-        imageViewDua.setLayoutParams(paramsDua);
+        imageviewPhoto.setLayoutParams(paramsDua);
         paramsDua.addRule(RelativeLayout.CENTER_IN_PARENT);
 
 
@@ -189,9 +196,48 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         layoutForCheck.addView(et, params2);
         layoutForCheck.addView(et2, params2);
         layoutForCheck.addView(textViewDua, params1);
-        layoutForCheck.addView(imageView, params2);
+        layoutForCheck.addView(imageViewSignature, params2);
         layoutForCheck.addView(textViewTiga, params1);
-        layoutForCheck.addView(imageViewDua, paramsDua);
+        layoutForCheck.addView(imageviewPhoto, paramsDua);
+
+
+        imageviewPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+
+
+                CameraActivity.Builder start = new CameraActivity.Builder(PushSLAVerificationActivity.this, 11);
+                start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                start.setCameraFace(CameraActivity.CAMERA_REAR);
+                start.setFlashMode(CameraActivity.FLASH_OFF);
+                start.setQuality(CameraActivity.MEDIUM);
+                start.setRatio(CameraActivity.RATIO_4_3);
+                start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
+                new Camera(start.build()).lauchCamera();
+
+
+
+                /*Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI4)));
+                if (cursorCild.getCount() > 0) {
+                    Intent intent = new Intent(context, ZoomImageViewActivity.class);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, ZoomImageViewActivity.FROM);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_A, idDetail);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_B, username);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_C, idTab);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_D, "cild");
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type, String.valueOf(finalI4)));
+                    startActivity(intent);
+                } else {
+                    captureGalery(idDetail, username, idTab, idListTask, type, name, flag, facing, String.valueOf(finalI4));
+                }*/
+
+            }
+        });
+
 
         /*
         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
@@ -440,6 +486,95 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 }
 
             }
+        } else if (requestCode == SIGNATURE_ACTIVITY) {
+            if (resultCode == RESULT_OK) {
+                resultSignature = data.getExtras().getString("status");
+/*
+                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
+                if (cEdit.getCount() > 0) {
+                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, result, jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                    db.updateDetailRoomWithFlagContent(orderModel);
+                }*/
+
+                imageViewSignature.setImageBitmap(decodeBase64(resultSignature));
+            } else {
+                imageViewSignature.setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
+
+               /* Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
+                if (cEdit.getCount() > 0) {
+                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
+                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                        db.deleteDetailRoomWithFlagContent(orderModel);
+                        imageView[Integer.valueOf(value.get(0).toString())].setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
+                    }
+                }*/
+
+            }
+        } else if (requestCode == 11) {
+            if (resultCode == RESULT_OK) {
+                String returnString = data.getStringExtra("PICTURE");
+                if (decodeFile(returnString)) {
+                    final java.io.File f = new java.io.File(returnString);
+                    if (f.exists()) {
+                        FileInputStream inputStream = null;
+                        try {
+                            inputStream = new FileInputStream(f);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+                        Bitmap result = MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800,
+                                800);
+
+                        imageviewPhoto.setImageBitmap(result);
+                        myBase64Image = encodeToBase64(result, Bitmap.CompressFormat.JPEG, 80);
+
+                           /* Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
+                            if (cEdit.getCount() > 0) {
+                                SimpleDateFormat dateFormatNew = new SimpleDateFormat(
+                                        "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+                                long date = System.currentTimeMillis();
+                                String dateString = dateFormatNew.format(date);
+
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateTaken(myBase64Image, dateString), jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                                db.updateDetailRoomWithFlagContent(orderModel);
+                            }*/
+
+                        f.delete();
+                    }
+
+                } else {
+                    Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
+                }
+
+            } else if (resultCode == RESULT_CANCELED) {
+/*
+
+                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
+                    if (cEdit.getCount() > 0) {
+                        if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                            db.deleteDetailRoomWithFlagContent(orderModel);
+                        }
+                    }
+*/
+
+
+                Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
+            } else {
+
+/*
+                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
+                    if (cEdit.getCount() > 0) {
+                        if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                            db.deleteDetailRoomWithFlagContent(orderModel);
+                        }
+                    }*/
+
+                Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -646,6 +781,14 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                     }
                 }
             }
+            JSONObject signature = new JSONObject();
+            signature.put("signature", resultSignature);
+            signature.put("photo", myBase64Image);
+            signature.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
+            signature.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());
+
+            jar.put(signature);
+
 
             stringdong = gvcs.toString();
         } catch (JSONException e) {

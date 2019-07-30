@@ -1860,6 +1860,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         spinnerArraySla.add(cost_center.substring(0, cost_center.indexOf("[")));
                         duaJJt.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
                     }
+//                    spinnerArraySla.add("ISS-01035F0011-FITNESS FIRST CIBUBUR JUNCTION");
+//                    duaJJt.add("ISS-01035F0011");
 
 
                 } catch (Exception e) {
@@ -2125,18 +2127,18 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         new apiLookUp().execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt",d);
 
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
-//                                        largeLog("ivana",hasilCOnvert.toString());
+////                                        largeLog("ivana",hasilCOnvert.toString());
                                         adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
                                             @Override
                                             public void onChecked(int count) {
                                                 textProgress.setText(count + "/" + countCheck);
                                             }
                                         });
-                                        recyclerView.setAdapter(adapter);
-                                        recyclerView.setAccordion(false);
-                                        recyclerView.removeItemClickListeners();
-
-                                        adapter.notifyDataSetChanged();
+//                                        recyclerView.setAdapter(adapter);
+//                                        recyclerView.setAccordion(false);
+//                                        recyclerView.removeItemClickListeners();
+//
+//                                        adapter.notifyDataSetChanged();
 
 
                                         JSONObject levelBobot1 = hasilCOnvert;
@@ -10530,7 +10532,11 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 progressDialog.dismiss();
                 if (response == 0) {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                    finish();
+//                    finish();
+                    recreate();
+                    if (spinner != null){
+                        spinner.setSelection(0);
+                    }
                 } else if (response == 1) {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                     finish();
@@ -12959,7 +12965,9 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         }
 
         protected void onPostExecute(String result) {
-            rdialog.dismiss();
+            if (rdialog != null && rdialog.isShowing()){
+                rdialog.dismiss();
+            }
             loadFragment(new ZhOneFragment(a,be , idDetail, c));
         }
 

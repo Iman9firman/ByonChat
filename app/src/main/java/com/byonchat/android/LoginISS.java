@@ -99,18 +99,16 @@ public class LoginISS extends AppCompatActivity {
                     Map<String, String> params = new HashMap<>();
                     params.put("username", userID.getText().toString());
                     params.put("password", passID.getText().toString());
+                    params.put("bc_user", dbhelper.getMyContact().getJabberId());
 
 
                     new Validations().getInstance(getApplicationContext()).setString(userID.getText().toString(), 28);
                     new Validations().getInstance(getApplicationContext()).setString(passID.getText().toString(), 29);
 
-                    params.put("bc_user", dbhelper.getMyContact().getJabberId());
 
-                   /* if (userID.getText().toString().equalsIgnoreCase("1701793")) {
-                        params.put("bc_user", "6285697223760");//busiti
-                    } else {
-                        params.put("bc_user", "6282213295568");//ahmadYani
-                    }*/
+                  /*  params.put("username", "N101174");
+                    params.put("password", "Pass551551");
+                    params.put("bc_user", "6285691219599");*/
 
 
                     LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
@@ -232,7 +230,7 @@ public class LoginISS extends AppCompatActivity {
                     DIVISION_NAME, DEPARTEMEN_CODE, DEPARTEMEN_NAME, ATASAN_2_USERNAME, ATASAN_2_EMAIL,
                     ATASAN_2_NIK, ATASAN_2_JT, ATASAN_2_NAMA, ATASAN_2_PHONE, LIST_APPROVE_ROLE1, LIST_APPROVE_ROLE2,
                     LIST_REQ_ROLE, MY_ROLE};
-            
+
             dbHelper.deleteUser();
             db.execSQL(getString(R.string.sql_insert_log_iss), dataLOG);
 

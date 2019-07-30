@@ -785,13 +785,12 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                     }
                 }
             }
-            JSONObject signature = new JSONObject();
-            signature.put("signature", resultSignature);
-            signature.put("photo", myBase64Image);
-            signature.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
-            signature.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());
 
-            jar.put(signature);
+            gvcs.put("signature", resultSignature);
+            gvcs.put("photo", myBase64Image);
+            gvcs.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
+            gvcs.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());
+
 
 
             stringdong = gvcs.toString();

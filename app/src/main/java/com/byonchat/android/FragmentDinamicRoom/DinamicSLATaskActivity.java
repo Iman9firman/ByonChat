@@ -247,7 +247,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     private List<SLAISSItem> itemList = new ArrayList<>();
     private FrameLayout container;
     public ArrayList<String> listSubmittedId = new ArrayList<>();
-    private String a,be,c,d;
+    private String a, be, c, d;
 
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
@@ -295,7 +295,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     Button b;
     ImageView imageView[];
     LinearLayout linearEstimasi[];
-    ExpandableListView expandableListView[];
+    // ExpandableListView expandableListView[];
     SearchableSpinner newSpinner[];
     RatingBar rat[];
     EditText et[];
@@ -1936,7 +1936,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 db.deleteDetailRoomWithFlagContent(orderModel);
                             }
                         } else {
-
+                            idListTaskMasterForm = "66986";
                             String assup = duaJJt.get(myPosition - 1);
 
                             if (cEdit.getCount() > 0) {
@@ -2117,29 +2117,20 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                         hasilCOnvert.put("data", satu);
 
-                                        Log.w("sangkur", makeJJTFrame(hasilCOnvert.toString()));
 
                                         a = spinnerArraySla.get(myPosition);
                                         be = hasilCOnvert.toString();
                                         c = passGrade;
                                         d = assup;
-//                                        new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/iss/kerangka_jjt.php", assup, makeJJTFrame(hasilCOnvert.toString()));
-                                        new apiLookUp().execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt",d);
+                                        new apiLookUp().execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt", d);
 
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
-////                                        largeLog("ivana",hasilCOnvert.toString());
                                         adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
                                             @Override
                                             public void onChecked(int count) {
                                                 textProgress.setText(count + "/" + countCheck);
                                             }
                                         });
-//                                        recyclerView.setAdapter(adapter);
-//                                        recyclerView.setAccordion(false);
-//                                        recyclerView.removeItemClickListeners();
-//
-//                                        adapter.notifyDataSetChanged();
-
 
                                         JSONObject levelBobot1 = hasilCOnvert;
 
@@ -2312,7 +2303,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 stringAPI = new ArrayList<ArrayList<String>>();
                 linearEstimasi = new LinearLayout[jsonArray.length()];
                 imageView = new ImageView[jsonArray.length()];
-                expandableListView = new ExpandableListView[jsonArray.length()];
+                //   expandableListView = new ExpandableListView[jsonArray.length()];
                 newSpinner = new SearchableSpinner[jsonArray.length()];
 
                 if (JcontentBawaanReject.length() > 3) {
@@ -2343,7 +2334,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     final String type = jsonArray.getJSONObject(i).getString("type").toString();
                     final String flag = jsonArray.getJSONObject(i).getString("flag").toString();
 
-                    Log.w("dariZar", i + "::" + idListTask + "<>" + name + "><" + type);
+
                     //zharfan
                     JSONArray dropdownViewId = null;
                     if (jsonArray.getJSONObject(i).has("dropdown_view_parents")) {
@@ -2351,7 +2342,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     }
 
                     if (type.equalsIgnoreCase("call_chat")) {
-                        Log.w("kamar2", "madni");
 
                         TextView textView = new TextView(DinamicSLATaskActivity.this);
                         if (required.equalsIgnoreCase("1")) {
@@ -3452,7 +3442,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 e.printStackTrace();
                             }
                         } else {
-                            Log.w("masukSLA", "disniSLA");
                             JSONArray jsonArrayCild = new JSONArray(formChild);
 
                             boolean perhitungan = false;
@@ -3726,17 +3715,13 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                     addCild.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Log.w("masukSLA" + idListTask, "disniSLA");
                                             if (idListTask.equalsIgnoreCase("66083") || idListTask.equalsIgnoreCase("66098") || idListTask.equalsIgnoreCase("66100")) {
-                                                Log.w("masukSLA1", "disniSLA");
                                                 FragmentManager fm = getSupportFragmentManager();
                                                 DialogFormChildMainNew testDialog = DialogFormChildMainNew.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId, DinamicSLATaskActivity.this, String.valueOf(linearLayout.getChildAt(0).getTop()));
                                                 testDialog.setRetainInstance(true);
                                                 testDialog.show(fm, "Dialog");
                                             } else {
-                                                Log.w("masukSLA2", "disniSLA");
                                                 if (customersId.equalsIgnoreCase("")) {
-                                                    Log.w("masukSLA3", "disniSLA");
                                                     final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicSLATaskActivity.this);
                                                     alertbox.setTitle("required");
                                                     String content = "Please Select Customer ";
@@ -3751,7 +3736,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     return;
                                                 }
                                                 if (idListTask.equalsIgnoreCase("62483")) {
-                                                    Log.w("masukSLA4", "disniSLA");
                                                     //talking Order lemindo
                                                     FragmentManager fm = getSupportFragmentManager();
                                                     DialogFormChildMainLemindo testDialog = DialogFormChildMainLemindo.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId);
@@ -3759,7 +3743,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     testDialog.show(fm, "Dialog");
 
                                                 } else {
-                                                    Log.w("masukSLA5", "disniSLA");
                                                     FragmentManager fm = getSupportFragmentManager();
                                                     DialogFormChildMain testDialog = DialogFormChildMain.newInstance(formChild, name, finalDbMaster, idDetail, username, idTab, idListTask, "", customersId);
                                                     testDialog.setRetainInstance(true);
@@ -4241,7 +4224,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                     }
                                 } catch (Exception c) {
-                                    Log.w("YaAmpun", c.toString());
                                 }
 
                                 et[count].setText(valUEParent);
@@ -8035,7 +8017,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             hashMap.put(Integer.parseInt(idListTask), valSetOne);
                         }
                     } else if (type.equalsIgnoreCase("radio")) {
-                        Log.w("buehasd1", "Gampang");
 //sendiri
                         // TODO: 07/09/18 lakukan penambahan edit text di other disamakan dengan dropdown
                         TextView textView = new TextView(DinamicSLATaskActivity.this);
@@ -8725,7 +8706,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                                         } catch (JSONException e) {
                                                             e.printStackTrace();
-                                                            Log.w("jojon", e.getMessage());
                                                         }
                                                     }
                                                 } else if (value.get(2).toString().equalsIgnoreCase("phone_number")) {
@@ -8875,7 +8855,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 alertbox.setTitle("Required");
                                 String content = "";
                                 for (String ss : errorReq) {
-                                    Log.w("samaSaj", ss);
                                     content += ss + "<br/>";
                                 }
                                 alertbox.setMessage(Html.fromHtml(content) + "\n");
@@ -9174,7 +9153,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 String pos = "0";
                 if (getIntent().getStringExtra("posisi") != null) {
                     pos = getIntent().getStringExtra("posisi");
-                    Log.e("sunnguh errorslow", pos);
                 }
                 mainScrooll.scrollTo(0, linearLayout.getTop() + Integer.valueOf(pos));
             }
@@ -9364,7 +9342,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                             }
                         } else {
-                            Log.w("prefect", c.getCount() + "");
                         }
 
                     } while (c.moveToNext());
@@ -9689,7 +9666,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.w("objeKK", obj.toString());
             return obj;
         } else {
             boolean insert = false;
@@ -9709,7 +9685,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Log.w("objeKK", obj.toString());
                         return obj;
                     }
                 }
@@ -9723,7 +9698,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Log.w("objeKK", obj.toString());
                     return obj;
                 }
             }
@@ -9892,7 +9866,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 adapter.updateDB(valueIdValue.getIdDetail().split(";")[0], valueIdValue.getIdDetail().split(";")[1], Integer.valueOf(valueIdValue.getExpandedListText()), f.getAbsolutePath(), null);
                             }
                             Fragment frag = getSupportFragmentManager().findFragmentById(R.id.container_sla);
-                            if (frag instanceof ZhFourFragment){
+                            if (frag instanceof ZhFourFragment) {
                                 ((ZhFourFragment) frag).getAdapter().notifyDataSetChanged();
                             }
 //                            adapter.notifyDataSetChanged();
@@ -9933,8 +9907,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 }
                             }
 
-                            ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[1].getExpandableListAdapter();
-                            ancur.notifyDataSetChanged();
+                          /*  ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[1].getExpandableListAdapter();
+                            ancur.notifyDataSetChanged();*/
                         }
 
                     }
@@ -10027,13 +10001,11 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         }
 
                     } catch (FileNotFoundException fnfe1) {
-                        Log.e("tag", fnfe1.getMessage());
                     } catch (Exception e) {
-                        Log.e("tag", e.getMessage());
                     }
 
-                    ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[1].getExpandableListAdapter();
-                    ancur.notifyDataSetChanged();
+                  /*  ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[1].getExpandableListAdapter();
+                    ancur.notifyDataSetChanged();*/
 
                 } else {
                     Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
@@ -10534,7 +10506,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 //                    finish();
                     recreate();
-                    if (spinner != null){
+                    if (spinner != null) {
                         spinner.setSelection(0);
                     }
                 } else if (response == 1) {
@@ -12226,10 +12198,10 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                             }
 
-                            ExpandableListAdapter listAdapter = new ExpandableListAdapter(activity, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()), valueForms.get(3).toString());
+                          /*  ExpandableListAdapter listAdapter = new ExpandableListAdapter(activity, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()), valueForms.get(3).toString());
                             expandableListView[Integer.valueOf(valueForms.get(0).toString())].setAdapter(listAdapter);
                             setListViewHeightBasedOnChildren(expandableListView[Integer.valueOf(valueForms.get(0).toString())]);
-
+*/
                         } catch (Exception e) {
                             Log.d("InputStream", e.getLocalizedMessage());
                         }
@@ -12610,8 +12582,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("username_room", usr));
                 nameValuePairs.add(new BasicNameValuePair("id_tab", idTab));
-                Log.w("webToo1n", usr);
-                Log.w("webToo2n", idTab);
                 MessengerDatabaseHelper messengerHelper = null;
                 if (messengerHelper == null) {
                     messengerHelper = MessengerDatabaseHelper.getInstance(context);
@@ -12788,10 +12758,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
     public static void largeLog(String tag, String content) {
         if (content.length() > 4000) {
-            Log.d(tag, content.substring(0, 4000));
             largeLog(tag, content.substring(4000));
         } else {
-            Log.d(tag, content);
         }
     }
 
@@ -12858,7 +12826,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "1", null, "parent");
             db.updateDetailRoomWithFlagContentParent(orderModel);
 
-            Log.w("idTab", idTab);
 
             new AllAboutUploadTask().getInstance(getApplicationContext()).UploadTask(DinamicSLATaskActivity.this, idDetail, username, idTab, JcontentBawaanReject);
         } else {
@@ -12933,7 +12900,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             aao.put("grade", "");
             aao.put("pembobotan", bb);
             aa.put(aao);
-            hasil = aa.toString();
+//            hasil = aa.toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -12965,10 +12932,10 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         }
 
         protected void onPostExecute(String result) {
-            if (rdialog != null && rdialog.isShowing()){
+            if (rdialog != null && rdialog.isShowing()) {
                 rdialog.dismiss();
             }
-            loadFragment(new ZhOneFragment(a,be , idDetail, c));
+            loadFragment(new ZhOneFragment(a, be, idDetail, c));
         }
 
         protected void onProgressUpdate(Integer... progress) {
@@ -13025,7 +12992,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                     final String data = EntityUtils.toString(r_entity);
 
-                    Log.w("hasil", data);
                 } else {
                     if (gpxfile.exists()) {
                         gpxfile.delete();
@@ -13067,16 +13033,16 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
         protected void onPostExecute(String result) {
             rdialog.dismiss();
-            if (!result.equals("")){
-                if (!result.equals("[]")){
+            if (!result.equals("")) {
+                if (!result.equals("[]")) {
                     try {
                         JSONArray arr = new JSONArray(result);
-                        for (int i = 0 ; i < arr.length() ; i++){
+                        for (int i = 0; i < arr.length(); i++) {
                             String id = arr.getString(i);
                             listSubmittedId.add(id);
                         }
-                        loadFragment(new ZhOneFragment(a,be , idDetail, c));
-                    } catch (Exception e){
+                        loadFragment(new ZhOneFragment(a, be, idDetail, c));
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {

@@ -157,18 +157,20 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         et2.setHint("Name");
 
 
-        TextView textViewDua = new TextView(PushSLAVerificationActivity.this);
-        textViewDua.setText(Html.fromHtml("Signature"));
-        textViewDua.setTextSize(15);
+//        TextView textViewDua = new TextView(PushSLAVerificationActivity.this);
+//        textViewDua.setText(Html.fromHtml("Signature"));
+//        textViewDua.setTextSize(15);
 
 
-        imageViewSignature = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
-        imageViewSignature.setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(5, 15, 0, 0);
+        LinearLayout photoSignLayout = (LinearLayout) findViewById(R.id.photo_sign_layout);
+//        imageViewSignature = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
+        imageViewSignature = (ImageView) findViewById(R.id.get_sign);
+//        imageViewSignature.setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        params.setMargins(5, 15, 0, 0);
 
-        imageViewSignature.setLayoutParams(params);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+//        imageViewSignature.setLayoutParams(params);
+//        params.addRule(RelativeLayout.CENTER_IN_PARENT);
         imageViewSignature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -180,25 +182,27 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         });
 
 
-        TextView textViewTiga = new TextView(PushSLAVerificationActivity.this);
-        textViewTiga.setText("Photo");
-        textViewTiga.setTextSize(15);
+//        TextView textViewTiga = new TextView(PushSLAVerificationActivity.this);
+//        textViewTiga.setText("Photo");
+//        textViewTiga.setTextSize(15);
 
-        imageviewPhoto = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
-        int width = getWindowManager().getDefaultDisplay().getWidth();
-        RelativeLayout.LayoutParams paramsDua = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
-        paramsDua.setMargins(5, 15, 0, 0);
-        imageviewPhoto.setLayoutParams(paramsDua);
-        paramsDua.addRule(RelativeLayout.CENTER_IN_PARENT);
+//        imageviewPhoto = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
+        imageviewPhoto = (ImageView) findViewById(R.id.get_photo);
+//        int width = getWindowManager().getDefaultDisplay().getWidth();
+//        RelativeLayout.LayoutParams paramsDua = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
+//        paramsDua.setMargins(5, 15, 0, 0);
+//        imageviewPhoto.setLayoutParams(paramsDua);
+//        paramsDua.addRule(RelativeLayout.CENTER_IN_PARENT);
 
 
         layoutForCheck.addView(textView, params1);
         layoutForCheck.addView(et, params2);
         layoutForCheck.addView(et2, params2);
-        layoutForCheck.addView(textViewDua, params1);
-        layoutForCheck.addView(imageViewSignature, params2);
-        layoutForCheck.addView(textViewTiga, params1);
-        layoutForCheck.addView(imageviewPhoto, paramsDua);
+        photoSignLayout.setVisibility(View.VISIBLE);
+//        layoutForCheck.addView(textViewDua, params1);
+//        layoutForCheck.addView(imageViewSignature, params2);
+//        layoutForCheck.addView(textViewTiga, params1);
+//        layoutForCheck.addView(imageviewPhoto, paramsDua);
 
 
         imageviewPhoto.setOnClickListener(new View.OnClickListener() {
@@ -498,7 +502,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                 imageViewSignature.setImageBitmap(decodeBase64(resultSignature));
             } else {
-                imageViewSignature.setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
+                imageViewSignature.setImageDrawable(getResources().getDrawable(R.drawable.dotted_square));
 
                /* Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {

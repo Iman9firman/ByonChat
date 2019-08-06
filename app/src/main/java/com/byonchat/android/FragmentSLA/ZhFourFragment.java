@@ -175,7 +175,7 @@ public class ZhFourFragment extends Fragment {
                                 String cmnt = getComment(idDetailForm,idContent);
                                 if (value == 0){
                                     if (img != null && cmnt != null){
-                                        objPertanyaan.put("id",id4);
+                                        objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
                                         objPertanyaan.put("v",value);
                                         objPertanyaan.put("f",itemList.get(iv).getImg());
                                         objPertanyaan.put("n",cmnt);
@@ -185,7 +185,7 @@ public class ZhFourFragment extends Fragment {
                                         lolos.add(iv);
                                     }
                                 } else {
-                                    objPertanyaan.put("id",id4);
+                                    objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
                                     objPertanyaan.put("v",value);
                                     objPertanyaan.put("f", img == null ? "" : itemList.get(iv).getImg());
                                     objPertanyaan.put("n", cmnt == null ? "" : cmnt);
@@ -196,13 +196,13 @@ public class ZhFourFragment extends Fragment {
                             if (!(lolos.size() > 0)){
                                 JSONArray arraySubsection = new JSONArray();
                                 JSONObject objSubsection = new JSONObject();
-                                objSubsection.put("id",id3);
+                                objSubsection.put("id",id1+"-"+id2+"-"+id3);
                                 objSubsection.put("pertanyaan",arrayPertanyaan);
                                 arraySubsection.put(objSubsection);
 
                                 JSONArray arraySection = new JSONArray();
                                 JSONObject objSection = new JSONObject();
-                                objSection.put("id",id2);
+                                objSection.put("id",id1+"-"+id2);
                                 objSection.put("subsection",arraySubsection);
                                 arraySection.put(objSection);
 
@@ -448,7 +448,7 @@ public class ZhFourFragment extends Fragment {
                         String cmnt = getComment(idDetailForm,idContent);
                         if (value == 0){
                             if (img != null && cmnt != null){
-                                objPertanyaan.put("id",id4);
+                                objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
                                 objPertanyaan.put("v",value);
                                 objPertanyaan.put("f",itemList.get(iv).getImg());
                                 objPertanyaan.put("n",cmnt);
@@ -458,7 +458,7 @@ public class ZhFourFragment extends Fragment {
                                 lolos.add(iv);
                             }
                         } else {
-                            objPertanyaan.put("id",id4);
+                            objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
                             objPertanyaan.put("v",value);
                             objPertanyaan.put("f", img == null ? "" : itemList.get(iv).getImg());
                             objPertanyaan.put("n", cmnt == null ? "" : cmnt);
@@ -469,13 +469,13 @@ public class ZhFourFragment extends Fragment {
                     if (!(lolos.size() > 0)){
                         JSONArray arraySubsection = new JSONArray();
                         JSONObject objSubsection = new JSONObject();
-                        objSubsection.put("id",id3);
+                        objSubsection.put("id",id1+"-"+id2+"-"+id3);
                         objSubsection.put("pertanyaan",arrayPertanyaan);
                         arraySubsection.put(objSubsection);
 
                         JSONArray arraySection = new JSONArray();
                         JSONObject objSection = new JSONObject();
-                        objSection.put("id",id2);
+                        objSection.put("id",id1+"-"+id2);
                         objSection.put("subsection",arraySubsection);
                         arraySection.put(objSection);
 

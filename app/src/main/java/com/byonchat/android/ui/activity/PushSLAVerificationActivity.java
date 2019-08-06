@@ -51,6 +51,7 @@ import com.android.volley.toolbox.Volley;
 import com.byonchat.android.CaptureSignature;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
+import com.byonchat.android.FragmentSLA.ZhFourFragment;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.data.model.File;
@@ -85,6 +86,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -103,9 +105,11 @@ import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
 import static com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity.decodeBase64;
+import static com.byonchat.android.ui.activity.PustSLAFollowUpActivity.resizeAndCompressImageBeforeSend;
 
 public class PushSLAVerificationActivity extends AppCompatActivity {
     String task_id, id_task, id_task_list, id_rooms_tab;
+    String username;
     String name_title;
     LinearLayout linearLayout;
     ByonchatRecyclerView vListData;
@@ -121,15 +125,21 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     private static final int SIGNATURE_ACTIVITY = 1205;
     ImageView imageViewSignature, imageviewPhoto;
 
-    String myBase64Image = "";
+    String resultImage = "";
     String resultSignature = "";
     EditText et, et2;
+    Bitmap imgBm,sgnBm;
+    ProgressDialog dialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
 
+        Intent ntent = getIntent();
+        if (ntent != null){
+            username = ntent.getStringExtra("username_room");
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -215,12 +225,15 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
 
                 CameraActivity.Builder start = new CameraActivity.Builder(PushSLAVerificationActivity.this, 11);
+                start.setPackageName(getPackageName());
                 start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                 start.setCameraFace(CameraActivity.CAMERA_REAR);
                 start.setFlashMode(CameraActivity.FLASH_OFF);
                 start.setQuality(CameraActivity.MEDIUM);
                 start.setRatio(CameraActivity.RATIO_4_3);
-                start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
+                String huft = new MediaProcessingUtil().createFileName("", "ROOM");
+                String name = huft.substring(0,huft.length()-1);
+                start.setFileName(name);
                 new Camera(start.build()).lauchCamera();
 
 
@@ -492,15 +505,26 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             }
         } else if (requestCode == SIGNATURE_ACTIVITY) {
             if (resultCode == RESULT_OK) {
-                resultSignature = data.getExtras().getString("status");
-/*
-                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
+//                resultSignature = data.getExtras().getString("status");
+                java.io.File file = saveImage(getApplicationContext(),data.getExtras().getString("status"));
+                sgnBm = decodeBase64(data.getExtras().getString("status"));
+                if (dialog == null){
+                    dialog = new ProgressDialog(PushSLAVerificationActivity.this);
+                }
+                dialog.setMessage("Uploading Image ...");
+                dialog.show();
+                AsyncTask uploadPict = new UploadPhoto();
+                ((UploadPhoto) uploadPict).setType("sign");
+                ((UploadPhoto) uploadPict).execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                        username,
+                        "2613",
+                        "66989",
+                        file.getAbsolutePath());
+                /*Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
                     RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, result, jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                     db.updateDetailRoomWithFlagContent(orderModel);
                 }*/
-
-                imageViewSignature.setImageBitmap(decodeBase64(resultSignature));
             } else {
                 imageViewSignature.setImageDrawable(getResources().getDrawable(R.drawable.dotted_square));
 
@@ -529,9 +553,20 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                         Bitmap result = MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800,
                                 800);
-
-                        imageviewPhoto.setImageBitmap(result);
-                        myBase64Image = encodeToBase64(result, Bitmap.CompressFormat.JPEG, 80);
+                        imgBm = result;
+                        if (dialog == null){
+                            dialog = new ProgressDialog(PushSLAVerificationActivity.this);
+                        }
+                        dialog.setMessage("Uploading Image ...");
+                        dialog.show();
+                        AsyncTask uploadPict = new UploadPhoto();
+                        ((UploadPhoto) uploadPict).setType("image");
+                        ((UploadPhoto) uploadPict).execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                username,
+                                "2613",
+                                "66989",
+                                returnString);
+//                        myBase64Image = encodeToBase64(result, Bitmap.CompressFormat.JPEG, 80);
 
                            /* Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                             if (cEdit.getCount() > 0) {
@@ -544,8 +579,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateTaken(myBase64Image, dateString), jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                                 db.updateDetailRoomWithFlagContent(orderModel);
                             }*/
-
-                        f.delete();
                     }
 
                 } else {
@@ -726,13 +759,16 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rdialog = new ProgressDialog(PushSLAVerificationActivity.this);
-                rdialog.setMessage("Loading...");
-                rdialog.show();
-                new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla.php",
-                        getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
-                        getIntent().getStringExtra("id_rooms_tab"));
-
+                if (!resultImage.equalsIgnoreCase("") && !resultSignature.equalsIgnoreCase("")){
+                    rdialog = new ProgressDialog(PushSLAVerificationActivity.this);
+                    rdialog.setMessage("Loading...");
+                    rdialog.show();
+                    new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla.php",
+                            getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
+                            getIntent().getStringExtra("id_rooms_tab"));
+                } else {
+                    Toast.makeText(getApplicationContext(),"Harap isi Photo dan Signature",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -784,14 +820,12 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                         }
                     }
                 }
+
+                first.put("signature", resultSignature);
+                first.put("photo", resultImage);
+                first.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
+                first.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());
             }
-
-            gvcs.put("signature", resultSignature);
-            gvcs.put("photo", myBase64Image);
-            gvcs.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
-            gvcs.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());
-
-
 
             stringdong = gvcs.toString();
         } catch (JSONException e) {
@@ -977,6 +1011,146 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         }
         return header;
 
+    }
+
+    private class UploadPhoto extends AsyncTask<String, Integer, String> {
+        long totalSize = 0;
+        String ii;
+        String id;
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        String type;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            return uploadFile(params[0], params[1], params[2], params[3], params[4]);
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+
+        }
+
+        @SuppressWarnings("deprecation")
+        private String uploadFile(String URL, String username, String id_room, String id_list, String value) {
+            String responseString = null;
+            ii = value;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(URL);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+                java.io.File sourceFile = new java.io.File(resizeAndCompressImageBeforeSend(getBaseContext(), ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
+
+                if (!sourceFile.exists()) {
+                    return "File not exists";
+                }
+
+                ContentType contentType = ContentType.create("image/jpeg");
+                entity.addPart("username_room", new StringBody(username));
+                entity.addPart("id_rooms_tab", new StringBody(id_room));
+                entity.addPart("id_list_task", new StringBody(id_list));
+                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
+
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    String _response = EntityUtils.toString(r_entity); // content will be consume only once
+                    return _response;
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return responseString;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (dialog != null){
+                dialog.hide();
+            }
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                String message = jsonObject.getString("message");
+                if (message.length() == 0) {
+                    String fileNameServer = jsonObject.getString("filename");
+                    if (type.equalsIgnoreCase("image")){
+                        imageviewPhoto.setImageBitmap(imgBm);
+                        resultImage = fileNameServer;
+                    } else if (type.equalsIgnoreCase("sign")){
+                        imageViewSignature.setImageBitmap(sgnBm);
+                        resultSignature = fileNameServer;
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+            }
+            super.onPostExecute(result);
+        }
+    }
+
+    public static java.io.File saveImage(final Context context, final String imageData) {
+        java.io.File file = null;
+        try {
+            final byte[] imgBytesData = android.util.Base64.decode(imageData,
+                    android.util.Base64.DEFAULT);
+
+            file = java.io.File.createTempFile("image", null, context.getCacheDir());
+            final FileOutputStream fileOutputStream;
+            try {
+                fileOutputStream = new FileOutputStream(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                    fileOutputStream);
+            try {
+                bufferedOutputStream.write(imgBytesData);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } finally {
+                try {
+                    bufferedOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return file;
     }
 
 }

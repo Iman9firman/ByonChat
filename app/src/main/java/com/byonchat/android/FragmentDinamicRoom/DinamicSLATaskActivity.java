@@ -246,7 +246,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     private SLAISSAdapter adapter;
     private List<SLAISSItem> itemList = new ArrayList<>();
     private FrameLayout container;
-    public ArrayList<String> listSubmittedId = new ArrayList<>();
+    public ArrayList<String> listSubmittedId;
     private String a, be, c, d;
 
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
@@ -2074,43 +2074,38 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                 }
                                             } else {
                                                 bobotIdOld = idBobot;
-                                                if (!sectionOld.equalsIgnoreCase(idSection)) {
-                                                    sectionOld = idSection;
-                                                    if (!subSectionOld.equalsIgnoreCase(idSubSection)) {
-                                                        subSectionOld = idSubSection;
-                                                        dua = new JSONArray();
-                                                        tiga = new JSONArray();
-                                                        empat = new JSONArray();
+                                                sectionOld = idSection;
+                                                subSectionOld = idSubSection;
 
+                                                dua = new JSONArray();
+                                                tiga = new JSONArray();
+                                                empat = new JSONArray();
 
-                                                        JSONObject ppObject = new JSONObject();
-                                                        ppObject.put("id", idPertanyaan);
-                                                        ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
-                                                        ppObject.put("label", itemTobe);
-                                                        empat.put(ppObject);
+                                                JSONObject ppObject = new JSONObject();
+                                                ppObject.put("id", idPertanyaan);
+                                                ppObject.put("id_content", idBobot + "-" + idSection + "-" + idSubSection + "-" + idPertanyaan);
+                                                ppObject.put("label", itemTobe);
+                                                empat.put(ppObject);
 
-                                                        JSONObject empatObject = new JSONObject();
-                                                        empatObject.put("id", idSubSection);
-                                                        empatObject.put("label", namaSubSection);
-                                                        empatObject.put("data", empat);
-                                                        tiga.put(empatObject);
+                                                JSONObject empatObject = new JSONObject();
+                                                empatObject.put("id", idSubSection);
+                                                empatObject.put("label", namaSubSection);
+                                                empatObject.put("data", empat);
+                                                tiga.put(empatObject);
 
-                                                        JSONObject tigaObject = new JSONObject();
-                                                        tigaObject.put("id", idSection);
-                                                        tigaObject.put("label", namaSection);
-                                                        tigaObject.put("data", tiga);
-                                                        dua.put(tigaObject);
+                                                JSONObject tigaObject = new JSONObject();
+                                                tigaObject.put("id", idSection);
+                                                tigaObject.put("label", namaSection);
+                                                tigaObject.put("data", tiga);
+                                                dua.put(tigaObject);
 
-                                                        JSONObject duaObject = new JSONObject();
-                                                        duaObject.put("id", idBobot);
-                                                        duaObject.put("label", namaBobot);
-                                                        duaObject.put("bobot", bobotNya);
-                                                        duaObject.put("data", dua);
+                                                JSONObject duaObject = new JSONObject();
+                                                duaObject.put("id", idBobot);
+                                                duaObject.put("label", namaBobot);
+                                                duaObject.put("bobot", bobotNya);
+                                                duaObject.put("data", dua);
 
-                                                        satu.put(duaObject);
-                                                    }
-                                                }
-
+                                                satu.put(duaObject);
                                             }
 
                                         } while (css.moveToNext());
@@ -2122,6 +2117,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         be = hasilCOnvert.toString();
                                         c = passGrade;
                                         d = assup;
+//                                        largeLog("ivana",be);
                                         new apiLookUp().execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt", d);
 
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
@@ -10505,10 +10501,13 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 if (response == 0) {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 //                    finish();
-                    recreate();
-                    if (spinner != null) {
-                        spinner.setSelection(0);
-                    }
+//                    recreate();
+//                    if (spinner != null) {
+//                        spinner.setSelection(0);
+//                    }
+                    AsyncTask goasync = new apiLookUp();
+                    ((apiLookUp) goasync).setTag("THIRD TAG");
+                    ((apiLookUp) goasync).execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt", d);
                 } else if (response == 1) {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                     finish();
@@ -12758,8 +12757,10 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
     public static void largeLog(String tag, String content) {
         if (content.length() > 4000) {
+            Log.w(tag,content.substring(0,4000));
             largeLog(tag, content.substring(4000));
         } else {
+            Log.w(tag,content);
         }
     }
 
@@ -13017,6 +13018,11 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         long totalSize = 0;
         ProgressDialog rdialog = null;
 
+        String tag = null;
+        public void setTag(String tag) {
+            this.tag = tag;
+        }
+
         @Override
         protected String doInBackground(String... params) {
             return postData(params[0], params[1]);
@@ -13025,6 +13031,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            listSubmittedId = new ArrayList<>();
             rdialog = new ProgressDialog(DinamicSLATaskActivity.this);
             rdialog.setMessage("Loading...");
             rdialog.show();
@@ -13041,7 +13048,25 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             String id = arr.getString(i);
                             listSubmittedId.add(id);
                         }
-                        loadFragment(new ZhOneFragment(a, be, idDetail, c));
+                        if (tag == null){
+                            loadFragment(new ZhOneFragment(a, be, idDetail, c));
+                        } else {
+                            if (tag.equalsIgnoreCase("THIRD TAG")){
+                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66985", "text", "0"));
+                                if (cEdit.getCount() > 0) {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, a + "|" + d, jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                                    db.updateDetailRoomWithFlagContent(orderModel);
+                                } else {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, a + "|" + d, jsonCreateType("66985", "text", "0"), "jjt", "cild");
+                                    db.insertRoomsDetail(orderModel);
+
+                                }
+                                Fragment currFragment = getVisibleFragment();
+                                if (currFragment != null){
+                                    currFragment.getFragmentManager().popBackStack();
+                                }
+                            }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -13108,6 +13133,18 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
     public String getIdDetail() {
         return idDetail;
+    }
+
+    public Fragment getVisibleFragment(){
+        FragmentManager fragmentManager = DinamicSLATaskActivity.this.getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if(fragments != null){
+            for(Fragment fragment : fragments){
+                if(fragment != null && fragment.isVisible())
+                    return fragment;
+            }
+        }
+        return null;
     }
 }
 

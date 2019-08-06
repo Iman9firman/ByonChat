@@ -3,38 +3,27 @@ package com.byonchat.android.view;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
+import android.util.Log;
 import android.view.Window;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
-import com.byonchat.android.AdvRecy.ItemMain;
-import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.R;
-import com.byonchat.android.ui.adapter.OnItemClickListener;
-import com.byonchat.android.ui.adapter.OnLongItemClickListener;
+import com.byonchat.android.Sample.Adapter.ExpandableListAdapter;
+import com.byonchat.android.model.SectionSampleItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ItemDialog extends Dialog {
 
     Context context;
 
     String title;
-    List<ItemMain> subList = new ArrayList<>();
+    ArrayList<SectionSampleItem> subList = new ArrayList<>();
     RecyclerView recyclerView;
-    RecyclerView.LayoutManager layoutManager;
-    //    MainAdapter adapter;
-    DraggableGridExampleAdapter adapter;
-    TextView titleView;
+    ExpandableListAdapter adapter;
 
-    public ItemDialog(Context context, String title, List<ItemMain> subList) {
+    public ItemDialog(Context context, String title, ArrayList<SectionSampleItem> subList) {
         super(context);
         this.context = context;
         this.title = title;
@@ -47,22 +36,14 @@ public class ItemDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.layout_item_dialog);
 
-        titleView = findViewById(R.id.title_dialog);
-        titleView.setText(title);
         recyclerView = findViewById(R.id.recycler_dialog);
-        layoutManager = new GridLayoutManager(context,3,RecyclerView.VERTICAL,false);
 
-        adapter = new DraggableGridExampleAdapter(context,subList, R.layout.list_grid_item);
-        adapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = ByonChatMainRoomActivity.generateIntent(context, (ItemMain) adapter.getData().get(position));
-                context.startActivity(intent);
-                dismiss();
-            }
-        });
+        recyclerView.setHasFixedSize(true);
 
-        recyclerView.setLayoutManager(layoutManager);
+        adapter = new ExpandableListAdapter(context, subList);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+
         recyclerView.setAdapter(adapter);
     }
 }

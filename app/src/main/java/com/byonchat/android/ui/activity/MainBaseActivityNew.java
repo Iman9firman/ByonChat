@@ -107,6 +107,7 @@ import com.byonchat.android.curved.CurvedImageView;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.BotAdapter;
 import com.byonchat.android.local.Byonchat;
+import com.byonchat.android.model.SectionSampleItem;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.DataBaseDropDown;
@@ -1009,12 +1010,11 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
                 String[] bagibagi = content.split("@@@");
                 JSONArray jAAr = new JSONArray(bagibagi[1]);
-                Log.w("Bebau kesukan", "satu  -->  " + jAAr);
                 for (int on = 0; on < jAAr.length(); on++) {
                     JSONObject jsonObject = /*new JSONObject(bagibagi[1]);*/jAAr.getJSONObject(on);
                     String title1 = jsonObject.getString("name");
                     String icon_name1 = jsonObject.getString("icon_name");
-                    String member = jsonObject.getString("members");
+                    String member = jsonObject.getString("section");
 
                     ItemMain itemMain1 = new ItemMain(i, null, title1, null, null,
                             username, null, color, colorText, null, null,
@@ -1237,9 +1237,13 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                         try {
                             JSONArray jsonArrow = new JSONArray(itemList.get(s1).status);
                             for (int i1 = 0; i1 < jsonArrow.length(); i1++) {
-                                String id_tab_dftared = jsonArrow.getString(i1);
-                                if (id_tab_dftared.equalsIgnoreCase(id_rooms_tab)) {
-                                    itemList.remove(itemMain);
+                                JSONObject jsonObject = jsonArrow.getJSONObject(i1);
+                                JSONArray jsonArray1 = jsonObject.getJSONArray("members");
+                                for (int i2 = 0; i2 < jsonArray1.length();i2++){
+                                    String id_tab_dftared = jsonArray1.getString(i2);
+                                    if (id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                                        itemList.remove(itemMain);
+                                    }
                                 }
                             }
                         } catch (JSONException e) {
@@ -2610,26 +2614,41 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         } else {
-            List<ItemMain> subItemList2 = new ArrayList<>();
+            ArrayList<SectionSampleItem> sample = new ArrayList<>();
+
 
             String member = adapter.getData().get(position).status;
             try {
                 JSONArray jsonArray = new JSONArray(member);
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    String id_tab_dftared = jsonArray.getString(i);
-                    for (int u = 0; u < subItemList.size(); u++) {
-                        if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
-                            subItemList2.add(subItemList.get(u));
+
+                    JSONObject gr = jsonArray.getJSONObject(i);
+
+                    String name_sub = gr.getString("name");
+                    JSONArray group_tab = gr.getJSONArray("members");
+                    ArrayList<ItemMain> subItemList2 = new ArrayList<>();
+
+                    for (int a = 0 ; a < group_tab.length(); a++){
+                        String id_tab_dftared = group_tab.getString(a);
+                        for (int u = 0; u < subItemList.size(); u++) {
+                            if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                                subItemList2.add(subItemList.get(u));
+                            }
                         }
                     }
+
+                    SectionSampleItem samply = new SectionSampleItem();
+                    samply.setHeaderTitle(name_sub);
+                    samply.setAllItemsInSection(subItemList2);
+                    sample.add(samply);
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            ItemDialog dialog = new ItemDialog(this, adapter.getData().get(position).tab_name, subItemList2);
+            ItemDialog dialog = new ItemDialog(this, adapter.getData().get(position).tab_name, sample);
             int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
-            int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.50);
+            int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.70);
             dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
             dialog.show();
             dialog.getWindow().setLayout(width, height);

@@ -571,42 +571,58 @@ public class MainActivityNew extends MainBaseActivityNew {
         adapter.setOnItemClickListener((view, position) -> {
             /*Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);*/
-            if (adapter.getData().get(position).category_tab != null) {
+            if (adapter.getData().get(position).id_rooms_tab != null) {
                 Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
                 startActivity(intent);
             } else {
                 ArrayList<SectionSampleItem> sample = new ArrayList<>();
-
-
+                String tab_name = adapter.getData().get(position).tab_name;
+                ArrayList<ItemMain> subItemListed = new ArrayList<>();
                 String member = adapter.getData().get(position).status;
+                String category_sub = adapter.getData().get(position).category_tab;
+                boolean non_sla = false;
                 try {
                     JSONArray jsonArray = new JSONArray(member);
                     for (int i = 0; i < jsonArray.length(); i++) {
+                        if(category_sub.equalsIgnoreCase("sla")) {
+                            JSONObject gr = jsonArray.getJSONObject(i);
+                            String name_sub = gr.getString("name");
+                            JSONArray group_tab = gr.getJSONArray("members");
+                            ArrayList<ItemMain> subItemList2 = new ArrayList<>();
 
-                        JSONObject gr = jsonArray.getJSONObject(i);
-
-                        String name_sub = gr.getString("name");
-                        JSONArray group_tab = gr.getJSONArray("members");
-                        ArrayList<ItemMain> subItemList2 = new ArrayList<>();
-
-                        for (int a = 0 ; a < group_tab.length(); a++){
-                            String id_tab_dftared = group_tab.getString(a);
-                            for (int u = 0; u < subItemList.size(); u++) {
-                                if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
-                                    subItemList2.add(subItemList.get(u));
+                            for (int a = 0; a < group_tab.length(); a++) {
+                                String id_tab_dftared = group_tab.getString(a);
+                                for (int u = 0; u < subItemList.size(); u++) {
+                                    if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                                        subItemList2.add(subItemList.get(u));
+                                    }
                                 }
                             }
+                            SectionSampleItem samply = new SectionSampleItem();
+                            samply.setHeaderTitle(name_sub);
+                            samply.setAllItemsInSection(subItemList2);
+                            sample.add(samply);
+                        }else {
+                            String id_tab_dftared = jsonArray.getString(i);
+                            for (int u = 0; u < subItemList.size(); u++) {
+                                if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                                    subItemListed.add(subItemList.get(u));
+                                }
+                            }
+                            non_sla = true;
                         }
+                    }
 
+                    if(non_sla){
                         SectionSampleItem samply = new SectionSampleItem();
-                        samply.setHeaderTitle(name_sub);
-                        samply.setAllItemsInSection(subItemList2);
+                        samply.setHeaderTitle(tab_name);
+                        samply.setAllItemsInSection(subItemListed);
                         sample.add(samply);
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
                 ItemDialog dialog = new ItemDialog(this, adapter.getData().get(position).tab_name, sample);
                 int width, height;
                 if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {

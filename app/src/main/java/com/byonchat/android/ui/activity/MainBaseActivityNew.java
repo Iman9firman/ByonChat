@@ -1003,6 +1003,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             positionList.clear();
             subItemList.clear();
             boolean grouping = false;
+            String category_sub = "";
 
             JSONArray jsonArray;
             if (content.startsWith("JSONnnye")) {
@@ -1014,9 +1015,17 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                     JSONObject jsonObject = /*new JSONObject(bagibagi[1]);*/jAAr.getJSONObject(on);
                     String title1 = jsonObject.getString("name");
                     String icon_name1 = jsonObject.getString("icon_name");
-                    String member = jsonObject.getString("section");
+                    String member = "";
+                    if(jsonObject.has("section")) {
+                        member = jsonObject.getString("section");
+                        category_sub = "sla";
+                    } else if ( jsonObject.has("members")){
+                        member = jsonObject.getString("members");
+                        category_sub = "non_sla";
+                    }
 
-                    ItemMain itemMain1 = new ItemMain(i, null, title1, null, null,
+
+                    ItemMain itemMain1 = new ItemMain(i, category_sub, title1, null, null,
                             username, null, color, colorText, null, null,
                             member, name, icon, icon_name1);
 
@@ -1236,14 +1245,23 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                     for (int s1 = 0; s1 < itemList.size(); s1++) {
                         try {
                             JSONArray jsonArrow = new JSONArray(itemList.get(s1).status);
+                            String category_sub1 = itemList.get(s1).category_tab;
                             for (int i1 = 0; i1 < jsonArrow.length(); i1++) {
-                                JSONObject jsonObject = jsonArrow.getJSONObject(i1);
-                                JSONArray jsonArray1 = jsonObject.getJSONArray("members");
-                                for (int i2 = 0; i2 < jsonArray1.length();i2++){
-                                    String id_tab_dftared = jsonArray1.getString(i2);
-                                    if (id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                                if(category_sub1.equalsIgnoreCase("sla")) {
+                                    JSONObject jsonObject = jsonArrow.getJSONObject(i1);
+                                    JSONArray jsonArray1 = jsonObject.getJSONArray("members");
+                                    for (int i2 = 0; i2 < jsonArray1.length(); i2++) {
+                                        String id_tab_dftared = jsonArray1.getString(i2);
+                                        if (id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                                            itemList.remove(itemMain);
+                                        }
+                                    }
+                                }else {
+                                    String id_tab_dftared = jsonArrow.getString(i1);
+                                    if (id_tab_dftared.equalsIgnoreCase(id_rooms_tab)) {
                                         itemList.remove(itemMain);
                                     }
+
                                 }
                             }
                         } catch (JSONException e) {
@@ -2610,42 +2628,59 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     }
 
     private void intentTabMenu(ItemMain im, int position) {
-        if (adapter.getData().get(position).category_tab != null) {
+        if (adapter.getData().get(position).id_rooms_tab != null) {
             Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
             startActivity(intent);
         } else {
             ArrayList<SectionSampleItem> sample = new ArrayList<>();
 
-
+            String tab_name = adapter.getData().get(position).tab_name;
+            ArrayList<ItemMain> subItemListed = new ArrayList<>();
             String member = adapter.getData().get(position).status;
+            String category_sub = adapter.getData().get(position).category_tab;
+            boolean non_sla = false;
             try {
                 JSONArray jsonArray = new JSONArray(member);
                 for (int i = 0; i < jsonArray.length(); i++) {
+                    if(category_sub.equalsIgnoreCase("sla")) {
+                        JSONObject gr = jsonArray.getJSONObject(i);
+                        String name_sub = gr.getString("name");
+                        JSONArray group_tab = gr.getJSONArray("members");
+                        ArrayList<ItemMain> subItemList2 = new ArrayList<>();
 
-                    JSONObject gr = jsonArray.getJSONObject(i);
-
-                    String name_sub = gr.getString("name");
-                    JSONArray group_tab = gr.getJSONArray("members");
-                    ArrayList<ItemMain> subItemList2 = new ArrayList<>();
-
-                    for (int a = 0 ; a < group_tab.length(); a++){
-                        String id_tab_dftared = group_tab.getString(a);
-                        for (int u = 0; u < subItemList.size(); u++) {
-                            if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
-                                subItemList2.add(subItemList.get(u));
+                        for (int a = 0; a < group_tab.length(); a++) {
+                            String id_tab_dftared = group_tab.getString(a);
+                            for (int u = 0; u < subItemList.size(); u++) {
+                                if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                                    subItemList2.add(subItemList.get(u));
+                                }
                             }
                         }
+                        SectionSampleItem samply = new SectionSampleItem();
+                        samply.setHeaderTitle(name_sub);
+                        samply.setAllItemsInSection(subItemList2);
+                        sample.add(samply);
+                    }else {
+                        String id_tab_dftared = jsonArray.getString(i);
+                        for (int u = 0; u < subItemList.size(); u++) {
+                            if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
+                                subItemListed.add(subItemList.get(u));
+                            }
+                        }
+                        non_sla = true;
                     }
+                }
 
+                if(non_sla){
                     SectionSampleItem samply = new SectionSampleItem();
-                    samply.setHeaderTitle(name_sub);
-                    samply.setAllItemsInSection(subItemList2);
+                    samply.setHeaderTitle(tab_name);
+                    samply.setAllItemsInSection(subItemListed);
                     sample.add(samply);
-
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             ItemDialog dialog = new ItemDialog(this, adapter.getData().get(position).tab_name, sample);
             int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.90);
             int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.70);

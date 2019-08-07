@@ -10500,14 +10500,52 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 progressDialog.dismiss();
                 if (response == 0) {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-//                    finish();
-//                    recreate();
-//                    if (spinner != null) {
-//                        spinner.setSelection(0);
-//                    }
                     AsyncTask goasync = new apiLookUp();
                     ((apiLookUp) goasync).setTag("THIRD TAG");
                     ((apiLookUp) goasync).execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt", d);
+
+                    long date = System.currentTimeMillis();
+                    String dateString = hourFormat.format(date);
+                    String latLongs = "0.0|0.0";
+
+
+                    if (latLong.equalsIgnoreCase("1")) {
+                        gps = new GPSTracker(DinamicSLATaskActivity.this);
+                        if (!gps.canGetLocation()) {
+                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), REQ_LOCATION_SETTING);
+                            finish();
+                        } else {
+                            if (gps.canGetLocation()) {
+                                latitude = gps.getLatitude();
+                                longitude = gps.getLongitude();
+                                if (latitude == 0.0 && longitude == 0.0) {
+                               /* DinamicSLATaskActivity.this.runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        finish();
+                                        Toast.makeText(context, "Harap coba kembali dalam waktu 1 menit, karena data gps anda sedang diaktifkan", Toast.LENGTH_LONG).show();
+                                    }
+                                });*/
+                                    latLongs = new NotificationReceiver().simInfo();
+                                } else {
+                                    latLongs = String.valueOf(latitude) + "|" + String.valueOf(longitude);
+                                }
+                            }
+                        }
+
+                    }
+                    String firstLat = "";
+                    if (!latLongs.equalsIgnoreCase("")) {
+                        firstLat = jsonCreateType(latLongs, "", "");
+                    }
+
+
+                    SimpleDateFormat dateFormatNew = new SimpleDateFormat(
+                            "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+
+                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "0", firstLat, "parent");
+                    db.insertRoomsDetail(orderModel);
+
                 } else if (response == 1) {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                     finish();

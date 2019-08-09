@@ -134,6 +134,7 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+import com.scottyab.rootbeer.RootBeer;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -546,7 +547,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     protected String roomid = "";
     protected int i = 0;
     protected ProgressDialog dialog;
-//    Boolean loginIss = true;
+
+    //    Boolean loginIss = true;
+    protected boolean successOnCreate = false;
 
     protected SQLiteDatabase sqLiteDatabase;
 
@@ -559,11 +562,24 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        RootBeer rootBeer = new RootBeer(getApplicationContext());
+        if (rootBeer.isRooted()){
+            AlertDialog.Builder dialog = new AlertDialog.Builder(MainBaseActivityNew.this);
+            dialog.setTitle(getResources().getString(R.string.rooted_device_title));
+            dialog.setMessage(getResources().getString(R.string.rooted_device));
+            dialog.setCancelable(false);
+            dialog.setNegativeButton("Close", (dialog1, which) -> {
+                finishAffinity();
+            });
+            dialog.show();
+            return;
+        }
         onSetStatusBarColor();
         setContentView(getResourceLayout());
         onSetupRoom();
         onLoadView();
         onViewReady(savedInstanceState);
+        successOnCreate = true;
     }
 
     protected void onSetStatusBarColor() {
@@ -2946,5 +2962,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
         }
 
 
+    }
+
+    protected boolean isSuccessOnCreate() {
+        return successOnCreate;
     }
 }

@@ -428,38 +428,42 @@ public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
     protected void onPause() {
-        unregisterReceiver(broadcastHandler);
+        if (isSuccessOnCreate()){
+            unregisterReceiver(broadcastHandler);
 //        assistant.stop();
-        numbers.clear();
-        appBarLayout.removeOnOffsetChangedListener(this);
+            numbers.clear();
+            appBarLayout.removeOnOffsetChangedListener(this);
+        }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        assistant.start();
+        if (isSuccessOnCreate()){
+            //        assistant.start();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            openOverlaySettings();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+                openOverlaySettings();
+            }
+
+            IntentFilter f = new IntentFilter(
+                    MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
+            f.addAction(MessengerConnectionService.ACTION_REFRESH_NOTIF_FORM);
+            f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
+            f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
+            f.setPriority(1);
+
+            registerReceiver(broadcastHandler, f);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+            addShortcutBadger(getApplicationContext());
+
+            onHomeRefresh();
+            resolveVersion();
         }
-
-        IntentFilter f = new IntentFilter(
-                MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
-        f.addAction(MessengerConnectionService.ACTION_REFRESH_NOTIF_FORM);
-        f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
-        f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
-        f.setPriority(1);
-
-        registerReceiver(broadcastHandler, f);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID_CARD);
-        addShortcutBadger(getApplicationContext());
-
-        onHomeRefresh();
-        resolveVersion();
     }
 
     protected void resolveVersion(){
@@ -935,10 +939,14 @@ public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(Gravity.START)) {
-            drawerLayout.closeDrawer(Gravity.START);
-        } else if (searchView.isSearchOpen()) {
-            searchView.closeSearch();
+        if (isSuccessOnCreate()){
+            if (drawerLayout.isDrawerOpen(Gravity.START)) {
+                drawerLayout.closeDrawer(Gravity.START);
+            } else if (searchView.isSearchOpen()) {
+                searchView.closeSearch();
+            } else {
+                super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }

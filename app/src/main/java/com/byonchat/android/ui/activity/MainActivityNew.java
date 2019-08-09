@@ -433,11 +433,13 @@ public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
     protected void onPause() {
-        unregisterReceiver(broadcastHandler);
-        if (lanjut){
-            assistant.stop();
-            numbers.clear();
-            appBarLayout.removeOnOffsetChangedListener(this);
+        if (isSuccessOnCreate()){
+            unregisterReceiver(broadcastHandler);
+            if (lanjut){
+                assistant.stop();
+                numbers.clear();
+                appBarLayout.removeOnOffsetChangedListener(this);
+            }
         }
         super.onPause();
     }
@@ -445,24 +447,26 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onResume() {
         super.onResume();
-        assistant.start();
+        if (isSuccessOnCreate()){
+            assistant.start();
 
-        IntentFilter f = new IntentFilter(
-                MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
-        f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
-        f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
-        f.setPriority(1);
+            IntentFilter f = new IntentFilter(
+                    MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
+            f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
+            f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
+            f.setPriority(1);
 
-        registerReceiver(broadcastHandler, f);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID_CARD);
-        if (lanjut){
-            addShortcutBadger(getApplicationContext());
+            registerReceiver(broadcastHandler, f);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+            if (lanjut){
+                addShortcutBadger(getApplicationContext());
 
-            onHomeRefresh();
-            resolveVersion();
+                onHomeRefresh();
+                resolveVersion();
+            }
         }
     }
 
@@ -827,10 +831,14 @@ public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(Gravity.START)) {
-            drawerLayout.closeDrawer(Gravity.START);
-        } else if (searchView.isSearchOpen()) {
-            searchView.closeSearch();
+        if (isSuccessOnCreate()){
+            if (drawerLayout.isDrawerOpen(Gravity.START)) {
+                drawerLayout.closeDrawer(Gravity.START);
+            } else if (searchView.isSearchOpen()) {
+                searchView.closeSearch();
+            } else {
+                super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }

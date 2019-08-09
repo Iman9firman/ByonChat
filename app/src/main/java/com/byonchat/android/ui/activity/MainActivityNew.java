@@ -558,6 +558,21 @@ public class MainActivityNew extends MainBaseActivityNew {
         resolveListRooms();
         resolveOpenRooms();
         resolveRefreshGrid();
+        resolveVisibleLayout();
+    }
+
+    public void resolveVisibleLayout(){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            recyclerView.setVisibility(View.VISIBLE);
+            vFrameTabOne.setVisibility(View.INVISIBLE);
+            vFrameTabTwo.setVisibility(View.INVISIBLE);
+            vFrameTabFour.setVisibility(View.INVISIBLE);
+            vFrameTabNine.setVisibility(View.INVISIBLE);
+        }else{
+            if(itemList.size() < 9){
+                recyclerView.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     @Override

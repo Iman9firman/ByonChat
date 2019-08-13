@@ -82,6 +82,8 @@ public class SLACyclerAdapter extends RecyclerView.Adapter<SLACyclerAdapter.SLAC
             holder.next.setVisibility(View.GONE);
             holder.textCount.setVisibility(View.GONE);
 
+            holder.picturePicker.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_att_gallery));
+
             if (checkDB(idDetailForm, holder.textId.getText().toString())) {
                 if (getOkFromDB(idDetailForm, holder.textId.getText().toString()) == 1) {
                     holder.yes.setBackgroundColor(activity.getResources().getColor(R.color.color_primary_green));

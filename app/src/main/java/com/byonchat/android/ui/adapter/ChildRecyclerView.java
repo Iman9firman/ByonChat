@@ -88,6 +88,7 @@ public class ChildRecyclerView {
         if (data.child_status.equalsIgnoreCase("0")) {
             status = "waiting";
             child_bayangan.setVisibility(android.view.View.GONE);
+            child_btn_cancel_approve.setVisibility(android.view.View.VISIBLE);
             child_btn_cancel_approve.setText("Cancel");
             child_btn_cancel_approve.setEnabled(true);
             child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
@@ -126,6 +127,7 @@ public class ChildRecyclerView {
         } else if (data.child_status.equalsIgnoreCase("2")) {
             status = "Confirm Checkin";
             child_bayangan.setVisibility(android.view.View.GONE);
+            child_btn_cancel_approve.setVisibility(android.view.View.VISIBLE);
             child_btn_cancel_approve.setText("Approve");
             child_btn_cancel_approve.setEnabled(true);
             child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
@@ -147,6 +149,7 @@ public class ChildRecyclerView {
         } else if (data.child_status.equalsIgnoreCase("4")) {
             child_bayangan.setVisibility(android.view.View.GONE);
             status = "Confirm CheckOut";
+            child_btn_cancel_approve.setVisibility(android.view.View.VISIBLE);
             child_btn_cancel_approve.setText("Approve");
             child_btn_cancel_approve.setEnabled(true);
             child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {

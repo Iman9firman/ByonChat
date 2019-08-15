@@ -1926,6 +1926,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66985", "text", "0"));
 
+
                     if (idTab.equalsIgnoreCase("2613")) {
                         if (spinnerArraySla.get(myPosition).equalsIgnoreCase("--Please Select--")) {
                             recyclerView.setVisibility(View.GONE);
@@ -2246,7 +2247,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             }
                         } else {
                             String assup = duaJJt.get(myPosition - 1);
-
+                            d = assup;
                             if (cEdit.getCount() > 0) {
                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArraySla.get(myPosition)) + "|" + assup, jsonCreateType("66985", "text", "0"), "jjt", "cild");
                                 db.updateDetailRoomWithFlagContent(orderModel);
@@ -13109,7 +13110,11 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         e.printStackTrace();
                     }
                 } else {
-                    new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/iss/kerangka_jjt.php", d, makeJJTFrame(be));
+                    if (!idTab.equalsIgnoreCase("3336")) {
+                        new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/iss/kerangka_jjt.php", d, makeJJTFrame(be));
+                    }else {
+                        finish();
+                    }
                 }
             }
         }

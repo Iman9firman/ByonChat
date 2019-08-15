@@ -8699,6 +8699,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         }
 
+                        int idchecked = -1;
+
                         for (int iaa = 0; iaa < jsonArrayCeks.length(); iaa++) {
                             String l = jsonArrayCeks.getJSONObject(iaa).getString("label_radio").toString();
                             String cek = jsonArrayCeks.getJSONObject(iaa).getString("is_checked").toString();
@@ -8721,7 +8723,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                             if (hasilDariDB.equalsIgnoreCase(l)) {
-                                rb[iaa].setChecked(true);
+//                                rb[iaa].setChecked(true);
+                                idchecked = iaa;
                             }
 
 
@@ -8740,6 +8743,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             rg[count].addView(rb[iaa]);
                         }
 
+                        if (idchecked != -1){
+                            rg[count].check(idchecked);
+                        }
+
                         if ((!showButton)) {
                             rg[count].setEnabled(false);
                         } else {
@@ -8747,7 +8754,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             rg[count].setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                                 @Override
                                 public void onCheckedChanged(RadioGroup group, int checkedId) {
-
 
                                     RadioButton rbs = (RadioButton) group.findViewById(checkedId);
                                     if (null != rbs && checkedId > -1) {
@@ -11275,7 +11281,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         } else if (valueKTP.equalsIgnoreCase("tanggal")) {
                             lala = f;
                         }
-
                         if (va.get(2).equalsIgnoreCase("radio")) {
 
                             int radio_button_Id = 0;

@@ -106,7 +106,7 @@ public class LoginISS extends AppCompatActivity {
                     new Validations().getInstance(getApplicationContext()).setString(passID.getText().toString(), 29);
 
 
-                  /*  params.put("username", "N101174");
+               /*     params.put("username", "N101174");
                     params.put("password", "Pass551551");
                     params.put("bc_user", "6285691219599");*/
 

@@ -138,15 +138,15 @@ public class PushRepairReportActivity extends AppCompatActivity {
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
             id_task = gvcs.getString("task_id");
-            id_task_list = gvcs.getString("id_list_task");
+            id_task_list = "68351";//gvcs.getString("id_list_task"); "jargon"
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
             name_title = gvcs.getString("title");
             JSONArray jar = gvcs.getJSONArray("value_detail");
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject basefoto = jar.getJSONObject(i);
-                String id = basefoto.getString("urutan");
                 String fotony = basefoto.getString("foto");
                 String title = basefoto.getString("keterangan");
+                String id = fotony.split("/")[(fotony.split("/").length) - 1];
 
                 Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
                 SLAmodelNew fotonya = null;
@@ -156,6 +156,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 } else {
                     fotonya = new SLAmodelNew("Header", id, title, fotony, (java.io.File) null);
                 }
+
                 foto.add(fotonya);
             }
         } catch (JSONException e) {
@@ -179,9 +180,6 @@ public class PushRepairReportActivity extends AppCompatActivity {
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
-
-                        Bitmap result = MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800,
-                                800);
 
                         RoomsDetail orderModel = new RoomsDetail(id_task, getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
                         db.insertRoomsDetail(orderModel);
@@ -382,33 +380,6 @@ public class PushRepairReportActivity extends AppCompatActivity {
         });
     }
 
-    private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    rdialog.dismiss();
-                    finish();
-                    Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-                    Log.w("Return push errorrr", response);
-
-                },
-                error -> {
-                    Toast.makeText(getApplicationContext(), "Error found! Try Again", Toast.LENGTH_SHORT).show();
-                    rdialog.dismiss();
-                    Log.w("Return push errorrrrr2", error);
-                }
-        ) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        queue.add(sr);
-    }
-
     private String fileJson() {
         String stringdong = "";
 
@@ -527,7 +498,6 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
@@ -571,44 +541,35 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.w("segitu@@", result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
-                    Log.w("segitu@1@", result);
                     String fileNameServer = jsonObject.getString("filename");
                     String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
 
-                    Log.w("11111 errorre 1", fileNameServer);
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getId().equalsIgnoreCase(id)) {
                             SLAmodelNew fotonya = new SLAmodelNew("Header", foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
                             uploadfoto.add(fotonya);
                         }
                     }
-
-
                 } else {
-                    Log.w("segitu@2@", result);
+                    Toast.makeText(getApplicationContext(), "Failed Uploading Report", Toast.LENGTH_LONG).show();
+                    rdialog.dismiss();
+                    finish();
                 }
 
                 if (foto.size() == uploadfoto.size()) {
-                    Log.w("segitu@3@", result);
-//                    Map<String, String> params = new HashMap<>();
-//                    params.put("username_room",  getIntent().getStringExtra("username_room"));
-//                    params.put("bc_user",  getIntent().getStringExtra("bc_user"));
-//                    params.put("id_rooms_tab",  getIntent().getStringExtra("id_rooms_tab"));
-//                    params.put("json",  fileJson());
-//                    Log.w("buifder uewufg",getIntent().getStringExtra("id_rooms_tab")+", "+ getIntent().getStringExtra("username_room"));
-//                    Log.w("nreoirgn errorre egbh",fileJson());
-//                    getDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_tobe_repair.php",params,true);
                     new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_tobe_repair.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                Toast.makeText(getApplicationContext(), "Failed Uploading Report", Toast.LENGTH_LONG).show();
+                rdialog.dismiss();
+                finish();
 
             }
             super.onPostExecute(result);
@@ -644,7 +605,6 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });

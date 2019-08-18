@@ -8578,6 +8578,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Log.w("jotRO", "ss");
                         b.setEnabled(false);
                         boolean berhenti = false;
 
@@ -10500,52 +10501,57 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             public void run() {
                 progressDialog.dismiss();
                 if (response == 0) {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-                    AsyncTask goasync = new apiLookUp();
-                    ((apiLookUp) goasync).setTag("THIRD TAG");
-                    ((apiLookUp) goasync).execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt", d);
+                    if (idTab.equalsIgnoreCase("3336")) {
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                        AsyncTask goasync = new apiLookUp();
+                        ((apiLookUp) goasync).setTag("THIRD TAG");
+                        ((apiLookUp) goasync).execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt", d);
 
-                    long date = System.currentTimeMillis();
-                    String dateString = hourFormat.format(date);
-                    String latLongs = "0.0|0.0";
+                        long date = System.currentTimeMillis();
+                        String dateString = hourFormat.format(date);
+                        String latLongs = "0.0|0.0";
 
 
-                    if (latLong.equalsIgnoreCase("1")) {
-                        gps = new GPSTracker(DinamicSLATaskActivity.this);
-                        if (!gps.canGetLocation()) {
-                            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), REQ_LOCATION_SETTING);
-                            finish();
-                        } else {
-                            if (gps.canGetLocation()) {
-                                latitude = gps.getLatitude();
-                                longitude = gps.getLongitude();
-                                if (latitude == 0.0 && longitude == 0.0) {
+                        if (latLong.equalsIgnoreCase("1")) {
+                            gps = new GPSTracker(DinamicSLATaskActivity.this);
+                            if (!gps.canGetLocation()) {
+                                startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), REQ_LOCATION_SETTING);
+                                finish();
+                            } else {
+                                if (gps.canGetLocation()) {
+                                    latitude = gps.getLatitude();
+                                    longitude = gps.getLongitude();
+                                    if (latitude == 0.0 && longitude == 0.0) {
                                /* DinamicSLATaskActivity.this.runOnUiThread(new Runnable() {
                                     public void run() {
                                         finish();
                                         Toast.makeText(context, "Harap coba kembali dalam waktu 1 menit, karena data gps anda sedang diaktifkan", Toast.LENGTH_LONG).show();
                                     }
                                 });*/
-                                    latLongs = new NotificationReceiver().simInfo();
-                                } else {
-                                    latLongs = String.valueOf(latitude) + "|" + String.valueOf(longitude);
+                                        latLongs = new NotificationReceiver().simInfo();
+                                    } else {
+                                        latLongs = String.valueOf(latitude) + "|" + String.valueOf(longitude);
+                                    }
                                 }
                             }
+
+                        }
+                        String firstLat = "";
+                        if (!latLongs.equalsIgnoreCase("")) {
+                            firstLat = jsonCreateType(latLongs, "", "");
                         }
 
+
+                        SimpleDateFormat dateFormatNew = new SimpleDateFormat(
+                                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+
+                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "0", firstLat, "parent");
+                        db.insertRoomsDetail(orderModel);
                     }
-                    String firstLat = "";
-                    if (!latLongs.equalsIgnoreCase("")) {
-                        firstLat = jsonCreateType(latLongs, "", "");
-                    }
-
-
-                    SimpleDateFormat dateFormatNew = new SimpleDateFormat(
-                            "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-
-
-                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "0", firstLat, "parent");
-                    db.insertRoomsDetail(orderModel);
 
                 } else if (response == 1) {
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
@@ -12796,10 +12802,10 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
     public static void largeLog(String tag, String content) {
         if (content.length() > 4000) {
-            Log.w(tag,content.substring(0,4000));
+            Log.w(tag, content.substring(0, 4000));
             largeLog(tag, content.substring(4000));
         } else {
-            Log.w(tag,content);
+            Log.w(tag, content);
         }
     }
 
@@ -13058,6 +13064,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         ProgressDialog rdialog = null;
 
         String tag = null;
+
         public void setTag(String tag) {
             this.tag = tag;
         }
@@ -13087,10 +13094,10 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             String id = arr.getString(i);
                             listSubmittedId.add(id);
                         }
-                        if (tag == null){
+                        if (tag == null) {
                             loadFragment(new ZhOneFragment(a, be, idDetail, c));
                         } else {
-                            if (tag.equalsIgnoreCase("THIRD TAG")){
+                            if (tag.equalsIgnoreCase("THIRD TAG")) {
                                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66985", "text", "0"));
                                 if (cEdit.getCount() > 0) {
                                     RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, a + "|" + d, jsonCreateType("66985", "text", "0"), "jjt", "cild");
@@ -13101,7 +13108,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                 }
                                 Fragment currFragment = getVisibleFragment();
-                                if (currFragment != null){
+                                if (currFragment != null) {
                                     currFragment.getFragmentManager().popBackStack();
                                 }
                             }
@@ -13112,7 +13119,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 } else {
                     if (!idTab.equalsIgnoreCase("3336")) {
                         new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/iss/kerangka_jjt.php", d, makeJJTFrame(be));
-                    }else {
+                    } else {
                         finish();
                     }
                 }
@@ -13178,12 +13185,12 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         return idDetail;
     }
 
-    public Fragment getVisibleFragment(){
+    public Fragment getVisibleFragment() {
         FragmentManager fragmentManager = DinamicSLATaskActivity.this.getSupportFragmentManager();
         List<Fragment> fragments = fragmentManager.getFragments();
-        if(fragments != null){
-            for(Fragment fragment : fragments){
-                if(fragment != null && fragment.isVisible())
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                if (fragment != null && fragment.isVisible())
                     return fragment;
             }
         }

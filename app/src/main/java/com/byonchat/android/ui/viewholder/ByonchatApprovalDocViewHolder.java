@@ -42,8 +42,8 @@ public class ByonchatApprovalDocViewHolder extends RecyclerView.ViewHolder imple
     protected File file;
 
     public ByonchatApprovalDocViewHolder(View view,
-                                 OnItemClickListener itemClickListener,
-                                 OnLongItemClickListener longItemClickListener) {
+                                         OnItemClickListener itemClickListener,
+                                         OnLongItemClickListener longItemClickListener) {
         super(view);
         vName = (TextView) view.findViewById(R.id.name);
         vTimestamp = (TextView) view.findViewById(R.id.timestamp);
@@ -77,20 +77,25 @@ public class ByonchatApprovalDocViewHolder extends RecyclerView.ViewHolder imple
 
     @Override
     public void onClick(View v) {
-        int position = getAdapterPosition();
-        if (position >= 0) {
-            itemClickListener.onItemClick(v, position);
+        if (v != null) {
+            int position = getAdapterPosition();
+            if (position >= 0) {
+                itemClickListener.onItemClick(v, position);
+            }
         }
+
     }
 
     @Override
     public boolean onLongClick(View v) {
-        if (longItemClickListener != null) {
-            int position = getAdapterPosition();
-            if (position >= 0) {
-                longItemClickListener.onLongItemClick(v, position);
+        if (v != null) {
+            if (longItemClickListener != null) {
+                int position = getAdapterPosition();
+                if (position >= 0) {
+                    longItemClickListener.onLongItemClick(v, position);
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }

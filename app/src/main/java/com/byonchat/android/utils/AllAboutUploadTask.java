@@ -436,7 +436,7 @@ public class AllAboutUploadTask {
 
         if (listUpload.size() == 0) {
             if (fromList.equalsIgnoreCase("show")) {
-                if (idTab.equalsIgnoreCase("3336")) {
+                if (idTab.equalsIgnoreCase("3336")||idTab.equalsIgnoreCase("2613")) {
                     new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAILSLA, username, idTab, idDetail);
                 } else {
                     new posTask().execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + POSDETAIL, username, idTab, idDetail);

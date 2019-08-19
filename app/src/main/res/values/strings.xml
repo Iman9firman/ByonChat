@@ -560,6 +560,4 @@
         <item name="size_four">4 x n</item>
     </string-array>
     <string name="title_activity_dinamic_slatask">DinamicSLATaskActivity</string>
-    <string name="rooted_device_title">"Can't open app"</string>
-    <string name="rooted_device">"Because of a new security policy, Byonchat can't be opened on a rooted device."</string>
 </resources>

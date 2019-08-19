@@ -428,20 +428,17 @@ public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
     protected void onPause() {
-        if (isSuccessOnCreate()){
+
             unregisterReceiver(broadcastHandler);
-//        assistant.stop();
             numbers.clear();
             appBarLayout.removeOnOffsetChangedListener(this);
-        }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isSuccessOnCreate()){
-            //        assistant.start();
+
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
                 openOverlaySettings();
@@ -463,7 +460,7 @@ public class MainActivityNew extends MainBaseActivityNew {
 
             onHomeRefresh();
             resolveVersion();
-        }
+
     }
 
     protected void resolveVersion(){
@@ -939,7 +936,6 @@ public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
     public void onBackPressed() {
-        if (isSuccessOnCreate()){
             if (drawerLayout.isDrawerOpen(Gravity.START)) {
                 drawerLayout.closeDrawer(Gravity.START);
             } else if (searchView.isSearchOpen()) {
@@ -947,9 +943,7 @@ public class MainActivityNew extends MainBaseActivityNew {
             } else {
                 super.onBackPressed();
             }
-        } else {
-            super.onBackPressed();
-        }
+
     }
 
     @Override

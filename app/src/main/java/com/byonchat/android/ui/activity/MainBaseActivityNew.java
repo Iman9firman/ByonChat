@@ -530,7 +530,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected String roomid = "";
     protected int i = 0;
     Boolean loginIss = true;
-    protected boolean successOnCreate = false;
 
     protected boolean lanjut = false;
 
@@ -545,18 +544,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        RootBeer rootBeer = new RootBeer(getApplicationContext());
-        if (rootBeer.isRooted()){
-            AlertDialog.Builder dialog = new AlertDialog.Builder(MainBaseActivityNew.this);
-            dialog.setTitle(getResources().getString(R.string.rooted_device_title));
-            dialog.setMessage(getResources().getString(R.string.rooted_device));
-            dialog.setCancelable(false);
-            dialog.setNegativeButton("Close", (dialog1, which) -> {
-                finishAffinity();
-            });
-            dialog.show();
-            return;
-        }
         if (!checkAndRequestPermissions()){
             return;
         } else {
@@ -567,7 +554,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         onSetupRoom();
         onLoadView();
         onViewReady(savedInstanceState);
-        successOnCreate = true;
     }
 
     protected Boolean checkAndRequestPermissions(){
@@ -2676,7 +2662,4 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         return false;
     }
 
-    protected boolean isSuccessOnCreate() {
-        return successOnCreate;
-    }
 }

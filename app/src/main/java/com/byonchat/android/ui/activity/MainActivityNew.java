@@ -360,13 +360,13 @@ public class MainActivityNew extends MainBaseActivityNew {
         resolveOpenRooms();
     }
 
-    protected void resolveVersion(){
+    protected void resolveVersion() {
         UpdateListDB db = new UpdateListDB(getApplicationContext());
         db.open();
 
         Cursor crs = db.getUnrefreshedData("0");
         while (crs.moveToNext()) {
-            if(crs.getString(crs.getColumnIndex(UpdateListDB.UPD_NAME)).equalsIgnoreCase("refresh_version")){
+            if (crs.getString(crs.getColumnIndex(UpdateListDB.UPD_NAME)).equalsIgnoreCase("refresh_version")) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 try {
                     Date d = sdf.parse(crs.getString(crs.getColumnIndexOrThrow(UpdateListDB.UPD_DATE_EXP)));
@@ -433,13 +433,11 @@ public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
     protected void onPause() {
-        if (isSuccessOnCreate()){
-            unregisterReceiver(broadcastHandler);
-            if (lanjut){
-                assistant.stop();
-                numbers.clear();
-                appBarLayout.removeOnOffsetChangedListener(this);
-            }
+        unregisterReceiver(broadcastHandler);
+        if (lanjut) {
+            assistant.stop();
+            numbers.clear();
+            appBarLayout.removeOnOffsetChangedListener(this);
         }
         super.onPause();
     }
@@ -447,26 +445,24 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onResume() {
         super.onResume();
-        if (isSuccessOnCreate()){
-            assistant.start();
+        assistant.start();
 
-            IntentFilter f = new IntentFilter(
-                    MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
-            f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
-            f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
-            f.setPriority(1);
+        IntentFilter f = new IntentFilter(
+                MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
+        f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
+        f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
+        f.setPriority(1);
 
-            registerReceiver(broadcastHandler, f);
-            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                    .cancel(NotificationReceiver.NOTIFY_ID);
-            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                    .cancel(NotificationReceiver.NOTIFY_ID_CARD);
-            if (lanjut){
-                addShortcutBadger(getApplicationContext());
+        registerReceiver(broadcastHandler, f);
+        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                .cancel(NotificationReceiver.NOTIFY_ID);
+        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+        if (lanjut) {
+            addShortcutBadger(getApplicationContext());
 
-                onHomeRefresh();
-                resolveVersion();
-            }
+            onHomeRefresh();
+            resolveVersion();
         }
     }
 
@@ -561,15 +557,15 @@ public class MainActivityNew extends MainBaseActivityNew {
         resolveVisibleLayout();
     }
 
-    public void resolveVisibleLayout(){
+    public void resolveVisibleLayout() {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             recyclerView.setVisibility(View.VISIBLE);
             vFrameTabOne.setVisibility(View.INVISIBLE);
             vFrameTabTwo.setVisibility(View.INVISIBLE);
             vFrameTabFour.setVisibility(View.INVISIBLE);
             vFrameTabNine.setVisibility(View.INVISIBLE);
-        }else{
-            if(itemList.size() < 9){
+        } else {
+            if (itemList.size() < 9) {
                 recyclerView.setVisibility(View.INVISIBLE);
             }
         }
@@ -846,14 +842,10 @@ public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
     public void onBackPressed() {
-        if (isSuccessOnCreate()){
-            if (drawerLayout.isDrawerOpen(Gravity.START)) {
-                drawerLayout.closeDrawer(Gravity.START);
-            } else if (searchView.isSearchOpen()) {
-                searchView.closeSearch();
-            } else {
-                super.onBackPressed();
-            }
+        if (drawerLayout.isDrawerOpen(Gravity.START)) {
+            drawerLayout.closeDrawer(Gravity.START);
+        } else if (searchView.isSearchOpen()) {
+            searchView.closeSearch();
         } else {
             super.onBackPressed();
         }

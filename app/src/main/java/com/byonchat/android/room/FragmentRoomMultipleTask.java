@@ -779,7 +779,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
             if (aa.getId().contains("|")) {
                 if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-                    new Refresh(getActivity()).execute(aa.getId(), username, idTab);
+                        new Refresh(getActivity()).execute(aa.getId(), username, idTab);
                 }
             }
 
@@ -792,7 +792,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
         }
 
-       // Collections.sort(listItem, new Sortiran());
+        // Collections.sort(listItem, new Sortiran());
         myadapter.notifyDataSetChanged();
     }
 
@@ -852,13 +852,13 @@ public class FragmentRoomMultipleTask extends Fragment {
                         }
 
                         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
                         // Execute HTTP Post Request
                         HttpResponse response = httpclient.execute(httppost);
                         int status = response.getStatusLine().getStatusCode();
                         if (status == 200) {
                             HttpEntity entity = response.getEntity();
                             String data = EntityUtils.toString(entity);
+                            Log.w("sudiBUPaeh", data);
 
                             try {
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -897,21 +897,7 @@ public class FragmentRoomMultipleTask extends Fragment {
                                 String api_officers = jsonRootObject.getString("api_officers");
 
 
-                                BotListDB db = BotListDB.getInstance(context);
-                                db.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from);
-
-                                RoomsDetail orderModel = new RoomsDetail(getId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), "", time_str, "value");
-                                db.insertRoomsDetail(orderModel);
-
-
-
-                                String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString(), context.getResources().getString(R.string.app_version));
-                                if (include_assignto.equalsIgnoreCase("0")) {
-                                    ccc = jsonDuaObjectW(content, attachment, "", jsonObject.toString(), context.getResources().getString(R.string.app_version));
-                                }
-
-
-                                String bawaDariBelakang = "";
+                                String bawaDariBelakang = "{}";
                                 if (jsonRootObject.has("anothers")) {
                                     JSONObject tambahan = new JSONObject("{}");
                                     if (jsonRootObject.has("alasan_reject")) {
@@ -928,17 +914,21 @@ public class FragmentRoomMultipleTask extends Fragment {
                                     }
                                 }
 
+                                BotListDB db = BotListDB.getInstance(context);
+                                db.deleteRoomsDetailPtabPRoomNotValue(id_rooms_tab, username, from);
 
-                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, bawaDariBelakang, time_str, "form");
+                                RoomsDetail orderModel = new RoomsDetail(getId, id_rooms_tab, username, jsonRootObject.getString("list_pull"), bawaDariBelakang, time_str, "value");
+                                db.insertRoomsDetail(orderModel);
+
+
+                                String ccc = jsonDuaObjectW(content, attachment, api_officers, jsonObject.toString(), context.getResources().getString(R.string.app_version));
+                                if (include_assignto.equalsIgnoreCase("0")) {
+                                    ccc = jsonDuaObjectW(content, attachment, "", jsonObject.toString(), context.getResources().getString(R.string.app_version));
+                                }
+
+
+                                RoomsDetail orderModel2 = new RoomsDetail(username, id_rooms_tab, username, ccc, "", time_str, "form");
                                 db.insertRoomsDetail(orderModel2);
-
-
-                                   /* mContext.runOnUiThread(new Runnable() {
-                                        public void run() {
-                                            Toast.makeText(mContext, "Success Download Value", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });*/
-
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

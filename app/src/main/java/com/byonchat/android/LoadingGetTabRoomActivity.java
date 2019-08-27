@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -27,8 +28,10 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.ui.activity.MainBaseActivityNew;
 import com.byonchat.android.utils.Validations;
 import com.googlecode.mp4parser.srt.SrtParser;
+import com.scottyab.rootbeer.RootBeer;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -223,8 +226,14 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                     messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
                 }
 
+
                 Contact contact = messengerHelper.getMyContact();
-                nameValuePairs.add(new BasicNameValuePair("app_version", getString(R.string.app_version)));
+                RootBeer rootBeer = new RootBeer(getApplicationContext());
+                String roor = "";
+                if (rootBeer.isRooted()) {
+                    roor = " (ROOTED)";
+                }
+                nameValuePairs.add(new BasicNameValuePair("app_version", getString(R.string.app_version) + roor));
                 nameValuePairs.add(new BasicNameValuePair("app_company", getString(R.string.app_company)));
                 nameValuePairs.add(new BasicNameValuePair("bc_user", contact.getJabberId()));
                 nameValuePairs.add(new BasicNameValuePair("id_client", getString(R.string.id_client)));

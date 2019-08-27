@@ -795,8 +795,6 @@ public class MainActivityNew extends MainBaseActivityNew {
                             break;
                         case R.id.nav_item_grid_size:
                             changeGridSize();
-//                            Intent For = new Intent(this, FormSubmitScheduleSLA.class);
-//                            startActivity(For);
                             break;
                         case R.id.nav_logout_button:
                             LogoutRoom();

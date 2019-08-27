@@ -58,13 +58,12 @@ import java.util.List;
 public class UpdateViewDialog extends Dialog {
     Context context;
     TextView tvText;
-    Button later, update;
+    Button update;
     private static final String SD_CARD_FOLDER = "ByonChatAPK";
 
     DownloadFromURL taskDownload;
     String link_update;
     String company, version, type_update;
-    boolean permanent = false;
 
     public UpdateViewDialog(Context context) {
         super(context);
@@ -81,7 +80,6 @@ public class UpdateViewDialog extends Dialog {
         }
 
         tvText = (TextView) findViewById(R.id.tvText);
-        later = (Button) findViewById(R.id.laterBtn);
         update = (Button) findViewById(R.id.updateBtn);
 
         UpdateListDB db = new UpdateListDB(context);
@@ -92,23 +90,12 @@ public class UpdateViewDialog extends Dialog {
             try {
                 link_update = cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_TARGET_URL));
                 Date d = sdf.parse(cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_DATE_EXP)));
-                Date c = Calendar.getInstance().getTime();
+//                Date c = Calendar.getInstance().getTime();
                 company = cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_APP_COMPANY));
                 version = cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_APP_VERSION));
                 type_update = cursor.getString(cursor.getColumnIndexOrThrow(UpdateListDB.UPD_NAME));
 
-
-                long diff = d.getTime() - c.getTime();
-
-                if (diff <= 0) {
-                    tvText.setText("Aplikasi anda telah kadaluarsa. Harap melakukan update");
-                    permanent = true;
-                }else {
-
-                    tvText.setText("Update aplikasi terbaru telah tersedia, harap segera melakukan update. Anda memiliki " +
-                            diff + " hari lagi untuk segera melakukan update.");
-                    permanent = false;
-                }
+                tvText.setText("New version is exist. Please update your application");
             } catch (ParseException ex) {
                 Log.w("Exception", ex.getLocalizedMessage());
             }
@@ -117,17 +104,6 @@ public class UpdateViewDialog extends Dialog {
         cursor.close();
         db.close();
 
-
-        later.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!permanent) {
-                    dismiss();
-                }else {
-                    Toast.makeText(context,"Update required to continue!",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,8 +135,17 @@ public class UpdateViewDialog extends Dialog {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog.setMessage("Doing something, please wait.");
+            dialog.setTitle("Downloading new version!");
+            dialog.setMessage("Please wait and make sure you stay in this page");
+            dialog.setIndeterminate(false);
+            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            dialog.setCancelable(false);
+            dialog.setMax(100);
             dialog.show();
+
+            changes cs = (changes) context;
+            cs.onproses(false);
+
         }
 
         @Override
@@ -222,6 +207,7 @@ public class UpdateViewDialog extends Dialog {
         }
 
         protected void onProgressUpdate(Integer... values) {
+            dialog.setProgress(values[0]);
         }
 
 
@@ -262,6 +248,10 @@ public class UpdateViewDialog extends Dialog {
                 Toast.makeText(context, "Download Failed, Please try again!" + error, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    public interface changes{
+        void onproses(boolean proses);
     }
 }
 

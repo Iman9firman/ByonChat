@@ -60,16 +60,7 @@
                 android:layout_marginTop="@dimen/margin10"
                 android:layout_marginLeft="@dimen/margin10"
                 android:layout_marginRight="@dimen/margin10"
-                android:weightSum="2">
-
-                <Button
-                    android:id="@+id/laterBtn"
-                    android:text="Later"
-                    style="@style/btn_submit_v11_f"
-                    android:textColor="@color/black_overlay"
-                    android:layout_weight="1"
-                    android:layout_marginRight="@dimen/margin5"
-                    android:layout_marginLeft="@dimen/margin5"/>
+                android:weightSum="1">
 
                 <Button
                     android:id="@+id/updateBtn"

@@ -128,6 +128,7 @@ import com.byonchat.android.utils.UtilsPD;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.view.ItemDialog;
+import com.byonchat.android.view.UpdateViewDialog;
 import com.github.mmin18.widget.RealtimeBlurView;
 import com.google.gson.Gson;
 import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
@@ -178,7 +179,7 @@ import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_MESSAGES_U
 import static com.byonchat.android.helpers.Constants.URL_LAPOR_SELECTED;
 
 public abstract class MainBaseActivityNew extends AppCompatActivity implements /*LocationAssistant.Listener,*/
-        AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener {
+        AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener, UpdateViewDialog.changes {
 
 //    @NonNull
 //    protected BadgeView bv1;
@@ -546,6 +547,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     protected String roomid = "";
     protected int i = 0;
     protected ProgressDialog dialog;
+
+    public boolean openDialog = true;
 
     //    Boolean loginIss = true;
     protected SQLiteDatabase sqLiteDatabase;
@@ -2948,5 +2951,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
     }
 
+
+    @Override
+    public void onproses(boolean proses) {
+        openDialog = proses;
+    }
 
 }

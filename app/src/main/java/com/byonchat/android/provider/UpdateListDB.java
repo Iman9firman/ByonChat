@@ -183,6 +183,19 @@ public class UpdateListDB extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getUnrefreshedVersion(String status){
+        String rrefr = "refresh_version";
+        Cursor cursor = mDb.query(UPD_TABLE, new String[]
+                {
+                        UPD_NAME, UPD_USER, UPD_IDTAB, UPD_PARENT_ID, UPD_ID_LIST_PUSH, UPD_TARGET_URL, UPD_DATE_EXP, UPD_APP_VERSION, UPD_APP_COMPANY
+                },UPD_STATUS + " = ? AND " + UPD_NAME + " = ?", new String[]{status, rrefr}, null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        return cursor;
+    }
+
     public boolean deleteRooms() {
         return mDb.delete(UPD_TABLE, null, null) > 0;
     }

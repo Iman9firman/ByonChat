@@ -2423,7 +2423,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             UpdateListDB dtbs = new UpdateListDB(getApplicationContext());
             dtbs.open();
 
-            String updating[] = vo.getMessage().split("://");
+            Log.e("verbose","come in: "+vo.getMessage());
 
             String resource = vo.getMessage().replace("upd://","");
             try {
@@ -2509,27 +2509,14 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         String formattedDate = df.format(c);
 
-                        long countDate = 0;
-                        try {
-                            Date date = df.parse(due_date);
-
-                            countDate = date.getTime() - c.getTime();
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
                         UpdateList data_upd = new UpdateList(type_update, link_tembak, version, company, "0", formattedDate, due_date);
                         dtbs.insertRooms(data_upd);
-
-                        if(countDate <= 0){
                             UpdateViewDialog dialog = new UpdateViewDialog(this);
                             dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
                             dialog.show();
                             dialog.setCancelable(false);
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                        }
-
                     }
                 }
                 dtbs.close();

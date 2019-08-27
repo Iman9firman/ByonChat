@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
@@ -16,6 +18,8 @@ import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.R;
 import com.byonchat.android.model.SectionSampleItem;
+
+import carbon.widget.LinearLayout;
 
 public class ExpandableListAdapter extends RecyclerView.Adapter<ExpandableListAdapter.ItemRowHolder> {
 
@@ -42,7 +46,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<ExpandableListAd
         ArrayList<ItemMain> singleSectionItems = dataList.get(i).getAllItemsInSection();
 
         itemRowHolder.itemTitle.setText(sectionName);
-        GridLayoutManager layoutManager = new GridLayoutManager(mContext,3,RecyclerView.VERTICAL,false);
+        GridLayoutManager layoutManager = new GridLayoutManager(mContext,3, LinearLayout.VERTICAL,false);
 
         DraggableGridExampleAdapter itemListDataAdapter = new DraggableGridExampleAdapter(mContext, singleSectionItems, R.layout.list_grid_item);
         itemListDataAdapter.setOnItemClickListener(new OnItemClickListener() {

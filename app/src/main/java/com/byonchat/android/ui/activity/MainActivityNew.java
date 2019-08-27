@@ -112,6 +112,7 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
+import com.byonchat.android.utils.Validations;
 import com.byonchat.android.view.ItemDialog;
 import com.byonchat.android.view.UpdateViewDialog;
 import com.byonchat.android.widget.BadgeView;
@@ -464,34 +465,35 @@ public class MainActivityNew extends MainBaseActivityNew {
     }
 
     protected void resolveVersion(){
-        UpdateListDB db = new UpdateListDB(getApplicationContext());
-        db.open();
+//        if (new Validations().getInstance(getApplicationContext()).getValidationPerHari("30") == 1) {
 
-        Cursor crs = db.getUnrefreshedData("0");
-        while (crs.moveToNext()) {
-            if(crs.getString(crs.getColumnIndex(UpdateListDB.UPD_NAME)).equalsIgnoreCase("refresh_version")){
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if(openDialog) {
+            UpdateListDB db = new UpdateListDB(getApplicationContext());
+            db.open();
+
+            Cursor crs = db.getUnrefreshedVersion("0");
+
+            if (crs.getColumnCount() > 0) {
                 try {
-                    Date d = sdf.parse(crs.getString(crs.getColumnIndexOrThrow(UpdateListDB.UPD_DATE_EXP)));
-                    Date c = Calendar.getInstance().getTime();
-
-                    long diff = d.getTime() - c.getTime();
-
-                    if(diff <= 0) {
-                        UpdateViewDialog dialog = new UpdateViewDialog(this);
-                        dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
-                        dialog.show();
-                        dialog.setCancelable(false);
-                        dialog.setCanceledOnTouchOutside(false);
-                        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                    if (crs.getString(crs.getColumnIndex(UpdateListDB.UPD_NAME)).equalsIgnoreCase("refresh_version")) {
+                        Log.e("verbose", "cek2");
+                        if (!getString(R.string.app_version).equalsIgnoreCase(crs.getString(crs.getColumnIndex(UpdateListDB.UPD_APP_VERSION)))) {
+                            UpdateViewDialog dialog = new UpdateViewDialog(this);
+                            dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+                            dialog.show();
+                            dialog.setCancelable(false);
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                        }
                     }
-                } catch (ParseException ex) {
-                    Log.w("Exception", ex.getLocalizedMessage());
+                } catch (Exception e) {
+                    Log.e("verbose", e.getMessage());
                 }
             }
+            crs.close();
+            db.close();
         }
-        crs.close();
-        db.close();
+//        }
     }
 
     @Override

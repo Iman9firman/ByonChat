@@ -1,8 +1,11 @@
 package com.byonchat.android.ui.adapter;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,11 +17,16 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.DialogFormChildMainRequester;
+import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
 import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingActivity;
+import com.byonchat.android.ISSActivity.Requester.DialogCancelReliever;
 import com.byonchat.android.R;
+import com.byonchat.android.Sample.DialogTry;
 import com.byonchat.android.data.model.MkgServices;
 import com.byonchat.android.tabRequest.MapsViewActivity;
 import com.byonchat.android.tabRequest.RelieverDetailActivity;
+import com.byonchat.android.ui.activity.DialogApproveRequestDocument;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
@@ -50,10 +58,10 @@ public class ChildRecyclerView {
     @View(R.id.child_bayangan)
     Button child_bayangan;
 
-    private Context mContext;
+    private Activity mContext;
     private MkgServices data;
 
-    public ChildRecyclerView(Context mContext, MkgServices data) {
+    public ChildRecyclerView(Activity mContext, MkgServices data) {
         this.mContext = mContext;
         this.data = data;
     }
@@ -94,27 +102,8 @@ public class ChildRecyclerView {
             child_btn_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
                 @Override
                 public void onClick(android.view.View v) {
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
-                    alertBuilder.setCancelable(true);
-                    alertBuilder.setTitle("Cancel");
-                    alertBuilder.setMessage("Reliever " + data.child_name);
-                    alertBuilder.setPositiveButton("By Reliever ",
-                            (dialogInterface, i) -> {
-                                Map<String, String> params = new HashMap<>();
-                                params.put("id", data.id);
-                                params.put("status", "5");
-                                getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
-                            });
-                    alertBuilder.setNegativeButton("By Requester",
-                            (dialogInterface, i) -> {
-                                Map<String, String> params = new HashMap<>();
-                                params.put("id", data.id);
-                                params.put("status", "5");
-                                params.put("opsi", "hapus");
-                                getDetail("https://bb.byonchat.com/ApiReliever/index.php/JobStatus", params, true);
-                            });
-                    AlertDialog alert = alertBuilder.create();
-                    alert.show();
+                    DialogCancelReliever dialogCancelReliever = new DialogCancelReliever(mContext, data.id);
+                    dialogCancelReliever.show();
                 }
             });
 

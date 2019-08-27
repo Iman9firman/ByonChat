@@ -537,6 +537,15 @@
     <string name="slide_4_title">SMS SOLDIER</string>
     <string name="slide_4_desc">SMS SOLDIER bersifat global Ulasan terbesar penyedia teknologi keuangan dunia yang didedikasikan untuk solusi. SMS Soldier memberdayakan Dunia Keuangan dengan perangkat lunak, layanan, konsultasi dan outsourcing solusi fokus pada ritel dan institusional perbankan, pembayaran, aset dan kekayaan manajemen, risiko dan kepatuhan, pemberdayaan perdagangan, proses transaksi dan pencatatan.</string>
 
+    <string name="reason_title">Are you sure want to cancel this request? Please select the reason</string>
+
+    <string name="reason1">Reliever Sakit</string>
+    <string name="reason2">Reliever Cuti</string>
+    <string name="reason3">Reliever Off</string>
+    <string name="reason4">Reliever terlalu jauh</string>
+    <string name="reason5">Reliever tidak bisa dihubungi</string>
+    <string name="reason6">Reliever tidak datang datang</string>
+
     <string-array name="attach_file">
         <item name="capture">Take a photo</item>
         <item name="gallery">Choose from Gallery</item>

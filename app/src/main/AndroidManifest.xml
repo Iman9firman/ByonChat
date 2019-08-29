@@ -765,6 +765,15 @@
             android:turnScreenOn="true"
             android:screenOrientation="portrait"
             android:theme="@style/AlertDialogCustom"/>
+        <activity android:name=".Sample.ScheduleSLAPeriod"/>
+        <activity android:name=".Sample.DateScheduleSLA"/>
+        <activity android:name=".Sample.DetailAreaScheduleSLA"/>
+        <activity android:name=".Sample.DialogAddSchedulePicture"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AlertDialogCustom"/>
     </application>
 
 </manifest>

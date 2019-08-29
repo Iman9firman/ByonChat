@@ -1010,6 +1010,21 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
             JSONArray jsonArray;
             if (content.startsWith("JSONnnye")) {
+
+                if (!new ValidationsKey().getInstance(getApplicationContext()).setKeyValue(30, getResources().getString(R.string.app_version))) {
+                    new Validations().getInstance(getApplicationContext()).removeById(26);
+                    new Validations().getInstance(getApplicationContext()).removeById(27);
+                    new Validations().getInstance(getApplicationContext()).removeById(28);
+                    new Validations().getInstance(getApplicationContext()).removeById(29);
+
+                    Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                    startActivity(a);
+                    finish();
+                    return;
+                }
+
                 content = content.replace("JSONnnye", "");
 
                 String[] bagibagi = content.split("@@@");
@@ -1019,10 +1034,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                     String title1 = jsonObject.getString("name");
                     String icon_name1 = jsonObject.getString("icon_name");
                     String member = "";
-                    if(jsonObject.has("section")) {
+                    if (jsonObject.has("section")) {
                         member = jsonObject.getString("section");
                         category_sub = "sla";
-                    } else if ( jsonObject.has("members")){
+                    } else if (jsonObject.has("members")) {
                         member = jsonObject.getString("members");
                         category_sub = "non_sla";
                     }
@@ -1250,7 +1265,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                             JSONArray jsonArrow = new JSONArray(itemList.get(s1).status);
                             String category_sub1 = itemList.get(s1).category_tab;
                             for (int i1 = 0; i1 < jsonArrow.length(); i1++) {
-                                if(category_sub1.equalsIgnoreCase("sla")) {
+                                if (category_sub1.equalsIgnoreCase("sla")) {
                                     JSONObject jsonObject = jsonArrow.getJSONObject(i1);
                                     JSONArray jsonArray1 = jsonObject.getJSONArray("members");
                                     for (int i2 = 0; i2 < jsonArray1.length(); i2++) {
@@ -1259,7 +1274,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                                             itemList.remove(itemMain);
                                         }
                                     }
-                                }else {
+                                } else {
                                     String id_tab_dftared = jsonArrow.getString(i1);
                                     if (id_tab_dftared.equalsIgnoreCase(id_rooms_tab)) {
                                         itemList.remove(itemMain);
@@ -2645,7 +2660,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
             try {
                 JSONArray jsonArray = new JSONArray(member);
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    if(category_sub.equalsIgnoreCase("sla")) {
+                    if (category_sub.equalsIgnoreCase("sla")) {
                         JSONObject gr = jsonArray.getJSONObject(i);
                         String name_sub = gr.getString("name");
                         JSONArray group_tab = gr.getJSONArray("members");
@@ -2663,7 +2678,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                         samply.setHeaderTitle(name_sub);
                         samply.setAllItemsInSection(subItemList2);
                         sample.add(samply);
-                    }else {
+                    } else {
                         String id_tab_dftared = jsonArray.getString(i);
                         for (int u = 0; u < subItemList.size(); u++) {
                             if (subItemList.get(u).id_rooms_tab.equalsIgnoreCase(id_tab_dftared)) {
@@ -2674,7 +2689,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                     }
                 }
 
-                if(non_sla){
+                if (non_sla) {
                     SectionSampleItem samply = new SectionSampleItem();
                     samply.setHeaderTitle(tab_name);
                     samply.setAllItemsInSection(subItemListed);
@@ -2801,7 +2816,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
-                    if (dialog != null){
+                    if (dialog != null) {
                         dialog.hide();
                     }
                     if (hide) {
@@ -2816,7 +2831,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
 
                 },
                 error -> {
-                    if (dialog != null){
+                    if (dialog != null) {
                         dialog.hide();
                     }
                     Toast.makeText(getApplicationContext(), "Please Try Again : because, " + error.getMessage(), Toast.LENGTH_SHORT).show();

@@ -100,6 +100,7 @@ public class LoginISS extends AppCompatActivity {
                     params.put("username", userID.getText().toString());
                     params.put("password", passID.getText().toString());
                     params.put("bc_user", dbhelper.getMyContact().getJabberId());
+                    params.put("version", getResources().getString(R.string.app_version));
 
 
                     new Validations().getInstance(getApplicationContext()).setString(userID.getText().toString(), 28);

@@ -1,5 +1,6 @@
 package com.byonchat.android.communication;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
@@ -410,7 +411,13 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         if (contact != null) {
             xmppOpen();
             doSomethingRepeatedly();
-            this.getApplicationContext().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contentObserver);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (getApplicationContext().checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                    this.getApplicationContext().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, contentObserver);
+                }
+            }
+
+
             started = true;
         }
 
@@ -2419,63 +2426,63 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         if (vo.getType().equalsIgnoreCase(Message.TYPE_TEXT) && vo.getMessage().startsWith("upd://")) {
             String url_tembak;
 
-            Log.w("alhamdulillah kesiniziz",vo.getMessage());
+            Log.w("alhamdulillah kesiniziz", vo.getMessage());
             UpdateListDB dtbs = new UpdateListDB(getApplicationContext());
             dtbs.open();
 
-            Log.e("verbose","come in: "+vo.getMessage());
+            Log.e("verbose", "come in: " + vo.getMessage());
 
-            String resource = vo.getMessage().replace("upd://","");
+            String resource = vo.getMessage().replace("upd://", "");
             try {
                 JSONObject update = new JSONObject(resource);
                 String type_update = update.getString("type");
 
                 String username_room = "";
-                if(update.has("username_room")){
+                if (update.has("username_room")) {
                     username_room = update.getString("username_room");
                 }
 
                 String id_tab = "";
-                if(update.has("id_rooms_tab")){
+                if (update.has("id_rooms_tab")) {
                     id_tab = update.getString("id_rooms_tab");
                 }
 
                 String parent_id = "";
-                if(update.has("parent_id")){
+                if (update.has("parent_id")) {
                     parent_id = update.getString("parent_id");
                 }
 
                 String id_list_push = "";
-                if(update.has("id_list_push")){
+                if (update.has("id_list_push")) {
                     id_list_push = update.getString("id_list_push");
                 }
 
                 String link_tembak = "";
-                if(update.has("url_tembak")){
+                if (update.has("url_tembak")) {
                     link_tembak = update.getString("url_tembak");
                 }
 
                 String fromlist = "";
-                if(update.has("from_list")){
+                if (update.has("from_list")) {
                     fromlist = update.getString("from_list");
                 }
 
                 String version = "";
-                if(update.has("version")){
+                if (update.has("version")) {
                     version = update.getString("version");
                 }
 
                 String company = "";
-                if(update.has("company")){
+                if (update.has("company")) {
                     company = update.getString("company");
                 }
 
                 String due_date = "";
-                if(update.has("due_date")){
+                if (update.has("due_date")) {
                     due_date = update.getString("due_date");
                 }
 
-                Log.w("alhamdulillah kesiniziz",type_update +" - - - "+ version +" - - - "+ due_date);
+                Log.w("alhamdulillah kesiniziz", type_update + " - - - " + version + " - - - " + due_date);
 
                 if (type_update.equalsIgnoreCase("refresh_tab")) {
                     String finalPath = "/bc_voucher_client/webservice/get_tab_rooms.php";
@@ -2503,7 +2510,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
                 } else if (type_update.equalsIgnoreCase("refresh_version")) {
 
-                    if(!getString(R.string.app_version).equalsIgnoreCase(version)){
+                    if (!getString(R.string.app_version).equalsIgnoreCase(version)) {
                         Date c = Calendar.getInstance().getTime();
 
                         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -2511,17 +2518,17 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
                         UpdateList data_upd = new UpdateList(type_update, link_tembak, version, company, "0", formattedDate, due_date);
                         dtbs.insertRooms(data_upd);
-                            UpdateViewDialog dialog = new UpdateViewDialog(this);
-                            dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
-                            dialog.show();
-                            dialog.setCancelable(false);
-                            dialog.setCanceledOnTouchOutside(false);
-                            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                        UpdateViewDialog dialog = new UpdateViewDialog(this);
+                        dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+                        dialog.show();
+                        dialog.setCancelable(false);
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                     }
                 }
                 dtbs.close();
 
-            }catch (JSONException e){
+            } catch (JSONException e) {
 
             }
         }
@@ -2589,18 +2596,18 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
                     }
 
-                    if(room.length == 5){
-                        if(room[4].equalsIgnoreCase("urgent")){
-                            DialogAct.startDialog(getApplicationContext(),60000,room[1],room[2],room[3],0);
+                    if (room.length == 5) {
+                        if (room[4].equalsIgnoreCase("urgent")) {
+                            DialogAct.startDialog(getApplicationContext(), 60000, room[1], room[2], room[3], 0);
                         }
 
                         databaseHelper.execSql("INSERT INTO tab_menu_badge (id_tab, jid, message) VALUES (?,?,?)",
-                                new String[]{room[2],databaseHelper.getMyContact().getJabberId(),room[3]});
+                                new String[]{room[2], databaseHelper.getMyContact().getJabberId(), room[3]});
                         vo.setMessage(room[3]);
 
                         Intent intent = new Intent(ACTION_REFRESH_NOTIF_FORM);
                         intent.putExtra(KEY_MESSAGE_OBJECT, vo);
-                        intent.putExtra("TYPE_XZ","yes");
+                        intent.putExtra("TYPE_XZ", "yes");
                         intent.putExtra(KEY_CONTACT_NAME, name + additionalInfo);
                         sendOrderedBroadcast(intent, null);
                         return;
@@ -5900,19 +5907,19 @@ Log.w("every",co.getJabberId());
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.w("Hanyajika balik",e.getMessage());
+                        Log.w("Hanyajika balik", e.getMessage());
                     }
                 }
 
             } catch (ConnectTimeoutException e) {
                 e.printStackTrace();
-                Log.w("Hanyajika balik1",e.getMessage());
+                Log.w("Hanyajika balik1", e.getMessage());
             } catch (ClientProtocolException e) {
                 // TODO Auto-generated catch block
-                Log.w("Hanyajika balik2",e.getMessage());
+                Log.w("Hanyajika balik2", e.getMessage());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                Log.w("Hanyajika balik3",e.getMessage());
+                Log.w("Hanyajika balik3", e.getMessage());
             }
         }
 
@@ -5936,7 +5943,7 @@ Log.w("every",co.getJabberId());
 
     private void refreshForm(UpdateList updateList) {
         String idDetail = "";
-        if(!updateList.getparent_id().equalsIgnoreCase("")){
+        if (!updateList.getparent_id().equalsIgnoreCase("")) {
             idDetail = updateList.getparent_id() + "|" + updateList.getid_list_push();
         }
 
@@ -6052,12 +6059,12 @@ Log.w("every",co.getJabberId());
                         String api_officers = jsonRootObject.getString("api_officers");
 
                         String from_list = "";
-                        if(!fromList.equalsIgnoreCase("")){
-                            if(fromList.equalsIgnoreCase("1") || fromList.equalsIgnoreCase("3")){
+                        if (!fromList.equalsIgnoreCase("")) {
+                            if (fromList.equalsIgnoreCase("1") || fromList.equalsIgnoreCase("3")) {
                                 from_list = "hide";
-                            }else if(fromList.equalsIgnoreCase("4") || fromList.equalsIgnoreCase("5")){
+                            } else if (fromList.equalsIgnoreCase("4") || fromList.equalsIgnoreCase("5")) {
                                 from_list = "hideMultiple";
-                            }else if(fromList.equalsIgnoreCase("6") || fromList.equalsIgnoreCase("7")){
+                            } else if (fromList.equalsIgnoreCase("6") || fromList.equalsIgnoreCase("7")) {
                                 from_list = "showMultiple";
                             } else {
                                 from_list = "show";
@@ -6168,7 +6175,7 @@ Log.w("every",co.getJabberId());
 
     public void refreshList(UpdateList updateList) {
         String idDetail = "";
-        if(!updateList.getparent_id().equalsIgnoreCase("")){
+        if (!updateList.getparent_id().equalsIgnoreCase("")) {
             idDetail = updateList.getparent_id() + "|" + updateList.getid_list_push();
         }
 

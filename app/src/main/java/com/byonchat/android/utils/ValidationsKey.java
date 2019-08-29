@@ -38,36 +38,37 @@ import java.util.concurrent.ExecutionException;
 
 
 public class ValidationsKey {
-	private static ValidationsKey instance = new ValidationsKey();
-	static Context context;
+    private static ValidationsKey instance = new ValidationsKey();
+    static Context context;
     private MessengerDatabaseHelper messengerHelper;
     private static String REQUEST_KEYS_URL = "https://"
             + MessengerConnectionService.UTIL_SERVER + "/v1/ckeys";
-	public ValidationsKey getInstance(Context ctx) {
+
+    public ValidationsKey getInstance(Context ctx) {
         context = ctx;
         return instance;
     }
 
-    public String key(boolean request){
+    public String key(boolean request) {
 
         String output = null;
         try {
-            if(!request){
-                if(getValidationKey()==1){
+            if (!request) {
+                if (getValidationKey() == 1) {
                     output = new MyAsyncTask(context).execute(REQUEST_KEYS_URL).get();
-                }else {
+                } else {
                     IntervalDB db = new IntervalDB(context);
                     db.open();
                     Cursor cursor = db.getSingleContact(3);
-                    if(cursor.getCount()>0) {
+                    if (cursor.getCount() > 0) {
                         output = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
-                    }else{
+                    } else {
                         output = new MyAsyncTask(context).execute(REQUEST_KEYS_URL).get();
                     }
                     cursor.close();
                     db.close();
                 }
-            }else{
+            } else {
                 output = new MyAsyncTask(context).execute(REQUEST_KEYS_URL).get();
             }
 
@@ -78,19 +79,43 @@ public class ValidationsKey {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        if (!output.equalsIgnoreCase("null")){
+        if (!output.equalsIgnoreCase("null")) {
             setKey(output);
         }
 
         return output;
     }
 
-    public void setKey(String key){
+    public Boolean setKeyValue(int id, String key) {
+        Boolean hasil = false;
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(id);
+        if (cursor.getCount() > 0) {
+            String time_strDB = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+            if (time_strDB.equalsIgnoreCase(key)) {
+                return true;
+            }
+        }
+
+        if (!hasil) {
+            db.deleteContact(id);
+            Interval interval = new Interval();
+            interval.setId(id);
+            interval.setTime(key);
+            db.createContact(interval);
+            db.close();
+        }
+
+        return hasil;
+    }
+
+    public void setKey(String key) {
         IntervalDB db = new IntervalDB(context);
         db.open();
 
         Cursor cursor = db.getSingleContact(3);
-        if (cursor.getCount()>0) {
+        if (cursor.getCount() > 0) {
             db.deleteContact(3);
         }
 
@@ -101,7 +126,7 @@ public class ValidationsKey {
         db.close();
     }
 
-    public int getValidationKey(){
+    public int getValidationKey() {
         int error = 0;
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -118,7 +143,7 @@ public class ValidationsKey {
         IntervalDB db = new IntervalDB(context);
         db.open();
         Cursor cursor = db.getSingleContact(10);
-        if(cursor.getCount()>0){
+        if (cursor.getCount() > 0) {
             String time_strDB = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
             String[] sDB = time_strDB.split(" ");
             int year_sysDB = Integer.parseInt(sDB[0].split("/")[0]);
@@ -127,29 +152,29 @@ public class ValidationsKey {
             int hour_sysDB = Integer.parseInt(sDB[1].split(":")[0]);
             int min_sysDB = Integer.parseInt(sDB[1].split(":")[1]);
 
-            if(year_sysDB==year_sys){
-                if(month_sysDB==month_sys){
-                    if(day_sysDB==day_sys){
-                        if(hour_sysDB==hour_sys){
-                            if( (min_sys-min_sysDB) > 15){
+            if (year_sysDB == year_sys) {
+                if (month_sysDB == month_sys) {
+                    if (day_sysDB == day_sys) {
+                        if (hour_sysDB == hour_sys) {
+                            if ((min_sys - min_sysDB) > 15) {
                                 error = 1;
-                            }else{
+                            } else {
                                 error = 0;
                             }
-                        }else{
+                        } else {
                             error = 1;
                         }
-                    }else{
+                    } else {
                         error = 1;
                     }
-                }else{
+                } else {
                     error = 1;
                 }
-            }else{
+            } else {
                 error = 1;
             }
 
-        }else{
+        } else {
             Interval interval = new Interval();
             interval.setId(10);
             interval.setTime(time_str);
@@ -159,21 +184,21 @@ public class ValidationsKey {
 
         db.close();
 
-        if(error==1){
+        if (error == 1) {
             setTime();
         }
 
         return error;
     }
 
-    public void setTime(){
+    public void setTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
         String time_str = dateFormat.format(cal.getTime());
         IntervalDB db = new IntervalDB(context);
         db.open();
         Cursor cursor = db.getSingleContact(10);
-        if (cursor.getCount()>0) {
+        if (cursor.getCount() > 0) {
             db.deleteContact(10);
         }
         Interval interval = new Interval();
@@ -266,15 +291,15 @@ public class ValidationsKey {
 
         protected void onPostExecute(String content) {
             if (error) {
-              //  Log.w("cek",content);
+                //  Log.w("cek",content);
             } else {
-              //  Log.w("cek22",content);
+                //  Log.w("cek22",content);
             }
         }
 
     }
 
-    public String getTargetUrl(String username){
+    public String getTargetUrl(String username) {
         BotListDB botListDB = BotListDB.getInstance(context);
         Cursor cur = botListDB.getSingleRoom(username);
         if (cur.getCount() > 0) {

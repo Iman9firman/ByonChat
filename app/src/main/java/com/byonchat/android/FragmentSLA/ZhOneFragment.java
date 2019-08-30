@@ -87,7 +87,9 @@ public class ZhOneFragment extends Fragment {
 
         if (content != null){
             try {
+                // ini mengambil id subsection yang sudah di kerjakan ( sama seperti di fragment 2 dan 3 )
                 ArrayList<String> listId = ((DinamicSLATaskActivity)getActivity()).getListSubmittedId();
+
                 JSONObject obj = new JSONObject(content);
                 JSONArray data = obj.getJSONArray("data");
                 for (int i = 0 ; i<data.length() ; i++){
@@ -98,6 +100,8 @@ public class ZhOneFragment extends Fragment {
                     this.bobot = bobot.toString();
                     String content = childObj.getJSONArray("data").toString();
                     JSONArray counting = new JSONArray(content);
+
+                    //disini penghitungan jumlah item to be check yang belum di lakukan
                     int counter = 0;
                     for (int j = 0 ; j<counting.length() ; j++){
                         JSONObject child1 = counting.getJSONObject(j);

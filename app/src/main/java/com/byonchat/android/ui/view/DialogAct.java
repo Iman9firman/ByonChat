@@ -41,7 +41,7 @@ public class DialogAct extends Activity {
     /*
      * Default TAG for Zharfan :)
      * */
-    private final String TAG = "ivana";
+    private final String TAG = "dialogzz";
     /*
      * Key value for putExtra intent counter (time).
      * */

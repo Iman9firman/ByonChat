@@ -362,7 +362,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     private Activity activity;
     Context context;
 
-    //rombak zharfan
     String calendar;
     String startDate;
     String dropdownViewIdParent;
@@ -512,7 +511,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         latLong = getIntent().getStringExtra("ll");
         fromList = getIntent().getStringExtra("from");
 
-        //zharfan
         calendar = getIntent().getStringExtra("clndr");
         startDate = getIntent().getStringExtra("strtdt");
 
@@ -2118,7 +2116,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         be = hasilCOnvert.toString();
                                         c = passGrade;
                                         d = assup;
-//                                        largeLog("ivana",be);
+                                        // ini untuk melihat dan mendapat subsection yang sudah dikerjakan
                                         new apiLookUp().execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt", d);
 
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
@@ -2331,8 +2329,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     final String type = jsonArray.getJSONObject(i).getString("type").toString();
                     final String flag = jsonArray.getJSONObject(i).getString("flag").toString();
 
-
-                    //zharfan
                     JSONArray dropdownViewId = null;
                     if (jsonArray.getJSONObject(i).has("dropdown_view_parents")) {
                         dropdownViewId = jsonArray.getJSONObject(i).getJSONArray("dropdown_view_parents");
@@ -13091,12 +13087,15 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     try {
                         JSONArray arr = new JSONArray(result);
                         for (int i = 0; i < arr.length(); i++) {
+                            // disini mencatat id subsection yang sudah dikerjakan .
                             String id = arr.getString(i);
                             listSubmittedId.add(id);
                         }
                         if (tag == null) {
+                            // ini jika pertama kali buka sla
                             loadFragment(new ZhOneFragment(a, be, idDetail, c));
                         } else {
+                            // ini jika sudah selesai submit , lalu akan kembali ke pilihan subsection , bukan kembali ke awal pembobotan
                             if (tag.equalsIgnoreCase("THIRD TAG")) {
                                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType("66985", "text", "0"));
                                 if (cEdit.getCount() > 0) {

@@ -457,7 +457,7 @@ public class NotePreviewActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String content) {
-            Log.w("zharfan", "Content : " + content);
+            Log.w("note", "Content : " + content);
             try {
                 swipeRefreshLayout.setRefreshing(false);
                 if (error) {
@@ -485,7 +485,7 @@ public class NotePreviewActivity extends AppCompatActivity {
                     viewMethod(content);
                 }
             } catch (Exception e) {
-                Log.w("zharfan", "Exception : " + e.getMessage());
+                Log.w("note", "Exception : " + e.getMessage());
             }
 
         }

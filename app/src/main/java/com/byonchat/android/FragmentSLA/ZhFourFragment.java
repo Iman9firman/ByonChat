@@ -135,11 +135,13 @@ public class ZhFourFragment extends Fragment {
                 for (int i = 0 ; i<itemList.size() ; i++){
                     String idContent = itemList.get(i).getDaleman();
                     if (i == 0){
+                        // ini mencatatan id pembobotan - section - subsection
                         ids = idContent.split("-");
                         id1 = ids[0];
                         id2 = ids[1];
                         id3 = ids[2];
                     }
+                    // ini check apakah tercatat di database
                     letsGo = checkDB(idDetailForm,idContent);
                 }
                 if (letsGo){
@@ -148,11 +150,13 @@ public class ZhFourFragment extends Fragment {
                             String idContent = itemList.get(z).getDaleman();
                             String image = getImgeB(idDetailForm,idContent);
                             if (image != "" && image != null){
+                                // ini mencatat image yang ada di subsection per item to be check
                                 imgList.add(image+";;"+idContent);
                             }
                         }
 
                         if (imgList.size() > 0){
+                            // ini jika terdapat image , maka akan di upload terlebih dahulu
                             dialog = new ProgressDialog(getContext());
                             dialog.setMessage("Uploading Image ...");
                             dialog.show();
@@ -163,6 +167,7 @@ public class ZhFourFragment extends Fragment {
                                     imgList.get(0).split(";;")[0],
                                     imgList.get(0).split(";;")[1]);
                         } else {
+                            // ini jika tidak ada image maka akan langsung submit sla nya
                             JSONArray arrayPertanyaan = new JSONArray();
                             List<Integer> lolos = new ArrayList<>();
                             for (int iv = 0 ; iv<itemList.size() ; iv++){
@@ -174,7 +179,9 @@ public class ZhFourFragment extends Fragment {
                                 String img = getImgeB(idDetailForm, idContent);
                                 String cmnt = getComment(idDetailForm,idContent);
                                 if (value == 0){
+                                    // ketika memilih NO
                                     if (img != null && cmnt != null){
+                                        // harus terdapat image dan komentar
                                         objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
                                         objPertanyaan.put("v",value);
                                         objPertanyaan.put("f",itemList.get(iv).getImg());
@@ -182,9 +189,11 @@ public class ZhFourFragment extends Fragment {
                                         objPertanyaan.put("b",decimal.format(itemList.get(iv).getValue()));
                                         arrayPertanyaan.put(objPertanyaan);
                                     } else {
+                                        // jika tidak ada , maka akan terhitung gagal divalidasi
                                         lolos.add(iv);
                                     }
                                 } else {
+                                    // ketika memilih YES
                                     objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
                                     objPertanyaan.put("v",value);
                                     objPertanyaan.put("f", img == null ? "" : itemList.get(iv).getImg());
@@ -194,6 +203,7 @@ public class ZhFourFragment extends Fragment {
                                 }
                             }
                             if (!(lolos.size() > 0)){
+                                // ini jika validasi berhasil dan tidak ada yang kurang image serta komentar nya
                                 JSONArray arraySubsection = new JSONArray();
                                 JSONObject objSubsection = new JSONObject();
                                 objSubsection.put("id",id1+"-"+id2+"-"+id3);
@@ -221,6 +231,7 @@ public class ZhFourFragment extends Fragment {
 //                            Toast.makeText(getContext(),"Submit success",Toast.LENGTH_SHORT).show();
                                 ((DinamicSLATaskActivity)getActivity()).submitSLA(arrayParent.toString());
                             } else {
+                                // ini jika validasi gagal
                                 Toast.makeText(getContext(),"Harap isi note dan gambar jika memilih 'No' .",Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -426,6 +437,7 @@ public class ZhFourFragment extends Fragment {
                 counter++;
 
                 if (counter < imgList.size()){
+                    // ini jika masih terdapat image , maka akan mengulang upload
                     new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
                             ((DinamicSLATaskActivity) getActivity()).getUsername(),
                             "2613",
@@ -433,6 +445,7 @@ public class ZhFourFragment extends Fragment {
                             imgList.get(counter).split(";;")[0],
                             imgList.get(counter).split(";;")[1]);
                 } else {
+                    // jika sudah tidak ada image maka akan submit sla
                     if (dialog != null){
                         dialog.hide();
                     }

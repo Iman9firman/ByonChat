@@ -123,8 +123,10 @@ public class ZhThreeFragment extends Fragment {
             adapter = new SLACyclerAdapter(getActivity(),itemList,idDetailForm);
             adapter.setClickListener((item, position) -> {
                 if (item.getCount() != 0){
+                    // jika subsection belum dikerjakan
                     loadFragmentFromFragment(ZhThreeFragment.this,new ZhFourFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot),"ZhFour");
                 } else {
+                    // jika subsection sudah dikerjakan
                     Toast.makeText(getContext(),"Sudah dikerjakan",Toast.LENGTH_SHORT).show();
                 }
             });

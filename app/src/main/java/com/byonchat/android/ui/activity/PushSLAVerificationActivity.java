@@ -34,12 +34,14 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -128,6 +130,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     String resultImage = "";
     String resultSignature = "";
     EditText et, et2;
+    Spinner spinner;
     Bitmap imgBm,sgnBm;
     ProgressDialog dialog = null;
 
@@ -204,7 +207,12 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 //        imageviewPhoto.setLayoutParams(paramsDua);
 //        paramsDua.addRule(RelativeLayout.CENTER_IN_PARENT);
 
-
+        spinner = new Spinner(this);
+        ArrayList<String> spinArr = new ArrayList<>();
+        spinArr.add("Daily");
+        spinArr.add("KPI");
+        spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinArr));
+        layoutForCheck.addView(spinner, params2);
         layoutForCheck.addView(textView, params1);
         layoutForCheck.addView(et, params2);
         layoutForCheck.addView(et2, params2);
@@ -823,11 +831,23 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                 first.put("signature", resultSignature);
                 first.put("photo", resultImage);
+//                type 0 = Daily , type 1 = KPI
+                if (spinner != null){
+                    String type = spinner.getSelectedItem().toString();
+                    if (type.equalsIgnoreCase("Daily")){
+                        first.put("type",0);
+                        Log.w("ivana", "Type 0");
+                    } else if(type.equalsIgnoreCase("KPI")){
+                        first.put("type",1);
+                        Log.w("ivana", "Type 1");
+                    }
+                }
                 first.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
                 first.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());
             }
 
             stringdong = gvcs.toString();
+            Log.w("ivana", "fileJson: "+stringdong);
         } catch (JSONException e) {
         }
 

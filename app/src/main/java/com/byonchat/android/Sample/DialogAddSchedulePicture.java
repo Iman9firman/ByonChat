@@ -149,6 +149,7 @@ public class DialogAddSchedulePicture extends Activity implements View.OnClickLi
                         return;
                     }
                     CameraActivity.Builder start = new CameraActivity.Builder(activity, REQ_CAMERA);
+                    start.setPackageName(getPackageName());
                     start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                     start.setCameraFace(CameraActivity.CAMERA_REAR);
                     start.setFlashMode(CameraActivity.FLASH_OFF);

@@ -445,7 +445,10 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onResume() {
         super.onResume();
-        assistant.start();
+        if (assistant != null) {
+            assistant.start();
+        }
+
 
         IntentFilter f = new IntentFilter(
                 MessengerConnectionService.ACTION_MESSAGE_RECEIVED);

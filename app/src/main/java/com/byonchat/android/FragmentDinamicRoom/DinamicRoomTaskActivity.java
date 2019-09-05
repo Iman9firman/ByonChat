@@ -204,7 +204,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
-    public static String PULLMULIPLEDETAILUPDATE = "/bc_voucher_client/webservice/proses/update_list_task_pull_multiple_json_temp.php";
+    public static String PULLMULIPLEDETAILUPDATE = "/bc_voucher_client/webservice/proses/update_list_task_pull_multiple_json.php";
 /*
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple.php";
@@ -9337,6 +9337,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         errorReq.add(value.get(4).toString());
                                                     }
 
+                                                } else if (value.get(2).toString().equalsIgnoreCase("load_dropdown")) {
+                                                    if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("--Please Select--")) {
+                                                        berhenti = true;
+                                                        errorReq.add(value.get(4).toString());
+                                                    }
+
                                                 } else if (value.get(2).toString().equalsIgnoreCase("load_dropdown_k")) {
                                                     if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).contains("--Please Select--")) {
                                                         berhenti = true;
@@ -13142,7 +13148,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 Contact contact = messengerHelper.getMyContact();
 
                 Log.w("webToo4n", contact.getJabberId());
-                
+
                 nameValuePairs.add(new BasicNameValuePair("bc_user", contact.getJabberId()));
 
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));

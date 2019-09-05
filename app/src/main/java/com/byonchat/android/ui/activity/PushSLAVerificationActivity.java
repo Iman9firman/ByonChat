@@ -836,10 +836,8 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                     String type = spinner.getSelectedItem().toString();
                     if (type.equalsIgnoreCase("Daily")){
                         first.put("type",0);
-                        Log.w("ivana", "Type 0");
                     } else if(type.equalsIgnoreCase("KPI")){
                         first.put("type",1);
-                        Log.w("ivana", "Type 1");
                     }
                 }
                 first.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
@@ -847,7 +845,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             }
 
             stringdong = gvcs.toString();
-            Log.w("ivana", "fileJson: "+stringdong);
         } catch (JSONException e) {
         }
 

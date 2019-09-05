@@ -129,6 +129,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
     String resultImage = "";
     String resultSignature = "";
+    int resultType = -1;
     EditText et, et2;
     Spinner spinner;
     Bitmap imgBm,sgnBm;
@@ -154,6 +155,12 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         btnCancel = (Button) findViewById(R.id.btn_cancel);
         basejson = getIntent().getStringExtra("data");
 
+        TextView textTitle = (TextView) findViewById(R.id.title_arr);
+        TextView textSubtitle = (TextView) findViewById(R.id.subtitle_arr);
+        String ttl = getIntent().getStringExtra("title");
+        String sbttl = getIntent().getStringExtra("subtitle");
+        textSubtitle.setText(sbttl);
+        textTitle.setText(ttl);
 
         TextView textView = new TextView(PushSLAVerificationActivity.this);
         textView.setText("Verified by");
@@ -209,10 +216,30 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         spinner = new Spinner(this);
         ArrayList<String> spinArr = new ArrayList<>();
+        spinArr.add("-- Select Type --");
         spinArr.add("Daily");
         spinArr.add("KPI");
         spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinArr));
-        layoutForCheck.addView(spinner, params2);
+        spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String type = spinner.getSelectedItem().toString();
+                if (type.equalsIgnoreCase("Daily")){
+                    resultType = 0;
+                } else if(type.equalsIgnoreCase("KPI")){
+                    resultType = 1;
+                } else {
+                    resultType = -1;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        layoutForCheck.addView(spinner, params1);
         layoutForCheck.addView(textView, params1);
         layoutForCheck.addView(et, params2);
         layoutForCheck.addView(et2, params2);
@@ -767,7 +794,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!resultImage.equalsIgnoreCase("") && !resultSignature.equalsIgnoreCase("")){
+                if (!resultImage.equalsIgnoreCase("") && !resultSignature.equalsIgnoreCase("") && resultType != -1){
                     rdialog = new ProgressDialog(PushSLAVerificationActivity.this);
                     rdialog.setMessage("Loading...");
                     rdialog.show();
@@ -775,7 +802,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"));
                 } else {
-                    Toast.makeText(getApplicationContext(),"Harap isi Photo dan Signature",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Harap isi Type, Photo, dan Signature",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -833,12 +860,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 first.put("photo", resultImage);
 //                type 0 = Daily , type 1 = KPI
                 if (spinner != null){
-                    String type = spinner.getSelectedItem().toString();
-                    if (type.equalsIgnoreCase("Daily")){
-                        first.put("type",0);
-                    } else if(type.equalsIgnoreCase("KPI")){
-                        first.put("type",1);
-                    }
+                    first.put("type",resultType);
                 }
                 first.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
                 first.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());

@@ -30,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -114,6 +115,13 @@ public class PushRepairReportActivity extends AppCompatActivity {
         btnSubmit = (Button) findViewById(R.id.btn_submit);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
         NoteDB = new SLANoteDB(getApplicationContext());
+
+        TextView textTitle = (TextView) findViewById(R.id.title_arr);
+        TextView textSubtitle = (TextView) findViewById(R.id.subtitle_arr);
+        String ttl = getIntent().getStringExtra("title");
+        String sbttl = getIntent().getStringExtra("subtitle");
+        textSubtitle.setText(sbttl);
+        textTitle.setText(ttl);
 
         resolveData();
         resolveListFile();

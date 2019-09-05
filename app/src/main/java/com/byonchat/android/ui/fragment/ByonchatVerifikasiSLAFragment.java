@@ -214,7 +214,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
                 params.put("id_rooms_tab", idRoomTab);
                 params.put("task_id", item.id + "");
                 Log.w("Parameter nya argus", username + ", " + databaseHelper.getMyContact().getJabberId() + ", " + idRoomTab + ", " + item.id);
-                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_verifikasi_sla.php", params, true);
+                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_verifikasi_sla.php", params, true,item.title,item.timestamp);
             }
         }, new OnRequestItemClickListener() {
             @Override
@@ -372,7 +372,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
         queue.add(sr);
     }
 
-    private void getMoreDetail(String Url, Map<String, String> params2, Boolean hide) {
+    private void getMoreDetail(String Url, Map<String, String> params2, Boolean hide, String toTitle, String toSubtitle) {
         ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
         rdialog.setMessage("Loading...");
         rdialog.show();
@@ -388,6 +388,8 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
                         iii.putExtra("username_room", username);
                         iii.putExtra("bc_user", databaseHelper.getMyContact().getJabberId());
                         iii.putExtra("id_rooms_tab", idRoomTab);
+                        iii.putExtra("title",toTitle);
+                        iii.putExtra("subtitle",toSubtitle);
                         startActivity(iii);
                     }
 

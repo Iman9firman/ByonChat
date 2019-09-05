@@ -38,6 +38,27 @@
             android:background="@drawable/backgroud_white"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/title_arr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginTop="@dimen/margin10"
+                android:layout_marginBottom="@dimen/margin5"
+                android:layout_marginLeft="@dimen/margin10"
+                android:layout_marginRight="@dimen/margin10"/>
+
+            <TextView
+                android:id="@+id/subtitle_arr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:layout_marginLeft="@dimen/margin10"
+                android:layout_marginRight="@dimen/margin10"/>
+
             <LinearLayout
                 android:id="@+id/linear"
                 android:layout_width="match_parent"
@@ -56,7 +77,6 @@
 
                 </com.byonchat.android.ui.view.ByonchatRecyclerView>
             </LinearLayout>
-
 
             <LinearLayout
                 android:id="@+id/layoutForCheck"

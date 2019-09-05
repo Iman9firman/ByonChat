@@ -195,9 +195,9 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                                 String valid = fifth.getString("v");
                                 noEmpat = String.valueOf(v + 1);
                                 if (valid.equalsIgnoreCase("0")) {
-                                    idItem = fifth.getString("id");
+                                    idItem = fifth.getString("id")+"-"+v;
                                     String asiop4[] = {"pertanyaan"};
-                                    headerFour = getNameByIdSLA("pertanyaan", asiop4, idItem);
+                                    headerFour = getNameByIdSLA("pertanyaan", asiop4, removePosFromId(idItem));
 
                                     String fotony = fifth.getString("f");
                                     String title = fifth.getString("n");
@@ -358,7 +358,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
     protected void resolveListFile() {
 
-
         mAdapter = new PustReportRepairAdapter(this, id_task,
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
@@ -436,7 +435,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                                     getIntent().getStringExtra("username_room"),
                                     id_rooms_tab, id_task_list,
                                     foto.get(i).getAfter().toString(),
-                                    foto.get(i).getId());
+                                    removePosFromId(foto.get(i).getId()));
                         } else {
                             Toast.makeText(getApplicationContext(), "Mohon tambahkan foto update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
                             rdialog.dismiss();
@@ -681,8 +680,8 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
 
                     for (int i = 0; i < foto.size(); i++) {
-                        if (foto.get(i).getId().equalsIgnoreCase(id)) {
-                            SLAmodelNew fotonya = new SLAmodelNew("Header", foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
+                        if (removePosFromId(foto.get(i).getId()).equalsIgnoreCase(id)) {
+                            SLAmodelNew fotonya = new SLAmodelNew("Header", removePosFromId(foto.get(i).getId()), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
                             uploadfoto.add(fotonya);
                         }
                     }
@@ -881,6 +880,10 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         }
         return header;
 
+    }
+
+    private String removePosFromId(String idWithPosition){
+        return idWithPosition.substring(0,idWithPosition.lastIndexOf("-"));
     }
 }
 

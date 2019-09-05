@@ -12,7 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
 import com.byonchat.android.Sample.Adapter.ScheduleAdapter;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
@@ -39,12 +47,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @SuppressLint("ValidFragment")
-public class ByonchatListScheduleFragment extends Fragment {
+public class ByonchatListScheduleFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener  {
 
     RecyclerView mRecyclerView;
     ScheduleAdapter myadapter;
@@ -87,7 +97,6 @@ public class ByonchatListScheduleFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         username = Byonchat.getMessengerHelper().getMyContact().getJabberId();
-
     }
 
 
@@ -134,59 +143,34 @@ public class ByonchatListScheduleFragment extends Fragment {
                 new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL);
         mRecyclerView.addItemDecoration(itemDecoration);
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshList();
-                    }
-                };
-                runnable.run();
-            }
-        });
-
-        refreshList();
+        swipeRefreshLayout.setOnRefreshListener(this);
     }
 
     @Override
     public void onResume() {
+        refreshList();
         super.onResume();
+    }
 
+    @Override
+    public void onRefresh() {
+        refreshList();
     }
 
     public void refreshList() {
         dataJson.clear();
+        swipeRefreshLayout.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
             String url = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
-            Log.e("Reamure 2",addLocationToUrl(url));
-            try {
-                String version = new HttpAsyncTask().execute(addLocationToUrl(url)).get();
+            new startGetData(addParamsToUrl(url)).execute();
 
-                if(version.startsWith("<pre>")){
-                    version = version.replace("<pre>","");
-                }
-                Log.e("Reamure SLAPeriod",version);
-
-                JSONObject jsonObject = new JSONObject(version);
-                JSONArray jsonArray = jsonObject.getJSONArray("item");
-                for(int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                    dataJson.add(jsonObject1.toString());
-                }
-            } catch (JSONException e){
-                Log.e("Error Reamure JSON",e.getMessage());
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+        } else {
+            swipeRefreshLayout.setRefreshing(false);
+            Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    protected String addLocationToUrl(String url){
+    protected String addParamsToUrl(String url){
         if(!url.endsWith("?"))
             url += "?";
 
@@ -200,18 +184,6 @@ public class ByonchatListScheduleFragment extends Fragment {
 
         url += paramString;
         return url;
-    }
-
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return GET(urls[0]);
-        }
-        @Override
-        protected void onPostExecute(String result) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
     }
 
     public static String GET(String url){
@@ -242,5 +214,42 @@ public class ByonchatListScheduleFragment extends Fragment {
         inputStream.close();
         return result;
 
+    }
+
+    private class startGetData extends AsyncTask<String, Void, String> {
+        private String vug;
+
+        private startGetData(String text) {
+            this.vug = text;
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return GET(vug);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            swipeRefreshLayout.setRefreshing(false);
+            setData(result);
+        }
+    }
+
+    public void setData(String response) {
+        try {
+            if(response.startsWith("<pre>")){
+                response = response.replace("<pre>","");
+            }
+
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("item");
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                dataJson.add(jsonObject1.toString());
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+        myadapter.notifyDataSetChanged();
     }
 }

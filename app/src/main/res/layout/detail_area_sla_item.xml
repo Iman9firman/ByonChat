@@ -27,6 +27,7 @@
                 android:layout_height="40dp"
                 android:gravity="left|center"
                 android:padding="@dimen/margin5"
+                android:textColor="@color/grayDark"
                 android:text="Sample Detail Area"/>
         </LinearLayout>
         <LinearLayout
@@ -79,6 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Start"
+                    android:textColor="@color/grayDark"
                     android:gravity="center"
                     android:layout_below="@+id/square1"/>
             </RelativeLayout>
@@ -125,6 +127,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="On Process"
+                    android:textColor="@color/grayDark"
                     android:gravity="center"
                     android:layout_below="@+id/square2"/>
             </RelativeLayout>
@@ -172,6 +175,7 @@
                     android:layout_height="wrap_content"
                     android:text="Done"
                     android:gravity="center"
+                    android:textColor="@color/grayDark"
                     android:layout_below="@+id/square3"/>
             </RelativeLayout>
         </LinearLayout>

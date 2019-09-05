@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.byonchat.android.R;
 import com.squareup.picasso.NetworkPolicy;
@@ -23,6 +24,8 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
 
     private ArrayList<DetailArea> detailareaList;
     private Activity mActivity;
+
+    int colorText, backgroundText;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
@@ -46,6 +49,8 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
     public DetailAreaScheduleAdapter(Activity activity, ArrayList<DetailArea> detailareaList) {
         this.detailareaList = detailareaList;
         this.mActivity = activity;
+        this.colorText = activity.getResources().getColor(R.color.grayDark);
+        this.backgroundText = activity.getResources().getColor(R.color.tab_text_selected);
     }
 
     @Override
@@ -60,6 +65,7 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
     public void onBindViewHolder(MyViewHolder holder, int position) {
         DetailArea detailArea = detailareaList.get(position);
         holder.title.setText(detailArea.getTitle());
+        holder.title.setTextColor(colorText);
 
         holder.cekdone.setVisibility(View.GONE);
         holder.cekstart.setVisibility(View.GONE);
@@ -83,28 +89,36 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
         holder.proses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent dsc = new Intent(mActivity, DialogAddSchedulePicture.class);
-                dsc.putExtra("id_da",detailArea.getId());
-                dsc.putExtra("id_jjt",detailArea.getId_jjt());
-                dsc.putExtra("tt",detailArea.getTitle());
-                dsc.putExtra("fq",detailArea.getFrekuensi());
-                dsc.putExtra("pr",detailArea.getPeriod());
-                dsc.putExtra("post","proses");
-                mActivity.startActivity(dsc);
+                if(!detailArea.getImg_start().equalsIgnoreCase("null")){
+                    Intent dsc = new Intent(mActivity, DialogAddSchedulePicture.class);
+                    dsc.putExtra("id_da", detailArea.getId());
+                    dsc.putExtra("id_jjt", detailArea.getId_jjt());
+                    dsc.putExtra("tt", detailArea.getTitle());
+                    dsc.putExtra("fq", detailArea.getFrekuensi());
+                    dsc.putExtra("pr", detailArea.getPeriod());
+                    dsc.putExtra("post", "proses");
+                    mActivity.startActivity(dsc);
+                } else {
+                    Toast.makeText(mActivity, "Add The Start Image First",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         holder.done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent dsc = new Intent(mActivity, DialogAddSchedulePicture.class);
-                dsc.putExtra("id_da",detailArea.getId());
-                dsc.putExtra("id_jjt",detailArea.getId_jjt());
-                dsc.putExtra("tt",detailArea.getTitle());
-                dsc.putExtra("fq",detailArea.getFrekuensi());
-                dsc.putExtra("pr",detailArea.getPeriod());
-                dsc.putExtra("post","done");
-                mActivity.startActivity(dsc);
+                if (!detailArea.getImg_proses().equalsIgnoreCase("null")){
+                    Intent dsc = new Intent(mActivity, DialogAddSchedulePicture.class);
+                    dsc.putExtra("id_da",detailArea.getId());
+                    dsc.putExtra("id_jjt",detailArea.getId_jjt());
+                    dsc.putExtra("tt",detailArea.getTitle());
+                    dsc.putExtra("fq",detailArea.getFrekuensi());
+                    dsc.putExtra("pr",detailArea.getPeriod());
+                    dsc.putExtra("post","done");
+                    mActivity.startActivity(dsc);
+                } else {
+                    Toast.makeText(mActivity, "Add The Process Image First",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

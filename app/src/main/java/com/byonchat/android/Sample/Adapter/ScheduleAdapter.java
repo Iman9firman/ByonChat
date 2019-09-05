@@ -28,12 +28,16 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
     private ItemClickListener mClickListener;
     Context context;
     TextView edt;
+    int colorText;
+    int backgroundText;
 
     // data is passed into the constructor
     public ScheduleAdapter(Context context, ArrayList<String> data) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.colorText = context.getResources().getColor(R.color.grayDark);
+        this.backgroundText = context.getResources().getColor(R.color.tab_text_selected);
     }
 
     // inflates the row layout from xml when needed
@@ -53,6 +57,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
             JSONObject jsonObject = new JSONObject(jjt);
             String jjt_loc = jsonObject.getString("jjt_location");
             holder.title_jjt.setText(jjt_loc);
+            holder.title_jjt.setTextColor(colorText);
             JSONArray jsonArray = jsonObject.getJSONArray("periode");
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
@@ -74,6 +79,8 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
                 LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(1));
                 edt = new TextView(context);
                 edt.setText(period);
+                edt.setTextColor(colorText);
+                edt.setBackgroundColor(backgroundText);
                 edt.setTextSize(20);
                 edt.setGravity(Gravity.CENTER|Gravity.LEFT);
                 holder.lineR_period.addView(edt,params1);
@@ -101,6 +108,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
         dw.putExtra("fq",freq);
         dw.putExtra("pr",period);
         dw.putExtra("tt",jjt_loc2);
+        dw.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(dw);
     }
     // total number of rows

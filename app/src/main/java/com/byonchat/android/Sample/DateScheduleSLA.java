@@ -40,10 +40,12 @@ import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.dpToP
 public class DateScheduleSLA extends AppCompatActivity {
     TextView title;
     LinearLayout llData;
-//    String jt,fq,fl,pr,sd,fd,tt;
+    //    String jt,fq,fl,pr,sd,fd,tt;
     String jt,fq,pr,tt;
-//    ArrayList<String> da = new ArrayList<>();
+    //    ArrayList<String> da = new ArrayList<>();
     private ProgressDialog progressDialog;
+
+    int colorText, backgroundText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,18 +60,17 @@ public class DateScheduleSLA extends AppCompatActivity {
         getAllDataListPeriode();
 
         title.setText(tt);
+        title.setTextColor(colorText);
     }
 
     public void getAllIntent(){
         jt = getIntent().getStringExtra("jt");
         fq = getIntent().getStringExtra("fq");
-//        fl = getIntent().getStringExtra("fl");
         pr = getIntent().getStringExtra("pr");
-//        sd = getIntent().getStringExtra("sd");
-//        fd = getIntent().getStringExtra("fd");
-//        da = getIntent().getStringArrayListExtra("da");
         tt = getIntent().getStringExtra("tt");
 
+        colorText = getResources().getColor(R.color.grayDark);
+        backgroundText = getResources().getColor(R.color.tab_text_selected);
     }
 
     public void getAllDataListPeriode(){
@@ -98,6 +99,8 @@ public class DateScheduleSLA extends AppCompatActivity {
                     LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(1));
                     TextView edt = new TextView(getApplicationContext());
                     edt.setText(date);
+                    edt.setTextColor(colorText);
+                    edt.setBackgroundColor(backgroundText);
                     edt.setTextSize(20);
                     edt.setGravity(Gravity.CENTER|Gravity.LEFT);
                     llData.addView(edt,params1);

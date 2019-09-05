@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,13 +31,21 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.byonchat.android.DownloadSqliteDinamicActivity;
+import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.Sample.ScheduleSLAPeriod;
+import com.byonchat.android.adapter.SLAISSAdapter;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.local.Byonchat;
+import com.byonchat.android.model.SLAISSItem;
+import com.byonchat.android.model.ScheduleList;
+import com.byonchat.android.provider.DataBaseDropDown;
+import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
 import com.byonchat.android.widget.CalendarDialog;
+import com.toptoche.searchablespinnerlibrary.SearchableListDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.apache.http.HttpEntity;
@@ -56,6 +66,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,10 +80,16 @@ public class ByonchatScheduleSLAFragment extends Fragment {
     ArrayList<String> kodeJJt = new ArrayList<>(); //list kode jjt nya saja
     EditText editParentTv;
     TextView editStart, editFinish;
-    SearchableSpinner spinjjt, spinfreq, spinfloor, spinperiod;
+    SearchableSpinner spinjjt, spinfreq, spinpembobotan, spinsection, spinsubsec, spinperiod;
     String[] detailArea = new String[0];
     boolean change_position = false;
     public String username;
+
+    ArrayList<ScheduleList> pembobotan = new ArrayList<>();
+    ArrayList<ScheduleList> section = new ArrayList<>();
+    ArrayList<ScheduleList> subsection = new ArrayList<>();
+
+    DecimalFormat df2 = new DecimalFormat("#.##");
 
     public ByonchatScheduleSLAFragment() {
 
@@ -116,7 +133,9 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         editParentTv = (EditText) view.findViewById(R.id.editParentTv);
         spinjjt = (SearchableSpinner) view.findViewById(R.id.spinnerJJT);
         spinfreq = (SearchableSpinner) view.findViewById(R.id.spinnerFreq);
-        spinfloor = (SearchableSpinner) view.findViewById(R.id.spinnerFloor);
+        spinpembobotan = (SearchableSpinner) view.findViewById(R.id.spinnerPembobotan);
+        spinsection = (SearchableSpinner) view.findViewById(R.id.spinnerSection);
+        spinsubsec = (SearchableSpinner) view.findViewById(R.id.spinnerSubSection);
         spinperiod = (SearchableSpinner) view.findViewById(R.id.spinnerPeriod);
 
         return view;
@@ -140,7 +159,9 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             spinjjt.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
             spinfreq.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
-            spinfloor.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
+            spinpembobotan.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
+            spinsection.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
+            spinsubsec.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
             spinperiod.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
         }
 
@@ -229,21 +250,26 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         list_freq.add("6 Bulanan");
         list_freq.add("Tahunan");
 
-        //List Floor
-        ArrayList<String> list_floor = new ArrayList<>();
+        //Adapter Pembobotan
+        ArrayList<String> list_bobot = new ArrayList<>();
 
-        ArrayAdapter listAdp_floor = new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, list_floor);
-        listAdp_floor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter listAdp_bobot = new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, list_bobot);
+        listAdp_bobot.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        list_bobot.add("-- Pilih Pembobotan --");
 
-        list_floor.add("-- Pilih Floor --");
-        list_floor.add("Lt. 1");
-        list_floor.add("Lt. 2");
-        list_floor.add("Lt. 3");
-        list_floor.add("Lt. 4");
-        list_floor.add("Lt. 6");
-        list_floor.add("Lt. 7");
-        list_floor.add("Lt. 8");
-        list_floor.add("Lt. 9");
+        //Adapter Section
+        ArrayList<String> list_secs = new ArrayList<>();
+
+        ArrayAdapter listAdp_secs = new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, list_secs);
+        listAdp_secs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        list_secs.add("-- Pilih Section --");
+
+        //Adapter Subsection
+        ArrayList<String> list_subsecs = new ArrayList<>();
+
+        ArrayAdapter listAdp_subsecs = new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, list_subsecs);
+        listAdp_subsecs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        list_subsecs.add("-- Pilih Subsection --");
 
         //List Period
         ArrayList<String> list_perio = new ArrayList<>();
@@ -260,8 +286,89 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
         spinjjt.setAdapter(listAdp);
         spinfreq.setAdapter(listAdp_freq);
-        spinfloor.setAdapter(listAdp_floor);
+        spinpembobotan.setAdapter(listAdp_bobot);
+        spinsection.setAdapter(listAdp_secs);
+        spinsubsec.setAdapter(listAdp_subsecs);
         spinperiod.setAdapter(listAdp_perio);
+
+        //Add List Pembobotan When Spinner JJT Changes
+        spinjjt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                list_bobot.clear();
+                spinpembobotan.setSelection(0);
+                list_bobot.add("-- Pilih Pembobotan --");
+                if(spinjjt.getSelectedItemPosition() != 0) {
+                    int jjt_pos = spinjjt.getSelectedItemPosition() - 1;
+                    String kode_jjt = kodeJJt.get(jjt_pos);
+
+                    getList_Like_SLA(kode_jjt);
+
+                    for (int i = 0; i < pembobotan.size(); i++) {
+                        list_bobot.add(pembobotan.get(i).getTitle());
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        //Add List Section When Spinner Bobot Changes
+        spinpembobotan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                list_secs.clear();
+                spinsection.setSelection(0);
+                list_secs.add("-- Pilih Section --");
+                if(spinpembobotan.getSelectedItemPosition() != 0) {
+                    String bobot = spinpembobotan.getSelectedItem().toString();
+                    String idBobot = "";
+                    for (int i = 0; i < pembobotan.size(); i++) {
+                        if(bobot.equalsIgnoreCase(pembobotan.get(i).getTitle())){
+                            idBobot = pembobotan.get(i).getId();
+                        }
+                    }
+
+                    for (int i = 0; i < section.size(); i++) {
+                        if(idBobot.equalsIgnoreCase(section.get(i).getId_parent())){
+                            list_secs.add(section.get(i).getTitle());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        //Add List SubSection When Spinner Section Changes
+        spinsection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                list_subsecs.clear();
+                spinsubsec.setSelection(0);
+                list_subsecs.add("-- Pilih Subsection --");
+                if(spinsection.getSelectedItemPosition() != 0)  {
+                    String section1 = spinsection.getSelectedItem().toString();
+                    String idSecs = "";
+                    for (int i = 0; i < section.size(); i++) {
+                        if(section1.equalsIgnoreCase(section.get(i).getTitle())){
+                            idSecs = section.get(i).getId();
+                        }
+                    }
+
+                    for (int i = 0; i < subsection.size(); i++) {
+                        if(idSecs.equalsIgnoreCase(subsection.get(i).getId_parent())){
+                            list_subsecs.add(subsection.get(i).getTitle());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
     }
 
@@ -356,73 +463,69 @@ public class ByonchatScheduleSLAFragment extends Fragment {
             public void onClick(View v) {
                 boolean error = false;
 
-                if(change_position){
-                        Intent detail = new Intent(mActivity, ScheduleSLAPeriod.class);
-                        detail.putExtra("jt", spinjjt.getSelectedItem().toString());
-                        detail.putExtra("fq", spinfreq.getSelectedItem().toString());
-                        detail.putExtra("fl", spinfloor.getSelectedItem().toString());
-                        detail.putExtra("pr", spinperiod.getSelectedItem().toString());
-                        detail.putExtra("sd", editStart.getText().toString());
-                        detail.putExtra("fd", editFinish.getText().toString());
-                        detail.putExtra("da", detaiArea);
-                        startActivity(detail);
-                }else {
-                    if (spinjjt.getSelectedItem().toString().equalsIgnoreCase("-- Pilih JJT --")) {
-                        error = true;
-                        Toast.makeText(mActivity, "Harap isi JJT", Toast.LENGTH_SHORT).show();
-                    }
-                    if (spinfreq.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Frequency --")) {
-                        error = true;
-                        Toast.makeText(mActivity, "Harap isi Frequency", Toast.LENGTH_SHORT).show();
-                    }
-                    if (spinfloor.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Floor --")) {
-                        error = true;
-                        Toast.makeText(mActivity, "Harap isi Floor", Toast.LENGTH_SHORT).show();
-                    }
-                    if (spinperiod.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Periode --")) {
-                        error = true;
-                        Toast.makeText(mActivity, "Harap isi Periode", Toast.LENGTH_SHORT).show();
-                    }
-                    if (editStart.getText().toString().equalsIgnoreCase("")) {
-                        error = true;
-                        Toast.makeText(mActivity, "Harap isi Start Date", Toast.LENGTH_SHORT).show();
-                    }
-                    if (editFinish.getText().toString().equalsIgnoreCase("")) {
-                        error = true;
-                        Toast.makeText(mActivity, "Harap isi Finish Date", Toast.LENGTH_SHORT).show();
-                    }
-                    if (detaiArea.size() == 0) {
-                        error = true;
-                        Toast.makeText(mActivity, "Harap isi Detail Area", Toast.LENGTH_SHORT).show();
-                    }
+                if (spinjjt.getSelectedItem().toString().equalsIgnoreCase("-- Pilih JJT --")) {
+                    error = true;
+                    Toast.makeText(mActivity, "Harap isi JJT", Toast.LENGTH_SHORT).show();
+                }
+                if (spinfreq.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Frequency --")) {
+                    error = true;
+                    Toast.makeText(mActivity, "Harap isi Frequency", Toast.LENGTH_SHORT).show();
+                }
+                if (spinpembobotan.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Pembobotan --")) {
+                    error = true;
+                    Toast.makeText(mActivity, "Harap isi Pembobotan", Toast.LENGTH_SHORT).show();
+                }
+                if (spinsection.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Section --")) {
+                    error = true;
+                    Toast.makeText(mActivity, "Harap isi Section", Toast.LENGTH_SHORT).show();
+                }
+                if (spinsection.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Subsection --")) {
+                    error = true;
+                    Toast.makeText(mActivity, "Harap isi Subsection", Toast.LENGTH_SHORT).show();
+                }
+                if (spinperiod.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Periode --")) {
+                    error = true;
+                    Toast.makeText(mActivity, "Harap isi Periode", Toast.LENGTH_SHORT).show();
+                }
+                if (editStart.getText().toString().equalsIgnoreCase("")) {
+                    error = true;
+                    Toast.makeText(mActivity, "Harap isi Start Date", Toast.LENGTH_SHORT).show();
+                }
+                if (editFinish.getText().toString().equalsIgnoreCase("")) {
+                    error = true;
+                    Toast.makeText(mActivity, "Harap isi Finish Date", Toast.LENGTH_SHORT).show();
+                }
+                if (detaiArea.size() == 0) {
+                    error = true;
+                    Toast.makeText(mActivity, "Harap isi Detail Area", Toast.LENGTH_SHORT).show();
+                }
 
-                    if (!error) {
+                if (!error) {
 
-                        for (int i = 0; i < detaiArea.size(); i++) {
-                            detailArea = new String[detaiArea.size()];
-                            detailArea[i] = detaiArea.get(i);
-                            String sac = detaiArea.get(i);
+                    for (int i = 0; i < detaiArea.size(); i++) {
+                        detailArea = new String[detaiArea.size()];
+                        detailArea[i] = detaiArea.get(i);
+                        String sac = detaiArea.get(i);
+                    }
+                    if (detaiArea.size() > 0) {
+                        String pilih = "";
+                        for (String is : detaiArea) {
+                            pilih += is + ", ";
                         }
-                        if (detaiArea.size() > 0) {
-                            String pilih = "";
-                            for (String is : detaiArea) {
-                                pilih += is + ", ";
-                            }
 
-                            String data_da = pilih.substring(0, pilih.length() - 1);
+                        String data_da = pilih.substring(0, pilih.length() - 1);
 
-                            String linnk = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_insert.php";
-                            if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
+                        String linnk = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_insert.php";
+                        if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
 
-                                int jjt_pos = spinjjt.getSelectedItemPosition()-1;
-                                String kode_jjt = kodeJJt.get(jjt_pos);
+                            int jjt_pos = spinjjt.getSelectedItemPosition()-1;
+                            String kode_jjt = kodeJJt.get(jjt_pos);
 
-                                new InsertSchedule(mActivity).execute(linnk, spinjjt.getSelectedItem().toString(), kode_jjt, spinfreq.getSelectedItem().toString(),
-                                        spinfloor.getSelectedItem().toString(), spinperiod.getSelectedItem().toString(), editStart.getText().toString(),
-                                        editFinish.getText().toString(), data_da);
-                            } else {
-                                Toast.makeText(getContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
-                            }
+                            new InsertSchedule(mActivity).execute(linnk, spinjjt.getSelectedItem().toString(), kode_jjt, spinfreq.getSelectedItem().toString(),
+                                    spinpembobotan.getSelectedItem().toString(), spinsection.getSelectedItem().toString(), spinsubsec.getSelectedItem().toString(),
+                                    spinperiod.getSelectedItem().toString(), editStart.getText().toString(), editFinish.getText().toString(), data_da);
+                        } else {
+                            Toast.makeText(getContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -450,20 +553,20 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
-            postData(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8]);
+            postData(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10]);
             return null;
         }
 
         protected void onPostExecute(String result) {
             if (error.length() > 0) {
-                 Toast.makeText(context, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, error, Toast.LENGTH_LONG).show();
             }
         }
 
         protected void onProgressUpdate(String... string) {
         }
 
-        public void postData(String link, String jjt, String kd_jjt, String freq, String floor, String perio, String sd, String ed, String da) {
+        public void postData(String link, String jjt, String kd_jjt, String freq, String bobot, String secs, String subsecs, String perio, String sd, String ed, String da) {
             try {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
@@ -478,7 +581,10 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                 nameValuePairs.add(new BasicNameValuePair("jjt_location", kd_jjt));
 
                 nameValuePairs.add(new BasicNameValuePair("frequency", freq));
-                nameValuePairs.add(new BasicNameValuePair("floor", floor));
+                nameValuePairs.add(new BasicNameValuePair("floor", "1"));
+                nameValuePairs.add(new BasicNameValuePair("bobot", bobot));
+                nameValuePairs.add(new BasicNameValuePair("section", secs));
+                nameValuePairs.add(new BasicNameValuePair("subsection", subsecs));
                 nameValuePairs.add(new BasicNameValuePair("periode", perio));
                 nameValuePairs.add(new BasicNameValuePair("start_date", sd));
                 nameValuePairs.add(new BasicNameValuePair("end_date", ed));
@@ -500,7 +606,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                     Intent detail = new Intent(mActivity, ScheduleSLAPeriod.class);
                     detail.putExtra("jt", spinjjt.getSelectedItem().toString());
                     detail.putExtra("fq", spinfreq.getSelectedItem().toString());
-                    detail.putExtra("fl", spinfloor.getSelectedItem().toString());
+                    detail.putExtra("fl", spinpembobotan.getSelectedItem().toString());
                     detail.putExtra("pr", spinperiod.getSelectedItem().toString());
                     detail.putExtra("sd", editStart.getText().toString());
                     detail.putExtra("fd", editFinish.getText().toString());
@@ -521,5 +627,87 @@ public class ByonchatScheduleSLAFragment extends Fragment {
             progressDialog.dismiss();
         }
 
+    }
+
+    //Get List Pembobotan / Section / Subsection equals with Tab_SLA
+    private void getList_Like_SLA(String kodeJJT){
+        pembobotan.clear();
+        section.clear();
+        subsection.clear();
+
+        DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(mActivity, "sqlite_iss");
+
+
+        String asiop[] = {"jt.id AS id_jjt", "pb.id AS id_pembobotan", "pb.nama_pembobotan AS nama_pembobotan", "pb.grade AS grade"
+                , "s.id AS id_section", "s.title AS title_section", "ss.id AS id_subsection", "ss.title AS title_subsection", "p.id AS id_pertanyaan", "p.pertanyaan AS pertanyaan", "jt.pass_grade AS pass_gradeNya"};
+
+        String asiap = "jjt jt\n" +
+                "INNER JOIN jjt_checklists jtc ON jt.id=jtc.id_jjt\n" +
+                "INNER JOIN pembobotan pb ON pb.id=jtc.id_pembobotan\n" +
+                "INNER JOIN pembobotan_checklists pc ON pb.id=pc.id_pembobotan\n" +
+                "INNER JOIN section s ON s.id=pc.id_section\n" +
+                "INNER JOIN section_checklists sc ON s.id=sc.id_section\n" +
+                "INNER JOIN sub_section ss ON ss.id=sc.id_subsection\n" +
+                "INNER JOIN subsection_checklists sbc ON ss.id=sbc.id_subsection\n" +
+                "INNER JOIN pertanyaan p ON p.id=sbc.id_pertanyaan";
+
+        final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + kodeJJT + "'", null, null, null, null, null);
+
+        if(css.moveToFirst()){
+            String bobotIdOld = "";
+            String sectionOld = "";
+            String subSectionOld = "";
+
+            try {
+
+                do {
+                    String idBobot = css.getString(1);
+                    String idSection = css.getString(4);
+                    String idSubSection = css.getString(6);
+
+                    String namaBobot = css.getString(2);
+                    String namaSection = css.getString(5);
+                    String namaSubSection = css.getString(7);
+
+                    if (bobotIdOld.equalsIgnoreCase(idBobot)) {
+                        if (sectionOld.equalsIgnoreCase(idSection)) {
+                            if (!subSectionOld.equalsIgnoreCase(idSubSection)) {
+                                subSectionOld = idSubSection;
+
+                                ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
+                                subsection.add(subsectioning);
+                            }
+                        } else {
+                            subSectionOld = idSubSection;
+                            sectionOld = idSection;
+
+                            ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
+                            subsection.add(subsectioning);
+
+                            ScheduleList sectioning = new ScheduleList(idSection, idBobot, namaSection);
+                            section.add(sectioning);
+
+                        }
+                    } else {
+                        bobotIdOld = idBobot;
+                        sectionOld = idSection;
+                        subSectionOld = idSubSection;
+
+                        ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
+                        subsection.add(subsectioning);
+
+                        ScheduleList sectioning = new ScheduleList(idSection, idBobot, namaSection);
+                        section.add(sectioning);
+
+                        ScheduleList bobot = new ScheduleList(idBobot, namaBobot);
+                        pembobotan.add(bobot);
+                    }
+
+                } while (css.moveToNext());
+
+            } catch (Exception e) {
+
+            }
+        }
     }
 }

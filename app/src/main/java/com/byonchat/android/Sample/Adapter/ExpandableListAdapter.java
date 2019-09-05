@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.TextView;
 
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
@@ -33,7 +31,7 @@ public class ExpandableListAdapter extends RecyclerView.Adapter<ExpandableListAd
 
     @Override
     public ItemRowHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.contoh_satu, null);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_grouping_menu, null);
         ItemRowHolder mh = new ItemRowHolder(v);
         return mh;
     }

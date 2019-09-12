@@ -90,6 +90,7 @@ import com.honda.android.LoginDinamicFingerPrint;
 import com.honda.android.LoginDinamicRoomActivity;
 import com.honda.android.LoginISS;
 import com.honda.android.Manhera.Manhera;
+import com.honda.android.NewSearchRoomActivity;
 import com.honda.android.R;
 import com.honda.android.RequestPasscodeRoomActivity;
 import com.honda.android.communication.MessengerConnectionService;
@@ -747,7 +748,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 card_search_main.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
             } else {
-                vTxtStatusWarning.setVisibility(View.VISIBLE);
+                /*vTxtStatusWarning.setVisibility(View.VISIBLE);
                 vFrameWarning.setVisibility(View.VISIBLE);
                 vBtnAddRooms.setVisibility(View.VISIBLE);
 
@@ -755,7 +756,13 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 card_search_main.setVisibility(View.INVISIBLE);
                 recyclerView.setVisibility(View.INVISIBLE);
 
-                isRecyclerViewShowed = false;
+                isRecyclerViewShowed = false;*/
+                Intent intent = new Intent(this, NewSearchRoomActivity.class);
+                intent.putExtra("search", "brand");
+                intent.putExtra("addHonda", "2");
+                intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
+                intent.putExtra(Constants.EXTRA_COLOR, color);
+                startActivity(intent);
             }
         }
     }

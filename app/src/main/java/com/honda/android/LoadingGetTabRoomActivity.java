@@ -235,11 +235,13 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 // Execute HTTP Post Request
                 HttpResponse response = httpclient.execute(httppost);
                 int status = response.getStatusLine().getStatusCode();
+                Log.w("gansdhi", status + "");
                 if (status == 200) {
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);
 
-                    Log.w("ww", data);
+                    Log.w("BukanSaya", data);
+                    new Validations().getInstance(getApplicationContext()).setLastVersion(getApplicationContext().getResources().getString(R.string.app_version));
 
                     try {
                         JSONObject jsonRootObject = new JSONObject(data);
@@ -289,7 +291,6 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         }
                         cursor.close();
 
-                        new Validations().getInstance(getApplicationContext()).setLastVersion(getApplicationContext().getResources().getString(R.string.app_version));
 
                         new Validations().getInstance(getApplicationContext()).removeById(26);
                         new Validations().getInstance(getApplicationContext()).removeById(25);

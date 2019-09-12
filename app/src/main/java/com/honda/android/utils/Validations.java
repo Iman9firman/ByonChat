@@ -648,6 +648,7 @@ public class Validations {
         Cursor cursor = db.getSingleContact(20);
         if (cursor.getCount() > 0) {
             String value = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+            Log.w("gambubu", value + "(.)(.)" + version);
             if (value.equalsIgnoreCase(version)) {
                 hasil = true;
             } else {

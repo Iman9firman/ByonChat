@@ -106,6 +106,7 @@ import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.ContactBot;
 import com.honda.android.provider.DataBaseDropDown;
 import com.honda.android.provider.Message;
+import com.honda.android.provider.MessengerDatabaseHelper;
 import com.honda.android.sync.BCServiceSyncAdapter;
 import com.honda.android.utils.BlurBuilder;
 import com.honda.android.utils.DialogUtil;
@@ -757,12 +758,19 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 recyclerView.setVisibility(View.INVISIBLE);
 
                 isRecyclerViewShowed = false;*/
-                Intent intent = new Intent(this, NewSearchRoomActivity.class);
-                intent.putExtra("search", "brand");
-                intent.putExtra("addHonda", "2");
-                intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
-                intent.putExtra(Constants.EXTRA_COLOR, color);
-                startActivity(intent);
+
+
+                MessengerDatabaseHelper dbhelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+
+                if (dbhelper.getMyContact() != null) {
+                    Intent intent = new Intent(this, NewSearchRoomActivity.class);
+                    intent.putExtra("search", "brand");
+                    intent.putExtra("addHonda", "2");
+                    intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
+                    intent.putExtra(Constants.EXTRA_COLOR, color);
+                    startActivity(intent);
+                }
+
             }
         }
     }
@@ -796,7 +804,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         vListRooms.setVisibility(isTrue ? View.GONE : View.VISIBLE);
 
         Menu nav_Menu = navigationView.getMenu();
-        nav_Menu.findItem(R.id.nav_item_one).setVisible(isTrue);
+        nav_Menu.findItem(R.id.nav_item_one).setVisible(false);
         nav_Menu.findItem(R.id.nav_item_two).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_three).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
@@ -1961,14 +1969,20 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         Byonchat.getRoomsDB().close();
 
 
-        if (!showDialog) {
-            if (botArrayListist.size() > 0) {
-                try {
-                    JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
-                    String targetURL = jObj.getString("path");
+        if (botArrayListist.size() > 0) {
+            try {
+                JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+                String targetURL = jObj.getString("path");
+
+                AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
+                alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
+                alertbox.setMessage("Are you sure you want to Refresh?");
+                alertbox.setCancelable(false);
+                alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
                     if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
 
                         refreshRoomForm();
+
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
@@ -1981,45 +1995,15 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     } else {
                         Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
                     }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        } else {
-            if (botArrayListist.size() > 0) {
-                try {
-                    JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
-                    String targetURL = jObj.getString("path");
-
-                    AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
-                    alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
-                    alertbox.setMessage("Are you sure you want to Refresh?");
-                    alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
-                        if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-
-                            refreshRoomForm();
-
-                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
-                            editor.apply();
-
-                            finish();
-
-                            Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                            startActivity(ii);
-                        } else {
-                            Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                });
+                if (showDialog) {
                     alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
                     });
-                    alertbox.show();
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
+                alertbox.show();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 

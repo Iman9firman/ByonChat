@@ -53,7 +53,7 @@ public class CloudStorageActivity extends AppCompatActivity {
     private List<String> m_path, u_path;
     private List<String> m_files, u_files;
     private List<String> m_filesPath, u_filesPath;
-    private String m_root = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ByonChatDoc";
+    private String m_root = Environment.getExternalStorageDirectory().getAbsolutePath() + "/S-TeamDoc";
     private String u_root = Environment.getExternalStorageDirectory().getAbsolutePath();
     ListAdapter m_listAdapter, u_listAdapter;
     String m_curDir, u_curDir;
@@ -387,7 +387,7 @@ public class CloudStorageActivity extends AppCompatActivity {
 
     private void prepareMerging(String path) {
         String fileOne = path;
-        String Nama_Merge = path.replace("/storage/emulated/0/ByonChatDoc/","");
+        String Nama_Merge = path.replace("/storage/emulated/0/S-TeamDoc/","");
         String fileTwo = CARD_PATH;
         File hasil = new File(Environment.getExternalStorageDirectory(), Nama_Merge);
         hasil.getParentFile().mkdirs();

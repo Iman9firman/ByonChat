@@ -249,7 +249,7 @@ public class AddBottomCatalogue extends Activity {
             doc.setProgressMessage(R.string.crop__wait);
             doc.setFileName("idcard_" + name + "_honda");
 
-            File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ByonChatDoc");
+            File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/S-TeamDoc");
             if (!pdf.exists()) {
                 pdf.mkdir();
             }

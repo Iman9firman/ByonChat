@@ -51,11 +51,11 @@ public class ForegroundService extends Service {
 
         String channelId = "";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channelId = createNotificationChannel("ByonChat", "Connected");
+            channelId = createNotificationChannel("S-Team", "Connected");
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), channelId);
             Notification notification = notificationBuilder.setOngoing(true)
-                    .setContentTitle("ByonChat")
+                    .setContentTitle("S-Team")
                     .setContentText(MessengerConnectionService.started ? "Connected" : "Not Connected")
                     .setSmallIcon(R.mipmap.ic_launcher)
 //                        .setLargeIcon(
@@ -68,7 +68,7 @@ public class ForegroundService extends Service {
                     notification);
         } else {
             Notification notification = new NotificationCompat.Builder(this)
-                    .setContentTitle("ByonChat")
+                    .setContentTitle("S-Team")
                     .setContentText("Connected")
                     .setSmallIcon(R.drawable.logo_byon)
                     .setContentIntent(pendingIntent)

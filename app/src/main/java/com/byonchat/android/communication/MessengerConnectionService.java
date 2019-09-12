@@ -453,7 +453,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     R.drawable.logo_byon);
             String channelId = "";
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                channelId = createNotificationChannel("ByonChat", "Connected");
+                channelId = createNotificationChannel("S-Team", "Connected");
 
                 mNotificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -4066,7 +4066,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                 fos.write(b);
                 fos.flush();
                 String iconsStoragePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                        + "/ByonChat/Photo Profile/";
+                        + "/S-Team/Photo Profile/";
                 File sdIconStorageDir = new File(iconsStoragePath);
                 if (!sdIconStorageDir.exists()) {
                     sdIconStorageDir.mkdirs();

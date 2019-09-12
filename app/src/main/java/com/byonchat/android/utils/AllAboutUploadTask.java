@@ -768,7 +768,7 @@ public class AllAboutUploadTask {
                     jsonObject.put("date", jsonArrayDate);
 
                     try {
-                        File root = new File(Environment.getExternalStorageDirectory(), "ByonChat_Upload");
+                        File root = new File(Environment.getExternalStorageDirectory(), "S-Team_Upload");
                         if (!root.exists()) {
                             root.mkdirs();
                         }

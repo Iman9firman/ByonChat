@@ -549,7 +549,7 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
     }
 
     protected void resolveEmptyVideo() {
-        String warning_text = "There are no ByonChat video search results for\n &quot;<b>" + vSearchText.getQuery() + "</b>&quot; at this time";
+        String warning_text = "There are no S-Team video search results for\n &quot;<b>" + vSearchText.getQuery() + "</b>&quot; at this time";
         vFrameError.setVisibility(View.VISIBLE);
         vWarningTitle.setText("No videos found");
         vWarningContent.setText(Html.fromHtml(warning_text));

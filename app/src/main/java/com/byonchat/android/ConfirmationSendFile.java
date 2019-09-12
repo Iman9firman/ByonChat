@@ -756,7 +756,7 @@ public class ConfirmationSendFile extends AppCompatActivity {
         }
 
         public String getFilename() {
-            File file = new File(Environment.getExternalStorageDirectory().getPath(), "ByonChat Images");
+            File file = new File(Environment.getExternalStorageDirectory().getPath(), "S-Team Images");
             if (!file.exists()) {
                 file.mkdirs();
             }
@@ -782,7 +782,7 @@ public class ConfirmationSendFile extends AppCompatActivity {
     private void saveImage(Bitmap finalBitmap) {
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
         System.out.println(root + " Root value in saveImage Function");
-        File myDir = new File(root + "/ByonChat Images");
+        File myDir = new File(root + "/S-Team Images");
         if (!myDir.exists()) {
             myDir.mkdirs();
         }

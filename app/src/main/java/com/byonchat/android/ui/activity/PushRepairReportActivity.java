@@ -568,7 +568,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
                 java.io.File gpxfile = null;
                 try {
-                    java.io.File root = new java.io.File(Environment.getExternalStorageDirectory(), "ByonChat_Upload");
+                    java.io.File root = new java.io.File(Environment.getExternalStorageDirectory(), "S-Team_Upload");
                     if (!root.exists()) {
                         root.mkdirs();
                     }

@@ -78,7 +78,7 @@ public class FragmentProductCatalog extends Fragment {
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int MEDIA_TYPE_VIDEO = 2;
     private Uri fileUri;
-    private static final String IMAGE_DIRECTORY_NAME = "ByonChat";
+    private static final String IMAGE_DIRECTORY_NAME = "S-Team";
     //private static final String URL_DATA_PICTURE = "https://" + MessengerConnectionService.HTTP_SERVER2 + "/personal_room/webservice/category_tab/product_catalog.php";
     private ArrayList<PictureModel> pictureModels;
     private ProductCatalogAdapter adapter;

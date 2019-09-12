@@ -99,7 +99,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
 
             String uriImage = "https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + item.getJabberId() + ".jpg";
             String iconsStoragePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                    + "/ByonChat/Photo Profile/";
+                    + "/S-Team/Photo Profile/";
             final File sdIconStorageDir = new File(iconsStoragePath);
             if (!sdIconStorageDir.exists()) {
                 sdIconStorageDir.mkdirs();

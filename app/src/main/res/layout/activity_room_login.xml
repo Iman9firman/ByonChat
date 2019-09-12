@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp"
-        android:text="Login to ByonChat"
+        android:text="Login to S-Team"
         android:textColor="@color/carbon_white"
         android:textSize="25sp"
         android:textStyle="bold"

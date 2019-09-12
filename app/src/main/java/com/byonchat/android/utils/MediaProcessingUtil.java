@@ -47,7 +47,7 @@ public class MediaProcessingUtil {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyyMMdd-HHmmss", Locale.getDefault());
     public static final String PROFILEPIC_FILE_NAME = "profile-pic";
-    public static final String ALBUM_NAME = "ByonChat";
+    public static final String ALBUM_NAME = "S-Team";
     public static final String FILES_PATH = Byonchat.getAppsName() + File.separator + "Files";
     public static final int PIC_HEIGHT = 480;
     public static final int PIC_WIDTH = 640;

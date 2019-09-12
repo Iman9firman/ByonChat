@@ -243,10 +243,12 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 HttpResponse response = httpclient.execute(httppost);
                 int status = response.getStatusLine().getStatusCode();
                 if (status == 200) {
+
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);
 
                     Log.w("ww", data);
+                    new Validations().getInstance(getApplicationContext()).setLastVersion(getApplicationContext().getResources().getString(R.string.app_version));
 
                     try {
                         JSONObject jsonRootObject = new JSONObject(data);

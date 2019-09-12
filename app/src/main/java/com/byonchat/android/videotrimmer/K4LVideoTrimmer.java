@@ -92,7 +92,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     private long fileSizeInKB, fileSizeInMB;
     Thread th;
 
-    public static final String APP_DIR = "ByonChat Videos/";
+    public static final String APP_DIR = "S-Team Videos/";
     public static final String TEMP_DIR = "Temp/";
 
     public static void try2CreateCompressDir() {

@@ -952,4 +952,39 @@ public class Validations {
     }
 
 
+    public void setLastVersion(String version) {
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(20);
+        if (cursor.getCount() > 0) {
+            db.deleteContact(20);
+        }
+        Interval interval = new Interval();
+        interval.setId(20);
+        interval.setTime(version);
+        db.createContact(interval);
+        db.close();
+    }
+
+    public Boolean getLastVersion(String version) {
+        Boolean hasil = false;
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(20);
+        if (cursor.getCount() > 0) {
+            String value = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+            Log.w("gambubu", value + "(.)(.)" + version);
+            if (value.equalsIgnoreCase(version)) {
+                hasil = true;
+            } else {
+                hasil = false;
+            }
+        } else {
+            hasil = false;
+        }
+        return hasil;
+    }
+
+
+
 }

@@ -77,8 +77,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentText("You may have new messages").setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("ByonChat"))
-                .setTicker("ByonChat");
+                        .bigText("S-Team"))
+                .setTicker("S-Team");
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationBuilder.getNotification().flags |= Notification.FLAG_AUTO_CANCEL;

@@ -100,6 +100,7 @@ import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
+import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.provider.UpdateList;
 import com.byonchat.android.provider.UpdateListDB;
@@ -110,6 +111,7 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
+import com.byonchat.android.utils.Validations;
 import com.byonchat.android.view.UpdateViewDialog;
 import com.byonchat.android.widget.BadgeView;
 import com.eightbitlab.supportrenderscriptblur.SupportRenderScriptBlur;
@@ -619,34 +621,19 @@ public class MainActivityNew extends MainBaseActivityNew {
             cursor.close();
 
 
-            final Contact contact = Byonchat.getMessengerHelper().getMyContact();
+            MessengerDatabaseHelper dbhelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
 
-            if (contact == null) {
-                Cursor cursorSkin = db.getCountSkin();
-                ArrayList<Skin> skinArrayList = db.retriveallSkin();
-
-                boolean insertByon = true;
-                for (Skin s : skinArrayList) {
-                    if (s.getTitle().equalsIgnoreCase("byonchat")) insertByon = false;
-                }
-
-                if (cursorSkin.getCount() == 0 || insertByon) {
-                    Bitmap logos = BitmapFactory.decodeResource(getResources(), R.drawable.logo_byon);
-                    Bitmap back = BitmapFactory.decodeResource(getResources(), R.drawable.bg_chat_baru);
-                    Bitmap header = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-                    Skin skin = new Skin("byonchat", "original", "#006b9c", logos, header, back);
-                    db.createSkin(skin);
-                }
-                cursorSkin.close();
+            if (dbhelper.getMyContact() == null) {
 
                 db.close();
                 Intent intent = new Intent(this, RegistrationActivity.class);
                 startActivity(intent);
                 finish();
                 return;
-            }
+            } else if (!new Validations().getInstance(getApplicationContext()).getLastVersion(getApplicationContext().getResources().getString(R.string.app_version))) {
+                RefreshRoom(false);
 
-            /*color = getResources().getColor(R.color.colorPrimary);*/
+            }
 
 
             Cursor cursorSelect = db.getSingleContact(4);
@@ -700,7 +687,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                             startActivity(intent3);
                             break;
                         case R.id.nav_item_refresh:
-                            RefreshRoom();
+                            RefreshRoom(true);
                             break;
                         case R.id.nav_item_create_shortcut:
                             createShortcut();
@@ -814,9 +801,11 @@ public class MainActivityNew extends MainBaseActivityNew {
                 startActivity(intent);
             });
 
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             e.printStackTrace();
         }
+
     }
 
     @Override

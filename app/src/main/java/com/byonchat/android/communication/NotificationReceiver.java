@@ -236,7 +236,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     int importance = NotificationManager.IMPORTANCE_HIGH;
-                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                     notificationChannel.enableLights(true);
                     notificationChannel.setLightColor(Color.RED);
                     notificationChannel.enableVibration(true);
@@ -295,7 +295,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     int importance = NotificationManager.IMPORTANCE_HIGH;
-                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                     notificationChannel.enableLights(true);
                     notificationChannel.setLightColor(Color.RED);
                     notificationChannel.enableVibration(true);
@@ -344,7 +344,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     int importance = NotificationManager.IMPORTANCE_HIGH;
-                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                     notificationChannel.enableLights(true);
                     notificationChannel.setLightColor(Color.RED);
                     notificationChannel.enableVibration(true);
@@ -385,7 +385,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                                     .getSystemService(Context.NOTIFICATION_SERVICE);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 int importance = NotificationManager.IMPORTANCE_HIGH;
-                                NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                                NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                                 notificationChannel.enableLights(true);
                                 notificationChannel.setLightColor(Color.RED);
                                 notificationChannel.enableVibration(true);
@@ -413,7 +413,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                                     .getSystemService(Context.NOTIFICATION_SERVICE);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 int importance = NotificationManager.IMPORTANCE_HIGH;
-                                NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                                NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                                 notificationChannel.enableLights(true);
                                 notificationChannel.setLightColor(Color.RED);
                                 notificationChannel.enableVibration(true);
@@ -442,7 +442,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                             .getSystemService(Context.NOTIFICATION_SERVICE);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         int importance = NotificationManager.IMPORTANCE_HIGH;
-                        NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                        NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                         notificationChannel.enableLights(true);
                         notificationChannel.setLightColor(Color.RED);
                         notificationChannel.enableVibration(true);
@@ -472,7 +472,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     int importance = NotificationManager.IMPORTANCE_HIGH;
-                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                     notificationChannel.enableLights(true);
                     notificationChannel.setLightColor(Color.RED);
                     notificationChannel.enableVibration(true);

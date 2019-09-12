@@ -544,7 +544,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!checkAndRequestPermissions()){
+        if (!checkAndRequestPermissions()) {
             return;
         } else {
             lanjut = true;
@@ -556,7 +556,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         onViewReady(savedInstanceState);
     }
 
-    protected Boolean checkAndRequestPermissions(){
+    protected Boolean checkAndRequestPermissions() {
 
         final int permissionReadContact = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
         final int permissionWriteContact = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS);
@@ -1563,20 +1563,20 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             } else {
                 Toast.makeText(getApplicationContext(), getString(R.string.permission_request_title), Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == 194){
-            final HashMap<String,Integer> perms = new HashMap<>();
+        } else if (requestCode == 194) {
+            final HashMap<String, Integer> perms = new HashMap<>();
 
-            perms.put(Manifest.permission.WRITE_CONTACTS,PackageManager.PERMISSION_GRANTED);
-            perms.put(Manifest.permission.READ_CONTACTS,PackageManager.PERMISSION_GRANTED);
-            perms.put(Manifest.permission.CALL_PHONE,PackageManager.PERMISSION_GRANTED);
-            perms.put(Manifest.permission.READ_PHONE_STATE,PackageManager.PERMISSION_GRANTED);
-            perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE,PackageManager.PERMISSION_GRANTED);
-            perms.put(Manifest.permission.READ_EXTERNAL_STORAGE,PackageManager.PERMISSION_GRANTED);
-            perms.put(Manifest.permission.CAMERA,PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.CALL_PHONE, PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+            perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
 
             if (grantResults.length > 0) {
-                for (int i = 0 ; i < permissions.length ; i++){
-                    perms.put(permissions[i],grantResults[i]);
+                for (int i = 0; i < permissions.length; i++) {
+                    perms.put(permissions[i], grantResults[i]);
                 }
 
                 if (perms.get(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
@@ -1595,9 +1595,9 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                         showDialogOK("Service Permissions are required for this app", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (which == DialogInterface.BUTTON_POSITIVE){
+                                if (which == DialogInterface.BUTTON_POSITIVE) {
                                     checkAndRequestPermissions();
-                                } else if (which == DialogInterface.BUTTON_NEGATIVE){
+                                } else if (which == DialogInterface.BUTTON_NEGATIVE) {
                                     finish();
                                 }
                             }
@@ -1614,7 +1614,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     public void onRefresh() {
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            RefreshRoom();
+            RefreshRoom(true);
         }, 500);
     }
 
@@ -1940,7 +1940,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         }
     }
 
-    protected void RefreshRoom() {
+    protected void RefreshRoom(Boolean showDialog) {
+
 
         File newDB = new File(DataBaseDropDown.getDatabaseFolder() + "sqlite_honda.sqlite");
         if (newDB.exists()) {
@@ -1951,19 +1952,16 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         Byonchat.getRoomsDB().open();
         botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
         Byonchat.getRoomsDB().close();
-        if (botArrayListist.size() > 0) {
-            try {
-                JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
-                String targetURL = jObj.getString("path");
 
-                AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
-                alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
-                alertbox.setMessage("Are you sure you want to Refresh?");
-                alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
+
+        if (!showDialog) {
+            if (botArrayListist.size() > 0) {
+                try {
+                    JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+                    String targetURL = jObj.getString("path");
                     if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
 
                         refreshRoomForm();
-
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
@@ -1976,14 +1974,49 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     } else {
                         Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
                     }
-                });
-                alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
-                });
-                alertbox.show();
-            } catch (JSONException e) {
-                e.printStackTrace();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } else {
+            if (botArrayListist.size() > 0) {
+                try {
+                    JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+                    String targetURL = jObj.getString("path");
+
+                    AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
+                    alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
+                    alertbox.setMessage("Are you sure you want to Refresh?");
+                    alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
+                        if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+
+                            refreshRoomForm();
+
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                            editor.apply();
+
+                            finish();
+
+                            Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                            startActivity(ii);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
+                    });
+                    alertbox.show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
+
     }
 
     protected void refreshRoomForm() {

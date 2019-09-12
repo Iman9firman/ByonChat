@@ -111,6 +111,7 @@ import com.honda.android.utils.DialogUtil;
 import com.honda.android.utils.PermanentLoggerUtil;
 import com.honda.android.utils.UploadService;
 import com.honda.android.utils.Utility;
+import com.honda.android.utils.Validations;
 import com.honda.android.view.UpdateViewDialog;
 import com.honda.android.widget.BadgeView;
 import com.eightbitlab.supportrenderscriptblur.SupportRenderScriptBlur;
@@ -622,29 +623,16 @@ public class MainActivityNew extends MainBaseActivityNew {
             MessengerDatabaseHelper dbhelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
 
             if (dbhelper.getMyContact() == null) {
-                /*Cursor cursorSkin = db.getCountSkin();
-                ArrayList<Skin> skinArrayList = db.retriveallSkin();
-
-                boolean insertByon = true;
-                for (Skin s : skinArrayList) {
-                    if (s.getTitle().equalsIgnoreCase("byonchat")) insertByon = false;
-                }
-
-                if (cursorSkin.getCount() == 0 || insertByon) {
-                    Bitmap logos = BitmapFactory.decodeResource(getResources(), R.drawable.logo_byon);
-                    Bitmap back = BitmapFactory.decodeResource(getResources(), R.drawable.bg_chat_baru);
-                    Bitmap header = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-
-                    Skin skin = new Skin("byonchat", "original", "#006b9c", logos, header, back);
-                    db.createSkin(skin);
-                }
-                cursorSkin.close();*/
-
                 db.close();
                 Intent intent = new Intent(this, RegistrationActivity.class);
                 startActivity(intent);
                 finish();
                 return;
+            } else {
+                if (!new Validations().getInstance(getApplicationContext()).getLastVersion(getApplicationContext().getResources().getString(R.string.app_version))) {
+                    RefreshRoom(false);
+                }
+
             }
 
             /*color = getResources().getColor(R.color.colorPrimary);*/
@@ -701,7 +689,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                             startActivity(intent3);
                             break;
                         case R.id.nav_item_refresh:
-                            RefreshRoom();
+                            RefreshRoom(true);
                             break;
                         case R.id.nav_item_create_shortcut:
                             createShortcut();

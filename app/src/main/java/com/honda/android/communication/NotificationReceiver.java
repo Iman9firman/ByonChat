@@ -7,6 +7,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +15,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -70,6 +72,8 @@ public class NotificationReceiver extends BroadcastReceiver {
             + " WHERE status = ?";
     String realname;
     Context ctx;
+    Uri soundUri;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -83,7 +87,9 @@ public class NotificationReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 context);
         Uri url = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.whistle);
-        builder.setSound(url);
+        soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + R.raw.honda);
+
+        builder.setSound(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.getPackageName() + "/" + R.raw.honda));
         builder.setLights(Color.GREEN, 500, 500);
         long[] pattern = {500, 500};
         builder.setVibrate(pattern);
@@ -231,7 +237,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     int importance = NotificationManager.IMPORTANCE_HIGH;
-                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                     notificationChannel.enableLights(true);
                     notificationChannel.setLightColor(Color.RED);
                     notificationChannel.enableVibration(true);
@@ -240,6 +246,11 @@ public class NotificationReceiver extends BroadcastReceiver {
                         builder.setChannelId("Message");
                         mgr.createNotificationChannel(notificationChannel);
                     }
+                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                            .build();
+                    notificationChannel.setSound(soundUri, audioAttributes);
                 }
                 if (mgr != null) {
                     mgr.notify(NOTIFY_ID, builder.build());
@@ -290,7 +301,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     int importance = NotificationManager.IMPORTANCE_HIGH;
-                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                     notificationChannel.enableLights(true);
                     notificationChannel.setLightColor(Color.RED);
                     notificationChannel.enableVibration(true);
@@ -299,6 +310,11 @@ public class NotificationReceiver extends BroadcastReceiver {
                         builder.setChannelId("Message");
                         mgr.createNotificationChannel(notificationChannel);
                     }
+                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                            .build();
+                    notificationChannel.setSound(soundUri, audioAttributes);
                 }
                 if (mgr != null) {
                     mgr.notify(NOTIFY_ID, builder.build());
@@ -339,7 +355,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     int importance = NotificationManager.IMPORTANCE_HIGH;
-                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                     notificationChannel.enableLights(true);
                     notificationChannel.setLightColor(Color.RED);
                     notificationChannel.enableVibration(true);
@@ -348,6 +364,11 @@ public class NotificationReceiver extends BroadcastReceiver {
                         builder.setChannelId("Message");
                         mgr.createNotificationChannel(notificationChannel);
                     }
+                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                            .build();
+                    notificationChannel.setSound(soundUri, audioAttributes);
                 }
                 if (mgr != null) {
                     mgr.notify(NOTIFY_ID_CARD, builder.build());
@@ -380,7 +401,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                                     .getSystemService(Context.NOTIFICATION_SERVICE);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 int importance = NotificationManager.IMPORTANCE_HIGH;
-                                NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                                NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                                 notificationChannel.enableLights(true);
                                 notificationChannel.setLightColor(Color.RED);
                                 notificationChannel.enableVibration(true);
@@ -389,6 +410,11 @@ public class NotificationReceiver extends BroadcastReceiver {
                                     builder.setChannelId("Message");
                                     mgr.createNotificationChannel(notificationChannel);
                                 }
+                                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                                        .build();
+                                notificationChannel.setSound(soundUri, audioAttributes);
                             }
                             if (mgr != null) {
                                 mgr.notify(NOTIFY_TASK, builder.build());
@@ -408,7 +434,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                                     .getSystemService(Context.NOTIFICATION_SERVICE);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 int importance = NotificationManager.IMPORTANCE_HIGH;
-                                NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                                NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                                 notificationChannel.enableLights(true);
                                 notificationChannel.setLightColor(Color.RED);
                                 notificationChannel.enableVibration(true);
@@ -417,6 +443,11 @@ public class NotificationReceiver extends BroadcastReceiver {
                                     builder.setChannelId("Message");
                                     mgr.createNotificationChannel(notificationChannel);
                                 }
+                                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                                        .build();
+                                notificationChannel.setSound(soundUri, audioAttributes);
                             }
                             if (mgr != null) {
                                 mgr.notify(NOTIFY_TASK, builder.build());
@@ -437,7 +468,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                             .getSystemService(Context.NOTIFICATION_SERVICE);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         int importance = NotificationManager.IMPORTANCE_HIGH;
-                        NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                        NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                         notificationChannel.enableLights(true);
                         notificationChannel.setLightColor(Color.RED);
                         notificationChannel.enableVibration(true);
@@ -446,6 +477,11 @@ public class NotificationReceiver extends BroadcastReceiver {
                             builder.setChannelId("Message");
                             mgr.createNotificationChannel(notificationChannel);
                         }
+                        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                                .build();
+                        notificationChannel.setSound(soundUri, audioAttributes);
                     }
                     if (mgr != null) {
                         mgr.notify(NOTIFY_TASK, builder.build());
@@ -467,7 +503,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                         .getSystemService(Context.NOTIFICATION_SERVICE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     int importance = NotificationManager.IMPORTANCE_HIGH;
-                    NotificationChannel notificationChannel = new NotificationChannel("Message", "ByonChat", importance);
+                    NotificationChannel notificationChannel = new NotificationChannel("Message", "S-Team", importance);
                     notificationChannel.enableLights(true);
                     notificationChannel.setLightColor(Color.RED);
                     notificationChannel.enableVibration(true);
@@ -476,6 +512,11 @@ public class NotificationReceiver extends BroadcastReceiver {
                         builder.setChannelId("Message");
                         mgr.createNotificationChannel(notificationChannel);
                     }
+                    AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                            .build();
+                    notificationChannel.setSound(soundUri, audioAttributes);
                 }
                 if (mgr != null) {
                     mgr.notify(NOTIFY_TASK, builder.build());

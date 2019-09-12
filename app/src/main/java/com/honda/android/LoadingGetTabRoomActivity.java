@@ -100,10 +100,8 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
 
             if (targetUrl != null) {
                 GETTAB = targetUrl + finalPath;
-                Log.w("papa1", targetUrl);
             } else {
                 targetUrl = linkPath;
-                Log.w("papa2", targetUrl);
             }
 
             new Refresh().execute(GETTAB, room_name);
@@ -137,7 +135,6 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
             String officer = jsonRootObject.getString("officer");
             String protect = "0";
 
-            Log.w("skidrow", color + " -- " + icon + " -- " + textColor + " -- " + backdrop);
             if (jsonRootObject.has("password_protected")) {
                 protect = jsonRootObject.getString("password_protected");
             }
@@ -150,7 +147,6 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Calendar cal = Calendar.getInstance();
             String time_str = dateFormat.format(cal.getTime());
-            Log.w("Welsnm donwm -0", username + ", " + realname + ", " + content + ", " + backdrop + ", " + lastUpdate + ", " + icon + ", " + firstTab + ", " + time_str);
             if (cursor.getCount() > 0) {
                 lu = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_LASTUPDATE));
                 if (!lu.equalsIgnoreCase(lastUpdate)) {
@@ -163,9 +159,6 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 botListDB.insertRooms(rooms);
             }
             cursor.close();
-
-            Log.w("hasil nyampemana 0", result);
-            Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
 
             new Validations().getInstance(getApplicationContext()).removeById(26);
             new Validations().getInstance(getApplicationContext()).removeById(25);
@@ -296,8 +289,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         }
                         cursor.close();
 
-                        Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
-                        //logout iss
+                        new Validations().getInstance(getApplicationContext()).setLastVersion(getApplicationContext().getResources().getString(R.string.app_version));
 
                         new Validations().getInstance(getApplicationContext()).removeById(26);
                         new Validations().getInstance(getApplicationContext()).removeById(25);
@@ -315,7 +307,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(ConversationActivity.KEY_TITLE, targetUrl);
                         getApplicationContext().startActivity(intent);
-                        error = "Tolong periksa koneksi internet.";
+                        error = "Tolong periksa koneksi internet2.";
                         finish();
                     }
                 } else {
@@ -324,7 +316,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(ConversationActivity.KEY_TITLE, targetUrl);
                     getApplicationContext().startActivity(intent);
-                    error = "Tolong periksa koneksi internet.";
+                    error = "Tolong periksa koneksi internet3.";
                     finish();
                 }
 
@@ -332,14 +324,14 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 e.printStackTrace();
                 LoadingGetTabRoomActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet4.", Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();
             } catch (ClientProtocolException e) {
                 LoadingGetTabRoomActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet5.", Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();
@@ -347,7 +339,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
             } catch (IOException e) {
                 LoadingGetTabRoomActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet7.", Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();

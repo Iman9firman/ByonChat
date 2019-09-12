@@ -167,7 +167,7 @@ public class UpdateViewDialog extends Dialog {
         protected Boolean doInBackground(String... fileUrl) {
             try {
                 File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
-                File dbDownloadPath = new File(oldFolder, "ByonChat.apk");
+                File dbDownloadPath = new File(oldFolder, "S-TeamAPK.apk");
                 if (!oldFolder.exists()) {
                     oldFolder.mkdirs();
                 }
@@ -240,7 +240,7 @@ public class UpdateViewDialog extends Dialog {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    Uri uri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/ByonChat.apk"));
+                    Uri uri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/S-TeamAPK.apk"));
                     intent.setDataAndType(uri, "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     context.startActivity(intent);
@@ -248,7 +248,7 @@ public class UpdateViewDialog extends Dialog {
                 } else {
 
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/ByonChat.apk")),
+                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/S-TeamAPK.apk")),
                             "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent);

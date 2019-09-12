@@ -204,7 +204,7 @@ public class Validations {
         return error;
     }
 
-    public void setShareLocOnOff(boolean onOff){
+    public void setShareLocOnOff(boolean onOff) {
         //id IntervalDB ke 27 ISSReliever
         IntervalDB db = new IntervalDB(context);
         db.open();
@@ -212,15 +212,15 @@ public class Validations {
         if (cursor.getCount() > 0) {
             db.deleteContact(27);
         }
-        Log.w("Adakah hasilnya bos","ada nih 0: "+onOff);
+        Log.w("Adakah hasilnya bos", "ada nih 0: " + onOff);
         Interval interval = new Interval();
         interval.setId(27);
-        interval.setTime(onOff+"");
+        interval.setTime(onOff + "");
         db.createContact(interval);
         db.close();
     }
 
-    public boolean getShareLocOnOff(int id){
+    public boolean getShareLocOnOff(int id) {
         //id IntervalDB ke 27 ISSReliever
         boolean onOff = false;
         IntervalDB db = new IntervalDB(context);
@@ -230,7 +230,7 @@ public class Validations {
             onOff = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)));
         }
 
-        Log.w("Adakah hasilnya bos","ada nih : "+onOff);
+        Log.w("Adakah hasilnya bos", "ada nih : " + onOff);
         return onOff;
     }
 
@@ -627,6 +627,39 @@ public class Validations {
         return error;
     }
 
+    public void setLastVersion(String version) {
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(20);
+        if (cursor.getCount() > 0) {
+            db.deleteContact(20);
+        }
+        Interval interval = new Interval();
+        interval.setId(20);
+        interval.setTime(version);
+        db.createContact(interval);
+        db.close();
+    }
+
+    public Boolean getLastVersion(String version) {
+        Boolean hasil = false;
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(20);
+        if (cursor.getCount() > 0) {
+            String value = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+            if (value.equalsIgnoreCase(version)) {
+                hasil = true;
+            } else {
+                hasil = false;
+            }
+        } else {
+            hasil = false;
+        }
+        return hasil;
+    }
+
+
     public void setTimeById(int id) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Calendar cal = Calendar.getInstance();
@@ -895,7 +928,8 @@ public class Validations {
         return kursIndonesia.format(dump).split(",")[0];
     }
 
-    public String getSignatureProfilePicture(String jaberId, MessengerDatabaseHelper messengerDatabaseHelper) {
+    public String getSignatureProfilePicture(String jaberId, MessengerDatabaseHelper
+            messengerDatabaseHelper) {
 
         Contact contact = messengerDatabaseHelper.getContact(jaberId);
         String signature = "";

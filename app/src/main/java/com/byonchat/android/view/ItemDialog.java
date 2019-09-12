@@ -51,40 +51,13 @@ public class ItemDialog extends Dialog {
         recyclerView = findViewById(R.id.recycler_dialog);
         titleName = findViewById(R.id.titleList);
 
-        if(subList.size() > 1) {
-            titleName.setVisibility(View.GONE);
-            recyclerView.setHasFixedSize(true);
+        titleName.setVisibility(View.GONE);
+        recyclerView.setHasFixedSize(true);
 
-            adapter = new ExpandableListAdapter(context, subList);
+        adapter = new ExpandableListAdapter(context, subList);
 
-            recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
-            recyclerView.setAdapter(adapter);
-        }else {
-            titleName.setVisibility(View.VISIBLE);
-
-
-            final String sectionName = subList.get(0).getHeaderTitle();
-
-            ArrayList<ItemMain> singleSectionItems = subList.get(0).getAllItemsInSection();
-
-            titleName.setText(sectionName);
-            GridLayoutManager layoutManager = new GridLayoutManager(context,3, LinearLayout.VERTICAL,false);
-
-            DraggableGridExampleAdapter itemListDataAdapter = new DraggableGridExampleAdapter(context, singleSectionItems, R.layout.list_grid_item);
-            itemListDataAdapter.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    Intent intent = ByonChatMainRoomActivity.generateIntent(context, (ItemMain) itemListDataAdapter.getData().get(position));
-                    context.startActivity(intent);
-                }
-            });
-
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setAdapter(itemListDataAdapter);
-
-            recyclerView.setNestedScrollingEnabled(false);
-        }
+        recyclerView.setAdapter(adapter);
     }
 }

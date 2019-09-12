@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.byonchat.android.room.DetailRoomTaskActivity">
+    tools:context="com.honda.android.room.DetailRoomTaskActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <com.byonchat.android.utils.TouchImageView
+        <com.honda.android.utils.TouchImageView
             android:id="@+id/photo"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"

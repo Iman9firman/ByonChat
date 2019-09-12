@@ -19,7 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGParseException;
 

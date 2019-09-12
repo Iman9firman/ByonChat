@@ -96,14 +96,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.byonchat.android.ui.view.ByonchatRecyclerView
+                <com.honda.android.ui.view.ByonchatRecyclerView
                     android:layout_marginTop="100dp"
                     android:id="@+id/list_videotube"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scrollbars="vertical">
 
-                </com.byonchat.android.ui.view.ByonchatRecyclerView>
+                </com.honda.android.ui.view.ByonchatRecyclerView>
             </android.support.v4.widget.SwipeRefreshLayout>
         </LinearLayout>
     </RelativeLayout>

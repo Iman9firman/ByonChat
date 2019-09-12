@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.byonchat.android.view.SquareFrameLayout
+    <com.honda.android.view.SquareFrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -45,7 +45,7 @@
 
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
-    </com.byonchat.android.view.SquareFrameLayout>
+    </com.honda.android.view.SquareFrameLayout>
 
     <TextView
         android:id="@+id/title_item_grid"
@@ -80,7 +80,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.byonchat.android.view.SquareFrameLayout
+    <com.honda.android.view.SquareFrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -119,7 +119,7 @@
             </android.support.constraint.ConstraintLayout>
 
         </FrameLayout>
-    </com.byonchat.android.view.SquareFrameLayout>
+    </com.honda.android.view.SquareFrameLayout>
 
     <TextView
         android:id="@+id/title_item_grid"

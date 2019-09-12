@@ -86,7 +86,7 @@
                         android:layout_margin="@dimen/margin1"
                         app:carbon_cornerRadius="10dp">
 
-                        <com.byonchat.android.utils.PicassoView
+                        <com.honda.android.utils.PicassoView
                             android:id="@+id/profilePic"
                             android:layout_width="43dp"
                             android:layout_height="43dp"
@@ -152,7 +152,7 @@
                     android:textColor="@color/description"
                     android:textSize="@dimen/feed_item_profile_status" />
 
-                <com.byonchat.android.personalRoom.NoteFeedImageView
+                <com.honda.android.personalRoom.NoteFeedImageView
                     android:id="@+id/feedImage1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -384,13 +384,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <com.byonchat.android.personalRoom.volley.RoundedNetworkImageView
+                    <com.honda.android.personalRoom.volley.RoundedNetworkImageView
                         android:id="@+id/profilePic_reply"
                         android:layout_width="@dimen/feed_item_profile_pic"
                         android:layout_height="@dimen/feed_item_profile_pic"
                         android:background="@drawable/button_timeline_background"
                         android:scaleType="fitXY"
-                        ></com.byonchat.android.personalRoom.volley.RoundedNetworkImageView>
+                        ></com.honda.android.personalRoom.volley.RoundedNetworkImageView>
 
                     <LinearLayout
                         android:layout_width="fill_parent"
@@ -435,7 +435,7 @@
                 <!--android:paddingRight="@dimen/feed_item_status_pad_left_right"-->
                 <!--android:textColorLink="@color/link" />-->
 
-                <com.byonchat.android.personalRoom.NoteFeedImageView
+                <com.honda.android.personalRoom.NoteFeedImageView
                     android:id="@+id/feedImage1_reply"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -613,14 +613,14 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:orientation="horizontal">-->
 
-            <!--<com.byonchat.android.personalRoom.volley.RoundedNetworkImageView-->
+            <!--<com.honda.android.personalRoom.volley.RoundedNetworkImageView-->
             <!--android:id="@+id/profilePic_reply"-->
             <!--android:layout_width="@dimen/feed_item_profile_pic"-->
             <!--android:layout_height="@dimen/feed_item_profile_pic"-->
             <!--android:src="@drawable/cheese_4"-->
             <!--android:background="@drawable/button_timeline_background"-->
             <!--android:scaleType="fitXY" >-->
-            <!--</com.byonchat.android.personalRoom.volley.RoundedNetworkImageView>-->
+            <!--</com.honda.android.personalRoom.volley.RoundedNetworkImageView>-->
 
             <!--<LinearLayout-->
             <!--android:layout_width="fill_parent"-->
@@ -665,7 +665,7 @@
             <!--&lt;!&ndash;android:paddingRight="@dimen/feed_item_status_pad_left_right"&ndash;&gt;-->
             <!--&lt;!&ndash;android:textColorLink="@color/link" />&ndash;&gt;-->
 
-            <!--<com.byonchat.android.personalRoom.NoteFeedImageView-->
+            <!--<com.honda.android.personalRoom.NoteFeedImageView-->
             <!--android:id="@+id/feedImage1_reply"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"-->
@@ -835,14 +835,14 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:orientation="horizontal">-->
 
-            <!--<com.byonchat.android.personalRoom.volley.RoundedNetworkImageView-->
+            <!--<com.honda.android.personalRoom.volley.RoundedNetworkImageView-->
             <!--android:id="@+id/profilePic_reply_2"-->
             <!--android:layout_width="@dimen/feed_item_profile_pic"-->
             <!--android:layout_height="@dimen/feed_item_profile_pic"-->
             <!--android:src="@drawable/cheese_3"-->
             <!--android:background="@drawable/button_timeline_background"-->
             <!--android:scaleType="fitXY" >-->
-            <!--</com.byonchat.android.personalRoom.volley.RoundedNetworkImageView>-->
+            <!--</com.honda.android.personalRoom.volley.RoundedNetworkImageView>-->
 
             <!--<LinearLayout-->
             <!--android:layout_width="fill_parent"-->
@@ -887,7 +887,7 @@
             <!--&lt;!&ndash;android:paddingRight="@dimen/feed_item_status_pad_left_right"&ndash;&gt;-->
             <!--&lt;!&ndash;android:textColorLink="@color/link" />&ndash;&gt;-->
 
-            <!--<com.byonchat.android.personalRoom.NoteFeedImageView-->
+            <!--<com.honda.android.personalRoom.NoteFeedImageView-->
             <!--android:id="@+id/feedImage1_reply_2"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"-->
@@ -1057,14 +1057,14 @@
             <!--android:layout_height="wrap_content"-->
             <!--android:orientation="horizontal">-->
 
-            <!--<com.byonchat.android.personalRoom.volley.RoundedNetworkImageView-->
+            <!--<com.honda.android.personalRoom.volley.RoundedNetworkImageView-->
             <!--android:id="@+id/profilePic_reply_3"-->
             <!--android:layout_width="@dimen/feed_item_profile_pic"-->
             <!--android:layout_height="@dimen/feed_item_profile_pic"-->
             <!--android:src="@drawable/cheese_4"-->
             <!--android:background="@drawable/button_timeline_background"-->
             <!--android:scaleType="fitXY" >-->
-            <!--</com.byonchat.android.personalRoom.volley.RoundedNetworkImageView>-->
+            <!--</com.honda.android.personalRoom.volley.RoundedNetworkImageView>-->
 
             <!--<LinearLayout-->
             <!--android:layout_width="fill_parent"-->
@@ -1109,7 +1109,7 @@
             <!--&lt;!&ndash;android:paddingRight="@dimen/feed_item_status_pad_left_right"&ndash;&gt;-->
             <!--&lt;!&ndash;android:textColorLink="@color/link" />&ndash;&gt;-->
 
-            <!--<com.byonchat.android.personalRoom.NoteFeedImageView-->
+            <!--<com.honda.android.personalRoom.NoteFeedImageView-->
             <!--android:id="@+id/feedImage1_reply_3"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"-->

@@ -44,7 +44,7 @@
                     app:expandedTitleGravity="center_horizontal|center_vertical"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                    <com.byonchat.android.curved.CurvedImageView
+                    <com.honda.android.curved.CurvedImageView
                         android:id="@+id/main.backdrop"
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
@@ -53,7 +53,7 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/byonchat_room" />
 
-                    <com.byonchat.android.curved.CurvedContainer
+                    <com.honda.android.curved.CurvedContainer
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
                         android:background="@null"
@@ -68,7 +68,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" />
 
-                    </com.byonchat.android.curved.CurvedContainer>
+                    </com.honda.android.curved.CurvedContainer>
 
                     <ImageView
                         android:id="@+id/backdropblur"

@@ -4,7 +4,7 @@
     android:id="@+id/mainScrooll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity">
+    tools:context="com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

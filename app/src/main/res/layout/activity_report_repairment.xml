@@ -45,13 +45,13 @@
                 android:orientation="vertical"
                 android:weightSum="1"
                 android:id="@+id/linear">
-                    <com.byonchat.android.ui.view.ByonchatRecyclerView
+                    <com.honda.android.ui.view.ByonchatRecyclerView
                         android:id="@+id/list_all"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scrollbars="vertical">
 
-                    </com.byonchat.android.ui.view.ByonchatRecyclerView>
+                    </com.honda.android.ui.view.ByonchatRecyclerView>
             </LinearLayout>
 
             <LinearLayout

@@ -51,7 +51,7 @@
                         android:orientation="vertical"
                         app:carbon_cornerRadius="10dp">
 
-                        <com.byonchat.android.utils.PicassoView
+                        <com.honda.android.utils.PicassoView
                             android:id="@+id/imagePhoto"
                             android:layout_width="@dimen/margin50"
                             android:layout_height="@dimen/margin50"

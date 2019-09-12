@@ -12,7 +12,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 
 import carbon.animation.AnimUtils;
 import carbon.animation.AnimatedView;

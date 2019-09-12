@@ -134,13 +134,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/appbar">
 
-        <com.byonchat.android.ui.view.ByonchatRecyclerView
+        <com.honda.android.ui.view.ByonchatRecyclerView
             android:id="@+id/list_videotube"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical">
 
-        </com.byonchat.android.ui.view.ByonchatRecyclerView>
+        </com.honda.android.ui.view.ByonchatRecyclerView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
 

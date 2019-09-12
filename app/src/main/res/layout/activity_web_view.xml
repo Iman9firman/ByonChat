@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray"
-    tools:context="com.byonchat.android.WebViewByonActivity">
+    tools:context="com.honda.android.WebViewByonActivity">
 
     <!-- View that will be hidden when video goes fullscreen -->
     <RelativeLayout
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <com.byonchat.android.utilVideoWebView.VideoEnabledWebView
+        <com.honda.android.utilVideoWebView.VideoEnabledWebView
             android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

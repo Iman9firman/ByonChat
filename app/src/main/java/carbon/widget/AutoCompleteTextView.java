@@ -7,7 +7,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.Filterable;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 
 import carbon.animation.AnimatedView;
 

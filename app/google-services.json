@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1058627568492:android:016cb3061148d394",
         "android_client_info": {
-          "package_name": "com.byonchat.android"
+          "package_name": "com.honda.android"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "1058627568492-vkh3sucv07cj1nobjvjcnprp960ot8rg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.byonchat.android",
+            "package_name": "com.honda.android",
             "certificate_hash": "a0dbac86adbf78a0f7ebfbdcd41d8deca800ffa6"
           }
         },
@@ -26,7 +26,7 @@
           "client_id": "1058627568492-bie14hgnplr9nt78c8nbtv0pj9e6q86m.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.byonchat.android",
+            "package_name": "com.honda.android",
             "certificate_hash": "9cb2504ac7a824afde0701122ae90eff5555a47f"
           }
         },

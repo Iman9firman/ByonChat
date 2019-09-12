@@ -7,7 +7,7 @@
     android:paddingTop="5dp"
     android:paddingRight="10dp"
     >
-    <com.byonchat.android.widget.ContactsCompletionView
+    <com.honda.android.widget.ContactsCompletionView
         android:id="@+id/searchView"
         android:padding="@dimen/margin5"
         android:background="@drawable/backgroud_conversation"

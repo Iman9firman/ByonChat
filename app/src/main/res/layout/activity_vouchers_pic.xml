@@ -76,7 +76,7 @@
                     android:background="@drawable/bg_verticaltextview_vouchers_top"
                     android:paddingTop="@dimen/margin30">
 
-                    <com.byonchat.android.utils.VerticalTextView
+                    <com.honda.android.utils.VerticalTextView
                         android:id="@+id/voucher_value"
                         style="@style/verticalTextStyle"
                         android:layout_width="wrap_content"
@@ -110,7 +110,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <com.byonchat.android.utils.VerticalTextView
+                        <com.honda.android.utils.VerticalTextView
                             android:id="@+id/tgl_valid"
                             style="@style/verticalTextStyle"
                             android:layout_width="wrap_content"
@@ -126,7 +126,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <com.byonchat.android.utils.VerticalTextView
+                        <com.honda.android.utils.VerticalTextView
                             android:id="@+id/serial_number"
                             style="@style/verticalTextStyle"
                             android:layout_width="wrap_content"

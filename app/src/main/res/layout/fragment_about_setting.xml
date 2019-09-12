@@ -113,7 +113,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:gravity="center"
-            android:text="©2018 ByonChat Inc.\nAll right reserved."
+            android:text="©2019 S-Team Inc.\nAll right reserved."
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
@@ -123,7 +123,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="ByonChat"
+            android:text="S-Team"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView

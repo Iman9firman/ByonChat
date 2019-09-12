@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.byonchat.android.byonchatvideo.com.byonchat.android.MainActivity">
+    tools:context="com.honda.android.byonchatvideo.com.honda.android.MainActivity">
     <item
         android:id="@+id/action_download"
         android:orderInCategory="100"

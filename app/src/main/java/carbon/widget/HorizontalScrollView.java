@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 
 import carbon.Carbon;
 import carbon.drawable.EdgeEffect;

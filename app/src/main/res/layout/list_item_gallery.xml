@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/margin5">
 
-    <com.byonchat.android.view.SquareFrameLayout
+    <com.honda.android.view.SquareFrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
@@ -42,6 +42,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true" />
         </RelativeLayout>
-    </com.byonchat.android.view.SquareFrameLayout>
+    </com.honda.android.view.SquareFrameLayout>
 </RelativeLayout>
 

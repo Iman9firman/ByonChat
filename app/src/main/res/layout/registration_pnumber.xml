@@ -1,121 +1,126 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cyan"
-  >
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background_load_contact_top"
-    android:orientation="vertical">
-    <RelativeLayout
-        android:layout_weight="0.7"
-        android:layout_height="fill_parent"
-        android:layout_width="fill_parent"
-        android:orientation="vertical"
-        >
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/image_layout"
-            android:orientation="vertical"
-            android:layout_above="@+id/image_layout_Anim"
-            android:layout_centerHorizontal="true">
-        </LinearLayout>
-        <LinearLayout
-            android:layout_above="@+id/Img_we_connect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/image_layout_Anim"
-            android:orientation="vertical"
-            android:layout_centerHorizontal="true"
-           >
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Img_we_connect"
-            android:orientation="vertical"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-        >
-        </LinearLayout>
-    </RelativeLayout>
+    android:background="@color/cyan">
 
-    <RelativeLayout android:layout_weight="0.4" android:layout_height="fill_parent" android:layout_width="match_parent">
-   <ImageView
-       android:id="@+id/imageEarth"
-       android:layout_width="match_parent"
-       android:layout_height="fill_parent"
-       android:src="@drawable/earth_byon"
-       android:scaleType="fitXY"/>
-    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_load_contact_top"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.7"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/image_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/image_layout_Anim"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical"></LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/image_layout_Anim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/Img_we_connect"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical"
+                android:visibility="invisible"></LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/Img_we_connect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical"></LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.4">
+
+            <ImageView
+                android:id="@+id/imageEarth"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/earth_byon" />
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayoutContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        >
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+
         <TextView
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
             android:id="@+id/textHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/registration_infoplus"
-            android:gravity="center"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/white"/>
-        <TextView
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
             android:layout_marginRight="30dp"
-            android:layout_marginBottom="20dp"
-            android:layout_below="@+id/textHeader"
             android:gravity="center"
+            android:text="@string/registration_infoplus"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/white" />
+
+        <TextView
             android:id="@+id/registrationTextInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/textHeader"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
             android:text="@string/registration_info"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/listCountry"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:text="@string/title_activity_country"
             android:layout_below="@+id/registrationTextInfo"
             android:layout_centerHorizontal="true"
-            android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/background_selector_white"
             android:drawableRight="@drawable/arrow_country"
             android:paddingRight="10dp"
-            android:background="@drawable/background_selector_white"
-            />
+            android:text="@string/title_activity_country" />
+
         <LinearLayout
             android:id="@+id/linearLayoutInputNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/listCountry"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="3dp"
             android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:orientation="horizontal"
-            android:layout_below="@+id/listCountry">
+            android:orientation="horizontal">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_white_round_left"
                 android:layout_marginBottom="3dp"
+                android:background="@drawable/background_white_round_left"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/registrationText"
                     android:layout_width="wrap_content"
@@ -124,43 +129,45 @@
                     android:layout_marginLeft="20dp"
                     android:text="+"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
+
                 <EditText
-                    android:layout_marginRight="20dp"
                     android:id="@+id/registrationTextCode"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:minWidth="20dp"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_toRightOf="@+id/registrationText"
+                    android:layout_marginRight="20dp"
                     android:layout_toEndOf="@+id/registrationText"
-                    android:maxLength="3"
+                    android:layout_toRightOf="@+id/registrationText"
                     android:background="@null"
-                    android:inputType="number"/>
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:minWidth="20dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
+
             <EditText
                 android:id="@+id/registrationTextPhoneNumber"
                 android:layout_width="fill_parent"
                 android:layout_height="40dp"
-                android:paddingLeft="10dp"
+                android:background="@drawable/background_white_round_right"
                 android:ems="10"
-                android:maxLength="14"
                 android:hint="@string/registration_hint_phone"
                 android:inputType="number"
-                android:background="@drawable/background_white_round_right"
-                >
+                android:maxLength="14"
+                android:paddingLeft="10dp">
+
                 <requestFocus />
             </EditText>
         </LinearLayout>
+
         <Button
             android:id="@+id/registrationButton"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@+id/linearLayoutInputNumber"
-            android:text="OK"
-            android:textColor="@android:color/white"
-            android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/btn_selector_registration"
-            />
+            android:text="OK"
+            android:textColor="@android:color/white" />
     </LinearLayout>
- </RelativeLayout>
+</RelativeLayout>

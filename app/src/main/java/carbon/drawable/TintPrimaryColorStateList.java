@@ -5,7 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.util.TypedValue;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 
 import carbon.Carbon;
 

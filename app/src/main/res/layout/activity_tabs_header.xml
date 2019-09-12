@@ -37,7 +37,7 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_collapseMode="pin">
 
-                <com.byonchat.android.otomotifRoom.view.SelectableRoundedImageView
+                <com.honda.android.otomotifRoom.view.SelectableRoundedImageView
                     android:id="@+id/profileImage"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"

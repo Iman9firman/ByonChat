@@ -6,7 +6,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 
 import carbon.widget.FrameLayout;
 import carbon.widget.TextView;

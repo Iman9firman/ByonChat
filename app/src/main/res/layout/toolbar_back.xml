@@ -51,7 +51,7 @@
                 android:orientation="vertical"
                 app:carbon_cornerRadius="10dp">
 
-                <com.byonchat.android.utils.PicassoView
+                <com.honda.android.utils.PicassoView
                     android:id="@+id/logo_toolbarPicasso"
                     android:layout_width="@dimen/margin38"
                     android:layout_height="@dimen/margin38"
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:singleLine="true"
-        android:text="ByonChat"
+        android:text="S-Team"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@android:color/white" />
 

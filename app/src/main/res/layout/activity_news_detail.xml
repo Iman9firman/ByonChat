@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.byonchat.android.NewsDetailActivity">
+    tools:context="com.honda.android.NewsDetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/main_appbar"
@@ -35,7 +35,7 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical">
 
-                        <com.byonchat.android.utils.PicassoView
+                        <com.honda.android.utils.PicassoView
                             android:id="@+id/backdrop"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"

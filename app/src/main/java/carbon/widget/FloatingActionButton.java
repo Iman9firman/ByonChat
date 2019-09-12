@@ -5,7 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 
 import carbon.Carbon;
 import carbon.animation.ElevationStateAnimator;

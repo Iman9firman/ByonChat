@@ -48,13 +48,13 @@
             android:secondaryProgress="0"
             android:thumb="@drawable/apptheme_text_select_handle_middle" />
 
-        <com.byonchat.android.videotrimmer.view.ProgressBarView
+        <com.honda.android.videotrimmer.view.ProgressBarView
             android:id="@+id/timeVideoView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/handlerTop" />
 
-        <com.byonchat.android.videotrimmer.view.TimeLineView
+        <com.honda.android.videotrimmer.view.TimeLineView
             android:id="@+id/timeLineView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
 
         </LinearLayout>
 
-        <com.byonchat.android.videotrimmer.view.RangeSeekBarView
+        <com.honda.android.videotrimmer.view.RangeSeekBarView
             android:id="@+id/timeLineBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

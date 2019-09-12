@@ -27,7 +27,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@android:color/white" />
 
-        <com.byonchat.android.view.CircleProgressBar
+        <com.honda.android.view.CircleProgressBar
             android:id="@+id/progress"
             android:layout_width="36dp"
             android:layout_height="36dp"

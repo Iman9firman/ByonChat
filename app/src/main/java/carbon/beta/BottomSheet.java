@@ -12,7 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 
 import carbon.Carbon;
 

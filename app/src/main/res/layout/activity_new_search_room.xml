@@ -139,7 +139,7 @@
                     android:layout_height="wrap_content"
                     android:visibility="visible">
 
-                    <com.byonchat.android.FlowLayout.FlowLayout xmlns:f="http://schemas.android.com/apk/res-auto"
+                    <com.honda.android.FlowLayout.FlowLayout xmlns:f="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/flowLayout"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
@@ -153,12 +153,12 @@
                         f:layoutDirection="ltr"
                         f:weightDefault="1.0">
 
-                        <com.byonchat.android.TagTrending.TagView
+                        <com.honda.android.TagTrending.TagView
                             android:id="@+id/tag_group"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp" />
-                    </com.byonchat.android.FlowLayout.FlowLayout>
+                    </com.honda.android.FlowLayout.FlowLayout>
 
                 </ScrollView>
 

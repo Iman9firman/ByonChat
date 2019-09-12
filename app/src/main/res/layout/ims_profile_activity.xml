@@ -294,7 +294,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:context="com.byonchat.android.ui.ImsProfileActivity">
+        tools:context="com.honda.android.ui.ImsProfileActivity">
 
         <RelativeLayout
             android:layout_width="match_parent"

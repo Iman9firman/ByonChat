@@ -299,11 +299,11 @@ public class CameraActivity extends AppCompatActivity implements LifecycleOwner 
                 if (!pictures.exists()){
                     pictures.mkdir();
                 }
-                File byonchat = new File(Environment.getExternalStorageDirectory(),"Pictures/com.byonchat.android");
+                File byonchat = new File(Environment.getExternalStorageDirectory(),"Pictures/com.honda.android");
                 if (!byonchat.exists()){
                     byonchat.mkdir();
                 }
-                File photo = new File(Environment.getExternalStorageDirectory() ,"Pictures/com.byonchat.android/"+path);
+                File photo = new File(Environment.getExternalStorageDirectory() ,"Pictures/com.honda.android/"+path);
                 Log.w("fotonya", "Path : "+photo.getAbsolutePath()+" | Quality : "+camera.getJpegQuality() );
                 /*if (photo.exists()){
                     photo.delete();

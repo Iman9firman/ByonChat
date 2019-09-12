@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 >
-                <com.byonchat.android.utils.TouchImageView
+                <com.honda.android.utils.TouchImageView
                     android:id="@+id/image_background"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"

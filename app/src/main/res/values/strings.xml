@@ -1,7 +1,7 @@
 <resources>
     <string name="hallo">hallo</string>
-    <string name="app_name">ByonChat</string>
-    <string name="app_version">2.6.3.2</string>
+    <string name="app_name">S-Team</string>
+    <string name="app_version">1.0</string>
     <string name="app_company">honda</string>
     <string name="id_client">106</string>
     <string name="action_settings">Settings</string>
@@ -117,24 +117,24 @@
     <string name="registration_select_country">Select Country</string>
     <string name="registration_resend_new_code">Resend number to get a new code</string>
     <string name="registration_time_remaning">Time remaning</string>
-    <string name="registration_no_internet">Network Required \n\n ByonChat requires an active Internet connection to go through the setup process. EDGE, 3G, and Wi-Fi are supported.</string>
+    <string name="registration_no_internet">Network Required \n\n S-Team requires an active Internet connection to go through the setup process. EDGE, 3G, and Wi-Fi are supported.</string>
     <string name="registration_alert_title">Number Confirmation</string>
     <string name="registration_alert_content">\n\nIs your phone number above correct?</string>
-    <string name="registration_infoplus">ByonChat will send one time SMS message to verify your phone number. Carrier SMS charges may apply</string>
+    <string name="registration_infoplus">S-Team will send one time SMS message to verify your phone number. Carrier SMS charges may apply</string>
     <string name="error_invalid_number">Invalid phone number</string>
     <string name="title_activity_country">Choose a country</string>
     <string name="error_invalid_code">Invalid country code length (1-3 digits only)</string>
     <string name="registration_info">Please confirm your country code and enter your phone number</string>
 
-    <string name="setting_up_byonchat">Now setting up ByonChat\n</string>
+    <string name="setting_up_byonchat">Now setting up S-Team\n</string>
     <string name="create_group_byonchat">Create Group Chat</string>
     <string name="name_group_byonchat">Your Group Name</string>
     <string name="title_activity_members_detail">Members Detail</string>
     <string name="delete_all_contacts">DELETE FROM contacts where _id > 1;</string>
 
-    <string name="share_subject">Install ByonChat</string>
+    <string name="share_subject">Install S-Team</string>
     <string name="share_title">Invite Friends</string>
-    <string name="share_body">Check out ByonChat for your smartphone. Download it today from http://campaignmanager.asia/market/</string>
+    <string name="share_body">Check out S-Team for your smartphone. Download it today from http://campaignmanager.asia/market/</string>
 
     <string name="pleaseTryAgain">Please try again later</string>
     <string name="no_internet">No Internet Connection</string>
@@ -186,7 +186,7 @@
     <string name="byonchat_id">or Byonchat ID</string>
     <string name="select_contact">Select Contact</string>
     <string name="to">To</string>
-    <string name="title_activity_vouchers">ByonChat Vouchers</string>
+    <string name="title_activity_vouchers">S-Team Vouchers</string>
     <string name="content_open_popup">Choose Action</string>
 
     <style name="TextRegularBlackNamaProfile">
@@ -465,7 +465,7 @@
     <string name="title_activity_group_note_create">GroupNoteCreateActivity</string>
     <string name="title_activity_detail_group_note">Detail Group Note</string>
     <string name="title_activity_detail_group_vote">Detail Group Voting</string>
-    <string name="title_activity_room">ByonChat Room</string>
+    <string name="title_activity_room">S-Team Room</string>
     <string name="title_activity_detail_room_task">PDAM TASK DETAIL</string>
 
     <string-array name="colorOffers">
@@ -553,7 +553,7 @@
     <string name="title_activity_request_passcode_room">RequestPasscodeRoomActivity</string>
 
     <string name="sync_account_type">android.byonchat.com</string>
-    <string name="content_authority">com.byonchat.android</string>
+    <string name="content_authority">com.honda.android</string>
 
     <string-array name="dialog_grid_size">
         <item name="size_three">3 x n</item>

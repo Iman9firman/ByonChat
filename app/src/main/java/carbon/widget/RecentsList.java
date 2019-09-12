@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Scroller;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 import com.nineoldandroids.view.ViewHelper;
 
 

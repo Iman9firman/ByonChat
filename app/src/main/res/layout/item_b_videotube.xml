@@ -137,7 +137,7 @@
         android:visibility="gone"
         app:srcCompat="@drawable/ic_round_check_circle_24px" />
 
-    <com.byonchat.android.ui.view.SoloCircleProgress
+    <com.honda.android.ui.view.SoloCircleProgress
         android:id="@+id/progress"
         android:layout_width="36dp"
         android:layout_height="36dp"

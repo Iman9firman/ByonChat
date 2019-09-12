@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <com.byonchat.android.createMeme.ColorPicker
+    <com.honda.android.createMeme.ColorPicker
         android:id="@+id/colorPicker"
         android:layout_width="wrap_content"
         android:layout_height="0dp"

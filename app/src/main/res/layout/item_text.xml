@@ -19,7 +19,7 @@
             android:orientation="vertical"
             app:carbon_cornerRadius="10dp">
 
-            <com.byonchat.android.utils.PicassoView
+            <com.honda.android.utils.PicassoView
                 android:id="@+id/profilePic"
                 android:layout_width="@dimen/margin40"
                 android:layout_height="@dimen/margin40"
@@ -121,7 +121,7 @@
                 android:textSize="@dimen/feed_item_profile_status" />
         </RelativeLayout>
 
-        <com.byonchat.android.personalRoom.NoteFeedImageView
+        <com.honda.android.personalRoom.NoteFeedImageView
             android:id="@+id/feedImage1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 

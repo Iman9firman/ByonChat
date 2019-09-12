@@ -40,7 +40,7 @@
                         android:textSize="@dimen/margin14" />
                 </FrameLayout>
 
-                <com.byonchat.android.ui.view.ByonchatRecyclerView
+                <com.honda.android.ui.view.ByonchatRecyclerView
                     android:id="@+id/list_history"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -61,7 +61,7 @@
                         android:textSize="@dimen/margin14" />
                 </FrameLayout>
 
-                <com.byonchat.android.ui.view.ByonchatRecyclerView
+                <com.honda.android.ui.view.ByonchatRecyclerView
                     android:id="@+id/list_history_find"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

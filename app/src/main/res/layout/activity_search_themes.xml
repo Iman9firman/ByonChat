@@ -42,7 +42,7 @@
                 android:background="@drawable/view_all"/>
         </LinearLayout>
 
-        <com.byonchat.android.widget.LoadMoreListView
+        <com.honda.android.widget.LoadMoreListView
             android:id="@+id/listCatalog"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -53,7 +53,7 @@
             android:layout_marginRight="5dp"
             android:scrollbars="none"
             android:listSelector="@android:color/transparent">
-        </com.byonchat.android.widget.LoadMoreListView>
+        </com.honda.android.widget.LoadMoreListView>
     </LinearLayout>
     <TextView
         android:id="@+id/txtEmpty"

@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
-                    <com.byonchat.android.utils.ChatImageRounded
+                    <com.honda.android.utils.ChatImageRounded
                         android:id="@+id/rightImageMessage"
                         android:layout_width="240dp"
                         android:layout_height="200dp"
@@ -77,7 +77,7 @@
                         android:orientation="vertical"
                         app:carbon_cornerRadius="10dp">
 
-                        <com.byonchat.android.utils.PicassoView
+                        <com.honda.android.utils.PicassoView
                             android:id="@+id/rightImageMessage"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -97,7 +97,7 @@
                         android:orientation="vertical"
                         app:carbon_cornerRadius="10dp">
 
-                        <com.byonchat.android.utils.PicassoView
+                        <com.honda.android.utils.PicassoView
                             android:id="@+id/rightImageMessage"
                             android:layout_width="200dp"
                             android:layout_height="200dp"
@@ -108,7 +108,7 @@
                             app:carbon_outAnimation="none" />
                     </carbon.widget.LinearLayout>-->
 
-                    <com.byonchat.android.widget.CircleProgressBar
+                    <com.honda.android.widget.CircleProgressBar
                         android:id="@+id/right_progressBar"
                         android:layout_width="@dimen/progressBar_dimen"
                         android:layout_height="@dimen/progressBar_dimen"

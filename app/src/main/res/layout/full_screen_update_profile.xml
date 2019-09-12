@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <com.byonchat.android.utils.TouchImageView
+    <com.honda.android.utils.TouchImageView
         android:background="@android:color/black"
         android:id="@+id/touchImageView"
         android:layout_width="match_parent"

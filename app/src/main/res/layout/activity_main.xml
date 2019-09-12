@@ -54,7 +54,7 @@
 
     <fragment
         android:id="@+id/fragment_navigation_drawer"
-        android:name="com.byonchat.android.FragmentDrawer"
+        android:name="com.honda.android.FragmentDrawer"
         android:layout_width="@dimen/nav_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"

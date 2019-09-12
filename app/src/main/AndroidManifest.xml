@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.byonchat.android"> <!-- OCR Library -->
+    package="com.honda.android"> <!-- OCR Library -->
     <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary" />
 
     <uses-feature
@@ -52,10 +52,10 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <permission
-        android:name="com.byonchat.android.permission.MAPS_RECEIVE"
+        android:name="com.honda.android.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.byonchat.android.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="com.honda.android.permission.MAPS_RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
@@ -110,7 +110,7 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
                 <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="com.byonchat.android.utils.ConnectionChangeReceiver" />
+                <action android:name="com.honda.android.utils.ConnectionChangeReceiver" />
             </intent-filter>
         </receiver> <!-- Firebase Notifications -->
         <service android:name=".communication.MyFirebaseMessagingService">
@@ -279,12 +279,12 @@
 
         <service android:name=".utils.UploadProfileService">
             <intent-filter>
-                <action android:name="com.byonchat.android.util.UploadProfileService" />
+                <action android:name="com.honda.android.util.UploadProfileService" />
             </intent-filter>
         </service>
         <service android:name=".utils.ThrowProfileService">
             <intent-filter>
-                <action android:name="com.byonchat.android.util.ThrowProfileService" />
+                <action android:name="com.honda.android.util.ThrowProfileService" />
             </intent-filter>
         </service>
 
@@ -362,7 +362,7 @@
         <service android:name=".utils.StreamService" />
         <service android:name=".utils.UploadService">
             <intent-filter>
-                <action android:name="com.byonchat.android.util.UploadService" />
+                <action android:name="com.honda.android.util.UploadService" />
             </intent-filter>
         </service>
         <service
@@ -403,12 +403,12 @@
 
         <receiver android:name=".communication.NotificationReceiver">
             <intent-filter>
-                <action android:name="com.byonchat.android.communication.MessengerConnectionService.messageReceived" />
-                <action android:name="com.byonchat.android.communication.MessengerConnectionService.addCard" />
-                <action android:name="com.byonchat.android.communication.MessengerConnectionService.inviteGroup" />
-                <action android:name="com.byonchat.android.communication.MessengerConnectionService.reqGps" />
-                <action android:name="com.byonchat.android.communication.MessengerConnectionService.taskDone" />
-                <action android:name="com.byonchat.android.communication.MessengerConnectionService.refreshRoom" />
+                <action android:name="com.honda.android.communication.MessengerConnectionService.messageReceived" />
+                <action android:name="com.honda.android.communication.MessengerConnectionService.addCard" />
+                <action android:name="com.honda.android.communication.MessengerConnectionService.inviteGroup" />
+                <action android:name="com.honda.android.communication.MessengerConnectionService.reqGps" />
+                <action android:name="com.honda.android.communication.MessengerConnectionService.taskDone" />
+                <action android:name="com.honda.android.communication.MessengerConnectionService.refreshRoom" />
             </intent-filter>
         </receiver>
         <!--
@@ -708,7 +708,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.byonchat.android.provider"
+            android:authorities="com.honda.android.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

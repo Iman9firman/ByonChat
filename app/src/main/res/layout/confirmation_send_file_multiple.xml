@@ -79,7 +79,7 @@
                     android:src="@drawable/ic_play_white" />
             </RelativeLayout>
 
-            <com.byonchat.android.widget.VideoSlaceSeekBar
+            <com.honda.android.widget.VideoSlaceSeekBar
                 android:id="@+id/seek_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
                 android:padding="@dimen/margin20"
                 android:visibility="gone" />
 
-            <com.byonchat.android.utils.TouchImageView
+            <com.honda.android.utils.TouchImageView
                 android:id="@+id/imageView"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"

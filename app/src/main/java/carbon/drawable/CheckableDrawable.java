@@ -18,7 +18,7 @@ import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGParseException;
 

@@ -12,7 +12,7 @@
     android:paddingRight="@dimen/margin10"
     android:paddingBottom="@dimen/margin10">
 
-    <com.byonchat.android.adapter.CircularContactView
+    <com.honda.android.adapter.CircularContactView
         android:id="@+id/imageText"
         android:layout_width="@dimen/margin50"
         android:layout_height="@dimen/margin50"

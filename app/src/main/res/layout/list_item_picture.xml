@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:padding="4dp">
 
-    <com.byonchat.android.view.SquareFrameLayout
+    <com.honda.android.view.SquareFrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -25,7 +25,7 @@
                 android:orientation="vertical"
                 app:carbon_cornerRadius="10dp">
 
-                <com.byonchat.android.utils.PicassoView
+                <com.honda.android.utils.PicassoView
                     android:id="@+id/item_img"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -50,7 +50,7 @@
             </RelativeLayout>
         </FrameLayout>
 
-    </com.byonchat.android.view.SquareFrameLayout>
+    </com.honda.android.view.SquareFrameLayout>
 
     <TextView
         android:id="@+id/title_item_grid"

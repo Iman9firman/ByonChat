@@ -33,7 +33,7 @@
             android:layout_marginRight="@dimen/margin5"
             android:layout_marginLeft="@dimen/margin5">
 
-                <com.byonchat.android.utils.PicassoView
+                <com.honda.android.utils.PicassoView
                     android:id="@+id/imagePhoto"
                     android:layout_width="@dimen/margin60"
                     android:layout_height="@dimen/margin60"

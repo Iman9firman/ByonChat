@@ -13,7 +13,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 

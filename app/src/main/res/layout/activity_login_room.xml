@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.byonchat.android.FragmentDinamicRoom.LoginRoomActivity">
+    tools:context="com.honda.android.FragmentDinamicRoom.LoginRoomActivity">
 
     <!-- Login progress -->
     <ProgressBar

@@ -12,7 +12,7 @@
     android:clickable="true"
     android:background="?android:attr/selectableItemBackground"
     >
-    <com.byonchat.android.adapter.CircularContactView
+    <com.honda.android.adapter.CircularContactView
         android:id="@+id/imageText"
         android:layout_width="@dimen/margin50"
         android:layout_height="@dimen/margin50"

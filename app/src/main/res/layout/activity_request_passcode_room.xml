@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:padding="@dimen/margin40">
 
-        <com.byonchat.android.widget.CircleProgressBar
+        <com.honda.android.widget.CircleProgressBar
             android:id="@+id/progress"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

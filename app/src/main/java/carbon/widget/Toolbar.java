@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.byonchat.android.R;
+import com.honda.android.R;
 
 import carbon.shadow.ShadowView;
 

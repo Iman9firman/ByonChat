@@ -29,8 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/Img_we_connect"
                 android:layout_centerHorizontal="true"
-                android:orientation="vertical"
-                android:visibility="invisible"></LinearLayout>
+                android:orientation="vertical"></LinearLayout>
 
             <LinearLayout
                 android:id="@+id/Img_we_connect"

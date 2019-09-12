@@ -167,6 +167,17 @@ public class NewSearchRoomActivity extends AppCompatActivity {
             ttipe = "1";
         }
 
+        if(getIntent().getStringExtra("addHonda") != null){
+            id = "2";
+            name = "1_248163516admin";
+            desc = "Honda Autobest";
+            realname = "HONDA AUTOBEST";
+            link = "https://autobest.byonchat.com/mediafiles/profile_photo_special_rooms/icon_honda.png";
+            type = "2";
+            insertToDB(id,name,desc,realname,link,"{\"type\":\"2\",\"tipe_room\":\"3\",\"path\":\"https:\\/\\/autobest.byonchat.com\"}",
+                    type,"https://autobest.byonchat.com");
+        }
+
         mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
         mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
 

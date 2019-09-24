@@ -1153,14 +1153,20 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                         valSetOne.add(include_latlong);
                         valSetOne.add("hideMultiple");
                         Constants.map.put(i, valSetOne);
-
                     }
                 } else if (category.equalsIgnoreCase("5")) {
                     itemMain.iconTest = R.drawable.ic_028;
                     Constants.map.put(i, null);
                 } else if (category.equalsIgnoreCase("14")) {
                     itemMain.iconTest = R.drawable.ic_040;
-                    Constants.map.put(i, null);
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("6")) {
                     itemMain.iconTest = R.drawable.ic_040;
                     Constants.map.put(i, null);
@@ -1200,17 +1206,45 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                     Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("16")) {
                     itemMain.iconTest = R.drawable.ic_040;
-                    Constants.map.put(i, null);
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("17")) {
                     itemMain.iconTest = R.drawable.ic_012;
-                    Constants.map.put(i, null);
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("18")) {
                     itemMain.iconTest = R.drawable.ic_012;
-                    Constants.map.put(i, null);
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("19")) {
 //                    loginIss = true;
                     itemMain.iconTest = R.drawable.ic_040;
-                    Constants.map.put(i, null);
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("20")) {
 //                    loginIss = true;
                     itemMain.iconTest = R.drawable.ic_015;
@@ -1244,18 +1278,74 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                     Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("23")) {
                     itemMain.iconTest = R.drawable.ic_008;
-                    Constants.map.put(i, null);
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("24")) {
                     itemMain.iconTest = R.drawable.ic_015;
-                    Constants.map.put(i, null);
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("26")) {
                     itemMain.iconTest = R.drawable.ic_015;
-                    Constants.map.put(i, null);
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("27")) {
+                    itemMain.iconTest = R.drawable.ic_028;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 } else if (category.equalsIgnoreCase("28")) {
                     itemMain.iconTest = R.drawable.ic_012;
-                    Constants.map.put(i, null);
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("30")) {
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
+                } else if (category.equalsIgnoreCase("31")) {
+                    itemMain.iconTest = R.drawable.ic_046;
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    valSetOne.add("hide");
+                    Constants.map.put(i, valSetOne);
                 }
-
 
                 if (grouping == true) {
                     itemList.add(itemMain);

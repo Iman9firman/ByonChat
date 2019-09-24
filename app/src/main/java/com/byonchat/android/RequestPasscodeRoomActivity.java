@@ -182,7 +182,6 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
                 return;
             }
             CameraActivity.Builder start = new CameraActivity.Builder(this, REQ_CAMERA);
-            start.setPackageName(getPackageName());
             start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
             start.setCameraFace(CameraActivity.CAMERA_FRONT);
             start.setFlashMode(CameraActivity.FLASH_OFF);
@@ -352,7 +351,6 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
                                 return;
                             }
                             CameraActivity.Builder start = new CameraActivity.Builder(RequestPasscodeRoomActivity.this, REQ_CAMERA);
-                            start.setPackageName(getPackageName());
                             start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                             start.setCameraFace(CameraActivity.CAMERA_FRONT);
                             start.setFlashMode(CameraActivity.FLASH_OFF);

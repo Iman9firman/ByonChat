@@ -5544,7 +5544,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         return;
                                     }
                                     CameraActivity.Builder start = new CameraActivity.Builder(activity, CAMERA_SCAN_TEXT);
-                                    start.setPackageName(getPackageName());
                                     start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                                     start.setCameraFace(CameraActivity.CAMERA_REAR);
                                     start.setFlashMode(CameraActivity.FLASH_OFF);
@@ -9489,7 +9488,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     return;
                 }
                 CameraActivity.Builder start = new CameraActivity.Builder(activity, REQ_CAMERA);
-                start.setPackageName(getPackageName());
                 start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                 start.setCameraFace(CameraActivity.CAMERA_FRONT);
                 start.setFlashMode(CameraActivity.FLASH_OFF);
@@ -9503,7 +9501,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     return;
                 }
                 CameraActivity.Builder start = new CameraActivity.Builder(activity, REQ_CAMERA);
-                start.setPackageName(getPackageName());
                 start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                 start.setCameraFace(CameraActivity.CAMERA_REAR);
                 start.setFlashMode(CameraActivity.FLASH_OFF);
@@ -11048,7 +11045,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
 
         CameraActivity.Builder start = new CameraActivity.Builder(activity, 11);
-        start.setPackageName(activity.getPackageName());
         start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
         start.setCameraFace(CameraActivity.CAMERA_REAR);
         start.setFlashMode(CameraActivity.FLASH_OFF);
@@ -11367,7 +11363,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         }
 
                         CameraActivity.Builder start = new CameraActivity.Builder(activity, 11);
-                        start.setPackageName(getPackageName());
                         start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                         start.setCameraFace(CameraActivity.CAMERA_REAR);
                         start.setFlashMode(CameraActivity.FLASH_OFF);
@@ -11441,7 +11436,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         }
 
                         CameraActivity.Builder start = new CameraActivity.Builder(activity, REQ_CAMERA);
-                        start.setPackageName(getPackageName());
                         start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                         start.setCameraFace(CameraActivity.CAMERA_REAR);
                         start.setFlashMode(CameraActivity.FLASH_OFF);

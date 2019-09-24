@@ -66,6 +66,7 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/androidx.exifinterface_exifinterface.version'
         exclude 'META-INF/proguard/androidx-annotations.pro'
+        exclude 'META-INF/INDEX.LIST'
         pickFirst 'lib/mips/librsjni.so'
         pickFirst 'lib/mips/libblasV8.so'
         pickFirst 'lib/mips/libRSSupport.so'
@@ -75,9 +76,7 @@ android {
         pickFirst 'lib/armeabi-v7a/librsjni.so'
         pickFirst 'lib/armeabi-v7a/libblasV8.so'
         pickFirst 'lib/armeabi-v7a/libRSSupport.so'
-        exclude 'META-INF/INDEX.LIST'
     }
-
 
     dexOptions {
         jumboMode = true
@@ -226,7 +225,7 @@ dependencies {
     //CameraLib
     compile 'com.otaliastudios:cameraview:1.6.0'
 
-    compile(name: 'zhar_camlib_date', ext: 'aar')
+    compile(name: 'camera_sept2019', ext: 'aar')
     compile 'com.chibde:audiovisualizer:2.1.0'
     compile 'com.google.firebase:firebase-core:16.0.5'
     compile 'com.google.android.gms:play-services-vision:17.0.2'

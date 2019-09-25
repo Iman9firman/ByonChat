@@ -45,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -157,15 +158,19 @@ public class ZhFourFragment extends Fragment {
 
                         if (imgList.size() > 0){
                             // ini jika terdapat image , maka akan di upload terlebih dahulu
-                            dialog = new ProgressDialog(getContext());
-                            dialog.setMessage("Uploading Image ...");
-                            dialog.show();
-                            new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
-                                    ((DinamicSLATaskActivity) getActivity()).getUsername(),
-                                    "2613",
-                                    "66989",
-                                    imgList.get(0).split(";;")[0],
-                                    imgList.get(0).split(";;")[1]);
+                            String res = chek();
+                            if (!res.equalsIgnoreCase("")){
+                                dialog = new ProgressDialog(getContext());
+                                dialog.setMessage("Uploading Image ...");
+                                dialog.show();
+                                new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                        ((DinamicSLATaskActivity) getActivity()).getUsername(),
+                                        "2613",
+                                        "66989",
+                                        imgList.get(0).split(";;")[0],
+                                        imgList.get(0).split(";;")[1]);
+                            }
+
                         } else {
                             // ini jika tidak ada image maka akan langsung submit sla nya
                             JSONArray arrayPertanyaan = new JSONArray();
@@ -386,6 +391,9 @@ public class ZhFourFragment extends Fragment {
 
                 java.io.File sourceFile = new java.io.File(resizeAndCompressImageBeforeSend(getContext(), ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
 
+                        Log.w("inidilog","1: "+ii);
+                        Log.w("inidilog","2: "+sourceFile);
+                        Log.w("inidilog","3: "+sourceFile.getAbsoluteFile());
                 if (!sourceFile.exists()) {
                     return "File not exists";
                 }
@@ -404,6 +412,11 @@ public class ZhFourFragment extends Fragment {
                 HttpEntity r_entity = response.getEntity();
 
                 int statusCode = response.getStatusLine().getStatusCode();
+
+                if (sourceFile.exists()) {
+                    sourceFile.delete();
+                }
+
                 if (statusCode == 200) {
                     String _response = EntityUtils.toString(r_entity); // content will be consume only once
                     return _response;
@@ -431,6 +444,10 @@ public class ZhFourFragment extends Fragment {
                     for (int i = 0 ; i<itemList.size() ; i++){
                         if (itemList.get(i).getDaleman().equalsIgnoreCase(id)){
                             itemList.get(i).setImg(fileNameServer);
+                            File file = new File(ii);
+                            if (file.exists()) {
+                                file.delete();
+                            }
                         }
                     }
                 }
@@ -445,70 +462,15 @@ public class ZhFourFragment extends Fragment {
                             imgList.get(counter).split(";;")[0],
                             imgList.get(counter).split(";;")[1]);
                 } else {
+                    if (dialog!=null){
+                        dialog.dismiss();
+                    }
+                    String res = chek();
+                    if (!res.equalsIgnoreCase("")){
+                        ((DinamicSLATaskActivity)getActivity()).submitSLA(res);
+                    }
                     // jika sudah tidak ada image maka akan submit sla
-                    if (dialog != null){
-                        dialog.hide();
-                    }
-                    JSONArray arrayPertanyaan = new JSONArray();
-                    List<Integer> lolos = new ArrayList<>();
-                    for (int iv = 0 ; iv<itemList.size() ; iv++){
-                        JSONObject objPertanyaan = new JSONObject();
-                        String idContent = itemList.get(iv).getDaleman();
-                        String[] id = idContent.split("-");
-                        id4 = id[3];
-                        int value = getOkFromDB(idDetailForm,idContent);
-                        String img = getImgeB(idDetailForm, idContent);
-                        String cmnt = getComment(idDetailForm,idContent);
-                        if (value == 0){
-                            if (img != null && cmnt != null){
-                                objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
-                                objPertanyaan.put("v",value);
-                                objPertanyaan.put("f",itemList.get(iv).getImg());
-                                objPertanyaan.put("n",cmnt);
-                                objPertanyaan.put("b",decimal.format(itemList.get(iv).getValue()));
-                                arrayPertanyaan.put(objPertanyaan);
-                            } else {
-                                lolos.add(iv);
-                            }
-                        } else {
-                            objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
-                            objPertanyaan.put("v",value);
-                            objPertanyaan.put("f", img == null ? "" : itemList.get(iv).getImg());
-                            objPertanyaan.put("n", cmnt == null ? "" : cmnt);
-                            objPertanyaan.put("b",decimal.format(itemList.get(iv).getValue()));
-                            arrayPertanyaan.put(objPertanyaan);
-                        }
-                    }
-                    if (!(lolos.size() > 0)){
-                        JSONArray arraySubsection = new JSONArray();
-                        JSONObject objSubsection = new JSONObject();
-                        objSubsection.put("id",id1+"-"+id2+"-"+id3);
-                        objSubsection.put("pertanyaan",arrayPertanyaan);
-                        arraySubsection.put(objSubsection);
 
-                        JSONArray arraySection = new JSONArray();
-                        JSONObject objSection = new JSONObject();
-                        objSection.put("id",id1+"-"+id2);
-                        objSection.put("subsection",arraySubsection);
-                        arraySection.put(objSection);
-
-                        JSONArray arrayPembobotan = new JSONArray();
-                        JSONObject objPembobotan = new JSONObject();
-                        objPembobotan.put("id",id1);
-                        objPembobotan.put("bobot",bobot);
-                        objPembobotan.put("section",arraySection);
-                        arrayPembobotan.put(objPembobotan);
-
-                        JSONArray arrayParent = new JSONArray();
-                        JSONObject objParent = new JSONObject();
-                        objParent.put("grade",passGrade);
-                        objParent.put("pembobotan",arrayPembobotan);
-                        arrayParent.put(objParent);
-//                            Toast.makeText(getContext(),"Submit success",Toast.LENGTH_SHORT).show();
-                        ((DinamicSLATaskActivity)getActivity()).submitSLA(arrayParent.toString());
-                    } else {
-                        Toast.makeText(getContext(),"Harap isi note dan gambar jika memilih 'No' .",Toast.LENGTH_SHORT).show();
-                    }
                 }
 
             } catch (JSONException e) {
@@ -517,5 +479,74 @@ public class ZhFourFragment extends Fragment {
             }
             super.onPostExecute(result);
         }
+    }
+
+    private String chek(){
+        try {
+        JSONArray arrayPertanyaan = new JSONArray();
+        List<Integer> lolos = new ArrayList<>();
+        for (int iv = 0 ; iv<itemList.size() ; iv++){
+            JSONObject objPertanyaan = new JSONObject();
+            String idContent = itemList.get(iv).getDaleman();
+            String[] id = idContent.split("-");
+            id4 = id[3];
+            int value = getOkFromDB(idDetailForm,idContent);
+            String img = getImgeB(idDetailForm, idContent);
+            String cmnt = getComment(idDetailForm,idContent);
+            if (value == 0){
+                if (img != null && cmnt != null){
+
+                        objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
+
+                    objPertanyaan.put("v",value);
+                    objPertanyaan.put("f",itemList.get(iv).getImg());
+                    objPertanyaan.put("n",cmnt);
+                    objPertanyaan.put("b",decimal.format(itemList.get(iv).getValue()));
+                    arrayPertanyaan.put(objPertanyaan);
+                } else {
+                    lolos.add(iv);
+                }
+            } else {
+                objPertanyaan.put("id",id1+"-"+id2+"-"+id3+"-"+id4);
+                objPertanyaan.put("v",value);
+                objPertanyaan.put("f", img == null ? "" : itemList.get(iv).getImg());
+                objPertanyaan.put("n", cmnt == null ? "" : cmnt);
+                objPertanyaan.put("b",decimal.format(itemList.get(iv).getValue()));
+                arrayPertanyaan.put(objPertanyaan);
+            }
+        }
+        if (!(lolos.size() > 0)){
+            JSONArray arraySubsection = new JSONArray();
+            JSONObject objSubsection = new JSONObject();
+            objSubsection.put("id",id1+"-"+id2+"-"+id3);
+            objSubsection.put("pertanyaan",arrayPertanyaan);
+            arraySubsection.put(objSubsection);
+
+            JSONArray arraySection = new JSONArray();
+            JSONObject objSection = new JSONObject();
+            objSection.put("id",id1+"-"+id2);
+            objSection.put("subsection",arraySubsection);
+            arraySection.put(objSection);
+
+            JSONArray arrayPembobotan = new JSONArray();
+            JSONObject objPembobotan = new JSONObject();
+            objPembobotan.put("id",id1);
+            objPembobotan.put("bobot",bobot);
+            objPembobotan.put("section",arraySection);
+            arrayPembobotan.put(objPembobotan);
+
+            JSONArray arrayParent = new JSONArray();
+            JSONObject objParent = new JSONObject();
+            objParent.put("grade",passGrade);
+            objParent.put("pembobotan",arrayPembobotan);
+            arrayParent.put(objParent);
+           return arrayParent.toString();
+        } else {
+            Toast.makeText(getContext(),"Harap isi note dan gambar jika memilih 'No' .",Toast.LENGTH_SHORT).show();
+        }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

@@ -10956,37 +10956,33 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
     @Override
     public void onBackPressed() {
-        if (showButton) {
-            final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicSLATaskActivity.this);
-            alertbox.setMessage("Are you sure you want to save?");
-            alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                    finish();
+        final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicSLATaskActivity.this);
+        alertbox.setMessage("Are you sure you want to save?");
+        alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                finish();
+            }
+        });
+        alertbox.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                if (adapter != null) {
+                    adapter.removeDB();
                 }
-            });
-            alertbox.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface arg0, int arg1) {
-                    if (adapter != null) {
-                        adapter.removeDB();
+                db.deleteRoomsDetailbyId(idDetail, idTab, username);
+                if (calendar != null) {
+                    if (calendar.equalsIgnoreCase("true boi")) {
+                        MyEventDatabase database = new MyEventDatabase(context);
+                        SQLiteDatabase db;
+                        db = database.getWritableDatabase();
+                        String[] args = {idDetail};
+                        db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
+                        db.close();
                     }
-                    db.deleteRoomsDetailbyId(idDetail, idTab, username);
-                    if (calendar != null) {
-                        if (calendar.equalsIgnoreCase("true boi")) {
-                            MyEventDatabase database = new MyEventDatabase(context);
-                            SQLiteDatabase db;
-                            db = database.getWritableDatabase();
-                            String[] args = {idDetail};
-                            db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
-                            db.close();
-                        }
-                    }
-                    finish();
                 }
-            });
-            alertbox.show();
-        } else {
-            finish();
-        }
+                finish();
+            }
+        });
+        alertbox.show();
     }
 
     @Override

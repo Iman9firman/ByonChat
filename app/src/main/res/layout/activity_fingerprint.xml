@@ -7,6 +7,16 @@
     android:background="@color/colorPrimary"
     android:padding="20dp">
 
+    <TextView
+        android:id="@+id/login_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login By PIN"
+        android:textColor="@color/white"
+        android:paddingRight="@dimen/margin20"
+        android:paddingLeft="@dimen/margin20"
+        android:paddingBottom="@dimen/margin20"
+        android:layout_alignParentRight="true"/>
 
     <TextView
         android:id="@+id/login_roomname"
@@ -14,12 +24,13 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp"
+        android:layout_marginBottom="@dimen/margin30"
         android:text="Login to ByonChat"
         android:textColor="@color/carbon_white"
         android:textSize="25sp"
         android:textStyle="bold"
-         />
-
+        android:layout_above="@+id/content_main"
+        />
 
     <android.support.v7.widget.CardView
         android:id="@+id/content_main"
@@ -50,9 +61,7 @@
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/img_dialog" />
 
-
             <TextView
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -62,7 +71,6 @@
                 android:layout_marginBottom="10dp"
                 android:text="@string/title_fingerprint"
                 android:textSize="24sp" />
-
 
             <TextView
                 android:id="@+id/errorText"
@@ -74,7 +82,6 @@
                 android:paddingEnd="30dp"
                 android:textAlignment="center"
                 android:textSize="14sp" />
-
 
         </LinearLayout>
 
@@ -98,7 +105,6 @@
                 android:layout_marginBottom="30dp"
                 android:paddingTop="2dp"
                 android:src="@drawable/ic_action_fingerprint" />
-
         </RelativeLayout>
 
         <TextView
@@ -114,6 +120,5 @@
             android:textColor="@color/white"
             android:textSize="16sp" />
     </LinearLayout>
-
 
 </RelativeLayout>

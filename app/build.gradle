@@ -81,8 +81,6 @@ repositories {
 //        classpath "me.tatarka:gradle-retrolambda:3.7.0"
 //    }
 //}
-
-
 dependencies {
     //noinspection GradleCompatible
     compile 'com.android.support:multidex:1.0.1'
@@ -209,6 +207,6 @@ dependencies {
 
     //Test Schedule
     compile 'com.applandeo:material-calendar-view:1.0.1'
-
+    compile 'com.chaos.view:pinview:1.4.3'
 }
 apply plugin: 'com.google.gms.google-services'

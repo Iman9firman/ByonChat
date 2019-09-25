@@ -90,7 +90,7 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
     String desc = "", realname = "", link = "", type = "";
     Context context;
     ProgressDialog progressDialog;
-    TextView login_roomname;
+    TextView login_roomname, login_pin;
     ImageView imageView;
 
     private UserLoginTask mAuthTask = null;
@@ -105,6 +105,7 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
 
         username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
         contentMain = (CardView) findViewById(R.id.content_main);
+        login_pin = (TextView) findViewById(R.id.login_pin);
 
         contentMain.setVisibility(View.GONE);
         if (roomsDB == null) {
@@ -133,7 +134,6 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
             mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login.php", username, "is_fingerprint");
 
         }
-
 
         Cursor cur = botListDB.getSingleRoom(username);
 
@@ -172,11 +172,15 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
             //loginBtn.setCardBackgroundColor(Color.parseColor("#" + color));
         }
 
-
-        // Initializing both Android Keyguard Manager and Fingerprint Manager
-
-
-        // Check whether the device has a Fingerprint sensor.
+        login_pin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginDinamicFingerPrint.this, LoginDinamicByPIN.class);
+                intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                intent.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                startActivity(intent);
+            }
+        });
 
     }
 

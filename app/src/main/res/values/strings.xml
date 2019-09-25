@@ -509,4 +509,7 @@
     <string name="title_fingerprint">One-touch Sign In</string>
     <string name="desc_fingerprint">Please place your fingertip on the scanner to verify your identity</string>
     <string name="title_activity_request_passcode_room">RequestPasscodeRoomActivity</string>
+
+    <string name="set_pin">Set a new PIN as an access login. Make sure you remember your new PIN</string>
+    <string name="input_pin">Input your recent PIN to login. Or if you forget your PIN. Request a new PIN by clicking <b>Reset PIN</b> on the top of this page</string>
 </resources>

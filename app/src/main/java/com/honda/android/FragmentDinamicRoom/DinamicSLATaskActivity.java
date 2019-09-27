@@ -37,13 +37,12 @@ import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -89,6 +88,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.honda.android.CaptureSignature;
 import com.honda.android.ConversationActivity;
 import com.honda.android.DialogFormChildMain;
@@ -6894,7 +6894,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                             }
 
                                             if (arrayAdapter.getCount() == 0) {
-                                                android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(DinamicSLATaskActivity.this);
+                                                androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(DinamicSLATaskActivity.this);
                                                 alertDialogBuilder.setMessage("Kode Pos not valid");
 
                                                 alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -6908,7 +6908,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                                     }
                                                 });
 
-                                                android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+                                                androidx.appcompat.app.AlertDialog alertDialog = alertDialogBuilder.create();
                                                 alertDialog.show();
                                             } else if (arrayAdapter.getCount() == 1) {
 
@@ -6937,7 +6937,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                                             } else {
 
-                                                android.support.v7.app.AlertDialog.Builder builderSingle = new android.support.v7.app.AlertDialog.Builder(DinamicSLATaskActivity.this);
+                                                androidx.appcompat.app.AlertDialog.Builder builderSingle = new androidx.appcompat.app.AlertDialog.Builder(DinamicSLATaskActivity.this);
                                                 builderSingle.setTitle("Pilih kelurahan ");
 
                                                 builderSingle.setNegativeButton(

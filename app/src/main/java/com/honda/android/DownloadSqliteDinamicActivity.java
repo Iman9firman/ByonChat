@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.honda.android.provider.DataBaseDropDown;
-import com.honda.android.provider.DatabaseKodePos;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;

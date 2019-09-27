@@ -1,24 +1,19 @@
 package com.honda.android;
 
-import android.database.Cursor;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
+import com.google.android.material.tabs.TabLayout;
 import com.honda.android.adapter.SettingMainAdapter;
 import com.honda.android.createMeme.FilteringImage;
 import com.honda.android.helpers.Constants;
-import com.honda.android.provider.IntervalDB;
-import com.honda.android.provider.Skin;
 
 public class MainSettingActivity extends AppCompatActivity {
 

@@ -8,10 +8,12 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,22 +22,18 @@ import android.widget.Toast;
 
 import com.honda.android.ByonChatMainRoomActivity;
 import com.honda.android.FragmentDinamicRoom.DinamicListTaskAdapter;
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.honda.android.R;
 import com.honda.android.communication.NetworkInternetConnectionStatus;
-import com.honda.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.Contact;
 import com.honda.android.provider.ContentRoom;
 import com.honda.android.provider.Message;
 import com.honda.android.provider.MessengerDatabaseHelper;
 import com.honda.android.provider.RoomsDetail;
-import com.honda.android.room.DividerItemDecoration;
 import com.honda.android.utils.EndlessRecyclerOnScrollListener;
 import com.honda.android.utils.HttpHelper;
 import com.honda.android.utils.RequestKeyTask;
 import com.honda.android.utils.TaskCompleted;
-import com.honda.android.utils.Utility;
 import com.honda.android.utils.ValidationsKey;
 
 import org.apache.http.HttpEntity;
@@ -61,14 +59,10 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;

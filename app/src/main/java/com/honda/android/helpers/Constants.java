@@ -1,6 +1,6 @@
 package com.honda.android.helpers;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.honda.android.communication.MessengerConnectionService;
 import com.honda.android.provider.Message;

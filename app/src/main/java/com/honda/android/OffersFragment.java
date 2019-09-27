@@ -15,10 +15,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,14 +62,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 
 
 @SuppressLint("ValidFragment")
 //1 chat
 //2 add
 //3 apps
-public class OffersFragment extends Fragment implements OnRefreshListener {
+public class OffersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     /**
      * The fragment argument representing the section number for this
      * fragment.

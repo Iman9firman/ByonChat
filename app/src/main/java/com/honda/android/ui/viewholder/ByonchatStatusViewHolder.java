@@ -1,21 +1,17 @@
 package com.honda.android.ui.viewholder;
 
 
-import android.annotation.TargetApi;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.honda.android.R;
 import com.honda.android.data.model.File;
-import com.honda.android.ui.adapter.OnItemClickListener;
 import com.honda.android.ui.adapter.OnLongItemClickListener;
 import com.squareup.picasso.Target;
 

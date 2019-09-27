@@ -14,7 +14,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.5.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
         classpath 'org.aspectj:aspectjtools:1.8.5'
@@ -39,6 +39,16 @@ allprojects {
         maven { url "https://maven.google.com" }
         maven { url 'https://jitpack.io' }
     }
+
+    configurations.all {
+        resolutionStrategy {
+            force 'com.google.firebase:firebase-common:17.0.0'
+            force 'com.google.android.gms:play-services-basement:16.2.0'
+            force 'com.google.firebase:firebase-iid:16.0.0'
+            force 'com.google.firebase:firebase-auth:17.0.0'
+        }
+    }
+
 //    gradle.projectsEvaluated {
 //        tasks.withType(JavaCompile) {
 //            options.compilerArgs << "-Xlint:deprecation"

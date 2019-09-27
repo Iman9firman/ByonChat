@@ -1,13 +1,10 @@
 package com.honda.android.utils;
 
-import android.app.Activity;
-import android.app.DownloadManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,24 +18,20 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.honda.android.ConversationGroupActivity;
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.honda.android.R;
 import com.honda.android.communication.MessengerConnectionService;
 import com.honda.android.communication.NetworkInternetConnectionStatus;
 import com.honda.android.config.Utils;
 import com.honda.android.config.WsConfig;
-import com.honda.android.helpers.Constants;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.Contact;
 import com.honda.android.provider.DataBaseHelper;
-import com.honda.android.provider.Files;
-import com.honda.android.provider.FilesDatabaseHelper;
 import com.honda.android.provider.FilesURL;
 import com.honda.android.provider.FilesURLDatabaseHelper;
 import com.honda.android.provider.Interval;
@@ -51,7 +44,6 @@ import com.honda.android.provider.SubmitingRoomDB;
 import com.honda.android.ui.activity.MainActivityNew;
 import com.honda.android.videotrimmer.interfaces.ConvertTaskCompleted;
 import com.honda.android.videotrimmer.utils.RequestConvertTask;
-import com.honda.android.videotrimmer.videocompressor.MediaController;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -63,7 +55,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.FormBodyPart;
@@ -103,7 +94,6 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity.GETTABDETAILPULLMULTIPLE;
 import static com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POSDETAIL;
 import static com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POST_FOTO;
 import static com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLDETAIL;

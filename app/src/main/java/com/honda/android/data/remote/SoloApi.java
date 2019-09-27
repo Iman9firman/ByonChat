@@ -1,7 +1,7 @@
 package com.honda.android.data.remote;
 
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.honda.android.BuildConfig;
 import com.honda.android.local.Byonchat;

@@ -1,14 +1,11 @@
 package com.honda.android.personalRoom;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,23 +23,11 @@ import com.bumptech.glide.Glide;
 import com.honda.android.R;
 import com.honda.android.communication.MessengerConnectionService;
 import com.honda.android.personalRoom.asynctask.ProfileSaveDescription;
-import com.honda.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.honda.android.utils.UtilsPD;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.HashMap;
 
 /**

@@ -10,17 +10,17 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
-import com.honda.android.FragmentDinamicRoom.RoomPOSdetail;
 import com.honda.android.R;
 import com.honda.android.communication.NetworkInternetConnectionStatus;
 import com.honda.android.createMeme.FilteringImage;
@@ -28,11 +28,9 @@ import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.MessengerDatabaseHelper;
 import com.honda.android.provider.RoomsDetail;
 import com.honda.android.room.DividerItemDecoration;
-import com.honda.android.room.FragmentRoomMultipleTask;
 import com.honda.android.utils.HttpHelper;
 import com.honda.android.utils.RequestKeyTask;
 import com.honda.android.utils.TaskCompleted;
-import com.honda.android.utils.Validations;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -58,10 +56,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class NotePreviewActivity extends AppCompatActivity {
 

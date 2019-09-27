@@ -1,22 +1,17 @@
 package com.honda.android.personalRoom.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.honda.android.Manhera.Manhera;
 import com.honda.android.R;
 import com.honda.android.personalRoom.model.NotesPhoto;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 

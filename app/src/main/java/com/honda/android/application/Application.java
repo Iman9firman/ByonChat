@@ -1,9 +1,10 @@
 package com.honda.android.application;
 
 import android.content.Context;
-import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.multidex.MultiDexApplication;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,7 +26,7 @@ public class Application extends MultiDexApplication {
         super.onCreate();
         instance = this;
         Byonchat.init(this, "Byonchat");
-        Byonchat.setEnableLog(android.support.multidex.BuildConfig.DEBUG);
+        Byonchat.setEnableLog(BuildConfig.DEBUG);
     }
 
     @Override

@@ -1,19 +1,16 @@
 package com.honda.android.AdvRecy;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +18,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 import com.honda.android.Manhera.Manhera;
-import com.honda.android.R;
 import com.honda.android.helpers.Constants;
 import com.honda.android.ui.adapter.OnItemClickListener;
 import com.honda.android.ui.adapter.OnLongItemClickListener;
@@ -31,7 +27,6 @@ import com.honda.android.utils.Utility;
 import com.google.gson.Gson;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.DraggableItemAdapter;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.ItemDraggableRange;
-import com.itextpdf.text.Font;
 
 import java.util.ArrayList;
 import java.util.List;

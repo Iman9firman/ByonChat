@@ -2,34 +2,25 @@ package com.honda.android.personalRoom;
 
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.honda.android.R;
@@ -38,34 +29,21 @@ import com.honda.android.communication.NetworkInternetConnectionStatus;
 import com.honda.android.personalRoom.adapter.NoteFeedListAdapter;
 import com.honda.android.personalRoom.adapter.NoteFeedListAdapterMine;
 import com.honda.android.personalRoom.asynctask.ProfileSaveDescription;
-import com.honda.android.personalRoom.listener.HidingScrollListener;
 import com.honda.android.personalRoom.model.NoteFeedItem;
-import com.honda.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.honda.android.personalRoom.utils.Level;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.MessengerDatabaseHelper;
 import com.honda.android.provider.RoomsDetail;
 import com.honda.android.utils.OnLoadMoreListener;
-import com.honda.android.utils.UtilsPD;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by lukma on 3/4/2016.

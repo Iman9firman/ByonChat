@@ -1,21 +1,16 @@
 package com.honda.android.personalRoom;
 
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.honda.android.R;
 import com.honda.android.utils.TouchImageView;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-
-import java.io.File;
 
 /**
  * Created by Lukmanpryg on 12/30/2016.

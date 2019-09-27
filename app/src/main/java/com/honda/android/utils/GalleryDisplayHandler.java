@@ -4,15 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
-import android.support.v4.content.FileProvider;
+
+import androidx.core.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.MimeTypeMap;
 
 import com.honda.android.ConversationGalleryActivity;
-import com.honda.android.DownloadFileByonchat;
 import com.honda.android.provider.Message;
 
 import java.io.File;

@@ -9,6 +9,6 @@
         android:iconTint="@color/ims_chat_list_primary_color"
         android:orderInCategory="100"
         android:title="action_notification"
-        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
 </menu>

@@ -1,8 +1,6 @@
 package com.honda.android.communication;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -18,23 +15,19 @@ import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.util.LogWriter;
+
+import androidx.core.app.NotificationCompat;
+
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
-import android.text.Html;
 import android.util.Log;
 
 import com.honda.android.ByonChatMainRoomActivity;
 import com.honda.android.ConversationActivity;
 import com.honda.android.ConversationGroupActivity;
-import com.honda.android.MainActivity;
 import com.honda.android.MemberDetailActivity;
 import com.honda.android.R;
-import com.honda.android.helpers.Constants;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.Contact;
 import com.honda.android.provider.Message;
@@ -51,14 +44,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import me.leolin.shortcutbadger.ShortcutBadgeException;
 import me.leolin.shortcutbadger.ShortcutBadger;
-import okhttp3.internal.Util;
 
 public class NotificationReceiver extends BroadcastReceiver {
     public static final int NOTIFY_ID = 2001;

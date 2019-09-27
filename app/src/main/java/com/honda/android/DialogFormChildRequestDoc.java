@@ -1,19 +1,9 @@
 package com.honda.android;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.text.Html;
-import android.text.InputFilter;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,42 +17,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.honda.android.ISSActivity.LoginDB.UserDB;
-import com.honda.android.provider.BotListDB;
-import com.honda.android.provider.Contact;
-import com.honda.android.provider.DataBaseHelper;
-import com.honda.android.provider.Message;
 import com.honda.android.provider.MessengerDatabaseHelper;
-import com.honda.android.provider.RoomsDetail;
-import com.honda.android.tempSchedule.MyEventDatabase;
-import com.honda.android.utils.AndroidMultiPartEntity;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class DialogFormChildRequestDoc extends DialogFragment {

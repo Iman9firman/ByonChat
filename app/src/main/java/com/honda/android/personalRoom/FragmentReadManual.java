@@ -3,46 +3,29 @@ package com.honda.android.personalRoom;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.honda.android.R;
-import com.honda.android.SearchThemesActivity;
-import com.honda.android.communication.NetworkInternetConnectionStatus;
-import com.honda.android.list.ListSearchThemesAdapter;
-import com.honda.android.personalRoom.adapter.NewsFeedListAdapter;
 import com.honda.android.personalRoom.adapter.ReadManualListAdapter;
-import com.honda.android.personalRoom.asynctask.ProfileSaveDescription;
-import com.honda.android.personalRoom.model.NewsFeedItem;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.ContentRoom;
 import com.honda.android.provider.RoomsDetail;
-import com.honda.android.room.DividerItemDecoration;
-import com.honda.android.utils.OnLoadMoreListener;
-import com.honda.android.widget.LoadMoreListView;
 import com.github.ybq.endless.Endless;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by lukma on 3/4/2016.

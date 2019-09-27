@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -26,18 +25,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -68,6 +64,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.honda.android.CaptureSignature;
 import com.honda.android.DownloadSqliteDinamicActivity;
 import com.honda.android.DownloadUtilsActivity;
@@ -90,13 +87,10 @@ import com.honda.android.provider.RoomsDetail;
 import com.honda.android.utils.GPSTracker;
 import com.honda.android.utils.ImageFilePath;
 import com.honda.android.utils.MediaProcessingUtil;
-import com.honda.android.widget.ContactsCompletionView;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.tokenautocomplete.FilteredArrayAdapter;
-import com.tokenautocomplete.TokenCompleteTextView;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.apache.http.HttpEntity;
@@ -2041,7 +2035,7 @@ public class FragmentRoomAPI extends Fragment {
                                             }
 
                                             if (arrayAdapter.getCount() == 0) {
-                                                android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(mContext);
+                                                androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(mContext);
                                                 alertDialogBuilder.setMessage("Kode Pos not valid");
 
                                                 alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -2055,7 +2049,7 @@ public class FragmentRoomAPI extends Fragment {
                                                     }
                                                 });
 
-                                                android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+                                                androidx.appcompat.app.AlertDialog alertDialog = alertDialogBuilder.create();
                                                 alertDialog.show();
                                             } else if (arrayAdapter.getCount() == 1) {
 
@@ -2083,7 +2077,7 @@ public class FragmentRoomAPI extends Fragment {
 
                                             } else {
 
-                                                android.support.v7.app.AlertDialog.Builder builderSingle = new android.support.v7.app.AlertDialog.Builder(mContext);
+                                                androidx.appcompat.app.AlertDialog.Builder builderSingle = new androidx.appcompat.app.AlertDialog.Builder(mContext);
                                                 builderSingle.setTitle("Pilih kelurahan ");
 
                                                 builderSingle.setNegativeButton(

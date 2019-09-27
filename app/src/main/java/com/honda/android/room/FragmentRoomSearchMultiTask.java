@@ -7,49 +7,36 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Html;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.honda.android.ByonChatMainRoomActivity;
 import com.honda.android.FragmentDinamicRoom.DinamicListTaskAdapter;
-import com.honda.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
-import com.honda.android.ISSActivity.Reliever.CheckInActivity;
-import com.honda.android.ISSActivity.Reliever.CheckOutActivity;
 import com.honda.android.ISSActivity.Reliever.SubmitRequestActivity;
 import com.honda.android.ISSActivity.Requester.ByonchatMallKelapaGadingActivity;
 import com.honda.android.R;
-import com.honda.android.ZoomImageViewActivity;
 import com.honda.android.communication.NetworkInternetConnectionStatus;
 import com.honda.android.helpers.Constants;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.Contact;
 import com.honda.android.provider.ContentRoom;
-import com.honda.android.provider.Message;
 import com.honda.android.provider.MessengerDatabaseHelper;
 import com.honda.android.provider.RoomsDetail;
 import com.honda.android.utils.EndlessRecyclerOnScrollListener;
 import com.honda.android.utils.HttpHelper;
-import com.honda.android.utils.RequestKeyTask;
-import com.honda.android.utils.TaskCompleted;
-import com.honda.android.utils.Utility;
-import com.honda.android.utils.ValidationsKey;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -58,30 +45,19 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 @SuppressLint("ValidFragment")
 public class FragmentRoomSearchMultiTask extends Fragment {

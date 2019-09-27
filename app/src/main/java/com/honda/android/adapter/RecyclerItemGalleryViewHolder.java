@@ -2,20 +2,14 @@ package com.honda.android.adapter;
 
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.LayerDrawable;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.honda.android.Manhera.Manhera;
 import com.honda.android.R;
-import com.joooonho.SelectableRoundedImageView;
-import com.squareup.picasso.Target;
 
 public class RecyclerItemGalleryViewHolder extends RecyclerView.ViewHolder {
 

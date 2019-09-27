@@ -1,32 +1,24 @@
 package com.honda.android.location;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.honda.android.R;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -90,7 +82,7 @@ public class MoveToFriend extends AppCompatActivity implements OnMapReadyCallbac
 		tv.setText("Wait...");
 		frnd_latlong = new LatLng(Double.parseDouble(frnd_lat), Double.parseDouble(frnd_longi));
 
-		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+		/*SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mapFragment.getMapAsync(this);
 
@@ -254,7 +246,7 @@ public class MoveToFriend extends AppCompatActivity implements OnMapReadyCallbac
 			        return Math.atan2(longi, lat);
 			    }
 			});
-		}
+		}*/
 	}
 
 	@Override

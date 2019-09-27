@@ -13,7 +13,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,7 +49,7 @@ import carbon.shadow.ShadowView;
  * Carbon version of a drawer layout with support for shadows, ripples and other material features.
  * Not really useful, but added for sake of completeness.
  */
-public class DrawerLayout extends android.support.v4.widget.DrawerLayout implements ShadowView, RippleView, TouchMarginView, StateAnimatorView, AnimatedView, InsetView, CornerView {
+public class DrawerLayout extends androidx.drawerlayout.widget.DrawerLayout implements ShadowView, RippleView, TouchMarginView, StateAnimatorView, AnimatedView, InsetView, CornerView {
     private boolean debugMode;
 
     public DrawerLayout(Context context) {

@@ -5,9 +5,10 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+
+import androidx.annotation.Nullable;
 
 import carbon.drawable.VectorDrawable;
 

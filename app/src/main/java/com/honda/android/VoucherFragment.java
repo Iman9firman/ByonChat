@@ -11,15 +11,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.honda.android.communication.MessengerConnectionService;
 import com.honda.android.communication.NetworkInternetConnectionStatus;
@@ -54,11 +54,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-
 
 @SuppressLint("ValidFragment")
-public class VoucherFragment extends Fragment implements OnRefreshListener {
+public class VoucherFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     public final static String URL_GET_VOUCHER = "https://" + MessengerConnectionService.HTTP_SERVER + "/voucher/index.php";
     private MessengerDatabaseHelper messengerHelper;
     private Contact contact;

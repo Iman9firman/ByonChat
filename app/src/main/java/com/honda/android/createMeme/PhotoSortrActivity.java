@@ -27,8 +27,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -47,10 +47,8 @@ import android.widget.Toast;
 
 import com.honda.android.ConfirmationSendFile;
 import com.honda.android.ConversationActivity;
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.honda.android.R;
 import com.honda.android.NewSelectContactActivity;
-import com.honda.android.utils.GPSTracker;
 import com.honda.android.utils.ImageFilePath;
 import com.honda.android.utils.MediaProcessingUtil;
 import com.honda.android.utils.TouchImageView;

@@ -1,15 +1,13 @@
 package com.honda.android.personalRoom.adapter;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.SpannableString;
 import android.util.Log;
@@ -18,24 +16,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.honda.android.R;
 import com.honda.android.communication.MessengerConnectionService;
 import com.honda.android.personalRoom.NoteCommentActivity;
 import com.honda.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.honda.android.personalRoom.model.CommentModel;
 import com.honda.android.personalRoom.viewHolder.feedItemsHolder;
-import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.MessengerDatabaseHelper;
-import com.honda.android.provider.RoomsDetail;
 import com.honda.android.utils.MyLeadingMarginSpan2;
 import com.honda.android.utils.UtilsPD;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.HashMap;

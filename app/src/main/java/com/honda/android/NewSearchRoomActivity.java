@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -22,12 +21,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -450,13 +449,13 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchItem.expandActionView();
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText = (EditText) mSearchView.findViewById(R.id.search_src_text);
         searchEditText.setTextColor(Color.parseColor("#" + mColorText));
         searchEditText.setHintTextColor(Color.parseColor("#" + mColorText));
         searchEditText.setHint(tipe);
         searchEditText.setFocusable(true);
 
-        ImageView searchImageView = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        ImageView searchImageView = (ImageView) mSearchView.findViewById(R.id.search_close_btn);
         Drawable mDrawable = context.getResources().getDrawable(R.drawable.ic_byonchat_close);
         mDrawable.setColorFilter(new
                 PorterDuffColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_ATOP));
@@ -464,7 +463,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
 //        ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor("#" + mColorText));
 //        searchEditText.setBackgroundTintList(colorStateList);
-        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
         searchAutoComplete.setThreshold(0);
         searchAutoComplete.setAdapter(new SuggestionAdapterHashTag(aa));
         searchAutoComplete.setDropDownBackgroundDrawable(getResources().getDrawable(R.drawable.abc_popup_background_mtrl_mult));

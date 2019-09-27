@@ -43,26 +43,24 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.multidex.MultiDex;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.multidex.MultiDex;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -81,6 +79,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andremion.counterfab.CounterFab;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.honda.android.AdvRecy.DraggableGridExampleAdapter;
 import com.honda.android.AdvRecy.ItemMain;
 import com.honda.android.ByonChatMainRoomActivity;
@@ -127,7 +129,6 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.DraggableItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.scottyab.rootbeer.RootBeer;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -269,14 +270,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected NestedScrollView vFrameTabThree;*/
     @NonNull
     protected NestedScrollView vFrameTabFour;
-    /*@NonNull
-    protected NestedScrollView vFrameTabFive;
-    @NonNull
-    protected NestedScrollView vFrameTabSix;
-    @NonNull
-    protected NestedScrollView vFrameTabSeven;
-    @NonNull
-    protected NestedScrollView vFrameTabEight;*/
+
     @NonNull
     protected NestedScrollView vFrameTabNine;
 
@@ -332,19 +326,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @NonNull
     protected TextView vTitleItemGridTwoTwo;
 
-    /*@NonNull
-    protected ImageView vLogoItemGridThreeOne;
-    @NonNull
-    protected TextView vTitleItemGridThreeOne;
-    @NonNull
-    protected ImageView vLogoItemGridThreeTwo;
-    @NonNull
-    protected TextView vTitleItemGridThreeTwo;
-    @NonNull
-    protected ImageView vLogoItemGridThreeThree;
-    @NonNull
-    protected TextView vTitleItemGridThreeThree;*/
-
     @NonNull
     protected ImageView vLogoItemGridFourOne;
     @NonNull
@@ -361,85 +342,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected ImageView vLogoItemGridFourFour;
     @NonNull
     protected TextView vTitleItemGridFourFour;
-
-    /*@NonNull
-    protected ImageView vLogoItemGridFiveOne;
-    @NonNull
-    protected TextView vTitleItemGridFiveOne;
-    @NonNull
-    protected ImageView vLogoItemGridFiveTwo;
-    @NonNull
-    protected TextView vTitleItemGridFiveTwo;
-    @NonNull
-    protected ImageView vLogoItemGridFiveThree;
-    @NonNull
-    protected TextView vTitleItemGridFiveThree;
-    @NonNull
-    protected ImageView vLogoItemGridFiveFour;
-    @NonNull
-    protected TextView vTitleItemGridFiveFour;
-    @NonNull
-    protected ImageView vLogoItemGridFiveFive;
-    @NonNull
-    protected TextView vTitleItemGridFiveFive;
-
-    @NonNull
-    protected ImageView vLogoItemGridSixOne;
-    @NonNull
-    protected TextView vTitleItemGridSixOne;
-    @NonNull
-    protected ImageView vLogoItemGridSixTwo;
-    @NonNull
-    protected TextView vTitleItemGridSixTwo;
-    @NonNull
-    protected ImageView vLogoItemGridSixThree;
-    @NonNull
-    protected TextView vTitleItemGridSixThree;
-    @NonNull
-    protected ImageView vLogoItemGridSixFour;
-    @NonNull
-    protected TextView vTitleItemGridSixFour;
-    @NonNull
-    protected ImageView vLogoItemGridSixFive;
-    @NonNull
-    protected TextView vTitleItemGridSixFive;
-    @NonNull
-    protected ImageView vLogoItemGridSixSix;
-    @NonNull
-    protected TextView vTitleItemGridSixSix;
-
-    @NonNull
-    protected ImageView vLogoItemGridEightOne;
-    @NonNull
-    protected TextView vTitleItemGridEightOne;
-    @NonNull
-    protected ImageView vLogoItemGridEightTwo;
-    @NonNull
-    protected TextView vTitleItemGridEightTwo;
-    @NonNull
-    protected ImageView vLogoItemGridEightThree;
-    @NonNull
-    protected TextView vTitleItemGridEightThree;
-    @NonNull
-    protected ImageView vLogoItemGridEightFour;
-    @NonNull
-    protected TextView vTitleItemGridEightFour;
-    @NonNull
-    protected ImageView vLogoItemGridEightFive;
-    @NonNull
-    protected TextView vTitleItemGridEightFive;
-    @NonNull
-    protected ImageView vLogoItemGridEightSix;
-    @NonNull
-    protected TextView vTitleItemGridEightSix;
-    @NonNull
-    protected ImageView vLogoItemGridEightSeven;
-    @NonNull
-    protected TextView vTitleItemGridEightSeven;
-    @NonNull
-    protected ImageView vLogoItemGridEightEight;
-    @NonNull
-    protected TextView vTitleItemGridEightEight;*/
 
     @NonNull
     protected ImageView vLogoItemGridNineOne;

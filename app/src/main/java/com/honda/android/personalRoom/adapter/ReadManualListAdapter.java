@@ -1,69 +1,19 @@
 package com.honda.android.personalRoom.adapter;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.util.Log;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
-import com.honda.android.MediaPlayCatalogActivity;
-import com.honda.android.NewsDetailActivity;
 import com.honda.android.R;
-import com.honda.android.SearchThemesActivity;
-import com.honda.android.SkinSelectorActivity;
 import com.honda.android.adapter.CircularContactView;
-import com.honda.android.communication.MessengerConnectionService;
-import com.honda.android.communication.NetworkInternetConnectionStatus;
-import com.honda.android.list.ItemListSearchTheme;
-import com.honda.android.list.ListSearchThemesAdapter;
-import com.honda.android.personalRoom.NoteCommentActivity;
-import com.honda.android.personalRoom.asynctask.ProfileSaveDescription;
-import com.honda.android.personalRoom.model.NewsFeedItem;
-import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.ContentRoom;
-import com.honda.android.provider.IntervalDB;
-import com.honda.android.provider.RoomsDetail;
-import com.honda.android.provider.Skin;
-import com.honda.android.utils.OnLoadMoreListener;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Created by lukma on 3/7/2016.

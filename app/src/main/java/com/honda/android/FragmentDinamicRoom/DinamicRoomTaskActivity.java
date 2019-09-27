@@ -37,12 +37,12 @@ import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -88,6 +88,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.honda.android.CaptureSignature;
 import com.honda.android.ConversationActivity;
 import com.honda.android.DialogFormChildMain;
@@ -1605,9 +1606,23 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                                         + Double.parseDouble(latlong[1]) + "(" + loc + ")");
                                                             }
 
-                                                            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                                            /*Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                                                             mapIntent.setPackage("com.google.android.apps.maps");
-                                                            startActivity(mapIntent);
+                                                            startActivity(mapIntent);*/
+
+                                                           /* if (!Places.isInitialized()) {
+                                                                Places.initialize(getApplicationContext(), "AIzaSyAhOmhz7BjEXDkuHEfj1oTkdq4ZTiK3wx8");
+                                                            }
+
+                                                            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                                                            try {
+                                                                startActivityForResult(builder.build(DinamicRoomTaskActivity.this), 100);
+                                                            } catch (GooglePlayServicesRepairableException e) {
+                                                                e.printStackTrace();
+                                                            } catch (GooglePlayServicesNotAvailableException e) {
+                                                                e.printStackTrace();
+                                                            }*/
+
                                                         }
                                                     }
                                                 });
@@ -7767,7 +7782,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
 
                                             if (arrayAdapter.getCount() == 0) {
-                                                android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(DinamicRoomTaskActivity.this);
+                                                androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(DinamicRoomTaskActivity.this);
                                                 alertDialogBuilder.setMessage("Kode Pos not valid");
 
                                                 alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -7781,7 +7796,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     }
                                                 });
 
-                                                android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+                                                androidx.appcompat.app.AlertDialog alertDialog = alertDialogBuilder.create();
                                                 alertDialog.show();
                                             } else if (arrayAdapter.getCount() == 1) {
 
@@ -7810,7 +7825,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                             } else {
 
-                                                android.support.v7.app.AlertDialog.Builder builderSingle = new android.support.v7.app.AlertDialog.Builder(DinamicRoomTaskActivity.this);
+                                                androidx.appcompat.app.AlertDialog.Builder builderSingle = new androidx.appcompat.app.AlertDialog.Builder(DinamicRoomTaskActivity.this);
                                                 builderSingle.setTitle("Pilih kelurahan ");
 
                                                 builderSingle.setNegativeButton(

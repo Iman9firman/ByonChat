@@ -2,13 +2,12 @@ package com.honda.android.adapter;
 
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.honda.android.R;
-import com.honda.android.model.Image;
 import com.honda.android.personalRoom.model.PictureModel;
 
 import java.util.List;

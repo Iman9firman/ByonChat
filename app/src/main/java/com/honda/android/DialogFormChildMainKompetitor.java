@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
@@ -33,11 +32,12 @@ import android.widget.Scroller;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import androidx.fragment.app.DialogFragment;
+
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.DataBaseDropDown;
 import com.honda.android.provider.RoomsDetail;
 import com.honda.android.utils.DialogUtil;
-import com.honda.android.utils.Validations;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.json.JSONArray;

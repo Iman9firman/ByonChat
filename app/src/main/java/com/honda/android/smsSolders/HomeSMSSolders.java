@@ -1,10 +1,8 @@
 package com.honda.android.smsSolders;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,43 +10,25 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.cardview.widget.CardView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
-import com.honda.android.ByonChatMainRoomActivity;
 import com.honda.android.ConversationActivity;
-import com.honda.android.FirstFragment;
-import com.honda.android.FragmentDinamicRoom.FragmentRoomAbout;
-import com.honda.android.LoadingGetTabRoomActivity;
 import com.honda.android.R;
-import com.honda.android.communication.NetworkInternetConnectionStatus;
-import com.honda.android.helpers.ImageUtils;
 import com.honda.android.provider.Contact;
 import com.honda.android.provider.Interval;
 import com.honda.android.provider.IntervalDB;
@@ -57,9 +37,6 @@ import com.honda.android.utils.DialogUtil;
 import com.honda.android.utils.MediaProcessingUtil;
 import com.honda.android.utils.RequestKeyTask;
 import com.honda.android.utils.TaskCompleted;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -79,21 +56,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import carbon.widget.CardView;
-import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
-
 public class HomeSMSSolders extends AppCompatActivity {
 
     SwipeRefreshLayout swipeLayout;
     TextView textPoint, smsSesama, smsOperator, smsScedule;
-    android.support.v7.widget.CardView smsSesamaBtn, smsOperatorBtn, smsSceduleBtn, contactBtn;
+    CardView smsSesamaBtn, smsOperatorBtn, smsSceduleBtn, contactBtn;
     ImageButton createSortcut;
 
     @Override
@@ -134,10 +107,10 @@ public class HomeSMSSolders extends AppCompatActivity {
         smsOperator = (TextView) findViewById(R.id.smsOperator);
         smsScedule = (TextView) findViewById(R.id.smsScedule);
 
-        smsSesamaBtn = (android.support.v7.widget.CardView) findViewById(R.id.smsSesamaBtn);
-        smsOperatorBtn = (android.support.v7.widget.CardView) findViewById(R.id.smsOperatorBtn);
-        smsSceduleBtn = (android.support.v7.widget.CardView) findViewById(R.id.smsSceduleBtn);
-        contactBtn = (android.support.v7.widget.CardView) findViewById(R.id.contactBtn);
+        smsSesamaBtn = (CardView) findViewById(R.id.smsSesamaBtn);
+        smsOperatorBtn = (CardView) findViewById(R.id.smsOperatorBtn);
+        smsSceduleBtn = (CardView) findViewById(R.id.smsSceduleBtn);
+        contactBtn = (CardView) findViewById(R.id.contactBtn);
 
 
         smsSesamaBtn.setOnClickListener(new View.OnClickListener() {
@@ -263,12 +236,12 @@ public class HomeSMSSolders extends AppCompatActivity {
 
                 dialogConfirmation.dismiss();
                 Toast.makeText(HomeSMSSolders.this, "Create Shortcut Success", Toast.LENGTH_SHORT).show();
-                Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),  R.drawable.ic_soldier);
+                Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_soldier);
 
                 Intent aa = new Intent(getApplicationContext(), WelcomeActivitySMS.class);
                 Intent shortcutintent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
                 shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "SMS Soldier");
-                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON, MediaProcessingUtil.getRoundedCornerBitmap(largeIcon,30));
+                shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_ICON, MediaProcessingUtil.getRoundedCornerBitmap(largeIcon, 30));
                 shortcutintent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, aa);
                 sendBroadcast(shortcutintent);
                 finish();

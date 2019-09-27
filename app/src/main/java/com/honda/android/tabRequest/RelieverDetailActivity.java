@@ -1,13 +1,11 @@
 package com.honda.android.tabRequest;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,21 +23,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.honda.android.ConversationActivity;
-import com.honda.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingActivity;
 import com.honda.android.R;
 import com.honda.android.communication.MessengerConnectionService;
-import com.honda.android.data.model.MkgServices;
 import com.honda.android.helpers.Constants;
 import com.honda.android.list.IconItem;
 import com.honda.android.provider.ChatParty;
 import com.honda.android.provider.Contact;
-import com.honda.android.ui.adapter.ChildRecyclerView;
-import com.honda.android.ui.adapter.HeaderRecyclerView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <include layout="@layout/toolbar_light" />
-        <!--<android.support.v7.widget.Toolbar-->
+        <!--<androidx.appcompat.widget.Toolbar-->
         <!--android:id="@+id/toolbar"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content"-->
@@ -59,7 +59,7 @@
         android:divider="@null"
         android:padding="@dimen/margin10" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
             android:listSelector="@drawable/listview_selector"
             android:scrollingCache="false"
             tools:listitem="@layout/listview_item" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/linearTrending"

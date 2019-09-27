@@ -1,91 +1,56 @@
 package com.honda.android;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+
+import androidx.fragment.app.DialogFragment;
+
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
-import com.honda.android.FragmentDinamicRoom.FormChildAdapter;
-import com.honda.android.FragmentDinamicRoom.ModelFormChild;
-import com.honda.android.FragmentDinamicRoom.ModelWilayah;
-import com.honda.android.list.utilLoadImage.ImageLoaderLarge;
-import com.honda.android.location.ActivityDirection;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.DataBaseDropDown;
-import com.honda.android.provider.DatabaseKodePos;
-import com.honda.android.provider.Message;
 import com.honda.android.provider.RoomsDetail;
 import com.honda.android.utils.DialogUtil;
-import com.honda.android.utils.GPSTracker;
 import com.honda.android.utils.Validations;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -124,9 +89,9 @@ public class DialogFormChildMain extends DialogFragment {
 
     int dummyIdDate;
 
-    Button mProceed,mCancel;
+    Button mProceed, mCancel;
 
-    public static DialogFormChildMain newInstance(String content, String title,String dbMaster,String idDetail,String username,String idTab,String idListTaskMaster,String idChildDetail,String customersId) {
+    public static DialogFormChildMain newInstance(String content, String title, String dbMaster, String idDetail, String username, String idTab, String idListTaskMaster, String idChildDetail, String customersId) {
         DialogFormChildMain f = new DialogFormChildMain();
         Bundle args = new Bundle();
         args.putString("title", title);
@@ -147,15 +112,15 @@ public class DialogFormChildMain extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
-        Log.w("sendiri","oke2");
+        Log.w("sendiri", "oke2");
         linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
         nameTitle = (TextView) dialog.findViewById(R.id.name);
         mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
         mCancel = (Button) dialog.findViewById(R.id.btn_cancel);
 
-        if (idchildDetail.equalsIgnoreCase("")){
+        if (idchildDetail.equalsIgnoreCase("")) {
             idchildDetail = getRandomString();
-        }else{
+        } else {
             update = true;
         }
 
@@ -188,7 +153,7 @@ public class DialogFormChildMain extends DialogFragment {
 
                 if (type.equalsIgnoreCase("form_child")) {
 
-                }else if (type.equalsIgnoreCase("text")) {
+                } else if (type.equalsIgnoreCase("text")) {
 
                     TextView textView = new TextView(getContext());
                     if (required.equalsIgnoreCase("1")) {
@@ -257,13 +222,13 @@ public class DialogFormChildMain extends DialogFragment {
                     et[count].setEnabled(false);
 
                     et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
-                    Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
+                    Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
                     if (cEdit.getCount() > 0) {
                         et[count].setText(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                     } else {
                         if (!value.equalsIgnoreCase("")) {
                             et[count].setText(value);
-                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), String.valueOf(value), jsonCreateType(idListTask, type, String.valueOf(i)), name, "child_detail");
+                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(value), jsonCreateType(idListTask, type, String.valueOf(i)), name, "child_detail");
                             botListDB.insertRoomsDetail(orderModel);
                         }
                     }
@@ -282,22 +247,21 @@ public class DialogFormChildMain extends DialogFragment {
 
                         @Override
                         public void afterTextChanged(Editable s) {
-                            Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI)));
+                            Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI)));
                             if (cEdit.getCount() > 0) {
-                                RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "child_detail");
+                                RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "child_detail");
                                 botListDB.updateDetailRoomWithFlagContent(orderModel);
                             } else {
                                 if (String.valueOf(s).length() > 0) {
-                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "child_detail");
+                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "child_detail");
                                     botListDB.insertRoomsDetail(orderModel);
                                 } else {
-                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "child_detail");
+                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "child_detail");
                                     botListDB.deleteDetailRoomWithFlagContent(orderModel);
                                 }
                             }
                         }
                     });
-
 
 
                     LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -347,7 +311,6 @@ public class DialogFormChildMain extends DialogFragment {
                     et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
 
 
-
                     LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     params1.setMargins(30, 10, 30, 0);
                     LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -393,13 +356,13 @@ public class DialogFormChildMain extends DialogFragment {
                     et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
                     et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
 
-                    Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
+                    Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
                     if (cursorCild.getCount() > 0) {
-                        et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).replace(".",""));
+                        et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).replace(".", ""));
                     } else {
                         if (!value.equalsIgnoreCase("")) {
                             et[count].setText(value);
-                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), String.valueOf(value).replace(".",""), jsonCreateType(idListTask, type, String.valueOf(i)), name, "child_detail");
+                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(value).replace(".", ""), jsonCreateType(idListTask, type, String.valueOf(i)), name, "child_detail");
                             botListDB.insertRoomsDetail(orderModel);
                         }
                     }
@@ -443,7 +406,7 @@ public class DialogFormChildMain extends DialogFragment {
                     linearLayout.addView(textView, params1);
                     linearLayout.addView(et[count], params2);
 
-                }else if (type.equalsIgnoreCase("currency")) {
+                } else if (type.equalsIgnoreCase("currency")) {
 
                     TextView textView = new TextView(getActivity());
                     if (required.equalsIgnoreCase("1")) {
@@ -474,13 +437,13 @@ public class DialogFormChildMain extends DialogFragment {
                     et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
                     et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
 
-                    Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
+                    Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
                     if (cursorCild.getCount() > 0) {
-                        et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).replace(".",""));
+                        et[count].setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).replace(".", ""));
                     } else {
                         if (!value.equalsIgnoreCase("")) {
                             et[count].setText(value);
-                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), String.valueOf(value).replace(".",""), jsonCreateType(idListTask, type, String.valueOf(i)), name, "child_detail");
+                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(value).replace(".", ""), jsonCreateType(idListTask, type, String.valueOf(i)), name, "child_detail");
                             botListDB.insertRoomsDetail(orderModel);
                         }
                     }
@@ -599,7 +562,7 @@ public class DialogFormChildMain extends DialogFragment {
                     //[{"url":"https:\/\/bb.byonchat.com\/bc_voucher_client\/public\/list_task\/dropdown_dinamis\/","data":[{"title":"Model","value":"model"},{"title":"Group","value":"item_group"},{"title":"Name Detail","value":"item_name_detail"},{"title":"Code Number","value":"item_number"}],"value":""}]
                     String valueTo = value;
                     JSONArray jjj = new JSONArray(value);
-                    if (jjj.length()==1){
+                    if (jjj.length() == 1) {
                         valueTo = jjj.getString(0).toString();
                     }
                     JSONObject jObject = new JSONObject(valueTo);
@@ -615,7 +578,7 @@ public class DialogFormChildMain extends DialogFragment {
                             kolom.add(oContent.getString("value").toString());
                             title.add(oContent.getString("title").toString());
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
 
                     }
 
@@ -636,9 +599,9 @@ public class DialogFormChildMain extends DialogFragment {
                         String namaTable = table;
                         linearEstimasi[count].removeAllViews();
 
-                        String[] columnNames =  new String[kolom.size()];
+                        String[] columnNames = new String[kolom.size()];
                         columnNames = kolom.toArray(columnNames);
-                        String[] titleNames =  new String[title.size()];
+                        String[] titleNames = new String[title.size()];
                         titleNames = title.toArray(titleNames);
                         final Cursor c = mDB.getWritableDatabase().query(true, namaTable, new String[]{columnNames[0]}, null, null, columnNames[0], null, null, null);
 
@@ -667,7 +630,7 @@ public class DialogFormChildMain extends DialogFragment {
                         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinner.setAdapter(spinnerArrayAdapter);
 
-                        Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
+                        Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
                         if (cursorCild.getCount() > 0) {
                             try {
                                 JSONObject jsonObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
@@ -689,21 +652,21 @@ public class DialogFormChildMain extends DialogFragment {
                             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                                 dummyIdDate = Integer.parseInt(idListTask);
                                 List nilai = (List) hashMap.get(dummyIdDate);
-                                if (!spinner.getSelectedItem().toString().replace("'","''").equals("--Please Select--")) {
+                                if (!spinner.getSelectedItem().toString().replace("'", "''").equals("--Please Select--")) {
                                     if (kolom.size() > 1) {
                                         final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
                                         linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1, counts - 1);
-                                        addSpinnerDinamic(finalTitleNames, finalNama.substring(0, finalNama.indexOf(".")), linearEstimasi[Integer.valueOf(nilai.get(0).toString())], finalNamaTable, finalColumnNames, 0, finalColumnNames[0] + "= '" + spinner.getSelectedItem().toString().replace("'","''") + "'", idListTask, type, String.valueOf(finalI24), name);
-                                    }else{
-                                        refresh(FormulaMaster,customersId,spinner.getSelectedItem().toString().replace("'","''"),finalNama.substring(0, finalNama.indexOf(".")));
+                                        addSpinnerDinamic(finalTitleNames, finalNama.substring(0, finalNama.indexOf(".")), linearEstimasi[Integer.valueOf(nilai.get(0).toString())], finalNamaTable, finalColumnNames, 0, finalColumnNames[0] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'", idListTask, type, String.valueOf(finalI24), name);
+                                    } else {
+                                        refresh(FormulaMaster, customersId, spinner.getSelectedItem().toString().replace("'", "''"), finalNama.substring(0, finalNama.indexOf(".")));
                                     }
 
-                                    Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
+                                    Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
 
                                     if (cEdit.getCount() > 0) {
                                         try {
                                             JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), function(jsonObject, titlesss, spinner.getSelectedItem().toString().replace("'","''") ).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), function(jsonObject, titlesss, spinner.getSelectedItem().toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
 
                                             botListDB.updateDetailRoomWithFlagContent(orderModel);
 
@@ -714,10 +677,10 @@ public class DialogFormChildMain extends DialogFragment {
                                         }
 
                                     } else {
-                                        Log.w("satu","2");
+                                        Log.w("satu", "2");
                                         RoomsDetail orderModel = null;
                                         try {
-                                            orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), function(null, titlesss, spinner.getSelectedItem().toString().replace("'","''") ).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                            orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), function(null, titlesss, spinner.getSelectedItem().toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
 
                                             botListDB.insertRoomsDetail(orderModel);
 
@@ -728,9 +691,9 @@ public class DialogFormChildMain extends DialogFragment {
                                     }
 
                                 } else {
-                                    refresh("","","","");
+                                    refresh("", "", "", "");
                                     if (kolom.size() > 1) {
-                                        RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), spinner.getSelectedItem().toString().replace("'","''") ,  jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                        RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), spinner.getSelectedItem().toString().replace("'", "''"), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
 
                                         botListDB.deleteDetailRoomWithFlagContent(orderModel);
 
@@ -868,7 +831,7 @@ public class DialogFormChildMain extends DialogFragment {
 
                 } else if (type.equalsIgnoreCase("checkbox")) {
 
-                }else if (type.equalsIgnoreCase("radio")) {
+                } else if (type.equalsIgnoreCase("radio")) {
 
                 } else if (type.equalsIgnoreCase("image_load")) {
 
@@ -883,7 +846,7 @@ public class DialogFormChildMain extends DialogFragment {
             e.printStackTrace();
         }
 
-        if(update){
+        if (update) {
             mProceed.setText("Update");
             mCancel.setText("Delete");
         }
@@ -893,9 +856,9 @@ public class DialogFormChildMain extends DialogFragment {
             public void onClick(View v) {
 
 
-                String titleUntuk ="";
-                String decsUntuk ="";
-                String priceUntuk ="";
+                String titleUntuk = "";
+                String decsUntuk = "";
+                String priceUntuk = "";
                 List<RoomsDetail> list = botListDB.getAllRoomDetailFormWithFlagContent(idchildDetail, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail");
                 for (int u = 0; u < list.size(); u++) {
                     JSONArray jsA = null;
@@ -919,9 +882,9 @@ public class DialogFormChildMain extends DialogFragment {
 
                     if (jsA != null) {
                         if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
-                            titleUntuk = jsonResultType(list.get(u).getContent(),"Name Detail");
-                            if (titleUntuk.equalsIgnoreCase("")){
-                                titleUntuk = jsonResultType(list.get(u).getContent(),"SKU");
+                            titleUntuk = jsonResultType(list.get(u).getContent(), "Name Detail");
+                            if (titleUntuk.equalsIgnoreCase("")) {
+                                titleUntuk = jsonResultType(list.get(u).getContent(), "SKU");
                             }
                         } else {
                             try {
@@ -934,9 +897,9 @@ public class DialogFormChildMain extends DialogFragment {
                             }
                         }
                     } else {
-                        if(jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number")||jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")){
+                        if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
                             decsUntuk = list.get(u).getContent();
-                        }else if(jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("formula")){
+                        } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("formula")) {
                             priceUntuk = list.get(u).getContent();
                         }
 
@@ -944,26 +907,26 @@ public class DialogFormChildMain extends DialogFragment {
                 }
 
                 boolean next = true;
-                if (titleUntuk.equalsIgnoreCase("")){
-                    AlertDialog.Builder builder = DialogUtil.generateAlertDialog(getActivity(),"Required","Item Product");
+                if (titleUntuk.equalsIgnoreCase("")) {
+                    AlertDialog.Builder builder = DialogUtil.generateAlertDialog(getActivity(), "Required", "Item Product");
                     builder.show();
                     next = false;
-                }else if(priceUntuk.equalsIgnoreCase("")){
+                } else if (priceUntuk.equalsIgnoreCase("")) {
                     et[1].setError("required");
                     next = false;
-                }else if (decsUntuk.equalsIgnoreCase("")){
+                } else if (decsUntuk.equalsIgnoreCase("")) {
                     et[2].setError("required");
                     next = false;
                 }
 
-                if (next){
-                    Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idListTaskMaster,username,idTab, "titleChild", idDetail);
+                if (next) {
+                    Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idListTaskMaster, username, idTab, "titleChild", idDetail);
 
                     if (cEdit.getCount() > 0) {
-                        RoomsDetail orderModel = new RoomsDetail(idListTaskMaster, idTab, username,jsonCreateTypeTitle(idchildDetail,titleUntuk,decsUntuk,priceUntuk),idDetail,"", "titleChild");
+                        RoomsDetail orderModel = new RoomsDetail(idListTaskMaster, idTab, username, jsonCreateTypeTitle(idchildDetail, titleUntuk, decsUntuk, priceUntuk), idDetail, "", "titleChild");
                         botListDB.updateDetailRoomWithFlagContent(orderModel);
                     } else {
-                        RoomsDetail orderModel = new RoomsDetail(idListTaskMaster, idTab, username,jsonCreateTypeTitle(idchildDetail,titleUntuk,decsUntuk,priceUntuk),idDetail,"", "titleChild");
+                        RoomsDetail orderModel = new RoomsDetail(idListTaskMaster, idTab, username, jsonCreateTypeTitle(idchildDetail, titleUntuk, decsUntuk, priceUntuk), idDetail, "", "titleChild");
                         botListDB.insertRoomsDetail(orderModel);
                     }
 
@@ -985,9 +948,9 @@ public class DialogFormChildMain extends DialogFragment {
                 AlertDialog.Builder alert = new AlertDialog.Builder(
                         getContext());
                 alert.setTitle("Confirmation!!");
-                if(mCancel.getText().toString().equalsIgnoreCase("Cancel")){
+                if (mCancel.getText().toString().equalsIgnoreCase("Cancel")) {
                     alert.setMessage("Are you sure to cancel ?");
-                }else{
+                } else {
                     alert.setMessage("Are you sure to delete ?");
                 }
 
@@ -1017,13 +980,13 @@ public class DialogFormChildMain extends DialogFragment {
         return dialog;
     }
 
-    public void delete(){
+    public void delete() {
 
 
-        List<RoomsDetail> list = botListDB.getAllRoomDetailFormWithFlagContent(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail");
+        List<RoomsDetail> list = botListDB.getAllRoomDetailFormWithFlagContent(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail");
 
-        if(list.size()>0){
-            for (RoomsDetail orderModel : list){
+        if (list.size() > 0) {
+            for (RoomsDetail orderModel : list) {
                 botListDB.deleteDetailRoomWithFlagContent(orderModel);
             }
         }
@@ -1035,10 +998,10 @@ public class DialogFormChildMain extends DialogFragment {
     @Override
     public void onDismiss(final DialogInterface dialog) {
         super.onDismiss(dialog);
-        if(mCancel.getText().toString().equalsIgnoreCase("Cancel")){
-            String titleUntuk ="";
-            String decsUntuk ="";
-            String priceUntuk ="";
+        if (mCancel.getText().toString().equalsIgnoreCase("Cancel")) {
+            String titleUntuk = "";
+            String decsUntuk = "";
+            String priceUntuk = "";
 
             List<RoomsDetail> list = botListDB.getAllRoomDetailFormWithFlagContent(idchildDetail, DialogFormChildMain.jsonCreateIdTabNUsrName(idTab, username), DialogFormChildMain.jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail");
 
@@ -1064,9 +1027,9 @@ public class DialogFormChildMain extends DialogFragment {
 
                 if (jsA != null) {
                     if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
-                        titleUntuk = jsonResultType(list.get(u).getContent(),"Name Detail");
-                        if (titleUntuk.equalsIgnoreCase("")){
-                            titleUntuk = jsonResultType(list.get(u).getContent(),"SKU");
+                        titleUntuk = jsonResultType(list.get(u).getContent(), "Name Detail");
+                        if (titleUntuk.equalsIgnoreCase("")) {
+                            titleUntuk = jsonResultType(list.get(u).getContent(), "SKU");
                         }
                     } else {
                         try {
@@ -1079,9 +1042,9 @@ public class DialogFormChildMain extends DialogFragment {
                         }
                     }
                 } else {
-                    if(jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number")||jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")){
+                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("number") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("currency")) {
                         decsUntuk = list.get(u).getContent();
-                    }else if(jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("formula")){
+                    } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("formula")) {
                         priceUntuk = list.get(u).getContent();
                     }
 
@@ -1089,14 +1052,14 @@ public class DialogFormChildMain extends DialogFragment {
             }
 
             boolean next = true;
-            if (titleUntuk.equalsIgnoreCase("")){
+            if (titleUntuk.equalsIgnoreCase("")) {
                 next = false;
-            }else if(priceUntuk.equalsIgnoreCase("")){
+            } else if (priceUntuk.equalsIgnoreCase("")) {
                 next = false;
-            }else if (decsUntuk.equalsIgnoreCase("")){
+            } else if (decsUntuk.equalsIgnoreCase("")) {
                 next = false;
             }
-            if (!next){
+            if (!next) {
                 delete();
             }
         }
@@ -1153,7 +1116,7 @@ public class DialogFormChildMain extends DialogFragment {
         return obj.toString();
     }
 
-    private String jsonCreateTypeTitle(String id, String name, String qty ,String price) {
+    private String jsonCreateTypeTitle(String id, String name, String qty, String price) {
         JSONObject obj = new JSONObject();
         try {
             obj.put("a", id);
@@ -1190,7 +1153,6 @@ public class DialogFormChildMain extends DialogFragment {
 
         return obj.toString();
     }
-
 
 
     @Override
@@ -1249,9 +1211,9 @@ public class DialogFormChildMain extends DialogFragment {
                 final ArrayList<String> spinnerArray = new ArrayList<String>();
                 if (coloum.length - 1 != asIs) {
                     spinnerArray.add("--Please Select--");
-                    refresh("","","","");
-                }else{
-                    showSpinner= false;
+                    refresh("", "", "", "");
+                } else {
+                    showSpinner = false;
                 }
 
                 if (c.moveToFirst()) {
@@ -1259,14 +1221,14 @@ public class DialogFormChildMain extends DialogFragment {
                         String column1 = c.getString(0);
 
                         spinnerArray.add(column1);
-                        if (!showSpinner){
+                        if (!showSpinner) {
 
 
-                            Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
+                            Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                             if (cEdit.getCount() > 0) {
                                 try {
                                     JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), function(jsonObject, titlle, column1).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), function(jsonObject, titlle, column1).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
                                     botListDB.updateDetailRoomWithFlagContent(orderModel);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -1277,7 +1239,7 @@ public class DialogFormChildMain extends DialogFragment {
                             } else {
                                 RoomsDetail orderModel = null;
                                 try {
-                                    orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), function(null, titlle,column1).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                    orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), function(null, titlle, column1).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
                                     botListDB.insertRoomsDetail(orderModel);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -1285,7 +1247,7 @@ public class DialogFormChildMain extends DialogFragment {
 
                             }
 
-                            refresh("",customersId,column1,namedb);
+                            refresh("", customersId, column1, namedb);
                         }
                     } while (c.moveToNext());
                 }
@@ -1311,7 +1273,7 @@ public class DialogFormChildMain extends DialogFragment {
                 final String finalTitlle = titlle;
 
 
-                Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
+                Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                 if (cEdit.getCount() > 0) {
                     try {
                         JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
@@ -1328,14 +1290,14 @@ public class DialogFormChildMain extends DialogFragment {
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                         final int count = view.getChildCount();
                         view.removeViews(asIs + 1, count - (asIs + 1));
-                        if (!spinner.getSelectedItem().toString().replace("'","''").equals("--Please Select--")) {
-                            addSpinnerDinamic(jsonValue, namedb, view, table, coloum, asIs, where + " and " + coloum[asIs] + "= '" + spinner.getSelectedItem().toString().replace("'","''")  + "'", idListTask, type, finalI24, name);
+                        if (!spinner.getSelectedItem().toString().replace("'", "''").equals("--Please Select--")) {
+                            addSpinnerDinamic(jsonValue, namedb, view, table, coloum, asIs, where + " and " + coloum[asIs] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'", idListTask, type, finalI24, name);
 
-                            Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab,username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
+                            Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                             if (cEdit.getCount() > 0) {
                                 try {
                                     JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster),  function(jsonObject, finalTitlle, spinner.getSelectedItem().toString().replace("'","''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), function(jsonObject, finalTitlle, spinner.getSelectedItem().toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
                                     botListDB.updateDetailRoomWithFlagContent(orderModel);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -1346,7 +1308,7 @@ public class DialogFormChildMain extends DialogFragment {
                             } else {
                                 RoomsDetail orderModel = null;
                                 try {
-                                    orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username),jsonCreateIdDetailNIdListTaskOld(idDetail,idListTaskMaster), function(null, finalTitlle, spinner.getSelectedItem().toString().replace("'","''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
+                                    orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), function(null, finalTitlle, spinner.getSelectedItem().toString().replace("'", "''")).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
                                     botListDB.insertRoomsDetail(orderModel);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -1364,9 +1326,9 @@ public class DialogFormChildMain extends DialogFragment {
 
                 });
 
-                if(showSpinner){
+                if (showSpinner) {
                     spinner.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     textView.setVisibility(View.VISIBLE);
                     spinner.setVisibility(View.GONE);
                     textView.setText(spinnerArray.get(0));
@@ -1378,30 +1340,30 @@ public class DialogFormChildMain extends DialogFragment {
         getActivity().sendBroadcast(newIntent);*/
     }
 
-    public void refresh(String Formulamaster, String idcustomes, String item,String dbName ){
-        if(idListTaskMaster.equalsIgnoreCase("62721") || idListTaskMaster.equalsIgnoreCase("62753")){
+    public void refresh(String Formulamaster, String idcustomes, String item, String dbName) {
+        if (idListTaskMaster.equalsIgnoreCase("62721") || idListTaskMaster.equalsIgnoreCase("62753")) {
             List<String> stockList = new ArrayList<String>();
             stockList.add(idcustomes);
             stockList.add(item);
             String[] stockArr = new String[stockList.size()];
             stockArr = stockList.toArray(stockArr);
 
-            DataBaseDropDown mDB = new DataBaseDropDown(getContext(),dbName);
+            DataBaseDropDown mDB = new DataBaseDropDown(getContext(), dbName);
             if (mDB.getWritableDatabase() != null) {
-                Cursor c2 = mDB.getWritableDatabase().rawQuery(Formulamaster,stockArr);
+                Cursor c2 = mDB.getWritableDatabase().rawQuery(Formulamaster, stockArr);
                 if (c2.moveToFirst()) {
                     while (!c2.isAfterLast()) {
                         String harga = new Validations().getInstance(getContext()).numberToCurency(c2.getString(0));
                         et[1].setText(harga);
                         c2.moveToNext();
                     }
-                }else{
+                } else {
                     et[1].setText("");
                 }
-            }else {
+            } else {
                 et[1].setText("");
             }
-        }else{
+        } else {
             List<String> stockList = new ArrayList<String>();
             stockList.add(idcustomes);
             stockList.add(item);
@@ -1409,21 +1371,21 @@ public class DialogFormChildMain extends DialogFragment {
             String[] stockArr = new String[stockList.size()];
             stockArr = stockList.toArray(stockArr);
 
-            DataBaseDropDown mDB = new DataBaseDropDown(getContext(),dbName);
+            DataBaseDropDown mDB = new DataBaseDropDown(getContext(), dbName);
             if (mDB.getWritableDatabase() != null) {
                 Cursor c2 = mDB.getWritableDatabase().rawQuery("SELECT COALESCE((Select price from special_price  where id_customers = ? and item_number = ?),harga) as harga\n" +
                         "FROM   product\n" +
-                        "WHERE  item_number = ?",stockArr);
+                        "WHERE  item_number = ?", stockArr);
                 if (c2.moveToFirst()) {
                     while (!c2.isAfterLast()) {
                         String harga = new Validations().getInstance(getContext()).numberToCurency(c2.getString(0));
                         et[1].setText(harga);
                         c2.moveToNext();
                     }
-                }else{
+                } else {
                     et[1].setText("");
                 }
-            }else {
+            } else {
                 et[1].setText("");
             }
         }

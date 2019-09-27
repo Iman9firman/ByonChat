@@ -1,6 +1,7 @@
 package com.honda.android;
 
-import android.support.v4.app.FragmentActivity;
+
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * Created by Iman Firmansyah on 3/11/2016.

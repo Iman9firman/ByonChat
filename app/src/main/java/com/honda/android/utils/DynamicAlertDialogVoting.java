@@ -3,9 +3,10 @@ package com.honda.android.utils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -193,9 +194,7 @@ public class DynamicAlertDialogVoting extends DialogFragment {
 				//selectedId = rg.getCheckedRadioButtonId();
 				selectedId = checkedId;
 				RadioButton rb=(RadioButton)view.findViewById(checkedId);
-				Log.i("--RADIO BUTTON SELECTED CODE ID--", ""+checkedId);
 				radiovalue = rb.getText().toString();
-				Log.i("--RADIO BUTTON SELECTED CODE VALUE--", ""+radiovalue);
 			}
 		});
 

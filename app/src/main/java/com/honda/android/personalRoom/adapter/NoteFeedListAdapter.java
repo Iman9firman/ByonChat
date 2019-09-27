@@ -8,11 +8,10 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.SpannableString;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,13 +26,11 @@ import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.honda.android.R;
 import com.honda.android.ZoomImageViewActivity;
 import com.honda.android.communication.MessengerConnectionService;
-import com.honda.android.personalRoom.FragmentMyNote;
 import com.honda.android.personalRoom.FullScreenDetailPicture;
 import com.honda.android.personalRoom.NoteCommentActivity;
 import com.honda.android.personalRoom.NoteFeedImageView;
 import com.honda.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.honda.android.personalRoom.model.NoteFeedItem;
-import com.honda.android.personalRoom.viewHolder.feedItemsHolder;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.RoomsDetail;
 import com.honda.android.utils.CustomVolleyRequestQueue;
@@ -45,7 +42,6 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,7 +49,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by lukma on 3/7/2016.

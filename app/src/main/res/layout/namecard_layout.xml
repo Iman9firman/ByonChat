@@ -5,7 +5,7 @@
     android:layout_height="360px"
     android:id="@+id/namecard_main">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -84,7 +84,7 @@
             app:layout_constraintTop_toBottomOf="@id/logo_ncl"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </RelativeLayout>

@@ -21,12 +21,12 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.support.annotation.NonNull;
-import android.support.v4.util.ArrayMap;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.support.v7.widget.RecyclerView.State;
-import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.support.v7.widget.SimpleItemAnimator;
+import androidx.annotation.NonNull;
+import androidx.core.util.ArrayMap;
+import androidx.core.view.animation.FastOutSlowInInterpolator;
+import androidx.appcompat.widget.RecyclerView.State;
+import androidx.appcompat.widget.RecyclerView.ViewHolder;
+import androidx.appcompat.widget.SimpleItemAnimator;
 import android.view.View;
 
 import java.util.ArrayList;

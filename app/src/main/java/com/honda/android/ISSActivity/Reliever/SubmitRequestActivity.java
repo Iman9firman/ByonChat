@@ -11,12 +11,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -31,15 +30,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.honda.android.ConversationActivity;
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.honda.android.R;
-import com.honda.android.communication.MessengerConnectionService;
 import com.honda.android.helpers.Constants;
 import com.honda.android.list.IconItem;
 import com.honda.android.provider.ChatParty;
 import com.honda.android.provider.Contact;
-import com.honda.android.provider.RoomsDetail;
-import com.honda.android.utils.ValidationsKey;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -59,9 +54,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 

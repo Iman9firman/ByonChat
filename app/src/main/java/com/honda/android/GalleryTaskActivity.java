@@ -8,12 +8,10 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,14 +23,10 @@ import android.widget.Toast;
 
 import com.honda.android.adapter.GalleryAdapter;
 import com.honda.android.adapter.RecyclerItemGalleryViewHolder;
-import com.honda.android.http.JobCompleted;
-import com.honda.android.http.RequestGet;
-import com.honda.android.model.Image;
 import com.honda.android.personalRoom.listener.HidingScrollListener;
 import com.honda.android.personalRoom.model.PictureModel;
 import com.honda.android.utils.HttpHelper;
 import com.honda.android.utils.Utility;
-import com.honda.android.utils.UtilsPD;
 import com.honda.android.view.GridSpacingItemDecoration;
 
 import org.apache.http.HttpResponse;
@@ -57,8 +51,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.honda.android.NoteCommentActivityV2.URL_LIST_NOTE_COMMENT;
 
 public class GalleryTaskActivity extends AppCompatActivity {
 

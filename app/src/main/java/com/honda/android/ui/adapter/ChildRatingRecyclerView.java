@@ -3,30 +3,23 @@ package com.honda.android.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
+
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.honda.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingActivity;
 import com.honda.android.ISSActivity.Requester.RequesterBaseRatingActivity;
 import com.honda.android.R;
 import com.honda.android.data.model.MkgServices;
-import com.honda.android.helpers.Constants;
 import com.honda.android.tabRequest.RelieverDetailActivity;
-import com.mindorks.placeholderview.annotations.Click;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
 @Layout(R.layout.mkg_child_rating_layout)
 public class ChildRatingRecyclerView {

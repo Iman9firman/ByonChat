@@ -6,15 +6,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.honda.android.ByonChatMainRoomActivity;
 import com.honda.android.FragmentDinamicRoom.DinamicListTaskAdapter;
@@ -30,7 +31,6 @@ import com.honda.android.utils.EndlessRecyclerOnScrollListener;
 import com.honda.android.utils.HttpHelper;
 import com.honda.android.utils.RequestKeyTask;
 import com.honda.android.utils.TaskCompleted;
-import com.honda.android.utils.Utility;
 import com.honda.android.utils.ValidationsKey;
 
 import org.apache.http.HttpEntity;
@@ -60,9 +60,6 @@ import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;

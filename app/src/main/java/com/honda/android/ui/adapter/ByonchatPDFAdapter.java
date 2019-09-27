@@ -7,7 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -18,13 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.honda.android.R;
 import com.honda.android.data.model.File;
 import com.honda.android.ui.viewholder.ByonchatPDFViewHolder;
-import com.honda.android.utils.Utility;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -38,8 +35,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import me.gujun.android.taggroup.TagGroup;
 
 public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 

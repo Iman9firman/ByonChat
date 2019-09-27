@@ -8,21 +8,21 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.util.SortedList;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
+
 import android.text.Html;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.HeaderViewListAdapter;
 import android.widget.Toast;
 
 import com.honda.android.Manhera.Manhera;
-import com.honda.android.NoteCommentActivityV2;
 import com.honda.android.R;
 import com.honda.android.ZoomImageViewActivity;
 import com.honda.android.communication.MessengerConnectionService;
@@ -50,8 +50,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import static com.honda.android.helpers.Constants.EXTRA_PARENT;
 
 /**
  * Created by Lukmanpryg on 5/9/2016.

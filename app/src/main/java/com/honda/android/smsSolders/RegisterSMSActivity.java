@@ -11,11 +11,10 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,24 +24,16 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TableLayout;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.honda.android.R;
-import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.Contact;
-import com.honda.android.provider.FilesURL;
-import com.honda.android.provider.FilesURLDatabaseHelper;
 import com.honda.android.provider.Interval;
 import com.honda.android.provider.IntervalDB;
 import com.honda.android.provider.MessengerDatabaseHelper;
-import com.honda.android.provider.RoomsDetail;
 import com.honda.android.utils.RequestKeyTask;
-import com.honda.android.utils.RequestUploadSite;
 import com.honda.android.utils.TaskCompleted;
-import com.honda.android.utils.UploadService;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -62,15 +53,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class RegisterSMSActivity extends AppCompatActivity {
     ProgressDialog progressDialog;

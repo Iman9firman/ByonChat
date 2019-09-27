@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.text.InputFilter;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -23,6 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.honda.android.R;
 import com.honda.android.adapter.FormSpinnerAdapterVoting;
@@ -73,7 +74,7 @@ public class DynamicDialogSelfLayoutVoting extends DialogFragment {
 	
 	public DynamicDialogSelfLayoutVoting() {}
 
-	public static DynamicDialogSelfLayoutVoting newInstance(FragmentActivity fragmentActivity, String groupid, String groupname, String tag) {		
+	public static DynamicDialogSelfLayoutVoting newInstance(FragmentActivity fragmentActivity, String groupid, String groupname, String tag) {
 		DynamicDialogSelfLayoutVoting frag = new DynamicDialogSelfLayoutVoting();
 		if(null != fragmentActivity)frag.fragmentActivity = fragmentActivity;
 		if(null != groupid)

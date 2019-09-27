@@ -1,96 +1,43 @@
 package com.honda.android;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.media.ExifInterface;
-import android.media.MediaPlayer;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.LruCache;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.Html;
-import android.text.Spanned;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
 
-import com.bumptech.glide.Glide;
 import com.honda.android.adapter.HorizontalAdapter;
-import com.honda.android.local.CacheManager;
 import com.honda.android.model.Image;
-import com.honda.android.model.ImageCompressed;
 import com.honda.android.model.ModelPicture;
 import com.honda.android.personalRoom.RecyclerItemClickListener;
 import com.honda.android.personalRoom.model.NotesPhoto;
 import com.honda.android.personalRoom.model.PictureModel;
 import com.honda.android.personalRoom.transformer.DepthPageTransformer;
-import com.honda.android.provider.FilesURL;
-import com.honda.android.provider.FilesURLDatabaseHelper;
-import com.honda.android.provider.Group;
-import com.honda.android.provider.Message;
-import com.honda.android.provider.MessengerDatabaseHelper;
-import com.honda.android.utils.ImageFilePath;
 import com.honda.android.utils.ImageLoadingUtils;
-import com.honda.android.utils.MediaProcessingUtil;
 import com.honda.android.utils.TouchImageView;
-import com.honda.android.utils.UploadService;
-import com.honda.android.utils.UtilsPD;
 import com.honda.android.utils.Validations;
-import com.honda.android.videotrimmer.utils.FileUtils;
-import com.honda.android.widget.VideoSlaceSeekBar;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.regex.Pattern;
 
 /**
  * Created by byonc on 4/20/2017.

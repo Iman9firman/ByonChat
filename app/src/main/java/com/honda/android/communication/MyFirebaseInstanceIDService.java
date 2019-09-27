@@ -1,12 +1,10 @@
 package com.honda.android.communication;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.honda.android.FinalizingActivity;
 import com.honda.android.R;
 import com.honda.android.provider.MessengerDatabaseHelper;
 import com.google.firebase.iid.FirebaseInstanceId;

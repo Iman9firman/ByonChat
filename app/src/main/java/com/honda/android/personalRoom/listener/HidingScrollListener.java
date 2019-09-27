@@ -1,7 +1,7 @@
 package com.honda.android.personalRoom.listener;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /*
 * Created by Rutul on 02-03-2015.

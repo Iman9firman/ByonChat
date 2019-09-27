@@ -1,40 +1,31 @@
 package com.honda.android.utils;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.CancellationSignal;
-import android.support.v4.app.ActivityCompat;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.honda.android.ByonChatMainRoomActivity;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+
+import android.widget.TextView;
+
 import com.honda.android.ConversationActivity;
-import com.honda.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.honda.android.LoginDinamicFingerPrint;
 import com.honda.android.R;
 import com.honda.android.RequestPasscodeRoomActivity;
-import com.honda.android.provider.BotListDB;
-import com.honda.android.provider.Rooms;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by whit3hawks on 11/16/16.
  */
-@android.support.annotation.RequiresApi(api = Build.VERSION_CODES.M)
+
+@RequiresApi(api = Build.VERSION_CODES.M)
 public class FingerprintHandler extends FingerprintManager.AuthenticationCallback {
 
     private Context context;

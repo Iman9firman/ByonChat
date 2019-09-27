@@ -3,25 +3,18 @@ package com.honda.android.personalRoom;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.cardview.widget.CardView;
 import android.text.Html;
 import android.util.Log;
 import android.view.Display;
@@ -34,37 +27,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.honda.android.DownloadFileByonchat;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.honda.android.R;
 import com.honda.android.communication.MessengerConnectionService;
-import com.honda.android.communication.NetworkInternetConnectionStatus;
-import com.honda.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.honda.android.personalRoom.utils.ShareFileFromAPI;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.MessengerDatabaseHelper;
-import com.honda.android.provider.RoomsDetail;
-import com.honda.android.tabRequest.RelieverDetailActivity;
-import com.honda.android.ui.activity.MainBaseActivityNew;
 import com.honda.android.utils.EndlessRecyclerViewScrollListener;
 import com.honda.android.utils.PermissionsUtil;
-import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
-
-import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 import static android.view.View.GONE;
 

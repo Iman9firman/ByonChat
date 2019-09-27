@@ -1,6 +1,6 @@
 package com.honda.android.videotrimmer.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.honda.android.videotrimmer.interfaces.OnTrimVideoListener;
 import java.io.IOException;
 import java.util.Formatter;

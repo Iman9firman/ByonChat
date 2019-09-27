@@ -9,11 +9,11 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.honda.android.R;
 import com.honda.android.provider.Contact;
-import com.honda.android.provider.Interval;
 import com.honda.android.provider.IntervalDB;
 import com.honda.android.provider.MessengerDatabaseHelper;
 import com.honda.android.utils.RequestKeyTask;

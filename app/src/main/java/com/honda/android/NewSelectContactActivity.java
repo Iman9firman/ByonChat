@@ -1,11 +1,8 @@
 package com.honda.android;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -18,16 +15,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.util.LogWriter;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+
+import androidx.core.view.MenuItemCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -37,81 +32,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.honda.android.TagTrending.Tag;
-import com.honda.android.TagTrending.TagClass;
-import com.honda.android.TagTrending.TagView;
 import com.honda.android.adapter.NewContactAdapter;
-import com.honda.android.communication.MessengerConnectionService;
-import com.honda.android.communication.NetworkInternetConnectionStatus;
-import com.honda.android.contacts.ContactListFragment;
 import com.honda.android.createMeme.FilteringImage;
-import com.honda.android.list.ItemListTrending;
-import com.honda.android.list.SearchroomAdapter;
 import com.honda.android.personalRoom.PersonalRoomActivity;
 import com.honda.android.provider.Contact;
-import com.honda.android.provider.ContactBot;
-import com.honda.android.provider.Interval;
 import com.honda.android.provider.IntervalDB;
 import com.honda.android.provider.Message;
 import com.honda.android.provider.MessengerDatabaseHelper;
-import com.honda.android.provider.RoomsDB;
 import com.honda.android.provider.Skin;
-import com.honda.android.suggest.SuggestionAdapter;
-import com.honda.android.suggest.SuggestionAdapterHashTag;
-import com.honda.android.suggest.SuggestionAdapterTag;
-import com.honda.android.utils.GPSTracker;
-import com.honda.android.utils.HttpHelper;
 import com.honda.android.utils.ImageFilePath;
-import com.honda.android.utils.MediaProcessingUtil;
-import com.honda.android.utils.RefreshContactService;
-import com.honda.android.utils.RequestKeyTask;
-import com.honda.android.utils.TaskCompleted;
 import com.honda.android.utils.Validations;
-import com.honda.android.utils.ValidationsKey;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Field;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import lb.library.PinnedHeaderListView;
-
-import static java.security.AccessController.getContext;
 
 public class NewSelectContactActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -459,7 +402,7 @@ public class NewSelectContactActivity extends AppCompatActivity implements Swipe
         final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchItem.expandActionView();
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText = (EditText) mSearchView.findViewById(R.id.search_src_text);
         searchEditText.setFocusable(true);
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override

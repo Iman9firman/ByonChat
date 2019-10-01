@@ -193,7 +193,7 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.2.1'
     compile 'com.github.grennis:ExpandableRecyclerView:0.9.3'
 
-    compile(name: 'cameralibrary-release', ext: 'aar')
+    compile(name: 'camera_sept2019', ext: 'aar')
     compile(name: 'ocrlibrary-release', ext: 'aar')
     compile 'com.google.android.gms:play-services-vision:10.2.1'
 

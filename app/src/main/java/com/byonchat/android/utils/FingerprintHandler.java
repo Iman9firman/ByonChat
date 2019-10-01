@@ -79,7 +79,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         Intent intent = new Intent(context, HomeActivity.class);
         context.startActivity(intent);*/
 
-        new Validations().getInstance(context).changeProtectLogin(username_room, "2");
+        new Validations().getInstance(context).changeProtectLogin(username_room, "2","");
         ((Activity) context).finish();
 
         Intent a = new Intent(context, LoginDinamicFingerPrint.class);
@@ -99,7 +99,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                 public void onClick(DialogInterface arg0, int arg1) {
                     // TODO: 22/11/18 buat disini activity untuk request passcode dengan hendry dan simpan didb status pemesanan pascodenya
 
-                    new Validations().getInstance(context).changeProtectLogin(username_room, "5");
+                    new Validations().getInstance(context).changeProtectLogin(username_room, "5","");
 
                     ((Activity) context).finish();
                     Intent intent = new Intent(context, RequestPasscodeRoomActivity.class);

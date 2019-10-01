@@ -40,7 +40,7 @@ public class Validations {
         return instance;
     }
 
-    public void changeProtectLogin(String usernameRoom, String proKey) {
+    public void changeProtectLogin(String usernameRoom, String proKey, String pinKey) {
         BotListDB botListDB = BotListDB.getInstance(context);
         Cursor cur = botListDB.getSingleRoom(usernameRoom);
         if (cur.getCount() > 0) {
@@ -62,6 +62,11 @@ public class Validations {
                 String c = new JSONObject(nColor).getString("c");
                 String d = new JSONObject(nColor).getString("d");
                 String e = new JSONObject(nColor).getString("e");
+                String pk = "";
+
+                if (new JSONObject(nColor).has("pin")) {
+                    pk = new JSONObject(nColor).getString("pin");
+                }
 
 
                 obj.put("a", a);
@@ -70,6 +75,13 @@ public class Validations {
                 obj.put("d", d);
                 obj.put("e", e);
                 obj.put("p", proKey);
+                if (pinKey.equalsIgnoreCase("")) {
+                    obj.put("pin", pk);
+                } else {
+                    obj.put("pin", pinKey);
+                }
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -11,23 +11,30 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDB;
+import com.byonchat.android.utils.Validations;
 import com.chaos.view.PinView;
 import com.squareup.picasso.Picasso;
+
 import java.security.KeyStore;
+
 import javax.crypto.Cipher;
 
 import static com.byonchat.android.ByonChatMainRoomActivity.jsonResultType;
+import static com.byonchat.android.ConversationActivity.KEY_TITLE;
 
-public class LoginDinamicByPIN  extends AppCompatActivity {
+public class LoginDinamicByPIN extends AppCompatActivity {
 
     private static final String KEY_NAME = "ByonChatKey";
 
@@ -42,6 +49,7 @@ public class LoginDinamicByPIN  extends AppCompatActivity {
     String username = "";
     String name = "";
     String content = "";
+    String pinOld = "";
     String current = "";
     String icon = "";
     String desc = "", realname = "", link = "", type = "";
@@ -57,7 +65,7 @@ public class LoginDinamicByPIN  extends AppCompatActivity {
         setContentView(R.layout.activity_pin_login);
 
         final Intent inti = getIntent();
-
+        context = LoginDinamicByPIN.this;
         username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
         login_pin = (TextView) findViewById(R.id.login_pin);
         reset_pin = (TextView) findViewById(R.id.reset_pin);
@@ -91,6 +99,7 @@ public class LoginDinamicByPIN  extends AppCompatActivity {
 
             color = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
             colorText = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
+            pinOld = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "pin");
             content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
             icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
 
@@ -106,7 +115,7 @@ public class LoginDinamicByPIN  extends AppCompatActivity {
 
             login_roomname = (TextView) findViewById(R.id.login_roomname);
 
-            login_roomname.setText("Login to " + name);
+            login_roomname.setText(name);
 
             ConstraintLayout someView = (ConstraintLayout) findViewById(R.id.all_background);
             someView.setBackgroundColor(Color.parseColor("#" + color));
@@ -116,13 +125,58 @@ public class LoginDinamicByPIN  extends AppCompatActivity {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                 getWindow().setStatusBarColor(Color.parseColor("#" + color));
             }
+
+            if (getIntent().getStringExtra("FROM").equalsIgnoreCase("REQUEST")) {
+                submit.setText("Create PIN");
+                reset_pin.setVisibility(View.GONE);
+                text_info.setText(getResources().getString(R.string.set_pin));
+            } else {
+                submit.setText("Submit");
+            }
         }
 
         reset_pin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reset_pin.setVisibility(View.GONE);
-                text_info.setText(getResources().getString(R.string.set_pin));
+                new Validations().getInstance(context).changeProtectLogin(username, "5", "request");
+                finish();
+                Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
+                a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                a.putExtra(ConversationActivity.KEY_TITLE, "request");
+                startActivity(a);
+            }
+        });
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.w("hahab", pinView.getText().toString() + "-:-" + pinOld);
+                if (pinView.length() < 4) {
+                    Toast.makeText(getApplicationContext(), R.string.participant_outlets, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (getIntent().getStringExtra("FROM").equalsIgnoreCase("REQUEST")) {
+                    new Validations().getInstance(context).changeProtectLogin(username, "2", pinView.getText().toString() );
+
+                    Intent a = new Intent(context, LoginDinamicFingerPrint.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                    a.putExtra(ConversationActivity.KEY_MESSAGE_FORWARD, "success");
+                    context.startActivity(a);
+                } else {
+                    if (pinView.getText().toString().equalsIgnoreCase(pinOld)) {
+                        Intent a = new Intent(context, LoginDinamicFingerPrint.class);
+                        a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                        a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                        a.putExtra(ConversationActivity.KEY_MESSAGE_FORWARD, "success");
+                        context.startActivity(a);
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+
             }
         });
     }

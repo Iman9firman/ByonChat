@@ -897,6 +897,15 @@ public class ByonChatMainRoomActivity extends AppCompatActivity implements Locat
                     a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
                     startActivity(a);
                 }
+            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("7")) {
+                if (success == null) {
+                    finish();
+                    Intent intent = new Intent(getApplicationContext(), LoginDinamicByPIN.class);
+                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    intent.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                    intent.putExtra("FROM", "REQUEST");
+                    startActivity(intent);
+                }
             }
         }
     }

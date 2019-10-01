@@ -108,6 +108,7 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
     BotListDB botListDB;
     String color;
     String colorText;
+    String pin;
     String name;
     CircleProgressBar vCircleProgress;
     TextView uploadProgress;
@@ -141,7 +142,7 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                new Validations().getInstance(RequestPasscodeRoomActivity.this).changeProtectLogin(usernameRoom, "5");
+                new Validations().getInstance(RequestPasscodeRoomActivity.this).changeProtectLogin(usernameRoom, "5", "");
                 finish();
                 Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
                 a.putExtra(ConversationActivity.KEY_JABBER_ID, usernameRoom);
@@ -158,6 +159,7 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
             icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
             color = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
             colorText = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
+            pin = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "pin");
             uploadProgress.setTextColor(Color.parseColor("#" + color));
             if (color == null || color.equalsIgnoreCase("") || color.equalsIgnoreCase("null")) {
                 color = "006b9c";
@@ -365,7 +367,7 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
 
                 } else {
                     finish();
-                    new Validations().getInstance(RequestPasscodeRoomActivity.this).changeProtectLogin(usernameRoom, "6");
+                    new Validations().getInstance(RequestPasscodeRoomActivity.this).changeProtectLogin(usernameRoom, "6", "");
                     Toast.makeText(RequestPasscodeRoomActivity.this, "Request Passcode Success", Toast.LENGTH_SHORT).show();
                 }
 
@@ -495,14 +497,27 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
                         if (hasil.equalsIgnoreCase("0")) {
                             error = jsonRootObject.getString("message");
                         } else if (hasil.equalsIgnoreCase("1")) {
-                            new Validations().getInstance(RequestPasscodeRoomActivity.this).changeProtectLogin(usernameRoom, "2");
-                            finish();
 
-                            Intent a = new Intent(getApplicationContext(), LoginDinamicFingerPrint.class);
-                            a.putExtra(ConversationActivity.KEY_JABBER_ID, usernameRoom);
-                            a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
-                            a.putExtra(ConversationActivity.KEY_MESSAGE_FORWARD, "success");
-                            startActivity(a);
+                            if (pin.equalsIgnoreCase("request")) {
+                                new Validations().getInstance(RequestPasscodeRoomActivity.this).changeProtectLogin(usernameRoom, "7", "");
+                                finish();
+
+                                Intent intent = new Intent(RequestPasscodeRoomActivity.this, LoginDinamicByPIN.class);
+                                intent.putExtra(ConversationActivity.KEY_JABBER_ID, usernameRoom);
+                                intent.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                                intent.putExtra("FROM", "REQUEST");
+                                startActivity(intent);
+
+                            } else {
+                                new Validations().getInstance(RequestPasscodeRoomActivity.this).changeProtectLogin(usernameRoom, "2", "");
+                                finish();
+                                Intent a = new Intent(getApplicationContext(), LoginDinamicFingerPrint.class);
+                                a.putExtra(ConversationActivity.KEY_JABBER_ID, usernameRoom);
+                                a.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                                a.putExtra(ConversationActivity.KEY_MESSAGE_FORWARD, "success");
+                                startActivity(a);
+                            }
+
 
                         } else {
                             error = "Tolong periksa koneksi internet.";

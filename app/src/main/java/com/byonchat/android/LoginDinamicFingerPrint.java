@@ -2,6 +2,7 @@ package com.byonchat.android;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -22,7 +23,9 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,7 +93,8 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
     String desc = "", realname = "", link = "", type = "";
     Context context;
     ProgressDialog progressDialog;
-    TextView login_roomname, login_pin;
+    TextView login_roomname;
+    Button login_pin;
     ImageView imageView;
 
     private UserLoginTask mAuthTask = null;
@@ -105,7 +109,7 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
 
         username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
         contentMain = (CardView) findViewById(R.id.content_main);
-        login_pin = (TextView) findViewById(R.id.login_pin);
+        login_pin = (Button) findViewById(R.id.login_pin);
 
         contentMain.setVisibility(View.GONE);
         if (roomsDB == null) {
@@ -123,7 +127,7 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
         }
 
         String ss = getIntent().getStringExtra(ConversationActivity.KEY_MESSAGE_FORWARD);
-        if (ss == null) {
+      /*  if (ss == null) {
             showProgress();
             mAuthTask = new UserLoginTask();
             mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login_expired.php", username);
@@ -133,7 +137,7 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
             mAuthTask = new UserLoginTask();
             mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login.php", username, "is_fingerprint");
 
-        }
+        }*/
 
         Cursor cur = botListDB.getSingleRoom(username);
 
@@ -160,9 +164,9 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
 
             Picasso.with(this).load(icon).into(imageView);
 
-            login_roomname.setText("Login to " + name);
+            login_roomname.setText(name);
 
-            RelativeLayout someView = (RelativeLayout) findViewById(R.id.all_background);
+            LinearLayout someView = (LinearLayout) findViewById(R.id.all_background);
             someView.setBackgroundColor(Color.parseColor("#" + color));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -172,13 +176,34 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
             //loginBtn.setCardBackgroundColor(Color.parseColor("#" + color));
         }
 
+        if (jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "pin").equalsIgnoreCase("error") || jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "pin").equalsIgnoreCase("request")) {
+            login_pin.setText("Request PIN");
+        } else {
+            login_pin.setText("Login by PIN");
+        }
+
         login_pin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginDinamicFingerPrint.this, LoginDinamicByPIN.class);
-                intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                intent.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
-                startActivity(intent);
+                if (jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "pin").equalsIgnoreCase("error") || jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "pin").equalsIgnoreCase("request")) {
+                    //new Validations().getInstance(context).changeProtectLogin(username, "5", "request");
+
+                    Toast.makeText(getApplicationContext(), "sayu", Toast.LENGTH_SHORT).show();
+
+                    new Validations().getInstance(LoginDinamicFingerPrint.this).changeProtectLogin(username, "5", "request");
+                    finish();
+                    Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
+                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    a.putExtra(ConversationActivity.KEY_TITLE, "request");
+                    startActivity(a);
+                } else {
+
+                    Intent intent = new Intent(LoginDinamicFingerPrint.this, LoginDinamicByPIN.class);
+                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                    intent.putExtra("FROM", "LOGIN");
+                    intent.putExtra(ConversationActivity.KEY_TITLE, messengerHelper.getMyContact().getJabberId());
+                    startActivity(intent);
+                }
             }
         });
 

@@ -89,12 +89,12 @@ public class ZhThreeFragment extends Fragment {
                     for (int j = 0 ; j<counting.length() ; j++){
                         counter++;
                     }
-                    SLAModel model = new SLAModel(label,content,counter,value/data.length(),false);
+                    SLAModel model = new SLAModel(label,content,counter+"",value/data.length(),false);
                     itemList.add(model);
                     for (int k = 0; k<listId.size() ; k++){
                         if (id.equalsIgnoreCase(listId.get(k))){
                             itemList.remove(model);
-                            itemList.add(new SLAModel(label,content,0,value/data.length(),false));
+                            itemList.add(new SLAModel(label,content,"0",value/data.length(),false));
                         }
                     }
                 }
@@ -122,7 +122,7 @@ public class ZhThreeFragment extends Fragment {
             slaCycler.addItemDecoration(dividerItemDecoration);
             adapter = new SLACyclerAdapter(getActivity(),itemList,idDetailForm);
             adapter.setClickListener((item, position) -> {
-                if (item.getCount() != 0){
+                if (!item.getCount().equalsIgnoreCase("0")){
                     // jika subsection belum dikerjakan
                     loadFragmentFromFragment(ZhThreeFragment.this,new ZhFourFragment(item.getTitle(),item.getDaleman(),idDetailForm,item.getValue(),passGrade,bobot),"ZhFour");
                 } else {

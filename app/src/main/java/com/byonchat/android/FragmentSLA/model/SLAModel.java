@@ -4,12 +4,12 @@ public class SLAModel {
     private String id;
     private String title;
     private String daleman;
-    private int count;
+    private String count;
     private Double value;
     private boolean isItemToBeCheck;
     private String img;
 
-    public SLAModel(String title,String content,int count,Double value,boolean isItemToBeCheck){
+    public SLAModel(String title,String content,String count,Double value,boolean isItemToBeCheck){
         this.title = title;
         this.daleman = content;
         this.count = count;
@@ -33,11 +33,11 @@ public class SLAModel {
         this.daleman = daleman;
     }
 
-    public int getCount() {
+    public String getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(String count) {
         this.count = count;
     }
 

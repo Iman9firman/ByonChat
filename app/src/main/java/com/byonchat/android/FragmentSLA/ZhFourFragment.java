@@ -122,7 +122,7 @@ public class ZhFourFragment extends Fragment {
                     String id = childObj.getString("id");
                     String idContent = childObj.getString("id_content");
                     String label = childObj.getString("label");
-                    itemList.add(new SLAModel(label,idContent,0,value/data.length(),true));
+                    itemList.add(new SLAModel(label,idContent,"0",value/data.length(),true));
                 }
             } catch (JSONException e){
                 e.printStackTrace();
@@ -146,7 +146,7 @@ public class ZhFourFragment extends Fragment {
                     letsGo = checkDB(idDetailForm,idContent);
                 }
                 if (letsGo){
-                try {
+                    try {
                         for (int z = 0 ; z<itemList.size() ; z++){
                             String idContent = itemList.get(z).getDaleman();
                             String image = getImgeB(idDetailForm,idContent);

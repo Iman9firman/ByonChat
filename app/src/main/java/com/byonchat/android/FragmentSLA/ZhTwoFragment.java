@@ -86,11 +86,15 @@ public class ZhTwoFragment extends Fragment {
                     String label = childObj.getString("label");
                     String content = childObj.getJSONArray("data").toString();
                     JSONArray counting = new JSONArray(content);
+
+                    int secount = 0;
                     int counter = 0;
+                    String sama = "";
                     for (int j = 0 ; j<counting.length() ; j++){
                         JSONObject child1 = counting.getJSONObject(j);
                         String id2 = child1.getString("id");
                         JSONArray contentCh1 = child1.getJSONArray("data");
+                        secount++;
                         for (int k = 0 ; k<contentCh1.length() ; k++){
                             String id3 = id+"-"+id2;
                             counter++;
@@ -98,12 +102,17 @@ public class ZhTwoFragment extends Fragment {
                                 for (int m = 0 ; m < listId.size() ; m++){
                                     if (listId.get(m).equalsIgnoreCase(id3)){
                                         counter--;
+                                        if(!sama.equalsIgnoreCase(id3)){
+                                            sama = id3;
+                                            secount--;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                    SLAModel model = new SLAModel(label,content,counter,value/data.length(),false);
+                    String countt = secount+"/"+counter;
+                    SLAModel model = new SLAModel(label,content,countt,value/data.length(),false);
                     model.setId(id);
                     itemList.add(model);
                 }

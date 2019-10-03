@@ -101,30 +101,63 @@ public class ZhOneFragment extends Fragment {
                     String content = childObj.getJSONArray("data").toString();
                     JSONArray counting = new JSONArray(content);
 
+                    Log.w("invisibbi",content);
                     //disini penghitungan jumlah item to be check yang belum di lakukan
+                    int secount = 0;
                     int counter = 0;
+                    String sama = "";
+                    String sama2 = "";
+
+                    //Section
                     for (int j = 0 ; j<counting.length() ; j++){
                         JSONObject child1 = counting.getJSONObject(j);
                         String id2 = child1.getString("id");
                         JSONArray contentCh1 = child1.getJSONArray("data");
+                        secount++;
+                        int jumlahSudah = 0;
+                        //Subsection
                         for (int k = 0 ; k<contentCh1.length() ; k++){
                             JSONObject child2 = contentCh1.getJSONObject(k);
                             String id3 = child2.getString("id");
                             JSONArray contentCh2 = child2.getJSONArray("data");
+                            //Pertanyaan
                             for (int l = 0 ; l<contentCh2.length();l++){
                                 String id4 = id+"-"+id2+"-"+id3;
                                 counter++;
                                 if (listId.size() != 0){
+                                    //Yang sudah di check
                                     for (int m = 0 ; m < listId.size() ; m++){
                                         if (listId.get(m).equalsIgnoreCase(id4)){
                                             counter--;
+                                            Log.w("invisibbieda",listId.get(m));
+                                            if(!sama.equalsIgnoreCase(id4)){
+                                                Log.w("invisibbiedd",listId.get(m));
+                                                jumlahSudah++;
+                                                sama = id4; //Biar gak looping dengan id yang sama
+//                                                if(contentCh1.length() == listId.size()){
+//                                                    secount--;
+//                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                        if(!sama2.equalsIgnoreCase(id2)){
+                            sama2 = id2;
+                            Log.w("invisibbier",jumlahSudah+"");
+                            Log.w("invisibbiera",contentCh1.length()+"");
+                            Log.w("invisibbier","-------------------------------");
+                            if(contentCh1.length() == jumlahSudah){
+                                secount--;
+                            }
+                        }
                     }
-                    SLAModel model = new SLAModel(label,content,counter,bobot,false);
+                    if(counter == 0){
+                        secount = 0;
+                    }
+                    String countt = secount+"/"+counter;
+                    SLAModel model = new SLAModel(label,content,countt,bobot,false);
                     model.setId(id);
                     itemList.add(model);
                 }

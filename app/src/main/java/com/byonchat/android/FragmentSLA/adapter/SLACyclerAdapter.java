@@ -116,7 +116,7 @@ public class SLACyclerAdapter extends RecyclerView.Adapter<SLACyclerAdapter.SLAC
             holder.nextLayout.setVisibility(View.VISIBLE);
             holder.note.setVisibility(View.GONE);
         }
-        if (item.getCount() == 0){
+        if (item.getCount().equalsIgnoreCase("0") || item.getCount().equalsIgnoreCase("0/0")){
             holder.textCount.setVisibility(View.INVISIBLE);
         }
     }

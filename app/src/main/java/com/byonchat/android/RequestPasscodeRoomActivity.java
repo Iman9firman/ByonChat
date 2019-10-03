@@ -35,6 +35,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -110,7 +111,7 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
     String colorText;
     String pin;
     String name;
-    CircleProgressBar vCircleProgress;
+    ProgressBar vCircleProgress;
     TextView uploadProgress;
     TextView reset;
     CardView contentMain;
@@ -132,7 +133,7 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
         }
 
         contentMain = (CardView) findViewById(R.id.content_main);
-        vCircleProgress = (CircleProgressBar) findViewById(R.id.progress);
+        vCircleProgress = (ProgressBar) findViewById(R.id.progress);
         uploadProgress = (TextView) findViewById(R.id.uploadProgress);
         reset = (TextView) findViewById(R.id.btn_reset);
         loginBtn = (Button) findViewById(R.id.loginBtn);
@@ -286,7 +287,12 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
                             public void transferred(long num) {
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                                 vCircleProgress.setProgress((int) ((num / (float) totalSize) * 100));
-                                uploadProgress.setText("Upload " + (int) ((num / (float) totalSize) * 100) + "%");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        uploadProgress.setText("Upload " + (int) ((num / (float) totalSize) * 100) + "%");
+                                    }
+                                });
                             }
                         });
 

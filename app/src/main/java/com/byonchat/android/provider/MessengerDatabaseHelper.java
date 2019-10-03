@@ -29,7 +29,7 @@ public class MessengerDatabaseHelper extends SQLiteOpenHelper {
             Context context) {
         if (instance == null) {
             instance = new MessengerDatabaseHelper(
-                    context.getApplicationContext());
+                    context);
         }
         return instance;
     }

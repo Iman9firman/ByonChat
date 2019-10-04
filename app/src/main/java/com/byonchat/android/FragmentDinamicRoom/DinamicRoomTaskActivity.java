@@ -95,6 +95,7 @@ import com.byonchat.android.DialogFormChildMainKompetitor;
 import com.byonchat.android.DialogFormChildMainLemindo;
 import com.byonchat.android.DialogFormChildMainNcal;
 import com.byonchat.android.DialogFormChildMainNew;
+import com.byonchat.android.DialogNewDropdown;
 import com.byonchat.android.DownloadFileByonchat;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.DownloadUtilsActivity;
@@ -6907,386 +6908,34 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             textView.setTextSize(15);
                             textView.setLayoutParams(new TableRow.LayoutParams(0));
 
+
+                            tp[count] = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
+                            tp[count].setId(Integer.parseInt(idListTask));
+                            tp[count].setHint(placeHolder);
+                            tp[count].setMinLines(4);
+
+
+                            tp[count].setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    FragmentManager fm = getSupportFragmentManager();
+                                    DialogNewDropdown testDialog = DialogNewDropdown.newInstance();
+                                    testDialog.setRetainInstance(true);
+                                    testDialog.show(fm, "Dialog");
+                                }
+                            });
+
                             LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                             params1.setMargins(30, 10, 30, 0);
                             valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(textView, params1);
 
-                            linearEstimasi[count] = (LinearLayout) getLayoutInflater().inflate(R.layout.layout_child, null);
-                            final JSONObject jObject = new JSONObject(value);
-                            String url = jObject.getString("url");
-                            Log.w("GlenF", url);
-                            String table = jsonArray.getJSONObject(i).getString("formula").toString().replace(";SELECT kelas, COUNT(*) AS jumlah FROM siswa GROUP BY kelas ORDER BY kelas ASC", "");
-
-                            final ArrayList<String> kolom = new ArrayList<>();
-                            ArrayList<String> title = new ArrayList<>();
-
-                            JSONArray jsonData = jObject.getJSONArray("data");
-                            try {
-                                for (int ii = 0; ii < jsonData.length(); ii++) {
-                                    JSONObject oContent = new JSONObject(jsonData.getString(ii));
-                                    kolom.add(oContent.getString("value").toString());
-                                    title.add(oContent.getString("title").toString());
-                                }
-                            } catch (Exception e) {
-
-                            }
-
-                            DataBaseDropDown mDB = null;
-
-                            String[] aa = url.split("/");
-                            String nama = aa[aa.length - 1].toString();
-                            if (!nama.contains(".")) {
-                                if (!dbMaster.equalsIgnoreCase("")) {
-                                    String[] aaBB = dbMaster.split("/");
-                                    nama = aaBB[aaBB.length - 1].toString();
-                                }
-                            }
-
-                            mDB = new DataBaseDropDown(context, nama.substring(0, nama.indexOf(".")));
-                            try {
-                                if (mDB.getWritableDatabase() != null) {
-                                    String namaTable = table;
-                                    String where = null;
-
-                                    if (namaTable.split(";").length > 1) {
-
-                                        String[] ww = namaTable.split(";");
-                                        namaTable = ww[0];
-                                        where = ww[1];
-                                        if (ww[2].startsWith("officer")) {
-                                            String[] of = ww[2].split("_");
-                                            where = where.replace("?", getOficer(of[1]));
-                                        } else if (ww[2].startsWith("bc_user")) {
-                                            MessengerDatabaseHelper messengerHelper = null;
-                                            if (messengerHelper == null) {
-                                                messengerHelper = MessengerDatabaseHelper.getInstance(context);
-                                            }
-
-                                            Contact contact = messengerHelper.getMyContact();
-                                            where = where.replace("?", "'" + contact.getJabberId() + "'");
-                                        }
-
-                                    }
-
-                                    if (nama.substring(0, nama.indexOf(".")).equalsIgnoreCase("SQL_29122017_144028_Hey89n63eA")) {
-                                        MessengerDatabaseHelper messengerHelper = null;
-                                        if (messengerHelper == null) {
-                                            messengerHelper = MessengerDatabaseHelper.getInstance(context);
-                                        }
-                                        Contact contact = messengerHelper.getMyContact();
-
-                                        where = "nip  = (select nip from guru where telp = '" + contact.getJabberId() + "')";
-
-                                        namaTable = "kelas";
-                                    }
-
-                                    final String whereDone = where;
-
-                                    Log.w("SObami", whereDone);
-
-                                    linearEstimasi[count].removeAllViews();
-
-                                    String[] columnNames = new String[kolom.size()];
-                                    columnNames = kolom.toArray(columnNames);
-                                    String[] titleNames = new String[title.size()];
-                                    titleNames = title.toArray(titleNames);
-
-                                    Cursor c = mDB.getWritableDatabase().query(true, namaTable, new String[]{columnNames[0]}, where, null, columnNames[0], null, null, null);
-
-                                    final ArrayList<String> spinnerArray = new ArrayList<String>();
-                                    if (c.getCount() > 1) {
-                                        spinnerArray.add("--Please Select--");
-                                    }
-                                    if (c.moveToFirst()) {
-                                        do {
-                                            String column1 = c.getString(0);
-                                            spinnerArray.add(column1);
-                                        } while (c.moveToNext());
-                                    }
-                                    c.close();
-
-                                    final LinearLayout spinerTitle = (LinearLayout) getLayoutInflater().inflate(R.layout.item_spiner_textview, null);
-                                    TextView textViewFirst = (TextView) spinerTitle.findViewById(R.id.title);
-
-                                    final String titlesss = title.get(0).toString();
-                                    textViewFirst.setText(Html.fromHtml(titlesss));
-                                    textViewFirst.setTextSize(15);
-
-                                    final SearchableSpinner spinner = (SearchableSpinner) spinerTitle.findViewById(R.id.spinner);
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                        spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
-                                    }
-                                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
-                                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    spinner.setAdapter(spinnerArrayAdapter);
-
-
-                                    Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
-                                    if (cursorCild.getCount() > 0) {
-
-                                        try {
-                                            JSONObject jsonObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                            int spinnerPosition = spinnerArrayAdapter.getPosition(jsonObject.getString(titlesss));
-
-                                            if (spinnerPosition < 0) {
-                                                spinnerPosition = spinnerArrayAdapter.getPosition("--Add--");
-                                            }
-
-                                            spinner.setSelection(spinnerPosition);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-
-
-                                    final String finalNamaTable = namaTable;
-                                    final int finalI24 = i;
-                                    final String[] finalColumnNames = columnNames;
-                                    final String finalNama = nama;
-                                    final String[] finalTitleNames = titleNames;
-
-                                    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-                                        @Override
-                                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                                            dummyIdDate = Integer.parseInt(idListTask);
-                                            List nilai = (List) hashMap.get(dummyIdDate);
-
-                                            if (spinner.getSelectedItem().toString().equals("--Please Select--")) {
-                                                Log.w("dimana1", "saja");
-                                                if (kolom.size() > 1) {
-                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinner.getSelectedItem().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
-
-                                                    db.deleteDetailRoomWithFlagContent(orderModel);
-
-                                                    linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeAllViews();
-                                                    linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(spinerTitle);
-                                                }
-                                            } else if (spinner.getSelectedItem().toString().equals("--Add--")) {
-                                                Log.w("dimana2", "saja");
-                                                linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeAllViews();
-                                                linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(spinerTitle);
-
-                                                JSONObject jsonObject = null;
-                                                Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
-                                                if (cursorCild.getCount() > 0) {
-                                                    try {
-                                                        jsonObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-
-                                                        boolean lanjut = false;
-                                                        for (String abubu : spinnerArray) {
-                                                            if (abubu.equalsIgnoreCase(jsonObject.getString(titlesss))) {
-                                                                lanjut = true;
-                                                            }
-                                                        }
-
-                                                        if (lanjut) {
-                                                            jsonObject = null;
-                                                            if (kolom.size() > 1) {
-                                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinner.getSelectedItem().toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
-                                                                db.deleteDetailRoomWithFlagContent(orderModel);
-                                                            }
-
-                                                        }
-
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                }
-
-                                                final EditText etFc[] = new EditText[finalTitleNames.length];
-                                                int ids = 0;
-                                                for (final String ahai : finalTitleNames) {
-
-                                                    TextView textView = new TextView(DinamicRoomTaskActivity.this);
-                                                    textView.setText(ahai);
-                                                    textView.setTextSize(15);
-                                                    textView.setLayoutParams(new TableRow.LayoutParams(0));
-
-                                                    LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                                                    params1.setMargins(30, 10, 30, 0);
-
-                                                    etFc[ids] = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
-                                                    try {
-                                                        if (jsonObject != null) {
-                                                            etFc[ids].setText(jsonObject.getString(ahai));
-                                                            if (etFc.length - 1 == ids) {
-                                                                customersId = etFc[ids].getText().toString();
-                                                            }
-                                                        }
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-
-                                                    final int finalIds = ids;
-                                                    etFc[ids].addTextChangedListener(new TextWatcher() {
-                                                        @Override
-                                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                                                        }
-
-                                                        @Override
-                                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                                                        }
-
-                                                        @Override
-                                                        public void afterTextChanged(Editable s) {
-                                                            if (etFc.length - 1 == finalIds) {
-                                                                customersId = s.toString();
-                                                            }
-
-
-                                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
-
-                                                            if (cEdit.getCount() > 0) {
-                                                                try {
-                                                                    JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, function(jsonObject, ahai, s.toString()).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
-                                                                    db.updateDetailRoomWithFlagContent(orderModel);
-                                                                } catch (JSONException e) {
-                                                                    e.printStackTrace();
-                                                                } catch (Exception e) {
-                                                                    e.printStackTrace();
-                                                                }
-
-                                                            } else {
-                                                                RoomsDetail orderModel = null;
-                                                                try {
-                                                                    orderModel = new RoomsDetail(idDetail, idTab, username, function(null, ahai, s.toString()).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
-                                                                    db.insertRoomsDetail(orderModel);
-                                                                } catch (Exception e) {
-                                                                    e.printStackTrace();
-                                                                }
-
-                                                            }
-
-                                                        }
-                                                    });
-
-                                                    linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(textView, params1);
-                                                    linearEstimasi[Integer.valueOf(nilai.get(0).toString())].addView(etFc[ids], params1);
-                                                    ids++;
-                                                }
-
-
-                                            } else {
-                                                Log.w("dimana3", "saja");
-                                                customersId = spinner.getSelectedItem().toString();
-                                                if (kolom.size() > 1) {
-                                                    final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
-                                                    linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1, counts - 1);
-
-                                                    String mera = finalColumnNames[0] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'";
-                                                    String next = whereDone != null ? " and " + whereDone : "";
-                                                    if (mera.equalsIgnoreCase("")) {
-                                                        next = whereDone != null ? whereDone : "";
-                                                    }
-                                                    String full = mera + next;
-
-                                                    addSpinnerDinamics(finalTitleNames, finalNama.substring(0, finalNama.indexOf(".")), linearEstimasi[Integer.valueOf(nilai.get(0).toString())], finalNamaTable, finalColumnNames, 0, full, idListTask, type, String.valueOf(finalI24), name);
-
-                                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
-
-                                                    if (cEdit.getCount() > 0) {
-                                                        try {
-                                                            JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, function(jsonObject, titlesss, spinner.getSelectedItem().toString()).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
-
-                                                            db.updateDetailRoomWithFlagContent(orderModel);
-
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    } else {
-                                                        RoomsDetail orderModel = null;
-                                                        try {
-                                                            orderModel = new RoomsDetail(idDetail, idTab, username, function(null, titlesss, spinner.getSelectedItem().toString()).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
-
-                                                            db.insertRoomsDetail(orderModel);
-
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    }
-
-                                                } else {
-                                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
-
-                                                    if (cEdit.getCount() > 0) {
-                                                        try {
-                                                            JSONObject jsonObject = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, function(jsonObject, titlesss, spinner.getSelectedItem().toString()).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
-
-                                                            db.updateDetailRoomWithFlagContent(orderModel);
-
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    } else {
-                                                        RoomsDetail orderModel = null;
-                                                        try {
-                                                            orderModel = new RoomsDetail(idDetail, idTab, username, function(null, titlesss, spinner.getSelectedItem().toString()).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "cild");
-
-                                                            db.insertRoomsDetail(orderModel);
-
-                                                        } catch (Exception e) {
-                                                            e.printStackTrace();
-                                                        }
-
-                                                    }
-
-                                                }
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onNothingSelected(AdapterView<?> parentView) {
-                                            // your code here
-                                        }
-
-                                    });
-
-                                    linearEstimasi[count].addView(spinerTitle);
-
-                                } else {
-
-                                    if (deleteContent) {
-
-                                        db.deleteRoomsDetailbyId(idDetail, idTab, username);
-
-                                    }
-                                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                                        Toast.makeText(context, "Please insert memmory card", Toast.LENGTH_LONG).show();
-                                        finish();
-                                    }
-                                    finish();
-
-                                    Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
-                                    intent.putExtra("name_db", nama.substring(0, nama.indexOf(".")));
-                                    intent.putExtra("path_db", url);
-                                    startActivity(intent);
-                                    return;
-                                }
-                            } catch (Exception e) {
-
-                            }
 
                             TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
                             params2.setMargins(60, 10, 30, 0);
-                            linearEstimasi[count].setLayoutParams(params2);
                             valSetOne.add(String.valueOf(linearLayout.getChildCount()));
-                            linearLayout.addView(linearEstimasi[count]);
-
+                            linearLayout.addView(tp[count], params2);
+                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
                         }
 
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);

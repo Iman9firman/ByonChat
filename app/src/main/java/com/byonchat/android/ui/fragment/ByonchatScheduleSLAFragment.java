@@ -44,7 +44,10 @@ import com.byonchat.android.model.ScheduleList;
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
+import com.byonchat.android.utils.ExceptionHandler;
 import com.byonchat.android.widget.CalendarDialog;
+import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
+import com.pdfjet.Line;
 import com.toptoche.searchablespinnerlibrary.SearchableListDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
@@ -65,10 +68,19 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static java.lang.Character.LINE_SEPARATOR;
 
 public class ByonchatScheduleSLAFragment extends Fragment {
     ScrollView scrollView;
@@ -117,6 +129,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler("ByonchatScheduleSLAFragment -> check log detail"));
     }
 
     @NonNull
@@ -217,7 +230,6 @@ public class ByonchatScheduleSLAFragment extends Fragment {
             try {
                 JSONArray arr = new JSONArray(contentJJT);
 
-
                 for (int as = 0; as < arr.length(); as++) {
                     JSONObject jo = arr.getJSONObject(as);
                     String cost_center = jo.getString("costcenter");
@@ -234,6 +246,8 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
 
             } catch (Exception e) {
+//                String error = e.getMessage() + this;
+//                Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(error));
             }
         }
 
@@ -533,7 +547,6 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         });
     }
 
-
     private class InsertSchedule extends AsyncTask<String, String, String> {
         String error = "";
         private Context context;
@@ -582,16 +595,16 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
                 nameValuePairs.add(new BasicNameValuePair("frequency", freq));
                 nameValuePairs.add(new BasicNameValuePair("floor", "1"));
-                nameValuePairs.add(new BasicNameValuePair("bobot", bobot));
+                nameValuePairs.add(new BasicNameValuePair("pembobotan", bobot));
                 nameValuePairs.add(new BasicNameValuePair("section", secs));
-                nameValuePairs.add(new BasicNameValuePair("subsection", subsecs));
+                nameValuePairs.add(new BasicNameValuePair("sub_section", subsecs));
                 nameValuePairs.add(new BasicNameValuePair("periode", perio));
                 nameValuePairs.add(new BasicNameValuePair("start_date", sd));
                 nameValuePairs.add(new BasicNameValuePair("end_date", ed));
 
                 for (int i = 0; i < detaiArea.size(); i++) {
                     nameValuePairs.add(new BasicNameValuePair("detail_area["+i+"]", detaiArea.get(i)));
-                    Log.e("Params meterss","detail_area ["+i+"]"+"  --> "+ detaiArea.get(i));
+                    Log.e("paramsend meterss","detail_area ["+i+"]"+"  --> "+ detaiArea.get(i));
                 }
 
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));

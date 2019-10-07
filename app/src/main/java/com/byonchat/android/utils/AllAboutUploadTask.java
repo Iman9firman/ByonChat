@@ -502,6 +502,7 @@ public class AllAboutUploadTask {
             prosesUpload.add("ada");
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(valueIWantToSend);
+            Log.w("linkdinamic",valueIWantToSend);
 
             try {
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
@@ -512,7 +513,6 @@ public class AllAboutUploadTask {
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
-
 
                 ContentType contentType = ContentType.create("multipart/form-data");
                 entity.addPart("username_room", new StringBody(usr));

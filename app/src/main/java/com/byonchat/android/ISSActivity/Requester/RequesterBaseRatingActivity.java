@@ -415,7 +415,8 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
 
                 try {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:+" + "628551551294"));
+//                    callIntent.setData(Uri.parse("tel:+" + "628551551294"));
+                    callIntent.setData(Uri.parse("tel:+" + "628561782163")); //Nomor Baru
                     startActivity(callIntent);
                 } catch (ActivityNotFoundException activityException) {
                 }

@@ -6166,6 +6166,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
 
                             List<String> valSetOne = new ArrayList<String>();
+
                             valSetOne.add(String.valueOf(count));
                             valSetOne.add(required);
                             valSetOne.add(type);
@@ -12610,7 +12611,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     int t = -1;
                                     do {
                                         String title = c.getString(1);
-                                        String titleS = String.valueOf(c.getInt(3));
+                                        String titleS = c.getString(0);
                                         if (!titleOld.equalsIgnoreCase(title)) {
                                             Item = new ArrayList<String>();
                                             Items = new ArrayList<JSONObject>();
@@ -12619,7 +12620,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             expandableListTitleJSON.add(titleS);
                                             t++;
                                         }
-                                        Integer column0 = c.getInt(0);
+
+                                        String column0 = c.getString(0);
                                         Integer column3 = c.getInt(3);
                                         String column4 = c.getString(4);
 
@@ -12627,10 +12629,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         JSONObject objS = new JSONObject();
                                         try {
                                             obj.put("t", column4);
-                                            obj.put("iT", String.valueOf(column3));
-                                            obj.put("iD", String.valueOf(column0));
+                                            obj.put("iT", String.valueOf(column0));
+                                            obj.put("iD", String.valueOf(column3));
 
-                                            objS.put("iD", String.valueOf(column0));
+                                            objS.put("iD", String.valueOf(column3));
                                             objS.put("v", "");
                                             objS.put("n", "");
 

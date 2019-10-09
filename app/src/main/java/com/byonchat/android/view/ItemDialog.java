@@ -48,16 +48,39 @@ public class ItemDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.layout_item_dialog);
 
-        recyclerView = findViewById(R.id.recycler_dialog);
         titleName = findViewById(R.id.titleList);
+        recyclerView = findViewById(R.id.recycler_dialog);
 
-        titleName.setVisibility(View.GONE);
-        recyclerView.setHasFixedSize(true);
+        if(subList.size() > 1) {
+            titleName.setVisibility(View.GONE);
+            recyclerView.setHasFixedSize(true);
+            adapter = new ExpandableListAdapter(context, subList);
 
-        adapter = new ExpandableListAdapter(context, subList);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+            recyclerView.setAdapter(adapter);
+        }else {
+            titleName.setVisibility(View.VISIBLE);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+            final String sectionName = subList.get(0).getHeaderTitle();
 
-        recyclerView.setAdapter(adapter);
+            ArrayList<ItemMain> singleSectionItems = subList.get(0).getAllItemsInSection();
+
+            titleName.setText(sectionName);
+            GridLayoutManager layoutManager = new GridLayoutManager(context,3, LinearLayout.VERTICAL,false);
+
+            DraggableGridExampleAdapter itemListDataAdapter = new DraggableGridExampleAdapter(context, singleSectionItems, R.layout.list_grid_item);
+            itemListDataAdapter.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    Intent intent = ByonChatMainRoomActivity.generateIntent(context, (ItemMain) itemListDataAdapter.getData().get(position));
+                    context.startActivity(intent);
+                }
+            });
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(itemListDataAdapter);
+            recyclerView.setNestedScrollingEnabled(false);
+        }
+
     }
 }

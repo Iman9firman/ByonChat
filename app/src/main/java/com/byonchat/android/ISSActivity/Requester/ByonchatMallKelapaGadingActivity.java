@@ -59,7 +59,7 @@ public class ByonchatMallKelapaGadingActivity extends ByonchatBaseMallKelapaGadi
         runnable = () -> {
             Log.w("selsai", "11");
             resolveListHistory();
-            handler.postDelayed(runnable, 20000);
+            handler.postDelayed(runnable, 3 * 60 * 1000);
         };
         handler.post(runnable);
 

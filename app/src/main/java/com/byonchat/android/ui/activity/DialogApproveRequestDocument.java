@@ -185,7 +185,7 @@ public class DialogApproveRequestDocument extends DialogFragment {
 //        layout5.setOrientation(LinearLayout.HORIZONTAL);
 
         TextView fildReason = new TextView(getContext());
-        fildReason.setText("Information : ");
+        fildReason.setText("Note : ");
         fildReason.setTextSize(15);
 
         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 250);

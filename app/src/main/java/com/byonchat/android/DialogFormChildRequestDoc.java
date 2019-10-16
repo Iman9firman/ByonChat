@@ -142,7 +142,7 @@ public class DialogFormChildRequestDoc extends DialogFragment {
         params2.setMargins(30, 10, 30, 0);
 
         EditText editText = new EditText(getContext());
-        editText.setHint("Information for approval *");
+        editText.setHint("Note*");
         editText.setTextSize(15);
         editText.setLines(8);
         editText.setPadding(10, 10, 10, 10);

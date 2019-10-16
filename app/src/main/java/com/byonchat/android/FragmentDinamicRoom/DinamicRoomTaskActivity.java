@@ -6919,7 +6919,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 @Override
                                 public void onClick(View v) {
                                     FragmentManager fm = getSupportFragmentManager();
-                                    DialogNewDropdown testDialog = DialogNewDropdown.newInstance();
+                                    DialogNewDropdown testDialog = new DialogNewDropdown(new DialogNewDropdown.finishListener() {
+                                        @Override
+                                        public void submitted(String json) {
+                                            tp[count].setText(json);
+                                        }
+                                    });
                                     testDialog.setRetainInstance(true);
                                     testDialog.show(fm, "Dialog");
                                 }

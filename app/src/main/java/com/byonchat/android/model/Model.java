@@ -4,22 +4,37 @@ package com.byonchat.android.model;
  * Created by Iman Firmansyah on 12/1/2015.
  */
 public class Model {
-    char name;
-    byte age;
+    String name;
+    String id_self;
+    String id_parent;
 
-    public char getName() {
+    public Model(String name, String id_self, String id_parent){
+        this.name = name;
+        this.id_self = id_self;
+        this.id_parent = id_parent;
+    }
+
+    public String getId_parent() {
+        return id_parent;
+    }
+
+    public String getId_self() {
+        return id_self;
+    }
+
+    public String getName() {
         return name;
     }
 
-    public void setName(char name) {
+    public void setId_parent(String id_parent) {
+        this.id_parent = id_parent;
+    }
+
+    public void setId_self(String id_self) {
+        this.id_self = id_self;
+    }
+
+    public void setName(String name) {
         this.name = name;
-    }
-
-    public byte getAge() {
-        return age;
-    }
-
-    public void setAge(byte age) {
-        this.age = age;
     }
 }

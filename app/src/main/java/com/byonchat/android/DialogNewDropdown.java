@@ -1,5 +1,6 @@
 package com.byonchat.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,6 +16,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.Html;
@@ -34,13 +38,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Scroller;
+import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
+import com.byonchat.android.model.Model;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseDropDown;
@@ -49,6 +56,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.Validations;
+import com.toptoche.searchablespinnerlibrary.SearchableListDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.apache.http.HttpEntity;
@@ -89,38 +97,83 @@ import static com.byonchat.android.FragmentDinamicRoom.FragmentRoomAPI.function;
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
+@SuppressLint("ValidFragment")
 public class DialogNewDropdown extends DialogFragment {
 
-    Button mProceed, mCancel;
+    private Button mProceed, mCancel;
+    private LinearLayout lParent;
+    private ProgressBar loading;
+    private finishListener listener;
 
-    public static DialogNewDropdown newInstance() {
+    private String cModel, cType, cWarna, cTipe_harga, cWilayah, cHarga;
+//   private Integer idModel, idType, idWarna, idTipe_harga, idHarga;
+
+    private ArrayList<Model> v1 = new ArrayList<>();
+    private ArrayList<Model> v2 = new ArrayList<>();
+    private ArrayList<Model> v3 = new ArrayList<>();
+    private ArrayList<Model> v4 = new ArrayList<>();
+    private ArrayList<Model> v5 = new ArrayList<>();
+
+    /*public static DialogNewDropdown newInstance() {
         DialogNewDropdown f = new DialogNewDropdown();
         Bundle args = new Bundle();
         f.setArguments(args);
 
         return f;
     }
+*/
+    public DialogNewDropdown (finishListener listener){
+        super();
+        this.listener = listener;
+    }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
 
         mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
-        mCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+        mCancel  = (Button) dialog.findViewById(R.id.btn_cancel);
+        lParent  = (LinearLayout) dialog.findViewById(R.id.linear);
+        loading  = (ProgressBar) dialog.findViewById(R.id.loading);
+
+        loading.setVisibility(View.VISIBLE);
 
         mProceed.setText("Save");
 
         mProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new getCars(getActivity()).execute("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/honda/convert_json_api_gzip.php", "106");
+                if(!setjson().contains("--Please Select--")) {
+//                    new Validations().getInstance(getContext()).setContentValidation(28, setjson());
+                    listener.submitted(setjson());
+                    dismiss();
+                }else {
+                    Toast.makeText(getContext(), "Harap isi semua field",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        mCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
 
         return dialog;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        new getCars(getActivity()).execute("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/honda/convert_json_api_gzip.php", "106");
+    }
 
     @Override
     public void onDismiss(final DialogInterface dialog) {
@@ -183,7 +236,10 @@ public class DialogNewDropdown extends DialogFragment {
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-            Toast.makeText(context, "Form success download2.::" + result, Toast.LENGTH_SHORT).show();
+            if (loading.getVisibility() == View.VISIBLE) {
+                loading.setVisibility(View.GONE);
+            }
+//            Toast.makeText(context, "Form success download2.::" + result, Toast.LENGTH_SHORT).show();
 
         }
 
@@ -218,24 +274,8 @@ public class DialogNewDropdown extends DialogFragment {
 
                     try {
                         JSONArray jsonArray = new JSONArray(decompress(decodedBytes));
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            String model = jsonArray.getJSONObject(i).getString("model").toString();
-                            Log.w("Kabar1", model);
-                            JSONArray jsonArrayModel = new JSONArray(jsonArray.getJSONObject(i).getString("value"));
-                            for (int ii = 0; ii < jsonArrayModel.length(); ii++) {
-                                String type = jsonArrayModel.getJSONObject(ii).getString("tipe").toString();
-                                Log.w("Kaba2r", type);
-                                JSONArray jsonArrayType = new JSONArray(jsonArrayModel.getJSONObject(ii).getString("value"));
-                                for (int iii = 0; ii < jsonArrayType.length(); iii++) {
-                                    String warna = jsonArrayModel.getJSONObject(iii).getString("warna").toString();
-                                    Log.w("Kaba3r", warna);
-                                }
-
-                            }
-
-                        }
-
-
+                        Log.w("Kabor0",jsonArray+"");
+                        buildDropdown(jsonArray.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -267,6 +307,323 @@ public class DialogNewDropdown extends DialogFragment {
         gis.close();
         bis.close();
         return sb.toString();
+    }
+
+    private void buildDropdown(String json) throws JSONException {
+        Model modelz = new Model("--Please Select--", "0","0");
+/*
+        ArrayList<Model> v1 = new ArrayList<>();
+        ArrayList<Model> v2 = new ArrayList<>();
+        ArrayList<Model> v3 = new ArrayList<>();
+        ArrayList<Model> v4 = new ArrayList<>();
+        ArrayList<Model> v5 = new ArrayList<>();*/
+        v1.clear();
+        v2.clear();
+        v3.clear();
+        v4.clear();
+        v5.clear();
+        v1.add(modelz);
+        v2.add(modelz);
+        v3.add(modelz);
+        v4.add(modelz);
+        v5.add(modelz);
+
+        JSONArray jsonArray = new JSONArray(json);
+        for (int i = 0; i < jsonArray.length(); i++) {
+            String model = jsonArray.getJSONObject(i).getString("model").toString();
+            Log.w("Kabar1", model);
+            JSONArray jsonArrayModel = new JSONArray(jsonArray.getJSONObject(i).getString("value"));
+            Model model1 = new Model(model, i+"",i+""); //Model
+            v1.add(model1);
+
+            for (int ii = 0; ii < jsonArrayModel.length(); ii++) {
+                String type = jsonArrayModel.getJSONObject(ii).getString("tipe").toString();
+                Log.w("Kaba2r", type);
+                JSONArray jsonArrayType = new JSONArray(jsonArrayModel.getJSONObject(ii).getString("value"));
+                Model type1 = new Model(type, ii+"",model); //Type
+                v2.add(type1);
+
+                for (int iii = 0; iii < jsonArrayType.length(); iii++) {
+                    String warna = jsonArrayType.getJSONObject(iii).getString("warna").toString();
+                    Log.w("Kaba3r", warna);
+                    JSONArray jsonArrayWarna = new JSONArray(jsonArrayType.getJSONObject(iii).getString("value"));
+                    Model warna1 = new Model(warna, iii+"",type); //Warna
+                    v3.add(warna1);
+
+                    for (int iv = 0; iv < jsonArrayWarna.length(); iv++) {
+                        String tipe_harga = jsonArrayWarna.getJSONObject(iv).getString("tipe_harga").toString();
+                        Log.w("Kaba4r", tipe_harga);
+                        JSONArray jsonArrayTiHarga = new JSONArray(jsonArrayWarna.getJSONObject(iv).getString("value"));
+                        Model tipe_harga1 = new Model(tipe_harga, iv+"",type + warna); //tipe Harga
+                        v4.add(tipe_harga1);
+
+                        for (int v = 0; v < jsonArrayTiHarga.length(); v++) {
+                            String harga = jsonArrayTiHarga.getJSONObject(v).getString("harga").toString();
+                            String wilayah = jsonArrayTiHarga.getJSONObject(v).getString("wilayah").toString();
+                            Log.w("Kaba5r", harga);
+                            Model harga1 = new Model(wilayah+"//"+harga, v+"",type + warna + tipe_harga); //Harga
+                            v5.add(harga1);
+                        }
+                    }
+                }
+            }
+        }
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loading.setVisibility(View.GONE);
+
+                addNewDropdown(v1, "Model", 0);
+//                addNewDropdown(v2, "Type");
+//                addNewDropdown(v3, "Warna");
+//                addNewDropdown(v4, "Type Harga");
+//                addNewDropdown(v5, "Total Harga");
+            }
+        });
+    }
+
+    private void addNewDropdown(ArrayList<Model> spinn, String title, int index){
+        ArrayList<String> spinnerArray = new ArrayList<>();
+
+        for (int i = 0; i < spinn.size(); i++) {
+            if(title.equalsIgnoreCase("wilayah")){
+                String[] separated = spinn.get(i).getName().split("//");
+                spinnerArray.add(separated[0]);
+            }else {
+                spinnerArray.add(spinn.get(i).getName());
+            }
+        }/*
+        try {
+            if (title.equalsIgnoreCase("model")) {
+                for (int i = 0; i < spinn.size(); i++) {
+                    spinnerArray.add(spinn.get(i).getName());
+                }
+            }
+            if (title.equalsIgnoreCase("type")) {
+                if (!cModel.equalsIgnoreCase("--Please Select--")) {
+                    for (int i = 0; i < spinn.size(); i++) {
+                        if (cModel.equals(spinn.get(i).getId_parent())) {
+                            spinnerArray.add(spinn.get(i).getName());
+                        }
+                    }
+                }
+            }
+            if (title.equalsIgnoreCase("warna")) {
+                if (!cType.equalsIgnoreCase("--Please Select--")) {
+                    for (int i = 0; i < spinn.size(); i++) {
+                        if (cType.equals(spinn.get(i).getId_parent())) {
+                            spinnerArray.add(spinn.get(i).getName());
+                        }
+                    }
+                }
+            }
+            if (title.equalsIgnoreCase("tipe_harga")) {
+                if (!cWarna.equalsIgnoreCase("--Please Select--")) {
+                    for (int i = 0; i < spinn.size(); i++) {
+                        if (cWarna.equals(spinn.get(i).getId_parent())) {
+                            spinnerArray.add(spinn.get(i).getName());
+                        }
+                    }
+                }
+            }
+            if (title.equalsIgnoreCase("harga")) {
+                if (!cTipe_harga.equalsIgnoreCase("--Please Select--")) {
+                    for (int i = 0; i < spinn.size(); i++) {
+                        if (cTipe_harga.equals(spinn.get(i).getId_parent())) {
+                            spinnerArray.add(spinn.get(i).getName());
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            
+        }*/
+        
+        final LinearLayout spinerTitle = (LinearLayout) getLayoutInflater().inflate(R.layout.item_spiner_textview, null);
+        TextView textViewFirst = (TextView) spinerTitle.findViewById(R.id.title);
+
+        textViewFirst.setText(Html.fromHtml(title));
+        textViewFirst.setTextSize(15);
+
+        final SearchableSpinner spinnner = (SearchableSpinner) spinerTitle.findViewById(R.id.spinner);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            spinnner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+        }
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnner.setAdapter(spinnerArrayAdapter);
+
+        lParent.addView(spinerTitle, index);
+
+        spinnner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(title.equalsIgnoreCase("model")){
+                    ArrayList<Model> vx1 = new ArrayList<>();
+                    vx1.clear();
+                    Model modelz = new Model("--Please Select--", "0","0");
+                    vx1.add(modelz);
+
+                    cModel = (String) spinnner.getSelectedItem();
+
+                    deleteFromParent(1);
+                    deleteFromParent(2);
+                    deleteFromParent(3);
+                    deleteFromParent(4);
+
+                    if (!cModel.equalsIgnoreCase("--Please Select--")) {
+                        for (int i = 0; i < v2.size(); i++) {
+                            if (cModel.equals(v2.get(i).getId_parent())) {
+                                Model xxs = new Model(v2.get(i).getName(), v2.get(i).getId_self(),v2.get(i).getId_parent());
+                                vx1.add(xxs);
+                            }
+                        }
+                        addNewDropdown(vx1, "Type", 1);
+                    }
+                }
+
+                if(title.equalsIgnoreCase("type")){
+                    ArrayList<Model> vx1 = new ArrayList<>();
+                    vx1.clear();
+                    Model modelz = new Model("--Please Select--", "0","0");
+                    vx1.add(modelz);
+
+                    cType = (String) spinnner.getSelectedItem();
+
+                    deleteFromParent(2);
+                    deleteFromParent(3);
+                    deleteFromParent(4);
+
+                    if (!cType.equalsIgnoreCase("--Please Select--")) {
+                        for (int i = 0; i < v3.size(); i++) {
+                            if (cType.equals(v3.get(i).getId_parent())) {
+                                Model xxs = new Model(v3.get(i).getName(), v3.get(i).getId_self(),v3.get(i).getId_parent());
+                                vx1.add(xxs);
+                            }
+                        }
+                        addNewDropdown(vx1, "Warna", 2);
+                    }
+                }
+
+                if(title.equalsIgnoreCase("warna")){
+                    ArrayList<Model> vx1 = new ArrayList<>();
+                    vx1.clear();
+                    Model modelz = new Model("--Please Select--", "0","0");
+                    vx1.add(modelz);
+
+                    cWarna = (String) spinnner.getSelectedItem();
+
+                    deleteFromParent(3);
+                    deleteFromParent(4);
+
+                    if (!cWarna.equalsIgnoreCase("--Please Select--")) {
+
+                        for (int i = 0; i < v4.size(); i++) {
+                            String kode = cType + cWarna;
+                            if (kode.equals(v4.get(i).getId_parent())) {
+                                Model xxs = new Model(v4.get(i).getName(), v4.get(i).getId_self(),v4.get(i).getId_parent());
+                                vx1.add(xxs);
+                            }
+                        }
+                        addNewDropdown(vx1, "Tipe Harga", 3);
+                    }
+                }
+
+                if(title.equalsIgnoreCase("tipe harga")){
+                    ArrayList<Model> vx1 = new ArrayList<>();
+                    vx1.clear();
+                    Model modelz = new Model("--Please Select--", "0","0");
+                    vx1.add(modelz);
+
+                    cTipe_harga = (String) spinnner.getSelectedItem();
+
+                    deleteFromParent(4);
+
+                    if (!cTipe_harga.equalsIgnoreCase("--Please Select--")) {
+
+                        for (int i = 0; i < v5.size(); i++) {
+                            String kode = cType + cWarna + cTipe_harga;
+                            if (kode.equals(v5.get(i).getId_parent())) {
+                                Model xxs = new Model(/*"Rp. "+formatCurrency(v5.get(i).getName())*/v5.get(i).getName(), v5.get(i).getId_self(),v5.get(i).getId_parent());
+                                vx1.add(xxs);
+                            }
+                        }
+                        addNewDropdown(vx1, "Wilayah", 4);
+                    }
+                }
+
+                if(title.equalsIgnoreCase("wilayah")){
+                    cWilayah = (String) spinnner.getSelectedItem();
+                    LinearLayout linearText = new LinearLayout(getContext());
+                    linearText.setOrientation(LinearLayout.VERTICAL);
+
+                    TextView textView = new TextView(getContext());
+                    textView.setText("Harga");
+                    textView.setTextSize(15);
+                    textView.setTextColor(getResources().getColor(R.color.navigationBarColor));
+
+                    TextView tvHarga = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
+                    tvHarga.setMinLines(1);
+
+                    deleteFromParent(5);
+
+                    if (!cWilayah.equalsIgnoreCase("--Please Select--")) {
+                        for (int i = 0; i < spinn.size(); i++) {
+                            String[] separated = spinn.get(i).getName().split("//");
+                            if(cWilayah.equalsIgnoreCase(separated[0])) {
+                                cHarga = separated[1];
+                                tvHarga.setText("Rp. "+formatCurrency(separated[1]) /*+"  ("+ separated[0] + ")"*/);
+                            }
+                        }
+                        linearText.addView(textView);
+                        linearText.addView(tvHarga);
+                        lParent.addView(linearText,5);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
+    public void deleteFromParent(int index){
+        try {
+            lParent.removeViewAt(index);
+        }catch (Exception e){
+            Log.w("Something wrong",e.getMessage());
+        }
+    }
+
+    public static String formatCurrency(String amount) {
+        DecimalFormat formatter = new DecimalFormat("###,###,##0.00");
+        return formatter.format(Double.parseDouble(amount));
+    }
+
+    public String setjson(){
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("model", cModel);
+            obj.put("type", cType);
+            obj.put("warna", cWarna);
+            obj.put("tipe_harga", cTipe_harga);
+            obj.put("wilayah", cWilayah);
+            obj.put("harga", cHarga);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return obj.toString();
+    }
+
+    public interface finishListener{
+        public void submitted(String json);
     }
 
 }

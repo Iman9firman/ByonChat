@@ -9310,8 +9310,9 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
 
-        focusOnView();
-
+        if (!title.toLowerCase().contains("approv")) {
+            focusOnView();
+        }
     }
 
     private void refreshMethod() {

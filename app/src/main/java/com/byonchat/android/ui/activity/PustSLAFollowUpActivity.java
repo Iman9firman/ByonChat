@@ -412,6 +412,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                Log.w("ketemmnu json",fileJson());
                 rdialog = new ProgressDialog(PustSLAFollowUpActivity.this);
                 rdialog.setMessage("Loading...");
                 rdialog.show();
@@ -484,11 +485,13 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 idItem = fifth.getString("id");
                                 String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+                                String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem + "-" + v;
                                 for (int vi = 0; vi < uploadfoto.size(); vi++) {
                                     if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                                         fifth.put("a", uploadfoto.get(vi).getAfterString());
-                                        if (checkDB(id)) {
-                                            fifth.put("ket", getTheDB(id));
+                                        if (checkDB(id_text)) {
+                                            fifth.put("ket", getTheDB(id_text));
+                                            Log.w("yang ketemmnu",getTheDB(id_text));
                                         }
                                     }
                                 }
@@ -501,6 +504,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
             stringdong = gvcs.toString();
         } catch (JSONException e) {
+            Log.e("eeror ketemmnu",e.getMessage());
         }
         return stringdong;
     }
@@ -535,11 +539,12 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 idItem = fifth.getString("id");
                                 String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+                                String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem + "-" + v;
                                 for (int vi = 0; vi < uploadfoto.size(); vi++) {
                                     if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                                         fifth.put("a", uploadfoto.get(vi).getAfterString());
-                                        if (checkDB(id)) {
-                                            deleteFromDB(id);
+                                        if (checkDB(id_text)) {
+                                            deleteFromDB(id_text);
                                             db.deleteNoteSLA(id_task, getIntent().getStringExtra("id_rooms_tab"), id, "reportrepair");
                                         }
                                     }

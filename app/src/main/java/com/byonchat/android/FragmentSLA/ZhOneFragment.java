@@ -160,8 +160,13 @@ public class ZhOneFragment extends Fragment {
                     if(counter == 0){
                         secount = 0;
                     }
+                    if(counter <= 0){
+                        counter = 0;
+                    }
+
                     countAll += counter;
                     String countt = secount+"/"+counter;
+
                     SLAModel model = new SLAModel(label,content,countt,bobot,false);
                     model.setId(id);
                     itemList.add(model);

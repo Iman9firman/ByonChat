@@ -115,8 +115,13 @@ public class ZhTwoFragment extends Fragment {
                             }
                         }
                     }
+                    if(counter <= 0){
+                        counter = 0;
+                    }
+
                     String countt = secount+"/"+counter;
                     countAll += counter;
+
                     SLAModel model = new SLAModel(label,content,countt,value/data.length(),false);
                     model.setId(id);
                     itemList.add(model);

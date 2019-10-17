@@ -3,6 +3,7 @@ package com.byonchat.android.FragmentSLA;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -18,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +70,7 @@ public class ZhFourFragment extends Fragment {
 
     RecyclerView slaCycler;
     TextView textTitle;
+    CheckBox numTitle;
     Button submit;
     ImageButton back;
     String title,content,idDetailForm,passGrade,bobot;
@@ -106,7 +110,9 @@ public class ZhFourFragment extends Fragment {
         back = view.findViewById(R.id.back_zhsla);
         back.setVisibility(View.VISIBLE);
         textTitle = view.findViewById(R.id.title_zhsla);
+        numTitle = view.findViewById(R.id.check_zhsla);
         slaCycler = view.findViewById(R.id.recy_zhsla);
+        numTitle.setVisibility(View.VISIBLE);
         return view;
     }
 
@@ -163,14 +169,22 @@ public class ZhFourFragment extends Fragment {
                                 dialog = new ProgressDialog(getContext());
                                 dialog.setMessage("Uploading Image ...");
                                 dialog.show();
-                                new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
-                                        ((DinamicSLATaskActivity) getActivity()).getUsername(),
-                                        "2613",
-                                        "66989",
-                                        imgList.get(0).split(";;")[0],
-                                        imgList.get(0).split(";;")[1]);
+                                if (imgList.get(0).split(";;").length ==2){
+                                    File checkFile = new File(imgList.get(0).split(";;")[0]);
+                                    if (checkFile.exists()){
+                                        new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                                ((DinamicSLATaskActivity) getActivity()).getUsername(),
+                                                "2613",
+                                                "66989",
+                                                imgList.get(0).split(";;")[0],
+                                                imgList.get(0).split(";;")[1]);
+                                        return;
+                                    }
+                                }
+
                             }
 
+                            Toast.makeText(getContext(),"Harap isi gambar jika memilih 'No' .",Toast.LENGTH_SHORT).show();
                         } else {
                             // ini jika tidak ada image maka akan langsung submit sla nya
                             JSONArray arrayPertanyaan = new JSONArray();
@@ -268,6 +282,33 @@ public class ZhFourFragment extends Fragment {
             slaCycler.getAdapter().notifyDataSetChanged();
 
         }
+
+        numTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        numTitle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    Toast.makeText(getContext(), "All Has Checked", Toast.LENGTH_SHORT).show();
+                    for (int o = 0; o < itemList.size(); o++) {
+                        if (checkDB(idDetailForm, itemList.get(o).getDaleman())) {
+                            updateDB(idDetailForm, itemList.get(o).getDaleman(), 1, null, null);
+                        } else {
+                            insertDB(idDetailForm, itemList.get(o).getDaleman(), 1, null, null);
+                        }
+                    }
+                }else {
+                    removeDB();
+                }
+                slaCycler.getAdapter().notifyDataSetChanged();
+            }
+        });
+
     }
 
     private boolean checkDB(String idDetail, String id) {
@@ -284,6 +325,50 @@ public class ZhFourFragment extends Fragment {
         cursor.close();
 
         return isExist;
+    }
+
+    public void insertDB(String idDetail, String id, int value, String image, String comment) {
+        RadioButtonCheckDB database = new RadioButtonCheckDB(getActivity());
+        SQLiteDatabase db = database.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, id);
+        values.put(COLUMN_ID_DETAIL, idDetail);
+        values.put(COLUMN_OK, value);
+        if (image != null) {
+            values.put(COLUMN_IMG, image);
+        }
+        if (comment != null) {
+            values.put(COLUMN_COMMENT, comment);
+        }
+        db.insert(TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public void updateDB(String idDetail, String id, int value, String image, String comment) {
+        RadioButtonCheckDB database = new RadioButtonCheckDB(getActivity());
+        SQLiteDatabase db = database.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        if (image != null) {
+            values.put(COLUMN_IMG, image);
+        }
+
+        if (comment != null) {
+            values.put(COLUMN_COMMENT, comment);
+        }
+
+        if (image == null && comment == null) {
+            values.put(COLUMN_OK, value);
+        }
+
+        db.update(TABLE_NAME, values, COLUMN_ID_DETAIL + " = '" + idDetail + "' AND " + COLUMN_ID + " =?",
+                new String[]{String.valueOf(id)});
+    }
+
+    public void removeDB() {
+        RadioButtonCheckDB database = new RadioButtonCheckDB(getActivity());
+        database.getWritableDatabase().delete(TABLE_NAME, null, null);
     }
 
     private int getOkFromDB(String idDetail, String id) {
@@ -455,26 +540,41 @@ public class ZhFourFragment extends Fragment {
 
                 if (counter < imgList.size()){
                     // ini jika masih terdapat image , maka akan mengulang upload
-                    new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
-                            ((DinamicSLATaskActivity) getActivity()).getUsername(),
-                            "2613",
-                            "66989",
-                            imgList.get(counter).split(";;")[0],
-                            imgList.get(counter).split(";;")[1]);
-                } else {
+                    if (imgList.get(0).split(";;").length ==2) {
+                        File checkFile = new File(imgList.get(0).split(";;")[0]);
+                        if (checkFile.exists()) {
+                            new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                    ((DinamicSLATaskActivity) getActivity()).getUsername(),
+                                    "2613",
+                                    "66989",
+                                    imgList.get(counter).split(";;")[0],
+                                    imgList.get(counter).split(";;")[1]);
+                            return;
+                        }
+                    }
+                    Toast.makeText(getContext(),"Harap isi gambar jika memilih 'No' ...",Toast.LENGTH_SHORT).show();
+
+                }else {
+
+                    // jika sudah tidak ada image maka akan submit sla
                     if (dialog!=null){
                         dialog.dismiss();
                     }
                     String res = chek();
                     if (!res.equalsIgnoreCase("")){
                         ((DinamicSLATaskActivity)getActivity()).submitSLA(res);
+                    }else {
+                        Toast.makeText(getContext(),"...",Toast.LENGTH_SHORT).show();
                     }
-                    // jika sudah tidak ada image maka akan submit sla
 
                 }
 
+
+
+
             } catch (JSONException e) {
                 e.printStackTrace();
+                Toast.makeText(getContext(),"....",Toast.LENGTH_SHORT).show();
 
             }
             super.onPostExecute(result);

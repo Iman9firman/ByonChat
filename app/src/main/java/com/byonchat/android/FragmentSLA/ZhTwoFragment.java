@@ -36,7 +36,7 @@ import static com.byonchat.android.FragmentSLA.ZhOneFragment.loadFragmentFromFra
 public class ZhTwoFragment extends Fragment {
 
     RecyclerView slaCycler;
-    TextView textTitle;
+    TextView textTitle, numTitle;
     Button submit;
     ImageButton back;
     String title,content,idDetailForm,passGrade,bobot,fromId;
@@ -67,6 +67,7 @@ public class ZhTwoFragment extends Fragment {
         back = view.findViewById(R.id.back_zhsla);
         back.setVisibility(View.VISIBLE);
         textTitle = view.findViewById(R.id.title_zhsla);
+        numTitle = view.findViewById(R.id.number_zhsla);
         slaCycler = view.findViewById(R.id.recy_zhsla);
         return view;
     }
@@ -80,6 +81,9 @@ public class ZhTwoFragment extends Fragment {
             try {
                 ArrayList<String> listId = ((DinamicSLATaskActivity)getActivity()).getListSubmittedId();
                 JSONArray data = new JSONArray(content);
+
+                int countAll = 0;
+
                 for (int i = 0 ; i<data.length() ; i++){
                     JSONObject childObj = data.getJSONObject(i);
                     String id = this.fromId+"-"+childObj.getString("id");
@@ -112,10 +116,12 @@ public class ZhTwoFragment extends Fragment {
                         }
                     }
                     String countt = secount+"/"+counter;
+                    countAll += counter;
                     SLAModel model = new SLAModel(label,content,countt,value/data.length(),false);
                     model.setId(id);
                     itemList.add(model);
                 }
+                numTitle.setText("("+countAll+")");
             } catch (JSONException e){
                 e.printStackTrace();
             }

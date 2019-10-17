@@ -35,7 +35,7 @@ import java.util.ArrayList;
 public class ZhOneFragment extends Fragment {
 
     RecyclerView slaCycler;
-    TextView textTitle;
+    TextView textTitle, numTitle;
     Button submit;
     ImageButton back;
     String title,content,idDetailForm,passGrade,bobot;
@@ -61,6 +61,7 @@ public class ZhOneFragment extends Fragment {
         back = view.findViewById(R.id.back_zhsla);
         back.setVisibility(View.INVISIBLE);
         textTitle = view.findViewById(R.id.title_zhsla);
+        numTitle = view.findViewById(R.id.number_zhsla);
         slaCycler = view.findViewById(R.id.recy_zhsla);
         return view;
     }
@@ -92,6 +93,9 @@ public class ZhOneFragment extends Fragment {
 
                 JSONObject obj = new JSONObject(content);
                 JSONArray data = obj.getJSONArray("data");
+
+                int countAll = 0;
+
                 for (int i = 0 ; i<data.length() ; i++){
                     JSONObject childObj = data.getJSONObject(i);
                     String id = childObj.getString("id");
@@ -156,6 +160,7 @@ public class ZhOneFragment extends Fragment {
                     if(counter == 0){
                         secount = 0;
                     }
+                    countAll += counter;
                     String countt = secount+"/"+counter;
                     SLAModel model = new SLAModel(label,content,countt,bobot,false);
                     model.setId(id);
@@ -164,7 +169,7 @@ public class ZhOneFragment extends Fragment {
                 if (slaCycler.getAdapter() != null){
                     slaCycler.getAdapter().notifyDataSetChanged();
                 }
-
+                numTitle.setText("("+countAll+")");
             } catch (JSONException e){
                 e.printStackTrace();
             }

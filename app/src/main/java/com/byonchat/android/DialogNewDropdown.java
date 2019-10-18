@@ -104,9 +104,9 @@ public class DialogNewDropdown extends DialogFragment {
     private LinearLayout lParent;
     private ProgressBar loading;
     private finishListener listener;
+    String type;
 
     private String cModel, cType, cWarna, cTipe_harga, cWilayah, cHarga;
-//   private Integer idModel, idType, idWarna, idTipe_harga, idHarga;
 
     private ArrayList<Model> v1 = new ArrayList<>();
     private ArrayList<Model> v2 = new ArrayList<>();
@@ -114,17 +114,10 @@ public class DialogNewDropdown extends DialogFragment {
     private ArrayList<Model> v4 = new ArrayList<>();
     private ArrayList<Model> v5 = new ArrayList<>();
 
-    /*public static DialogNewDropdown newInstance() {
-        DialogNewDropdown f = new DialogNewDropdown();
-        Bundle args = new Bundle();
-        f.setArguments(args);
-
-        return f;
-    }
-*/
-    public DialogNewDropdown (finishListener listener){
+    public DialogNewDropdown(finishListener listener, String type) {
         super();
         this.listener = listener;
+        this.type = type;
     }
 
     @Override
@@ -137,23 +130,22 @@ public class DialogNewDropdown extends DialogFragment {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
 
         mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
-        mCancel  = (Button) dialog.findViewById(R.id.btn_cancel);
-        lParent  = (LinearLayout) dialog.findViewById(R.id.linear);
-        loading  = (ProgressBar) dialog.findViewById(R.id.loading);
+        mCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+        lParent = (LinearLayout) dialog.findViewById(R.id.linear);
+        loading = (ProgressBar) dialog.findViewById(R.id.loading);
 
         loading.setVisibility(View.VISIBLE);
 
-        mProceed.setText("Save");
+        mProceed.setText("Save ");
 
         mProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!setjson().contains("--Please Select--")) {
-//                    new Validations().getInstance(getContext()).setContentValidation(28, setjson());
+                if (!setjson().contains("--Please Select--")) {
                     listener.submitted(setjson());
                     dismiss();
-                }else {
-                    Toast.makeText(getContext(), "Harap isi semua field",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Harap isi semua field", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -268,13 +260,10 @@ public class DialogNewDropdown extends DialogFragment {
 
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);
-                    Log.w("Wagu1", data);
-
                     byte[] decodedBytes = Base64.decode(data, 0);
 
                     try {
                         JSONArray jsonArray = new JSONArray(decompress(decodedBytes));
-                        Log.w("Kabor0",jsonArray+"");
                         buildDropdown(jsonArray.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -310,13 +299,7 @@ public class DialogNewDropdown extends DialogFragment {
     }
 
     private void buildDropdown(String json) throws JSONException {
-        Model modelz = new Model("--Please Select--", "0","0");
-/*
-        ArrayList<Model> v1 = new ArrayList<>();
-        ArrayList<Model> v2 = new ArrayList<>();
-        ArrayList<Model> v3 = new ArrayList<>();
-        ArrayList<Model> v4 = new ArrayList<>();
-        ArrayList<Model> v5 = new ArrayList<>();*/
+        Model modelz = new Model("--Please Select--", "0", "0");
         v1.clear();
         v2.clear();
         v3.clear();
@@ -331,37 +314,32 @@ public class DialogNewDropdown extends DialogFragment {
         JSONArray jsonArray = new JSONArray(json);
         for (int i = 0; i < jsonArray.length(); i++) {
             String model = jsonArray.getJSONObject(i).getString("model").toString();
-            Log.w("Kabar1", model);
             JSONArray jsonArrayModel = new JSONArray(jsonArray.getJSONObject(i).getString("value"));
-            Model model1 = new Model(model, i+"",i+""); //Model
+            Model model1 = new Model(model, i + "", i + ""); //Model
             v1.add(model1);
 
             for (int ii = 0; ii < jsonArrayModel.length(); ii++) {
                 String type = jsonArrayModel.getJSONObject(ii).getString("tipe").toString();
-                Log.w("Kaba2r", type);
                 JSONArray jsonArrayType = new JSONArray(jsonArrayModel.getJSONObject(ii).getString("value"));
-                Model type1 = new Model(type, ii+"",model); //Type
+                Model type1 = new Model(type, ii + "", model); //Type
                 v2.add(type1);
 
                 for (int iii = 0; iii < jsonArrayType.length(); iii++) {
                     String warna = jsonArrayType.getJSONObject(iii).getString("warna").toString();
-                    Log.w("Kaba3r", warna);
                     JSONArray jsonArrayWarna = new JSONArray(jsonArrayType.getJSONObject(iii).getString("value"));
-                    Model warna1 = new Model(warna, iii+"",type); //Warna
+                    Model warna1 = new Model(warna, iii + "", type); //Warna
                     v3.add(warna1);
 
                     for (int iv = 0; iv < jsonArrayWarna.length(); iv++) {
                         String tipe_harga = jsonArrayWarna.getJSONObject(iv).getString("tipe_harga").toString();
-                        Log.w("Kaba4r", tipe_harga);
                         JSONArray jsonArrayTiHarga = new JSONArray(jsonArrayWarna.getJSONObject(iv).getString("value"));
-                        Model tipe_harga1 = new Model(tipe_harga, iv+"",type + warna); //tipe Harga
+                        Model tipe_harga1 = new Model(tipe_harga, iv + "", type + warna); //tipe Harga
                         v4.add(tipe_harga1);
 
                         for (int v = 0; v < jsonArrayTiHarga.length(); v++) {
                             String harga = jsonArrayTiHarga.getJSONObject(v).getString("harga").toString();
                             String wilayah = jsonArrayTiHarga.getJSONObject(v).getString("wilayah").toString();
-                            Log.w("Kaba5r", harga);
-                            Model harga1 = new Model(wilayah+"//"+harga, v+"",type + warna + tipe_harga); //Harga
+                            Model harga1 = new Model(wilayah + "//" + harga, v + "", type + warna + tipe_harga); //Harga
                             v5.add(harga1);
                         }
                     }
@@ -373,73 +351,23 @@ public class DialogNewDropdown extends DialogFragment {
             @Override
             public void run() {
                 loading.setVisibility(View.GONE);
-
                 addNewDropdown(v1, "Model", 0);
-//                addNewDropdown(v2, "Type");
-//                addNewDropdown(v3, "Warna");
-//                addNewDropdown(v4, "Type Harga");
-//                addNewDropdown(v5, "Total Harga");
             }
         });
     }
 
-    private void addNewDropdown(ArrayList<Model> spinn, String title, int index){
+    private void addNewDropdown(ArrayList<Model> spinn, String title, int index) {
         ArrayList<String> spinnerArray = new ArrayList<>();
 
         for (int i = 0; i < spinn.size(); i++) {
-            if(title.equalsIgnoreCase("wilayah")){
+            if (title.equalsIgnoreCase("wilayah")) {
                 String[] separated = spinn.get(i).getName().split("//");
                 spinnerArray.add(separated[0]);
-            }else {
+            } else {
                 spinnerArray.add(spinn.get(i).getName());
             }
-        }/*
-        try {
-            if (title.equalsIgnoreCase("model")) {
-                for (int i = 0; i < spinn.size(); i++) {
-                    spinnerArray.add(spinn.get(i).getName());
-                }
-            }
-            if (title.equalsIgnoreCase("type")) {
-                if (!cModel.equalsIgnoreCase("--Please Select--")) {
-                    for (int i = 0; i < spinn.size(); i++) {
-                        if (cModel.equals(spinn.get(i).getId_parent())) {
-                            spinnerArray.add(spinn.get(i).getName());
-                        }
-                    }
-                }
-            }
-            if (title.equalsIgnoreCase("warna")) {
-                if (!cType.equalsIgnoreCase("--Please Select--")) {
-                    for (int i = 0; i < spinn.size(); i++) {
-                        if (cType.equals(spinn.get(i).getId_parent())) {
-                            spinnerArray.add(spinn.get(i).getName());
-                        }
-                    }
-                }
-            }
-            if (title.equalsIgnoreCase("tipe_harga")) {
-                if (!cWarna.equalsIgnoreCase("--Please Select--")) {
-                    for (int i = 0; i < spinn.size(); i++) {
-                        if (cWarna.equals(spinn.get(i).getId_parent())) {
-                            spinnerArray.add(spinn.get(i).getName());
-                        }
-                    }
-                }
-            }
-            if (title.equalsIgnoreCase("harga")) {
-                if (!cTipe_harga.equalsIgnoreCase("--Please Select--")) {
-                    for (int i = 0; i < spinn.size(); i++) {
-                        if (cTipe_harga.equals(spinn.get(i).getId_parent())) {
-                            spinnerArray.add(spinn.get(i).getName());
-                        }
-                    }
-                }
-            }
-        }catch (Exception e){
-            
-        }*/
-        
+        }
+
         final LinearLayout spinerTitle = (LinearLayout) getLayoutInflater().inflate(R.layout.item_spiner_textview, null);
         TextView textViewFirst = (TextView) spinerTitle.findViewById(R.id.title);
 
@@ -460,128 +388,134 @@ public class DialogNewDropdown extends DialogFragment {
         spinnner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(title.equalsIgnoreCase("model")){
-                    ArrayList<Model> vx1 = new ArrayList<>();
-                    vx1.clear();
-                    Model modelz = new Model("--Please Select--", "0","0");
-                    vx1.add(modelz);
 
+                if (!type.equalsIgnoreCase("1")) {
+                    if (title.equalsIgnoreCase("model")) {
+                        ArrayList<Model> vx1 = new ArrayList<>();
+                        vx1.clear();
+                        Model modelz = new Model("--Please Select--", "0", "0");
+                        vx1.add(modelz);
+
+                        cModel = (String) spinnner.getSelectedItem();
+
+                        deleteFromParent(1);
+                        deleteFromParent(2);
+                        deleteFromParent(3);
+                        deleteFromParent(4);
+
+                        if (!cModel.equalsIgnoreCase("--Please Select--")) {
+                            for (int i = 0; i < v2.size(); i++) {
+                                if (cModel.equals(v2.get(i).getId_parent())) {
+                                    Model xxs = new Model(v2.get(i).getName(), v2.get(i).getId_self(), v2.get(i).getId_parent());
+                                    vx1.add(xxs);
+                                }
+                            }
+                            addNewDropdown(vx1, "Type", 1);
+                        }
+                    }
+
+                    if (title.equalsIgnoreCase("type")) {
+                        ArrayList<Model> vx1 = new ArrayList<>();
+                        vx1.clear();
+                        Model modelz = new Model("--Please Select--", "0", "0");
+                        vx1.add(modelz);
+
+                        cType = (String) spinnner.getSelectedItem();
+
+                        deleteFromParent(2);
+                        deleteFromParent(3);
+                        deleteFromParent(4);
+
+                        if (!cType.equalsIgnoreCase("--Please Select--")) {
+                            for (int i = 0; i < v3.size(); i++) {
+                                if (cType.equals(v3.get(i).getId_parent())) {
+                                    Model xxs = new Model(v3.get(i).getName(), v3.get(i).getId_self(), v3.get(i).getId_parent());
+                                    vx1.add(xxs);
+                                }
+                            }
+                            addNewDropdown(vx1, "Warna", 2);
+                        }
+                    }
+
+                    if (title.equalsIgnoreCase("warna")) {
+                        ArrayList<Model> vx1 = new ArrayList<>();
+                        vx1.clear();
+                        Model modelz = new Model("--Please Select--", "0", "0");
+                        vx1.add(modelz);
+
+                        cWarna = (String) spinnner.getSelectedItem();
+
+                        deleteFromParent(3);
+                        deleteFromParent(4);
+
+                        if (!cWarna.equalsIgnoreCase("--Please Select--")) {
+
+                            for (int i = 0; i < v4.size(); i++) {
+                                String kode = cType + cWarna;
+                                if (kode.equals(v4.get(i).getId_parent())) {
+                                    Model xxs = new Model(v4.get(i).getName(), v4.get(i).getId_self(), v4.get(i).getId_parent());
+                                    vx1.add(xxs);
+                                }
+                            }
+                            addNewDropdown(vx1, "Tipe Harga", 3);
+                        }
+                    }
+
+                    if (title.equalsIgnoreCase("tipe harga")) {
+                        ArrayList<Model> vx1 = new ArrayList<>();
+                        vx1.clear();
+                        Model modelz = new Model("--Please Select--", "0", "0");
+                        vx1.add(modelz);
+
+                        cTipe_harga = (String) spinnner.getSelectedItem();
+
+                        deleteFromParent(4);
+
+                        if (!cTipe_harga.equalsIgnoreCase("--Please Select--")) {
+
+                            for (int i = 0; i < v5.size(); i++) {
+                                String kode = cType + cWarna + cTipe_harga;
+                                if (kode.equals(v5.get(i).getId_parent())) {
+                                    Model xxs = new Model(/*"Rp. "+formatCurrency(v5.get(i).getName())*/v5.get(i).getName(), v5.get(i).getId_self(), v5.get(i).getId_parent());
+                                    vx1.add(xxs);
+                                }
+                            }
+                            addNewDropdown(vx1, "Wilayah", 4);
+                        }
+                    }
+
+                    if (title.equalsIgnoreCase("wilayah")) {
+                        cWilayah = (String) spinnner.getSelectedItem();
+                        LinearLayout linearText = new LinearLayout(getContext());
+                        linearText.setOrientation(LinearLayout.VERTICAL);
+
+                        TextView textView = new TextView(getContext());
+                        textView.setText("Harga");
+                        textView.setTextSize(15);
+                        textView.setTextColor(getResources().getColor(R.color.navigationBarColor));
+
+                        TextView tvHarga = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
+                        tvHarga.setMinLines(1);
+
+                        deleteFromParent(5);
+
+                        if (!cWilayah.equalsIgnoreCase("--Please Select--")) {
+                            for (int i = 0; i < spinn.size(); i++) {
+                                String[] separated = spinn.get(i).getName().split("//");
+                                if (cWilayah.equalsIgnoreCase(separated[0])) {
+                                    cHarga = separated[1];
+                                    tvHarga.setText("Rp. " + formatCurrency(separated[1]) /*+"  ("+ separated[0] + ")"*/);
+                                }
+                            }
+                            linearText.addView(textView);
+                            linearText.addView(tvHarga);
+                            lParent.addView(linearText, 5);
+                        }
+                    }
+                } else {
                     cModel = (String) spinnner.getSelectedItem();
-
-                    deleteFromParent(1);
-                    deleteFromParent(2);
-                    deleteFromParent(3);
-                    deleteFromParent(4);
-
-                    if (!cModel.equalsIgnoreCase("--Please Select--")) {
-                        for (int i = 0; i < v2.size(); i++) {
-                            if (cModel.equals(v2.get(i).getId_parent())) {
-                                Model xxs = new Model(v2.get(i).getName(), v2.get(i).getId_self(),v2.get(i).getId_parent());
-                                vx1.add(xxs);
-                            }
-                        }
-                        addNewDropdown(vx1, "Type", 1);
-                    }
                 }
 
-                if(title.equalsIgnoreCase("type")){
-                    ArrayList<Model> vx1 = new ArrayList<>();
-                    vx1.clear();
-                    Model modelz = new Model("--Please Select--", "0","0");
-                    vx1.add(modelz);
-
-                    cType = (String) spinnner.getSelectedItem();
-
-                    deleteFromParent(2);
-                    deleteFromParent(3);
-                    deleteFromParent(4);
-
-                    if (!cType.equalsIgnoreCase("--Please Select--")) {
-                        for (int i = 0; i < v3.size(); i++) {
-                            if (cType.equals(v3.get(i).getId_parent())) {
-                                Model xxs = new Model(v3.get(i).getName(), v3.get(i).getId_self(),v3.get(i).getId_parent());
-                                vx1.add(xxs);
-                            }
-                        }
-                        addNewDropdown(vx1, "Warna", 2);
-                    }
-                }
-
-                if(title.equalsIgnoreCase("warna")){
-                    ArrayList<Model> vx1 = new ArrayList<>();
-                    vx1.clear();
-                    Model modelz = new Model("--Please Select--", "0","0");
-                    vx1.add(modelz);
-
-                    cWarna = (String) spinnner.getSelectedItem();
-
-                    deleteFromParent(3);
-                    deleteFromParent(4);
-
-                    if (!cWarna.equalsIgnoreCase("--Please Select--")) {
-
-                        for (int i = 0; i < v4.size(); i++) {
-                            String kode = cType + cWarna;
-                            if (kode.equals(v4.get(i).getId_parent())) {
-                                Model xxs = new Model(v4.get(i).getName(), v4.get(i).getId_self(),v4.get(i).getId_parent());
-                                vx1.add(xxs);
-                            }
-                        }
-                        addNewDropdown(vx1, "Tipe Harga", 3);
-                    }
-                }
-
-                if(title.equalsIgnoreCase("tipe harga")){
-                    ArrayList<Model> vx1 = new ArrayList<>();
-                    vx1.clear();
-                    Model modelz = new Model("--Please Select--", "0","0");
-                    vx1.add(modelz);
-
-                    cTipe_harga = (String) spinnner.getSelectedItem();
-
-                    deleteFromParent(4);
-
-                    if (!cTipe_harga.equalsIgnoreCase("--Please Select--")) {
-
-                        for (int i = 0; i < v5.size(); i++) {
-                            String kode = cType + cWarna + cTipe_harga;
-                            if (kode.equals(v5.get(i).getId_parent())) {
-                                Model xxs = new Model(/*"Rp. "+formatCurrency(v5.get(i).getName())*/v5.get(i).getName(), v5.get(i).getId_self(),v5.get(i).getId_parent());
-                                vx1.add(xxs);
-                            }
-                        }
-                        addNewDropdown(vx1, "Wilayah", 4);
-                    }
-                }
-
-                if(title.equalsIgnoreCase("wilayah")){
-                    cWilayah = (String) spinnner.getSelectedItem();
-                    LinearLayout linearText = new LinearLayout(getContext());
-                    linearText.setOrientation(LinearLayout.VERTICAL);
-
-                    TextView textView = new TextView(getContext());
-                    textView.setText("Harga");
-                    textView.setTextSize(15);
-                    textView.setTextColor(getResources().getColor(R.color.navigationBarColor));
-
-                    TextView tvHarga = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
-                    tvHarga.setMinLines(1);
-
-                    deleteFromParent(5);
-
-                    if (!cWilayah.equalsIgnoreCase("--Please Select--")) {
-                        for (int i = 0; i < spinn.size(); i++) {
-                            String[] separated = spinn.get(i).getName().split("//");
-                            if(cWilayah.equalsIgnoreCase(separated[0])) {
-                                cHarga = separated[1];
-                                tvHarga.setText("Rp. "+formatCurrency(separated[1]) /*+"  ("+ separated[0] + ")"*/);
-                            }
-                        }
-                        linearText.addView(textView);
-                        linearText.addView(tvHarga);
-                        lParent.addView(linearText,5);
-                    }
-                }
             }
 
             @Override
@@ -592,11 +526,11 @@ public class DialogNewDropdown extends DialogFragment {
 
     }
 
-    public void deleteFromParent(int index){
+    public void deleteFromParent(int index) {
         try {
             lParent.removeViewAt(index);
-        }catch (Exception e){
-            Log.w("Something wrong",e.getMessage());
+        } catch (Exception e) {
+            Log.w("Something wrong", e.getMessage());
         }
     }
 
@@ -605,15 +539,19 @@ public class DialogNewDropdown extends DialogFragment {
         return formatter.format(Double.parseDouble(amount));
     }
 
-    public String setjson(){
+    public String setjson() {
         JSONObject obj = new JSONObject();
         try {
             obj.put("model", cModel);
-            obj.put("type", cType);
-            obj.put("warna", cWarna);
-            obj.put("tipe_harga", cTipe_harga);
-            obj.put("wilayah", cWilayah);
-            obj.put("harga", cHarga);
+            if (!type.equalsIgnoreCase("1")) {
+                obj.put("type", cType);
+                obj.put("warna", cWarna);
+                obj.put("tipe_harga", cTipe_harga);
+                obj.put("wilayah", cWilayah);
+                obj.put("harga", cHarga);
+            }
+
+
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -622,7 +560,7 @@ public class DialogNewDropdown extends DialogFragment {
         return obj.toString();
     }
 
-    public interface finishListener{
+    public interface finishListener {
         public void submitted(String json);
     }
 

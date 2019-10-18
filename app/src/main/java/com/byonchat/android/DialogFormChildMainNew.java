@@ -123,7 +123,7 @@ public class DialogFormChildMainNew extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
-        Log.w("sendiri", "oke5");
+        Log.w("sendiri", "oke5::" + idTab);
         linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
         nameTitle = (TextView) dialog.findViewById(R.id.name);
         mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
@@ -166,18 +166,19 @@ public class DialogFormChildMainNew extends DialogFragment {
 
                 } else if (type.equalsIgnoreCase("text")) {
 
-                    TextView textView = new TextView(getContext());
-                    if (required.equalsIgnoreCase("1")) {
-                        label += "<font size=\"3\" color=\"red\">*</font>";
-                    }
-                    textView.setText(Html.fromHtml(label));
-                    textView.setTextSize(15);
 
                     if (count == null) {
                         count = 0;
                     } else {
                         count++;
                     }
+                    tp[count] = new TextView(getContext());
+                    if (required.equalsIgnoreCase("1")) {
+                        label += "<font size=\"3\" color=\"red\">*</font>";
+                    }
+                    tp[count].setText(Html.fromHtml(label));
+                    tp[count].setTextSize(15);
+
                     et[count] = (EditText) getActivity().getLayoutInflater().inflate(R.layout.edit_input_layout, null);
                     List<String> valSetOne = new ArrayList<String>();
                     valSetOne.add(String.valueOf(count));
@@ -242,7 +243,7 @@ public class DialogFormChildMainNew extends DialogFragment {
                     params2.setMargins(30, 10, 30, 40);
 
 
-                    linearLayout.addView(textView, params1);
+                    linearLayout.addView(tp[count], params1);
                     linearLayout.addView(et[count], params2);
 
                 } else if (type.equalsIgnoreCase("formula")) {
@@ -1010,13 +1011,13 @@ public class DialogFormChildMainNew extends DialogFragment {
                     valSetOne.add(label);
                     valSetOne.add(String.valueOf(i));
                     hashMap.put(Integer.parseInt(idListTask), valSetOne);
-                    final EditText et = (EditText) getActivity().getLayoutInflater().inflate(R.layout.edit_input_layout, null);
+                    final EditText etD = (EditText) getActivity().getLayoutInflater().inflate(R.layout.edit_input_layout, null);
 
                     Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
                     if (cursorCild.getCount() > 0) {
                         int spinnerPosition = spinnerArrayAdapter.getPosition(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                         if (spinnerPosition < 0) {
-                            et.setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                            etD.setText(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                             spinnerPosition = spinnerArrayVal.indexOf("others");
                         }
                         spinner.setSelection(spinnerPosition);
@@ -1033,8 +1034,8 @@ public class DialogFormChildMainNew extends DialogFragment {
                         public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
                             String status = spinnerArrayVal.get(myPosition);
                             if (status.equalsIgnoreCase("others")) {
-                                et.setVisibility(View.VISIBLE);
-                                et.addTextChangedListener(new TextWatcher() {
+                                etD.setVisibility(View.VISIBLE);
+                                etD.addTextChangedListener(new TextWatcher() {
                                     @Override
                                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -1063,7 +1064,26 @@ public class DialogFormChildMainNew extends DialogFragment {
                                     }
                                 });
                             } else {
-                                et.setVisibility(View.GONE);
+                                if (idTab.equalsIgnoreCase("2584")) {
+                                    if (status.equalsIgnoreCase("insent_marg") || status.equalsIgnoreCase("plat_qr")) {
+                                        Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, "{\"idt\":\"2584\",\"usr\":\"1_277091610admin\"}", "{\"iddtl\":\"1671|2427\",\"idtsk\":\"66900\"}", "child_detail", "{\"a\":\"2\",\"b\":\"text\",\"c\":\"1\"}");
+                                        if (cEdit.getCount() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, "{\"idt\":\"2584\",\"usr\":\"1_277091610admin\"}", "{\"iddtl\":\"1671|2427\",\"idtsk\":\"66900\"}", "", "{\"a\":\"2\",\"b\":\"text\",\"c\":\"1\"}", "dett", "child_detail");
+                                            botListDB.updateDetailRoomWithFlagContent(orderModel);
+                                        } else {
+                                            RoomsDetail orderModel = new RoomsDetail(idchildDetail, "{\"idt\":\"2584\",\"usr\":\"1_277091610admin\"}", "{\"iddtl\":\"1671|2427\",\"idtsk\":\"66900\"}", "", "{\"a\":\"2\",\"b\":\"text\",\"c\":\"1\"}", "dett", "child_detail");
+                                            botListDB.insertRoomsDetail(orderModel);
+                                        }
+
+                                        et[0].setVisibility(View.GONE);
+                                        tp[0].setVisibility(View.GONE);
+                                    } else {
+                                        et[0].setVisibility(View.VISIBLE);
+                                        tp[0].setVisibility(View.VISIBLE);
+                                    }
+                                }
+
+                                etD.setVisibility(View.GONE);
                                 Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
                                 if (cEdit.getCount() > 0) {
                                     RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), spinner.getSelectedItem().toString().replace("'", "''"), jsonCreateType(idListTask, type, String.valueOf(finalI24)), name, "child_detail");
@@ -1087,7 +1107,7 @@ public class DialogFormChildMainNew extends DialogFragment {
 
                     linearLayout.addView(textView, params1);
                     linearLayout.addView(spinner, params2);
-                    linearLayout.addView(et, params2);
+                    linearLayout.addView(etD, params2);
 
                 } else if (type.equalsIgnoreCase("input_kodepos")) {
 
@@ -1149,7 +1169,6 @@ public class DialogFormChildMainNew extends DialogFragment {
                             AlertDialog.Builder builder = DialogUtil.generateAlertDialog(getActivity(), "Input Required", labelAlert);
                             builder.show();
                         } else {
-                            Log.w("arimbi", list.size() + "");
                             if (list.size() == 1) {
                                 titleUntuk = list.get(0).getContent();
                             } else {
@@ -1171,7 +1190,6 @@ public class DialogFormChildMainNew extends DialogFragment {
                             if (getDialog() != null) {
                                 getDialog().dismiss();
                             }
-                            Log.w("posisi", posisi);
                             mCancel.setText("save");
                             Intent newIntent = new Intent("refreshForm");
                             newIntent.putExtra("posisi", posisi);
@@ -1270,7 +1288,6 @@ public class DialogFormChildMainNew extends DialogFragment {
                             getDialog().dismiss();
                         }
                         mCancel.setText("save");
-                        Log.w("posisi", posisi);
                         Intent newIntent = new Intent("refreshForm");
                         newIntent.putExtra("posisi", posisi);
                         getActivity().sendBroadcast(newIntent);
@@ -1321,7 +1338,6 @@ public class DialogFormChildMainNew extends DialogFragment {
     }
 
     public void delete() {
-
 
         List<RoomsDetail> list = botListDB.getAllRoomDetailFormWithFlagContent(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail");
 
@@ -1617,11 +1633,7 @@ public class DialogFormChildMainNew extends DialogFragment {
                     if (spinnerArray.get(0) != null) {
                         if (spinnerArray.get(0).startsWith("http") && spinnerArray.get(0).endsWith(".jpg")) {
 
-                            Log.w("sis122", spinnerArray.get(0));
-
                             final RelativeLayout relative = (RelativeLayout) spinerTitle.findViewById(R.id.lastImage);
-
-
                             final ImageView imageView = (ImageView) spinerTitle.findViewById(R.id.value);
                             final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) spinerTitle.findViewById(R.id.loader_progress);
 
@@ -1643,8 +1655,6 @@ public class DialogFormChildMainNew extends DialogFragment {
                             textView.setText(spinnerArray.get(0));
 
                         } else {
-                            Log.w("sis133", spinnerArray.get(0));
-
                             textView.setVisibility(View.VISIBLE);
                             spinner.setVisibility(View.GONE);
                             textView.setText(spinnerArray.get(0));

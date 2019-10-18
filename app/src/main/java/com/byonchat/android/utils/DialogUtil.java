@@ -33,7 +33,7 @@ public class DialogUtil {
         View form = activity.getLayoutInflater().inflate(
                 R.layout.custom_information, null);
         TextView tv = (TextView) form.findViewById(R.id.customInformationText);
-        tv.setText(message);
+        tv.setText(Html.fromHtml(message));
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(title);

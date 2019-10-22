@@ -106,7 +106,7 @@ public class DialogNewDropdown extends DialogFragment {
     private finishListener listener;
     String type;
 
-    private String cModel, cType, cWarna, cTipe_harga, cWilayah, cHarga;
+    private String cModel, cType, cWarna, cTipe_harga, cWilayah, cHarga, cKode, defaultValue;
 
     private ArrayList<Model> v1 = new ArrayList<>();
     private ArrayList<Model> v2 = new ArrayList<>();
@@ -114,10 +114,11 @@ public class DialogNewDropdown extends DialogFragment {
     private ArrayList<Model> v4 = new ArrayList<>();
     private ArrayList<Model> v5 = new ArrayList<>();
 
-    public DialogNewDropdown(finishListener listener, String type) {
+    public DialogNewDropdown(finishListener listener, String type, String defaultV) {
         super();
         this.listener = listener;
         this.type = type;
+        this.defaultValue = defaultV;
     }
 
     @Override
@@ -163,6 +164,16 @@ public class DialogNewDropdown extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (new Validations().getInstance(getActivity()).getCars() != null) {
+            try {
+                JSONArray jsonArray = new JSONArray(new Validations().getInstance(getActivity()).getCars());
+                buildDropdown(jsonArray.toString());
+                return;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         new getCars(getActivity()).execute("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/honda/convert_json_api_gzip.php", "106");
     }
@@ -231,8 +242,6 @@ public class DialogNewDropdown extends DialogFragment {
             if (loading.getVisibility() == View.VISIBLE) {
                 loading.setVisibility(View.GONE);
             }
-//            Toast.makeText(context, "Form success download2.::" + result, Toast.LENGTH_SHORT).show();
-
         }
 
         protected void onProgressUpdate(String... string) {
@@ -263,7 +272,9 @@ public class DialogNewDropdown extends DialogFragment {
                     byte[] decodedBytes = Base64.decode(data, 0);
 
                     try {
-                        JSONArray jsonArray = new JSONArray(decompress(decodedBytes));
+                        String rr = decompress(decodedBytes);
+                        new Validations().getInstance(context).setCarsTemp(rr);
+                        JSONArray jsonArray = new JSONArray(rr);
                         buildDropdown(jsonArray.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -339,7 +350,8 @@ public class DialogNewDropdown extends DialogFragment {
                         for (int v = 0; v < jsonArrayTiHarga.length(); v++) {
                             String harga = jsonArrayTiHarga.getJSONObject(v).getString("harga").toString();
                             String wilayah = jsonArrayTiHarga.getJSONObject(v).getString("wilayah").toString();
-                            Model harga1 = new Model(wilayah + "//" + harga, v + "", type + warna + tipe_harga); //Harga
+                            String kode = jsonArrayTiHarga.getJSONObject(v).getString("kode").toString();
+                            Model harga1 = new Model(wilayah + "//" + harga + "//" + kode, v + "", type + warna + tipe_harga); //Harga
                             v5.add(harga1);
                         }
                     }
@@ -357,6 +369,7 @@ public class DialogNewDropdown extends DialogFragment {
     }
 
     private void addNewDropdown(ArrayList<Model> spinn, String title, int index) {
+
         ArrayList<String> spinnerArray = new ArrayList<>();
 
         for (int i = 0; i < spinn.size(); i++) {
@@ -385,6 +398,16 @@ public class DialogNewDropdown extends DialogFragment {
 
         lParent.addView(spinerTitle, index);
 
+        try {
+            JSONObject jsonObjectDefaultValue = new JSONObject(defaultValue);
+            if (jsonObjectDefaultValue.has(title)) {
+                spinnner.setSelection(spinnerArrayAdapter.getPosition(jsonObjectDefaultValue.getString(title)));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         spinnner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -402,6 +425,7 @@ public class DialogNewDropdown extends DialogFragment {
                         deleteFromParent(2);
                         deleteFromParent(3);
                         deleteFromParent(4);
+                        deleteFromParent(5);
 
                         if (!cModel.equalsIgnoreCase("--Please Select--")) {
                             for (int i = 0; i < v2.size(); i++) {
@@ -411,6 +435,12 @@ public class DialogNewDropdown extends DialogFragment {
                                 }
                             }
                             addNewDropdown(vx1, "Type", 1);
+                        } else {
+                            deleteFromParent(1);
+                            deleteFromParent(2);
+                            deleteFromParent(3);
+                            deleteFromParent(4);
+                            deleteFromParent(5);
                         }
                     }
 
@@ -425,6 +455,7 @@ public class DialogNewDropdown extends DialogFragment {
                         deleteFromParent(2);
                         deleteFromParent(3);
                         deleteFromParent(4);
+                        deleteFromParent(5);
 
                         if (!cType.equalsIgnoreCase("--Please Select--")) {
                             for (int i = 0; i < v3.size(); i++) {
@@ -434,6 +465,11 @@ public class DialogNewDropdown extends DialogFragment {
                                 }
                             }
                             addNewDropdown(vx1, "Warna", 2);
+                        } else {
+                            deleteFromParent(2);
+                            deleteFromParent(3);
+                            deleteFromParent(4);
+                            deleteFromParent(5);
                         }
                     }
 
@@ -447,6 +483,7 @@ public class DialogNewDropdown extends DialogFragment {
 
                         deleteFromParent(3);
                         deleteFromParent(4);
+                        deleteFromParent(5);
 
                         if (!cWarna.equalsIgnoreCase("--Please Select--")) {
 
@@ -457,11 +494,15 @@ public class DialogNewDropdown extends DialogFragment {
                                     vx1.add(xxs);
                                 }
                             }
-                            addNewDropdown(vx1, "Tipe Harga", 3);
+                            addNewDropdown(vx1, "Price Type", 3);
+                        } else {
+                            deleteFromParent(3);
+                            deleteFromParent(4);
+                            deleteFromParent(5);
                         }
                     }
 
-                    if (title.equalsIgnoreCase("tipe harga")) {
+                    if (title.equalsIgnoreCase("price type")) {
                         ArrayList<Model> vx1 = new ArrayList<>();
                         vx1.clear();
                         Model modelz = new Model("--Please Select--", "0", "0");
@@ -470,17 +511,21 @@ public class DialogNewDropdown extends DialogFragment {
                         cTipe_harga = (String) spinnner.getSelectedItem();
 
                         deleteFromParent(4);
+                        deleteFromParent(5);
 
                         if (!cTipe_harga.equalsIgnoreCase("--Please Select--")) {
 
                             for (int i = 0; i < v5.size(); i++) {
                                 String kode = cType + cWarna + cTipe_harga;
                                 if (kode.equals(v5.get(i).getId_parent())) {
-                                    Model xxs = new Model(/*"Rp. "+formatCurrency(v5.get(i).getName())*/v5.get(i).getName(), v5.get(i).getId_self(), v5.get(i).getId_parent());
+                                    Model xxs = new Model(v5.get(i).getName(), v5.get(i).getId_self(), v5.get(i).getId_parent());
                                     vx1.add(xxs);
                                 }
                             }
                             addNewDropdown(vx1, "Wilayah", 4);
+                        } else {
+                            deleteFromParent(4);
+                            deleteFromParent(5);
                         }
                     }
 
@@ -490,12 +535,20 @@ public class DialogNewDropdown extends DialogFragment {
                         linearText.setOrientation(LinearLayout.VERTICAL);
 
                         TextView textView = new TextView(getContext());
-                        textView.setText("Harga");
+                        textView.setText("Price");
                         textView.setTextSize(15);
                         textView.setTextColor(getResources().getColor(R.color.navigationBarColor));
 
                         TextView tvHarga = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
                         tvHarga.setMinLines(1);
+
+                        TextView textViewKode = new TextView(getContext());
+                        textViewKode.setText("Kode");
+                        textViewKode.setTextSize(15);
+                        textViewKode.setTextColor(getResources().getColor(R.color.navigationBarColor));
+
+                        TextView kode = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
+                        kode.setMinLines(1);
 
                         deleteFromParent(5);
 
@@ -503,14 +556,20 @@ public class DialogNewDropdown extends DialogFragment {
                             for (int i = 0; i < spinn.size(); i++) {
                                 String[] separated = spinn.get(i).getName().split("//");
                                 if (cWilayah.equalsIgnoreCase(separated[0])) {
-                                    cHarga = separated[1];
-                                    tvHarga.setText("Rp. " + formatCurrency(separated[1]) /*+"  ("+ separated[0] + ")"*/);
+                                    tvHarga.setText("Rp. " + formatCurrency(separated[1]));
+                                    cHarga = tvHarga.getText().toString();
+                                    cKode = separated[2];
+                                    kode.setText(cKode);
                                 }
                             }
                             linearText.addView(textView);
                             linearText.addView(tvHarga);
+                            linearText.addView(textViewKode);
+                            linearText.addView(kode);
+
                             lParent.addView(linearText, 5);
                         }
+                        defaultValue = "{}";
                     }
                 } else {
                     cModel = (String) spinnner.getSelectedItem();
@@ -542,13 +601,14 @@ public class DialogNewDropdown extends DialogFragment {
     public String setjson() {
         JSONObject obj = new JSONObject();
         try {
-            obj.put("model", cModel);
+            obj.put("Model", cModel);
             if (!type.equalsIgnoreCase("1")) {
-                obj.put("type", cType);
-                obj.put("warna", cWarna);
-                obj.put("tipe_harga", cTipe_harga);
-                obj.put("wilayah", cWilayah);
-                obj.put("harga", cHarga);
+                obj.put("Type", cType);
+                obj.put("Warna", cWarna);
+                obj.put("Price Type", cTipe_harga);
+                obj.put("Wilayah", cWilayah);
+                obj.put("Price", cHarga);
+                obj.put("Kode", cKode);
             }
 
 

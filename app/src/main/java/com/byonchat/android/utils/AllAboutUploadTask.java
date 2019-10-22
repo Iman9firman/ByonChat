@@ -691,6 +691,13 @@ public class AllAboutUploadTask {
                             jsonArrayDate.put("");
                             jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
 
+                        } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("copy_field_dropdown") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis")) {
+
+                            jsonArrayKey.put(list.get(u).getFlag_tab());
+                            jsonArrayValue.put(list.get(u).getContent());
+                            jsonArrayDate.put("");
+                            jsonArrayType.put("new_dropdown_dinamis");
+
                         } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
 
                             jsonArrayKey.put(list.get(u).getFlag_tab());

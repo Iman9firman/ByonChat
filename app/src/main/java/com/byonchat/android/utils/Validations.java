@@ -204,7 +204,7 @@ public class Validations {
         return error;
     }
 
-    public void setShareLocOnOff(boolean onOff){
+    public void setShareLocOnOff(boolean onOff) {
         //id IntervalDB ke 27 ISSReliever
         IntervalDB db = new IntervalDB(context);
         db.open();
@@ -212,15 +212,15 @@ public class Validations {
         if (cursor.getCount() > 0) {
             db.deleteContact(27);
         }
-        Log.w("Adakah hasilnya bos","ada nih 0: "+onOff);
+        Log.w("Adakah hasilnya bos", "ada nih 0: " + onOff);
         Interval interval = new Interval();
         interval.setId(27);
-        interval.setTime(onOff+"");
+        interval.setTime(onOff + "");
         db.createContact(interval);
         db.close();
     }
 
-    public boolean getShareLocOnOff(int id){
+    public boolean getShareLocOnOff(int id) {
         //id IntervalDB ke 27 ISSReliever
         boolean onOff = false;
         IntervalDB db = new IntervalDB(context);
@@ -230,7 +230,7 @@ public class Validations {
             onOff = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)));
         }
 
-        Log.w("Adakah hasilnya bos","ada nih : "+onOff);
+        Log.w("Adakah hasilnya bos", "ada nih : " + onOff);
         return onOff;
     }
 
@@ -986,5 +986,35 @@ public class Validations {
     }
 
 
+    public void setCarsTemp(String carsTemp) {
+        IntervalDB db = new IntervalDB(context);
+        db.open();
+        Cursor cursor = db.getSingleContact(28);
+        if (cursor.getCount() > 0) {
+            db.deleteContact(28);
+        }
+        Interval interval = new Interval();
+        interval.setId(28);
+        interval.setTime(carsTemp);
+        db.createContact(interval);
+        db.close();
+    }
+
+    public String getCars() {
+        String result = null;
+        if (getValidationById(29, 5) == 0) {
+            IntervalDB db = new IntervalDB(context);
+            db.open();
+            Cursor cursorSelect = db.getSingleContact(28);
+            if (cursorSelect.getCount() > 0) {
+                result = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+            }
+            cursorSelect.close();
+            db.close();
+
+        }
+
+        return result;
+    }
 
 }

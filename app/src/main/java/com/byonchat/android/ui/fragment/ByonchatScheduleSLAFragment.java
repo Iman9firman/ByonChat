@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.icu.util.Calendar;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,24 +32,16 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.byonchat.android.DownloadSqliteDinamicActivity;
-import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.Sample.ScheduleSLAPeriod;
-import com.byonchat.android.adapter.SLAISSAdapter;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.local.Byonchat;
-import com.byonchat.android.model.SLAISSItem;
 import com.byonchat.android.model.ScheduleList;
 import com.byonchat.android.provider.DataBaseDropDown;
-import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
 import com.byonchat.android.utils.ExceptionHandler;
 import com.byonchat.android.widget.CalendarDialog;
-import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
-import com.pdfjet.Line;
-import com.toptoche.searchablespinnerlibrary.SearchableListDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.apache.http.HttpEntity;
@@ -68,31 +61,30 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
-
-import static java.lang.Character.LINE_SEPARATOR;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class ByonchatScheduleSLAFragment extends Fragment {
     ScrollView scrollView;
     LinearLayout spanLayout;
     ImageView addLayout;
+    TextView theChosen;
+    String stChosen;
     Button submit;
     Activity mActivity;
     ArrayList<String> detaiArea = new ArrayList<>();
     ArrayList<String> kodeJJt = new ArrayList<>(); //list kode jjt nya saja
     EditText editParentTv;
     TextView editStart, editFinish;
-    SearchableSpinner spinjjt, spinfreq, spinpembobotan, spinsection, spinsubsec, spinperiod;
+    SearchableSpinner spinjjt, spinktr, spinpembobotan, spinsection, spinsubsec, spinperiod;
     String[] detailArea = new String[0];
     boolean change_position = false;
     public String username;
@@ -145,11 +137,12 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         editFinish = (TextView) view.findViewById(R.id.editFinishDate);
         editParentTv = (EditText) view.findViewById(R.id.editParentTv);
         spinjjt = (SearchableSpinner) view.findViewById(R.id.spinnerJJT);
-        spinfreq = (SearchableSpinner) view.findViewById(R.id.spinnerFreq);
+        spinktr = (SearchableSpinner) view.findViewById(R.id.spinnerFreq);
         spinpembobotan = (SearchableSpinner) view.findViewById(R.id.spinnerPembobotan);
         spinsection = (SearchableSpinner) view.findViewById(R.id.spinnerSection);
         spinsubsec = (SearchableSpinner) view.findViewById(R.id.spinnerSubSection);
         spinperiod = (SearchableSpinner) view.findViewById(R.id.spinnerPeriod);
+        theChosen = (TextView) view.findViewById(R.id.textxt);
 
         return view;
     }
@@ -171,48 +164,12 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             spinjjt.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
-            spinfreq.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
+            spinktr.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
             spinpembobotan.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
             spinsection.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
             spinsubsec.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
             spinperiod.setBackground(mActivity.getResources().getDrawable(R.drawable.spinner_background));
         }
-
-        editStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CalendarDialog calendarDialog = new CalendarDialog(mActivity);
-                calendarDialog.setListener(new CalendarDialog.MyDialogListener() {
-                    @Override
-                    public void userSelectedAValue(String value) {
-                        editStart.setText(value);
-                    }
-
-                    @Override
-                    public void userCanceled() {
-                    }
-                });
-                calendarDialog.show();
-            }
-        });
-
-        editFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CalendarDialog calendarDialog = new CalendarDialog(mActivity);
-                calendarDialog.setListener(new CalendarDialog.MyDialogListener() {
-                    @Override
-                    public void userSelectedAValue(String value) {
-                        editFinish.setText(value);
-                    }
-
-                    @Override
-                    public void userCanceled() {
-                    }
-                });
-                calendarDialog.show();
-            }
-        });
 
         //List JJT
         ArrayList<String> list = new ArrayList<>();
@@ -257,12 +214,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         ArrayAdapter listAdp_freq = new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, list_freq);
         listAdp_freq.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        list_freq.add("-- Pilih Frequency --");
-        list_freq.add("Harian");
-        list_freq.add("Mingguan");
-        list_freq.add("Bulanan");
-        list_freq.add("6 Bulanan");
-        list_freq.add("Tahunan");
+        list_freq.add("-- Pilih Keterangan --");
 
         //Adapter Pembobotan
         ArrayList<String> list_bobot = new ArrayList<>();
@@ -292,18 +244,206 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         listAdp_perio.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         list_perio.add("-- Pilih Periode --");
-        list_perio.add("Harian");
-        list_perio.add("Mingguan");
-        list_perio.add("Bulanan");
-        list_perio.add("6 Bulanan");
-        list_perio.add("Tahunan");
+
+        editStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CalendarDialog calendarDialog = new CalendarDialog(mActivity);
+                calendarDialog.setListener(new CalendarDialog.MyDialogListener() {
+                    @Override
+                    public void userSelectedAValue(String value) {
+                        editStart.setText(value);
+
+                        if(!editFinish.getText().toString().equalsIgnoreCase("")) {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            Date start = null, finish = null;
+                            try {
+                                start = dateFormat.parse(value);
+                                finish = dateFormat.parse(editFinish.getText().toString());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            long msDiff = finish.getTime() - start.getTime();
+                            long daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff);
+
+                            list_perio.clear();
+                            list_perio.add("-- Pilih Periode --");
+                            if (daysDiff < 7) {
+                                list_perio.add("One Time");
+                            } else if (daysDiff >= 7 && daysDiff < 30) {
+                                list_perio.add("One Time");
+                                list_perio.add("Weekly");
+                            } else if (daysDiff >= 30) {
+                                list_perio.add("One Time");
+                                list_perio.add("Weekly");
+                                list_perio.add("Monthly");
+                            }
+                            listAdp_perio.notifyDataSetChanged();
+                            theChosen.setText("");
+                            spinperiod.setSelection(0);
+                        }
+                    }
+
+                    @Override
+                    public void userCanceled() {
+                    }
+                });
+                calendarDialog.show();
+            }
+        });
+
+        editFinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CalendarDialog calendarDialog = new CalendarDialog(mActivity);
+                calendarDialog.setListener(new CalendarDialog.MyDialogListener() {
+                    @Override
+                    public void userSelectedAValue(String value) {
+                        editFinish.setText(value);
+
+                        if(!editStart.getText().toString().equalsIgnoreCase("")) {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            Date start = null, finish = null;
+                            try {
+                                start = dateFormat.parse(editStart.getText().toString());
+                                finish = dateFormat.parse(value);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            long msDiff = finish.getTime() - start.getTime();
+                            long daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff);
+
+                            list_perio.clear();
+                            list_perio.add("-- Pilih Periode --");
+                            if (daysDiff <= 7) {
+                                list_perio.add("One Time");
+                            } else if (daysDiff >= 8 && daysDiff < 30) {
+                                list_perio.add("Weekly");
+                            } else if (daysDiff >= 30) {
+                                list_perio.add("Weekly");
+                                list_perio.add("Monthly");
+                            }
+                            listAdp_perio.notifyDataSetChanged();
+                            theChosen.setText("");
+                            spinperiod.setSelection(0);
+                        }
+                    }
+
+                    @Override
+                    public void userCanceled() {
+                    }
+                });
+                calendarDialog.show();
+            }
+        });
 
         spinjjt.setAdapter(listAdp);
-        spinfreq.setAdapter(listAdp_freq);
+        spinktr.setAdapter(listAdp_freq);
         spinpembobotan.setAdapter(listAdp_bobot);
         spinsection.setAdapter(listAdp_secs);
         spinsubsec.setAdapter(listAdp_subsecs);
         spinperiod.setAdapter(listAdp_perio);
+
+        //Add List Selected Date
+        spinperiod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SimpleDateFormat targetFormat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss (EEEE)");
+                list_freq.clear();
+                if(spinperiod.getSelectedItem().toString().equalsIgnoreCase("one time")){
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date start = null, finish = null;
+                    try {
+                        start = dateFormat.parse(editStart.getText().toString());
+                        finish = dateFormat.parse(editFinish.getText().toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    long msDiff = finish.getTime() - start.getTime();
+                    long daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff);
+
+                    GregorianCalendar gc = new GregorianCalendar();
+                    gc.setTime(start);
+                    Log.w("tdbretles",gc.getTime().toGMTString()+"");
+                    stChosen = targetFormat.format(gc.getTime());
+                    for(long i = 0; i < daysDiff; i++){
+                        gc.add(Calendar.DATE,1);
+                        Log.w("tdbretles",targetFormat.format(gc.getTime())+"");
+                        stChosen = stChosen + "\n"+targetFormat.format(gc.getTime());
+                    }
+                    theChosen.setText(stChosen);
+
+                    list_freq.add("-- Pilih Keterangan --");
+                    list_freq.add("One Time");
+                    list_freq.add("3 Bulan");
+                    list_freq.add("6 Bulan");
+                    list_freq.add("Tahunan");
+                }else if(spinperiod.getSelectedItem().toString().equalsIgnoreCase("weekly")){
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date start = null, finish = null;
+                    try {
+                        start = dateFormat.parse(editStart.getText().toString());
+                        finish = dateFormat.parse(editFinish.getText().toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    long msDiff = finish.getTime() - start.getTime();
+                    long daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff);
+
+                    GregorianCalendar gc = new GregorianCalendar();
+                    gc.setTime(start);
+                    Log.w("tdbretles",gc.getTime()+"");
+                    stChosen = targetFormat.format(gc.getTime());
+                    for(long i = 0; i < daysDiff; i++){
+                        gc.add(Calendar.DATE,7);
+                        if(gc.getTime().before(finish)) {
+                            Log.w("tdbretles", gc.getTime() + "");
+                            stChosen = stChosen + "\n"+targetFormat.format(gc.getTime());
+                        }
+                    }
+                    theChosen.setText(stChosen);
+
+                    list_freq.add("-- Pilih Keterangan --");
+                    list_freq.add("Weekly");
+                }else if(spinperiod.getSelectedItem().toString().equalsIgnoreCase("monthly")){
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date start = null, finish = null;
+                    try {
+                        start = dateFormat.parse(editStart.getText().toString());
+                        finish = dateFormat.parse(editFinish.getText().toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    long msDiff = finish.getTime() - start.getTime();
+                    long daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff);
+
+                    GregorianCalendar gc = new GregorianCalendar();
+                    gc.setTime(start);
+                    Log.w("tdbretles",gc.getTime()+"");
+                    stChosen = targetFormat.format(gc.getTime());
+                    for(long i = 0; i < daysDiff; i++){
+                        gc.add(Calendar.MONTH,1);
+                        if(gc.getTime().before(finish)) {
+                            Log.w("tdbretles", gc.getTime() + "");
+                            stChosen = stChosen + "\n"+targetFormat.format(gc.getTime());
+                        }
+                    }
+                    theChosen.setText(stChosen);
+
+                    list_freq.add("-- Pilih Keterangan --");
+                    list_freq.add("Monthly");
+                }else {
+                    list_freq.add("-- Pilih Keterangan --");
+                    theChosen.setText("");
+                }
+                spinktr.setSelection(0);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //Add List Pembobotan When Spinner JJT Changes
         spinjjt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -481,7 +621,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                     error = true;
                     Toast.makeText(mActivity, "Harap isi JJT", Toast.LENGTH_SHORT).show();
                 }
-                if (spinfreq.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Frequency --")) {
+                if (spinktr.getSelectedItem().toString().equalsIgnoreCase("-- Pilih Keterangan --")) {
                     error = true;
                     Toast.makeText(mActivity, "Harap isi Frequency", Toast.LENGTH_SHORT).show();
                 }
@@ -535,9 +675,9 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                             int jjt_pos = spinjjt.getSelectedItemPosition()-1;
                             String kode_jjt = kodeJJt.get(jjt_pos);
 
-                            new InsertSchedule(mActivity).execute(linnk, spinjjt.getSelectedItem().toString(), kode_jjt, spinfreq.getSelectedItem().toString(),
+                            new InsertSchedule(mActivity).execute(linnk, kode_jjt, spinjjt.getSelectedItem().toString(), perioRes(spinktr.getSelectedItem().toString()),
                                     spinpembobotan.getSelectedItem().toString(), spinsection.getSelectedItem().toString(), spinsubsec.getSelectedItem().toString(),
-                                    spinperiod.getSelectedItem().toString(), editStart.getText().toString(), editFinish.getText().toString(), data_da);
+                                    perioRes(spinperiod.getSelectedItem().toString()), editStart.getText().toString(), editFinish.getText().toString(), data_da);
                         } else {
                             Toast.makeText(getContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
@@ -579,7 +719,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         protected void onProgressUpdate(String... string) {
         }
 
-        public void postData(String link, String jjt, String kd_jjt, String freq, String bobot, String secs, String subsecs, String perio, String sd, String ed, String da) {
+        public void postData(String link, String kd_jjt, String all_jjt, String ket, String bobot, String secs, String subsecs, String perio, String sd, String ed, String da) {
             try {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
@@ -590,15 +730,16 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                 // Add your data
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("bc_user", username));
-                nameValuePairs.add(new BasicNameValuePair("kode_jjt", jjt));
+                nameValuePairs.add(new BasicNameValuePair("kode_jjt", all_jjt));
                 nameValuePairs.add(new BasicNameValuePair("jjt_location", kd_jjt));
 
-                nameValuePairs.add(new BasicNameValuePair("frequency", freq));
+                nameValuePairs.add(new BasicNameValuePair("periode", perio));
+                nameValuePairs.add(new BasicNameValuePair("keterangan", ket));
+
                 nameValuePairs.add(new BasicNameValuePair("floor", "1"));
                 nameValuePairs.add(new BasicNameValuePair("pembobotan", bobot));
                 nameValuePairs.add(new BasicNameValuePair("section", secs));
                 nameValuePairs.add(new BasicNameValuePair("sub_section", subsecs));
-                nameValuePairs.add(new BasicNameValuePair("periode", perio));
                 nameValuePairs.add(new BasicNameValuePair("start_date", sd));
                 nameValuePairs.add(new BasicNameValuePair("end_date", ed));
 
@@ -617,8 +758,8 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                     String data = EntityUtils.toString(entity);
 
                     Intent detail = new Intent(mActivity, ScheduleSLAPeriod.class);
-                    detail.putExtra("jt", spinjjt.getSelectedItem().toString());
-                    detail.putExtra("fq", spinfreq.getSelectedItem().toString());
+                    detail.putExtra("jt", all_jjt);
+                    detail.putExtra("fq", spinktr.getSelectedItem().toString());
                     detail.putExtra("fl", spinpembobotan.getSelectedItem().toString());
                     detail.putExtra("pr", spinperiod.getSelectedItem().toString());
                     detail.putExtra("sd", editStart.getText().toString());
@@ -722,5 +863,32 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
             }
         }
+    }
+
+    public static String perioRes(String value){
+        String result;
+        if(value.equalsIgnoreCase("One Time")){
+            result = "one_time";
+        }else if(value.equalsIgnoreCase("Weekly")){
+            result = "mingguan";
+        }else if(value.equalsIgnoreCase("Monthly")){
+            result = "bulanan";
+        }else if(value.equalsIgnoreCase("Yearly")){
+            result = "tahunan";
+        }else if(value.equalsIgnoreCase("Tahunan")){
+            result = "tahunan";
+        }else if(value.equalsIgnoreCase("3 Bulan")){
+            result = "3_bulanan";
+        }else if(value.equalsIgnoreCase("6 Bulan")){
+            result = "6_bulanan";
+        }else if(value.equalsIgnoreCase("3 Month")){
+            result = "3_bulanan";
+        }else if(value.equalsIgnoreCase("6 Month")){
+            result = "6_bulanan";
+        }else {
+            result = value;
+        }
+
+        return result;
     }
 }

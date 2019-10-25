@@ -28,14 +28,93 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="@dimen/margin10"
+                        android:gravity="center|bottom"
+                        android:weightSum="7">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Start date"/>
+                            <TextView
+                                android:id="@+id/editStartDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:singleLine="true"
+                                android:ellipsize="marquee"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:padding="@dimen/margin7"
+                                android:textSize="16sp"
+                                android:textColor="@color/carbon_black"
+                                android:background="@drawable/rounder_editext" />
+                        </LinearLayout>
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
+                            android:src="@drawable/next"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Finish date"/>
+                            <TextView
+                                android:id="@+id/editFinishDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="@dimen/margin7"
+                                android:singleLine="true"
+                                android:ellipsize="marquee"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:textSize="16sp"
+                                android:textColor="@color/carbon_black"
+                                android:background="@drawable/rounder_editext" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/margin10"
                         android:orientation="vertical">
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="JJT Location"/>
+                            android:text="Period"/>
                         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                            android:id="@+id/spinnerJJT"
+                            android:id="@+id/spinnerPeriod"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/margin5"
+                            android:layout_marginTop="@dimen/margin3"
+                            android:textColor="@android:color/black" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/textxt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/margin20"
+                        android:paddingRight="@dimen/margin20"
+                        android:paddingBottom="@dimen/margin20"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin10"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Keterangan"/>
+                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            android:id="@+id/spinnerFreq"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/margin5"
@@ -50,9 +129,9 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Frequency"/>
+                            android:text="JJT Location"/>
                         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                            android:id="@+id/spinnerFreq"
+                            android:id="@+id/spinnerJJT"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="@dimen/margin5"
@@ -110,78 +189,7 @@
                             android:layout_marginTop="@dimen/margin3"
                             android:textColor="@android:color/black" />
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/margin10"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Period"/>
-                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                            android:id="@+id/spinnerPeriod"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/margin5"
-                            android:layout_marginTop="@dimen/margin3"
-                            android:textColor="@android:color/black" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="@dimen/margin10"
-                        android:gravity="center|bottom"
-                        android:weightSum="7">
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Start date"/>
-                            <TextView
-                                android:id="@+id/editStartDate"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:singleLine="true"
-                                android:ellipsize="marquee"
-                                android:marqueeRepeatLimit="marquee_forever"
-                                android:padding="@dimen/margin7"
-                                android:textSize="16sp"
-                                android:textColor="@color/carbon_black"
-                                android:background="@drawable/rounder_editext" />
-                        </LinearLayout>
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="3"
-                            android:src="@drawable/next"/>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="2"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Finish date"/>
-                            <TextView
-                                android:id="@+id/editFinishDate"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:padding="@dimen/margin7"
-                                android:singleLine="true"
-                                android:ellipsize="marquee"
-                                android:marqueeRepeatLimit="marquee_forever"
-                                android:textSize="16sp"
-                                android:textColor="@color/carbon_black"
-                                android:background="@drawable/rounder_editext" />
-                        </LinearLayout>
-                    </LinearLayout>
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"

@@ -35,13 +35,14 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.dpToPx;
+import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.perioRes;
 
 
 public class DateScheduleSLA extends AppCompatActivity {
     TextView title;
     LinearLayout llData;
     //    String jt,fq,fl,pr,sd,fd,tt;
-    String jt,fq,pr,tt;
+    String jt,ktrgn,pr,tt;
     //    ArrayList<String> da = new ArrayList<>();
     private ProgressDialog progressDialog;
 
@@ -65,7 +66,7 @@ public class DateScheduleSLA extends AppCompatActivity {
 
     public void getAllIntent(){
         jt = getIntent().getStringExtra("jt");
-        fq = getIntent().getStringExtra("fq");
+        ktrgn = getIntent().getStringExtra("fq");
         pr = getIntent().getStringExtra("pr");
         tt = getIntent().getStringExtra("tt");
 
@@ -93,7 +94,7 @@ public class DateScheduleSLA extends AppCompatActivity {
                     String floor = jsonObject1.getString("floor");
                     String date = jsonObject1.getString("date");
                     String period = jsonObject1.getString("periode");
-                    String frequency = jsonObject1.getString("frequency");
+                    String ktrgn = jsonObject1.getString("keterangan");
 
                     LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(50));
                     LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(1));
@@ -131,7 +132,7 @@ public class DateScheduleSLA extends AppCompatActivity {
     public void intentTo(String aa){
         Intent dw = new Intent(this, DetailAreaScheduleSLA.class);
         dw.putExtra("jt",jt);
-        dw.putExtra("fq",fq);
+        dw.putExtra("fq",ktrgn);
 //        dw.putExtra("fl",fl);
         dw.putExtra("pr",pr);
 //        dw.putExtra("sd",sd);
@@ -149,8 +150,8 @@ public class DateScheduleSLA extends AppCompatActivity {
 
         params.add(new BasicNameValuePair("action", "getData"));
         params.add(new BasicNameValuePair("kode_jjt", jt));
-        params.add(new BasicNameValuePair("periode", pr));
-        params.add(new BasicNameValuePair("frequency", fq));
+        params.add(new BasicNameValuePair("periode", perioRes(pr)));
+        params.add(new BasicNameValuePair("keterangan", perioRes(ktrgn)));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");
 

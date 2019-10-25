@@ -64,9 +64,9 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
                 String id = jsonObject1.getString("id");
                 String jt = jsonObject1.getString("kode_jjt");
                 String period = jsonObject1.getString("periode");
-                String freq = "";
-                if(jsonObject1.has("frequency")) {
-                    freq = jsonObject1.getString("frequency");
+                String ketrgn = "";
+                if(jsonObject1.has("keterangan")) {
+                    ketrgn = jsonObject1.getString("keterangan");
                 }
                 String floor = jsonObject1.getString("floor");
                 String sd = jsonObject1.getString("start_date");
@@ -89,7 +89,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
                 view.setBackgroundColor(context.getResources().getColor(R.color.grey));
                 holder.lineR_period.addView(view, params2);
 
-                String finalFreq = freq;
+                String finalFreq = ketrgn;
                 edt.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -102,10 +102,10 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
         }
     }
 
-    public void intentTo(String jt, String freq, String period, String jjt_loc2){
+    public void intentTo(String jt, String ketrgn, String period, String jjt_loc2){
         Intent dw = new Intent(context, DateScheduleSLA.class);
         dw.putExtra("jt",jt);
-        dw.putExtra("fq",freq);
+        dw.putExtra("fq",ketrgn);
         dw.putExtra("pr",period);
         dw.putExtra("tt",jjt_loc2);
         dw.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

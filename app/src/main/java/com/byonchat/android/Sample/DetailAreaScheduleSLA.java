@@ -54,12 +54,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.perioRes;
+
 public class DetailAreaScheduleSLA extends AppCompatActivity {
     RecyclerView recyclerView;
     DetailAreaScheduleAdapter adapter;
     ArrayList<DetailArea> detarea_list = new ArrayList();
 //    String jt,fq,fl,pr,sd,fd, dt;
-    String jt, fq, pr, dt;
+    String jt, ktrgn, pr, dt;
     ArrayList<String> da = new ArrayList<>();
     private static final int REQ_CAMERA = 1201;
     public static String link_pic = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/files/";
@@ -84,7 +86,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
 
     public void getAllIntent(){
         jt = getIntent().getStringExtra("jt");
-        fq = getIntent().getStringExtra("fq");
+        ktrgn = getIntent().getStringExtra("fq");
         pr = getIntent().getStringExtra("pr");
         dt = getIntent().getStringExtra("dt");
         da = getIntent().getStringArrayListExtra("da");
@@ -121,7 +123,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                     String floor = jsonObject1.getString("floor");
                     String date = jsonObject1.getString("date");
                     String period = jsonObject1.getString("periode");
-                    String frequency = jsonObject1.getString("frequency");
+                    String ketrgn = jsonObject1.getString("keterangan");
                     String id_detail_area = jsonObject1.getString("id_detail_area");
                     String detail_area = jsonObject1.getString("detail_area");
                     String id_detail_proses = jsonObject1.getString("id_detail_proses");
@@ -138,7 +140,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                         dbA.insertDataSchedule(sch);
                     }
 
-                    DetailArea dtArea = new DetailArea(id_detail_proses, id, detail_area, period, frequency, start, on_proses, done);
+                    DetailArea dtArea = new DetailArea(id_detail_proses, id, detail_area, period, ketrgn, start, on_proses, done);
                     detarea_list.add(dtArea);
                 }
             } catch (ExecutionException e) {
@@ -183,8 +185,8 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
 
         params.add(new BasicNameValuePair("action", "getFullDetail"));
         params.add(new BasicNameValuePair("kode_jjt", jt));
-        params.add(new BasicNameValuePair("periode", pr));
-        params.add(new BasicNameValuePair("frequency", fq));
+        params.add(new BasicNameValuePair("periode", perioRes(pr)));
+        params.add(new BasicNameValuePair("keterangan", perioRes(ktrgn)));
         params.add(new BasicNameValuePair("date", dt));
 
         String paramString = URLEncodedUtils.format(params, "utf-8");

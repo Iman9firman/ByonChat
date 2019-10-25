@@ -41,7 +41,7 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
     TextView title;
     LinearLayout llData;
     String jt;
-    String freq, period;
+    String ketrgn, period;
     String jjt_loc;
     private ProgressDialog progressDialog;
 
@@ -85,7 +85,7 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
                     String id = jsonObject1.getString("id");
                     String jjt = jsonObject1.getString("kode_jjt");
                     period = jsonObject1.getString("periode");
-                    freq = jsonObject1.getString("frequency");
+                    ketrgn = jsonObject1.getString("keterangan");
 
                     String floor = jsonObject1.getString("floor");
                     String sd = jsonObject1.getString("start_date");
@@ -126,7 +126,7 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
     public void intentTo(){
         Intent dw = new Intent(this, DateScheduleSLA.class);
         dw.putExtra("jt",jt);
-        dw.putExtra("fq",freq);
+        dw.putExtra("fq",ketrgn);
         dw.putExtra("pr",period);
         dw.putExtra("tt",jjt_loc);
         startActivity(dw);

@@ -4079,18 +4079,29 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                 @Override
                                 public void afterTextChanged(Editable s) {
+
+                                    Log.w("sangkut", String.valueOf(s).trim().length() + "");
                                     Intent newIntent = new Intent("bLFormulas");
                                     sendBroadcast(newIntent);
 
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI)));
                                     if (cEdit.getCount() > 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
-                                        db.updateDetailRoomWithFlagContent(orderModel);
+                                        if (String.valueOf(s).trim().length() > 0) {
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
+                                            db.updateDetailRoomWithFlagContent(orderModel);
+                                        }else{
+                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
+                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                        }
+
                                     } else {
-                                        if (String.valueOf(s).length() > 0) {
+                                        Log.w("sangkut", "jambo1");
+                                        if (String.valueOf(s).trim().length() > 0) {
+                                            Log.w("sangkut", "jambo2");
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         } else {
+                                            Log.w("sangkut", "jambo3");
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                         }
@@ -4189,7 +4200,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
                                     } else {
-                                        if (String.valueOf(s).length() > 0) {
+                                        if (String.valueOf(s).trim().length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         } else {
@@ -4298,7 +4309,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         db.updateDetailRoomWithFlagContent(orderModel);
 
                                     } else {
-                                        if (String.valueOf(s).length() > 0) {
+                                        if (String.valueOf(s).trim().length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI1)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         } else {
@@ -4416,7 +4427,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         db.updateDetailRoomWithFlagContent(orderModel);
 
                                     } else {
-                                        if (String.valueOf(s).length() > 0) {
+                                        if (String.valueOf(s).trim().length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI1)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
                                         } else {
@@ -4700,7 +4711,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
                                     } else {
-                                        if (String.valueOf(s).length() > 0) {
+                                        if (String.valueOf(s).trim().length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
 
@@ -4831,7 +4842,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
                                     } else {
-                                        if (String.valueOf(s).length() > 0) {
+                                        if (String.valueOf(s).trim().length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
 
@@ -4962,7 +4973,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                             db.updateDetailRoomWithFlagContent(orderModel);
                                         } else {
-                                            if (String.valueOf(s).length() > 0) {
+                                            if (String.valueOf(s).trim().length() > 0) {
                                                 RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                                 db.insertRoomsDetail(orderModel);
                                             } else {
@@ -5250,7 +5261,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                         db.updateDetailRoomWithFlagContent(orderModel);
                                     } else {
-                                        if (String.valueOf(s).length() > 0) {
+                                        if (String.valueOf(s).trim().length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI3)), name, "cild");
                                             db.insertRoomsDetail(orderModel);
 
@@ -5401,7 +5412,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
 
                                         } else {
-                                            if (String.valueOf(s).length() > 0) {
+                                            if (String.valueOf(s).trim().length() > 0) {
                                                 JSONObject jsonObj = null;
                                                 try {
                                                     RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, function(null, nn, s.toString()).toString(), jsonCreateType(idListTask, type, String.valueOf(finalI25)), name, "cild");
@@ -6807,19 +6818,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         final int finalI7 = i;
                         Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
                         if (cEdit.getCount() > 0) {
-                            try {
-                                JSONObject hasilJson = new JSONObject(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                String resulShow = "";
-                                for (int iia = 0; iia < kolom.size(); iia++) {
-                                    resulShow += titles.get(iia) + " : " + hasilJson.getString(kolom.get(iia));
-                                }
-
-                                tp[Integer.valueOf(valSetOne.get(0))].setText(resulShow);
-
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            tp[Integer.valueOf(valSetOne.get(0))].setText(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                         }
 
                         tp[count].setOnClickListener(new View.OnClickListener() {
@@ -6839,22 +6838,29 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                     @Override
                                     public void submitted(String json) {
 
-                                        try {
-                                            Log.w("gambis", json);
+                                        if (ConversationAdapter.isJSONValid(json)) {
+                                            JSONObject jsonObject = null;
+                                            try {
+                                                jsonObject = new JSONObject(json);
+                                                Iterator<String> keys = jsonObject.keys();
 
-                                            JSONObject hasilJson = new JSONObject(json);
-                                            String resulShow = "";
-                                            for (int iia = 0; iia < kolom.size(); iia++) {
-                                                resulShow += titles.get(iia) + " : " + hasilJson.getString(kolom.get(iia));
+                                                List<String> keysList = new ArrayList<String>();
+                                                while (keys.hasNext()) {
+                                                    keysList.add(keys.next());
+                                                }
+
+                                                String resultNya = "";
+                                                for (String aa : keysList) {
+
+                                                    resultNya += String.valueOf(aa) + " = " + jsonObject.getString(aa) + "\n";
+
+                                                }
+                                                tp[Integer.valueOf(valSetOne.get(0))].setText(resultNya);
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
                                             }
 
-                                            tp[Integer.valueOf(valSetOne.get(0))].setText(resulShow);
-
-
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
                                         }
-
 
                                         Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
                                         if (cEdit.getCount() > 0) {
@@ -6871,6 +6877,27 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 testDialog.show(fm, "Dialog");
                             }
                         });
+
+
+                        String chanc = tp[Integer.valueOf(valSetOne.get(0))].getText().toString();
+
+                        if (ConversationAdapter.isJSONValid(chanc)) {
+                            JSONObject jsonObject = new JSONObject(chanc);
+                            Iterator<String> keys = jsonObject.keys();
+
+                            List<String> keysList = new ArrayList<String>();
+                            while (keys.hasNext()) {
+                                keysList.add(keys.next());
+                            }
+
+                            String resultNya = "";
+                            for (String aa : keysList) {
+
+                                resultNya += String.valueOf(aa) + " = " + jsonObject.getString(aa) + "\n";
+
+                            }
+                            tp[Integer.valueOf(valSetOne.get(0))].setText(resultNya);
+                        }
 
                         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params1.setMargins(30, 10, 30, 0);
@@ -7210,7 +7237,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                                     db.updateDetailRoomWithFlagContent(orderModel);
                                                 } else {
-                                                    if (String.valueOf(s).length() > 0) {
+                                                    if (String.valueOf(s).trim().length() > 0) {
                                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
                                                         db.insertRoomsDetail(orderModel);
                                                     } else {
@@ -8386,7 +8413,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rbs.getText().toString() + " = " + String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
                                                         db.updateDetailRoomWithFlagContent(orderModel);
                                                     } else {
-                                                        if (String.valueOf(s).length() > 0) {
+                                                        if (String.valueOf(s).trim().length() > 0) {
                                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, rbs.getText().toString() + " = " + String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI23)), name, "cild");
                                                             db.insertRoomsDetail(orderModel);
                                                         } else {
@@ -9947,7 +9974,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         new Validations().getInstance(context).removeById(28);
         new Validations().getInstance(context).removeById(29);
-        
+
         Cursor cursor = db.getSingleRoomDetailForm(username, idTab);
         if (cursor.getCount() > 0) {
             if (!linkGetAsignTo.equalsIgnoreCase("")) {

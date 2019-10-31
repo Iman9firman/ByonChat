@@ -42,6 +42,7 @@ import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.DialogUtil;
+import com.byonchat.android.widget.SpinnerCustomAdapter;
 import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 import com.wang.avi.AVLoadingIndicatorView;
@@ -140,7 +141,7 @@ public class DialogFormChildMainNew extends DialogFragment {
             botListDB = BotListDB.getInstance(getContext());
         }
 
-        Log.e("errorslow serror", posisi);
+        Log.e("errorslow", content);
         try {
             JSONArray jsonArrayCild = new JSONArray(content);
 
@@ -162,7 +163,121 @@ public class DialogFormChildMainNew extends DialogFragment {
                 final String flag = jsonArrayCild.getJSONObject(i).getString("flag").toString();
 
                 Log.w("sida", type + "::" + label);
-                if (type.equalsIgnoreCase("form_child")) {
+                if (type.equalsIgnoreCase("load_dropdown")) {
+
+                    if (count == null) {
+                        count = 0;
+                    } else {
+                        count++;
+                    }
+
+                    TextView textView = new TextView(getActivity());
+                    if (required.equalsIgnoreCase("1")) {
+                        label += "<font size=\"3\" color=\"red\">*</font>";
+                    }
+                    textView.setText(Html.fromHtml(label));
+                    textView.setTextSize(15);
+                    textView.setLayoutParams(new TableRow.LayoutParams(0));
+
+                    TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
+
+                    // String downloadForm = jsonArrayCild.getJSONObject(i).getString("formula").toString();
+                    String downloadForm = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/api_dropdown_spk.php";
+                    final ArrayList<String> spinnerArray = new ArrayList<String>();
+                    spinnerArray.add("-");
+
+                    SearchableSpinner spinner = new SearchableSpinner(getActivity());
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        spinner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+                    }
+                    MessengerDatabaseHelper messengerHelper = null;
+                    if (messengerHelper == null) {
+                        messengerHelper = MessengerDatabaseHelper.getInstance(getActivity());
+                    }
+
+                    Contact contact = messengerHelper.getMyContact();
+
+                    SpinnerCustomAdapter spinnerArrayAdapter = new SpinnerCustomAdapter(getActivity(), R.layout.simple_spinner_item_black, downloadForm, contact.getJabberId(), spinnerArray);
+                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner.setAdapter(spinnerArrayAdapter);
+                    params2.setMargins(30, 10, 30, 40);
+                    spinner.setLayoutParams(params2);
+
+
+                    /*Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                    if (cursorCild.getCount() > 0) {
+                        int spinnerPosition = spinnerArrayAdapter.getPosition(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                        spinner.setSelection(spinnerPosition);
+                    } else {
+                        if (spinner.getSelectedItem() != null) {
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinner.getSelectedItem().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                            db.insertRoomsDetail(orderModel);
+                        }
+
+                    }
+
+
+                    if ((!showButton)) {
+                        spinner.setEnabled(false);
+                    } else {
+                        final int finalI7 = i;
+                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                            @Override
+                            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
+
+
+                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
+                                if (cEdit.getCount() > 0) {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                    db.updateDetailRoomWithFlagContent(orderModel);
+                                } else {
+                                    if (String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)).length() > 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                        db.insertRoomsDetail(orderModel);
+                                    } else {
+                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
+                                        db.deleteDetailRoomWithFlagContent(orderModel);
+                                    }
+                                }
+
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parentView) {
+                            }
+
+                        });
+                    }*/
+
+                    LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params1.setMargins(30, 10, 30, 0);
+
+                    LinearLayout.LayoutParams params12 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params12.setMargins(50, 10, 30, 0);
+
+                    List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add("");
+                    valSetOne.add(required);
+                    valSetOne.add(type);
+                    valSetOne.add(name);
+                    valSetOne.add(label);
+                    valSetOne.add(String.valueOf(i));
+
+                    valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                    linearLayout.addView(textView, params1);
+
+                    valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                    linearLayout.addView(spinner, params1);
+                    View view = new View(getActivity());
+                    view.setVisibility(View.INVISIBLE);
+
+                    valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                    linearLayout.addView(view, params2);
+
+                    hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                } else if (type.equalsIgnoreCase("form_child")) {
 
                 } else if (type.equalsIgnoreCase("text")) {
 

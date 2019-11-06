@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.dpToPx;
+import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.getPerioRes;
 
 
 public class ScheduleSLAPeriod  extends AppCompatActivity {
@@ -95,7 +96,7 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
                     LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(50));
                     LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(1));
                     TextView edt = new TextView(getApplicationContext());
-                    edt.setText(period);
+                    edt.setText(getPerioRes(period));
                     edt.setTextSize(20);
                     edt.setGravity(Gravity.CENTER|Gravity.LEFT);
                     llData.addView(edt,params1);

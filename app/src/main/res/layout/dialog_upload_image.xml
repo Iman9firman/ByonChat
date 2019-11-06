@@ -64,6 +64,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin5"
+                    android:visibility="gone"
                     android:text="Note"/>
 
                 <EditText
@@ -73,6 +74,7 @@
                     android:padding="@dimen/margin10"
                     android:lines="8"
                     android:singleLine="false"
+                    android:visibility="gone"
                     android:minLines="5"/>
 
             </LinearLayout>

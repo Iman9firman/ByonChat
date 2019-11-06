@@ -66,7 +66,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Finish date"/>
+                                android:text="End date"/>
                             <TextView
                                 android:id="@+id/editFinishDate"
                                 android:layout_width="match_parent"
@@ -88,7 +88,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Period"/>
+                            android:text="Periode"/>
                         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                             android:id="@+id/spinnerPeriod"
                             android:layout_width="match_parent"

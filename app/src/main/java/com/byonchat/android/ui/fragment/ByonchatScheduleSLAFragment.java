@@ -757,7 +757,14 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);
 
-                    Intent detail = new Intent(mActivity, ScheduleSLAPeriod.class);
+                    mActivity.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(mActivity,"Schedule has been created",Toast.LENGTH_SHORT).show();
+                            mActivity.onBackPressed();
+                        }
+                    });
+
+                    /*Intent detail = new Intent(mActivity, ScheduleSLAPeriod.class);
                     detail.putExtra("jt", all_jjt);
                     detail.putExtra("fq", spinktr.getSelectedItem().toString());
                     detail.putExtra("fl", spinpembobotan.getSelectedItem().toString());
@@ -765,7 +772,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                     detail.putExtra("sd", editStart.getText().toString());
                     detail.putExtra("fd", editFinish.getText().toString());
                     detail.putExtra("da", detaiArea);
-                    startActivity(detail);
+                    startActivity(detail);*/
 
                 } else {
                     error = "Tolong periksa koneksi internet.";
@@ -881,10 +888,31 @@ public class ByonchatScheduleSLAFragment extends Fragment {
             result = "3_bulanan";
         }else if(value.equalsIgnoreCase("6 Bulan")){
             result = "6_bulanan";
-        }else if(value.equalsIgnoreCase("3 Month")){
+        }else if(value.equalsIgnoreCase("3 Monthly")){
             result = "3_bulanan";
-        }else if(value.equalsIgnoreCase("6 Month")){
+        }else if(value.equalsIgnoreCase("6 Monthly")){
             result = "6_bulanan";
+        }else {
+            result = value;
+        }
+
+        return result;
+    }
+
+    public static String getPerioRes(String value){
+        String result;
+        if(value.equalsIgnoreCase("one_time")){
+            result = "One Time";
+        }else if(value.equalsIgnoreCase("mingguan")){
+            result = "Weekly";
+        }else if(value.equalsIgnoreCase("bulanan")){
+            result = "Monthly";
+        }else if(value.equalsIgnoreCase("tahunan")){
+            result = "Yearly";
+        }else if(value.equalsIgnoreCase("3_bulanan")){
+            result = "3 Month";
+        }else if(value.equalsIgnoreCase("6_bulanan")){
+            result = "6 Month";
         }else {
             result = value;
         }

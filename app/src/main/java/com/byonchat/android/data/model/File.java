@@ -26,12 +26,20 @@ public class File implements Parcelable {
     public String type;
     public String file_type;
     public String timestamp;
+
+    //Add Condition by Mas Maul
+    public String kode_jjt;
+    public String id_pembobotan;
+    public String id_section;
+    public String id_subsection;
+
     public boolean isDownloading;
     public boolean isDownloaded;
     public boolean isSelected;
     public boolean isPinned;
 
     //additional
+    public String id_detail_area;
     public String nama_requester;
     public String nik_requester;
     public String id_history;

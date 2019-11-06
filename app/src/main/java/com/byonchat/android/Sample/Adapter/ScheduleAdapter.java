@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.byonchat.android.R;
 import com.byonchat.android.Sample.DateScheduleSLA;
+import com.byonchat.android.Sample.DetailAreaScheduleSLA;
+import com.byonchat.android.data.model.File;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +26,7 @@ import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.dpToP
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHolder> {
 
-    private ArrayList<String> mData;
+    private ArrayList<File> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     Context context;
@@ -32,7 +35,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
     int backgroundText;
 
     // data is passed into the constructor
-    public ScheduleAdapter(Context context, ArrayList<String> data) {
+    public ScheduleAdapter(Context context, ArrayList<File> data) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
@@ -43,16 +46,28 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_layout_schedule_list, parent, false);
+        View view = mInflater.inflate(R.layout.item_schedule_sla, parent, false);
         return new ViewHolder(view);
     }
 
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String jjt = mData.get(position);
+        File fileee = mData.get(position);
 
-        try {
+        holder.job.setText(fileee.subtitle);
+        holder.date.setText(fileee.timestamp);
+        holder.jjt.setText(fileee.kode_jjt);
+        holder.period.setText(fileee.description);
+
+        holder.click_field.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intentTo(fileee.kode_jjt, fileee.description, fileee.title, fileee.timestamp, fileee.id_detail_area);
+            }
+        });
+
+        /*try {
 
             JSONObject jsonObject = new JSONObject(jjt);
             String jjt_loc = jsonObject.getString("jjt_location");
@@ -99,15 +114,16 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
             }
         } catch (JSONException e){
             e.printStackTrace();
-        }
+        }*/
     }
 
-    public void intentTo(String jt, String ketrgn, String period, String jjt_loc2){
-        Intent dw = new Intent(context, DateScheduleSLA.class);
+    public void intentTo(String jt, String ketrgn, String period, String date, String id_da){
+        Intent dw = new Intent(context, DetailAreaScheduleSLA.class);
         dw.putExtra("jt",jt);
         dw.putExtra("fq",ketrgn);
         dw.putExtra("pr",period);
-        dw.putExtra("tt",jjt_loc2);
+        dw.putExtra("dt",date);
+        dw.putExtra("id",id_da);
         dw.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(dw);
     }
@@ -119,14 +135,21 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
 
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        LinearLayout lineR_period, lineR_jjt;
-        TextView title_jjt;
+//        LinearLayout lineR_period, lineR_jjt;
+//        TextView title_jjt;
+            RelativeLayout click_field;
+            TextView jjt, date, period, job;
 
         ViewHolder(View itemView) {
             super(itemView);
-            lineR_jjt = (LinearLayout) itemView.findViewById(R.id.nonRecycler);
-            title_jjt = (TextView) itemView.findViewById(R.id.title);
-            lineR_period = (LinearLayout) itemView.findViewById(R.id.linearData);
+//            lineR_jjt = (LinearLayout) itemView.findViewById(R.id.nonRecycler);
+//            title_jjt = (TextView) itemView.findViewById(R.id.title);
+//            lineR_period = (LinearLayout) itemView.findViewById(R.id.linearData);
+            click_field = (RelativeLayout)  itemView.findViewById(R.id.clickField);
+            jjt = (TextView)  itemView.findViewById(R.id.sch_jjt);
+            date = (TextView)  itemView.findViewById(R.id.sch_date);
+            period = (TextView)  itemView.findViewById(R.id.sch_perio);
+            job = (TextView)  itemView.findViewById(R.id.sch_job);
         }
 
         @Override
@@ -137,7 +160,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
 
     // convenience method for getting data at click position
     String getItem(int id) {
-        return mData.get(id);
+        return mData.get(id).kode_jjt;
     }
 
     // allows clicks events to be caught

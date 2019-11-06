@@ -4,13 +4,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -19,6 +23,7 @@ import com.byonchat.android.R;
 import com.byonchat.android.Sample.Database.ScheduleSLA;
 import com.byonchat.android.Sample.Database.ScheduleSLADB;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
+import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.local.Byonchat;
 
 import org.apache.http.HttpEntity;
@@ -61,20 +66,20 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     DetailAreaScheduleAdapter adapter;
     ArrayList<DetailArea> detarea_list = new ArrayList();
 //    String jt,fq,fl,pr,sd,fd, dt;
-    String jt, ktrgn, pr, dt;
-    ArrayList<String> da = new ArrayList<>();
+    String id, jt, ktrgn, pr, dt;
     private static final int REQ_CAMERA = 1201;
     public static String link_pic = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/files/";
 
     Bitmap result = null;
     Button submit;
+    boolean hideSubmit;
     private String url;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_area_sla_layout);
-        getSupportActionBar().setTitle("Schedule SLA");
+        resolveToolbar("022b95", "ffffff");
 
         recyclerView = (RecyclerView) findViewById(R.id.blinded);
         submit = (Button) findViewById(R.id.button_submit);
@@ -85,11 +90,25 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     }
 
     public void getAllIntent(){
+        id = getIntent().getStringExtra("id");
         jt = getIntent().getStringExtra("jt");
         ktrgn = getIntent().getStringExtra("fq");
         pr = getIntent().getStringExtra("pr");
         dt = getIntent().getStringExtra("dt");
-        da = getIntent().getStringArrayListExtra("da");
+    }
+
+    protected void resolveToolbar(String mColor, String mColorText) {
+        getSupportActionBar().setTitle("Schedule SLA");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if (mColor.equalsIgnoreCase("FFFFFF") && mColorText.equalsIgnoreCase("000000")) {
+            View lytToolbarDark = getLayoutInflater().inflate(R.layout.toolbar_dark, null);
+            Toolbar toolbarDark = lytToolbarDark.findViewById(R.id.toolbar_dark);
+        } else {
+            FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + mColor)));
+        }
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_keyboard_arrow_left_black_35dp);
     }
 
     public void adapterRecyclerView(){
@@ -104,15 +123,24 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     }
 
     public void prepareDataRecycle(){
+        submit.setVisibility(View.GONE);
+
         detarea_list.clear();
         ScheduleSLADB dbA = ScheduleSLADB.getInstance(DetailAreaScheduleSLA.this);
 
         url = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
 
         if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+            String version = null;
             try {
-                String version = new HttpAsyncTask().execute(postParameters(url)).get();
-                Log.e("Reamure DetailArea",version);
+                version = new HttpAsyncTask().execute(postParameters(url)).get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Log.e("Reamure DetailArea",version);
+            try {
 
                 JSONObject jsonObject = new JSONObject(version);
                 JSONArray jsonArray = jsonObject.getJSONArray("item");
@@ -131,6 +159,10 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                     String on_proses = jsonObject1.getString("on_proses");
                     String done = jsonObject1.getString("done");
 
+                    if(done.equalsIgnoreCase("null")){
+                        submit.setVisibility(View.VISIBLE);
+                    }
+
                     ScheduleSLA sch = new ScheduleSLA(id_detail_proses, id, Byonchat.getMessengerHelper().getMyContact().getJabberId(), start, on_proses, done);
 
                     Cursor cursorBot = dbA.getDataPicByID(id_detail_proses);
@@ -143,10 +175,6 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                     DetailArea dtArea = new DetailArea(id_detail_proses, id, detail_area, period, ketrgn, start, on_proses, done);
                     detarea_list.add(dtArea);
                 }
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             } catch (JSONException e){
                 e.printStackTrace();
                 Log.e("version","error!!!   "+e.getMessage());
@@ -184,6 +212,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         List<NameValuePair> params = new LinkedList<NameValuePair>();
 
         params.add(new BasicNameValuePair("action", "getFullDetail"));
+        params.add(new BasicNameValuePair("id_detail_area", id));
         params.add(new BasicNameValuePair("kode_jjt", jt));
         params.add(new BasicNameValuePair("periode", perioRes(pr)));
         params.add(new BasicNameValuePair("keterangan", perioRes(ktrgn)));
@@ -306,7 +335,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
 
                     DetailAreaScheduleSLA.this.runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(DetailAreaScheduleSLA.this,data,Toast.LENGTH_LONG).show();
+                            Toast.makeText(DetailAreaScheduleSLA.this,"Submit Successfully!",Toast.LENGTH_LONG).show();
                             prepareDataRecycle();
                         }
                     });
@@ -345,6 +374,8 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+//        prepareDataRecycle();
+
         ScheduleSLADB dbA = ScheduleSLADB.getInstance(DetailAreaScheduleSLA.this);
         Cursor all = dbA.getAllImgSaved();
         if(all.getCount() > 0){
@@ -369,5 +400,14 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                 }while (all.moveToNext());
             }
         }
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+        }
+        return true;
     }
 }

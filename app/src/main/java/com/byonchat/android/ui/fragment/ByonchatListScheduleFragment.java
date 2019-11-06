@@ -24,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
 import com.byonchat.android.Sample.Adapter.ScheduleAdapter;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
+import com.byonchat.android.data.model.File;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
@@ -62,7 +63,7 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
     Activity mContext;
     private MessengerDatabaseHelper dbhelper;
     private SwipeRefreshLayout swipeRefreshLayout;
-    ArrayList<String> dataJson = new ArrayList<>();
+    ArrayList<File> dataJson = new ArrayList<>();
 
     String username;
 
@@ -148,6 +149,7 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
 
     @Override
     public void onResume() {
+        Log.w("Ini keresume","iya");
         refreshList();
         super.onResume();
     }
@@ -242,13 +244,57 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
             }
 
             JSONObject jsonObject = new JSONObject(response);
+
+            Log.w("ressssD",response);
             JSONArray jsonArray = jsonObject.getJSONArray("item");
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                dataJson.add(jsonObject1.toString());
+
+//                JSONArray jsonArray1 = jsonObject1.getJSONArray("item");
+//                for(int ii = 0; ii < jsonArray1.length(); ii++) {
+//                    JSONObject jsonObject2 = jsonArray1.getJSONObject(ii);
+
+                    JSONArray jsonArray2 = jsonObject1.getJSONArray("periode");
+                    for(int iii = 0; iii < jsonArray2.length(); iii++){
+                        JSONObject jsonObject3 = jsonArray2.getJSONObject(iii);
+
+                        String kode_jjt = jsonObject3.getString("kode_jjt");
+                        String jjt_loc = jsonObject3.getString("jjt_location");
+                        String periode = jsonObject3.getString("periode");
+                        String keterangan = jsonObject3.getString("keterangan");
+                        String detail_area = jsonObject3.getString("detail_area");
+                        String id_detail_area = jsonObject3.getString("id_detail_area");
+                        String date = jsonObject3.getString("date");
+
+                        File filemodel = new File();
+                        filemodel.kode_jjt = kode_jjt;
+                        filemodel.title = periode;
+                        filemodel.description = keterangan;
+                        filemodel.timestamp = date;
+                        filemodel.id_detail_area = id_detail_area;
+                        filemodel.subtitle = detail_area;
+
+                        dataJson.add(filemodel);
+                    }
+                    /*String id = jsonObject1i.getString("id");
+                    String jt = jsonObject1i.getString("kode_jjt");
+                    String period = jsonObject1i.getString("periode");
+                    String ketrgn = "";
+                    if(jsonObject1i.has("keterangan")) {
+                        ketrgn = jsonObject1i.getString("keterangan");
+                    }
+                    String floor = jsonObject1i.getString("floor");
+                    String sd = jsonObject1i.getString("start_date");
+                    String ed = jsonObject1i.getString("end_date");
+                    String jjt_loc2 = jsonObject1i.getString("jjt_location");
+
+                    Log.w("ressssDw",period);
+                    dataJson.add(period);*/
+//                }
             }
         } catch (JSONException e){
             e.printStackTrace();
+            Log.w("ressssD error",e.getMessage());
         }
         myadapter.notifyDataSetChanged();
     }

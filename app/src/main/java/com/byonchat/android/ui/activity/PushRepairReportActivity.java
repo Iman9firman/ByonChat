@@ -160,9 +160,9 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 SLAmodelNew fotonya = null;
                 if (cursorCild.getCount() > 0) {
                     java.io.File f = new java.io.File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                    fotonya = new SLAmodelNew("Header", id, title, fotony, f);
+                    fotonya = new SLAmodelNew("","Header", id, title, fotony, f);
                 } else {
-                    fotonya = new SLAmodelNew("Header", id, title, fotony, (java.io.File) null);
+                    fotonya = new SLAmodelNew("","Header", id, title, fotony, (java.io.File) null);
                 }
 
                 foto.add(fotonya);
@@ -558,7 +558,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getId().equalsIgnoreCase(id)) {
-                            SLAmodelNew fotonya = new SLAmodelNew("Header", foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
+                            SLAmodelNew fotonya = new SLAmodelNew("","Header", foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
                             uploadfoto.add(fotonya);
                         }
                     }

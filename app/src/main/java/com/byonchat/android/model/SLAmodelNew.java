@@ -4,6 +4,7 @@ import java.io.File;
 
 public class SLAmodelNew {
     private String header = "";
+    private String id_task;
     private String id, title, before, afterString;
     private String verif;
     private String ket = "";
@@ -12,7 +13,8 @@ public class SLAmodelNew {
     public SLAmodelNew() {
     }
 
-    public SLAmodelNew(String header, String id, String title, String before, File after) {
+    public SLAmodelNew( String id_task, String header, String id, String title, String before, File after) {
+        this.id_task = id_task;
         this.id = id;
         this.title = title;
         this.before = before;
@@ -34,7 +36,8 @@ public class SLAmodelNew {
         }
     }
 
-    public SLAmodelNew(String header, String id, String title, String before, String aftera, String verif, String _ket) {
+    public SLAmodelNew(String id_task, String header, String id, String title, String before, String aftera, String verif, String _ket) {
+        this.id_task = id_task;
         this.id = id;
         this.title = title;
         this.before = before;
@@ -47,7 +50,8 @@ public class SLAmodelNew {
         }
     }
 
-    public SLAmodelNew(String header, String id, String title, String before, File after, String aftera) {
+    public SLAmodelNew(String id_task, String header, String id, String title, String before, File after, String aftera) {
+        this.id_task = id_task;
         this.id = id;
         this.title = title;
         this.before = before;
@@ -65,6 +69,14 @@ public class SLAmodelNew {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getId_task() {
+        return id_task;
+    }
+
+    public void setId_task(String id_task) {
+        this.id_task = id_task;
     }
 
     public String getTitle() {

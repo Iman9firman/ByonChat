@@ -214,7 +214,7 @@ import static com.guna.ocrlibrary.OcrCaptureActivity.TextBlockObject;
 public class DinamicRoomTaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener, AllAboutUploadTask.OnTaskCompleted {
 
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
-    public static String POSDETAILSLA = "/bc_voucher_client/webservice/proses/list_task_json_sla.php";
+    public static String POSDETAILSLA = "/bc_voucher_client/webservice/proses/list_task_json_sla_new.php"; //TESTING
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
     public static String PULLMULIPLEDETAILUPDATE = "/bc_voucher_client/webservice/proses/update_list_task_pull_multiple_json.php";
 /*

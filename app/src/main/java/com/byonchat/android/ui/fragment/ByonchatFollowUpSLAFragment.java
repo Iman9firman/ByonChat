@@ -3,6 +3,7 @@ package com.byonchat.android.ui.fragment;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +33,9 @@ import com.android.volley.toolbox.Volley;
 import com.byonchat.android.DialogFormChildMainNew;
 import com.byonchat.android.DialogFormChildRequestDoc;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
+import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.data.model.Status;
@@ -88,6 +92,8 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
     private String idRoomTab;
     private String color;
 
+    private ArrayList<String> kodeJJt = new ArrayList<>();
+
     protected LinearLayoutManager chatLayoutManager;
     protected ByonchatRepairReportAdapter mAdapter;
     MessengerDatabaseHelper databaseHelper;
@@ -137,13 +143,33 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
         super.onCreate(savedInstanceState);
         databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
         title = getArguments().getString("aa");
-//        urlTembak = "https://bb.byonchat.com/ApiDocumentControl/index.php/Request/list";
 
-        urlTembak = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_sla_fu.php";
+        urlTembak = "https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/report_sla_fu_new.php";
         username = getArguments().getString("cc");
         idRoomTab = getArguments().getString("dd");
         myContact = getArguments().getString("ee");
         color = getArguments().getString("col");
+
+        ArrayList<String> list = new ArrayList<>();
+
+        UserDB userDB = UserDB.getInstance(getActivity());
+        list.add("-- Pilih JJT --");
+
+        Cursor cursorJJT = userDB.getSingle();
+        if (cursorJJT.getCount() > 0) {
+            String contentJJT = cursorJJT.getString(cursorJJT.getColumnIndexOrThrow(UserDB.EMPLOYEE_MULTICOST));
+            try {
+                JSONArray arr = new JSONArray(contentJJT);
+
+                for (int as = 0; as < arr.length(); as++) {
+                    JSONObject jo = arr.getJSONObject(as);
+                    String cost_center = jo.getString("costcenter");
+                    list.add(cost_center.substring(0, cost_center.indexOf("[")));
+                    kodeJJt.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
+                }
+
+            } catch (Exception e) { }
+        }
     }
 
     @NonNull
@@ -187,6 +213,10 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
             params.put("username_room", username);
             params.put("bc_user", databaseHelper.getMyContact().getJabberId());
             params.put("id_rooms_tab", idRoomTab);
+            for(int i = 0; i < kodeJJt.size(); i++){
+                params.put("kode_jjt["+i+"]", kodeJJt.get(i));
+            }
+
             Log.w("nhdua paramser", idRoomTab + ", --> " + username);
             getDetail(/*"https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_tobe_repair.php"*/urlTembak, params, true);
         } else {
@@ -212,10 +242,14 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                 Map<String, String> params = new HashMap<>();
                 params.put("username_room", username);
                 params.put("bc_user", databaseHelper.getMyContact().getJabberId());
-                params.put("id_rooms_tab", idRoomTab);
-                params.put("task_id", item.id + "");
-                Log.w("Parameter nya argus", username + ", " + databaseHelper.getMyContact().getJabberId() + ", " + idRoomTab + ", " + item.id);
-                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_sla_fu.php", params, true,item.title,item.timestamp);
+
+                params.put("kode_jjt",item.kode_jjt+"");
+                params.put("tanggal_submit",item.timestamp);
+//                params.put("id_pembobotan", item.id_pembobotan + "");
+//                params.put("id_section", item.id_section + "");
+//                params.put("id_subsection", item.id_subsection + "");
+
+                getMoreDetail("https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/push_sla_fu_new.php", params, true,item.title,item.timestamp);
             }
         }, new OnRequestItemClickListener() {
             @Override
@@ -314,6 +348,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                     rdialog.dismiss();
                     if (hide) {
                         try {
+                            Log.w("staywitme",response);
 //                            JSONArray jsonArray0 = new JSONArray(response);
                             JSONObject jsonObject = new JSONObject(response);
 //                            String status = jsonObject.getString("status");
@@ -326,18 +361,20 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                             if (jsonArray.length() > 0) {
                                 for (int i = jsonArray.length() - 1; i >= 0; i--) {
                                     JSONObject jObj = jsonArray.getJSONObject(i);
-                                    String id = jObj.getString("id");
-//                                        String link_file = jObj.getString("link_file");
+//                                    String id = jObj.getString("id");
                                     String timestamp = jObj.getString("tanggal_submit");
-//                                        String bc_user_requester = jObj.getString("bc_user_requester");
                                     String nama_file = jObj.getString("title");
-//                                        String history = jObj.getString("history");
+
+                                    String kode_jjt = jObj.getString("kode_jjt");
+//                                    String id_pembobotan = jObj.getString("id_pembobotan");
+//                                    String id_section = jObj.getString("id_section");
+//                                    String id_subsection = jObj.getString("id_subsection");
 
 //                                        String id_request = new JSONArray(history).getJSONObject(0).getString("id_request");
 //                                        String id_history = new JSONArray(history).getJSONObject(new JSONArray(history).length()-1).getString("id");
 
                                     File file = new File();
-                                    file.id = Long.valueOf(id);
+                                    file.id = i;
                                     file.title = nama_file;
                                     file.url = "";
                                     file.timestamp = timestamp;
@@ -345,6 +382,10 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                                     file.id_history = "";
                                     file.description = "";
                                     file.nama_requester = "";
+                                    file.kode_jjt = kode_jjt;
+//                                    file.id_pembobotan = id_pembobotan;
+//                                    file.id_section = id_section;
+//                                    file.id_subsection = id_subsection;
 
                                     files.add(file);
                                 }
@@ -360,6 +401,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
 
                 },
                 error -> {
+                    Log.w("staywitme 2",error);
                     rdialog.dismiss();
                 }
         ) {
@@ -382,6 +424,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
+            Log.w("Nangkringbocah", response);
                     rdialog.dismiss();
                     if (hide) {
                         Intent iii = new Intent(getContext(), PustSLAFollowUpActivity.class);
@@ -396,6 +439,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
 
                 },
                 error -> {
+                    Log.w("Nangkringbocah 2", error);
                     rdialog.dismiss();
                 }
         ) {

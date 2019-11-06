@@ -56,6 +56,7 @@ import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.FragmentSLA.ZhFourFragment;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
+import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
@@ -110,7 +111,8 @@ import static com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity.de
 import static com.byonchat.android.ui.activity.PustSLAFollowUpActivity.resizeAndCompressImageBeforeSend;
 
 public class PushSLAVerificationActivity extends AppCompatActivity {
-    String task_id, id_task, id_task_list, id_rooms_tab;
+    String task_id, /*id_task,*/ id_task_list, id_rooms_tab;
+    String kode_jjt;
     String username;
     String name_title;
     LinearLayout linearLayout;
@@ -289,119 +291,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             }
         });
 
-
-        /*
-        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
-        if (cursorCild.getCount() > 0) {
-
-            if (Message.isJSONValid(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)))) {
-                JSONObject jObject = null;
-                try {
-                    jObject = new JSONObject(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                if (jObject != null) {
-                    try {
-                        String a = jObject.getString("a");
-                        imageView[count].setImageBitmap(decodeBase64(a));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
-                imageView[count].setImageBitmap(decodeBase64(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT))));
-            }
-        }
-
-
-        hashMap.put(Integer.parseInt(idListTask), valSetOne);
-*/
-
-       /* final int finalI4 = i;
-        imageView[count].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI4)));
-                if (cursorCild.getCount() > 0) {
-                    Intent intent = new Intent(context, ZoomImageViewActivity.class);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, ZoomImageViewActivity.FROM);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_A, idDetail);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_B, username);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_C, idTab);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_D, "cild");
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type, String.valueOf(finalI4)));
-                    startActivity(intent);
-                } else {
-                    int facing = 0;
-                    if (type.equalsIgnoreCase("front_camera")) {
-                        facing = 1;
-                    }
-                    captureGalery(idDetail, username, idTab, idListTask, type, name, flag, facing, String.valueOf(finalI4));
-                }
-
-            }
-        });*/
-
-        /*final String finalLabel = label;
-        final int finalI5 = i;
-        imageView[count].setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog.Builder builderSingle = new AlertDialog.Builder(
-                        DinamicSLATaskActivity.this);
-                builderSingle.setTitle("Select an action " + Html.fromHtml(finalLabel));
-                final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                        DinamicSLATaskActivity.this,
-                        android.R.layout.simple_list_item_1);
-
-
-                final Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI5)));
-                if (cursorCild.getCount() > 0) {
-                    arrayAdapter.add("Retake");
-                    arrayAdapter.add("Delete");
-                    arrayAdapter.add("View");
-                } else {
-                    arrayAdapter.add("Capture");
-                }
-                builderSingle.setAdapter(arrayAdapter,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String listName = arrayAdapter.getItem(which);
-                                if (listName.equalsIgnoreCase("Retake") || listName.equalsIgnoreCase("Capture")) {
-                                    int facing = 0;
-                                    if (type.equalsIgnoreCase("front_camera")) {
-                                        facing = 1;
-                                    }
-                                    captureGalery(idDetail, username, idTab, idListTask, type, name, flag, facing, String.valueOf(finalI5));
-                                } else if (listName.equalsIgnoreCase("Delete")) {
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI5)), name, "cild");
-
-                                    db.deleteDetailRoomWithFlagContent(orderModel);
-                                    finish();
-                                    Intent aa = getIntent();
-                                    aa.putExtra("idTask", idDetail);
-                                    startActivity(getIntent());
-                                } else if (listName.equalsIgnoreCase("View")) {
-                                    Intent intent = new Intent(context, ZoomImageViewActivity.class);
-                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, ZoomImageViewActivity.FROM);
-                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_A, idDetail);
-                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_B, username);
-                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_C, idTab);
-                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_D, "cild");
-                                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type, String.valueOf(finalI5)));
-                                    startActivity(intent);
-                                }
-                            }
-                        });
-                builderSingle.show();
-                return true;
-            }
-        });*/
-
-
         resolveData();
         resolveListFile();
         resolveSend();
@@ -424,10 +313,11 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     protected void resolveData() {
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
-            id_task = gvcs.getString("task_id");
+//            id_task = gvcs.getString("task_id");
             id_task_list = gvcs.getString("id_list_task");
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
             name_title = gvcs.getString("title");
+            kode_jjt = gvcs.getString("kode_jjt");
 
             JSONArray jar = gvcs.getJSONArray("value_detail");
             String idSection = "";
@@ -438,31 +328,31 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             String headerTwo = "";
             String headerFour = "";
 
-            String noSatu = "";
-            String noDua = "";
-            String noTiga = "";
-            String noEmpat = "";
+            String noSatu = "1";
+            String noDua = "1";
+            String noTiga = "1";
+            String noEmpat = "1";
 
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
-                JSONArray pembobotan = first.getJSONArray("pembobotan");
-                for (int ii = 0; ii < pembobotan.length(); ii++) {
-                    JSONObject second = pembobotan.getJSONObject(ii);
-                    JSONArray section = second.getJSONArray("section");
-                    idSection = second.getString("id");
-                    noSatu = String.valueOf(ii + 1);
-                    for (int iii = 0; iii < section.length(); iii++) {
-                        JSONObject third = section.getJSONObject(iii);
-                        JSONArray subsection = third.getJSONArray("subsection");
-                        idSubSection = third.getString("id");
+                JSONObject pembobotan = first.getJSONObject("pembobotan");
+//                for (int ii = 0; ii < pembobotan.length(); ii++) {
+                    JSONObject second = pembobotan.getJSONObject("section");
+//                    JSONArray section = second.getJSONArray("section");
+                    idSection = pembobotan.getString("id");
+//                    noSatu = String.valueOf(ii + 1);
+//                    for (int iii = 0; iii < section.length(); iii++) {
+//                        JSONObject third = section.getJSONObject(iii);
+                        JSONObject subsection = second.getJSONObject("subsection");
+                        idSubSection = second.getString("id");
                         String asiop2[] = {"title"};
                         headerTwo = getNameByIdSLA("section", asiop2, idSubSection);
-                        noDua = String.valueOf(iii + 1);
-                        for (int iv = 0; iv < subsection.length(); iv++) {
-                            JSONObject fourth = subsection.getJSONObject(iv);
-                            JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
-                            idPertanyaan = fourth.getString("id");
-                            noTiga = String.valueOf(iv + 1);
+//                        noDua = String.valueOf(iii + 1);
+//                        for (int iv = 0; iv < subsection.length(); iv++) {
+//                            JSONObject fourth = subsection.getJSONObject(iv);
+                            JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
+                            idPertanyaan = subsection.getString("id");
+//                            noTiga = String.valueOf(iv + 1);
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
                                 idItem = fifth.getString("id");
@@ -474,6 +364,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                                     String asiop4[] = {"pertanyaan"};
                                     headerFour = getNameByIdSLA("pertanyaan", asiop4, idItem);
 
+                                    String id_task = fifth.getString("id_task");
                                     String fotony = fifth.getString("f");
                                     String title = fifth.getString("n");
                                     String ket = "";
@@ -486,17 +377,22 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                                         fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
                                     }
 
+                                    if (!aftera.contains("http://")) {
+                                        aftera = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("a");
+                                    }
+
                                     String header = noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + headerTwo + " - " + headerFour;
 
-                                    SLAmodelNew fotonya = new SLAmodelNew(header, id, title, fotony, aftera, valid, ket);
+                                    SLAmodelNew fotonya = new SLAmodelNew(id_task, header, id, title, fotony, aftera, valid, ket);
                                     foto.add(fotonya);
                                 }
-                            }
-                        }
-                    }
+//                            }
+//                        }
+//                    }
                 }
             }
         } catch (JSONException e) {
+            Log.w("ERROR argus",e.getMessage());
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -521,10 +417,12 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                         MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800,
                                 800);
 
-                        RoomsDetail orderModel = new RoomsDetail(id_task, getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
-                        db.insertRoomsDetail(orderModel);
+
                         for (int i = 0; i < foto.size(); i++) {
                             if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
+                                RoomsDetail orderModel = new RoomsDetail(foto.get(i).getId_task(), getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
+                                db.insertRoomsDetail(orderModel);
+
                                 foto.get(i).setAfter(f);
                             }
                         }
@@ -740,7 +638,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     protected void resolveListFile() {
 
 
-        mAdapter = new PushSLAVerificationAdapter(getApplication(), id_task,
+        mAdapter = new PushSLAVerificationAdapter(getApplication(), "",
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
@@ -797,9 +695,9 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                     rdialog = new ProgressDialog(PushSLAVerificationActivity.this);
                     rdialog.setMessage("Loading...");
                     rdialog.show();
-                    new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla.php",
+                    new UploadJSONSOn().execute("https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla_new.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
-                            getIntent().getStringExtra("id_rooms_tab"));
+                            getIntent().getStringExtra("id_rooms_tab"), kode_jjt);
                 } else {
                     Toast.makeText(getApplicationContext(),"Harap isi Type, Photo, dan Signature",Toast.LENGTH_SHORT).show();
                 }
@@ -812,11 +710,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         try {
             JSONObject gvcs = new JSONObject(basejson);
-            id_task = gvcs.getString("task_id");
-            id_task_list = gvcs.getString("id_list_task");
-            id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
-            name_title = gvcs.getString("title");
-
             JSONArray jar = gvcs.getJSONArray("value_detail");
 
             String idSection = "";
@@ -826,31 +719,25 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
-                JSONArray pembobotan = first.getJSONArray("pembobotan");
-                for (int ii = 0; ii < pembobotan.length(); ii++) {
-                    JSONObject second = pembobotan.getJSONObject(ii);
-                    JSONArray section = second.getJSONArray("section");
-                    idSection = second.getString("id");
-                    for (int iii = 0; iii < section.length(); iii++) {
-                        JSONObject third = section.getJSONObject(iii);
-                        JSONArray subsection = third.getJSONArray("subsection");
-                        idSubSection = third.getString("id");
-                        for (int iv = 0; iv < subsection.length(); iv++) {
-                            JSONObject fourth = subsection.getJSONObject(iv);
-                            JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
-                            idPertanyaan = fourth.getString("id");
-                            for (int v = 0; v < pertanyaan.length(); v++) {
-                                JSONObject fifth = pertanyaan.getJSONObject(v);
-                                idItem = fifth.getString("id");
-                                String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
-                                for (int vi = 0; vi < foto.size(); vi++) {
-                                    if (foto.get(vi).getId().equalsIgnoreCase(id)) {
-                                        fifth.remove("v");
-                                        fifth.put("v", foto.get(vi).getVerif());
-                                    }
-                                }
+                JSONObject pembobotan = first.getJSONObject("pembobotan");
 
-                            }
+                idSection = pembobotan.getString("id");
+                JSONObject second = pembobotan.getJSONObject("section");
+
+                idSubSection = second.getString("id");
+                JSONObject subsection = second.getJSONObject("subsection");
+
+                idPertanyaan = subsection.getString("id");
+                JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
+
+                for (int v = 0; v < pertanyaan.length(); v++) {
+                    JSONObject fifth = pertanyaan.getJSONObject(v);
+                    idItem = fifth.getString("id");
+                    String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+                    for (int vi = 0; vi < foto.size(); vi++) {
+                        if (foto.get(vi).getId().equalsIgnoreCase(id)) {
+                            fifth.remove("v");
+                            fifth.put("v", foto.get(vi).getVerif());
                         }
                     }
                 }
@@ -866,7 +753,9 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             }
 
             stringdong = gvcs.toString();
+            Log.w("brurhur argus",stringdong);
         } catch (JSONException e) {
+            Log.w("brorhur argus",e.getMessage());
         }
 
         return stringdong;
@@ -882,14 +771,14 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            return uploadFile(params[0], params[1], params[2], params[3]);
+            return uploadFile(params[0], params[1], params[2], params[3], params[4]);
         }
 
         protected void onProgressUpdate(Integer... progress) {
         }
 
         @SuppressWarnings("deprecation")
-        private String uploadFile(String URL, String username, String bc_user, String id_room) {
+        private String uploadFile(String URL, String username, String bc_user, String id_room, String kode_jjt) {
             String responseString = null;
 
             HttpClient httpclient = new DefaultHttpClient();
@@ -930,7 +819,8 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("bc_user", new StringBody(bc_user));
                 entity.addPart("id_rooms_tab", new StringBody(id_room));
-                entity.addPart("json", new FileBody(gpxfile, contentType, gpxfile.getName()));
+//                entity.addPart("kode_jjt", new StringBody(kode_jjt));
+                entity.addPart("json", new /*FileBody(gpxfile, contentType, gpxfile.getName())*/StringBody(fileJson()));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);
@@ -941,15 +831,18 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 200) {
                     String _response = EntityUtils.toString(r_entity); // content will be consume only once
+                    Log.w("waterews","1. "+_response);
                     return _response;
-                } else {
+                } else {Log.w("waterews","2. "+"error");
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
                 }
 
             } catch (ClientProtocolException e) {
+                Log.w("waterews","3. "+e.getMessage());
                 responseString = e.toString();
             } catch (IOException e) {
+                Log.w("waterews","4. "+e.getMessage());
                 responseString = e.toString();
             }
 
@@ -958,6 +851,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            Log.w("waterews","5. "+result);
             Toast.makeText(getApplicationContext(), "Success Uploading Report", Toast.LENGTH_LONG).show();
             rdialog.dismiss();
             finish();

@@ -99,7 +99,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
                     .into(holder.after);
         } else {
             BotListDB db = BotListDB.getInstance(context);
-            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "reportrepair", foto.getId());
+            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(foto.getId_task(), username, idTab, "reportrepair", foto.getId());
 
             if (cursorCild.getCount() > 0) {
                 File f = new File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
@@ -149,6 +149,8 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
                                             DialogInterface dialog, int id) {
                                         holder.note.setText(edit.getText());
 
+//                                        Log.w("Still jokes",edit.getText().toString() );
+//                                        Log.w("Still jokes ketemmnu",foto.getId() );
                                         if (checkDB(foto.getId())) {
                                             updateDB(foto.getId(), edit.getText().toString());
                                         } else {

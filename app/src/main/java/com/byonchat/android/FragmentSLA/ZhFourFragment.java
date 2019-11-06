@@ -122,6 +122,7 @@ public class ZhFourFragment extends Fragment {
 
         if (content != null){
             try {
+                Log.w("getDataSLA",content);
                 JSONArray data = new JSONArray(content);
                 for (int i = 0 ; i<data.length() ; i++){
                     JSONObject childObj = data.getJSONObject(i);
@@ -169,6 +170,7 @@ public class ZhFourFragment extends Fragment {
                                 dialog = new ProgressDialog(getContext());
                                 dialog.setMessage("Uploading Image ...");
                                 dialog.show();
+                                Log.w("showwdilog",imgList.get(0));
                                 if (imgList.get(0).split(";;").length ==2){
                                     File checkFile = new File(imgList.get(0).split(";;")[0]);
                                     if (checkFile.exists()){
@@ -531,7 +533,7 @@ public class ZhFourFragment extends Fragment {
                             itemList.get(i).setImg(fileNameServer);
                             File file = new File(ii);
                             if (file.exists()) {
-                                file.delete();
+//                                file.delete();
                             }
                         }
                     }
@@ -540,6 +542,7 @@ public class ZhFourFragment extends Fragment {
 
                 if (counter < imgList.size()){
                     // ini jika masih terdapat image , maka akan mengulang upload
+                    Log.w("showwdilog...",imgList.get(0));
                     if (imgList.get(0).split(";;").length ==2) {
                         File checkFile = new File(imgList.get(0).split(";;")[0]);
                         if (checkFile.exists()) {

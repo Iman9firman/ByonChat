@@ -2117,7 +2117,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         c = passGrade;
                                         d = assup;
                                         // ini untuk melihat dan mendapat subsection yang sudah dikerjakan
-                                        new apiLookUp().execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt", d);
+                                        new apiLookUp().execute("https://"+ MessengerConnectionService.HTTP_SERVER + "/apicekjjt/index.php", d);
 
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
                                         adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
@@ -10504,7 +10504,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                         AsyncTask goasync = new apiLookUp();
                         ((apiLookUp) goasync).setTag("THIRD TAG");
-                        ((apiLookUp) goasync).execute("https://bb.byonchat.com/apislaiss/index.php/Lookupjjt", d);
+                        ((apiLookUp) goasync).execute("https://"+ MessengerConnectionService.HTTP_SERVER + "/apicekjjt/index.php", d);
 
                         long date = System.currentTimeMillis();
                         String dateString = hourFormat.format(date);

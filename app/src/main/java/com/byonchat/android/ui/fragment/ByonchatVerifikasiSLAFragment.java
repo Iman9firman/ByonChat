@@ -3,6 +3,7 @@ package com.byonchat.android.ui.fragment;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,7 +32,9 @@ import com.android.volley.toolbox.Volley;
 import com.byonchat.android.DialogFormChildMainNew;
 import com.byonchat.android.DialogFormChildRequestDoc;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
+import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.data.model.Status;
@@ -89,6 +92,8 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
     private String idRoomTab;
     private String color;
 
+    private ArrayList<String> kodeJJt = new ArrayList<>();
+
     protected LinearLayoutManager chatLayoutManager;
     protected ByonchatRepairReportAdapter mAdapter;
     MessengerDatabaseHelper databaseHelper;
@@ -138,11 +143,26 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
         super.onCreate(savedInstanceState);
         databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
         title = getArguments().getString("aa");
-        urlTembak = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_verifikasi_sla.php";
+        urlTembak = "https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/report_verifikasi_sla_new.php";
         username = getArguments().getString("cc");
         idRoomTab = getArguments().getString("dd");
         myContact = getArguments().getString("ee");
         color = getArguments().getString("col");
+
+        UserDB userDB = UserDB.getInstance(getActivity());
+
+        Cursor cursorJJT = userDB.getSingle();
+        if (cursorJJT.getCount() > 0) {
+            String contentJJT = cursorJJT.getString(cursorJJT.getColumnIndexOrThrow(UserDB.EMPLOYEE_MULTICOST));
+            try {
+                JSONArray arr = new JSONArray(contentJJT);
+
+                for (int as = 0; as < arr.length(); as++) {
+                    kodeJJt.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
+                }
+
+            } catch (Exception e) { }
+        }
     }
 
     @NonNull
@@ -179,14 +199,18 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
     @Override
     public void onResume() {
 
-        Log.w("apa isi argumenya", urlTembak);
+        Log.w("apadilog argumenya", urlTembak);
         vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
             Map<String, String> params = new HashMap<>();
             params.put("username_room", username);
             params.put("bc_user", databaseHelper.getMyContact().getJabberId());
             params.put("id_rooms_tab", idRoomTab);
-            Log.w("nhdua paramser", idRoomTab + ", --> " + username);
+            for(int i = 0; i < kodeJJt.size(); i++){
+                params.put("kode_jjt["+i+"]", kodeJJt.get(i));
+                Log.w("dilog paramser", "jjt."+i+": "+kodeJJt.get(i));
+            }
+            Log.w("dilog paramser", idRoomTab + ", --> " + username);
             getDetail(/*"https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_tobe_repair.php"*/urlTembak, params, true);
         } else {
             vRefreshList.setRefreshing(false);
@@ -211,10 +235,19 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
                 Map<String, String> params = new HashMap<>();
                 params.put("username_room", username);
                 params.put("bc_user", databaseHelper.getMyContact().getJabberId());
-                params.put("id_rooms_tab", idRoomTab);
-                params.put("task_id", item.id + "");
+//                params.put("id_rooms_tab", idRoomTab);
+//                params.put("task_id", item.id + "");
+                params.put("kode_jjt", item.kode_jjt + "");
+                params.put("tanggal_submit",item.timestamp);
+//                params.put("id_pembobotan", item.id_pembobotan + "");
+//                params.put("id_section", item.id_section + "");
+//                params.put("id_subsection", item.id_subsection + "");
+                Log.w("Param argus","jjt: "+item.kode_jjt);
+//                Log.w("Param argus","pmb: "+item.id_pembobotan);
+//                Log.w("Param argus","sct: "+item.id_section);
+//                Log.w("Param argus","sbs: "+item.id_subsection);
                 Log.w("Parameter nya argus", username + ", " + databaseHelper.getMyContact().getJabberId() + ", " + idRoomTab + ", " + item.id);
-                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_verifikasi_sla.php", params, true,item.title,item.timestamp);
+                getMoreDetail("https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/push_verifikasi_sla_new.php", params, true,item.title,item.timestamp);
             }
         }, new OnRequestItemClickListener() {
             @Override
@@ -310,36 +343,41 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
+                    Log.w("ijdilog",response);
                     rdialog.dismiss();
                     if (hide) {
+                        files.clear();
                         try {
 //                            JSONArray jsonArray0 = new JSONArray(response);
                             JSONObject jsonObject = new JSONObject(response);
 //                            String status = jsonObject.getString("status");
 //                            String message = jsonObject.getString("message");
 
-                            files.clear();
                             JSONArray jsonArray = new JSONArray(jsonObject.getString("value_detail"));
 
 
                             if (jsonArray.length() > 0) {
                                 for (int i = jsonArray.length() - 1; i >= 0; i--) {
                                     JSONObject jObj = jsonArray.getJSONObject(i);
-                                    String id = jObj.getString("id");
-//                                        String link_file = jObj.getString("link_file");
+//                                    String id = jObj.getString("id");
                                     String timestamp = jObj.getString("tanggal_submit");
-//                                        String bc_user_requester = jObj.getString("bc_user_requester");
                                     String nama_file = jObj.getString("title");
-//                                        String history = jObj.getString("history");
+                                    String kode_jjt = jObj.getString("kode_jjt");
 
-//                                        String id_request = new JSONArray(history).getJSONObject(0).getString("id_request");
-//                                        String id_history = new JSONArray(history).getJSONObject(new JSONArray(history).length()-1).getString("id");
+//                                    String id_pembobotan = jObj.getString("id_pembobotan");
+//                                    String id_section = jObj.getString("id_section");
+//                                    String id_subsection = jObj.getString("id_subsection");
 
                                     File file = new File();
-                                    file.id = Long.valueOf(id);
+                                    file.id = /*Long.valueOf(id)*/i;
                                     file.title = nama_file;
-                                    file.url = "";
                                     file.timestamp = timestamp;
+                                    file.kode_jjt = kode_jjt;
+//                                    file.id_pembobotan = id_pembobotan;
+//                                    file.id_section = id_section;
+//                                    file.id_subsection = id_subsection;
+
+                                    file.url = "";
                                     file.type = "text";
                                     file.id_history = "";
                                     file.description = "";
@@ -347,18 +385,20 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
                                     files.add(file);
                                 }
-
-                                mAdapter.setItems(files);
-                                mAdapter.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            Log.w("sadilog",e.getMessage());
                         }
+
+                        mAdapter.setItems(files);
+                        mAdapter.notifyDataSetChanged();
                         vRefreshList.setRefreshing(false);
                     }
 
                 },
                 error -> {
+                    Log.w("ierjdilog",error);
                     rdialog.dismiss();
                 }
         ) {
@@ -381,6 +421,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
+            Log.w("res dilog",response);
                     rdialog.dismiss();
                     if (hide) {
                         Intent iii = new Intent(getContext(), PushSLAVerificationActivity.class);
@@ -395,6 +436,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
                 },
                 error -> {
+                    Log.w("err dilog",error);
                     rdialog.dismiss();
                 }
         ) {

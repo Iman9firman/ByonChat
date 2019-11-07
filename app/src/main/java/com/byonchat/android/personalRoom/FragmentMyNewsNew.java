@@ -86,7 +86,7 @@ public class FragmentMyNewsNew extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         title = getArguments().getString("aa");
-        urlTembak = getArguments().getString("bb");
+        urlTembak = /*getArguments().getString("bb");*/"https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/list_attachment_new.php";
         username = getArguments().getString("cc");
         idRoomTab = getArguments().getString("dd");
         myContact = getArguments().getString("ee");

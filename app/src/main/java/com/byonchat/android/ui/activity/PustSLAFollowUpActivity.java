@@ -214,6 +214,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         }
 
                         String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+                        Log.w("idpaslagi insert",id);
                         String header = headerTwo + " - " + headerFour;
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
@@ -557,6 +558,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                             fifth.put("a", uploadfoto.get(vi).getAfterString());
                             byTwo.put("a", uploadfoto.get(vi).getAfterString());
+                            Log.w("idpaslagi view",id_text);
                             if (checkDB(id_text)) {
                                 fifth.put("ket", getTheDB(id_text));
                                 byTwo.put("ket", getTheDB(id_text));
@@ -619,45 +621,41 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
             String idSection = "";
             String idSubSection = "";
-            String idPertanyaan = "";
+            String idPertanyaan =  "";
             String idItem = "";
 
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
-                JSONArray pembobotan = first.getJSONArray("pembobotan");
-                for (int ii = 0; ii < pembobotan.length(); ii++) {
-                    JSONObject second = pembobotan.getJSONObject(ii);
-                    JSONArray section = second.getJSONArray("section");
-                    idSection = second.getString("id");
-                    for (int iii = 0; iii < section.length(); iii++) {
-                        JSONObject third = section.getJSONObject(iii);
-                        JSONArray subsection = third.getJSONArray("subsection");
-                        idSubSection = third.getString("id");
-                        for (int iv = 0; iv < subsection.length(); iv++) {
-                            JSONObject fourth = subsection.getJSONObject(iv);
-                            JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
-                            idPertanyaan = fourth.getString("id");
-                            for (int v = 0; v < pertanyaan.length(); v++) {
-                                JSONObject fifth = pertanyaan.getJSONObject(v);
-                                idItem = fifth.getString("id");
-                                String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
-                                String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem + "-" + v;
-                                for (int vi = 0; vi < uploadfoto.size(); vi++) {
-                                    if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
-                                        fifth.put("a", uploadfoto.get(vi).getAfterString());
-                                        if (checkDB(id_text)) {
-                                            deleteFromDB(id_text);
-                                            db.deleteNoteSLA(uploadfoto.get(vi).getId_task(), getIntent().getStringExtra("id_rooms_tab"), id, "reportrepair");
-                                        }
-                                    }
-                                }
+                JSONObject pembobotan = first.getJSONObject("pembobotan");
 
+                idSection = pembobotan.getString("id");
+                JSONObject section = pembobotan.getJSONObject("section");
+
+                idSubSection = section.getString("id");
+                JSONObject subsection = section.getJSONObject("subsection");
+
+                idPertanyaan = subsection.getString("id");
+                JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
+
+                for (int v = 0; v < pertanyaan.length(); v++) {
+                    JSONObject fifth = pertanyaan.getJSONObject(v);
+                    idItem = fifth.getString("id");
+                    String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+                    String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem + "-" + v;
+                    Log.w("idpaslagi delete",id_text);
+                    for (int vi = 0; vi < uploadfoto.size(); vi++) {
+                        if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
+                            fifth.put("a", uploadfoto.get(vi).getAfterString());
+                            if (checkDB(id_text)) {
+                                deleteFromDB(id_text);
+                                db.deleteNoteSLA(uploadfoto.get(vi).getId_task(), getIntent().getStringExtra("id_rooms_tab"), id, "reportrepair");
                             }
                         }
                     }
                 }
             }
         } catch (JSONException e) {
+            Log.w("error idpaslagi",e.getMessage());
         }
     }
 
@@ -851,7 +849,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             }
                         });
 
-
+/*
                 java.io.File gpxfile = null;
                 try {
                     java.io.File root = new java.io.File(Environment.getExternalStorageDirectory(), "ByonChat_Upload");
@@ -870,7 +868,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                 if (!gpxfile.exists()) {
                     return "File not exists";
-                }
+                }*/
 
                 ContentType contentType = ContentType.create("multipart/form-data");
                 entity.addPart("username_room", new StringBody(username));

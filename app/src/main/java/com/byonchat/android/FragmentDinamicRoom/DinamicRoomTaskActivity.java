@@ -2664,7 +2664,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 }
 
                                 DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-                                formatter.applyPattern("#,###,###,###");
+                                formatter.applyPattern("#,###,###,###.#####");
                                 String formattedString = formatter.format(totalQ);
 
                                 total_price_order.setText(formattedString);
@@ -3202,7 +3202,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             if (dodo.contains(" ")) {
                                                 dodo = dodo.substring(0, dodo.indexOf(" "));
                                             }
-                                            String ssss = new Validations().getInstance(context).numberToCurency(String.valueOf(Double.parseDouble(mfc.getPrice().replace(",", "")) * Double.parseDouble(dodo.replace(",", ""))));
+                                            String ssss = String.valueOf(Double.parseDouble(mfc.getPrice().replace(",", "")) * Double.parseDouble(dodo.replace(",", "")));
                                             totalP += Double.parseDouble(ssss.replace(",", ""));
                                             totalQ += Integer.valueOf(dodo);
                                         } catch (Exception e) {
@@ -7179,12 +7179,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     final int counts = linearEstimasi[Integer.valueOf(nilai.get(0).toString())].getChildCount();
                                                     linearEstimasi[Integer.valueOf(nilai.get(0).toString())].removeViews(1, counts - 1);
 
-                                                    String mera = finalColumnNames[0] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'";
+                                                    String mera = "upper(" + finalColumnNames[0] + ")" + "= " + "upper('" + spinner.getSelectedItem().toString().replace("'", "''") + "')";
                                                     String next = whereDone != null ? " and " + whereDone : "";
                                                     if (mera.equalsIgnoreCase("")) {
                                                         next = whereDone != null ? whereDone : "";
                                                     }
                                                     String full = mera + next;
+
 
                                                     addSpinnerDinamics(finalTitleNames, finalNama.substring(0, finalNama.indexOf(".")), linearEstimasi[Integer.valueOf(nilai.get(0).toString())], finalNamaTable, finalColumnNames, 0, full, idListTask, type, String.valueOf(finalI24), name);
 
@@ -9906,7 +9907,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             final Integer asIs = from + 1;
             if (asIs < coloum.length) {
                 String titlle = jsonValue[asIs];
-                final Cursor c = mDB.getWritableDatabase().query(true, table, new String[]{coloum[asIs]}, where, null, coloum[asIs], null, null, null);
+                final Cursor c = mDB.getWritableDatabase().query(true, table, new String[]{"upper(" + coloum[asIs] + ")"}, where, null, "upper(" + coloum[asIs] + ")", null, null, null);
+
                 final ArrayList<String> spinnerArray = new ArrayList<String>();
 
                 if (coloum.length - 1 != asIs) {
@@ -10002,7 +10004,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         final int count = view.getChildCount();
                         view.removeViews(asIs + 1, count - (asIs + 1));
                         if (!spinner.getSelectedItem().toString().equals("--Please Select--")) {
-                            addSpinnerDinamics(jsonValue, namedb, view, table, coloum, asIs, where + " and " + coloum[asIs] + "= '" + spinner.getSelectedItem().toString().replace("'", "''") + "'", idListTask, type, finalI24, name);
+                            addSpinnerDinamics(jsonValue, namedb, view, table, coloum, asIs, where + " and upper(" + coloum[asIs] + ") = upper('" + spinner.getSelectedItem().toString().replace("'", "''") + "')", idListTask, type, finalI24, name);
                         }
 
                         Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI24)));
@@ -11528,6 +11530,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             alertbox.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface arg0, int arg1) {
                     finish();
+                    SimpleDateFormat dateFormatNew = new SimpleDateFormat(
+                            "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+                    long date = System.currentTimeMillis();
+                    String dateString = dateFormatNew.format(date);
+                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "0", null, "parent");
+                    db.updateDetailRoomWithFlagContentParent(orderModel);
                 }
             });
             alertbox.setNegativeButton("Discard", new DialogInterface.OnClickListener() {

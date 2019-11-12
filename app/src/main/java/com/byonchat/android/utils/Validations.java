@@ -23,10 +23,12 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class Validations {
@@ -204,7 +206,7 @@ public class Validations {
         return error;
     }
 
-    public void setShareLocOnOff(boolean onOff){
+    public void setShareLocOnOff(boolean onOff) {
         //id IntervalDB ke 27 ISSReliever
         IntervalDB db = new IntervalDB(context);
         db.open();
@@ -212,15 +214,15 @@ public class Validations {
         if (cursor.getCount() > 0) {
             db.deleteContact(27);
         }
-        Log.w("Adakah hasilnya bos","ada nih 0: "+onOff);
+        Log.w("Adakah hasilnya bos", "ada nih 0: " + onOff);
         Interval interval = new Interval();
         interval.setId(27);
-        interval.setTime(onOff+"");
+        interval.setTime(onOff + "");
         db.createContact(interval);
         db.close();
     }
 
-    public boolean getShareLocOnOff(int id){
+    public boolean getShareLocOnOff(int id) {
         //id IntervalDB ke 27 ISSReliever
         boolean onOff = false;
         IntervalDB db = new IntervalDB(context);
@@ -230,7 +232,7 @@ public class Validations {
             onOff = Boolean.parseBoolean(cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)));
         }
 
-        Log.w("Adakah hasilnya bos","ada nih : "+onOff);
+        Log.w("Adakah hasilnya bos", "ada nih : " + onOff);
         return onOff;
     }
 
@@ -837,7 +839,24 @@ public class Validations {
         db.close();
     }
 
-    public String numberToCurency(String nilai) {
+    public String numberToCurency(String originalString) {
+        if (originalString.equalsIgnoreCase("")) {
+            originalString = "0";
+        }
+        Double longval;
+        if (originalString.contains(",")) {
+            originalString = originalString.replaceAll(",", "");
+        }
+        longval = Double.parseDouble(originalString);
+
+        DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+        formatter.applyPattern("#,###,###,###.#####");
+        String formattedString = formatter.format(longval);
+
+        return formattedString;
+    }
+
+    public String numberToCurencyId(String nilai) {
         DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
         DecimalFormatSymbols formatRp = new DecimalFormatSymbols();
 
@@ -877,6 +896,10 @@ public class Validations {
 
 
     public String numberToCurencyUSD(String nilai) {
+        if (nilai.equalsIgnoreCase("")) {
+            nilai = "0";
+        }
+
         DecimalFormat kursIndonesia = (DecimalFormat) DecimalFormat.getCurrencyInstance();
         DecimalFormatSymbols formatRp = new DecimalFormatSymbols();
 
@@ -894,6 +917,7 @@ public class Validations {
 
         return kursIndonesia.format(dump).split(",")[0];
     }
+
 
     public String getSignatureProfilePicture(String jaberId, MessengerDatabaseHelper messengerDatabaseHelper) {
 

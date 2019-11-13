@@ -317,7 +317,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra(ConversationActivity.KEY_TITLE, targetUrl);
                         getApplicationContext().startActivity(intent);
-                        error = "Tolong periksa koneksi internet.";
+                        error = "Tolong periksa koneksi internet2.";
                         finish();
                     }
                 } else {
@@ -326,7 +326,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra(ConversationActivity.KEY_TITLE, targetUrl);
                     getApplicationContext().startActivity(intent);
-                    error = "Tolong periksa koneksi internet.";
+                    error = "Tolong periksa koneksi internet.1";
                     finish();
                 }
 
@@ -334,22 +334,23 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 e.printStackTrace();
                 LoadingGetTabRoomActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet0.", Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();
             } catch (ClientProtocolException e) {
                 LoadingGetTabRoomActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet.4", Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();
                 // TODO Auto-generated catch block
             } catch (IOException e) {
+                Log.w("jojo", e.getMessage());
                 LoadingGetTabRoomActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Tolong periksa koneksi internet.7:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
                 finish();

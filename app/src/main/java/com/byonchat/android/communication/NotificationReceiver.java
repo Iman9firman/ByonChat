@@ -499,6 +499,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                 String planText = null;
                 planText = "location;" + pesan[1] + ";" + latitude + "," + longitude + ";" + pesan[2] + ";" + simInfo();
                 if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                    Log.w("saya :" + messengerHelper.getMyContact().getJabberId() + ": Kitim", planText);
                     Message report = new Message(messengerHelper.getMyContact().getJabberId(), "x_byonchatbackground", planText);
                     report.setType("text");
                     report.setSendDate(new Date());
@@ -559,13 +560,10 @@ public class NotificationReceiver extends BroadcastReceiver {
     }
 
     protected void sendSMSMessage(String content) {
-        String phoneNo = "+6288977669999";
-        // String phoneNo = "+628158888248";
+       /* String phoneNo = "+6288977669999";
         String message = content;
 
         try {
-         /*   SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNo, null, message, null, null);*/
             SmsManager sms = SmsManager.getDefault();
             String sent = "android.telephony.SmsManager.STATUS_ON_ICC_SENT";
             PendingIntent piSent = PendingIntent.getBroadcast(ctx, Utility.generateRandomInt(), new Intent(sent), 0);
@@ -574,7 +572,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 

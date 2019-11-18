@@ -1,7 +1,7 @@
 <resources>
     <string name="hallo">hallo</string>
     <string name="app_name">ByonChat</string>
-    <string name="app_version">2.0</string>
+    <string name="app_version">3.0</string>
     <string name="app_company">lemindo</string>
     <string name="id_client">66</string>
     <string name="action_settings">Settings</string>

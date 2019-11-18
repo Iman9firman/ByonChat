@@ -29,6 +29,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
@@ -79,7 +80,8 @@ public class NoteCommentActivity extends AppCompatActivity implements EmojiconGr
     SwipeRefreshLayout mswipeRefreshLayout;
     String color;
     Boolean personal;
-    private LinearLayout emojicons, contentRoot;
+    private LinearLayout emojicons;
+    private RelativeLayout contentRoot;
     private ImageButton btnMic, btn_add_emoticon;
 
     @Override
@@ -90,7 +92,7 @@ public class NoteCommentActivity extends AppCompatActivity implements EmojiconGr
         toolbar = (Toolbar) findViewById(R.id.abMain);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
-        contentRoot = (LinearLayout) findViewById(R.id.contentRoot);
+        contentRoot = (RelativeLayout) findViewById(R.id.contentRoot);
         mWriteComment = (EmojiconEditText) findViewById(R.id.writeComment);
         mButtonSend = (Button) findViewById(R.id.btnSend);
         mswipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);

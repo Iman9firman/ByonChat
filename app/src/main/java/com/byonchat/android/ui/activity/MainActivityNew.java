@@ -75,6 +75,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.byonchat.android.AccountSettingActivity;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.ByonChatMainRoomActivity;
@@ -100,6 +101,7 @@ import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
+import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
@@ -585,6 +587,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                 finish();
                 return;
             }
+
 
             /*color = getResources().getColor(R.color.colorPrimary);*/
 

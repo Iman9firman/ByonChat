@@ -5917,6 +5917,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 count++;
                             }
 
+                            Log.w("kerinduan", count + "");
                             List<String> valSetOne = new ArrayList<String>();
                             valSetOne.add(String.valueOf(count));
                             valSetOne.add(required);
@@ -10530,7 +10531,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         if (idListTaskMasterForm.equalsIgnoreCase("66986")) {
                             ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[0].getExpandableListAdapter();
                             ancur.notifyDataSetChanged();
+                        } else if (idListTaskMasterForm.equalsIgnoreCase("68396")) {
+                            ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[2].getExpandableListAdapter();
+                            ancur.notifyDataSetChanged();
                         } else {
+
                             ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[1].getExpandableListAdapter();
                             ancur.notifyDataSetChanged();
                         }
@@ -11629,7 +11634,23 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
         new Annca(photo.build()).launchCamera();*/
 
-        showAttachmentDialogNew(11);
+        if (idTab.equalsIgnoreCase("3355")) {
+            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            CameraActivity.Builder start = new CameraActivity.Builder(activity, 11);
+            start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+            start.setCameraFace(CameraActivity.CAMERA_REAR);
+            start.setFlashMode(CameraActivity.FLASH_OFF);
+            start.setQuality(CameraActivity.MEDIUM);
+            start.setRatio(CameraActivity.RATIO_4_3);
+            start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
+            new Camera(start.build()).lauchCamera();
+        } else {
+            showAttachmentDialogNew(11);
+        }
+
     }
 
 

@@ -313,6 +313,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     protected void resolveData() {
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
+            Log.w("OKee argus",gvcs+"");
 //            id_task = gvcs.getString("task_id");
             id_task_list = gvcs.getString("id_list_task");
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");

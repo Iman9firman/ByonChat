@@ -228,59 +228,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         foto.add(fotonya);
                     }
                 }
-
-                /*JSONArray pembobotan = first.getJSONArray("pembobotan");
-                for (int ii = 0; ii < pembobotan.length(); ii++) {
-                    JSONObject second = pembobotan.getJSONObject(ii);
-                    idSection = second.getString("id");
-                    noSatu = String.valueOf(ii + 1);
-                    JSONArray section = second.getJSONArray("section");
-                    for (int iii = 0; iii < section.length(); iii++) {
-                        JSONObject third = section.getJSONObject(iii);
-                        idSubSection = third.getString("id");
-                        noDua = String.valueOf(iii + 1);
-                        JSONArray subsection = third.getJSONArray("subsection");
-                        String asiop2[] = {"title"};
-                        headerTwo = getNameByIdSLA("section", asiop2, idSubSection);
-
-                        for (int iv = 0; iv < subsection.length(); iv++) {
-                            JSONObject fourth = subsection.getJSONObject(iv);
-                            JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
-                            idPertanyaan = fourth.getString("id");
-                            noTiga = String.valueOf(iv + 1);
-                            for (int v = 0; v < pertanyaan.length(); v++) {
-                                JSONObject fifth = pertanyaan.getJSONObject(v);
-                                String valid = fifth.getString("v");
-                                noEmpat = String.valueOf(v + 1);
-                                if (valid.equalsIgnoreCase("0")) {
-                                    idItem = fifth.getString("id")+"-"+v;
-                                    String asiop4[] = {"pertanyaan"};
-                                    headerFour = getNameByIdSLA("pertanyaan", asiop4, removePosFromId(idItem));
-
-                                    String fotony = fifth.getString("f");
-                                    String title = fifth.getString("n");
-
-                                    if (!fotony.contains("http://")) {
-                                        fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
-                                    }
-
-                                    String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
-                                    String header = headerTwo + " - " + headerFour;
-
-                                    Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
-                                    SLAmodelNew fotonya = null;
-                                    if (cursorCild.getCount() > 0) {
-                                        java.io.File f = new java.io.File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                                        fotonya = new SLAmodelNew(noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + header, id, title, fotony, f);
-                                    } else {
-                                        fotonya = new SLAmodelNew(noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + header, id, title, fotony, (java.io.File) null);
-                                    }
-                                    foto.add(fotonya);
-                                }
-                            }
-                        }
-                    }
-                }*/
             }
         } catch (JSONException e) {
             Log.w("Nangkringbocah 3",e.getMessage());
@@ -569,39 +516,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     byThree.put(byTwo);
                 }
                 byOne.put("pertanyaan",byThree);
-
-                /*JSONArray pembobotan = first.getJSONArray("pembobotan");
-                for (int ii = 0; ii < pembobotan.length(); ii++) {
-                    JSONObject second = pembobotan.getJSONObject(ii);
-                    JSONArray section = second.getJSONArray("section");
-                    idSection = second.getString("id");
-                    for (int iii = 0; iii < section.length(); iii++) {
-                        JSONObject third = section.getJSONObject(iii);
-                        JSONArray subsection = third.getJSONArray("subsection");
-                        idSubSection = third.getString("id");
-                        for (int iv = 0; iv < subsection.length(); iv++) {
-                            JSONObject fourth = subsection.getJSONObject(iv);
-                            JSONArray pertanyaan = fourth.getJSONArray("pertanyaan");
-                            idPertanyaan = fourth.getString("id");
-                            for (int v = 0; v < pertanyaan.length(); v++) {
-                                JSONObject fifth = pertanyaan.getJSONObject(v);
-                                idItem = fifth.getString("id");
-                                String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
-                                String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem + "-" + v;
-                                for (int vi = 0; vi < uploadfoto.size(); vi++) {
-                                    if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
-                                        fifth.put("a", uploadfoto.get(vi).getAfterString());
-                                        if (checkDB(id_text)) {
-                                            fifth.put("ket", getTheDB(id_text));
-                                            Log.w("yang ketemmnu",getTheDB(id_text));
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                }*/
             }
 
             Log.e("erte Nangkringbocah",byOne.toString());

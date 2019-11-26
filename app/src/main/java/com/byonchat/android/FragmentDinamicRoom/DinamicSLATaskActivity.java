@@ -5547,6 +5547,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                     start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                                     start.setCameraFace(CameraActivity.CAMERA_REAR);
                                     start.setFlashMode(CameraActivity.FLASH_OFF);
+                                    start.setNIK("NIKISIH");
                                     start.setQuality(CameraActivity.MEDIUM);
                                     start.setRatio(CameraActivity.RATIO_4_3);
                                     start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));

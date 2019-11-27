@@ -870,7 +870,6 @@ public class BotListDB extends SQLiteOpenHelper {
                 }, ROOM_DETAIL_ID_ROOM + "='" + idDtlTskOld + "' AND " + ROOM_DETAIL_ID_TAB + "= '" + idUsrNTb + "'" + " AND " + ROOM_DETAIL_FLAG_ROOM + "= '" + Status + "'"
                 , null, ROOM_DETAIL_ID, null, null, null);
         if (cursor.moveToFirst()) {
-            Log.w("ada", "kabar");
             do {
 
                 String a = cursor.getString(cursor.getColumnIndex(ROOM_DETAIL_ID));
@@ -881,6 +880,24 @@ public class BotListDB extends SQLiteOpenHelper {
 
         return list;
     }
+
+    public ArrayList<String> getAllRoomDetailFormWithFlagContentWithOutIdContent(String idUsrNTb, String idDtlTskOld, String Status) throws SQLException {
+        ArrayList<String> list = new ArrayList<String>();
+        Cursor cursor = getDatabase().query(true, ROOM_DETAIl_TABLE, new String[]{ROOM_DETAIL_ID, ROOM_DETAIL_CONTENT/*,ROOM_DETAIL_ID_TAB,ROOM_DETAIL_ID_ROOM,ROOM_DETAIL_CONTENT,ROOM_DETAIL_FLAG_CONTENT,ROOM_DETAIL_FLAG_TAB,ROOM_DETAIL_FLAG_ROOM*/
+                }, ROOM_DETAIL_ID_ROOM + "='" + idDtlTskOld + "' AND " + ROOM_DETAIL_ID_TAB + "= '" + idUsrNTb + "'" + " AND " + ROOM_DETAIL_FLAG_ROOM + "= '" + Status + "'"
+                , null, ROOM_DETAIL_ID, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+
+                String a = cursor.getString(cursor.getColumnIndex(ROOM_DETAIL_CONTENT));
+                list.add(a);
+            } while (cursor.moveToNext());
+        }
+
+
+        return list;
+    }
+
 
     public boolean removeRoomDetailFormWithFlagContentWithOutId(String idUsrNTb, String idDtlTskOld, String Status) {
         return getDatabase().delete(ROOM_DETAIl_TABLE, ROOM_DETAIL_ID_ROOM + "='" + idDtlTskOld + "' AND " + ROOM_DETAIL_ID_TAB + "= '" + idUsrNTb + "'" + " AND " + ROOM_DETAIL_FLAG_ROOM + "= '" + Status + "'", null) > 0;

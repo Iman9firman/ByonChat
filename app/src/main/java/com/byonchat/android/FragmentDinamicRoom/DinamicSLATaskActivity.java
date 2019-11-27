@@ -143,8 +143,6 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.guna.ocrlibrary.OCRCapture;
-import com.multilevelview.MultiLevelRecyclerView;
-import com.multilevelview.models.RecyclerViewItem;
 import com.squareup.picasso.Picasso;
 import com.tokenautocomplete.FilteredArrayAdapter;
 import com.tokenautocomplete.TokenCompleteTextView;
@@ -207,7 +205,6 @@ import zharfan.com.cameralibrary.CameraActivity;
 public class DinamicSLATaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener, AllAboutUploadTask.OnTaskCompleted {
 
 
-    private MultiLevelRecyclerView recyclerView;
     private SLAISSAdapter adapter;
     private List<SLAISSItem> itemList;
 
@@ -1797,9 +1794,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             }
 
 
-            recyclerView = findViewById(R.id.recy_main);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
             String json = "{\n" +
                     "  \"data\": [\n" +
                     "    {\n" +
@@ -1884,13 +1878,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                     "}";
 
             itemList = (List<SLAISSItem>) getListFromJson("", json, 0);
-
-            adapter = new SLAISSAdapter(this, itemList, recyclerView);
-
-            recyclerView.setAdapter(adapter);
-            recyclerView.setAccordion(false);
-            recyclerView.removeItemClickListeners();
-
 
             try {
 
@@ -9588,7 +9575,6 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 adapter.updateDB(Integer.valueOf(valueIdValue.getIdDetail()), Integer.valueOf(valueIdValue.getExpandedListText()), f.getAbsolutePath());
                             }
 
-                            adapter.notifyDataSetChanged();
 
                         } else {
                             Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", valueIdValue.getTypes());
@@ -12210,25 +12196,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     }
 
     private List<?> getListFromJson(String from, String jsonString, int levelNumber) {
-        List<RecyclerViewItem> itemList = new ArrayList<>();
-        String title;
-        int id = 0;
-        try {
-            JSONObject parent = new JSONObject(jsonString);
-            JSONArray arrayOne = parent.getJSONArray("data");
-            for (int one = 0; one < arrayOne.length(); one++) {
-                SLAISSItem item = new SLAISSItem(levelNumber);
-                JSONObject objectOne = arrayOne.getJSONObject(one);
-                title = objectOne.getString("label");
-                id = objectOne.getInt("id");
 
-                item.setTitle(from + (one + 1) + ". " + title);
-                item.setId(id);
-                item.addChildren((List<RecyclerViewItem>) getListFromJson(from + (one + 1) + ".", objectOne.toString(), levelNumber + 1));
-                itemList.add(item);
-            }
-        } catch (JSONException e) {
-        }
         return itemList;
     }
 

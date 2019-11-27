@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -19,13 +20,19 @@ import java.util.HashMap;
 public class SpinnerCustomAdapter extends ArrayAdapter<String> {
 
     private ArrayList<String> values;
+    private ArrayList<String> existing;
 
     public SpinnerCustomAdapter(Context context, int resourceId,
-                                String url,String bcUser, ArrayList<String> values) {
+                                String url, String bcUser, ArrayList<String> values) {
         super(context, resourceId, values);
         this.values = values;
 
         new getListTask(url).execute(bcUser);
+    }
+
+    public String nilai(ArrayList<String> _existing) {
+        this.existing = _existing;
+        return "";
     }
 
     @Override
@@ -61,13 +68,13 @@ public class SpinnerCustomAdapter extends ArrayAdapter<String> {
         return label;
     }
 
-    class getListTask extends AsyncTask<String , Void , ArrayList<String>>{
+    class getListTask extends AsyncTask<String, Void, ArrayList<String>> {
 
         private String urlStr;
         private ArrayList<String> valuesNew = new ArrayList<>();
         ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
 
-        public getListTask(String url){
+        public getListTask(String url) {
             this.urlStr = url;
         }
 
@@ -79,17 +86,22 @@ public class SpinnerCustomAdapter extends ArrayAdapter<String> {
             valuesNew.add("--Please Select--");
             String result = profileSaveDescription.sendPostRequest(urlStr, data);
             try {
-                if (result != null){
+                if (result != null) {
                     if (result.length() > 0) {
                         final JSONArray jsonArrays = new JSONArray(result);
 
                         for (int ia = 0; ia < jsonArrays.length(); ia++) {
                             String l = jsonArrays.getJSONObject(ia).getString("spk");
-                            valuesNew.add(l);
+                            if (existing != null) {
+                                if (existing.indexOf(l) == -1) {
+                                    valuesNew.add(l);
+                                }
+                            }
+
                         }
                     }
                 }
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

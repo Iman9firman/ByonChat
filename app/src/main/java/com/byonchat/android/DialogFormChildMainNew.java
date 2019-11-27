@@ -197,58 +197,54 @@ public class DialogFormChildMainNew extends DialogFragment {
 
                     Contact contact = messengerHelper.getMyContact();
 
+                    List<String> listId = botListDB.getAllRoomDetailFormWithFlagContentWithOutIdContent(jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail");
                     SpinnerCustomAdapter spinnerArrayAdapter = new SpinnerCustomAdapter(getActivity(), R.layout.simple_spinner_item_black, downloadForm, contact.getJabberId(), spinnerArray);
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerArrayAdapter.nilai((ArrayList<String>) listId);
                     spinner.setAdapter(spinnerArrayAdapter);
                     params2.setMargins(30, 10, 30, 40);
                     spinner.setLayoutParams(params2);
 
 
-                    /*Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
-                    if (cursorCild.getCount() > 0) {
-                        int spinnerPosition = spinnerArrayAdapter.getPosition(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                    Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(i)));
+                    if (cEdit.getCount() > 0) {
+                        int spinnerPosition = spinnerArrayAdapter.getPosition(cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
                         spinner.setSelection(spinnerPosition);
-                    } else {
-                        if (spinner.getSelectedItem() != null) {
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, spinner.getSelectedItem().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                            db.insertRoomsDetail(orderModel);
-                        }
-
                     }
 
+                    final int finalI7 = i;
+                    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-                    if ((!showButton)) {
-                        spinner.setEnabled(false);
-                    } else {
-                        final int finalI7 = i;
-                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
 
-                            @Override
-                            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
-
-
-                                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
+                            if (!spinnerArrayAdapter.getValues().get(myPosition).equals("--Please Select--") && !spinnerArrayAdapter.getValues().get(myPosition).equals("-")) {
+                                Cursor cEdit = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
                                 if (cEdit.getCount() > 0) {
-                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
-                                    db.updateDetailRoomWithFlagContent(orderModel);
+                                    RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "child_detail");
+                                    botListDB.updateDetailRoomWithFlagContent(orderModel);
                                 } else {
                                     if (String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)).length() > 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
-                                        db.insertRoomsDetail(orderModel);
+                                        RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "child_detail");
+                                        botListDB.insertRoomsDetail(orderModel);
                                     } else {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "cild");
-                                        db.deleteDetailRoomWithFlagContent(orderModel);
+                                        RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "child_detail");
+                                        botListDB.deleteDetailRoomWithFlagContent(orderModel);
                                     }
                                 }
-
+                            } else {
+                                RoomsDetail orderModel = new RoomsDetail(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), String.valueOf(spinnerArrayAdapter.getValues().get(myPosition)), jsonCreateType(idListTask, type, String.valueOf(finalI7)), name, "child_detail");
+                                botListDB.deleteDetailRoomWithFlagContent(orderModel);
                             }
 
-                            @Override
-                            public void onNothingSelected(AdapterView<?> parentView) {
-                            }
 
-                        });
-                    }*/
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parentView) {
+                        }
+
+                    });
 
                     LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     params1.setMargins(30, 10, 30, 0);
@@ -1249,6 +1245,7 @@ public class DialogFormChildMainNew extends DialogFragment {
         mProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                labelAlert = "";
                 Integer start = Integer.valueOf(idListTaskMaster);
                 String titleUntuk = "";
                 String decsUntuk = "";

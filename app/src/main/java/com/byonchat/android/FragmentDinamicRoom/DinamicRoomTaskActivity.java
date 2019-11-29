@@ -141,6 +141,12 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.Writer;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.guna.ocrlibrary.OCRCapture;
 import com.squareup.picasso.Picasso;
 import com.tokenautocomplete.FilteredArrayAdapter;
@@ -2511,7 +2517,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         params2.setMargins(30, 10, 30, 0);
                         params3.setMargins(30, 10, 30, 30);
                         textView.setLayoutParams(params2);
-                        linearLayout.addView(textView);
+
 
                         if (count == null) {
                             count = 0;
@@ -2526,7 +2532,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         valSetOne.add(name);
                         valSetOne.add(label);
                         valSetOne.add(String.valueOf(i));
-
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
 
                         if (idListTask.equalsIgnoreCase("65128")) {
 
@@ -3659,6 +3666,92 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         linearLayout.addView(linearEstimasi[count], params3);
 
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                    } else if (type.equalsIgnoreCase("image_load_copy")) {
+
+                        TextView textView = new TextView(DinamicRoomTaskActivity.this);
+                        if (required.equalsIgnoreCase("1")) {
+                            label += "<font size=\"3\" color=\"red\">*</font>";
+                        }
+                        textView.setText(Html.fromHtml(label));
+                        textView.setTextSize(15);
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add("");
+                        valSetOne.add("");
+                        valSetOne.add(type);
+                        valSetOne.add(name);
+                        valSetOne.add(label);
+                        valSetOne.add(String.valueOf(i));
+
+                        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params2.setMargins(30, 10, 30, 0);
+                        textView.setLayoutParams(params2);
+                        valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                        linearLayout.addView(textView);
+
+                        if (count == null) {
+                            count = 0;
+                        } else {
+                            count++;
+                        }
+
+
+                        Cursor cursorValue = db.getSingleRoomDetailFormWithFlag(idDetail, username, idTab, "value");
+                        if (cursorValue.getCount() > 0) {
+                            String valUEParent = "";
+                            final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
+                            JSONArray jsonArrayYes = null;
+                            try {
+                                jsonArrayYes = new JSONArray(contentValue);
+                                for (int ii = (jsonArrayYes.length() - 1); ii >= 0; ii--) {
+
+                                    JSONArray magic = new JSONArray(jsonArrayYes.getJSONArray(ii).toString());
+                                    JSONObject oContent2 = new JSONObject(magic.get(1).toString());
+                                    JSONArray joContent = oContent2.getJSONArray("value_detail");
+
+                                    for (int iff = 0; iff < joContent.length(); iff++) {
+                                        final String idValue = joContent.getJSONObject(iff).getString("id").toString();
+                                        String pareen = jsonArray.getJSONObject(i).getString("copy_from").toString();
+                                        if (idValue.equalsIgnoreCase(pareen)) {
+                                            valUEParent = joContent.getJSONObject(iff).getString("value").toString();
+                                        }
+                                    }
+
+                                }
+                            } catch (Exception c) {
+                                Log.w("YaAmpun", c.toString());
+                            }
+
+                            LinearLayout imgLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.image_loader_layout_form, null);
+                            int width = getWindowManager().getDefaultDisplay().getWidth();
+                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
+                            params.setMargins(5, 15, 0, 0);
+                            final ImageView imageView = (ImageView) imgLayout.findViewById(R.id.value);
+                            imageView.setLayoutParams(params);
+                            final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) imgLayout.findViewById(R.id.loader_progress);
+                            valSetOne.add(String.valueOf(linearLayout.getChildCount()));
+                            linearLayout.addView(imgLayout);
+                            hashMap.put(Integer.parseInt(idListTask), valSetOne);
+
+                            MessengerDatabaseHelper messengerHelper = null;
+                            if (messengerHelper == null) {
+                                messengerHelper = MessengerDatabaseHelper.getInstance(context);
+                            }
+
+                            Toast.makeText(getBaseContext(), valUEParent, Toast.LENGTH_SHORT).show();
+                            Bitmap bitmap = null;
+                            try {
+                                bitmap = TextToImageEncode(valUEParent);
+                                progress.setVisibility(View.GONE);
+                                imageView.setImageBitmap(bitmap);
+                            } catch (WriterException e) {
+                                e.printStackTrace();
+                            }
+
+
+                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, valUEParent, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                            db.insertRoomsDetail(orderModel);
+                        }
+
                     } else if (type.equalsIgnoreCase("copy_field")) {
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -4089,7 +4182,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         if (String.valueOf(s).trim().length() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
                                             db.updateDetailRoomWithFlagContent(orderModel);
-                                        }else{
+                                        } else {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                         }
@@ -4626,6 +4719,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, String.valueOf(finalI2)), name, "cild");
                                         db.insertRoomsDetail(orderModel);
                                     }
+
+                                    Log.w("programert : ", finalLabel3);
 
                                     showDialog(Integer.valueOf(String.valueOf(DATE_DIALOG_ID) + finalLabel3));
                                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -12943,5 +13038,68 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
         return show;
+    }
+
+    private Bitmap TextToImageEncode(String Value) throws WriterException {
+        BitMatrix bitMatrix;
+        try {
+            bitMatrix = new MultiFormatWriter().encode(
+                    Value,
+                    BarcodeFormat.DATA_MATRIX.QR_CODE,
+                    500, 500, null
+            );
+
+        } catch (IllegalArgumentException Illegalargumentexception) {
+
+            return null;
+        }
+        int bitMatrixWidth = bitMatrix.getWidth();
+
+        int bitMatrixHeight = bitMatrix.getHeight();
+
+        int[] pixels = new int[bitMatrixWidth * bitMatrixHeight];
+
+        for (int y = 0; y < bitMatrixHeight; y++) {
+            int offset = y * bitMatrixWidth;
+
+            for (int x = 0; x < bitMatrixWidth; x++) {
+
+                pixels[offset + x] = bitMatrix.get(x, y) ?
+                        getResources().getColor(R.color.black_alpha_50) : getResources().getColor(R.color.white);
+            }
+        }
+        Bitmap bitmap = Bitmap.createBitmap(bitMatrixWidth, bitMatrixHeight, Bitmap.Config.ARGB_4444);
+
+        bitmap.setPixels(pixels, 0, 500, 0, 0, bitMatrixWidth, bitMatrixHeight);
+        return bitmap;
+    }
+
+    private class MultiFormatWriter implements Writer {
+
+        @Override
+        public BitMatrix encode(String contents,
+                                BarcodeFormat format,
+                                int width,
+                                int height) throws WriterException {
+            return encode(contents, format, width, height, null);
+        }
+
+        @Override
+        public BitMatrix encode(String contents,
+                                BarcodeFormat format,
+                                int width, int height,
+                                Map<EncodeHintType, ?> hints) throws WriterException {
+
+            Writer writer;
+            switch (format) {
+                case QR_CODE:
+                    writer = new QRCodeWriter();
+                    break;
+                default:
+                    throw new IllegalArgumentException("No encoder available for format " + format);
+            }
+            return writer.encode(contents, format, width, height, hints);
+        }
+
     }
 }

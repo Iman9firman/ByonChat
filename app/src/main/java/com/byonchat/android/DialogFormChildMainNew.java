@@ -42,6 +42,7 @@ import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.DialogUtil;
+import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.SpinnerCustomAdapter;
 import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
@@ -182,7 +183,9 @@ public class DialogFormChildMainNew extends DialogFragment {
                     TableRow.LayoutParams params2 = new TableRow.LayoutParams(1);
 
                     // String downloadForm = jsonArrayCild.getJSONObject(i).getString("formula").toString();
-                    String downloadForm = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/api_dropdown_spk.php";
+                    String downloadForm = new ValidationsKey().getInstance(getContext()).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/api_dropdown_spk.php";
+
+                    Log.w("dirimu", downloadForm);
                     final ArrayList<String> spinnerArray = new ArrayList<String>();
                     spinnerArray.add("-");
 

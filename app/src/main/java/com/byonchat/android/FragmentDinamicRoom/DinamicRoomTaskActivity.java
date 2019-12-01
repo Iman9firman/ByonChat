@@ -8438,13 +8438,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             rb[iaa].setText(l);
                             rb[iaa].setId(iaa);
 
-                            if (!cek.equalsIgnoreCase("null")) {
-                                rb[iaa].setChecked(true);
+                            if (cek.equalsIgnoreCase("1")) {
+                                idchecked = iaa;
                             }
 
-
                             if (hasilDariDB.equalsIgnoreCase(l)) {
-//                                rb[iaa].setChecked(true);
                                 idchecked = iaa;
                             }
 
@@ -8464,9 +8462,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             rg[count].addView(rb[iaa]);
                         }
 
-                        if (idchecked != -1) {
-                            rg[count].check(idchecked);
-                        }
 
                         if ((!showButton)) {
                             rg[count].setEnabled(false);
@@ -8540,6 +8535,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 }
                             });
                         }
+
+                        if (idchecked != -1) {
+                            rg[count].check(idchecked);
+                        }
+
 
                         LinearLayout.LayoutParams params12 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params12.setMargins(50, 10, 30, 0);

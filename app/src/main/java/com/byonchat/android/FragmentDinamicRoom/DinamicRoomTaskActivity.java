@@ -3779,6 +3779,26 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         et[count].setId(Integer.parseInt(idListTask));
                         et[count].setHint(placeHolder);
 
+                        if (flag.equalsIgnoreCase("textarea")) {
+                            et[count].setMinLines(4);
+                            et[count].setMaxLines(8);
+                            et[count].setScroller(new Scroller(context));
+                            et[count].setVerticalScrollBarEnabled(true);
+                            et[count].setSingleLine(false);
+                            et[count].setImeOptions(EditorInfo.IME_FLAG_NO_ENTER_ACTION);
+                            et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
+                        } else if (flag.equalsIgnoreCase("phone_number")) {
+                            et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
+                            et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt("15"))});
+                        } else if (flag.equalsIgnoreCase("email")) {
+
+                        } else if (flag.equalsIgnoreCase("number") || flag.equalsIgnoreCase("currency")) {
+                            et[count].setInputType(InputType.TYPE_CLASS_NUMBER);
+                            et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
+                        } else if (flag.equalsIgnoreCase("name")) {
+                            et[count].setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
+                        }
+
 
                         et[count].setFilters(new InputFilter[]{new InputFilter.LengthFilter(Integer.parseInt(maxlength))});
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
@@ -3863,43 +3883,124 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             et[count].setEnabled(false);
                         } else {
                             final int finalI = i;
-                            et[count].addTextChangedListener(new TextWatcher() {
-                                @Override
-                                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                                }
+                            if (flag.equalsIgnoreCase("currency")) {
+                                et[count].addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                                @Override
-                                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                    }
 
-                                }
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                                @Override
-                                public void afterTextChanged(Editable s) {
-                                    Intent newIntent = new Intent("bLFormulas");
-                                    sendBroadcast(newIntent);
+                                    }
 
-                                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI)));
-                                    if (cEdit.getCount() > 0) {
-                                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
-                                        db.updateDetailRoomWithFlagContent(orderModel);
-                                    } else {
-                                        if (String.valueOf(s).length() > 0) {
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                        List value = (List) hashMap.get(Integer.parseInt(idListTask));
+
+                                        et[Integer.valueOf(value.get(0).toString())].removeTextChangedListener(this);
+
+                                        try {
+
+                                            String originalString = s.toString();
+
+                                            Long longval;
+                                            if (originalString.contains(",")) {
+                                                originalString = originalString.replaceAll(",", "");
+                                            }
+                                            longval = Long.parseLong(originalString);
+
+                                            DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+                                            formatter.applyPattern("#,###,###,###");
+                                            String formattedString = formatter.format(longval);
+
+                                            //setting text after format to EditText
+                                            et[Integer.valueOf(value.get(0).toString())].setText(formattedString);
+                                            et[Integer.valueOf(value.get(0).toString())].setSelection(et[Integer.valueOf(value.get(0).toString())].getText().length());
+                                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI)));
+                                            if (cEdit.getCount() > 0) {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
+                                                db.updateDetailRoomWithFlagContent(orderModel);
+                                            } else {
+                                                if (String.valueOf(s).trim().length() > 0) {
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
+                                                    db.insertRoomsDetail(orderModel);
+                                                } else {
+                                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(formattedString), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
+                                                    db.deleteDetailRoomWithFlagContent(orderModel);
+                                                }
+                                            }
+                                            Intent newIntent = new Intent("bLFormulas");
+                                            sendBroadcast(newIntent);
+
+                                        } catch (NumberFormatException nfe) {
+                                            nfe.printStackTrace();
+                                        }
+
+                                        et[Integer.valueOf(value.get(0).toString())].addTextChangedListener(this);
+
+                                    }
+                                });
+                            } else {
+                                et[count].addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
+                                        Intent newIntent = new Intent("bLFormulas");
+                                        sendBroadcast(newIntent);
+
+                                        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI)));
+                                        if (cEdit.getCount() > 0) {
                                             RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
-                                            db.insertRoomsDetail(orderModel);
+                                            db.updateDetailRoomWithFlagContent(orderModel);
                                         } else {
-                                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
-                                            db.deleteDetailRoomWithFlagContent(orderModel);
+                                            if (String.valueOf(s).length() > 0) {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
+                                                db.insertRoomsDetail(orderModel);
+                                            } else {
+                                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(s), jsonCreateType(idListTask, type, String.valueOf(finalI)), name, "cild");
+                                                db.deleteDetailRoomWithFlagContent(orderModel);
+                                            }
                                         }
                                     }
-                                }
-                            });
+                                });
+                            }
+
                         }
+
+                        if (et[count].getText().toString().length() > 0) {
+                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                            if (cEdit.getCount() > 0) {
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, et[count].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                db.updateDetailRoomWithFlagContent(orderModel);
+                            } else {
+                                if (et[count].getText().toString().length() > 0) {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, et[count].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                    db.insertRoomsDetail(orderModel);
+                                } else {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, et[count].getText().toString(), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                    db.deleteDetailRoomWithFlagContent(orderModel);
+                                }
+                            }
+                        }
+
 
                         String formulas = jsonArray.getJSONObject(i).getString("formula").toString();
                         if (formulas.equalsIgnoreCase("disable")) {
                             et[count].setEnabled(false);
                         }
+
                         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         params1.setMargins(30, 10, 30, 0);
                         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);

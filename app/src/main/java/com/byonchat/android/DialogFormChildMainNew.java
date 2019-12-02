@@ -102,6 +102,8 @@ public class DialogFormChildMainNew extends DialogFragment {
     String hargaDasarUSD = "0";
     Button mProceed, mCancel;
 
+    ArrayList<String> lolosReq = new ArrayList<>();
+
     public static DialogFormChildMainNew newInstance(String content, String title, String dbMaster, String idDetail, String username, String idTab, String idListTaskMaster, String idChildDetail, String customersId, Activity activity, String posisi) {
         Log.w("masudk2", posisi);
         DialogFormChildMainNew f = new DialogFormChildMainNew();
@@ -1188,10 +1190,11 @@ public class DialogFormChildMainNew extends DialogFragment {
                                             RoomsDetail orderModel = new RoomsDetail(idchildDetail, "{\"idt\":\"2584\",\"usr\":\"1_277091610admin\"}", "{\"iddtl\":\"1671|2427\",\"idtsk\":\"66900\"}", "", "{\"a\":\"2\",\"b\":\"text\",\"c\":\"1\"}", "dett", "child_detail");
                                             botListDB.insertRoomsDetail(orderModel);
                                         }
-
+                                        lolosReq.add("dett");
                                         et[0].setVisibility(View.GONE);
                                         tp[0].setVisibility(View.GONE);
                                     } else {
+                                        lolosReq.remove("dett");
                                         et[0].setVisibility(View.VISIBLE);
                                         tp[0].setVisibility(View.VISIBLE);
                                     }
@@ -1261,20 +1264,21 @@ public class DialogFormChildMainNew extends DialogFragment {
 
                     for (Integer key : hashMap.keySet()) {
                         List<String> value = hashMap.get(key);
-                        if (value != null) {
-                            if (value.get(1).toString().equalsIgnoreCase("1")) {
-                                //semua masuk sini berhenti
-                                Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
-                                if (cursorCild.getCount() > 0) {
 
-                                    labelAlert += value.get(4).toString();
-
-                                } else {
-                                    labelAlert += value.get(4).toString();
-                                    berhenti = true;
+                        if (lolosReq.indexOf(value.get(3)) == -1) {
+                            if (value != null) {
+                                if (value.get(1).toString().equalsIgnoreCase("1")) {
+                                    //semua masuk sini berhenti
+                                    Cursor cursorCild = botListDB.getSingleRoomDetailFormWithFlagContentChild(idchildDetail, jsonCreateIdTabNUsrName(idTab, username), jsonCreateIdDetailNIdListTaskOld(idDetail, idListTaskMaster), "child_detail", jsonCreateType(String.valueOf(key), value.get(2).toString(), value.get(5).toString()));
+                                    if (cursorCild.getCount() == 0) {
+                                        labelAlert += value.get(4).toString() + "\n";
+                                        berhenti = true;
+                                    }
                                 }
                             }
                         }
+
+
                     }
 
                     if (!berhenti) {

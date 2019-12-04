@@ -75,6 +75,7 @@ public class SpinnerCustomAdapter extends ArrayAdapter<String> {
         ProfileSaveDescription profileSaveDescription = new ProfileSaveDescription();
 
         public getListTask(String url) {
+            Log.w("statusT", url);
             this.urlStr = url;
         }
 
@@ -85,6 +86,7 @@ public class SpinnerCustomAdapter extends ArrayAdapter<String> {
             data.put("bc_user", strings[0]);
             valuesNew.add("--Please Select--");
             String result = profileSaveDescription.sendPostRequest(urlStr, data);
+            Log.w("stabil", result);
             try {
                 if (result != null) {
                     if (result.length() > 0) {
@@ -96,6 +98,8 @@ public class SpinnerCustomAdapter extends ArrayAdapter<String> {
                                 if (existing.indexOf(l) == -1) {
                                     valuesNew.add(l);
                                 }
+                            } else {
+                                valuesNew.add(l);
                             }
 
                         }

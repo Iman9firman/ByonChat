@@ -105,6 +105,7 @@ public class AccountSettingActivity extends AppCompatActivity {
         textGender.setAdapter(adapter);
 
         bcUser_txt = (EditText) findViewById(R.id.bcUser_txt);
+        bcUser_txt.setVisibility(View.GONE);
         textName = (EditText) findViewById(R.id.txt_name);
         textCountName = (TextView) findViewById(R.id.txt_count_name);
         textBirth = (EditText) findViewById(R.id.txt_birth);
@@ -247,7 +248,7 @@ public class AccountSettingActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Berhasil,Harap22 close apps", Toast.LENGTH_SHORT).show();
+             /*   Toast.makeText(getApplicationContext(), "Berhasil,Harap22 close apps", Toast.LENGTH_SHORT).show();
                 if (dbhelper == null) {
                     dbhelper = MessengerDatabaseHelper.getInstance(AccountSettingActivity.this);
                 }
@@ -255,7 +256,7 @@ public class AccountSettingActivity extends AppCompatActivity {
                 c.setJabberId(bcUser_txt.getText().toString());
                 dbhelper.updateData(c);
                 Toast.makeText(getApplicationContext(), "Berhasil,Harap close apps", Toast.LENGTH_SHORT).show();
-                finish();
+                finish();*/
 
                /* if (!dbhelper.getMyContact().getJabberId().equalsIgnoreCase(bcUser_txt.getText().toString()) && bcUser_txt.getText().toString().length() > 0) {
                     Contact c = dbhelper.getMyContact();
@@ -269,7 +270,7 @@ public class AccountSettingActivity extends AppCompatActivity {
                 }
 */
 
-                /*if (isNetworkConnectionAvailable()) {
+                if (isNetworkConnectionAvailable()) {
                     textEmail.setError(null);
                     textBirth.setError(null);
                     String a = textName.getText().toString();
@@ -306,7 +307,7 @@ public class AccountSettingActivity extends AppCompatActivity {
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_SHORT).show();
-                }*/
+                }
             }
         });
     }

@@ -200,14 +200,16 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     String valid = fifth.getString("v");
                     noEmpat = String.valueOf(v + 1);
                     if (valid.equalsIgnoreCase("0")) {
-                        idItem = fifth.getString("id")+"-"+v;
                         String asiop4[] = {"pertanyaan"};
+                        Log.w("hope",idItem);
                         headerFour = getNameByIdSLA("pertanyaan", asiop4, removePosFromId(idItem));
 
+                        String idPrtnyaan = fifth.getString("id");
                         String id_task = fifth.getString("id_task");
-
                         String fotony = fifth.getString("f");
                         String title = fifth.getString("n");
+
+                        idItem = id_task +"-"+ v;
 
                         if (!fotony.contains("http://")) {
                             fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
@@ -339,12 +341,12 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.flush();
                     out.close();
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return true;
             }
+
             final java.io.File f = new java.io.File(path);
             if (f.exists()) f.delete();
             try {
@@ -499,9 +501,10 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     idItem = fifth.getString("id");
                     String idTask = fifth.getString("id_task");
                     byTwo.put("id_task",idTask);
-                    String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
-                    String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem + "-" + v;
+                    String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask;
+                    String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask + "-" + v;
                     for (int vi = 0; vi < uploadfoto.size(); vi++) {
+                        Log.w("FollPush Nangkringbocah",uploadfoto.get(vi).getId());
                         if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                             fifth.put("a", uploadfoto.get(vi).getAfterString());
                             byTwo.put("a", uploadfoto.get(vi).getAfterString());
@@ -519,14 +522,12 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             }
 
             Log.e("erte Nangkringbocah",byOne.toString());
-//            stringdong = gvcs.toString();
             stringdong = byOne.toString();
         } catch (JSONException e) {
             Log.e("eeror ketemmnu",e.getMessage());
         }
         return stringdong;
     }
-
 
     private void deleteNote() {
         try {
@@ -910,7 +911,13 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
     }
 
     private String removePosFromId(String idWithPosition){
-        return idWithPosition.substring(0,idWithPosition.lastIndexOf("-"));
+      try {
+          return idWithPosition.substring(0,idWithPosition.lastIndexOf("-"));
+      }catch (Exception e){
+        Log.w("Jambore::"+idWithPosition,e.getMessage());
+      }
+        return idWithPosition;
+
     }
 }
 

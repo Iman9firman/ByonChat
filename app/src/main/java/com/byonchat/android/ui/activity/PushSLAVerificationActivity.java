@@ -272,8 +272,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 start.setFileName(name);
                 new Camera(start.build()).lauchCamera();
 
-
-
                 /*Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI4)));
                 if (cursorCild.getCount() > 0) {
                     Intent intent = new Intent(context, ZoomImageViewActivity.class);
@@ -287,7 +285,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 } else {
                     captureGalery(idDetail, username, idTab, idListTask, type, name, flag, facing, String.valueOf(finalI4));
                 }*/
-
             }
         });
 
@@ -356,7 +353,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 //                            noTiga = String.valueOf(iv + 1);
                             for (int v = 0; v < pertanyaan.length(); v++) {
                                 JSONObject fifth = pertanyaan.getJSONObject(v);
-                                idItem = fifth.getString("id");
+                                idItem = fifth.getString("id_task");
                                 String valid = fifth.getString("v");
                                 if (valid.equalsIgnoreCase("0")) {
                                     String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;

@@ -44,6 +44,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
@@ -201,7 +202,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     noEmpat = String.valueOf(v + 1);
                     if (valid.equalsIgnoreCase("0")) {
                         String asiop4[] = {"pertanyaan"};
-                        Log.w("hope",idItem);
+                        Log.w("hope", idItem);
                         headerFour = getNameByIdSLA("pertanyaan", asiop4, removePosFromId(idItem));
 
                         String idPrtnyaan = fifth.getString("id");
@@ -209,30 +210,30 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         String fotony = fifth.getString("f");
                         String title = fifth.getString("n");
 
-                        idItem = id_task +"-"+ v;
+                        idItem = id_task + "-" + v;
 
                         if (!fotony.contains("http://")) {
                             fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
                         }
 
                         String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
-                        Log.w("idpaslagi insert",id);
+                        Log.w("idpaslagi insert", id);
                         String header = headerTwo + " - " + headerFour;
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
                         SLAmodelNew fotonya = null;
                         if (cursorCild.getCount() > 0) {
                             java.io.File f = new java.io.File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                            fotonya = new SLAmodelNew(id_task,noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + header, id, title, fotony, f);
+                            fotonya = new SLAmodelNew(id_task, noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + header, id, title, fotony, f);
                         } else {
-                            fotonya = new SLAmodelNew(id_task,noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + header, id, title, fotony, (java.io.File) null);
+                            fotonya = new SLAmodelNew(id_task, noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + header, id, title, fotony, (java.io.File) null);
                         }
                         foto.add(fotonya);
                     }
                 }
             }
         } catch (JSONException e) {
-            Log.w("Nangkringbocah 3",e.getMessage());
+            Log.w("Nangkringbocah 3", e.getMessage());
         }
     }
 
@@ -254,7 +255,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         }
 
                         MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800, 800);
-
 
 
                         for (int i = 0; i < foto.size(); i++) {
@@ -373,7 +373,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 foto, new OnPreviewItemClickListener() {
             @Override
             public void onItemClick(View view, String position, File item, String type) {
-                Log.w("kepencet gak",type);
                 if (type.equalsIgnoreCase("before")) {
                     task_id = position;
                     Intent intent = new Intent(PustSLAFollowUpActivity.this, ZoomImageViewActivity.class);
@@ -389,6 +388,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                     start.setCameraFace(CameraActivity.CAMERA_REAR);
                     start.setFlashMode(CameraActivity.FLASH_OFF);
+                    start.setNIK(new UserDB(PustSLAFollowUpActivity.this).getColValue(UserDB.EMPLOYEE_NIK));
                     start.setQuality(CameraActivity.MEDIUM);
                     start.setRatio(CameraActivity.RATIO_4_3);
                     start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
@@ -423,7 +423,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 rdialog.show();
 
                 if (foto.size() == 0) {
-                    new UploadJSONSOn().execute("https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_sla_new.php",
+                    new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_sla_new.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"));
                 } else {
@@ -444,7 +444,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getAfter() != null) {
-                            Log.w("jahannamKau",foto.get(i).getAfter().toString());
+                            Log.w("jahannamKau", foto.get(i).getAfter().toString());
                             new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
                                     getIntent().getStringExtra("username_room"),
                                     id_rooms_tab, id_task_list,
@@ -472,9 +472,9 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             String bc_user = gvcs.getString("bc_user");
             String kode_jjt = gvcs.getString("kode_jjt");
 
-            byOne.put("username_room",user_room);
-            byOne.put("bc_user",bc_user);
-            byOne.put("kode_jjt",kode_jjt);
+            byOne.put("username_room", user_room);
+            byOne.put("bc_user", bc_user);
+            byOne.put("kode_jjt", kode_jjt);
 
             String idSection = "";
             String idSubSection = "";
@@ -500,31 +500,31 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     JSONObject byTwo = new JSONObject();
                     idItem = fifth.getString("id");
                     String idTask = fifth.getString("id_task");
-                    byTwo.put("id_task",idTask);
+                    byTwo.put("id_task", idTask);
                     String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask;
                     String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask + "-" + v;
                     for (int vi = 0; vi < uploadfoto.size(); vi++) {
-                        Log.w("FollPush Nangkringbocah",uploadfoto.get(vi).getId());
+                        Log.w("FollPush Nangkringbocah", uploadfoto.get(vi).getId());
                         if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                             fifth.put("a", uploadfoto.get(vi).getAfterString());
                             byTwo.put("a", uploadfoto.get(vi).getAfterString());
-                            Log.w("idpaslagi view",id_text);
+                            Log.w("idpaslagi view", id_text);
                             if (checkDB(id_text)) {
                                 fifth.put("ket", getTheDB(id_text));
                                 byTwo.put("ket", getTheDB(id_text));
-                                Log.w("yang ketemmnu",getTheDB(id_text));
+                                Log.w("yang ketemmnu", getTheDB(id_text));
                             }
                         }
                     }
                     byThree.put(byTwo);
                 }
-                byOne.put("pertanyaan",byThree);
+                byOne.put("pertanyaan", byThree);
             }
 
-            Log.e("erte Nangkringbocah",byOne.toString());
+            Log.e("erte Nangkringbocah", byOne.toString());
             stringdong = byOne.toString();
         } catch (JSONException e) {
-            Log.e("eeror ketemmnu",e.getMessage());
+            Log.e("eeror ketemmnu", e.getMessage());
         }
         return stringdong;
     }
@@ -536,7 +536,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
             String idSection = "";
             String idSubSection = "";
-            String idPertanyaan =  "";
+            String idPertanyaan = "";
             String idItem = "";
 
             for (int i = 0; i < jar.length(); i++) {
@@ -557,7 +557,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     idItem = fifth.getString("id");
                     String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
                     String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem + "-" + v;
-                    Log.w("idpaslagi delete",id_text);
+                    Log.w("idpaslagi delete", id_text);
                     for (int vi = 0; vi < uploadfoto.size(); vi++) {
                         if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                             fifth.put("a", uploadfoto.get(vi).getAfterString());
@@ -570,7 +570,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 }
             }
         } catch (JSONException e) {
-            Log.w("error idpaslagi",e.getMessage());
+            Log.w("error idpaslagi", e.getMessage());
         }
     }
 
@@ -718,13 +718,13 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 }
 
                 if (foto.size() == uploadfoto.size()) {
-                    new UploadJSONSOn().execute("https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_sla_new.php",
+                    new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_sla_new.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.w("Bukan itu",e.getMessage());
+                Log.w("Bukan itu", e.getMessage());
             }
             super.onPostExecute(result);
         }
@@ -910,12 +910,12 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
     }
 
-    private String removePosFromId(String idWithPosition){
-      try {
-          return idWithPosition.substring(0,idWithPosition.lastIndexOf("-"));
-      }catch (Exception e){
-        Log.w("Jambore::"+idWithPosition,e.getMessage());
-      }
+    private String removePosFromId(String idWithPosition) {
+        try {
+            return idWithPosition.substring(0, idWithPosition.lastIndexOf("-"));
+        } catch (Exception e) {
+            Log.w("Jambore::" + idWithPosition, e.getMessage());
+        }
         return idWithPosition;
 
     }

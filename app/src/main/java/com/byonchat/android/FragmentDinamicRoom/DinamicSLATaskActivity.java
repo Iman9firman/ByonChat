@@ -2117,7 +2117,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         c = passGrade;
                                         d = assup;
                                         // ini untuk melihat dan mendapat subsection yang sudah dikerjakan
-                                        new apiLookUp().execute("https://"+ MessengerConnectionService.HTTP_SERVER + "/apicekjjt/index.php", d);
+                                        new apiLookUp().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/apicekjjt/index.php", d);
 
                                         itemList = (List<SLAISSItem>) getListFromJson("", "", hasilCOnvert.toString(), 0);
                                         adapter = new SLAISSAdapter(DinamicSLATaskActivity.this, idDetail, itemList, recyclerView, new SLAISSAdapter.CountCheckerListener() {
@@ -5547,7 +5547,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                     start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
                                     start.setCameraFace(CameraActivity.CAMERA_REAR);
                                     start.setFlashMode(CameraActivity.FLASH_OFF);
-                                    start.setNIK("NIKISIH");
+                                    start.setNIK(new UserDB(context).getColValue(UserDB.EMPLOYEE_NIK));
                                     start.setQuality(CameraActivity.MEDIUM);
                                     start.setRatio(CameraActivity.RATIO_4_3);
                                     start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
@@ -9494,6 +9494,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 start.setFlashMode(CameraActivity.FLASH_OFF);
                 start.setQuality(CameraActivity.MEDIUM);
                 start.setRatio(CameraActivity.RATIO_4_3);
+                start.setNIK(new UserDB(context).getColValue(UserDB.EMPLOYEE_NIK));
                 start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
                 new Camera(start.build()).lauchCamera();
 
@@ -9507,6 +9508,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 start.setFlashMode(CameraActivity.FLASH_OFF);
                 start.setQuality(CameraActivity.MEDIUM);
                 start.setRatio(CameraActivity.RATIO_4_3);
+                start.setNIK(new UserDB(context).getColValue(UserDB.EMPLOYEE_NIK));
                 start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
                 new Camera(start.build()).lauchCamera();
             }
@@ -10505,7 +10507,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                         AsyncTask goasync = new apiLookUp();
                         ((apiLookUp) goasync).setTag("THIRD TAG");
-                        ((apiLookUp) goasync).execute("https://"+ MessengerConnectionService.HTTP_SERVER + "/apicekjjt/index.php", d);
+                        ((apiLookUp) goasync).execute("https://" + MessengerConnectionService.HTTP_SERVER + "/apicekjjt/index.php", d);
 
                         long date = System.currentTimeMillis();
                         String dateString = hourFormat.format(date);
@@ -11047,6 +11049,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         start.setFlashMode(CameraActivity.FLASH_OFF);
         start.setQuality(CameraActivity.MEDIUM);
         start.setRatio(CameraActivity.RATIO_4_3);
+        start.setNIK(new UserDB(context).getColValue(UserDB.EMPLOYEE_NIK));
         start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
         new Camera(start.build()).lauchCamera();
 
@@ -11365,6 +11368,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         start.setFlashMode(CameraActivity.FLASH_OFF);
                         start.setQuality(CameraActivity.MEDIUM);
                         start.setRatio(CameraActivity.RATIO_4_3);
+                        start.setNIK(new UserDB(context).getColValue(UserDB.EMPLOYEE_NIK));
                         start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
                         new Camera(start.build()).lauchCamera();
                     }
@@ -11438,6 +11442,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         start.setFlashMode(CameraActivity.FLASH_OFF);
                         start.setQuality(CameraActivity.MEDIUM);
                         start.setRatio(CameraActivity.RATIO_4_3);
+                        start.setNIK(new UserDB(context).getColValue(UserDB.EMPLOYEE_NIK));
                         start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
                         new Camera(start.build()).lauchCamera();
 

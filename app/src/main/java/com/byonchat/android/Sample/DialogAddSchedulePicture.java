@@ -19,10 +19,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.byonchat.android.FullScreenUpdateProfileActivity;
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.Sample.Database.ScheduleSLA;
 import com.byonchat.android.Sample.Database.ScheduleSLADB;
 import com.byonchat.android.local.Byonchat;
+import com.byonchat.android.ui.activity.PushRepairReportActivity;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -64,7 +66,7 @@ public class DialogAddSchedulePicture extends Activity implements View.OnClickLi
         initViews();
     }
 
-    private void initIntent(){
+    private void initIntent() {
         id = getIntent().getStringExtra("id_da");
         id_jjt = getIntent().getStringExtra("id_jjt");
         post = getIntent().getStringExtra("post");
@@ -75,39 +77,39 @@ public class DialogAddSchedulePicture extends Activity implements View.OnClickLi
         butSubmit = (Button) findViewById(R.id.btn_proceed);
         imageCover = (ImageView) findViewById(R.id.cover_image);
 
-        Log.w("version","fcewvwebv Start");
+        Log.w("version", "fcewvwebv Start");
         Cursor cursorBot = databasse.getDataPicByID(id);
         imageCover.setImageDrawable(getResources().getDrawable(R.drawable.ic_att_photo));
-        if(cursorBot.getCount() > 0){
+        if (cursorBot.getCount() > 0) {
             String img_start = cursorBot.getString(cursorBot.getColumnIndex(ScheduleSLADB.SCH_DATA_START_PIC));
             String img_proses = cursorBot.getString(cursorBot.getColumnIndex(ScheduleSLADB.SCH_DATA_PROSES_PIC));
             String img_done = cursorBot.getString(cursorBot.getColumnIndex(ScheduleSLADB.SCH_DATA_DONE_PIC));
-            if(post.equalsIgnoreCase("start")){
-                if(!img_start.equalsIgnoreCase("null")) {
+            if (post.equalsIgnoreCase("start")) {
+                if (!img_start.equalsIgnoreCase("null")) {
                     path_this = img_start;
                     if (img_start.startsWith("/storage")) {
-                        Log.w("Mistakeer", "1. "+img_start);
+                        Log.w("Mistakeer", "1. " + img_start);
                         Picasso.with(DialogAddSchedulePicture.this).load(new File(img_start))
                                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                                 .into(imageCover);
                     } else {
-                        Log.w("Mistakeer", "2. "+img_start);
+                        Log.w("Mistakeer", "2. " + img_start);
                         Picasso.with(DialogAddSchedulePicture.this).load(link_pic + img_start)
                                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                                 .into(imageCover);
                         uploaded = true;
                     }
                 }
-            } else if(post.equalsIgnoreCase("proses")){
+            } else if (post.equalsIgnoreCase("proses")) {
                 if (!img_proses.equalsIgnoreCase("null")) {
                     path_this = img_proses;
                     if (img_proses.startsWith("/storage")) {
-                        Log.w("Mistakeer", "3. "+img_proses);
+                        Log.w("Mistakeer", "3. " + img_proses);
                         Picasso.with(DialogAddSchedulePicture.this).load(new File(img_proses))
                                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                                 .into(imageCover);
                     } else {
-                        Log.w("Mistakeer", "4. "+img_proses);
+                        Log.w("Mistakeer", "4. " + img_proses);
                         Picasso.with(DialogAddSchedulePicture.this).load(link_pic + img_proses)
                                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                                 .into(imageCover);
@@ -115,15 +117,15 @@ public class DialogAddSchedulePicture extends Activity implements View.OnClickLi
                     }
                 }
             } else {
-                if(!img_done.equalsIgnoreCase("null")) {
+                if (!img_done.equalsIgnoreCase("null")) {
                     path_this = img_done;
                     if (img_done.startsWith("/storage")) {
-                        Log.w("Mistakeer", "5. "+img_done);
+                        Log.w("Mistakeer", "5. " + img_done);
                         Picasso.with(DialogAddSchedulePicture.this).load(new File(img_done))
                                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                                 .into(imageCover);
                     } else {
-                        Log.w("Mistakeer", "6. "+img_done);
+                        Log.w("Mistakeer", "6. " + img_done);
                         Picasso.with(DialogAddSchedulePicture.this).load(link_pic + img_done)
                                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                                 .into(imageCover);
@@ -138,8 +140,8 @@ public class DialogAddSchedulePicture extends Activity implements View.OnClickLi
         imageCover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.w("version","Start Image");
-                if(uploaded) {
+                Log.w("version", "Start Image");
+                if (uploaded) {
                     Intent intent = new Intent(getApplicationContext(), FullScreenUpdateProfileActivity.class);
                     intent.putExtra(FullScreenUpdateProfileActivity.JAB_ID, Byonchat.getMessengerHelper().getMyContact().getJabberId());
                     intent.putExtra(FullScreenUpdateProfileActivity.PATH, link_pic + path_this);
@@ -154,6 +156,7 @@ public class DialogAddSchedulePicture extends Activity implements View.OnClickLi
                     start.setFlashMode(CameraActivity.FLASH_OFF);
                     start.setQuality(CameraActivity.MEDIUM);
                     start.setRatio(CameraActivity.RATIO_4_3);
+                    start.setNIK(new UserDB(activity).getColValue(UserDB.EMPLOYEE_NIK));
                     start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
                     new Camera(start.build()).lauchCamera();
                 }
@@ -193,9 +196,9 @@ public class DialogAddSchedulePicture extends Activity implements View.OnClickLi
                             sch = new ScheduleSLA(id, id_jjt, Byonchat.getMessengerHelper().getMyContact().getJabberId(), "null", "null", returnString);
                         }
                         Cursor cursorBot = databasse.getDataPicByID(id);
-                        if(cursorBot.getCount() > 0){
+                        if (cursorBot.getCount() > 0) {
                             databasse.updateImgNow(sch, post);
-                        }else {
+                        } else {
                             databasse.insertDataSchedule(sch);
                         }
                         exist = true;
@@ -334,7 +337,7 @@ public class DialogAddSchedulePicture extends Activity implements View.OnClickLi
     public void onClick(View v) {
         if (v == butCancel) {
             finish();
-            if(exist) {
+            if (exist) {
                 databasse.deleteByIdDAandJJT(id, id_jjt);
             }
         }

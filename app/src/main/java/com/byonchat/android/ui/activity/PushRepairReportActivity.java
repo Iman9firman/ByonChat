@@ -38,6 +38,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.data.model.File;
@@ -160,9 +161,9 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 SLAmodelNew fotonya = null;
                 if (cursorCild.getCount() > 0) {
                     java.io.File f = new java.io.File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                    fotonya = new SLAmodelNew("","Header", id, title, fotony, f);
+                    fotonya = new SLAmodelNew("", "Header", id, title, fotony, f);
                 } else {
-                    fotonya = new SLAmodelNew("","Header", id, title, fotony, (java.io.File) null);
+                    fotonya = new SLAmodelNew("", "Header", id, title, fotony, (java.io.File) null);
                 }
 
                 foto.add(fotonya);
@@ -322,6 +323,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                     start.setFlashMode(CameraActivity.FLASH_OFF);
                     start.setQuality(CameraActivity.MEDIUM);
                     start.setRatio(CameraActivity.RATIO_4_3);
+                    start.setNIK(new UserDB(PushRepairReportActivity.this).getColValue(UserDB.EMPLOYEE_NIK));
                     start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
                     if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                         // TODO: Consider calling
@@ -558,7 +560,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getId().equalsIgnoreCase(id)) {
-                            SLAmodelNew fotonya = new SLAmodelNew("","Header", foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
+                            SLAmodelNew fotonya = new SLAmodelNew("", "Header", foto.get(i).getId(), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
                             uploadfoto.add(fotonya);
                         }
                     }

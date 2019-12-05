@@ -54,6 +54,7 @@ import com.byonchat.android.CaptureSignature;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.FragmentSLA.ZhFourFragment;
+import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
@@ -111,7 +112,8 @@ import static com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity.de
 import static com.byonchat.android.ui.activity.PustSLAFollowUpActivity.resizeAndCompressImageBeforeSend;
 
 public class PushSLAVerificationActivity extends AppCompatActivity {
-    String task_id, /*id_task,*/ id_task_list, id_rooms_tab;
+    String task_id, /*id_task,*/
+            id_task_list, id_rooms_tab;
     String kode_jjt;
     String username;
     String name_title;
@@ -134,7 +136,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     int resultType = -1;
     EditText et, et2;
     Spinner spinner;
-    Bitmap imgBm,sgnBm;
+    Bitmap imgBm, sgnBm;
     ProgressDialog dialog = null;
 
     @Override
@@ -143,7 +145,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_report_repairment);
 
         Intent ntent = getIntent();
-        if (ntent != null){
+        if (ntent != null) {
             username = ntent.getStringExtra("username_room");
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -227,9 +229,9 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String type = spinner.getSelectedItem().toString();
-                if (type.equalsIgnoreCase("Daily")){
+                if (type.equalsIgnoreCase("Daily")) {
                     resultType = 0;
-                } else if(type.equalsIgnoreCase("KPI")){
+                } else if (type.equalsIgnoreCase("KPI")) {
                     resultType = 1;
                 } else {
                     resultType = -1;
@@ -267,24 +269,12 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 start.setFlashMode(CameraActivity.FLASH_OFF);
                 start.setQuality(CameraActivity.MEDIUM);
                 start.setRatio(CameraActivity.RATIO_4_3);
+                start.setNIK(new UserDB(PushSLAVerificationActivity.this).getColValue(UserDB.EMPLOYEE_NIK));
                 String huft = new MediaProcessingUtil().createFileName("", "ROOM");
-                String name = huft.substring(0,huft.length()-1);
+                String name = huft.substring(0, huft.length() - 1);
                 start.setFileName(name);
                 new Camera(start.build()).lauchCamera();
 
-                /*Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI4)));
-                if (cursorCild.getCount() > 0) {
-                    Intent intent = new Intent(context, ZoomImageViewActivity.class);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, ZoomImageViewActivity.FROM);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_A, idDetail);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_B, username);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_C, idTab);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_D, "cild");
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE_BASE_E, jsonCreateType(idListTask, type, String.valueOf(finalI4)));
-                    startActivity(intent);
-                } else {
-                    captureGalery(idDetail, username, idTab, idListTask, type, name, flag, facing, String.valueOf(finalI4));
-                }*/
             }
         });
 
@@ -310,7 +300,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     protected void resolveData() {
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
-            Log.w("OKee argus",gvcs+"");
+            Log.w("OKee argus", gvcs + "");
 //            id_task = gvcs.getString("task_id");
             id_task_list = gvcs.getString("id_list_task");
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
@@ -335,62 +325,62 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 JSONObject first = jar.getJSONObject(i);
                 JSONObject pembobotan = first.getJSONObject("pembobotan");
 //                for (int ii = 0; ii < pembobotan.length(); ii++) {
-                    JSONObject second = pembobotan.getJSONObject("section");
+                JSONObject second = pembobotan.getJSONObject("section");
 //                    JSONArray section = second.getJSONArray("section");
-                    idSection = pembobotan.getString("id");
+                idSection = pembobotan.getString("id");
 //                    noSatu = String.valueOf(ii + 1);
 //                    for (int iii = 0; iii < section.length(); iii++) {
 //                        JSONObject third = section.getJSONObject(iii);
-                        JSONObject subsection = second.getJSONObject("subsection");
-                        idSubSection = second.getString("id");
-                        String asiop2[] = {"title"};
-                        headerTwo = getNameByIdSLA("section", asiop2, idSubSection);
+                JSONObject subsection = second.getJSONObject("subsection");
+                idSubSection = second.getString("id");
+                String asiop2[] = {"title"};
+                headerTwo = getNameByIdSLA("section", asiop2, idSubSection);
 //                        noDua = String.valueOf(iii + 1);
 //                        for (int iv = 0; iv < subsection.length(); iv++) {
 //                            JSONObject fourth = subsection.getJSONObject(iv);
-                            JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
-                            idPertanyaan = subsection.getString("id");
+                JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
+                idPertanyaan = subsection.getString("id");
 //                            noTiga = String.valueOf(iv + 1);
-                            for (int v = 0; v < pertanyaan.length(); v++) {
-                                JSONObject fifth = pertanyaan.getJSONObject(v);
-                                idItem = fifth.getString("id_task");
-                                String valid = fifth.getString("v");
-                                if (valid.equalsIgnoreCase("0")) {
-                                    String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+                for (int v = 0; v < pertanyaan.length(); v++) {
+                    JSONObject fifth = pertanyaan.getJSONObject(v);
+                    idItem = fifth.getString("id_task");
+                    String valid = fifth.getString("v");
+                    if (valid.equalsIgnoreCase("0")) {
+                        String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
 
-                                    noEmpat = String.valueOf(v + 1);
-                                    String asiop4[] = {"pertanyaan"};
-                                    headerFour = getNameByIdSLA("pertanyaan", asiop4, idItem);
+                        noEmpat = String.valueOf(v + 1);
+                        String asiop4[] = {"pertanyaan"};
+                        headerFour = getNameByIdSLA("pertanyaan", asiop4, idItem);
 
-                                    String id_task = fifth.getString("id_task");
-                                    String fotony = fifth.getString("f");
-                                    String title = fifth.getString("n");
-                                    String ket = "";
-                                    if (fifth.has("ket")) {
-                                        ket = fifth.getString("ket");
-                                    }
+                        String id_task = fifth.getString("id_task");
+                        String fotony = fifth.getString("f");
+                        String title = fifth.getString("n");
+                        String ket = "";
+                        if (fifth.has("ket")) {
+                            ket = fifth.getString("ket");
+                        }
 
-                                    String aftera = fifth.getString("a");
-                                    if (!fotony.contains("http://")) {
-                                        fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
-                                    }
+                        String aftera = fifth.getString("a");
+                        if (!fotony.contains("http://")) {
+                            fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
+                        }
 
-                                    if (!aftera.contains("http://")) {
-                                        aftera = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("a");
-                                    }
+                        if (!aftera.contains("http://")) {
+                            aftera = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("a");
+                        }
 
-                                    String header = noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + headerTwo + " - " + headerFour;
+                        String header = noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + headerTwo + " - " + headerFour;
 
-                                    SLAmodelNew fotonya = new SLAmodelNew(id_task, header, id, title, fotony, aftera, valid, ket);
-                                    foto.add(fotonya);
-                                }
+                        SLAmodelNew fotonya = new SLAmodelNew(id_task, header, id, title, fotony, aftera, valid, ket);
+                        foto.add(fotonya);
+                    }
 //                            }
 //                        }
 //                    }
                 }
             }
         } catch (JSONException e) {
-            Log.w("ERROR argus",e.getMessage());
+            Log.w("ERROR argus", e.getMessage());
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -436,9 +426,9 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         } else if (requestCode == SIGNATURE_ACTIVITY) {
             if (resultCode == RESULT_OK) {
 //                resultSignature = data.getExtras().getString("status");
-                java.io.File file = saveImage(getApplicationContext(),data.getExtras().getString("status"));
+                java.io.File file = saveImage(getApplicationContext(), data.getExtras().getString("status"));
                 sgnBm = decodeBase64(data.getExtras().getString("status"));
-                if (dialog == null){
+                if (dialog == null) {
                     dialog = new ProgressDialog(PushSLAVerificationActivity.this);
                 }
                 dialog.setMessage("Uploading Image ...");
@@ -484,7 +474,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                         Bitmap result = MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800,
                                 800);
                         imgBm = result;
-                        if (dialog == null){
+                        if (dialog == null) {
                             dialog = new ProgressDialog(PushSLAVerificationActivity.this);
                         }
                         dialog.setMessage("Uploading Image ...");
@@ -689,15 +679,15 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!resultImage.equalsIgnoreCase("") && !resultSignature.equalsIgnoreCase("") && resultType != -1){
+                if (!resultImage.equalsIgnoreCase("") && !resultSignature.equalsIgnoreCase("") && resultType != -1) {
                     rdialog = new ProgressDialog(PushSLAVerificationActivity.this);
                     rdialog.setMessage("Loading...");
                     rdialog.show();
-                    new UploadJSONSOn().execute("https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla_new.php",
+                    new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla_new.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"), kode_jjt);
                 } else {
-                    Toast.makeText(getApplicationContext(),"Harap isi Type, Photo, dan Signature",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Harap isi Type, Photo, dan Signature", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -743,17 +733,17 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 first.put("signature", resultSignature);
                 first.put("photo", resultImage);
 //                type 0 = Daily , type 1 = KPI
-                if (spinner != null){
-                    first.put("type",resultType);
+                if (spinner != null) {
+                    first.put("type", resultType);
                 }
                 first.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
                 first.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());
             }
 
             stringdong = gvcs.toString();
-            Log.w("brurhur argus",stringdong);
+            Log.w("brurhur argus", stringdong);
         } catch (JSONException e) {
-            Log.w("brorhur argus",e.getMessage());
+            Log.w("brorhur argus", e.getMessage());
         }
 
         return stringdong;
@@ -829,18 +819,19 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 200) {
                     String _response = EntityUtils.toString(r_entity); // content will be consume only once
-                    Log.w("waterews","1. "+_response);
+                    Log.w("waterews", "1. " + _response);
                     return _response;
-                } else {Log.w("waterews","2. "+"error");
+                } else {
+                    Log.w("waterews", "2. " + "error");
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
                 }
 
             } catch (ClientProtocolException e) {
-                Log.w("waterews","3. "+e.getMessage());
+                Log.w("waterews", "3. " + e.getMessage());
                 responseString = e.toString();
             } catch (IOException e) {
-                Log.w("waterews","4. "+e.getMessage());
+                Log.w("waterews", "4. " + e.getMessage());
                 responseString = e.toString();
             }
 
@@ -849,7 +840,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.w("waterews","5. "+result);
+            Log.w("waterews", "5. " + result);
             Toast.makeText(getApplicationContext(), "Success Uploading Report", Toast.LENGTH_LONG).show();
             rdialog.dismiss();
             finish();
@@ -953,6 +944,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         }
 
         String type;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -1023,7 +1015,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (dialog != null){
+            if (dialog != null) {
                 dialog.hide();
             }
             try {
@@ -1031,10 +1023,10 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
                     String fileNameServer = jsonObject.getString("filename");
-                    if (type.equalsIgnoreCase("image")){
+                    if (type.equalsIgnoreCase("image")) {
                         imageviewPhoto.setImageBitmap(imgBm);
                         resultImage = fileNameServer;
-                    } else if (type.equalsIgnoreCase("sign")){
+                    } else if (type.equalsIgnoreCase("sign")) {
                         imageViewSignature.setImageBitmap(sgnBm);
                         resultSignature = fileNameServer;
                     }
@@ -1077,7 +1069,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return file;

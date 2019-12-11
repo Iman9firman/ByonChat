@@ -858,7 +858,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                         if (status == 200) {
                             HttpEntity entity = response.getEntity();
                             String data = EntityUtils.toString(entity);
-                            Log.w("sudiBUPaeh", data);
 
                             try {
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

@@ -2142,7 +2142,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
 
                                     if (!spinnerArray.get(myPosition).equalsIgnoreCase("--Please Select--")) {
-                                        HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
+                                       /* HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
                                         ArrayList<String> udah = new ArrayList<>();
 
                                         for (int asik = 1; asik < (spinnerArray.size()); asik++) {
@@ -2174,7 +2174,90 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 }
 
                                             }
+                                        }*/
+
+                                        HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
+
+                                        lolosReq = new ArrayList<>();
+                                        ArrayList<String> lolosTemp = new ArrayList<>();
+                                        ArrayList<String> removeReq = new ArrayList<>();
+
+                                        for (Map.Entry me : hashMapL.entrySet()) {
+                                            /*ArrayList<String> percobaan = (ArrayList<String>) me.getValue();
+                                            for (String cv : percobaan) {
+
+                                                if (lolosReq.indexOf(cv) < 0) {
+                                                    lolosReq.add(cv);
+                                                }
+                                               *//* List value = (List) hashMap.get(Integer.parseInt(cv));
+                                                if (value != null) {
+                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                        if (me.getKey().toString().equalsIgnoreCase(spinnerArray.get(myPosition))) {
+                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                                        } else {
+                                                            Log.w("yangLolos", cv);
+                                                            lolosReq.add(cv);
+                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+
+                                                        }
+                                                    }
+                                                }*//*
+                                            }*/
+
+                                            if (me.getKey().toString().equalsIgnoreCase(spinnerArray.get(myPosition))) {
+                                                ArrayList<String> percobaan = (ArrayList<String>) me.getValue();
+                                                for (String cv : percobaan) {
+
+                                                    if (removeReq.indexOf(cv) < 0) {
+                                                        removeReq.add(cv);
+                                                    }
+
+                                                    List value = (List) hashMap.get(Integer.parseInt(cv));
+                                                    if (value != null) {
+                                                        for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                                        }
+                                                    }
+                                                }
+
+                                            } else {
+                                                ArrayList<String> percobaan = (ArrayList<String>) me.getValue();
+                                                for (String cv : percobaan) {
+
+                                                    if (lolosTemp.indexOf(cv) < 0) {
+                                                        lolosTemp.add(cv);
+                                                    }
+
+                                                }
+                                            }
                                         }
+
+                                        for (String lol : lolosTemp) {
+                                            if (removeReq.indexOf(lol) < 0) {
+                                                lolosReq.add(lol);
+                                                List value = (List) hashMap.get(Integer.parseInt(lol));
+                                                if (value != null) {
+                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                    }
+                                                }
+                                            }
+
+                                        }
+
+
+
+
+/*
+
+                                        for (String tampil : idVisible) {
+                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                        }
+                                        for (String hide : idVisible) {
+                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                        }*/
+
+                                        Toast.makeText(context, lolosReq.size() + "", Toast.LENGTH_SHORT).show();
 
                                     } else {
 

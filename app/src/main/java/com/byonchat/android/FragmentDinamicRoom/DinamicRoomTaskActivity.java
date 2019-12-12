@@ -215,7 +215,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
     public static String PULLMULIPLEDETAILUPDATE = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
-  //  public static String PULLMULIPLEDETAILUPDATE = "/bc_voucher_client/webservice/proses/update_list_task_pull_multiple_json.php";
+    //  public static String PULLMULIPLEDETAILUPDATE = "/bc_voucher_client/webservice/proses/update_list_task_pull_multiple_json.php";
 /*
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple.php";
@@ -10529,10 +10529,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 e.printStackTrace();
                             }
                         }
+                        Log.w("labaer", idListTaskMasterForm); //68415
                         if (idListTaskMasterForm.equalsIgnoreCase("66986")) {
                             ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[0].getExpandableListAdapter();
                             ancur.notifyDataSetChanged();
-                        } else if (idListTaskMasterForm.equalsIgnoreCase("68396")) {
+                        } else if (idListTaskMasterForm.equalsIgnoreCase("68396") || idListTaskMasterForm.equalsIgnoreCase("68415") ) {
                             ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[2].getExpandableListAdapter();
                             ancur.notifyDataSetChanged();
                         } else {

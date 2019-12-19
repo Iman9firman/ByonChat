@@ -764,12 +764,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 final String type = joContent.getJSONObject(i).getString("type").toString();
                                 final String idValue = joContent.getJSONObject(i).getString("id").toString();
 
-                                Log.w("Kabarin1", type);
-                                Log.w("Kabarin2", value);
                                 if (showParentView(joContent, idValue, label)) {
-
                                     if (!value.equalsIgnoreCase("-")) {
-
                                         if (type.equalsIgnoreCase("dropdown_views")) {
                                             TextView textV = new TextView(DinamicRoomTaskActivity.this);
                                             textV.setText(Html.fromHtml(label));
@@ -1700,6 +1696,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 linearValue.addView(etV, params22);
                                             }
                                         } else {
+                                            Log.w("jurai", label);
                                             TextView textV = new TextView(DinamicRoomTaskActivity.this);
                                             textV.setText(Html.fromHtml(label));
                                             textV.setTextSize(17);
@@ -1726,7 +1723,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-
+                        Log.w("teret", e.toString());
+                        Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -2141,145 +2139,50 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 @Override
                                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int myPosition, long myID) {
 
-                                    if (!spinnerArray.get(myPosition).equalsIgnoreCase("--Please Select--")) {
-                                       /* HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
-                                        ArrayList<String> udah = new ArrayList<>();
-
-                                        for (int asik = 1; asik < (spinnerArray.size()); asik++) {
-                                            String slip = spinnerArray.get(asik);
-                                            ArrayList<String> sss = hashMapL.get(slip);
-                                            if (slip.equalsIgnoreCase(spinnerArray.get(myPosition))) {
-                                                for (int ia = 0; ia < sss.size(); ia++) {
-                                                    udah.add(sss.get(ia));
-                                                    List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
-                                                    if (value != null) {
-                                                        for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                            lolosReq.remove(sss.get(ia));
-                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
-                                                        }
+                                    HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
+                                    Iterator iterator = hashMapL.entrySet().iterator();
+                                    ArrayList<String> udah = new ArrayList<>();
+                                    ArrayList<String> belum = new ArrayList<>();
+                                    while (iterator.hasNext()) {
+                                        Map.Entry me2 = (Map.Entry) iterator.next();
+                                        ArrayList<String> sss = (ArrayList<String>) me2.getValue();
+                                        for (String salam : sss) {
+                                            List value = (List) hashMap.get(Integer.parseInt(salam));
+                                            if (value != null) {
+                                                if (me2.getKey().toString().equalsIgnoreCase(spinnerArray.get(myPosition))) {
+                                                    if (!udah.contains(salam)) {
+                                                        udah.add(salam);
                                                     }
-                                                }
-                                            } else {
-                                                //false
-                                                for (int ia = 0; ia < sss.size(); ia++) {
-                                                    List value = (List) hashMap.get(Integer.parseInt(sss.get(ia)));
-                                                    if (value != null) {
-                                                        for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                            if (!udah.contains(sss.get(ia))) {
-                                                                lolosReq.add(sss.get(ia));
-                                                                linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-
-                                            }
-                                        }*/
-
-                                        HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
-
-                                        lolosReq = new ArrayList<>();
-                                        ArrayList<String> lolosTemp = new ArrayList<>();
-                                        ArrayList<String> removeReq = new ArrayList<>();
-
-                                        for (Map.Entry me : hashMapL.entrySet()) {
-                                            /*ArrayList<String> percobaan = (ArrayList<String>) me.getValue();
-                                            for (String cv : percobaan) {
-
-                                                if (lolosReq.indexOf(cv) < 0) {
-                                                    lolosReq.add(cv);
-                                                }
-                                               *//* List value = (List) hashMap.get(Integer.parseInt(cv));
-                                                if (value != null) {
-                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                        if (me.getKey().toString().equalsIgnoreCase(spinnerArray.get(myPosition))) {
-                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
-                                                        } else {
-                                                            Log.w("yangLolos", cv);
-                                                            lolosReq.add(cv);
-                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
-
-                                                        }
-                                                    }
-                                                }*//*
-                                            }*/
-
-                                            if (me.getKey().toString().equalsIgnoreCase(spinnerArray.get(myPosition))) {
-                                                ArrayList<String> percobaan = (ArrayList<String>) me.getValue();
-                                                for (String cv : percobaan) {
-
-                                                    if (removeReq.indexOf(cv) < 0) {
-                                                        removeReq.add(cv);
-                                                    }
-
-                                                    List value = (List) hashMap.get(Integer.parseInt(cv));
-                                                    if (value != null) {
-                                                        for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
-                                                        }
-                                                    }
-                                                }
-
-                                            } else {
-                                                ArrayList<String> percobaan = (ArrayList<String>) me.getValue();
-                                                for (String cv : percobaan) {
-
-                                                    if (lolosTemp.indexOf(cv) < 0) {
-                                                        lolosTemp.add(cv);
-                                                    }
-
-                                                }
-                                            }
-                                        }
-
-                                        for (String lol : lolosTemp) {
-                                            if (removeReq.indexOf(lol) < 0) {
-                                                lolosReq.add(lol);
-                                                List value = (List) hashMap.get(Integer.parseInt(lol));
-                                                if (value != null) {
-                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
-                                                    }
-                                                }
-                                            }
-
-                                        }
-
-
-
-
-/*
-
-                                        for (String tampil : idVisible) {
-                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
-                                        }
-                                        for (String hide : idVisible) {
-                                            linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
-                                        }*/
-
-                                        Toast.makeText(context, lolosReq.size() + "", Toast.LENGTH_SHORT).show();
-
-                                    } else {
-
-                                        HashMap<String, ArrayList<String>> hashMapL = newDropdownViews.get(Integer.parseInt(idListTask));
-                                        Iterator iterator = hashMapL.entrySet().iterator();
-
-                                        while (iterator.hasNext()) {
-                                            Map.Entry me2 = (Map.Entry) iterator.next();
-                                            ArrayList<String> sss = (ArrayList<String>) me2.getValue();
-                                            for (String salam : sss) {
-                                                List value = (List) hashMap.get(Integer.parseInt(salam));
-                                                if (value != null) {
-                                                    for (int ii = 0; ii < (value.size() - 6); ii++) {
-                                                        lolosReq.remove(salam);
-                                                        linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                                } else {
+                                                    if (!belum.contains(salam)) {
+                                                        belum.add(salam);
                                                     }
                                                 }
                                             }
                                         }
-
                                     }
 
+
+                                    for (String asd : belum) {
+                                        List value = (List) hashMap.get(Integer.parseInt(asd));
+                                        lolosReq.add(asd);
+                                        if (value != null) {
+                                            for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.GONE);
+                                            }
+                                        }
+                                    }
+
+
+                                    for (String asd : udah) {
+                                        List value = (List) hashMap.get(Integer.parseInt(asd));
+                                        lolosReq.remove(asd);
+                                        if (value != null) {
+                                            for (int ii = 0; ii < (value.size() - 6); ii++) {
+                                                linearLayout.getChildAt(Integer.valueOf(value.get(6 + ii).toString())).setVisibility(View.VISIBLE);
+                                            }
+                                        }
+                                    }
 
                                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(finalI7)));
                                     if (cEdit.getCount() > 0) {
@@ -2294,7 +2197,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             db.deleteDetailRoomWithFlagContent(orderModel);
                                         }
                                     }
-
 
                                 }
 
@@ -13202,7 +13104,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             for (int sangar = 0; sangar < joContent.length(); sangar++) {
                 final String sangarType = joContent.getJSONObject(sangar).getString("type").toString();
                 String sangarValue = joContent.getJSONObject(sangar).getString("value").toString();
-
                 if (sangarType.equalsIgnoreCase("dropdown_views")) {
                     JSONObject jsso = new JSONObject(sangarValue);
                     if (jsso.has("pairs")) {
@@ -13220,7 +13121,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
         }
 
-
+        Log.w("sabo::" + labelSS, show + "");
         return show;
     }
 

@@ -175,6 +175,7 @@ import org.sufficientlysecure.htmltextview.HtmlResImageGetter;
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -203,6 +204,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 import io.github.memfis19.annca.Annca;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
@@ -320,6 +322,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     private LocationAssistant assistant;
     //sementara
     String customersId = "";
+    String outletID = "";
     String isReject = "";
     String dumpCusId = "";
     String cusNewDrop = null;
@@ -5904,6 +5907,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
                     } else if (type.equalsIgnoreCase("dropdown_form")) {
+                        Log.w("dinis", "salar");
                         if (idListTask.equalsIgnoreCase("66989")) {
                             TextView textView = new TextView(DinamicRoomTaskActivity.this);
                             if (required.equalsIgnoreCase("1")) {
@@ -6154,6 +6158,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             }
 
                         } else {
+
+
                             TextView textView = new TextView(DinamicRoomTaskActivity.this);
                             if (required.equalsIgnoreCase("1")) {
                                 label += "<font size=\"3\" color=\"red\">*</font>";
@@ -6216,6 +6222,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                         hashMapDropForm.put(Integer.parseInt(idListTask), valFormula);
 
                                         RelativeLayout relativeLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.expandable_listview, null);
+
                                         expandableListView[count] = (ExpandableListView) relativeLayout.findViewById(R.id.expandableView);
 
 
@@ -6273,6 +6280,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             linearLayout.addView(linearEstimasi[count]);
 
                             hashMap.put(Integer.parseInt(idListTask), valSetOne);
+                        }
+
+                        if (!outletID.equalsIgnoreCase("")) {
+                            new getAuditList(this).execute("https://imperialgroup.byonchat.com/bc_voucher_client/webservice/list_api/imperialKitchen/AuditList.php", outletID);
                         }
 
 
@@ -6577,7 +6588,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
 
-                    }else if (type.equalsIgnoreCase("copy_field_dropdown")) {
+                    } else if (type.equalsIgnoreCase("copy_field_dropdown")) {
                         // TODO: 2019-10-21 Membuat default value dan mengembalikan copy_field
 
                         TextView textView = new TextView(DinamicRoomTaskActivity.this);
@@ -6728,6 +6739,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                         String chanc = et[Integer.valueOf(valSetOne.get(0))].getText().toString();
 
+                        Log.w("jamsos", chanc);
                         if (ConversationAdapter.isJSONValid(chanc)) {
                             JSONObject jsonObject = new JSONObject(chanc);
                             Iterator<String> keys = jsonObject.keys();
@@ -6739,9 +6751,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                             String resultNya = "";
                             for (String aa : keysList) {
-
-                                resultNya += String.valueOf(aa) + " = " + jsonObject.getString(aa) + "\n";
-
+                                resultNya += String.valueOf(aa) + " : " + jsonObject.getString(aa) + "\n";
+                                if (aa.equalsIgnoreCase("id")) {
+                                    outletID = jsonObject.getString(aa);
+                                }
                             }
                             et[Integer.valueOf(valSetOne.get(0))].setText(resultNya);
                         }
@@ -10720,7 +10733,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         if (idListTaskMasterForm.equalsIgnoreCase("66986")) {
                             ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[0].getExpandableListAdapter();
                             ancur.notifyDataSetChanged();
-                        } else if (idListTaskMasterForm.equalsIgnoreCase("68396") || idListTaskMasterForm.equalsIgnoreCase("68415") ) {
+                        } else if (idListTaskMasterForm.equalsIgnoreCase("68396") || idListTaskMasterForm.equalsIgnoreCase("68415")) {
                             ExpandableListAdapter ancur = (ExpandableListAdapter) expandableListView[2].getExpandableListAdapter();
                             ancur.notifyDataSetChanged();
                         } else {
@@ -11823,7 +11836,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
         new Annca(photo.build()).launchCamera();*/
 
-        if (idTab.equalsIgnoreCase("3355")) {
+        Log.w("hingga", idTab);
+        if (idTab.equalsIgnoreCase("3355") || idTab.equalsIgnoreCase("3445")) {
             if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -12812,7 +12826,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             DataBaseDropDown mDB = new DataBaseDropDown(context, DBmaster);
                             if (mDB.getWritableDatabase() != null) {
 
-                                final Cursor c = mDB.getWritableDatabase().query(true, from, aass, where, new String[]{customersId}, null, null, null, null);
+                                final Cursor c = mDB.getWritableDatabase().query(true, from, aass, where, new String[]{"318"}, null, null, null, null);
 
                                 if (c.moveToFirst()) {
                                     String titleOld = "";
@@ -13412,5 +13426,302 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
         return show;
+    }
+
+    private class getAuditList extends AsyncTask<String, String, String> {
+        private ProgressDialog dialog;
+        String error = "";
+        private Activity activity;
+        private Context context;
+
+        public getAuditList(Activity activity) {
+            this.activity = activity;
+            context = activity;
+            dialog = new ProgressDialog(activity);
+        }
+
+        protected void onPreExecute() {
+            if (dialog != null && dialog.isShowing()) {
+                this.dialog.setMessage("Loading...");
+                this.dialog.show();
+            }
+
+
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            postData(params[0], params[1]);
+            return null;
+        }
+
+        protected void onPostExecute(String result) {
+
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+
+        protected void onProgressUpdate(String... string) {
+        }
+
+        public void postData(String valueIWantToSend, String dealer) {
+            // Create a new HttpClient and Post Header
+            Log.w("janpn", dealer);
+
+            try {
+                HttpParams httpParameters = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
+                HttpConnectionParams.setSoTimeout(httpParameters, 15000);
+                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpPost httppost = new HttpPost(valueIWantToSend);
+
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("outletId", dealer));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                // Execute HTTP Post Request
+                HttpResponse response = httpclient.execute(httppost);
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200) {
+
+                    HttpEntity entity = response.getEntity();
+                    String data = EntityUtils.toString(entity);
+                    byte[] decodedBytes = Base64.decode(data, 0);
+
+                    try {
+                        String rr = decompress(decodedBytes);
+                        // new Validations().getInstance(context).setCarsTemp(rr);
+                        JSONArray jsonArray = new JSONArray(rr);
+                        buildDropdown(jsonArray);
+                        // buildDropdown(jsonArray.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    error = "Tolong periksa koneksi internet.";
+                }
+
+            } catch (ConnectTimeoutException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+            }
+        }
+
+    }
+
+    public static String decompress(byte[] compressed) throws IOException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(compressed);
+        GZIPInputStream gis = new GZIPInputStream(bis);
+        BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        br.close();
+        gis.close();
+        bis.close();
+        return sb.toString();
+    }
+
+    private void buildDropdown(JSONArray jsonArray) {
+
+
+        List<String> expandableListTitle = new ArrayList<String>();
+        HashMap<String, List<String>> expandableListDetail = new HashMap<String, List<String>>();
+
+        HashMap<String, List<JSONObject>> expandableListDetailJSONObject = new HashMap<String, List<JSONObject>>();
+        List<String> expandableListTitleJSON = new ArrayList<String>();
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String id = jsonArray.getJSONObject(i).getString("id").toString();
+                String title = jsonArray.getJSONObject(i).getString("title").toString();
+                String description = jsonArray.getJSONObject(i).getString("description").toString();
+                JSONArray value = jsonArray.getJSONObject(i).getJSONArray("value");
+                expandableListTitle.add(title);
+                expandableListTitleJSON.add(id);
+
+                ArrayList Item = new ArrayList<String>();
+                ArrayList Items = new ArrayList<JSONObject>();
+                for (int ii = 0; ii < value.length(); ii++) {
+                    String idEquipment = value.getJSONObject(ii).getString("idEquipment").toString();
+                    String parameter = value.getJSONObject(ii).getString("parameter").toString();
+                    JSONObject obj = new JSONObject();
+                    JSONObject objS = new JSONObject();
+                    try {
+                        obj.put("t", parameter);
+                        obj.put("iT", String.valueOf(id));
+                        obj.put("iD", String.valueOf(idEquipment));
+
+                        objS.put("iD", String.valueOf(idEquipment));
+                        objS.put("v", "");
+                        objS.put("n", "");
+
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block e.printStackTrace();
+                    }
+                    Item.add(obj.toString());
+                    Items.add(objS);
+
+                }
+                expandableListDetail.put(title, Item);
+                expandableListDetailJSONObject.put(title, Items);
+            }
+
+            JSONObject jsonObject = new JSONObject();
+            for (String title : expandableListTitleJSON) {
+                List<JSONObject> ala = expandableListDetailJSONObject.get(title);
+                JSONArray JsArray = new JSONArray();
+                for (JSONObject aha : ala) {
+                    JsArray.put(aha);
+                }
+                jsonObject.put(title, JsArray);
+            }
+            jsonObject.put("customersId", customersId);
+            String flagRoom = "";
+            JSONObject jsonObject1 = new JSONObject();
+            if (idTab.equalsIgnoreCase("3355")) {
+                jsonObject1.put("a", "68388");
+                flagRoom = "form_isiannya";
+            } else if (idTab.equalsIgnoreCase("3445")) {
+                jsonObject1.put("a", "68415");
+                flagRoom = "form_isian";
+            }
+
+
+            jsonObject1.put("b", "dropdown_form");
+            jsonObject1.put("c", "2");
+
+
+            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonObject1.toString());
+            if (cEdit.getCount() == 0) {
+                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), jsonObject1.toString(), flagRoom, "cild");
+                db.insertRoomsDetail(orderModel);
+            } else {
+                String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                JSONObject lala = new JSONObject(text);
+                if (!lala.getString("customersId").equalsIgnoreCase(customersId)) {
+                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), jsonObject1.toString(), flagRoom, "cild");
+                    db.updateDetailRoomWithFlagContent(orderModel);
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    for (String title : expandableListTitleJSON) {
+                        List<JSONObject> ala = expandableListDetailJSONObject.get(title);
+                        JSONArray JsArray = new JSONArray();
+                        for (JSONObject aha : ala) {
+                            JsArray.put(aha);
+                        }
+                        jsonObject.put(title, JsArray);
+                    }
+                    jsonObject.put("customersId", customersId);
+                    String flagRoom = "";
+                    JSONObject jsonObject1 = new JSONObject();
+                    if (idTab.equalsIgnoreCase("3355")) {
+                        jsonObject1.put("a", "68388");
+                        flagRoom = "form_isiannya";
+                    } else if (idTab.equalsIgnoreCase("3445")) {
+                        jsonObject1.put("a", "68415");
+                        flagRoom = "form_isian";
+                    }
+
+
+                    jsonObject1.put("b", "dropdown_form");
+                    jsonObject1.put("c", "2");
+
+
+                    ExpandableListAdapter listAdapter = new ExpandableListAdapter(activity, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonObject1.toString(), flagRoom);
+                    expandableListView[2].setAdapter(listAdapter);
+                    setListViewHeightBasedOnChildren(expandableListView[Integer.valueOf(2)]);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+
+           /* String title = c.getString(1);
+            String titleS = c.getString(0);
+            if (!titleOld.equalsIgnoreCase(title)) {
+                Item = new ArrayList<String>();
+                Items = new ArrayList<JSONObject>();
+                titleOld = title;
+                expandableListTitle.add(title);
+                expandableListTitleJSON.add(titleS);
+                t++;
+            }
+
+            String column0 = c.getString(0);
+            Integer column3 = c.getInt(3);
+            String column4 = c.getString(4);
+
+            JSONObject obj = new JSONObject();
+            JSONObject objS = new JSONObject();
+            try {
+                obj.put("t", column4);
+                obj.put("iT", String.valueOf(column0));
+                obj.put("iD", String.valueOf(column3));
+
+                objS.put("iD", String.valueOf(column3));
+                objS.put("v", "");
+                objS.put("n", "");
+
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block e.printStackTrace();
+            }
+            Item.add(obj.toString());
+            Items.add(objS);
+
+            expandableListDetail.put(title, Item);
+            expandableListDetailJSONObject.put(titleS, Items);
+*/
+
+
+        /*JSONObject jsonObject = new JSONObject();
+        for (String title : expandableListTitleJSON) {
+            List<JSONObject> ala = expandableListDetailJSONObject.get(title);
+            JSONArray JsArray = new JSONArray();
+            for (JSONObject aha : ala) {
+                JsArray.put(aha);
+            }
+            jsonObject.put(title, JsArray);
+        }
+        jsonObject.put("customersId", customersId);
+
+        Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()));
+        if (cEdit.getCount() == 0) {
+            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()), valueForms.get(3).toString(), "cild");
+            db.insertRoomsDetail(orderModel);
+        } else {
+            String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+            JSONObject lala = new JSONObject(text);
+            if (!lala.getString("customersId").equalsIgnoreCase(customersId)) {
+                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, jsonObject.toString(), jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()), valueForms.get(3).toString(), "cild");
+                db.updateDetailRoomWithFlagContent(orderModel);
+            }
+        }
+*/
+      /*  ExpandableListAdapter listAdapter = new ExpandableListAdapter(activity, getApplicationContext(), expandableListTitle, expandableListDetail, idDetail, username, idTab, jsonCreateType(String.valueOf(pair.getKey()), valueForms.get(2).toString(), valueForms.get(5).toString()), valueForms.get(3).toString());
+        expandableListView[1].setAdapter(listAdapter);
+        setListViewHeightBasedOnChildren(expandableListView[Integer.valueOf(1)]);*/
     }
 }

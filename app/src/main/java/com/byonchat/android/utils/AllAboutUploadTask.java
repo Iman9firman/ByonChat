@@ -679,10 +679,15 @@ public class AllAboutUploadTask {
                                     e.printStackTrace();
                                 }
 
-                                jsonArrayKey.put(list.get(u).getFlag_tab());
-                                jsonArrayValue.put(content.substring(0, content.length() - 1));
-                                jsonArrayDate.put("");
-                                jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
+                                if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("copy_field_dropdown")) {
+                                    Log.w("msudk", "sini");
+                                } else {
+                                    jsonArrayKey.put(list.get(u).getFlag_tab());
+                                    jsonArrayValue.put(content.substring(0, content.length() - 1));
+                                    jsonArrayDate.put("");
+                                    jsonArrayType.put(jsonResultType(list.get(u).getFlag_content(), "b"));
+                                }
+
 
                             }
 

@@ -78,6 +78,7 @@ import com.byonchat.android.provider.TimeLine;
 import com.byonchat.android.provider.TimeLineDB;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.ui.view.DialogAct;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.GetRealNameRoom;
@@ -3633,6 +3634,100 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
         }
 
     }
+
+    class updateStatusDeliverNotif extends AsyncTask<String, Void, String> {
+        //https://bb.byonchat.com/bc_voucher_client/webservice/proses/update_history_list_task.php
+        private static final int REGISTRATION_TIMEOUT = 3 * 1000;
+        private static final int WAIT_TIMEOUT = 3 * 1000;
+        private final HttpClient httpclient = new DefaultHttpClient();
+
+        final HttpParams params = httpclient.getParams();
+        HttpResponse response;
+        private Context mContext;
+        private String content = null;
+        private boolean error = false;
+        String code2 = "400";
+        private MessengerDatabaseHelper messengerHelper;
+
+        public updateStatusDeliverNotif(Context context) {
+            this.mContext = context;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        InputStreamReader reader = null;
+
+        protected String doInBackground(String... key) {
+            Log.w("jojon1", key[0]);
+            Log.w("jojon2", key[1]);
+            Log.w("jojon3", key[2]);
+            try {
+                HttpClient httpClient = HttpHelper
+                        .createHttpClient(mContext);
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+                        2);
+
+                if (messengerHelper == null) {
+                    messengerHelper = MessengerDatabaseHelper.getInstance(mContext);
+                }
+
+                nameValuePairs.add(new BasicNameValuePair("task_id", key[1]));
+                nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", key[2]));
+
+                HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+                ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+
+                HttpPost post = new HttpPost(key[0]);
+                post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+
+                //Response from the Http Request
+                response = httpclient.execute(post);
+                StatusLine statusLine = response.getStatusLine();
+
+                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    out.close();
+
+                } else {
+                    //Closes the connection.
+                    error = true;
+                    // Log.w("HTTP1:", statusLine.getReasonPhrase());
+                    content = statusLine.getReasonPhrase();
+                    response.getEntity().getContent().close();
+                    throw new IOException(content);
+                }
+
+            } catch (ClientProtocolException e) {
+                // Log.w("HTTP2:", e);
+                content = e.getMessage();
+                error = true;
+            } catch (IOException e) {
+                // Log.w("HTTP3:", e);
+                content = e.getMessage();
+                error = true;
+            } catch (Exception e) {
+                error = true;
+            }
+
+            return content;
+        }
+
+        protected void onCancelled() {
+
+        }
+
+        protected void onPostExecute(String content) {
+//            Log.w("sudah", content);
+        }
+
+    }
+
 
     class FileDownloadHandlerImageTumbP2PSave extends AsyncTask<Message, Message, Bitmap> {
         Message data;

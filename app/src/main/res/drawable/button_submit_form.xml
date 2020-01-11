@@ -15,4 +15,4 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/margin15"
         android:text="SUBMIT" />
-</LinearLayout>
+    </LinearLayout>

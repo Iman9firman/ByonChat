@@ -2484,8 +2484,60 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
                     }
 
+                    if (room.length == 5) {
+                        if (room[4].equalsIgnoreCase("urgent")) {
+                            DialogAct.startDialog(getApplicationContext(), 60000, room[1], room[2], room[3], 0);
+                        } else if (room[4].equalsIgnoreCase("notif")) {
+                            String title = room[3].split(";")[1];
+                            String value = room[3].split(";")[0];
+                            try {
+                                JSONArray jsonArrays = new JSONArray(value);
+                                if (jsonArrays.length() == 2) {
+                                    JSONObject jsonObject = jsonArrays.getJSONObject(0);
+                                    String id = jsonObject.getString("id");
+                                    String parent_id = jsonObject.getString("parent_id");
+                                    String add_date = jsonObject.getString("add_date");
 
-                    String SQL_UPDATE_MESSAGES = "Delete from " + Message.TABLE_NAME + " WHERE " + Message.MESSAGE + " = ?;";
+                                    JSONObject jsonObjectA = jsonArrays.getJSONObject(1);
+                                    JSONObject caca = jsonObjectA.getJSONObject("value_detail");
+
+                                    String type = caca.getString("type");
+                                    String values = caca.getString("value");
+
+                                    Cursor cursorParent = botListDB.getSingleRoomDetailFormWithFlag(id + "|" + parent_id, room[1], room[2], "parent");
+
+                                    if (cursorParent.getCount() == 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(id + "|" + parent_id, room[2], room[1], add_date, "4", "", "parent");
+                                        botListDB.insertRoomsDetail(orderModel);
+
+                                        RoomsDetail orderModelTitle211 = new RoomsDetail(id + "|" + parent_id, room[2], room[1], values, "1", type, "list");
+                                        RoomsDetail orderModelTitle2 = new RoomsDetail(id + "|" + parent_id, room[2], room[1], jsonDuaObject(va(orderModelTitle211), ""), "1", type, "list");
+                                        botListDB.insertRoomsDetail(orderModelTitle2);
+
+                                        JSONObject jsonObjectI = new JSONObject();
+                                        try {
+                                            jsonObjectI.put("idDetail", id + "|" + parent_id);
+                                            jsonObjectI.put("username", room[1]);
+                                            jsonObjectI.put("idTab", room[2]);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+
+                                    DialogAct.startDialog(getApplicationContext(), 0, room[1], room[2], title + " " + values, 0);
+                                    new updateStatusDeliverNotif(getApplicationContext()).execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/update_history_list_task.php", id, parent_id);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    }
+
+
+                        String SQL_UPDATE_MESSAGES = "Delete from " + Message.TABLE_NAME + " WHERE " + Message.MESSAGE + " = ?;";
                     String SQL_SELECT_MESSAGES = "SELECT *  FROM "
                             + Message.TABLE_NAME + " WHERE " + Message.MESSAGE + "=? ;";
                     Cursor cursor = databaseHelper.query(SQL_SELECT_MESSAGES, new String[]{vo.getMessage()});

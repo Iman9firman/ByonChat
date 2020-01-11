@@ -178,6 +178,7 @@ public class DialogAct extends Activity {
                 Intent intent = new Intent(getBaseContext(), MainActivityNew.class);
                 intent.putExtra(ConversationActivity.KEY_JABBER_ID, contact.getJabberId());
                 intent.putExtra("success", "oke");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
 
                 if (countDownTimer != null) {
@@ -186,53 +187,57 @@ public class DialogAct extends Activity {
                 finish();
             }
         });
-        countDownTimer = new CountDownTimer(getCounterFromIntent, 1000) {
 
-            public void onTick(long millisUntilFinished) {
-                /*
-                 * If counter divide by 10 equals 0 or counter < 10 , then vibrate the device.
-                 * If dialog was removed by home or back button, start another dialog.
-                 * */
-                if (((int) (millisUntilFinished / 1000) % 10 == 0) || (int) (millisUntilFinished / 1000) < 10) {
-                    if (isFinishing()) {
-                        countDownTimer.cancel();
-                        startDialog(getApplicationContext(), counterForBack, username, id_tab, message, counter);
-                    } else {
-                        vibratePlease(v, pattern);
+        if (getCounterFromIntent > 0) {
+            countDownTimer = new CountDownTimer(getCounterFromIntent, 1000) {
+
+                public void onTick(long millisUntilFinished) {
+                    /*
+                     * If counter divide by 10 equals 0 or counter < 10 , then vibrate the device.
+                     * If dialog was removed by home or back button, start another dialog.
+                     * */
+                    if (((int) (millisUntilFinished / 1000) % 10 == 0) || (int) (millisUntilFinished / 1000) < 10) {
+                        if (isFinishing()) {
+                            countDownTimer.cancel();
+                            startDialog(getApplicationContext(), counterForBack, username, id_tab, message, counter);
+                        } else {
+                            vibratePlease(v, pattern);
+                        }
                     }
+                    /*
+                     * Saving the value of counter time and progress for another dialog if current dialog removed.
+                     * */
+                    String dateString = DateFormat.format("ss", new Date(millisUntilFinished)).toString();
+                    counterForBack = millisUntilFinished;
+                    openMessage.setText("Open (" + dateString + ")");
+                    counter++;
+                    /*
+                     * Update circle progress bar with animation.
+                     * */
+                    progressBar.setProgressWithAnimation((float) counter * 100 / (60000 / 1000));
+                    Log.w(TAG, "\nTick : " + (int) (millisUntilFinished / 1000) + "\nCounter : " + counter + "\nProgress : " + (float) counter * 100 / (60000 / 1000) + "\nIntent : " + getCounterFromIntent);
                 }
-                /*
-                 * Saving the value of counter time and progress for another dialog if current dialog removed.
-                 * */
-                String dateString = DateFormat.format("ss", new Date(millisUntilFinished)).toString();
-                counterForBack = millisUntilFinished;
-                openMessage.setText("Open (" + dateString + ")");
-                counter++;
-                /*
-                 * Update circle progress bar with animation.
-                 * */
-                progressBar.setProgressWithAnimation((float) counter * 100 / (60000 / 1000));
-                Log.w(TAG, "\nTick : " + (int) (millisUntilFinished / 1000) + "\nCounter : " + counter + "\nProgress : " + (float) counter * 100 / (60000 / 1000) + "\nIntent : " + getCounterFromIntent);
-            }
 
-            public void onFinish() {
-                counter++;
-                openMessage.setText("Open (00)");
-                progressBar.setProgressWithAnimation(100);
-                runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        /*
-                         * Wait for 2 sec until dialog dismiss itself.
-                         * */
-                        finish();
-                        handler.postDelayed(runnable, 2000);
-                    }
-                };
-                handler.postDelayed(runnable, 2000);
-            }
+                public void onFinish() {
+                    counter++;
+                    openMessage.setText("Open (00)");
+                    progressBar.setProgressWithAnimation(100);
+                    runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            /*
+                             * Wait for 2 sec until dialog dismiss itself.
+                             * */
+                            finish();
+                            handler.postDelayed(runnable, 2000);
+                        }
+                    };
+                    handler.postDelayed(runnable, 2000);
+                }
 
-        }.start();
+            }.start();
+        }
+
     }
 
     private void getDataFromDB() {

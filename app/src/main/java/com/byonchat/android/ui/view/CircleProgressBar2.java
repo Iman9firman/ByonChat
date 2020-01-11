@@ -64,11 +64,11 @@ public class CircleProgressBar2 extends View {
                 0, 0);
         //Reading values from the XML layout
         try {
-            strokeWidth = typedArray.getDimension(R.styleable.CircleProgressBar2_progressBarThickness, strokeWidth);
-            progress = typedArray.getFloat(R.styleable.CircleProgressBar2_progress, progress);
-            color = typedArray.getInt(R.styleable.CircleProgressBar2_progressbarColor, color);
-            min = typedArray.getInt(R.styleable.CircleProgressBar2_min, min);
-            max = typedArray.getInt(R.styleable.CircleProgressBar2_max, max);
+            strokeWidth = typedArray.getDimension(R.styleable.CircleProgressBar2_progressBarThickness_, strokeWidth);
+            progress = typedArray.getFloat(R.styleable.CircleProgressBar2_progress_, progress);
+            color = typedArray.getInt(R.styleable.CircleProgressBar2_progressbarColor_, color);
+            min = typedArray.getInt(R.styleable.CircleProgressBar2_min_, min);
+            max = typedArray.getInt(R.styleable.CircleProgressBar2_max_, max);
         } finally {
             typedArray.recycle();
         }

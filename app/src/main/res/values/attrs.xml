@@ -383,4 +383,11 @@
         <attr name="gradientStartColor" format="color" />
         <attr name="gradientEndColor" format="color" />
     </declare-styleable>
+    <declare-styleable name="CircleProgressBar2">
+        <attr name="min_" format="integer" />
+        <attr name="max_" format="integer" />
+        <attr name="progress_" format="integer" />
+        <attr name="progressbarColor_" format="color" />
+        <attr name="progressBarThickness_" format="dimension" />
+    </declare-styleable>
 </resources>

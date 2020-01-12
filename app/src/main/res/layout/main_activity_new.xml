@@ -315,102 +315,51 @@
                 android:id="@+id/card_nav_main"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin50"
-                android:layout_marginRight="@dimen/margin50"
                 android:layout_marginBottom="-45dp"
                 android:background="@null"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="@dimen/margin45"
-                app:cardElevation="0dp"
-                app:cardPreventCornerOverlap="false"
                 app:layout_anchor="@id/recycler_main"
                 app:layout_anchorGravity="center_horizontal|bottom"
                 app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior">
 
-                <eightbitlab.com.blurview.BlurView
-                    android:id="@+id/blurView"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="130dp"
-                    android:background="@null"
-                    android:elevation="4dp"
-                    app:blurOverlayColor="@color/ims_blur_background">
-                    <!--app:blurOverlayColor="#10ffffff"-->
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/margin10">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/margin10">
+                    <com.andremion.counterfab.CounterFab
+                        android:id="@+id/fab_menu_1_main"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginBottom="@dimen/margin20"
+                        android:paddingLeft="@dimen/margin15"
+                        android:paddingRight="@dimen/margin15"
+                        app:badgeBackgroundColor="@android:color/transparent"
+                        android:paddingBottom="@dimen/margin15"
+                        app:backgroundTint="@color/white"
+                        app:badgeTextColor="@color/white"
+                        app:borderWidth="0dp"
+                        app:elevation="0dp"
+                        app:srcCompat="@drawable/ic_01" />
 
-                        <com.andremion.counterfab.CounterFab
-                            android:id="@+id/fab_menu_1_main"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_marginBottom="@dimen/margin20"
-                            android:paddingLeft="@dimen/margin15"
-                            android:paddingRight="@dimen/margin15"
-                            android:paddingBottom="@dimen/margin15"
-                            app:backgroundTint="@color/white"
-                            app:badgeTextColor="@color/white"
-                            app:borderWidth="0dp"
-                            app:elevation="0dp"
-                            app:srcCompat="@drawable/ic_01" />
+                    <com.andremion.counterfab.CounterFab
+                        android:id="@+id/fab_menu_2_main"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginBottom="@dimen/margin20"
+                        android:paddingLeft="@dimen/margin15"
+                        android:paddingRight="@dimen/margin15"
+                        app:backgroundTint="@color/white"
+                        app:badgeBackgroundColor="@android:color/transparent"
+                        app:badgePosition="RightTop"
+                        app:badgeTextColor="@color/white"
+                        app:borderWidth="0dp"
+                        app:elevation="0dp"
+                        app:srcCompat="@drawable/ic_02" />
 
-                        <com.andremion.counterfab.CounterFab
-                            android:id="@+id/fab_menu_2_main"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginBottom="@dimen/margin20"
-                            android:paddingLeft="@dimen/margin15"
-                            android:paddingRight="@dimen/margin15"
-                            app:backgroundTint="@color/white"
-                            app:badgeBackgroundColor="@color/accent_500"
-                            app:badgePosition="RightTop"
-                            app:badgeTextColor="@color/white"
-                            app:borderWidth="0dp"
-                            app:elevation="0dp"
-                            app:srcCompat="@drawable/ic_02" />
-
-                        <!--<android.support.design.widget.FloatingActionButton-->
-                        <!--android:id="@+id/fab_menu_1_main"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_alignParentLeft="true"-->
-                        <!--android:padding="@dimen/margin20"-->
-                        <!--android:tint="@color/textColorSecondary"-->
-                        <!--app:backgroundTint="@color/white"-->
-                        <!--app:borderWidth="0dp"-->
-                        <!--app:elevation="0dp"-->
-                        <!--app:srcCompat="@drawable/baseline_home_24" />-->
-
-                        <!--<android.support.design.widget.FloatingActionButton-->
-                        <!--android:id="@+id/fab_menu_2_main"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_alignParentRight="true"-->
-                        <!--android:padding="@dimen/margin20"-->
-                        <!--android:tint="@color/textColorSecondary"-->
-                        <!--app:backgroundTint="@color/white"-->
-                        <!--app:borderWidth="0dp"-->
-                        <!--app:elevation="0dp"-->
-                        <!--app:srcCompat="@drawable/baseline_message_24" />-->
-
-                        <!--<android.support.design.widget.FloatingActionButton
-                            android:id="@+id/fab_menu_3_main"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/baseline_person_24"
-                            app:layout_constraintRight_toRightOf="parent"
-                            android:backgroundTint="#ffffff"
-                            android:tint="@color/colorPrimary"
-                            app:borderWidth="0dp"
-                            app:elevation="0dp"/>-->
-
-                    </RelativeLayout>
-
-                </eightbitlab.com.blurview.BlurView>
+                </RelativeLayout>
 
             </android.support.v7.widget.CardView>
 

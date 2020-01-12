@@ -12,6 +12,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +49,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
@@ -75,7 +77,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.byonchat.android.AccountSettingActivity;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.ByonChatMainRoomActivity;
@@ -101,7 +102,6 @@ import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
-import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
@@ -133,6 +133,8 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.internal.Util;
 
 public class MainActivityNew extends MainBaseActivityNew {
+
+    private static final int REQUEST_CODE_ASK_OVERLAY = 1121;
 
     @Override
     protected int getResourceLayout() {
@@ -290,38 +292,6 @@ public class MainActivityNew extends MainBaseActivityNew {
         vLogoItemGridFourFour = findViewById(R.id.logo_item_grid_four_four);
         vTitleItemGridFourFour = findViewById(R.id.title_item_grid_four_four);
 
-        /*vLogoItemGridFiveOne = findViewById(R.id.logo_item_grid_five_one);
-        vTitleItemGridFiveOne = findViewById(R.id.title_item_grid_four_one);
-        vLogoItemGridFiveTwo = findViewById(R.id.logo_item_grid_five_two);
-        vTitleItemGridFiveTwo = findViewById(R.id.title_item_grid_four_two);
-        vLogoItemGridFiveThree = findViewById(R.id.logo_item_grid_five_three);
-        vTitleItemGridFiveThree = findViewById(R.id.title_item_grid_four_three);
-        vLogoItemGridFiveFour = findViewById(R.id.logo_item_grid_five_four);
-        vTitleItemGridFiveFour = findViewById(R.id.title_item_grid_four_four);
-
-        vLogoItemGridFiveOne = findViewById(R.id.logo_item_grid_five_one);
-        vTitleItemGridFiveOne = findViewById(R.id.title_item_grid_five_one);
-        vLogoItemGridFiveTwo = findViewById(R.id.logo_item_grid_five_two);
-        vTitleItemGridFiveTwo = findViewById(R.id.title_item_grid_five_two);
-        vLogoItemGridFiveThree = findViewById(R.id.logo_item_grid_five_three);
-        vTitleItemGridFiveThree = findViewById(R.id.title_item_grid_five_three);
-        vLogoItemGridFiveFour = findViewById(R.id.logo_item_grid_five_four);
-        vTitleItemGridFiveFour = findViewById(R.id.title_item_grid_five_four);
-        vLogoItemGridFiveFive = findViewById(R.id.logo_item_grid_five_five);
-        vTitleItemGridFiveFive = findViewById(R.id.title_item_grid_five_five);
-
-        vLogoItemGridSixOne = findViewById(R.id.logo_item_grid_six_one);
-        vTitleItemGridSixOne = findViewById(R.id.title_item_grid_six_one);
-        vLogoItemGridSixTwo = findViewById(R.id.logo_item_grid_six_two);
-        vTitleItemGridSixTwo = findViewById(R.id.title_item_grid_six_two);
-        vLogoItemGridSixThree = findViewById(R.id.logo_item_grid_six_three);
-        vTitleItemGridSixThree = findViewById(R.id.title_item_grid_six_three);
-        vLogoItemGridSixFour = findViewById(R.id.logo_item_grid_six_four);
-        vTitleItemGridSixFour = findViewById(R.id.title_item_grid_six_four);
-        vLogoItemGridSixFive = findViewById(R.id.logo_item_grid_six_five);
-        vTitleItemGridSixFive = findViewById(R.id.title_item_grid_six_five);
-        vLogoItemGridSixSix = findViewById(R.id.logo_item_grid_six_six);
-        vTitleItemGridSixSix = findViewById(R.id.title_item_grid_six_six);*/
 
         vLogoItemGridNineOne = findViewById(R.id.logo_item_grid_nine_one);
         vTitleItemGridNineOne = findViewById(R.id.title_item_grid_nine_one);
@@ -364,26 +334,6 @@ public class MainActivityNew extends MainBaseActivityNew {
             }
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
-
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.WRITE_CONTACTS,
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.CALL_PHONE,
-                            Manifest.permission.RECEIVE_SMS},
-                    TAG_CODE_PERMISSION_LOCATION);
-        }
-
         try {
             int off = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
             if (off == 0) {
@@ -399,7 +349,7 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onPause() {
         unregisterReceiver(broadcastHandler);
-        assistant.stop();
+//        assistant.stop();
         numbers.clear();
         appBarLayout.removeOnOffsetChangedListener(this);
         super.onPause();
@@ -408,10 +358,15 @@ public class MainActivityNew extends MainBaseActivityNew {
     @Override
     protected void onResume() {
         super.onResume();
-        assistant.start();
+//        assistant.start();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            openOverlaySettings();
+        }
 
         IntentFilter f = new IntentFilter(
                 MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
+        f.addAction(MessengerConnectionService.ACTION_REFRESH_NOTIF_FORM);
         f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
         f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
         f.setPriority(1);
@@ -502,8 +457,12 @@ public class MainActivityNew extends MainBaseActivityNew {
         recyclerViewDragDropManager.attachRecyclerView(recyclerView);
 
         adapter.setOnItemClickListener((view, position) -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
+            /*Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+            startActivity(intent);*/
+            if (adapter.getData().get(position).category_tab != null) {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            }
         });
 
         adapter.setOnLongItemClickListener((view, position) -> {
@@ -514,6 +473,17 @@ public class MainActivityNew extends MainBaseActivityNew {
         resolveListRooms();
         resolveOpenRooms();
         resolveRefreshGrid();
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            vFrameTabOne.setVisibility(View.INVISIBLE);
+            vFrameTabTwo.setVisibility(View.INVISIBLE);
+            vFrameTabFour.setVisibility(View.INVISIBLE);
+            vFrameTabNine.setVisibility(View.INVISIBLE);
+        } else {
+            if (itemList.size() < 9) {
+                recyclerView.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     @Override
@@ -536,11 +506,10 @@ public class MainActivityNew extends MainBaseActivityNew {
     @SuppressWarnings("WrongConstant")
     protected void resolveView() {
         try {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            Log.w("kesomo", "Kala");
 
-                resolveServices();
-            }
+
+            resolveServices();
 
             IntervalDB db = new IntervalDB(getApplicationContext());
             db.open();
@@ -575,7 +544,7 @@ public class MainActivityNew extends MainBaseActivityNew {
                 if (cursorSkin.getCount() == 0 || insertByon) {
                     Bitmap logos = BitmapFactory.decodeResource(getResources(), R.drawable.logo_byon);
                     Bitmap back = BitmapFactory.decodeResource(getResources(), R.drawable.bg_chat_baru);
-                    Bitmap header = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                    Bitmap header = BitmapFactory.decodeResource(getResources(), R.drawable.logo_byon);
                     Skin skin = new Skin("byonchat", "original", "#006b9c", logos, header, back);
                     db.createSkin(skin);
                 }
@@ -587,7 +556,6 @@ public class MainActivityNew extends MainBaseActivityNew {
                 finish();
                 return;
             }
-
 
             /*color = getResources().getColor(R.color.colorPrimary);*/
 
@@ -862,4 +830,24 @@ public class MainActivityNew extends MainBaseActivityNew {
         }
         Toast.makeText(this, "Shortcut Created", Toast.LENGTH_SHORT).show();
     }
+
+    public void openOverlaySettings() {
+     /*   Intent intent  = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,Uri.parse("package:${getPackageName()}"));
+        try {
+            startActivityForResult(intent,REQUEST_CODE_ASK_OVERLAY);
+        } catch ( ActivityNotFoundException e){
+            e.printStackTrace();
+        }*/
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, REQUEST_CODE_ASK_OVERLAY);
+            }
+        }
+
+    }
+
+
 }

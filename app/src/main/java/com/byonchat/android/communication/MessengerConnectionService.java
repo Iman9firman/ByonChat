@@ -227,6 +227,7 @@ import java.util.concurrent.TimeUnit;
 import static com.byonchat.android.utils.PicassoOwnCache.cacheDir;
 
 public class MessengerConnectionService extends Service implements AllAboutUploadTask.OnTaskCompleted {
+    public static final String ACTION_REFRESH_NOTIF_FORM ="" ;
     private ScheduledExecutorService scheduleTaskExecutor;
     private NotificationReceiver notifReceive;
     public static final String CHAT_SERVER = "ss.byonchat.com";

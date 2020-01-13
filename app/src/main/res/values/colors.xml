@@ -215,6 +215,7 @@
     <color name="ims_blur_background">#689E9E9E</color>
     <color name="ims_blur_list_background">#a3ffffff</color>
     <color name="iss_default">#022b95</color>
+    <color name="blue_home">#60AFE3</color>
 
     <array name="array_dot_active">
         <item>@color/dot_light_screen1</item>

@@ -313,53 +313,75 @@
 
             <android.support.v7.widget.CardView
                 android:id="@+id/card_nav_main"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="-45dp"
                 android:background="@null"
                 app:layout_anchor="@id/recycler_main"
                 app:layout_anchorGravity="center_horizontal|bottom"
                 app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/margin10">
+                    android:orientation="horizontal">
 
-                    <com.andremion.counterfab.CounterFab
-                        android:id="@+id/fab_menu_1_main"
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginBottom="@dimen/margin20"
-                        android:paddingLeft="@dimen/margin15"
-                        android:paddingRight="@dimen/margin15"
-                        app:badgeBackgroundColor="@android:color/transparent"
-                        android:paddingBottom="@dimen/margin15"
-                        app:backgroundTint="@color/white"
-                        app:badgeTextColor="@color/white"
-                        app:borderWidth="0dp"
-                        app:elevation="0dp"
-                        app:srcCompat="@drawable/ic_01" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <com.andremion.counterfab.CounterFab
-                        android:id="@+id/fab_menu_2_main"
-                        android:layout_width="wrap_content"
+                        <com.andremion.counterfab.CounterFab
+                            android:id="@+id/fab_menu_1_main"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            app:backgroundTint="@color/white"
+                            app:badgeBackgroundColor="@android:color/transparent"
+                            app:badgeTextColor="@color/white"
+                            app:borderWidth="0dp"
+                            app:elevation="0dp"
+                            app:srcCompat="@drawable/ic_01" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/margin50"
+                            android:text="Home"
+                            android:textColor="@color/blue_home" />
+                    </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginBottom="@dimen/margin20"
-                        android:paddingLeft="@dimen/margin15"
-                        android:paddingRight="@dimen/margin15"
-                        app:backgroundTint="@color/white"
-                        app:badgeBackgroundColor="@android:color/transparent"
-                        app:badgePosition="RightTop"
-                        app:badgeTextColor="@color/white"
-                        app:borderWidth="0dp"
-                        app:elevation="0dp"
-                        app:srcCompat="@drawable/ic_02" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                </RelativeLayout>
+                        <com.andremion.counterfab.CounterFab
+                            android:id="@+id/fab_menu_2_main"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            app:backgroundTint="@color/white"
+                            app:badgeBackgroundColor="@android:color/transparent"
+                            app:badgePosition="RightTop"
+                            app:badgeTextColor="@color/white"
+                            app:borderWidth="0dp"
+                            app:elevation="0dp"
+                            app:srcCompat="@drawable/ic_02" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/margin50"
+                            android:text="Chat" />
+                    </RelativeLayout>
+
+
+                </LinearLayout>
 
             </android.support.v7.widget.CardView>
 

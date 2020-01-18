@@ -13587,12 +13587,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             String flagRoom = "";
             JSONObject jsonObject1 = new JSONObject();
             if (idTab.equalsIgnoreCase("3355")) {
-                jsonObject1.put("a", "68388");
-                flagRoom = "form_isiannya";
+                jsonObject1.put("a", "68396");
+                flagRoom = "form_isian";
             } else if (idTab.equalsIgnoreCase("3445")) {
                 jsonObject1.put("a", "68415");
                 flagRoom = "form_isian";
             }
+
 
 
             jsonObject1.put("b", "dropdown_form");
@@ -13635,13 +13636,12 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     String flagRoom = "";
                     JSONObject jsonObject1 = new JSONObject();
                     if (idTab.equalsIgnoreCase("3355")) {
-                        jsonObject1.put("a", "68388");
-                        flagRoom = "form_isiannya";
+                        jsonObject1.put("a", "68396");
+                        flagRoom = "form_isian";
                     } else if (idTab.equalsIgnoreCase("3445")) {
                         jsonObject1.put("a", "68415");
                         flagRoom = "form_isian";
                     }
-
 
                     jsonObject1.put("b", "dropdown_form");
                     jsonObject1.put("c", "2");

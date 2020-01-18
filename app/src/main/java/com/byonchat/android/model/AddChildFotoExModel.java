@@ -13,7 +13,7 @@ public class AddChildFotoExModel {
     private String childListText;
     private String name;
 
-    public AddChildFotoExModel(String a, String b, String d, String e, String f, int g, String h, int i, String c, String name) {
+    public AddChildFotoExModel(String a, String b, String d, String e, String f, int g, String h, int i, String c, String nam) {
         idDetail = a;
         username = b;
         idTab = d;
@@ -23,7 +23,7 @@ public class AddChildFotoExModel {
         expandedListText = h;
         childListPos = i;
         childListText = c;
-        name = name;
+        name = nam;
     }
 
     public String getName() {

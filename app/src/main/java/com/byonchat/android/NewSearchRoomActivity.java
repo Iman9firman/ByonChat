@@ -167,6 +167,24 @@ public class NewSearchRoomActivity extends AppCompatActivity {
             ttipe = "1";
         }
 
+
+        if(getIntent().getStringExtra("addHonda") != null){
+            String id = "1";
+            String name = "1_248162126admin";
+            String desc = "Honda IKB PRADANA";
+            String realname = "HONDA S-TEAM";
+            String link = "https://bb.byonchat.com/mediafiles/profile_photo_special_rooms/icon_honda.png";
+            String type = "2";
+
+            roomsDB.open();
+            boolean isActived = true;
+            ContactBot contactBot = new ContactBot("1", name, desc, realname, link, type, isActived, "{\"type\":\"2\",\"tipe_room\":\"3\",\"path\":\"https:\\/\\/hondaikb.byonchat.com\"}");
+            roomsDB.insertRooms(contactBot);
+            roomsDB.close();
+            finish();
+        }
+
+
         mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
         mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
 
@@ -1030,6 +1048,20 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         } else {
             requestKey(path, json);
         }
+    }
+
+    public void insertToDBbyRequest(String id, String name, String desc, String realname, String link, String json, String type, String path) {
+        if (roomsDB == null) {
+            roomsDB = new RoomsDB(NewSearchRoomActivity.this);
+        }
+
+        roomsDB.open();
+        catArray = roomsDB.retrieveRoomsByName(name, "2");
+        roomsDB.close();
+        if (catArray.size() > 0) {
+            Toast.makeText(NewSearchRoomActivity.this, realname + " is already added to selected rooms", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void requestKey(final String path, final String json) {

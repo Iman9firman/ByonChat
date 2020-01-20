@@ -105,6 +105,7 @@ public class DialogNewDropdown extends DialogFragment {
     private ProgressBar loading;
     private finishListener listener;
     String type;
+    String kodeDealer;
 
     private String cModel, cType, cWarna, cTipe_harga, cWilayah, cHarga, cKode, defaultValue;
 
@@ -114,11 +115,13 @@ public class DialogNewDropdown extends DialogFragment {
     private ArrayList<Model> v4 = new ArrayList<>();
     private ArrayList<Model> v5 = new ArrayList<>();
 
-    public DialogNewDropdown(finishListener listener, String type, String defaultV) {
+    public DialogNewDropdown(finishListener listener, String type, String defaultV, String kodeD) {
         super();
         this.listener = listener;
         this.type = type;
         this.defaultValue = defaultV;
+        this.kodeDealer = kodeD;
+
     }
 
     @Override
@@ -139,6 +142,7 @@ public class DialogNewDropdown extends DialogFragment {
 
         mProceed.setText("Save ");
 
+        Log.w("SSSAD", kodeDealer);
         mProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,7 +179,7 @@ public class DialogNewDropdown extends DialogFragment {
             }
         }
 
-        new getCars(getActivity()).execute("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/honda/convert_json_api_gzip.php", "106");
+        new getCars(getActivity()).execute("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/honda/convert_json_api_gzip.php", kodeDealer);
     }
 
     @Override

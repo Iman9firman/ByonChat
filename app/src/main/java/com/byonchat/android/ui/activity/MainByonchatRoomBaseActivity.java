@@ -46,6 +46,7 @@ import android.widget.Toast;
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.ConversationActivity;
+import com.byonchat.android.FragmentDinamicRoom.DinamicPerformanceActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
@@ -77,6 +78,7 @@ import com.byonchat.android.room.FragmentRoomTask;
 import com.byonchat.android.room.FragmentRoomTaskWater;
 import com.byonchat.android.tempSchedule.TempScheduleRoom;
 import com.byonchat.android.ui.fragment.ByonchatApprovalRequestFragment;
+import com.byonchat.android.ui.fragment.ByonchatEperformanceFragment;
 import com.byonchat.android.ui.fragment.ByonchatFollowUpSLAFragment;
 import com.byonchat.android.ui.fragment.ByonchatListScheduleFragment;
 import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
@@ -411,7 +413,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     protected void resolveFragment() {
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        Log.w("CEK WV GANDHIP", category + "  -  " + title+" -----   "+id_rooms_tab+" --> "+username);
+        Log.w("CEK WV GANDHIP", category + "  -  " + title + " -----   " + id_rooms_tab + " --> " + username);
         if (cur.getCount() > 0) {
             try {
                 if (category.equalsIgnoreCase("1")) {
@@ -596,6 +598,22 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 } else if (category.equalsIgnoreCase("31")) {
                     show = true;
                     mFragment = ByonchatListScheduleFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
+                } else if (category.equalsIgnoreCase("32")) {
+                    Intent intent = new Intent(getApplicationContext(), DinamicPerformanceActivity.class);
+                    startActivity(intent);
+
+                   /* List<String> valSetOne = new ArrayList<String>();
+                    valSetOne.add(title);
+                    valSetOne.add(username);
+                    valSetOne.add(id_rooms_tab);
+                    valSetOne.add(color);
+                    valSetOne.add(include_latlong);
+                    show = true;
+                    valSetOne.add("fabPerformance");
+                    mFragment = FragmentRoomSearchMultiTask.newInstance(title, "https://bb.byonchat.com/ApiReliever/index.php/Request/list", username, id_rooms_tab, color, include_latlong, MainByonchatRoomBaseActivity.this, "showMultiple");*/
+                } else if (category.equalsIgnoreCase("33")) {
+                    show = true;
+                    // mFragment = ByonchatListScheduleFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 }
 
                 if (status.equalsIgnoreCase("1") && show) {
@@ -640,7 +658,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 if (value.get(5).toString().equalsIgnoreCase("show") || value.get(5).toString().equalsIgnoreCase("showMultiple")) {
                     vFloatingButton.show();
                     Intent intent = new Intent(getApplicationContext(), DinamicRoomTaskActivity.class);
-                    if (value.get(2).toString().equalsIgnoreCase("2613")||value.get(2).toString().equalsIgnoreCase("3336")) {
+                    if (value.get(2).toString().equalsIgnoreCase("2613") || value.get(2).toString().equalsIgnoreCase("3336")) {
                         intent = new Intent(getApplicationContext(), DinamicSLATaskActivity.class);
                     }
 
@@ -673,6 +691,19 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     intent.putExtra("tt", value.get(0).toString());
                     showFabIntent(intent);
                 } else if (value.get(5).toString().equalsIgnoreCase("fabSearch")) {
+                    vFloatingButton.show();
+                    Intent intent = new Intent(getApplicationContext(), DinamicRoomSearchTaskActivity.class);
+                    intent.putExtra("tt", value.get(0).toString());
+                    if (value.size() > 1) {
+                        intent.putExtra("uu", value.get(1).toString());
+                        intent.putExtra("ii", value.get(2).toString());
+                        intent.putExtra("col", value.get(3).toString());
+                        intent.putExtra("ll", value.get(4).toString());
+                        intent.putExtra("from", value.get(5).toString());
+                        intent.putExtra("idTask", "");
+                    }
+                    showFabIntent(intent);
+                } else if (value.get(5).toString().equalsIgnoreCase("fabPerformance")) {
                     vFloatingButton.show();
                     Intent intent = new Intent(getApplicationContext(), DinamicRoomSearchTaskActivity.class);
                     intent.putExtra("tt", value.get(0).toString());

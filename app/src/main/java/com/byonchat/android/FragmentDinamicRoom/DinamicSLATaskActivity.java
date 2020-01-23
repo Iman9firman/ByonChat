@@ -9874,7 +9874,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
 
                                 JSONObject lala = null;
-                                try {
+                                try {                                                                      
                                     lala = new JSONObject(text);
                                     JSONObject jsonObject = new JSONObject(valueIdValue.getExpandedListText());
                                     JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));

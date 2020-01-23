@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.byonchat.android"> <!-- OCR Library -->
-    <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary,me.zharfan.osmplaces"/>
+    <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary,me.zharfan.osmplaces" />
 
     <uses-feature
         android:name="android.hardware.bluetooth"
@@ -87,9 +87,9 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:persistent="true"
-        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
 
 
         <uses-library
@@ -579,6 +579,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".FragmentDinamicRoom.DinamicRoomTaskActivity" />
         <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
+        <activity android:name=".FragmentDinamicRoom.DinamicPerformanceActivity"
+            android:label="E-Performance"
+            />
         <activity
             android:name=".FragmentDinamicRoom.DinamicSLATaskActivity"
             android:screenOrientation="portrait" />
@@ -759,21 +762,23 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.view.DialogAct"
+        <activity
+            android:name=".ui.view.DialogAct"
+            android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"
+            android:theme="@style/AlertDialogCustom"
+            android:turnScreenOn="true" />
+        <activity android:name=".Sample.ScheduleSLAPeriod" />
+        <activity android:name=".Sample.DateScheduleSLA" />
+        <activity android:name=".Sample.DetailAreaScheduleSLA" />
+        <activity
+            android:name=".Sample.DialogAddSchedulePicture"
             android:screenOrientation="portrait"
-            android:theme="@style/AlertDialogCustom"/>
-        <activity android:name=".Sample.ScheduleSLAPeriod"/>
-        <activity android:name=".Sample.DateScheduleSLA"/>
-        <activity android:name=".Sample.DetailAreaScheduleSLA"/>
-        <activity android:name=".Sample.DialogAddSchedulePicture"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/AlertDialogCustom"/>
+            android:theme="@style/AlertDialogCustom"
+            android:turnScreenOn="true" />
     </application>
 
 </manifest>

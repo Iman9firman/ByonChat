@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -207,7 +208,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
     public void onResume() {
 
         Log.w("apa isi argumenya", urlTembak);
-        vRefreshList.setRefreshing(true);
+        vRefreshList.setRefreshing(false);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
             Map<String, String> params = new HashMap<>();
             params.put("username_room", username);
@@ -337,6 +338,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
+        vRefreshList.setRefreshing(false);
         ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
         rdialog.setMessage("Loading...");
         rdialog.show();
@@ -412,10 +414,15 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                 return params2;
             }
         };
+        sr.setRetryPolicy(new DefaultRetryPolicy(
+                30000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(sr);
     }
 
     private void getMoreDetail(String Url, Map<String, String> params2, Boolean hide, String toTitle, String toSubtitle) {
+        vRefreshList.setRefreshing(false);
         ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
         rdialog.setMessage("Loading...");
         rdialog.show();

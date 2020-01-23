@@ -26,7 +26,6 @@
             android:weightSum="1"></LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin10"
@@ -48,7 +47,7 @@
                 android:layout_marginLeft="@dimen/margin10"
                 android:layout_marginRight="@dimen/margin10"
                 android:padding="@dimen/margin5"
-                android:text="JJT"
+                android:text="Pick Employee"
                 android:textColor="@android:color/black"
                 android:textColorHint="@color/grayList" />
 
@@ -71,8 +70,8 @@
                 android:layout_marginLeft="@dimen/margin10"
                 android:layout_marginRight="@dimen/margin10"
                 android:padding="@dimen/margin5"
-                android:textColor="@android:color/black"
-                android:textAlignment="textEnd"/>
+                android:textAlignment="textEnd"
+                android:textColor="@android:color/black" />
 
             <com.multilevelview.MultiLevelRecyclerView
 
@@ -93,7 +92,24 @@
                 android:layout_marginTop="@dimen/margin10"
                 android:layout_marginRight="@dimen/margin5"
                 android:layout_marginBottom="@dimen/margin10"
-                android:visibility="gone"/>
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin10"
+            android:background="@drawable/backgroud_white"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/margin50"
+            android:weightSum="1">
+
         </LinearLayout>
 
     </LinearLayout>

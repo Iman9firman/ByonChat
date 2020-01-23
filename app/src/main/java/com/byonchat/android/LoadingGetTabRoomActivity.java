@@ -28,6 +28,7 @@ import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.Validations;
+import com.google.gson.JsonObject;
 import com.googlecode.mp4parser.srt.SrtParser;
 
 import org.apache.http.HttpEntity;
@@ -103,8 +104,8 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 targetUrl = linkPath;
             }
 
-            if(!GETTAB.contains("http")){
-                GETTAB = "https://bb.byonchat.com"+ GETTAB;
+            if (!GETTAB.contains("http")) {
+                GETTAB = "https://bb.byonchat.com" + GETTAB;
             }
 
             new Refresh().execute(GETTAB, room_name);
@@ -117,14 +118,64 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
     }
 
     private void extractResult(String result) {
+        //993479, 993480
+        Log.w("Minta", result);
         try {
             JSONObject jsonRootObject = new JSONObject(result);
             String username = jsonRootObject.getString("username_room");
             String content = jsonRootObject.getString("tab_room");
-            if(jsonRootObject.has("grouping_room")){
-                String grouping = jsonRootObject.getString("grouping_room");
-                content = "JSONnnye "+content+"@@@"+grouping+"}";
+            JSONArray jsCOntent = new JSONArray(content);
+
+            JSONObject u = new JSONObject();
+            u.put("urutan", "28");
+            u.put("icon_name_current", "https://bb.byonchat.com/images/room_icons/ic_003.png");
+            u.put("icon_name", "https://bb.byonchat.com/images/room_icons/ic_003.png");
+            u.put("id_rooms_tab", "993479");
+            u.put("tab_name", "E - Performance");
+            u.put("description", "E - Performance");
+            u.put("category_tab", "32");
+            u.put("add_date", "2019-03-08 16:22:03");
+            u.put("status", "1");
+            u.put("include_pull", "4");
+            u.put("parent_id", null);
+            u.put("include_latlong", 0);
+            u.put("target_audience", "2");
+            u.put("url_tembak", "");
+            u.put("face_detection", null);
+            u.put("include_finger_print", "0");
+            u.put("include_check_in_out", "0");
+
+            JSONObject fu = new JSONObject();
+            fu.put("urutan", "29");
+            fu.put("icon_name_current", "https://bb.byonchat.com/images/room_icons/ic_028.png");
+            fu.put("icon_name", "https://bb.byonchat.com/images/room_icons/ic_028.png");
+            fu.put("id_rooms_tab", "993479");
+            fu.put("tab_name", "Approval");
+            fu.put("description", "Approval");
+            fu.put("category_tab", "33");
+            fu.put("add_date", "2019-03-08 16:22:03");
+            fu.put("status", "1");
+            fu.put("include_pull", "4");
+            fu.put("parent_id", null);
+            fu.put("include_latlong", 0);
+            fu.put("target_audience", "2");
+            fu.put("url_tembak", "");
+            fu.put("face_detection", null);
+            fu.put("include_finger_print", "0");
+            fu.put("include_check_in_out", "0");
+
+
+            jsCOntent.put(u);
+            jsCOntent.put(fu);
+
+            if (jsonRootObject.has("grouping_room")) {
+                //String grouping = jsonRootObject.getString("grouping_room");
+                String grouping = "[{\"name\":\"E-Doc\",\"icon_name\":\"https://bb.byonchat.com/images/room_icons/ic_058.png\",\"members\":[\"2696\",\"2697\",\"2698\"]},{\"name\":\"E-Reliever\",\"icon_name\":\"https://bb.byonchat.com/images/room_icons/ic_059.png\",\"members\":[\"2775\",\"2785\"]},{\"name\":\"E-SLA\",\"icon_name\":\"https://bb.byonchat.com/images/room_icons/ic_061.png\",\"members\":[\"2613\",\"3045\",\"3055\",\"3056\",\"3336\",\"3043\",\"3049\",\"3346\",\"3347\"],\"section\":[{\"name\":\"E-SLA\",\"members\":[\"2613\",\"3045\",\"3055\",\"3056\"]},{\"name\":\"E-To Be Repair\",\"members\":[\"3336\",\"3043\",\"3049\"]},{\"name\":\"Periodic\",\"members\":[\"3346\",\"3347\"]}]},{\"name\":\"E-Performance\",\"icon_name\":\"https://bb.byonchat.com/images/room_icons/ic_061.png\",\"members\":[\"993479\",\"993480\"]}]";
+                content = "JSONnnye " + jsCOntent.toString() + "@@@" + grouping + "}";
             }
+
+            Log.w("conten", content);
+
             String realname = jsonRootObject.getString("nama_display");
             String icon = jsonRootObject.getString("icon"); // byonchat
             String backdrop = jsonRootObject.getString("backdrop")
@@ -294,7 +345,7 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                         Log.w("gg", jsonCreateType(color, textColor, description, officer, targetUrl, "1"));
                         //logout iss
 
-                     //
+                        //
                         new Validations().getInstance(getApplicationContext()).removeById(25);
 
                         Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);

@@ -145,7 +145,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
         databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
         title = getArguments().getString("aa");
 
-        urlTembak = "https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/report_sla_fu_new.php";
+        urlTembak = "https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/report_sla_fu_new.php";
         username = getArguments().getString("cc");
         idRoomTab = getArguments().getString("dd");
         myContact = getArguments().getString("ee");
@@ -169,7 +169,8 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                     kodeJJt.add(arr.getString(as).substring(arr.getString(as).indexOf("[") + 1, arr.getString(as).indexOf("]")));
                 }
 
-            } catch (Exception e) { }
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -207,18 +208,16 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
     @Override
     public void onResume() {
 
-        Log.w("apa isi argumenya", urlTembak);
         vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
             Map<String, String> params = new HashMap<>();
             params.put("username_room", username);
             params.put("bc_user", databaseHelper.getMyContact().getJabberId());
             params.put("id_rooms_tab", idRoomTab);
-            for(int i = 0; i < kodeJJt.size(); i++){
-                params.put("kode_jjt["+i+"]", kodeJJt.get(i));
+            for (int i = 0; i < kodeJJt.size(); i++) {
+                params.put("kode_jjt[" + i + "]", kodeJJt.get(i));
             }
 
-            Log.w("nhdua paramser", idRoomTab + ", --> " + username);
             getDetail(/*"https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_tobe_repair.php"*/urlTembak, params, true);
         } else {
             vRefreshList.setRefreshing(false);
@@ -244,13 +243,9 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                 params.put("username_room", username);
                 params.put("bc_user", databaseHelper.getMyContact().getJabberId());
 
-                params.put("kode_jjt",item.kode_jjt+"");
-                params.put("tanggal_submit",item.timestamp);
-//                params.put("id_pembobotan", item.id_pembobotan + "");
-//                params.put("id_section", item.id_section + "");
-//                params.put("id_subsection", item.id_subsection + "");
-
-                getMoreDetail("https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/push_sla_fu_new.php", params, true,item.title,item.timestamp);
+                params.put("kode_jjt", item.kode_jjt + "");
+                params.put("tanggal_submit", item.timestamp);
+                getMoreDetail("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/push_sla_fu_new.php", params, true, item.title, item.timestamp);
             }
         }, new OnRequestItemClickListener() {
             @Override
@@ -346,6 +341,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
+                    vRefreshList.setRefreshing(false);
                     rdialog.dismiss();
                     if (hide) {
                         try {
@@ -385,6 +381,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
 
                 },
                 error -> {
+                    vRefreshList.setRefreshing(false);
                     rdialog.dismiss();
                 }
         ) {
@@ -410,6 +407,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
+                    vRefreshList.setRefreshing(false);
                     rdialog.dismiss();
                     if (hide) {
                         Intent iii = new Intent(getContext(), PustSLAFollowUpActivity.class);
@@ -417,13 +415,14 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                         iii.putExtra("username_room", username);
                         iii.putExtra("bc_user", databaseHelper.getMyContact().getJabberId());
                         iii.putExtra("id_rooms_tab", idRoomTab);
-                        iii.putExtra("title",toTitle);
-                        iii.putExtra("subtitle",toSubtitle);
+                        iii.putExtra("title", toTitle);
+                        iii.putExtra("subtitle", toSubtitle);
                         startActivity(iii);
                     }
 
                 },
                 error -> {
+                    vRefreshList.setRefreshing(false);
                     rdialog.dismiss();
                 }
         ) {

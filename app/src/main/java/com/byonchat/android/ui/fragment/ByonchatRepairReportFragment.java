@@ -209,7 +209,7 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
                 params.put("bc_user", databaseHelper.getMyContact().getJabberId());
                 params.put("id_rooms_tab", idRoomTab);
                 params.put("task_id", item.id + "");
-                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_tobe_repair.php", params, true,item.title,item.timestamp);
+                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_tobe_repair.php", params, true, item.title, item.timestamp);
 
             }
         }, new OnRequestItemClickListener() {
@@ -307,12 +307,10 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
+                    vRefreshList.setRefreshing(false);
                     if (hide) {
                         try {
-//                            JSONArray jsonArray0 = new JSONArray(response);
                             JSONObject jsonObject = new JSONObject(response);
-//                            String status = jsonObject.getString("status");
-//                            String message = jsonObject.getString("message");
 
                             files.clear();
                             JSONArray jsonArray = new JSONArray(jsonObject.getString("value_detail"));
@@ -322,18 +320,11 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
                                 for (int i = jsonArray.length() - 1; i >= 0; i--) {
                                     JSONObject jObj = jsonArray.getJSONObject(i);
                                     String id = jObj.getString("id");
-//                                        String link_file = jObj.getString("link_file");
-//                                        String timestamp = jObj.getString("create_at");
-//                                        String bc_user_requester = jObj.getString("bc_user_requester");
                                     String timestamp = "";
                                     if (jObj.has("tanggal_submit")) {
                                         timestamp = jObj.getString("tanggal_submit");
                                     }
                                     String nama_file = jObj.getString("title");
-//                                        String history = jObj.getString("history");
-
-//                                        String id_request = new JSONArray(history).getJSONObject(0).getString("id_request");
-//                                        String id_history = new JSONArray(history).getJSONObject(new JSONArray(history).length()-1).getString("id");
 
                                     File file = new File();
                                     file.id = Long.valueOf(id);
@@ -359,6 +350,7 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
 
                 },
                 error -> {
+                    vRefreshList.setRefreshing(false);
                     rdialog.dismiss();
                 }
         ) {
@@ -385,19 +377,21 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
+                    vRefreshList.setRefreshing(false);
                     if (hide) {
                         Intent iii = new Intent(getContext(), PushRepairReportActivity.class);
                         iii.putExtra("data", response);
                         iii.putExtra("username_room", username);
                         iii.putExtra("bc_user", databaseHelper.getMyContact().getJabberId());
                         iii.putExtra("id_rooms_tab", idRoomTab);
-                        iii.putExtra("title",toTitle);
-                        iii.putExtra("subtitle",toSubtitle);
+                        iii.putExtra("title", toTitle);
+                        iii.putExtra("subtitle", toSubtitle);
                         startActivity(iii);
                     }
 
                 },
                 error -> {
+                    vRefreshList.setRefreshing(false);
                     rdialog.dismiss();
                 }
         ) {

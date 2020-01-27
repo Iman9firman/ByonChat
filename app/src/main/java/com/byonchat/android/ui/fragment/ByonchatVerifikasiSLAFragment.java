@@ -200,7 +200,6 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
     @Override
     public void onResume() {
 
-        Log.w("apadilog argumenya", urlTembak);
         vRefreshList.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
             Map<String, String> params = new HashMap<>();
@@ -211,7 +210,6 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
                 params.put("kode_jjt["+i+"]", kodeJJt.get(i));
                 Log.w("dilog paramser", "jjt."+i+": "+kodeJJt.get(i));
             }
-            Log.w("dilog paramser", idRoomTab + ", --> " + username);
             getDetail(/*"https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_tobe_repair.php"*/urlTembak, params, true);
         } else {
             vRefreshList.setRefreshing(false);
@@ -236,18 +234,8 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
                 Map<String, String> params = new HashMap<>();
                 params.put("username_room", username);
                 params.put("bc_user", databaseHelper.getMyContact().getJabberId());
-//                params.put("id_rooms_tab", idRoomTab);
-//                params.put("task_id", item.id + "");
                 params.put("kode_jjt", item.kode_jjt + "");
                 params.put("tanggal_submit",item.timestamp);
-//                params.put("id_pembobotan", item.id_pembobotan + "");
-//                params.put("id_section", item.id_section + "");
-//                params.put("id_subsection", item.id_subsection + "");
-                Log.w("Param argus","jjt: "+item.kode_jjt);
-//                Log.w("Param argus","pmb: "+item.id_pembobotan);
-//                Log.w("Param argus","sct: "+item.id_section);
-//                Log.w("Param argus","sbs: "+item.id_subsection);
-                Log.w("Parameter nya argus", username + ", " + databaseHelper.getMyContact().getJabberId() + ", " + idRoomTab + ", " + item.id);
                 getMoreDetail("https://"+ MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/push_verifikasi_sla_new.php", params, true,item.title,item.timestamp);
             }
         }, new OnRequestItemClickListener() {
@@ -345,38 +333,23 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
+                    vRefreshList.setRefreshing(false);
                     if (hide) {
                         files.clear();
                         try {
-//                            JSONArray jsonArray0 = new JSONArray(response);
                             JSONObject jsonObject = new JSONObject(response);
-//                            String status = jsonObject.getString("status");
-//                            String message = jsonObject.getString("message");
-
                             JSONArray jsonArray = new JSONArray(jsonObject.getString("value_detail"));
-
-
                             if (jsonArray.length() > 0) {
                                 for (int i = jsonArray.length() - 1; i >= 0; i--) {
                                     JSONObject jObj = jsonArray.getJSONObject(i);
-//                                    String id = jObj.getString("id");
                                     String timestamp = jObj.getString("tanggal_submit");
                                     String nama_file = jObj.getString("title");
                                     String kode_jjt = jObj.getString("kode_jjt");
-
-//                                    String id_pembobotan = jObj.getString("id_pembobotan");
-//                                    String id_section = jObj.getString("id_section");
-//                                    String id_subsection = jObj.getString("id_subsection");
-
                                     File file = new File();
                                     file.id = /*Long.valueOf(id)*/i;
                                     file.title = nama_file;
                                     file.timestamp = timestamp;
                                     file.kode_jjt = kode_jjt;
-//                                    file.id_pembobotan = id_pembobotan;
-//                                    file.id_section = id_section;
-//                                    file.id_subsection = id_subsection;
-
                                     file.url = "";
                                     file.type = "text";
                                     file.id_history = "";
@@ -397,6 +370,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
                 },
                 error -> {
+                    vRefreshList.setRefreshing(false);
                     rdialog.dismiss();
                 }
         ) {
@@ -422,6 +396,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
+                    vRefreshList.setRefreshing(false);
                     rdialog.dismiss();
                     if (hide) {
                         Intent iii = new Intent(getContext(), PushSLAVerificationActivity.class);
@@ -436,6 +411,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
                 },
                 error -> {
+                    vRefreshList.setRefreshing(false);
                     rdialog.dismiss();
                 }
         ) {

@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -343,7 +344,6 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
-                    Log.w("ijdilog",response);
                     rdialog.dismiss();
                     if (hide) {
                         files.clear();
@@ -388,7 +388,6 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            Log.w("sadilog",e.getMessage());
                         }
 
                         mAdapter.setItems(files);
@@ -398,7 +397,6 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
                 },
                 error -> {
-                    Log.w("ierjdilog",error);
                     rdialog.dismiss();
                 }
         ) {
@@ -409,6 +407,9 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
                 return params2;
             }
         };
+        sr.setRetryPolicy(new DefaultRetryPolicy(180000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(sr);
     }
 
@@ -421,7 +422,6 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
-            Log.w("res dilog",response);
                     rdialog.dismiss();
                     if (hide) {
                         Intent iii = new Intent(getContext(), PushSLAVerificationActivity.class);
@@ -436,7 +436,6 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
 
                 },
                 error -> {
-                    Log.w("err dilog",error);
                     rdialog.dismiss();
                 }
         ) {
@@ -447,6 +446,9 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
                 return params2;
             }
         };
+        sr.setRetryPolicy(new DefaultRetryPolicy(180000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(sr);
     }
 }

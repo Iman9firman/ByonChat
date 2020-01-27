@@ -10,6 +10,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9043,26 +9044,32 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
     private void refreshMethod() {
 
-        if (username != null) {
-            if (fromList.equalsIgnoreCase("hide")) {
-                new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
-            } else if (fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
-                if (!idDetail.equalsIgnoreCase("")) {
-                    String[] ff = idDetail.split("\\|");
-                    if (ff.length == 2) {
-                        new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail);
+        if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+            if (username != null) {
+                if (fromList.equalsIgnoreCase("hide")) {
+                    new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULL, username, idTab, idDetail);
+                } else if (fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
+                    if (!idDetail.equalsIgnoreCase("")) {
+                        String[] ff = idDetail.split("\\|");
+                        if (ff.length == 2) {
+                            new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, idDetail);
+                        } else {
+                            new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
+                        }
                     } else {
-                        new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
+                        if (fromList.equalsIgnoreCase("showMultiple")) {
+                            new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
+                        }
                     }
                 } else {
-                    if (fromList.equalsIgnoreCase("showMultiple")) {
-                        new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
-                    }
+                    new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
                 }
             } else {
-                new DinamicSLATaskActivity.Refresh(DinamicSLATaskActivity.this).execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + GETTABDETAIL, username, idTab, "");
+                finish();
             }
+
         } else {
+            Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show();
             finish();
         }
 
@@ -9858,9 +9865,9 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
                         if (idListTaskMasterForm.equalsIgnoreCase("66986")) {
                             if (valueIdValue.getTypes().equalsIgnoreCase("insert")) {
-                                adapter.insertDB(valueIdValue.getIdDetail().split(";")[0], valueIdValue.getIdDetail().split(";")[1], 0, f.getAbsolutePath(), null);
+                                insertDB(valueIdValue.getIdDetail().split(";")[0], valueIdValue.getIdDetail().split(";")[1], 0, f.getAbsolutePath(), null);
                             } else {
-                                adapter.updateDB(valueIdValue.getIdDetail().split(";")[0], valueIdValue.getIdDetail().split(";")[1], Integer.valueOf(valueIdValue.getExpandedListText()), f.getAbsolutePath(), null);
+                                updateDB(valueIdValue.getIdDetail().split(";")[0], valueIdValue.getIdDetail().split(";")[1], Integer.valueOf(valueIdValue.getExpandedListText()), f.getAbsolutePath(), null);
                             }
                             Fragment frag = getSupportFragmentManager().findFragmentById(R.id.container_sla);
                             if (frag instanceof ZhFourFragment) {
@@ -11193,31 +11200,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             ccc = jsonDuaObject(content, attachment, "", jsonObject.toString(), context.getResources().getString(R.string.app_version));
                         }
 
-                        /*String bawaDariBelakang = "";
-                        if (jsonRootObject.has("anothers")) {
-                            JSONObject tambahan = new JSONObject("{}");
-                            if (jsonRootObject.has("alasan_reject")) {
-                                if (jsonRootObject.has("anothers")) {
-                                    String anothers = jsonRootObject.getString("anothers");
-                                    if (!anothers.equalsIgnoreCase("[]")) {
-                                        tambahan = new JSONObject(anothers);
-                                        if (jsonRootObject.toString().contains("\"alasan_reject\": {")) {
-                                            if (jsonRootObject.getJSONObject("alasan_reject").has("message")) {
-                                                tambahan.put("message", jsonRootObject.getJSONObject("alasan_reject").getString("message"));
-                                                bawaDariBelakang = tambahan.toString();
-                                            } else {
-                                                bawaDariBelakang = "{}";
-                                            }
-                                        } else {
-                                            bawaDariBelakang = "{}";
-                                        }
-                                    } else {
-                                        bawaDariBelakang = "{}";
-                                    }
-                                }
-                            }
-                        }
-*/
+
                         //sukses honda 6281808785547
                         String bawaDariBelakang = "";
                         if (jsonRootObject.has("anothers")) {
@@ -13196,6 +13179,46 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         }
         return null;
     }
+
+    public void insertDB(String idDetail, String id, int value, String image, String comment) {
+        RadioButtonCheckDB database = new RadioButtonCheckDB(activity);
+        SQLiteDatabase db = database.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID, id);
+        values.put(COLUMN_ID_DETAIL, idDetail);
+        values.put(COLUMN_OK, value);
+        if (image != null) {
+            values.put(COLUMN_IMG, image);
+        }
+        if (comment != null) {
+            values.put(COLUMN_COMMENT, comment);
+        }
+        db.insert(TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public void updateDB(String idDetail, String id, int value, String image, String comment) {
+        RadioButtonCheckDB database = new RadioButtonCheckDB(activity);
+        SQLiteDatabase db = database.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        if (image != null) {
+            values.put(COLUMN_IMG, image);
+        }
+
+        if (comment != null) {
+            values.put(COLUMN_COMMENT, comment);
+        }
+
+        if (image == null && comment == null) {
+            values.put(COLUMN_OK, value);
+        }
+
+        db.update(TABLE_NAME, values, COLUMN_ID_DETAIL + " = '" + idDetail + "' AND " + COLUMN_ID + " =?",
+                new String[]{String.valueOf(id)});
+    }
+
 }
 
 

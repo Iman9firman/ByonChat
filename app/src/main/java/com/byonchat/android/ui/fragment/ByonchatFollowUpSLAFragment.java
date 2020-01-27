@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
@@ -348,12 +349,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                     rdialog.dismiss();
                     if (hide) {
                         try {
-                            Log.w("staywitme",response);
-//                            JSONArray jsonArray0 = new JSONArray(response);
                             JSONObject jsonObject = new JSONObject(response);
-//                            String status = jsonObject.getString("status");
-//                            String message = jsonObject.getString("message");
-
                             files.clear();
                             JSONArray jsonArray = new JSONArray(jsonObject.getString("value_detail"));
 
@@ -361,18 +357,10 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                             if (jsonArray.length() > 0) {
                                 for (int i = jsonArray.length() - 1; i >= 0; i--) {
                                     JSONObject jObj = jsonArray.getJSONObject(i);
-//                                    String id = jObj.getString("id");
                                     String timestamp = jObj.getString("tanggal_submit");
                                     String nama_file = jObj.getString("title");
 
                                     String kode_jjt = jObj.getString("kode_jjt");
-//                                    String id_pembobotan = jObj.getString("id_pembobotan");
-//                                    String id_section = jObj.getString("id_section");
-//                                    String id_subsection = jObj.getString("id_subsection");
-
-//                                        String id_request = new JSONArray(history).getJSONObject(0).getString("id_request");
-//                                        String id_history = new JSONArray(history).getJSONObject(new JSONArray(history).length()-1).getString("id");
-
                                     File file = new File();
                                     file.id = i;
                                     file.title = nama_file;
@@ -383,10 +371,6 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                                     file.description = "";
                                     file.nama_requester = "";
                                     file.kode_jjt = kode_jjt;
-//                                    file.id_pembobotan = id_pembobotan;
-//                                    file.id_section = id_section;
-//                                    file.id_subsection = id_subsection;
-
                                     files.add(file);
                                 }
 
@@ -401,7 +385,6 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
 
                 },
                 error -> {
-                    Log.w("staywitme 2",error);
                     rdialog.dismiss();
                 }
         ) {
@@ -412,6 +395,9 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                 return params2;
             }
         };
+        sr.setRetryPolicy(new DefaultRetryPolicy(180000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(sr);
     }
 
@@ -424,7 +410,6 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
-            Log.w("Nangkringbocah", response);
                     rdialog.dismiss();
                     if (hide) {
                         Intent iii = new Intent(getContext(), PustSLAFollowUpActivity.class);
@@ -439,7 +424,6 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
 
                 },
                 error -> {
-                    Log.w("Nangkringbocah 2", error);
                     rdialog.dismiss();
                 }
         ) {
@@ -450,6 +434,9 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                 return params2;
             }
         };
+        sr.setRetryPolicy(new DefaultRetryPolicy(180000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(sr);
     }
 }

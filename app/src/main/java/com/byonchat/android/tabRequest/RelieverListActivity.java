@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -159,103 +160,7 @@ public class RelieverListActivity extends AppCompatActivity {
             btn_submit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.w("malam", "ini");
                     getVolley();
-                    /*try {
-                        String url = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/api_submit_realiver_iss.php";
-                        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
-                                        Log.w("cariLL", response);
-                                    }
-                                },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Log.w("cariLL22", "Jowh");
-                                    }
-                                }
-                        ) {
-                            @Override
-                            protected Map<String, String> getParams() {
-                                JSONObject jsonObject7 = new JSONObject();
-                                JSONObject jsonObject1 = new JSONObject();
-                                JSONObject jsonObject3 = new JSONObject();
-                                JSONObject jsonObject4 = new JSONObject();
-                                JSONObject jsonObject2 = new JSONObject();
-                                JSONObject jsonObject5 = new JSONObject();
-                                JSONObject jsonObject6 = new JSONObject();
-                                JSONObject jsonObject8 = new JSONObject();
-                                JSONObject jsonObject9 = new JSONObject();
-                                try {
-
-                                    jsonObject1.put("value", "lokasi");
-                                    jsonObject1.put("type", "text");
-
-
-                                    jsonObject2.put("value", "15:00");
-                                    jsonObject2.put("type", "text");
-
-
-                                    jsonObject3.put("value", "15:00");
-                                    jsonObject3.put("type", "text");
-
-
-                                    jsonObject4.put("value", "15:00");
-                                    jsonObject4.put("type", "text");
-
-
-
-                                    jsonObject5.put("value", "15:00");
-                                    jsonObject5.put("type", "text");
-
-
-
-                                    jsonObject6.put("value", "15:00");
-                                    jsonObject6.put("type", "text");
-
-
-
-                                    jsonObject7.put("value", "15:00");
-                                    jsonObject7.put("type", "text");
-
-
-                                    jsonObject8.put("value", "15:00");
-                                    jsonObject8.put("type", "number");
-
-                                    jsonObject9.put("value", "15:00");
-                                    jsonObject9.put("type", "textarea");
-
-
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                Map<String, String> params = new HashMap<String, String>();
-
-                                params.put("lokasi", jsonObject1.toString());
-                                params.put("jenis_pekerjaan", jsonObject2.toString());
-                                params.put("tanggal_mulai",jsonObject3.toString());
-                                params.put("tanggal_selesai", jsonObject4.toString());
-                                params.put("jam_mulai",jsonObject5.toString());
-                                params.put("jam_selesai", jsonObject6.toString());
-                                params.put("jumlah", jsonObject7.toString());
-                                params.put("keterangan",jsonObject8.toString());
-                                params.put("value",jsonObject9.toString());
-
-                                return params;
-                            }
-                        };
-
-                        Application.getInstance().addToRequestQueue(postRequest);
-
-                    } catch (Exception e) {
-                        Log.w("kardus", e.getMessage());
-                    }*/
-
-
                 }
             });
         } else {
@@ -368,6 +273,9 @@ public class RelieverListActivity extends AppCompatActivity {
                 return params;
             }
         };
+        sr.setRetryPolicy(new DefaultRetryPolicy(180000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(sr);
     }
 

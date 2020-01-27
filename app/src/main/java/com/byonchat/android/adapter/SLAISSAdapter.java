@@ -103,8 +103,8 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         this.idDetailForm = idDetailForm;
         this.mMultiLevelRecyclerView = multiLevelRecyclerView;
         this.listener = counterListener;
-        database = new RadioButtonCheckDB(activity);
         listener.onChecked(getCountDB(idDetailForm));
+        database = new RadioButtonCheckDB(activity);
     }
 
     public interface CountCheckerListener {

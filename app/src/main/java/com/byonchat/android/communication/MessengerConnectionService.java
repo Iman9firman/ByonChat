@@ -49,6 +49,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -573,6 +574,9 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                                     }
                                 };
 
+                                postRequest.setRetryPolicy(new DefaultRetryPolicy(180000,
+                                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                                 Application.getInstance().addToRequestQueue(postRequest);
 
                             } catch (Exception e) {
@@ -581,7 +585,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
                     } else {
                         requestLocationUpdates(false);
-                        Log.w("laporPak", "no");
                     }
 
                     Contact contact = databaseHelper.getMyContact();

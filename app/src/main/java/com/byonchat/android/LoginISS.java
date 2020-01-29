@@ -61,6 +61,8 @@ public class LoginISS extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_for_iss_room);
+        pd = new ProgressDialog(LoginISS.this);
+        pd.setMessage("Please Wait");
 
         if (Build.VERSION.SDK_INT >= 21) {
             getWindow().setNavigationBarColor(getResources().getColor(R.color.iss_default));
@@ -93,9 +95,10 @@ public class LoginISS extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please enter your password!", Toast.LENGTH_SHORT).show();
                     passID.setError("Can't Empty");
                 } else {
-                    pd = new ProgressDialog(LoginISS.this);
-                    pd.setMessage("Please Wait");
-                    pd.show();
+                    if (pd != null) {
+                        pd.show();
+                    }
+
                     Map<String, String> params = new HashMap<>();
                     params.put("username", userID.getText().toString());
                     params.put("password", passID.getText().toString());
@@ -124,11 +127,19 @@ public class LoginISS extends AppCompatActivity {
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     if (hide) {
+                        if (pd != null) {
+                            pd.dismiss();
+                        }
                         try {
                             JSONObject jsonRootObject = new JSONObject(response);
-                            parseJSON(response, jsonRootObject.getString("json_iss"));
+                            if (jsonRootObject.has("json_iss")) {
+                                parseJSON(response, jsonRootObject.getString("json_iss"));
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Sunfish Return Not Valid", Toast.LENGTH_SHORT).show();
+                            }
+
                         } catch (JSONException e) {
-                            pd.dismiss();
+
                             Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
@@ -137,7 +148,9 @@ public class LoginISS extends AppCompatActivity {
                 },
                 error -> {
                     Toast.makeText(getApplicationContext(), "Please Try Again : because, " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    pd.dismiss();
+                    if (pd != null) {
+                        pd.dismiss();
+                    }
                 }
         ) {
 
@@ -150,17 +163,16 @@ public class LoginISS extends AppCompatActivity {
         sr.setRetryPolicy(new RetryPolicy() {
             @Override
             public int getCurrentTimeout() {
-                return 50000;
+                return 180000;
             }
 
             @Override
             public int getCurrentRetryCount() {
-                return 50000;
+                return 180000;
             }
 
             @Override
             public void retry(VolleyError error) throws VolleyError {
-                Log.e("HttpClient", "error: " + error.toString());
                 Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -257,7 +269,9 @@ public class LoginISS extends AppCompatActivity {
                 Intent ii = LoadingGetTabRoomActivity.generateISS(getApplicationContext(), allres, username);
                 startActivity(ii);
                 finish();
-                pd.dismiss();
+                if (pd != null) {
+                    pd.dismiss();
+                }
             } else {
                 Toast.makeText(LoginISS.this, "Username dan password anda salah", Toast.LENGTH_LONG).show();
             }

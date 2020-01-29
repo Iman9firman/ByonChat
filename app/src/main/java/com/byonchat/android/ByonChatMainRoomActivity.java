@@ -207,7 +207,6 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
                 ArrayList<RoomsDetail> listItem3 = Byonchat.getBotListDB().allRoomDetailFormWithFlag(aa.getId(), value.get(1).toString(), value.get(2).toString(), "list");
                 for (RoomsDetail ii : listItem3) {
                     if (ii.getFlag_content().equalsIgnoreCase("1")) {
-                        Log.w("2abub", ii.getContent());
                         JSONObject jO = null;
                         try {
                             jO = new JSONObject(ii.getContent());
@@ -335,7 +334,6 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
                 ArrayList<RoomsDetail> listItem3 = Byonchat.getBotListDB().allRoomDetailFormWithFlag(aa.getId(), value.get(1).toString(), value.get(2).toString(), "list");
                 for (RoomsDetail ii : listItem3) {
                     if (ii.getFlag_content().equalsIgnoreCase("1")) {
-                        Log.w("2abub", ii.getContent());
                         JSONObject jO = null;
                         try {
                             jO = new JSONObject(ii.getContent());

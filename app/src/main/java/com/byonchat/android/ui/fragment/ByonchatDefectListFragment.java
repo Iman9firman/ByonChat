@@ -47,11 +47,13 @@ import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.ui.activity.ByonchatDetailDefectActivity;
 import com.byonchat.android.ui.activity.ByonchatPDFPreviewActivity;
+import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
 import com.byonchat.android.ui.adapter.ByonchatDefectListAdapter;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
+import com.byonchat.android.utils.ValidationsKey;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -224,7 +226,7 @@ public class ByonchatDefectListFragment extends Fragment implements SwipeRefresh
                 params.put("parent_id",item._id+"");
                 params.put("id_list_push",item.id+"");
 
-                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/list_task_defect_multiple.php",params,true, item.id+"|"+item._id);
+                getMoreDetail(new ValidationsKey().getInstance(getContext()).getTargetUrl()+"/bc_voucher_client/webservice/category_tab/list_task_defect_multiple.php",params,true, item.id+"|"+item._id);
             }
         });
 

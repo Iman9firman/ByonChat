@@ -424,7 +424,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     protected void resolveFragment() {
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        Log.w("CEK WV GANDHIP", category + "  -  " + title);
         if (cur.getCount() > 0) {
             try {
                 if (category.equalsIgnoreCase("1")) {
@@ -439,7 +438,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     show = true;
                     mFragment = FragmentMyVideo.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, "", false, MainByonchatRoomBaseActivity.this);
                 } else if (category.equalsIgnoreCase("4")) {
-                    Log.w("kabadu", url_tembak + " - " + include_pull);
                     if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);

@@ -110,6 +110,7 @@ import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.PermanentLoggerUtil;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Utility;
+import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.BadgeView;
 import com.eightbitlab.supportrenderscriptblur.SupportRenderScriptBlur;
 import com.google.gson.Gson;

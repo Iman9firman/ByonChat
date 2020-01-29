@@ -31,8 +31,6 @@ public class Constants extends AppCompatActivity {
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 124;
 
-    public static final String DOWNLOAD_URL_WO_PARAM = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/video_local.php";
-    public static final String DOWNLOAD_URL_W_PARAM = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/video_local.php?keywords=";
 
     public static final String URLLAPORSELECTED = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/selectapop.php";
 

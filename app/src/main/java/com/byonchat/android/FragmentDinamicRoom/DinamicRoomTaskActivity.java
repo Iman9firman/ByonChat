@@ -125,6 +125,7 @@ import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.tempSchedule.MyEventDatabase;
+import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.GPSTracker;
@@ -5403,7 +5404,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
                                 JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                 if (values.has("value")) {
-                                    Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
+                                    Picasso.with(context).load(new ValidationsKey().getInstance(context).getTargetUrl()+"/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
                                 }
                             }
                         }

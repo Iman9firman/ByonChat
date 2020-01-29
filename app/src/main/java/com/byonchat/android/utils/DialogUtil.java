@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.model.Image;
+import com.byonchat.android.ui.activity.MainActivityNew;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -167,9 +168,8 @@ public class DialogUtil {
         ss.setText(viewTitle != null ? viewTitle : "");
         viewHarga.setText(viewMessage != null ? viewMessage : "");
         iama.setVisibility(View.VISIBLE);
-        Picasso.with(activity).load("https://bb.byonchat.com/bc_voucher_client/images/list_task/" + title.split(";")[0]).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(iam);
+        Picasso.with(activity).load(new ValidationsKey().getInstance(activity).getTargetUrl()+"/bc_voucher_client/images/list_task/" + title.split(";")[0]).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(iam);
 
-        Log.w("od", "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + title.split(";")[0]);
         tvN.setVisibility(View.GONE);
         if (message.equalsIgnoreCase("")) {
             viewHarga.setVisibility(View.GONE);
@@ -182,7 +182,7 @@ public class DialogUtil {
             public void onClick(View v) {
                 //
                 Intent intent = new Intent(activity, ZoomImageViewActivity.class);
-                intent.putExtra(ZoomImageViewActivity.KEY_FILE, "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + title.split(";")[0]);
+                intent.putExtra(ZoomImageViewActivity.KEY_FILE, new ValidationsKey().getInstance(activity).getTargetUrl()+"/bc_voucher_client/images/list_task/" + title.split(";")[0]);
                 activity.startActivity(intent);
             }
         });

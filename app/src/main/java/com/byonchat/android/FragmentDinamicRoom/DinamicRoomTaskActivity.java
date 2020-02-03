@@ -37,12 +37,12 @@ import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.appbar.AppBarLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -152,7 +152,6 @@ import com.squareup.picasso.Picasso;
 import com.tokenautocomplete.FilteredArrayAdapter;
 import com.tokenautocomplete.TokenCompleteTextView;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
-import com.wang.avi.AVLoadingIndicatorView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -197,14 +196,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import de.measite.minidns.Record;
 import io.github.memfis19.annca.Annca;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import zharfan.com.cameralibrary.Camera;
@@ -810,7 +807,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             HtmlTextView htmlTextView = (HtmlTextView) linearLayout.findViewById(R.id.value);
                                             htmlTextView.setTextIsSelectable(true);
 
-                                            AVLoadingIndicatorView progress = (AVLoadingIndicatorView) linearLayout.findViewById(R.id.loader_progress);
+                                            com.github.ybq.android.spinkit.SpinKitView progress = (com.github.ybq.android.spinkit.SpinKitView) linearLayout.findViewById(R.id.loader_progress);
 
                                             if (!value.equalsIgnoreCase("")) {
                                                 SaveMedia saveMedia = new SaveMedia();
@@ -844,7 +841,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.image_loader_layout_form, null);
 
                                             final ImageView imageView = (ImageView) linearLayout.findViewById(R.id.value);
-                                            final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) linearLayout.findViewById(R.id.loader_progress);
+                                            final com.github.ybq.android.spinkit.SpinKitView progress = (com.github.ybq.android.spinkit.SpinKitView) linearLayout.findViewById(R.id.loader_progress);
 
                                             Picasso.with(context).load(value).into(imageView);
 
@@ -2247,7 +2244,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
                             final HtmlTextView valueFile = (HtmlTextView) linearEstimasi[count].findViewById(R.id.value);
-                            AVLoadingIndicatorView progress = (AVLoadingIndicatorView) linearEstimasi[count].findViewById(R.id.loader_progress);
+                            com.github.ybq.android.spinkit.SpinKitView progress = (com.github.ybq.android.spinkit.SpinKitView) linearEstimasi[count].findViewById(R.id.loader_progress);
 
                             final int finalI = i;
                             valueFile.addTextChangedListener(new TextWatcher() {
@@ -3698,7 +3695,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             params.setMargins(5, 15, 0, 0);
                             final ImageView imageView = (ImageView) imgLayout.findViewById(R.id.value);
                             imageView.setLayoutParams(params);
-                            final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) imgLayout.findViewById(R.id.loader_progress);
+                            final com.github.ybq.android.spinkit.SpinKitView progress = (com.github.ybq.android.spinkit.SpinKitView) imgLayout.findViewById(R.id.loader_progress);
                             valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                             linearLayout.addView(imgLayout);
                             hashMap.put(Integer.parseInt(idListTask), valSetOne);
@@ -7543,7 +7540,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                             }
 
                                             if (arrayAdapter.getCount() == 0) {
-                                                android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(DinamicRoomTaskActivity.this);
+                                                androidx.appcompat.app.AlertDialog.Builder alertDialogBuilder = new androidx.appcompat.app.AlertDialog.Builder(DinamicRoomTaskActivity.this);
                                                 alertDialogBuilder.setMessage("Kode Pos not valid");
 
                                                 alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -7557,7 +7554,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                     }
                                                 });
 
-                                                android.support.v7.app.AlertDialog alertDialog = alertDialogBuilder.create();
+                                                androidx.appcompat.app.AlertDialog alertDialog = alertDialogBuilder.create();
                                                 alertDialog.show();
                                             } else if (arrayAdapter.getCount() == 1) {
 
@@ -7586,7 +7583,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                             } else {
 
-                                                android.support.v7.app.AlertDialog.Builder builderSingle = new android.support.v7.app.AlertDialog.Builder(DinamicRoomTaskActivity.this);
+                                                androidx.appcompat.app.AlertDialog.Builder builderSingle = new androidx.appcompat.app.AlertDialog.Builder(DinamicRoomTaskActivity.this);
                                                 builderSingle.setTitle("Pilih kelurahan ");
 
                                                 builderSingle.setNegativeButton(
@@ -8656,7 +8653,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         params.setMargins(5, 15, 0, 0);
                         final ImageView imageView = (ImageView) imgLayout.findViewById(R.id.value);
                         imageView.setLayoutParams(params);
-                        final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) imgLayout.findViewById(R.id.loader_progress);
+                        final com.github.ybq.android.spinkit.SpinKitView progress = (com.github.ybq.android.spinkit.SpinKitView) imgLayout.findViewById(R.id.loader_progress);
                         valSetOne.add(String.valueOf(linearLayout.getChildCount()));
                         linearLayout.addView(imgLayout);
                         hashMap.put(Integer.parseInt(idListTask), valSetOne);
@@ -12044,10 +12041,10 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
     private static class MyTaskParams {
         HtmlTextView textView;
-        AVLoadingIndicatorView progress;
+        com.github.ybq.android.spinkit.SpinKitView progress;
         String url;
 
-        MyTaskParams(HtmlTextView _bar, AVLoadingIndicatorView _progress, String _url) {
+        MyTaskParams(HtmlTextView _bar, com.github.ybq.android.spinkit.SpinKitView _progress, String _url) {
             this.textView = _bar;
             this.progress = _progress;
             this.url = _url;
@@ -12061,11 +12058,11 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             this.textView = textView;
         }
 
-        public AVLoadingIndicatorView getProgress() {
+        public com.github.ybq.android.spinkit.SpinKitView getProgress() {
             return progress;
         }
 
-        public void setProgress(AVLoadingIndicatorView progress) {
+        public void setProgress(com.github.ybq.android.spinkit.SpinKitView progress) {
             this.progress = progress;
         }
 

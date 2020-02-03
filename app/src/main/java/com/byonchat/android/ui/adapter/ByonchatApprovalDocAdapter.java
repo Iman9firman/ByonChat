@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -16,7 +16,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.byonchat.android.R;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.ui.viewholder.ByonchatApprovalDocViewHolder;
@@ -26,8 +25,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import me.gujun.android.taggroup.TagGroup;
 
 public class ByonchatApprovalDocAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 

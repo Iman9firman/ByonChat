@@ -1,7 +1,7 @@
 package com.byonchat.android.data.remote;
 
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.byonchat.android.BuildConfig;
 import com.byonchat.android.local.Byonchat;

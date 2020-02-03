@@ -21,8 +21,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Rect;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView.ViewHolder;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.view.ViewGroup;
 

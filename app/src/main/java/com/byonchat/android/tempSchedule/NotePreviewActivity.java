@@ -10,17 +10,16 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
-import com.byonchat.android.FragmentDinamicRoom.RoomPOSdetail;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.createMeme.FilteringImage;
@@ -28,11 +27,9 @@ import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.room.DividerItemDecoration;
-import com.byonchat.android.room.FragmentRoomMultipleTask;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
-import com.byonchat.android.utils.Validations;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -58,10 +55,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public class NotePreviewActivity extends AppCompatActivity {
 

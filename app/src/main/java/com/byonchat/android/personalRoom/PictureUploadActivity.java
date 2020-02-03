@@ -145,6 +145,7 @@ public class PictureUploadActivity extends Activity {
             HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
 
             try {
+
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
                         new AndroidMultiPartEntity.ProgressListener() {
 

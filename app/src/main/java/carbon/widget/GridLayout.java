@@ -13,9 +13,9 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -52,7 +52,7 @@ import carbon.shadow.ShadowView;
  * A GridLayout implementation with support for material features including shadows, ripples, rounded
  * corners, insets, custom drawing order, touch margins, state animators and others.
  */
-public class GridLayout extends android.support.v7.widget.GridLayout implements ShadowView, RippleView, TouchMarginView, StateAnimatorView, AnimatedView, InsetView, CornerView {
+public class GridLayout extends androidx.gridlayout.widget.GridLayout implements ShadowView, RippleView, TouchMarginView, StateAnimatorView, AnimatedView, InsetView, CornerView {
 
     private boolean debugMode;
 
@@ -792,7 +792,7 @@ public class GridLayout extends android.support.v7.widget.GridLayout implements 
         }
     }
 
-    public static class LayoutParams extends android.support.v7.widget.GridLayout.LayoutParams {
+    public static class LayoutParams extends androidx.gridlayout.widget.GridLayout.LayoutParams {
         public int anchorView;
         private int anchorGravity;
 
@@ -813,7 +813,7 @@ public class GridLayout extends android.support.v7.widget.GridLayout implements 
             super(rowSpec, columnSpec);
         }
 
-        public LayoutParams(android.support.v7.widget.GridLayout.LayoutParams source) {
+        public LayoutParams(androidx.gridlayout.widget.GridLayout.LayoutParams source) {
             super(source);
         }
 

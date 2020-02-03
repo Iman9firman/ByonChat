@@ -1,6 +1,6 @@
 package com.byonchat.android.helpers;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.provider.Message;

@@ -13,16 +13,13 @@ import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -38,18 +35,13 @@ import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.data.model.File;
-import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
-import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
-import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.MediaProcessingUtil;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -71,12 +63,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import zharfan.com.cameralibrary.Camera;
@@ -458,7 +446,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("id_rooms_tab", new StringBody(id_room));
                 entity.addPart("id_list_task", new StringBody(id_list));
-                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("value", new FileBody(sourceFile, contentType.toString(), sourceFile.getName()));
 
 
                 totalSize = entity.getContentLength();
@@ -590,7 +578,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("bc_user", new StringBody(bc_user));
                 entity.addPart("id_rooms_tab", new StringBody(id_room));
-                entity.addPart("json", new FileBody(gpxfile, contentType, gpxfile.getName()));
+                entity.addPart("json", new FileBody(gpxfile, contentType.toString(), gpxfile.getName()));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

@@ -1,11 +1,10 @@
 package com.byonchat.android.adapter;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.byonchat.android.FragmentSetting.AboutSettingFragment;
-import com.byonchat.android.FragmentSetting.NotificationSettingFragment;
 import com.byonchat.android.FragmentSetting.ProfileSettingFragment;
 
 /**

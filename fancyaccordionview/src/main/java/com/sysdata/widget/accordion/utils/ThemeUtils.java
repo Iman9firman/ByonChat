@@ -19,7 +19,7 @@ package com.sysdata.widget.accordion.utils;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.AttrRes;
+import androidx.annotation.AttrRes;
 
 public final class ThemeUtils {
 

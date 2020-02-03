@@ -1,13 +1,10 @@
 package com.byonchat.android.utils;
 
-import android.app.Activity;
-import android.app.DownloadManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,24 +18,19 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.byonchat.android.ConversationGroupActivity;
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.config.Utils;
 import com.byonchat.android.config.WsConfig;
-import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseHelper;
-import com.byonchat.android.provider.Files;
-import com.byonchat.android.provider.FilesDatabaseHelper;
 import com.byonchat.android.provider.FilesURL;
 import com.byonchat.android.provider.FilesURLDatabaseHelper;
 import com.byonchat.android.provider.Interval;
@@ -51,7 +43,6 @@ import com.byonchat.android.provider.SubmitingRoomDB;
 import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.videotrimmer.interfaces.ConvertTaskCompleted;
 import com.byonchat.android.videotrimmer.utils.RequestConvertTask;
-import com.byonchat.android.videotrimmer.videocompressor.MediaController;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -63,7 +54,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.FormBodyPart;
@@ -103,7 +93,6 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.GETTABDETAILPULLMULTIPLE;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POSDETAIL;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POST_FOTO;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLDETAIL;
@@ -812,7 +801,7 @@ public class UploadService extends IntentService {
                     if (bp != null) {
                         ByteArrayOutputStream bos = new ByteArrayOutputStream();
                         bp.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                        FormBodyPart fbp = new FormBodyPart("file", new ByteArrayBody(bos.toByteArray(), contentType, fileToSend.getName()));
+                        FormBodyPart fbp = new FormBodyPart("file", new ByteArrayBody(bos.toByteArray(), contentType.toString(), fileToSend.getName()));
                         entity.addPart(fbp);
                     } else {
                         FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
@@ -826,7 +815,7 @@ public class UploadService extends IntentService {
                         sendBroadcast(intent);
                     }
                 } else if (this.type.equals(Message.TYPE_VIDEO)) {
-                    entity.addPart("file", new FileBody(fileToSend, contentType, fileToSend.getName()));
+                    entity.addPart("file", new FileBody(fileToSend, contentType.toString(), fileToSend.getName()));
                 }
 
                 entity.addPart("session", new StringBody(sessionId));
@@ -1308,7 +1297,7 @@ public class UploadService extends IntentService {
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("id_rooms_tab", new StringBody(id_room));
                 entity.addPart("id_list_task", new StringBody(id_list));
-                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("value", new FileBody(sourceFile, contentType.toString(), sourceFile.getName()));
 
 
                 totalSize = entity.getContentLength();

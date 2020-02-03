@@ -1,53 +1,32 @@
 package com.byonchat.android;
 
 import android.app.ProgressDialog;
-import android.content.ContentUris;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
-import android.support.v4.util.LruCache;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.byonchat.android.provider.FilesURL;
 import com.byonchat.android.provider.FilesURLDatabaseHelper;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
-import com.byonchat.android.utils.ImageFilePath;
-import com.byonchat.android.utils.ImageLoadingUtils;
 import com.byonchat.android.utils.MediaProcessingUtil;
-import com.byonchat.android.utils.TouchImageView;
 import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.videotrimmer.K4LVideoTrimmer;
 import com.byonchat.android.videotrimmer.interfaces.OnK4LVideoListener;
 import com.byonchat.android.videotrimmer.interfaces.OnTrimVideoListener;
-import com.byonchat.android.videotrimmer.videocompressor.MediaController;
-import com.byonchat.android.widget.VideoSlaceSeekBar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Date;
 
 /**

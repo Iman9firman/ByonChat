@@ -1,24 +1,18 @@
 package com.byonchat.android;
 
-import android.database.Cursor;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.tabs.TabLayout;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import com.byonchat.android.adapter.SettingMainAdapter;
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.helpers.Constants;
-import com.byonchat.android.provider.IntervalDB;
-import com.byonchat.android.provider.Skin;
 
 public class MainSettingActivity extends AppCompatActivity {
 

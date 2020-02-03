@@ -1,24 +1,18 @@
 package com.byonchat.android.ui.activity;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.helpers.Constants;
-
-import java.util.ArrayList;
 
 import me.grantland.widget.AutofitHelper;
 

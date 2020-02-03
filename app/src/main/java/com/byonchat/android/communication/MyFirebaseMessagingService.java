@@ -1,29 +1,14 @@
 package com.byonchat.android.communication;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
+import androidx.core.app.NotificationCompat;
+
 import android.util.Log;
 
-import com.byonchat.android.MainActivity;
-import com.byonchat.android.R;
 import com.byonchat.android.utils.UploadService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Calendar;
 import java.util.Map;
 
 /**

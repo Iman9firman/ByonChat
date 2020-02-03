@@ -8,10 +8,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,28 +38,27 @@ public class CountryListSelectorActivity extends AppCompatActivity {
     private int color = 0;
     ArrayList<Country> arraylist = new ArrayList<Country>();
     ImageButton btn_search;
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.county_list);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         color = getResources().getColor(R.color.colorPrimary);
-        Bitmap back_default = FilteringImage.headerColor(getWindow(),CountryListSelectorActivity.this, color);
+        Bitmap back_default = FilteringImage.headerColor(getWindow(), CountryListSelectorActivity.this, color);
         Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             toolbar.setBackground(back_draw_default);
-        }else{
+        } else {
             toolbar.setBackgroundDrawable(back_draw_default);
         }
 
-        lv  =   (ListView) findViewById(android.R.id.list);
+        lv = (ListView) findViewById(R.id.list);
         name = Country.title;
         code = Country.code;
         setSupportActionBar(toolbar);
 
-        for (int i = 0; i < name.length; i++)
-        {
+        for (int i = 0; i < name.length; i++) {
             Country country = new Country(name[i], code[i]);
             // Binds all strings into an array
             arraylist.add(country);
@@ -72,15 +73,14 @@ public class CountryListSelectorActivity extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> arg0,
-                                    View arg1, int position, long arg3)
-            {
+                                    View arg1, int position, long arg3) {
 
                 Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
                 intent.putExtra(RegistrationActivity.BUNDLE_KEY_CODE,
-                        ( adapter.newList().get(position).getCodeContry().replaceFirst("\\+","")));
+                        (adapter.newList().get(position).getCodeContry().replaceFirst("\\+", "")));
                 intent.putExtra(RegistrationActivity.BUNDLE_KEY_NAME,
-                        ( adapter.newList().get(position).getNameContry()));
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        (adapter.newList().get(position).getNameContry()));
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 finish();
             }
@@ -107,7 +107,7 @@ public class CountryListSelectorActivity extends AppCompatActivity {
                 // Do something
                 return true;
             }
-         });
+        });
 
         return true;
     }

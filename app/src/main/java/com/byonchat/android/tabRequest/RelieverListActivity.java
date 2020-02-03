@@ -7,14 +7,14 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.util.LogWriter;
-import android.support.v7.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.util.LogWriter;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,15 +29,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
 import com.byonchat.android.R;
-import com.byonchat.android.application.Application;
 import com.byonchat.android.createMeme.FilteringImage;
-import com.byonchat.android.listeners.RecyclerItemClickListener;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
-import com.byonchat.android.utils.ValidationsKey;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -57,8 +53,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.byonchat.android.ByonChatMainRoomActivity.jsonResultType;
 
 public class RelieverListActivity extends AppCompatActivity {
 

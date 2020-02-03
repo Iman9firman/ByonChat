@@ -3,16 +3,13 @@ package com.byonchat.android.personalRoom.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,16 +17,10 @@ import android.widget.Toast;
 import com.android.volley.toolbox.ImageLoader;
 import com.byonchat.android.ByonChatMainRoomActivity;
 import com.byonchat.android.ConversationActivity;
-import com.byonchat.android.MediaPlayCatalogActivity;
-import com.byonchat.android.NewsDetailActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.WebViewByonActivity;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
-import com.byonchat.android.personalRoom.NoteCommentActivity;
 import com.byonchat.android.personalRoom.model.NewsFeedItem;
-import com.byonchat.android.personalRoom.viewHolder.feedItemsHolderNews;
-import com.byonchat.android.provider.Message;
-import com.byonchat.android.utils.MediaProcessingUtil;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -37,10 +28,8 @@ import com.squareup.picasso.Target;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Created by lukma on 3/7/2016.

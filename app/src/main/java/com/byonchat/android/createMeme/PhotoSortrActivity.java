@@ -27,8 +27,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -47,10 +47,8 @@ import android.widget.Toast;
 
 import com.byonchat.android.ConfirmationSendFile;
 import com.byonchat.android.ConversationActivity;
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.NewSelectContactActivity;
-import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.TouchImageView;

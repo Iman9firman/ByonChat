@@ -10,21 +10,23 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <org.sufficientlysecure.htmltextview.HtmlTextView
             android:id="@+id/value"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/margin5"
             android:textColor="@android:color/black"
-            android:textColorHint="@color/grayList"
-            android:padding="@dimen/margin5"/>
-        <com.wang.avi.AVLoadingIndicatorView
-            android:layout_centerInParent="true"
+            android:textColorHint="@color/grayList" />
+
+        <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/loader_progress"
+            style="@style/SpinKitView.Large.Circle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:indicator="BallPulse"
-            app:indicator_color="@color/color_primary_blue_dark" />
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            app:SpinKit_Color="@color/colorAccent" />
 
     </RelativeLayout>
 

@@ -3,7 +3,7 @@ package zharfan.com.cameralibrary;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.RequiresPermission;
+import androidx.annotation.RequiresPermission;
 
 public class Camera {
     private CameraActivity cameraActivity;

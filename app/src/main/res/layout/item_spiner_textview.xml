@@ -44,14 +44,16 @@
         android:layout_height="150dp"
         android:visibility="gone">
 
-        <com.wang.avi.AVLoadingIndicatorView
+        <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/loader_progress"
+            style="@style/SpinKitView.Large.Circle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_gravity="center"
             android:visibility="visible"
-            app:indicator="BallPulse"
-            app:indicator_color="@color/color_primary_blue_dark" />
+            app:SpinKit_Color="@color/color_primary_blue_dark" />
+
 
         <ImageView
             android:id="@+id/value"

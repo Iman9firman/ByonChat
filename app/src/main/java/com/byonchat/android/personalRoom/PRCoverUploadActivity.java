@@ -134,7 +134,7 @@ public class PRCoverUploadActivity extends Activity {
                 ContentType contentType = ContentType.create("image/jpeg");
 
                 entity.addPart("userid", new StringBody(userid));
-                entity.addPart("file", new FileBody(sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("file", new FileBody(sourceFile, contentType.toString(), sourceFile.getName()));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

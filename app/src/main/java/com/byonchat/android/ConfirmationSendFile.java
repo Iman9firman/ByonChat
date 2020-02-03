@@ -1,6 +1,5 @@
 package com.byonchat.android;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,8 +16,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.v4.util.LruCache;
-import android.support.v7.app.AppCompatActivity;
+import androidx.collection.LruCache;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,11 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.personalRoom.model.NotesPhoto;
-import com.byonchat.android.personalRoom.model.PictureModel;
-import com.byonchat.android.provider.Files;
-import com.byonchat.android.provider.FilesDatabaseHelper;
 import com.byonchat.android.provider.FilesURL;
 import com.byonchat.android.provider.FilesURLDatabaseHelper;
 import com.byonchat.android.provider.Message;
@@ -53,7 +48,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,8 +58,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
-
-import static com.byonchat.android.ConfirmationSendFileMultiple.EXTRA_PHOTOS;
 
 /*import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;

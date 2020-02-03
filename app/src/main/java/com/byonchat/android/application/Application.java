@@ -1,7 +1,7 @@
 package com.byonchat.android.application;
 
 import android.content.Context;
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -9,7 +9,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.Volley;
-import com.byonchat.android.BuildConfig;
 import com.byonchat.android.local.Byonchat;
 
 /**
@@ -25,7 +24,7 @@ public class Application extends MultiDexApplication {
         super.onCreate();
         instance = this;
         Byonchat.init(this, "Byonchat");
-        Byonchat.setEnableLog(android.support.multidex.BuildConfig.DEBUG);
+        Byonchat.setEnableLog(androidx.multidex.BuildConfig.DEBUG);
     }
 
     @Override

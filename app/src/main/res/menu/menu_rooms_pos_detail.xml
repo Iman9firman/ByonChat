@@ -5,7 +5,7 @@
         android:title="Find on page"
         app:actionLayout="@layout/custome_search_page_room"
         app:showAsAction="ifRoom"
-        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         />
     <item android:id="@+id/action_next"
         android:title="Next"

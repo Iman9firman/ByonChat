@@ -6,23 +6,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -40,28 +36,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
-import com.android.volley.NoConnectionError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.bumptech.glide.Glide;
 import com.byonchat.android.Manhera.Manhera;
-import com.byonchat.android.adapter.ExpandableListAdapter;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.personalRoom.model.NotesPhoto;
-import com.byonchat.android.provider.BotListDB;
-import com.byonchat.android.provider.Message;
-import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
-import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.UtilsPD;
-import com.byonchat.android.utils.ValidationsKey;
-import com.byonchat.android.volley.VolleyMultipartRequest;
-import com.byonchat.android.volley.VolleySinglepartRequest;
-import com.byonchat.android.volley.VolleySingleton;
 import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
@@ -77,9 +56,6 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -90,9 +66,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.github.memfis19.annca.Annca;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
@@ -416,7 +390,7 @@ public class GalleryBeforeAfterActivity extends Constants implements EmojiconGri
                             buf.read(bytes, 0, bytes.length);
                             buf.close();
 
-                            entity.addPart("photo_after", new FileBody(file, contentType, photo.getPhotoFile().getName()));
+                            entity.addPart("photo_after", new FileBody(file, contentType.toString(), photo.getPhotoFile().getName()));
                         } catch (FileNotFoundException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();

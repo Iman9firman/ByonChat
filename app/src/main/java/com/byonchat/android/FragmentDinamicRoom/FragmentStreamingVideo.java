@@ -3,15 +3,14 @@ package com.byonchat.android.FragmentDinamicRoom;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
-import com.byonchat.android.personalRoom.FragmentMyNews;
 import com.byonchat.android.personalRoom.adapter.NewsFeedListAdapter;
 import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.byonchat.android.personalRoom.model.NewsFeedItem;

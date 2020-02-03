@@ -1,33 +1,18 @@
 package com.byonchat.android.list;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.support.v7.widget.PopupMenu;
-import android.text.Html;
-import android.util.Log;
+
+import androidx.appcompat.widget.PopupMenu;
+
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.byonchat.android.ConversationActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.list.utilLoadImage.ImageLoader;
-import com.byonchat.android.provider.ContactBot;
-import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.RoomsDB;
-import com.byonchat.android.provider.VouchersDB;
-import com.byonchat.android.provider.VouchersDetailModel;
 
 import java.util.ArrayList;
 

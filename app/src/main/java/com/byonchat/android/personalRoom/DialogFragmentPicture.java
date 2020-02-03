@@ -1,23 +1,15 @@
 package com.byonchat.android.personalRoom;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
-import android.util.Log;
+
+import androidx.fragment.app.DialogFragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +25,6 @@ import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.ImageCompress;
-import com.byonchat.android.utils.ImageLoadingUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -47,8 +38,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -211,7 +200,7 @@ public class DialogFragmentPicture extends DialogFragment implements DialogInter
                 entity.addPart("userid", new StringBody(userid));
                 entity.addPart("title", new StringBody(mTitle.getText().toString()));
                 entity.addPart("description", new StringBody(mDescription.getText().toString()));
-                entity.addPart("file", new FileBody(sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("file", new FileBody(sourceFile, contentType.toString(), sourceFile.getName()));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

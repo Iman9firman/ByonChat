@@ -1,20 +1,16 @@
 package com.byonchat.android.personalRoom;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -46,7 +41,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -316,7 +310,7 @@ public class DialogFragmentVideo extends DialogFragment implements DialogInterfa
                 File sourceFile = new File(filePath);
                 ContentType contentType = ContentType.create("video/mp4");
                 entity.addPart("userid", new StringBody(userid));
-                entity.addPart("file", new FileBody(sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("file", new FileBody(sourceFile, contentType.toString(), sourceFile.getName()));
                 entity.addPart("judul_video", new StringBody(mTitle.getText().toString()));
                 entity.addPart("deskripsi_video", new StringBody(mDescription.getText().toString()));
                 entity.addPart("durasi", new StringBody(waktu));

@@ -11,7 +11,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
@@ -35,7 +35,6 @@ import android.widget.Scroller;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseDropDown;
@@ -46,7 +45,6 @@ import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.SpinnerCustomAdapter;
 import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
-import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -1754,7 +1752,7 @@ public class DialogFormChildMainNew extends DialogFragment {
 
                             final RelativeLayout relative = (RelativeLayout) spinerTitle.findViewById(R.id.lastImage);
                             final ImageView imageView = (ImageView) spinerTitle.findViewById(R.id.value);
-                            final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) spinerTitle.findViewById(R.id.loader_progress);
+                            final com.github.ybq.android.spinkit.SpinKitView progress = (com.github.ybq.android.spinkit.SpinKitView) spinerTitle.findViewById(R.id.loader_progress);
 
                             Picasso.with(getContext()).load(spinnerArray.get(0)).into(imageView);
 

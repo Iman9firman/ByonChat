@@ -1,7 +1,6 @@
 package com.byonchat.android;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -12,50 +11,32 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
-import android.text.Html;
+
+import com.google.android.material.textfield.TextInputEditText;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.appcompat.widget.Toolbar;
+
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
-import com.byonchat.android.adapter.ExpandableListAdapter;
-import com.byonchat.android.communication.NotificationReceiver;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.provider.BotListDB;
-import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
-import com.byonchat.android.provider.Rooms;
-import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.GPSTracker;
-import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.Validations;
-import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.CircleProgressBar;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
@@ -75,23 +56,16 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
@@ -300,7 +274,7 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
                 entity.addPart("bc_user", new StringBody(messengerHelper.getMyContact().getJabberId()));
                 entity.addPart("lat", new StringBody(lat));
                 entity.addPart("long", new StringBody(longi));
-                entity.addPart("foto", new FileBody(sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("foto", new FileBody(sourceFile, contentType.toString(), sourceFile.getName()));
 
 
                 totalSize = entity.getContentLength();

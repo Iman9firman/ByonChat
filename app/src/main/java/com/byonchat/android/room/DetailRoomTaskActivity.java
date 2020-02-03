@@ -18,11 +18,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -469,7 +468,7 @@ public class DetailRoomTaskActivity extends AppCompatActivity {
 
                 File sourceFile = new File(filePath);
                 ContentType contentType = ContentType.create("image/jpeg");
-                entity.addPart("foto1",  new FileBody( sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("foto1",  new FileBody( sourceFile, contentType.toString(), sourceFile.getName()));
                 entity.addPart("note1",new StringBody(textMessage.getText().toString()));
                 entity.addPart("koordinat", new StringBody(longitude+","+latitude));
                 Date date = new Date();

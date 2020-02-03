@@ -1,6 +1,5 @@
 package com.byonchat.android.adapter;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,23 +7,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.Html;
+
+import androidx.annotation.RequiresApi;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,50 +24,22 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.FragmentDinamicRoom.DinamicSLATaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.model.AddChildFotoExModel;
 import com.byonchat.android.model.SLAISSItem;
-import com.byonchat.android.provider.BotListDB;
-import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.RadioButtonCheckDB;
-import com.byonchat.android.provider.RoomsDetail;
-import com.byonchat.android.utils.ImageFilePath;
-import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.widget.RadioButtonDialog;
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
-import com.guna.ocrlibrary.OCRCapture;
 import com.multilevelview.MultiLevelAdapter;
 import com.multilevelview.MultiLevelRecyclerView;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import zharfan.com.cameralibrary.Camera;
-import zharfan.com.cameralibrary.CameraActivity;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_ID;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_IMG;
 import static com.byonchat.android.provider.RadioButtonCheckDB.COLUMN_OK;

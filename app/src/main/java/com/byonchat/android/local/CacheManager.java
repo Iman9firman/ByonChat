@@ -2,9 +2,7 @@ package com.byonchat.android.local;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.util.Pair;
-
-import com.google.gson.Gson;
+import androidx.core.util.Pair;
 
 /**
  * Created by Lukmanpryg on 26/7/2018.

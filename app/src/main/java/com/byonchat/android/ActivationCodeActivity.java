@@ -14,7 +14,7 @@ import android.net.NetworkInfo.State;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.view.View;

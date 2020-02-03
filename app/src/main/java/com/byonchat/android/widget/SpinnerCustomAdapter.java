@@ -3,7 +3,7 @@ package com.byonchat.android.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;

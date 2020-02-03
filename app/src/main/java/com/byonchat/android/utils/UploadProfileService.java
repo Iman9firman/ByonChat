@@ -207,7 +207,7 @@ public class UploadProfileService extends IntentService implements
                             }
                         });
 
-                entity.addPart("foto", new FileBody( imageOutput, contentType, imageOutput.getName()));
+                entity.addPart("foto", new FileBody( imageOutput, contentType.toString(), imageOutput.getName()));
                 // Extra parameters if you want to pass to server
                 entity.addPart("key", new StringBody(params[0]));
                 entity.addPart("username", new StringBody(dbhelper.getMyContact().getJabberId()));

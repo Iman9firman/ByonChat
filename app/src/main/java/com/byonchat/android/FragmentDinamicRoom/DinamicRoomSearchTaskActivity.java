@@ -2,31 +2,24 @@ package com.byonchat.android.FragmentDinamicRoom;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.Html;
-import android.text.TextWatcher;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,22 +30,15 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.byonchat.android.DialogFormChildMain;
 import com.byonchat.android.DialogFormChildMainRequester;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.ISSActivity.Requester.RequesterRatingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.helpers.Constants;
-import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDB;
-import com.byonchat.android.provider.RoomsDetail;
-import com.byonchat.android.tabRequest.MapsViewActivity;
-import com.byonchat.android.utils.ValidationsKey;
-import com.byonchat.android.widget.CalendarDialog;
-import com.itextpdf.text.pdf.parser.Line;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.json.JSONArray;
@@ -61,7 +47,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DinamicRoomSearchTaskActivity extends AppCompatActivity {

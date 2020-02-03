@@ -1,22 +1,18 @@
 package com.byonchat.android.personalRoom.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.byonchat.android.Manhera.Manhera;
 import com.byonchat.android.R;
 import com.byonchat.android.personalRoom.model.NotesPhoto;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 

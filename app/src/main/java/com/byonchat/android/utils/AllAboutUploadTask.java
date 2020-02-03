@@ -793,7 +793,7 @@ public class AllAboutUploadTask {
                 }
 
 
-                entity.addPart("file_json", new FileBody(gpxfile, contentType, gpxfile.getName()));
+                entity.addPart("file_json", new FileBody(gpxfile, contentType.toString(), gpxfile.getName()));
 
 
                 totalSize = entity.getContentLength();
@@ -934,7 +934,7 @@ public class AllAboutUploadTask {
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("id_rooms_tab", new StringBody(id_room));
                 entity.addPart("id_list_task", new StringBody(id_list));
-                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("value", new FileBody(sourceFile, contentType.toString(), sourceFile.getName()));
 
 
                 totalSize = entity.getContentLength();
@@ -1050,7 +1050,7 @@ public class AllAboutUploadTask {
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("id_rooms_tab", new StringBody(id_room));
                 entity.addPart("id_list_task", new StringBody(id_list));
-                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("value", new FileBody(sourceFile, contentType.toString(), sourceFile.getName()));
 
 
                 totalSize = entity.getContentLength();

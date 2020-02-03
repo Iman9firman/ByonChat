@@ -1,6 +1,5 @@
 package com.byonchat.android;
 
-import android.*;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,11 +21,10 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.content.LocalBroadcastManager;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputFilter;
@@ -52,34 +50,23 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.list.AttachmentAdapter;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.DataBaseDropDown;
-import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.DialogUtil;
-import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.MediaProcessingUtil;
-import com.byonchat.android.utils.Validations;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
-import com.wang.avi.AVLoadingIndicatorView;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,13 +74,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import io.github.memfis19.annca.Annca;
-import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 import static com.byonchat.android.FragmentDinamicRoom.FragmentRoomAPI.function;
 
 /**
@@ -1686,7 +1669,7 @@ public class DialogFormChildMainNcal extends DialogFragment {
                     if (spinnerArray.get(0).startsWith("http") && spinnerArray.get(0).endsWith(".jpg")) {
                         final RelativeLayout relative = (RelativeLayout) spinerTitle.findViewById(R.id.lastImage);
                         final ImageView imageView = (ImageView) spinerTitle.findViewById(R.id.value);
-                        final AVLoadingIndicatorView progress = (AVLoadingIndicatorView) spinerTitle.findViewById(R.id.loader_progress);
+                        final com.github.ybq.android.spinkit.SpinKitView progress = (com.github.ybq.android.spinkit.SpinKitView) spinerTitle.findViewById(R.id.loader_progress);
 
                         Picasso.with(getContext()).load(spinnerArray.get(0)).into(imageView);
 

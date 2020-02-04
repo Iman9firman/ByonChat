@@ -46,7 +46,7 @@ public class MyFirebaseInstanceIDService extends FirebaseMessagingService {
 
     private void storeRegIdInPref(String token) {
 
-        if (messengerHelper == null) {
+       /* if (messengerHelper == null) {
             messengerHelper = MessengerDatabaseHelper.getInstance(this);
         }
 
@@ -63,7 +63,7 @@ public class MyFirebaseInstanceIDService extends FirebaseMessagingService {
         SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("regId", token);
-        editor.commit();
+        editor.commit();*/
     }
 
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {

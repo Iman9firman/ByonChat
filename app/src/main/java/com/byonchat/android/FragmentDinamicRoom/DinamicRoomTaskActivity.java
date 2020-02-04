@@ -37,12 +37,19 @@ import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Settings;
+
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.appbar.AppBarLayout;
+
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -139,8 +146,6 @@ import com.byonchat.android.widget.TimeDialog;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.Writer;
@@ -193,6 +198,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -9830,10 +9836,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         100);
             }
         } else {
+
+            String apiKey = "AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs";
+            if (!Places.isInitialized()) {
+                Places.initialize(getApplicationContext(), apiKey);
+            }
+
             gps = new GPSTracker(DinamicRoomTaskActivity.this);
             LocationManager locManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                try {
+                /*try {
 
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, f));
                     if (cEdit.getCount() == 0) {
@@ -9851,7 +9863,16 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     e.printStackTrace();
                 } catch (GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
-                }
+                }*/
+                // Set the fields to specify which types of place data to return.
+
+                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+                // Start the autocomplete intent.
+                Intent intent = new Autocomplete.IntentBuilder(
+                        AutocompleteActivityMode.FULLSCREEN, fields)//NIGERIA
+                        .build(context);
+                startActivityForResult(intent, PLACE_PICKER_REQUEST);
+
             } else {
                 gps.showSettingsAlert();
             }
@@ -10711,7 +10732,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         } else if (requestCode == PLACE_PICKER_REQUEST) {
             showDialog = true;
             final List value = (List) hashMap.get(dummyIdDate);
-            if (resultCode == Activity.RESULT_OK) {
+            /*if (resultCode == Activity.RESULT_OK) {
                 final Place place = PlacePicker.getPlace(data, this);
                 final String name = place.getName() != null ? (String) place.getName() : " ";
                 final String address = place.getAddress() != null ? (String) place.getAddress() : " ";
@@ -10741,7 +10762,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                     }
                 }
 
-            }
+            }*/
 
 
         } else if (requestCode == 12011) {

@@ -19,7 +19,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
 
-    @Override
+  /*  @Override
     public void onCreate() {
         super.onCreate();
         Log.v(TAG, "Service Created");
@@ -30,7 +30,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onDestroy();
         Log.v(TAG, "Service Destroyed...");
     }
-
+*/
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -46,10 +46,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendNotification(String message, String title) {
 
 
-        Intent intentStart = new Intent(this, UploadService.class);
+       /* Intent intentStart = new Intent(this, UploadService.class);
         intentStart.putExtra(UploadService.ACTION, "startService");
         startService(intentStart);
-
+*/
        /* hilang firebase
        int requestID = (int) System.currentTimeMillis();
         Intent intent = new Intent(this, MainActivity.class);

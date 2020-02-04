@@ -1,19 +1,19 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: "com.jfrog.bintray"
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
     buildToolsVersion rootProject.buildToolsVersion
     useLibrary 'org.apache.http.legacy'
 
+
     defaultConfig {
         applicationId "com.byonchat.android"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 7
-        versionName "3.3"
+        versionCode 1
+        versionName "1.0"
         multiDexEnabled true
         renderscriptTargetApi 28
         renderscriptSupportModeEnabled true
@@ -46,25 +46,27 @@ android {
 //        textReport true
 //    }
 
-
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/ASL2.0'
-        exclude 'META-INF/androidx.exifinterface_exifinterface.version'
         exclude 'META-INF/proguard/androidx-annotations.pro'
+        exclude 'META-INF/androidx.exifinterface_exifinterface.version'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+
         pickFirst 'lib/mips/librsjni.so'
         pickFirst 'lib/mips/libblasV8.so'
         pickFirst 'lib/mips/libRSSupport.so'
@@ -74,14 +76,7 @@ android {
         pickFirst 'lib/armeabi-v7a/librsjni.so'
         pickFirst 'lib/armeabi-v7a/libblasV8.so'
         pickFirst 'lib/armeabi-v7a/libRSSupport.so'
-        exclude 'META-INF/INDEX.LIST'
-    }
 
-
-    dexOptions {
-        jumboMode = true
-        incremental true
-        javaMaxHeapSize "4g"
     }
 
     sourceSets.main {
@@ -89,7 +84,7 @@ android {
         jni.srcDirs = [] //disable automatic ndk-build call
 //        jni.srcDir 'src/main/jni'
     }
-    buildToolsVersion '28.0.0'
+    buildToolsVersion '28.0.3'
 }
 
 //added by me --
@@ -109,150 +104,172 @@ repositories {
 //    }
 //}
 
+configurations {
+    compile.exclude group: "junit", module: "junit"
+}
 
 dependencies {
 
     //noinspection GradleCompatible
-    implementation 'javax.inject:javax.inject:1'
-    implementation 'androidx.multidex:multidex:2.0.1'
+    api 'javax.inject:javax.inject:1'
+    api 'androidx.multidex:multidex:2.0.0'
     testImplementation 'junit:junit:4.12'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
 
     //noinspection GradleCompatible
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation files('libs/YouTubeAndroidPlayerApi.jar')
-    implementation files('libs/vdopialwsdk.jar')
-    //  implementation files('libs/httpmime-4.4-beta1.jar')
-    // implementation files('libs/httpcore-4.4.jar')
-    implementation files('libs/isoparser-1.0.6.jar')
-    implementation files('libs/android-websockets-master.jar')
-    implementation files('libs/zcsprinterV.jar')
-    implementation files('libs/tokenautocomplete-2.0.8.jar')
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    api files('libs/YouTubeAndroidPlayerApi.jar')
+    api files('libs/vdopialwsdk.jar')
+    api files('libs/isoparser-1.0.6.jar')
+    api files('libs/android-websockets-master.jar')
+    api files('libs/zcsprinterV.jar')
+    api files('libs/tokenautocomplete-2.0.8.jar')
 
-    // implementation 'com.github.hiteshsondhi88.libffmpeg:FFmpegAndroid:0.2.5'
-    implementation project(':library')
+    // compile 'com.github.hiteshsondhi88.libffmpeg:FFmpegAndroid:0.2.5'
+    api project(':library')
 
     // root beer
-    implementation 'com.scottyab:rootbeer-lib:0.0.7'
+    api 'com.scottyab:rootbeer-lib:0.0.7'
 
     //noinspection GradleCompatible
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.gridlayout:gridlayout:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.palette:palette:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+    api 'androidx.appcompat:appcompat:1.0.0'
+    api 'androidx.legacy:legacy-support-v4:1.0.0'
+    api 'com.google.android.material:material:1.0.0'
+    api 'androidx.gridlayout:gridlayout:1.0.0'
+    api 'androidx.cardview:cardview:1.0.0'
+    api 'androidx.palette:palette:1.0.0'
+    api 'androidx.recyclerview:recyclerview:1.0.0'
+    api 'androidx.constraintlayout:constraintlayout:1.1.3'
+    api 'com.miguelcatalan:materialsearchview:1.4.0'
 
     //noinspection GradleCompatible
-    implementation 'com.github.quentin7b:android-location-tracker:3.2'
-    implementation group: 'org.igniterealtime.smack', name: 'smack-resolver-minidns', version: '4.1.7'
-    implementation group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.1.7'
-    implementation group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.1.7'
-    implementation group: 'org.igniterealtime.smack', name: 'smack-legacy', version: '4.1.7'
-    implementation group: 'org.igniterealtime.smack', name: 'smack-sasl-provided', version: '4.1.7'
-    implementation group: 'org.igniterealtime.smack', name: 'smack-android', version: '4.1.7'
-    implementation "org.igniterealtime.smack:smack-bosh:4.1.7"
+    api 'com.github.quentin7b:android-location-tracker:3.2'
+    api group: 'org.igniterealtime.smack', name: 'smack-resolver-minidns', version: '4.1.7'
+    api group: 'org.igniterealtime.smack', name: 'smack-extensions', version: '4.1.7'
+    api group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.1.7'
+    api group: 'org.igniterealtime.smack', name: 'smack-legacy', version: '4.1.7'
+    api group: 'org.igniterealtime.smack', name: 'smack-sasl-provided', version: '4.1.7'
+    api group: 'org.igniterealtime.smack', name: 'smack-android', version: '4.1.7'
+    api "org.igniterealtime.smack:smack-bosh:4.1.7"
 
     // BlurView
-    implementation 'jp.wasabeef:blurry:2.1.1'
-    implementation 'com.eightbitlab:blurview:1.5.0'
-    implementation 'com.eightbitlab:supportrenderscriptblur:1.0.2'
-    implementation 'com.github.mmin18:realtimeblurview:1.1.2'
-    implementation 'com.github.andremion:counterfab:1.2.0'
-    implementation 'com.rom4ek:arcnavigationview:1.0.3'
+    api 'jp.wasabeef:blurry:2.1.1'
+    api 'com.eightbitlab:blurview:1.5.0'
+    api 'com.eightbitlab:supportrenderscriptblur:1.0.2'
+    api 'com.github.mmin18:realtimeblurview:1.1.2'
+    api 'com.github.andremion:counterfab:1.2.0'
+    api 'com.rom4ek:arcnavigationview:1.0.3'
 
     // Viewbadge
-    implementation files('libs/android-viewbadger.jar')
+    api files('libs/android-viewbadger.jar')
 
     // AdvanceRecyclerView
-    implementation('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.11.0@aar') {
+    api('com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:0.11.0@aar') {
         transitive = true
     }
-    implementation 'me.gujun.android.taggroup:library:1.4@aar'
-    implementation 'me.grantland:autofittextview:0.2.1'
-    implementation 'com.mikhaellopez:circularimageview:3.2.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'com.rockerhieu.emojicon:library:1.3.1'
-    implementation 'com.soundcloud.android:android-crop:1.0.0@aar'
-    implementation 'com.mcxiaoke.volley:library-aar:1.0.0'
-    implementation 'com.github.clans:fab:1.6.4'
-    implementation 'androidx.browser:browser:1.2.0'
-    implementation 'com.github.ozodrukh:CircularReveal:1.1.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'com.github.PhilJay:MPAndroidChart:v2.2.0'
-    implementation "com.github.bumptech.glide:glide:${glideLibVersion}"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+    api 'me.gujun.android.taggroup:library:1.4@aar'
+    api 'me.grantland:autofittextview:0.2.+'
+    api 'com.mikhaellopez:circularimageview:3.2.0'
+    api 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    api 'com.rockerhieu.emojicon:library:1.3.1'
+    api 'com.soundcloud.android:android-crop:1.0.0@aar'
+    /*  api 'com.mcxiaoke.volley:library-aar:1.0.0'*/
+    api 'com.github.clans:fab:1.6.1'
+    api 'androidx.browser:browser:1.0.0'
+    api 'com.github.ozodrukh:CircularReveal:1.1.0'
+    api 'com.google.code.gson:gson:2.2.4'
+    api 'com.github.PhilJay:MPAndroidChart:v2.2.0'
+    api "com.github.bumptech.glide:glide:${glideLibVersion}"
+    api 'androidx.legacy:legacy-support-v4:1.0.0'
+    api 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 
     //Lukman
-    implementation 'com.squareup.picasso:picasso:2.5.2'
-    implementation 'androidx.palette:palette:1.0.0'
-    implementation 'org.jetbrains:annotations:13.0'
-    implementation 'jp.wasabeef:glide-transformations:1.2.1'
-    implementation 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
-    implementation 'com.joooonho:selectableroundedimageview:1.0.1'
-    implementation 'de.greenrobot:androidsvg:1.2.2-beta-1-tweaked-2'
-    implementation 'com.nineoldandroids:library:2.4.0'
-    implementation "com.squareup.okhttp3:okhttp:${okhttpLibVersion}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpLibVersion}"
-    implementation 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
-    implementation "com.squareup.retrofit2:retrofit:${retrofitLibVersion}"
-    implementation "com.squareup.retrofit2:converter-gson:${retrofitLibVersion}"
-    implementation "com.squareup.retrofit2:adapter-rxjava:${retrofitLibVersion}"
-    implementation "com.schinizer:rxunfurl:${rxunurlLibVersion}"
-    implementation "com.schinizer:rxunfurl:${rxunurlLibVersion}"
-    implementation "com.trello:rxlifecycle:${rxLibVersion}"
-    implementation "com.trello:rxlifecycle-android:${rxLibVersion}"
-    implementation "com.trello:rxlifecycle-components:${rxLibVersion}"
-    implementation 'com.google.android.gms:play-services-base:17.1.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
-    implementation 'com.google.android.gms:play-services-places:17.0.0'
-    implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
-    implementation 'jp.wasabeef:picasso-transformations:2.1.0'
-    implementation 'com.toptoche.searchablespinner:searchablespinnerlibrary:1.3.1'
-    implementation 'com.github.ybq:Endless-RecyclerView:1.0.3'
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'org.aspectj:aspectjrt:1.8.5'
-    implementation 'org.sufficientlysecure:html-textview:3.3'
-    implementation 'io.github.memfis19:annca:0.3.7'
-    implementation 'com.google.firebase:firebase-messaging:20.1.0'
-    implementation 'com.github.grennis:ExpandableRecyclerView:0.9.3'
-    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
-    //CameraLib
-    implementation 'com.otaliastudios:cameraview:1.6.0'
+    api 'com.squareup.picasso:picasso:2.5.2'
+    api 'androidx.palette:palette:1.0.0'
+    api 'org.jetbrains:annotations:13.0'
+    api 'jp.wasabeef:glide-transformations:1.2.1'
+    api 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
+    api 'com.joooonho:selectableroundedimageview:1.0.1'
+    api 'de.greenrobot:androidsvg:1.2.2-beta-1-tweaked-2'
+    api 'com.nineoldandroids:library:2.4.0'
+    api "com.squareup.okhttp3:okhttp:${okhttpLibVersion}"
+    api "com.squareup.okhttp3:logging-interceptor:${okhttpLibVersion}"
+    api 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
+    api "com.squareup.retrofit2:retrofit:${retrofitLibVersion}"
+    api "com.squareup.retrofit2:converter-gson:${retrofitLibVersion}"
+    api "com.squareup.retrofit2:adapter-rxjava:${retrofitLibVersion}"
+    api "com.schinizer:rxunfurl:${rxunurlLibVersion}"
+    api "com.schinizer:rxunfurl:${rxunurlLibVersion}"
+    api "com.trello:rxlifecycle:${rxLibVersion}"
+    api "com.trello:rxlifecycle-android:${rxLibVersion}"
+    api "com.trello:rxlifecycle-components:${rxLibVersion}"
+    api 'com.google.android.gms:play-services-base:17.1.0'
+    api 'com.google.android.gms:play-services-maps:17.0.0'
+    api 'com.google.android.gms:play-services-location:17.0.0'
+    api 'com.google.android.gms:play-services-places:17.0.0'
+    api 'com.github.aakira:expandable-layout:1.6.0@aar'
+    api 'jp.wasabeef:picasso-transformations:2.1.0'
+    api 'com.toptoche.searchablespinner:searchablespinnerlibrary:1.3.1'
+    api 'com.github.ybq:Endless-RecyclerView:1.0.3'
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api 'org.aspectj:aspectjrt:1.8.5'
+    api 'org.sufficientlysecure:html-textview:3.3'
+    api 'io.github.memfis19:annca:0.3.7'
+    api 'com.google.firebase:firebase-iid@[20.0.0]'
+    api 'com.github.grennis:ExpandableRecyclerView:0.9.3'
 
-    //    implementation(name: 'zhar_camlib', ext: 'aar')
-    implementation(name: 'zhar_camlib', ext: 'aar')
-    implementation 'com.google.firebase:firebase-core:17.2.2'
-    implementation 'com.google.android.gms:play-services-vision:19.0.0'
-    implementation(name: 'ocrlibrary-release', ext: 'aar')
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'me.leolin:ShortcutBadger:1.1.22@aar'
-    implementation 'com.itextpdf:itextpdf:5.5.13'
+    //CameraLib
+    api 'com.otaliastudios:cameraview:1.6.0'
+
+    //    api(name: 'zhar_camlib', ext: 'aar')
+    api(name: 'zhar_camlib', ext: 'aar')
+    api 'com.google.firebase:firebase-core:17.2.0'
+    api 'com.google.android.gms:play-services-vision:18.0.0'
+    api(name: 'ocrlibrary-release', ext: 'aar')
+    api 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    api 'me.leolin:ShortcutBadger:1.1.22@aar'
+    api 'com.itextpdf:itextpdf:5.5.13'
 
     //Test Schedule
-    implementation 'com.applandeo:material-calendar-view:1.0.1'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    api 'com.applandeo:material-calendar-view:1.0.1'
+    api 'androidx.appcompat:appcompat:1.0.0'
 
     //OpenStreetMap
-    implementation 'org.osmdroid:osmdroid-android:6.0.3'
-    implementation 'com.github.MKergall:osmbonuspack:6.5.3'
+    api 'org.osmdroid:osmdroid-android:6.0.3'
+    api 'com.github.MKergall:osmbonuspack:6.5.3'
 
-    implementation 'com.github.BlackBoxVision:material-wheel-view:v0.0.1'
+    api 'com.github.BlackBoxVision:material-wheel-view:v0.0.1'
 
-    implementation 'com.mindorks:placeholderview:0.7.1'
-    implementation 'com.stepstone.apprating:app-rating:2.3.0'
+    api 'com.mindorks:placeholderview:0.7.1'
+    api 'com.stepstone.apprating:app-rating:2.3.0'
 
-    implementation('com.github.kenglxn.QRGen:android:2.5.0') { exclude group: 'com.google.zxing' }
+    api('com.github.kenglxn.QRGen:android:2.5.0') { exclude group: 'com.google.zxing' }
 
-    implementation 'com.github.HendrixString:Android-PdfMyXml:v1.0.1'
-    implementation 'com.muditsen.multilevelrecyclerview:multilevelview:1.0.0'
+    api 'com.github.HendrixString:Android-PdfMyXml:v1.0.1'
+    api 'com.muditsen.multilevelrecyclerview:multilevelview:1.0.0'
 
+    api 'com.google.android.libraries.places:places:2.0.0'
+/*    api 'com.google.firebase:firebase-messaging:20.0.0'
+    api 'com.google.firebase:firebase-firestore:21.1.1'
+    api 'com.google.firebase:firebase-auth:19.1.0'
+    api 'com.firebaseui:firebase-ui-auth:4.2.0'*/
+    implementation platform('com.google.firebase:firebase-bom:17.0.0')
 
+    implementation "com.google.firebase:firebase-core"
+    implementation "com.google.firebase:firebase-analytics"
+    implementation "com.google.firebase:firebase-messaging"
+    implementation "com.google.firebase:firebase-iid:16.0.0 "
+    //implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
+    /*implementation('org.apache.httpcomponents:httpclient-android:4.3.5.1') {
+        exclude group: 'org.apache.http'
+    }
+
+    implementation('org.apache.httpcomponents:httpcore:4.3.2') {
+        exclude group: 'org.apache.http'
+    }*/
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
+
+    implementation 'com.google.android.gms:play-services-places:16.0.0'
 }
-apply plugin: 'com.google.gms.google-services'

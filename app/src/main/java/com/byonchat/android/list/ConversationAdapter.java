@@ -877,6 +877,7 @@ public class ConversationAdapter extends BaseAdapter {
                 }
 
             } else if (Message.TYPE_LOC.equals(data.getType())) {
+                Log.w("BUKU", "GALA");
                 holder.imageMessage.setImageResource(R.drawable.ic_map_marker);
 //                Picasso.with(activity).load(R.drawable.ic_map_marker).into(holder.imageMessage);
                 holder.captionText.setText("");
@@ -894,18 +895,26 @@ public class ConversationAdapter extends BaseAdapter {
                 holder.buttonDownload.setVisibility(View.GONE);
 
                 if (!data.getMessage().equals("")) {
+                    Log.w("GAGA", data.getMessage());
                     String[] latlong = data.getMessage().split(
                             Message.LOCATION_DELIMITER);
                     boolean loadStaticMap = true;
                     holder.captionText.setVisibility(View.VISIBLE);
                     String text = "<u><b>" + (String) latlong[2] + "</b></u><br/>";
                     holder.captionText.setText(Html.fromHtml(text + latlong[3] + "&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160&#160;"));
-                    if (latlong.length == 6) {
+
+                    String locationView = "http://maps.google.com/maps/api/staticmap?center=" + latlong[0] + "," + latlong[1] + "&zoom=18&sensor=false&markers=color:red%7C&size=640x480&scale=2&maptype=hybrid&key=" + "AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs";
+                    Log.w("GAGA2", locationView);
+                    Picasso.with(activity).load(locationView).into(holder.imageMessage);
+
+                    /*if (latlong.length == 6) {
                         loadStaticMap = false;
                         File f = activity.getFileStreamPath(latlong[5]);
                         if (f.exists() && f.length() > 1000) {
-                            holder.imageMessage.setImageURI(Uri.fromFile(f));
-//                            Picasso.with(activity).load(Uri.fromFile(f)).into(holder.imageMessage);
+                            //holder.imageMessage.setImageURI(Uri.fromFile(f));
+                            String locationView = "http://maps.google.com/maps/api/staticmap?center=" + latlong[0] + "," + latlong[1] + "&zoom=7&size=640x480&scale=2&maptype=hybrid&key=" + "AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs";
+                            Log.w("GAGA2", locationView);
+                            Picasso.with(activity).load(locationView).into(holder.imageMessage);
                         }
                     }
 
@@ -914,7 +923,7 @@ public class ConversationAdapter extends BaseAdapter {
                         intent.putExtra(UploadService.ACTION, "downloadLocation");
                         intent.putExtra(UploadService.KEY_MESSAGE, data);
                         activity.getApplicationContext().startService(intent);
-                    }
+                    }*/
 
                     try {
                         holder.imageMessage
@@ -943,12 +952,12 @@ public class ConversationAdapter extends BaseAdapter {
             }
 
             if (btnOpen) {
-                if (data.getMessage().replace("<br/>", "").startsWith("bc://")){
+                if (data.getMessage().replace("<br/>", "").startsWith("bc://")) {
                     holder.textTime.setVisibility(View.GONE);
                     holder.imageLayout.setVisibility(View.GONE);
                     holder.textMessage.setVisibility(View.GONE);
                     holder.frameMainText.setVisibility(View.GONE);
-                }else{
+                } else {
                     final String link[] = data.getMessage().split(";");
                     holder.RelatifOpen.setVisibility(View.VISIBLE);
                     holder.btnOpenLink.setVisibility(View.VISIBLE);
@@ -1428,6 +1437,7 @@ public class ConversationAdapter extends BaseAdapter {
                         }
                     }
                 } else if (Message.TYPE_LOC.equals(data.getType())) {
+                    Log.w("BUKU", "locat");
                     holder.imageMessage.setImageResource(R.drawable.ic_map_marker);
                     holder.captionText.setText("");
                     holder.captionText.setVisibility(View.GONE);

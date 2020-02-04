@@ -28,65 +28,67 @@ import java.io.InputStreamReader;
  */
 public class RequestUploadSite extends AsyncTask<String, String, String> {
 
-        private MessengerDatabaseHelper messengerHelper;
-        private TaskCompleted mFragmentCallback;
-        private static final int REGISTRATION_TIMEOUT = 3 * 1000;
-        private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-        private static String REQUEST_KEYS = "https://"+ MessengerConnectionService.FILE_SERVER+":"+MessengerConnectionService.SERVER_PORT_MN+"/v2/upload/file/";
-        private static String REQUEST_KEYS_URL = "https://"+ MessengerConnectionService.FILE_SERVER+":"+MessengerConnectionService.SERVER_PORT_MN+"/v2/upload/file/";
-        public static String REQUEST_KEYS_URL_Thum = "https://"+ MessengerConnectionService.FILE_SERVER+":"+MessengerConnectionService.SERVER_PORT_MN+"/v2/download/thb/";
-        public static String REQUEST_KEYS_URL_REAL = "https://"+ MessengerConnectionService.FILE_SERVER+":"+MessengerConnectionService.SERVER_PORT_MN+"/v2/download/file/";
+    private MessengerDatabaseHelper messengerHelper;
+    private TaskCompleted mFragmentCallback;
+    private static final int REGISTRATION_TIMEOUT = 3 * 1000;
+    private static final int WAIT_TIMEOUT = 30 * 1000;
+    private final HttpClient httpclient = new DefaultHttpClient();
+    private static String REQUEST_KEYS = "https://" + MessengerConnectionService.FILE_SERVER + ":" + MessengerConnectionService.SERVER_PORT_MN + "/v2/upload/file/";
+    private static String REQUEST_KEYS_URL = "https://" + MessengerConnectionService.FILE_SERVER + ":" + MessengerConnectionService.SERVER_PORT_MN + "/v2/upload/file/";
+    public static String REQUEST_KEYS_URL_Thum = "https://" + MessengerConnectionService.FILE_SERVER + ":" + MessengerConnectionService.SERVER_PORT_MN + "/v2/download/thb/";
+    public static String REQUEST_KEYS_URL_REAL = "https://" + MessengerConnectionService.FILE_SERVER + ":" + MessengerConnectionService.SERVER_PORT_MN + "/v2/download/file/";
 
-        HttpResponse response;
-        private String content = null;
-        private String mKey;
-        private String mFileName;
-        private Context mContext;
+    HttpResponse response;
+    private String content = null;
+    private String mKey;
+    private String mFileName;
+    private Context mContext;
 
-        public RequestUploadSite(TaskCompleted fragmentCallback, Context ctx,String key,String fileName) {
-                REQUEST_KEYS_URL = "https://"+ MessengerConnectionService.FILE_SERVER+":"+MessengerConnectionService.SERVER_PORT_MN+"/v2/upload/file/";
-                mFragmentCallback = fragmentCallback;
-                mContext = ctx;
-                mKey = key;
-                mFileName = fileName;
-        }
+    public RequestUploadSite(TaskCompleted fragmentCallback, Context ctx, String key, String fileName) {
+        REQUEST_KEYS_URL = "https://" + MessengerConnectionService.FILE_SERVER + ":" + MessengerConnectionService.SERVER_PORT_MN + "/v2/upload/file/";
+        mFragmentCallback = fragmentCallback;
+        mContext = ctx;
+        mKey = key;
+        mFileName = fileName;
+    }
 
-        public RequestUploadSite(TaskCompleted fragmentCallback, Context ctx,String key,String fileName,String url) {
-                    REQUEST_KEYS_URL = url;
-                    mFragmentCallback = fragmentCallback;
-                    mContext = ctx;
-                    mKey = key;
-                    mFileName = fileName;
-        }
+    public RequestUploadSite(TaskCompleted fragmentCallback, Context ctx, String key, String fileName, String url) {
+        REQUEST_KEYS_URL = url;
+        mFragmentCallback = fragmentCallback;
+        mContext = ctx;
+        mKey = key;
+        mFileName = fileName;
+    }
 
-        @Override
-        public void onPreExecute() {
-        }
+    @Override
+    public void onPreExecute() {
+    }
 
-        @Override
-        protected void onProgressUpdate(String... values) {
-        }
+    @Override
+    protected void onProgressUpdate(String... values) {
+    }
 
-        @Override
-        protected String doInBackground(String... urls) {
-            InputStream inputStream = null;
+    @Override
+    protected String doInBackground(String... urls) {
+        InputStream inputStream = null;
         if (messengerHelper == null) {
-                messengerHelper = MessengerDatabaseHelper.getInstance(mContext);
+            messengerHelper = MessengerDatabaseHelper.getInstance(mContext);
         }
 
         Contact contact = messengerHelper.getMyContact();
         try {
             HttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(REQUEST_KEYS_URL+mFileName);
-            httpGet.addHeader("u",contact.getJabberId());
+            HttpGet httpGet = new HttpGet(REQUEST_KEYS_URL + mFileName);
+            httpGet.addHeader("u", contact.getJabberId());
             httpGet.addHeader("k", mKey);
             response = httpclient.execute(httpGet);
             StatusLine statusLine = response.getStatusLine();
             inputStream = response.getEntity().getContent();
+            Log.w("DEDE1", statusLine.getStatusCode() + "");
             if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                if(inputStream != null){
-                   String jsonm = convertInputStreamToString(inputStream);
+                if (inputStream != null) {
+                    String jsonm = convertInputStreamToString(inputStream);
+                    Log.w("DEDE2", jsonm);
                     JSONObject jObject = null;
                     try {
                         jObject = new JSONObject(jsonm);
@@ -97,16 +99,16 @@ public class RequestUploadSite extends AsyncTask<String, String, String> {
                     if (jObject != null) {
                         try {
                             String s = jObject.getString("s");
-                            if(s.equals("0")){
-                                if(REQUEST_KEYS_URL.equalsIgnoreCase(REQUEST_KEYS_URL_Thum)){
+                            if (s.equals("0")) {
+                                if (REQUEST_KEYS_URL.equalsIgnoreCase(REQUEST_KEYS_URL_Thum)) {
                                     content = jObject.getString("u");
-                                }else if (REQUEST_KEYS_URL.equalsIgnoreCase(REQUEST_KEYS_URL_REAL)){
+                                } else if (REQUEST_KEYS_URL.equalsIgnoreCase(REQUEST_KEYS_URL_REAL)) {
                                     content = jObject.getString("u");
-                                }else if(REQUEST_KEYS_URL.equalsIgnoreCase(REQUEST_KEYS)){
-                                    content = jObject.getString("u")+" "+jObject.getString("i");
+                                } else if (REQUEST_KEYS_URL.equalsIgnoreCase(REQUEST_KEYS)) {
+                                    content = jObject.getString("u") + " " + jObject.getString("i");
                                 }
 
-                            }else {
+                            } else {
                                 content = "null2";
                                 response.getEntity().getContent().close();
                                 throw new IOException(statusLine.getReasonPhrase());
@@ -118,7 +120,7 @@ public class RequestUploadSite extends AsyncTask<String, String, String> {
                             throw new IOException(statusLine.getReasonPhrase());
                         }
                     }
-                }else{
+                } else {
                     content = "null";
                     response.getEntity().getContent().close();
                     throw new IOException(statusLine.getReasonPhrase());
@@ -130,25 +132,25 @@ public class RequestUploadSite extends AsyncTask<String, String, String> {
             }
 
         } catch (ClientProtocolException e) {
-                content = "null5";
+            content = "null5:" + e;
         } catch (IOException e) {
-                content = "null6";
+            content = "null6:" + e;
         } catch (Exception e) {
-                content = "null7";
+            content = "null7:" + e;
         }
         return content;
-        }
+    }
 
-        @Override
-        protected void onPostExecute(String results) {
-             mFragmentCallback.onTaskDone(results);
-        }
+    @Override
+    protected void onPostExecute(String results) {
+        mFragmentCallback.onTaskDone(results);
+    }
 
-    private static String convertInputStreamToString(InputStream inputStream) throws IOException{
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+    private static String convertInputStreamToString(InputStream inputStream) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = "";
         String result = "";
-        while((line = bufferedReader.readLine()) != null)
+        while ((line = bufferedReader.readLine()) != null)
             result += line;
 
         inputStream.close();

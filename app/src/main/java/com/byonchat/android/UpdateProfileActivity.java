@@ -260,12 +260,17 @@ public class UpdateProfileActivity extends ABNextServiceActivity implements
 
         switch (which) {
             case 0:
-                Intent i = new Intent("android.media.action.IMAGE_CAPTURE");
-                imageOutput = MediaProcessingUtil.getOutputFile("jpeg");
-                i.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(imageOutput));
-                selectedImageUri = Uri.fromFile(imageOutput);
-                startActivityForResult(i, REQ_CAMERA);
+                try {
+                    Intent i = new Intent("android.media.action.IMAGE_CAPTURE");
+                    imageOutput = MediaProcessingUtil.getOutputFile("jpeg");
+                    i.putExtra(MediaStore.EXTRA_OUTPUT,
+                            Uri.fromFile(imageOutput));
+                    selectedImageUri = Uri.fromFile(imageOutput);
+                    startActivityForResult(i, REQ_CAMERA);
+                      
+                } catch (Exception e) {
+
+                }
                 break;
 
             case 1:

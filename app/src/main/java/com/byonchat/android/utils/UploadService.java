@@ -461,6 +461,7 @@ public class UploadService extends IntentService {
                 RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
                     @Override
                     public void onTaskDone(String key) {
+                        Log.w("KINI1", key);
                         if (key.equalsIgnoreCase("null")) {
                             FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
                             db.open();
@@ -475,6 +476,7 @@ public class UploadService extends IntentService {
                             RequestUploadSite testAsyncTask = new RequestUploadSite(new TaskCompleted() {
                                 @Override
                                 public void onTaskDone(final String key) {
+                                    Log.w("KINI2", key);
                                     if (key.equalsIgnoreCase("null") || key.equalsIgnoreCase("https://upload.com")) {
                                         FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
                                         db.open();
@@ -1928,7 +1930,9 @@ public class UploadService extends IntentService {
             try {
                 String url = context.getString(R.string.googlemap_static_url)
                         + "?zoom=18&size=400x400&sensor=false&markers=color:red%7C"
-                        + loc + "&center=" + loc;
+                        + loc + "&center=" + loc + "&key=AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs";
+
+                Log.w("oraIus", url);
                 String fname = MediaProcessingUtil.getFileFromUrl(context,
                         url, "location", "png");
 

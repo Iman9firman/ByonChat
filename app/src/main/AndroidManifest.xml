@@ -82,6 +82,7 @@
     <application
         android:name=".application.Application"
         android:allowBackup="true"
+        android:appComponentFactory="whateverString"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -91,10 +92,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:replace="android:appComponentFactory"
-        android:appComponentFactory="whateverString"
-        >
-
+        tools:replace="android:appComponentFactory">
+        <activity
+            android:name=".utils.AutocompleteTestActivity"
+            android:label="@string/title_activity_autocomplete_test"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -739,9 +741,7 @@
             android:name=".ISSActivity.Reliever.CheckInActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
-
         <activity android:name=".FragmentDinamicRoom.DinamicSLATaskActivity" />
-
         <activity android:name=".tabRequest.RelieverListActivity" />
         <activity android:name=".tabRequest.MapsViewActivity" />
         <activity android:name=".tabRequest.RelieverDetailActivity" />

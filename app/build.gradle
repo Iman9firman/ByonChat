@@ -259,7 +259,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core"
     implementation "com.google.firebase:firebase-analytics"
     implementation "com.google.firebase:firebase-messaging"
-    implementation "com.google.firebase:firebase-iid:16.0.0 "
+    implementation "com.google.firebase:firebase-iid:20.0.2"
     //implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     /*implementation('org.apache.httpcomponents:httpclient-android:4.3.5.1') {
         exclude group: 'org.apache.http'
@@ -271,5 +271,5 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
     implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
 
-    implementation 'com.google.android.gms:play-services-places:16.0.0'
+    implementation 'com.google.android.gms:play-services-places:17.0.0'
 }

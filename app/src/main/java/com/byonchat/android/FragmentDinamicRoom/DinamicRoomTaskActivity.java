@@ -38,9 +38,13 @@ import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Settings;
 
+import com.byonchat.android.utils.AutocompleteTestActivity;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -9837,39 +9841,30 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             }
         } else {
 
-            String apiKey = "AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs";
+            String apiKey = "AIzaSyAhOmhz7BjEXDkuHEfj1oTkdq4ZTiK3wx8";
             if (!Places.isInitialized()) {
                 Places.initialize(getApplicationContext(), apiKey);
             }
+/*
+            Intent intent = new Intent(getApplicationContext(), AutocompleteTestActivity.class);
+            startActivity(intent);*/
+
 
             gps = new GPSTracker(DinamicRoomTaskActivity.this);
             LocationManager locManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                /*try {
+                // try {
 
-                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, f));
-                    if (cEdit.getCount() == 0) {
-                        RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, f), name, "cild");
-                        db.insertRoomsDetail(orderModel);
-                    }
+                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, f));
+                if (cEdit.getCount() == 0) {
+                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, f), name, "cild");
+                    db.insertRoomsDetail(orderModel);
+                }
 
-
-                    PlacePicker.IntentBuilder intentBuilder =
-                            new PlacePicker.IntentBuilder();
-                    Intent intent = intentBuilder.build(this);
-                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
-
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }*/
-                // Set the fields to specify which types of place data to return.
 
                 List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
-                // Start the autocomplete intent.
                 Intent intent = new Autocomplete.IntentBuilder(
-                        AutocompleteActivityMode.FULLSCREEN, fields)//NIGERIA
+                        AutocompleteActivityMode.OVERLAY, fields).setCountry("ID")
                         .build(context);
                 startActivityForResult(intent, PLACE_PICKER_REQUEST);
 
@@ -10732,8 +10727,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         } else if (requestCode == PLACE_PICKER_REQUEST) {
             showDialog = true;
             final List value = (List) hashMap.get(dummyIdDate);
-            /*if (resultCode == Activity.RESULT_OK) {
-                final Place place = PlacePicker.getPlace(data, this);
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
                 final String name = place.getName() != null ? (String) place.getName() : " ";
                 final String address = place.getAddress() != null ? (String) place.getAddress() : " ";
                 final String web = String.valueOf(place.getWebsiteUri() != null ? place.getWebsiteUri() : " ");
@@ -10751,6 +10746,21 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                 Intent newIntent = new Intent("bLFormulas");
                 sendBroadcast(newIntent);
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i("HOHOOO2", status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+
+            /*if (resultCode == Activity.RESULT_OK) {
+
+            }else {
+
+            }*/
+            /*if (resultCode == Activity.RESULT_OK) {
+
 
             } else {
 

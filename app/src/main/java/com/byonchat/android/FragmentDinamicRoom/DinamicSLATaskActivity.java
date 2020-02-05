@@ -37,6 +37,9 @@ import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Settings;
+
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.material.appbar.AppBarLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
@@ -140,7 +143,6 @@ import com.byonchat.android.widget.TimeDialog;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.guna.ocrlibrary.OCRCapture;
 import com.squareup.picasso.Picasso;
@@ -10049,7 +10051,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
             showDialog = true;
             final List value = (List) hashMap.get(dummyIdDate);
             if (resultCode == Activity.RESULT_OK) {
-                final Place place = PlacePicker.getPlace(data, this);
+                Place place = Autocomplete.getPlaceFromIntent(data);
                 final String name = place.getName() != null ? (String) place.getName() : " ";
                 final String address = place.getAddress() != null ? (String) place.getAddress() : " ";
                 final String web = String.valueOf(place.getWebsiteUri() != null ? place.getWebsiteUri() : " ");

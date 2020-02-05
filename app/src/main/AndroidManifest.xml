@@ -93,10 +93,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:appComponentFactory">
-        <activity
-            android:name=".utils.AutocompleteTestActivity"
-            android:label="@string/title_activity_autocomplete_test"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <uses-library
             android:name="org.apache.http.legacy"
@@ -435,9 +431,13 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCB8QQQv-94C4cw2wHcJ-1CwohQRGuq2kc" />
         -->
+        <!--   <meta-data
+               android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs" />-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCfD67Wuw40uyQilEdZ0LC-UaPgWq_3jAs" />
+            android:value="AIzaSyAhOmhz7BjEXDkuHEfj1oTkdq4ZTiK3wx8" />
+
         <!--
         // test key
         AIzaSyCKV9y7lWGK64q1jmWQTivaQphq_ohfmLo

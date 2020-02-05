@@ -38,7 +38,6 @@ import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Settings;
 
-import com.byonchat.android.utils.AutocompleteTestActivity;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.libraries.places.api.Places;
@@ -9845,10 +9844,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             if (!Places.isInitialized()) {
                 Places.initialize(getApplicationContext(), apiKey);
             }
-/*
-            Intent intent = new Intent(getApplicationContext(), AutocompleteTestActivity.class);
-            startActivity(intent);*/
-
 
             gps = new GPSTracker(DinamicRoomTaskActivity.this);
             LocationManager locManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);

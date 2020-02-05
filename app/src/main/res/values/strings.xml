@@ -1,7 +1,7 @@
 <resources>
     <string name="hallo">hallo</string>
     <string name="app_name">S-Team</string>
-    <string name="app_version">3.3</string>
+    <string name="app_version">3.4</string>
     <string name="app_company">honda</string>
     <string name="id_client">106</string>
     <string name="action_settings">Settings</string>
@@ -563,68 +563,6 @@
 
     <string name="rooted_device_title">"Can't open app"</string>
     <string name="rooted_device">"Because of a new security policy, Byonchat can't be opened on a rooted device."</string>
-    <string name="title_activity_autocomplete_test">AutocompleteTestActivity</string>
-
-
-    <!-- AUTOCOMPLETE -->
-
-    <!-- Hint for the autocomplete widget's initial query and autocomplete prediction's query field. -->
-    <string name="autocomplete_query_hint" translatable="false">(Initial) Query</string>
-
-    <!-- Hint for the autocomplete widget's query field. -->
-    <string name="autocomplete_hint_hint" translatable="false">Hint</string>
-
-    <!-- Hint for the autocomplete prediction's and widget's countries field. -->
-    <string name="autocomplete_country_hint" translatable="false">Countries (e.g CH, US, RO)</string>
-
-    <!-- Hint Text for the autocomplete prediction's and widget's type filter field. -->
-    <string name="autocomplete_type_filter" translatable="false">Type Filter</string>
-
-    <!-- Label for the autocomplete prediction's and widget's location origin field. -->
-    <string name="autocomplete_location_origin_label" translatable="false">Location Origin (format: -33.2, 128.2)</string>
-
-    <!-- Label for the autocomplete prediction's and widget's location bias related fields. -->
-    <string name="autocomplete_location_bias_label" translatable="false">Location Bias (format: -33.2, 128.2)</string>
-
-    <!-- Label for the autocomplete prediction's and widget's location restriction related fields. -->
-    <string name="autocomplete_location_restriction_label" translatable="false">Location Restriction (format: -33.2, 128.2)</string>
-
-    <!-- Hint for the autocomplete prediction's and widget's location origin field. -->
-    <string name="autocomplete_location_origin_hint" translatable="false">Origin (lat, lng)</string>
-
-    <!-- Hint for the autocomplete prediction's and widget's location southwest field. -->
-    <string name="autocomplete_location_south_west_hint" translatable="false">South West (lat, lng)</string>
-
-    <!-- Hint for the autocomplete prediction's and widget's location northeast field. -->
-    <string name="autocomplete_location_north_east_hint" translatable="false">North East (lat, lng)</string>
-
-
-    <!-- Text for enabling autocomplete prediction's and widget's type filter field. -->
-    <string name="autocomplete_use_type_filter" translatable="false">Use TypeFilter?</string>
-
-    <!-- Text for enabling autocomplete prediction's use of session tokens. -->
-    <string name="autocomplete_use_session_token" translatable="false">(Predictions-only) Use session token?</string>
-
-    <!-- Text for autocomplete activity mode (overlay or fullscreen) checkbox. -->
-    <string name="autocomplete_activity_overlay_mode" translatable="false">Overlay mode?</string>
-
-    <!-- Text for the autocomplete support fragment section label. -->
-    <string name="autocomplete_support_fragment_text_label" translatable="false">Autocomplete Support Fragment:</string>
-
-    <!-- Text for the autocomplete fragment section label. -->
-    <string name="autocomplete_fragment_text_label" translatable="false">Autocomplete Fragment:</string>
-
-    <!-- Text for the autocomplete support fragment update button. -->
-    <string name="autocomplete_support_fragment_update_button" translatable="false">Update Support Fragment</string>
-
-    <!-- Text for the autocomplete fragment update button. -->
-    <string name="autocomplete_fragment_update_button" translatable="false">Update Fragment</string>
-
-    <!-- Text for starting the autocomplete activity button. -->
-    <string name="autocomplete_activity_button" translatable="false">Open Activity</string>
-
-    <!-- Text for the fetch autocomplete predictions submit button. -->
-    <string name="fetch_autocomplete_predictions_button" translatable="false">Fetch Predictions</string>
 
 
 </resources>

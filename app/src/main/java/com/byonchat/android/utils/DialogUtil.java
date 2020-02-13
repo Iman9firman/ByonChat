@@ -229,6 +229,24 @@ public class DialogUtil {
         return dialog;
     }
 
+    public static Dialog customDialogConversationDelay(Activity activity) {
+        Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_option_confirmation);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+
+        LinearLayout linearlayout = (LinearLayout) dialog.findViewById(R.id.linearLayout1);
+        FrameLayout frameLayout1 = (FrameLayout) dialog.findViewById(R.id.frameLayout1);
+
+        GradientDrawable linear = (GradientDrawable) linearlayout.getBackground();
+        linear.setColor(activity.getResources().getColor(R.color.softBlue3));
+
+        GradientDrawable frame = (GradientDrawable) frameLayout1.getBackground();
+        frame.setColor(activity.getResources().getColor(R.color.white));
+        return dialog;
+    }
+
     public static AlertDialog.Builder generateViewDialog(Activity activity,
                                                          String title, View v) {
 

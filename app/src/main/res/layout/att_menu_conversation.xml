@@ -27,7 +27,7 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:contentDescription="Location"
-                android:text="Location"
+                android:text="Paste"
                 android:drawablePadding="8dp"
                 android:padding="10dp"
                 android:textAllCaps="false"

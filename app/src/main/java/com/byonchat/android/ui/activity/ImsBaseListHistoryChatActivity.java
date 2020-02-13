@@ -46,6 +46,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byonchat.android.ConversationActivity;
+import com.byonchat.android.PickUserActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.createMeme.FilteringImage;
@@ -496,8 +497,13 @@ public abstract class ImsBaseListHistoryChatActivity extends AppCompatActivity i
         onScroll();
 
         vBtnCreateMessage.setOnClickListener(v -> {
-            Intent intent = SelectMessageContactActivity.generateIntent(this, mColor, mColorText);
-            startActivity(intent);
+         /*   Intent intent = SelectMessageContactActivity.generateIntent(this, mColor, mColorText);
+            startActivity(intent);*/
+
+            Intent i = new Intent(this, PickUserActivity.class);
+            i.putExtra(PickUserActivity.FROMACTIVITY,"Message Broadcast");
+            startActivity(i);
+
         });
     }
 

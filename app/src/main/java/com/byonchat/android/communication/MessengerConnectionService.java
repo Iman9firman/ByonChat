@@ -35,7 +35,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -1831,7 +1833,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             String action = "";
             vo.setSendDate(new Date());
             if (isConnectionAlive()) {
-                String messageToSend = vo.getMessage();
+                String messageToSend = new Validations().getInstance(getApplicationContext()).encrypt(vo.getMessage());
                 if (vo.getType().equals(Message.TYPE_VIDEO) || vo.getType().equals(Message.TYPE_IMAGE)) {
                     String urlFile = "";
                     String caption = "";
@@ -2110,7 +2112,9 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     }
 
     public void onMessageReceived(final Message vo/*,String aaa*/) {
-        Log.w("alhamdulillah", "supaya satu");
+
+        String messageReceived = new Validations().getInstance(getApplicationContext()).decrypt(vo.getMessage());
+        vo.setMessage(messageReceived);
 
         ArrayList<String> listblock = new ArrayList<String>();
 

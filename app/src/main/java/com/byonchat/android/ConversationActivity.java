@@ -39,6 +39,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.provider.ContactsContract;
@@ -103,12 +104,14 @@ import com.byonchat.android.list.IconItem;
 import com.byonchat.android.list.utilLoadImage.ImageLoaderFromSD;
 import com.byonchat.android.list.utilLoadImage.TextLoader;
 import com.byonchat.android.model.Image;
+import com.byonchat.android.personalRoom.FragmentProductCatalog;
 import com.byonchat.android.provider.BlockListDB;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.ChatParty;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.ContactBot;
 import com.byonchat.android.provider.Group;
+import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
@@ -658,7 +661,57 @@ public class ConversationActivity extends AppCompatActivity implements
         btnMic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                promptSpeechInput();
+                if (textMessage.getText().toString().length() > 0) {
+                    final Dialog dialogConfirmation;
+                    dialogConfirmation = DialogUtil.customDialogConversationConfirmation(ConversationActivity.this);
+                    dialogConfirmation.show();
+
+                    TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
+                    TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
+                    txtConfirmation.setText("Hapus Pesan Otomatis");
+                    descConfirmation.setVisibility(View.VISIBLE);
+                    descConfirmation.setText("Pesan ini akan dihapus dalam kurun waktu 30 detik?");
+
+                    Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
+                    Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+                    btnNo.setText("Batal");
+                    btnNo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialogConfirmation.dismiss();
+                        }
+                    });
+
+                    btnYes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialogConfirmation.dismiss();
+
+                            Message vo = createNewMessageDurasi(textMessage.getText().toString(), Message.TYPE_TEXT, "30");
+                            addConversation(vo);
+
+                            messengerHelper.insertData(vo);
+                            Intent intent = new Intent(ConversationActivity.this, UploadService.class);
+                            intent.putExtra(UploadService.ACTION, "sendText");
+                            intent.putExtra(UploadService.KEY_MESSAGE, vo);
+                            startService(intent);
+
+
+                            textMessage.setText("");
+
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.w("Handler", "Running Handler");
+                                    vo.setMessage(vo.getPacketId());
+                                    tarikPesan(vo);
+                                }
+                            }, 10 * 1000);
+                        }
+                    });
+                }
+
             }
         });
 
@@ -785,6 +838,7 @@ public class ConversationActivity extends AppCompatActivity implements
 
         btnSend = (ImageButton) findViewById(R.id.btnSend);
         btnSend.setOnClickListener(btnClickListener);
+
         if (attCurReq > 0) {
             showAttachmentDialog(attCurReq);
         }
@@ -1013,7 +1067,6 @@ public class ConversationActivity extends AppCompatActivity implements
             messengerHelper.execSql(SQL_UPDATE_MESSAGES, new String[]{countMessageUnread.getString(countMessageUnread.getColumnIndex("_id"))});
             if (!countMessageUnread.getString(countMessageUnread.getColumnIndex(Message.TYPE)).equalsIgnoreCase(Message.TYPE_READSTATUS)) {
                 readFunction(countMessageUnread.getString(countMessageUnread.getColumnIndex("packet_id")));
-                Log.w("dinin", countMessageUnread.getString(countMessageUnread.getColumnIndex("message")));
             }
         }
         countMessageUnread.close();
@@ -1353,13 +1406,15 @@ public class ConversationActivity extends AppCompatActivity implements
         textMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable arg0) {
-                if (textMessage.getText().toString().trim().length() > 0) {
+                btnSend.setVisibility(View.VISIBLE);
+
+               /* if (textMessage.getText().toString().trim().length() > 0) {
                     btnMic.setVisibility(View.GONE);
-                    btnSend.setVisibility(View.VISIBLE);
+
                 } else {
                     btnMic.setVisibility(View.VISIBLE);
                     btnSend.setVisibility(View.GONE);
-                }
+                }*/
             }
 
             @Override
@@ -1370,6 +1425,19 @@ public class ConversationActivity extends AppCompatActivity implements
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
+    }
+
+    private Message createNewMessageDurasi(String message, String type, String durasi) {
+        Message vo = new Message(sourceAddr, destination.getJabberId(), message);
+        vo.setType(type);
+        vo.setSendDate(new Date());
+        vo.setStatus(Message.STATUS_INPROGRESS);
+        vo.generatePacketId(durasi);
+        if (conversationType == CONVERSATION_TYPE_GROUP) {
+            vo.setGroupChat(true);
+            vo.setSourceInfo(sourceAddr);
+        }
+        return vo;
     }
 
     private Message createNewMessage(String message, String type) {
@@ -1881,15 +1949,20 @@ public class ConversationActivity extends AppCompatActivity implements
                 @Override
                 public void onClick(View v) {
                     dialog.dismiss();
-                    if (Build.VERSION.SDK_INT >= 11) {
-                        ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                        cm.setPrimaryClip(ClipData.newPlainText("ochat-message",
-                                msg.getMessage()));
-                    } else {
-                        android.text.ClipboardManager cm = (android.text.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                        cm.setText(msg.getMessage());
+                    IntervalDB db = new IntervalDB(getApplicationContext());
+                    db.open();
+                    Cursor cursorSelect = db.getSingleContact(27);
+                    if (cursorSelect.getCount() > 0) {
+                        db.deleteContact(27);
                     }
-                    showToast("Copied");
+                    Interval interval = new Interval();
+                    interval.setId(27);
+                    interval.setTime(msg.getMessage());
+                    db.createContact(interval);
+                    cursorSelect.close();
+                    db.close();
+                    showToast("Copy ByonChat Only");
+
                 }
             });
 
@@ -2030,15 +2103,20 @@ public class ConversationActivity extends AppCompatActivity implements
                 return true;
             case R.id.menu_conversation_copy:
 
-                if (Build.VERSION.SDK_INT >= 11) {
-                    ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    cm.setPrimaryClip(ClipData.newPlainText("ochat-message",
-                            msg.getMessage()));
-                } else {
-                    android.text.ClipboardManager cm = (android.text.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    cm.setText(msg.getMessage());
+                IntervalDB db = new IntervalDB(this);
+                db.open();
+                Cursor cursorSelect = db.getSingleContact(27);
+                if (cursorSelect.getCount() > 0) {
+                    db.deleteContact(27);
                 }
-                showToast("Copied");
+                Interval interval = new Interval();
+                interval.setId(27);
+                interval.setTime(msg.getMessage());
+                db.createContact(interval);
+                cursorSelect.close();
+                db.close();
+                showToast("Copy ByonChat Only");
+
                 return true;
 
             case R.id.menu_failed_retry:
@@ -2581,7 +2659,15 @@ public class ConversationActivity extends AppCompatActivity implements
         public void onClick(View v) {
             showAttc(false);
             if (v.equals(btnAttachmentMapMarker)) {
-                requestLocationInfo();
+
+                IntervalDB db = new IntervalDB(getApplicationContext());
+                db.open();
+
+                Cursor cursor = db.getSingleContact(27);
+                if (cursor.getCount() > 0) {
+                    textMessage.setText(cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME)));
+                }
+                db.close();
             } else if (v.equals(btnAttachmentCamera)
                     || v.equals(btnAttachmentVideo)) {
                 if (v.equals(btnAttachmentCamera)) {

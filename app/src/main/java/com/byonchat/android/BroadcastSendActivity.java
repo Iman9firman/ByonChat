@@ -17,11 +17,15 @@ import com.byonchat.android.list.IconItem;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.ui.activity.ImsBaseListHistoryChatActivity;
+import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.MediaProcessingUtil;
+import com.byonchat.android.utils.UploadService;
 import com.byonchat.android.utils.Validations;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +51,7 @@ public class BroadcastSendActivity extends ABNextServiceActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.broadcast_message);
         getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header(getWindow()));
-      //  getSupportActionBar().setIcon(new Validations().getInstance(getApplicationContext()).logoCustome());
+        //  getSupportActionBar().setIcon(new Validations().getInstance(getApplicationContext()).logoCustome());
         txtMessage = (EditText) findViewById(R.id.txtBroadcastMessage);
         if (selectedContacts == null)
             selectedContacts = new HashMap<String, Contact>();
@@ -98,7 +102,7 @@ public class BroadcastSendActivity extends ABNextServiceActivity {
     private void refreshList() {
         items.clear();
         for (Iterator<String> iterator = selectedContacts.keySet().iterator(); iterator
-                .hasNext();) {
+                .hasNext(); ) {
             Contact data = selectedContacts.get(iterator.next());
             IconItem item = new IconItem(data.getJabberId(), data.getName(),
                     data.getStatus(), null, data);
@@ -115,20 +119,20 @@ public class BroadcastSendActivity extends ABNextServiceActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case android.R.id.home:
-            Intent intent = new Intent(this, PickUserActivity.class);
-            intent.putExtra(PickUserActivity.FROMACTIVITY, "Message Broadcast");
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-            finish();
-            return true;
+            case android.R.id.home:
+                Intent intent = new Intent(this, PickUserActivity.class);
+                intent.putExtra(PickUserActivity.FROMACTIVITY, "Message Broadcast");
+                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                finish();
+                return true;
 
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void onSendingDone() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainActivityNew.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
         finish();
@@ -145,16 +149,11 @@ public class BroadcastSendActivity extends ABNextServiceActivity {
         @Override
         protected Void doInBackground(Void... params) {
             count = 0;
-                        String message = txtMessage.getText().toString();
-                for (Iterator<String> iterator = selectedContacts.keySet()
-                        .iterator(); iterator.hasNext();) {
-                    Contact data = selectedContacts.get(iterator.next());
-                Message vo = new Message(source, data.getJabberId(), message);
-                vo.setStatus(Message.STATUS_INPROGRESS);
-                vo.setType(Message.TYPE_BROADCAST);
-                vo.generatePacketId();
-                binder.sendBroadCast(vo);
-                publishProgress(data.getName());
+            String message = txtMessage.getText().toString();
+            for (Iterator<String> iterator = selectedContacts.keySet()
+                    .iterator(); iterator.hasNext(); ) {
+                Contact data = selectedContacts.get(iterator.next());
+                sendMessage(message, source, data.getJabberId());
             }
             return null;
         }
@@ -172,5 +171,24 @@ public class BroadcastSendActivity extends ABNextServiceActivity {
             onSendingDone();
         }
 
+    }
+
+    private void sendMessage(String message, String sourceAddr, String destination) {
+        MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(this);
+        Message vo = createNewMessage(message, Message.TYPE_TEXT, sourceAddr, destination);
+        messengerHelper.insertData(vo);
+        Intent intent = new Intent(this, UploadService.class);
+        intent.putExtra(UploadService.ACTION, "sendText");
+        intent.putExtra(UploadService.KEY_MESSAGE, vo);
+        startService(intent);
+    }
+
+    private Message createNewMessage(String message, String type, String sourceAddr, String destination) {
+        Message vo = new Message(sourceAddr, destination, message);
+        vo.setType(type);
+        vo.setSendDate(new Date());
+        vo.setStatus(Message.STATUS_INPROGRESS);
+        vo.generatePacketId();
+        return vo;
     }
 }

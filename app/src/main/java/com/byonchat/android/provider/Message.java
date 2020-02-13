@@ -42,7 +42,7 @@ public class Message implements Data {
     public static final String STATUS_TYPE_SEND = "send";
     public static final String STATUS_TYPE_FAILED = "failed";
     public static final String STATUS_TYPE_INPROSES = "inproses";
-    public static final String STATUS_TYPE_READ= "read";
+    public static final String STATUS_TYPE_READ = "read";
 
 
     public static final String TABLE_NAME = "messages";
@@ -58,7 +58,7 @@ public class Message implements Data {
     public static final String STATUS = "status";
     public static final String TYPE = "type";
     public static final String IS_GROUP_CHAT = "is_group_chat";
-    public static final String IS_RETRY  = "is_retry";
+    public static final String IS_RETRY = "is_retry";
 
     public static final int STATUS_INPROGRESS = 1;
     public static final int STATUS_SENT = 2;
@@ -66,7 +66,7 @@ public class Message implements Data {
     public static final int STATUS_FAILED = 9;
     public static final int STATUS_UNREAD = 12;
     public static final int STATUS_NOTSEND = 13;
-    public static final int STATUS_READ= 14;
+    public static final int STATUS_READ = 14;
 
     private static String[] fieldNames;
 
@@ -133,6 +133,7 @@ public class Message implements Data {
     private boolean parseGroupChatInfo(int gchat) {
         return (gchat == 0) ? false : true;
     }
+
     private boolean parseRetryInfo(int retry) {
         return (retry == 0) ? false : true;
     }
@@ -140,6 +141,7 @@ public class Message implements Data {
     private int parseGroupChatInfo(boolean gchat) {
         return (gchat) ? 1 : 0;
     }
+
     private int parseRetryInfo(boolean retry) {
         return (retry) ? 1 : 0;
     }
@@ -173,6 +175,14 @@ public class Message implements Data {
         String pid = source + destination;
         int hash = pid.hashCode();
         packetId = Integer.toHexString(hash) + "-"
+                + Long.toHexString(System.currentTimeMillis());
+        return packetId;
+    }
+
+    public String generatePacketId(String durasi) {
+        String pid = source + destination;
+        int hash = pid.hashCode();
+        packetId = Integer.toHexString(hash) + ";" + durasi + ";"
                 + Long.toHexString(System.currentTimeMillis());
         return packetId;
     }
@@ -343,11 +353,11 @@ public class Message implements Data {
         }
     };
 
-    public static String parsedMessageBody(Message vo,Context context) {
-        return parsedMessageBody(vo, 20,context);
+    public static String parsedMessageBody(Message vo, Context context) {
+        return parsedMessageBody(vo, 20, context);
     }
 
-    public static String parsedMessageBody(Message vo, int maxLen,Context context) {
+    public static String parsedMessageBody(Message vo, int maxLen, Context context) {
         String message;
         if (vo.getStatus() == Message.STATUS_FAILED) {
             message = "Message fail to deliver";
@@ -367,21 +377,21 @@ public class Message implements Data {
             String text = Html.fromHtml(message).toString();
             Pattern htmlPattern = Pattern.compile(".*\\<[^>]+>.*", Pattern.DOTALL);
             boolean isHTML = htmlPattern.matcher(message).matches();
-            if(isHTML){
-                if(text.contains("<")) {
+            if (isHTML) {
+                if (text.contains("<")) {
                     text = Html.fromHtml(Html.fromHtml(message).toString()).toString();
                 }
-            }else{
+            } else {
                 text = vo.getMessage();
             }
 
             if (text.length() > 20) {
                 message = text.substring(0, 20) + " ...";
-            }else{
+            } else {
                 message = text;
             }
 
-            if(new Validations().getInstance(context).cekRoom(vo.getSource())) {
+            if (new Validations().getInstance(context).cekRoom(vo.getSource())) {
                 JSONObject jObject = null;
                 try {
                     jObject = new JSONObject(vo.getMessage());
@@ -407,14 +417,14 @@ public class Message implements Data {
 
     public static String parsedMessageText(String text) {
         String message;
-            message = text.replaceAll("\n|\r,", " ");
-            if (message.length() > 20) {
-                message = message.substring(0, 20) + " ...";
-            }
+        message = text.replaceAll("\n|\r,", " ");
+        if (message.length() > 20) {
+            message = message.substring(0, 20) + " ...";
+        }
         return message;
     }
 
-    public static String parsedMessageBodyHtmlCode(Message vo,Context context) {
+    public static String parsedMessageBodyHtmlCode(Message vo, Context context) {
         String message;
         if (vo.getStatus() == Message.STATUS_FAILED) {
             message = "Message fail to deliver";
@@ -431,7 +441,7 @@ public class Message implements Data {
                 return "Work Schedule";
             } else if (message.startsWith("bc://")) {
                 String r[] = message.split(";");
-                if (r.length>=2){
+                if (r.length >= 2) {
                     message = r[1];
                 }
 
@@ -498,29 +508,29 @@ public class Message implements Data {
         return true;
     }
 
-    public static String getStatusMessage(Message vo,String myContact){
+    public static String getStatusMessage(Message vo, String myContact) {
         String type;
         if (!vo.getType().equals(Message.TYPE_TEXT)) {
             type = vo.getType();
-        }else{
-            if(vo.getDestination().equals(myContact)){
+        } else {
+            if (vo.getDestination().equals(myContact)) {
                 type = STATUS_TYPE_RECEIVE;
-            }else{
-                if(vo.getStatus()== Message.STATUS_DELIVERED){
+            } else {
+                if (vo.getStatus() == Message.STATUS_DELIVERED) {
                     type = STATUS_TYPE_DELIVER;
-                }else if(vo.getStatus()== Message.STATUS_NOTSEND){
+                } else if (vo.getStatus() == Message.STATUS_NOTSEND) {
                     type = STATUS_TYPE_FAILED;
-                }else if (vo.getStatus()== Message.STATUS_UNREAD){
+                } else if (vo.getStatus() == Message.STATUS_UNREAD) {
                     type = STATUS_TYPE_RECEIVE;
-                }else if (vo.getStatus()== Message.STATUS_FAILED){
+                } else if (vo.getStatus() == Message.STATUS_FAILED) {
                     type = STATUS_TYPE_FAILED;
-                }else if (vo.getStatus()== Message.STATUS_SENT){
+                } else if (vo.getStatus() == Message.STATUS_SENT) {
                     type = STATUS_TYPE_SEND;
-                }else if (vo.getStatus()== Message.STATUS_INPROGRESS){
+                } else if (vo.getStatus() == Message.STATUS_INPROGRESS) {
                     type = STATUS_TYPE_INPROSES;
-                }else if (vo.getStatus()== Message.STATUS_READ){
+                } else if (vo.getStatus() == Message.STATUS_READ) {
                     type = STATUS_TYPE_READ;
-                }else{
+                } else {
                     type = STATUS_TYPE_RECEIVE;
                 }
             }
@@ -551,5 +561,4 @@ public class Message implements Data {
     }
 
 
-
- }
+}

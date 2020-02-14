@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 /**
  * Created by imanfirmansyah on 21/03/18.
  */
@@ -164,6 +166,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }
@@ -257,6 +260,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }
@@ -271,6 +275,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }
@@ -414,6 +419,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }
@@ -428,6 +434,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }
@@ -443,6 +450,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }
@@ -640,6 +648,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }
@@ -654,6 +663,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }
@@ -669,6 +679,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }
@@ -682,6 +693,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
 
                             }

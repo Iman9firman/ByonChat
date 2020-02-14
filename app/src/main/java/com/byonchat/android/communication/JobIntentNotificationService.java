@@ -2,6 +2,7 @@ package com.byonchat.android.communication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.JobIntentService;
 
 import com.byonchat.android.utils.UploadService;
@@ -23,8 +24,19 @@ public class JobIntentNotificationService extends JobIntentService {
 
     @Override
     protected void onHandleWork(@NotNull Intent intent) {
-        Intent intentStart = new Intent(this, UploadService.class);
-        intentStart.putExtra(UploadService.ACTION, "startService");
-        startService(intentStart);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+                Intent intentStart = new Intent(this, UploadService.class);
+                intentStart.putExtra(UploadService.ACTION, "startService");
+                startForegroundService(intentStart);
+            } else {
+                Intent intentStart = new Intent(this, UploadService.class);
+                intentStart.putExtra(UploadService.ACTION, "startService");
+                startService(intentStart);
+            }
+        }catch (Exception e){
+
+        }
     }
 }

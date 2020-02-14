@@ -22,8 +22,6 @@ import java.util.Date;
 public class MyBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("HIDUP", "onReceive MyBroadcastReceiver");
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Utility.scheduleJob(context);
         } else {
@@ -51,11 +49,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                     PackageManager.DONT_KILL_APP);
         }
 
-//        if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-//            Intent intentStart = new Intent(context, UploadService.class);
-//            intentStart.putExtra(UploadService.ACTION, "startService");
-//            context.startService(intentStart);
-//        }
     }
 
     protected boolean isMyServiceRunning(Context context, Class<?> serviceClass) {

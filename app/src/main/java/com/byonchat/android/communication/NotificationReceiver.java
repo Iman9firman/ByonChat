@@ -93,12 +93,8 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
 
         if (vo != null) {
-            Log.w("sudah", "1");
-            Log.w("sudah1", vo.getMessage());
 //1_277091610admin//2595//8;List Pengiriman Mobil
             if (vo.getMessage().startsWith("bc://")) {
-
-                Log.w("sudah1", vo.getMessage());
 
                 builder.setSmallIcon(R.drawable.ic_notif);
                 builder.setLargeIcon(BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher));

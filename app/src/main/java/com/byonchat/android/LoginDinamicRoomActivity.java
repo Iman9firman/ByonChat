@@ -322,11 +322,6 @@ public class LoginDinamicRoomActivity extends AppCompatActivity {
 
 
 
-                /*String deviceSerial = android.os.Build.SERIAL;
-                String deviceMan = android.os.Build.MANUFACTURER;
-                String android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
-                nameValuePairs.add(new BasicNameValuePair("sn_device", deviceMan + "|" + deviceSerial + "|" + android_id));*/
 
                 Log.w("hasil", nameValuePairs.toString());
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));

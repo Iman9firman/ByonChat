@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="8dp">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_1_urgent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".15"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_2_urgent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".30"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_3_urgent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".70"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guide_8_urgent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".3"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/all_corner"
+        android:backgroundTint="@color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guide_1_urgent">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guide_4_urgent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".15"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guide_5_urgent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent=".85"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guide_6_urgent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".2"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guide_7_urgent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".8"/>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guide_9_urgent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".55"/>
+
+        <TextView
+            android:id="@+id/title_urgent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:text="Job Call"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            style="@style/TextAppearance.MaterialComponents.Headline5"
+            app:layout_constraintTop_toTopOf="@id/guide_6_urgent"
+            app:layout_constraintBottom_toBottomOf="@id/guide_9_urgent"
+            app:layout_constraintLeft_toLeftOf="@id/guide_4_urgent"
+            app:layout_constraintRight_toRightOf="@id/guide_5_urgent"/>
+
+        <TextView
+            android:id="@+id/note_urgent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textAlignment="center"
+            android:gravity="top"
+            android:textSize="14sp"
+            android:text="New task , please open it !"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toTopOf="@id/guide_9_urgent"
+            app:layout_constraintBottom_toBottomOf="@id/guide_7_urgent"
+            app:layout_constraintLeft_toLeftOf="@id/guide_4_urgent"
+            app:layout_constraintRight_toRightOf="@id/guide_5_urgent"/>
+
+        <ImageButton
+            android:id="@+id/cancel_urgent"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:srcCompat="@drawable/ic_cancel"
+            android:tint="@color/accent_500"
+            android:scaleType="centerCrop"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"/>
+
+        <Button
+            android:id="@+id/but_open_urgent"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:text="Open"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/colorPrimary"
+            app:layout_constraintLeft_toLeftOf="@id/guide_4_urgent"
+            app:layout_constraintRight_toRightOf="@id/guide_5_urgent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="@id/guide_2_urgent"
+        app:layout_constraintRight_toRightOf="@id/guide_3_urgent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/guide_8_urgent">
+
+
+
+        <ImageView
+            android:id="@+id/logo_urgent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:padding="24dp"
+            android:src="@drawable/ic_iss"
+            android:layout_margin="4dp"/>
+
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>

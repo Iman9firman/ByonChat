@@ -78,6 +78,7 @@ import com.byonchat.android.provider.TimeLine;
 import com.byonchat.android.provider.TimeLineDB;
 import com.byonchat.android.smsSolders.WelcomeActivitySMS;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.ui.view.DialogAct;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.GetRealNameRoom;
@@ -243,6 +244,8 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     public static final String GROUP_SERVER = "http://139.162.13.81:8080/InConnect/controll/open/";
     private static final String TAG = MessengerConnectionService.class.getSimpleName();
     public static Uri CONTACT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+    public static final String ACTION_REFRESH_NOTIF_FORM = MessengerConnectionService.class
+            .getName() + ".refreshNotifForm";
     public static final String ACTION_CONNECTED = MessengerConnectionService.class
             .getName() + ".connected";
     public static final String ACTION_DISCONNECTED = MessengerConnectionService.class
@@ -2484,6 +2487,68 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
                     }
 
+                    if (room.length == 5) {
+                        if (room[4].equalsIgnoreCase("urgent")) {
+                            DialogAct.startDialog(getApplicationContext(), 60000, room[1], room[2], room[3], 0);
+                        } else if (room[4].equalsIgnoreCase("notif")) {
+                            String title = room[3].split(";")[1];
+                            String value = room[3].split(";")[0];
+                            try {
+                                JSONArray jsonArrays = new JSONArray(value);
+                                if (jsonArrays.length() == 2) {
+                                    JSONObject jsonObject = jsonArrays.getJSONObject(0);
+                                    String id = jsonObject.getString("id");
+                                    String parent_id = jsonObject.getString("parent_id");
+                                    String add_date = jsonObject.getString("add_date");
+
+                                    JSONObject jsonObjectA = jsonArrays.getJSONObject(1);
+                                    JSONObject caca = jsonObjectA.getJSONObject("value_detail");
+
+                                    String type = caca.getString("type");
+                                    String values = caca.getString("value");
+
+                                    Cursor cursorParent = botListDB.getSingleRoomDetailFormWithFlag(id + "|" + parent_id, room[1], room[2], "parent");
+
+                                    if (cursorParent.getCount() == 0) {
+                                        RoomsDetail orderModel = new RoomsDetail(id + "|" + parent_id, room[2], room[1], add_date, "4", "", "parent");
+                                        botListDB.insertRoomsDetail(orderModel);
+
+                                        RoomsDetail orderModelTitle211 = new RoomsDetail(id + "|" + parent_id, room[2], room[1], values, "1", type, "list");
+                                        RoomsDetail orderModelTitle2 = new RoomsDetail(id + "|" + parent_id, room[2], room[1], jsonDuaObject(va(orderModelTitle211), ""), "1", type, "list");
+                                        botListDB.insertRoomsDetail(orderModelTitle2);
+
+                                        JSONObject jsonObjectI = new JSONObject();
+                                        try {
+                                            jsonObjectI.put("idDetail", id + "|" + parent_id);
+                                            jsonObjectI.put("username", room[1]);
+                                            jsonObjectI.put("idTab", room[2]);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+
+                                    DialogAct.startDialog(getApplicationContext(), 0, room[1], room[2], title + " " + values, 0);
+                                    new updateStatusDeliverNotif(getApplicationContext()).execute(new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl()+"bc_voucher_client/webservice/proses/update_history_list_task.php", id, parent_id);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+
+                        databaseHelper.execSql("INSERT INTO tab_menu_badge (id_tab, jid, message) VALUES (?,?,?)",
+                                new String[]{room[2], databaseHelper.getMyContact().getJabberId(), room[3]});
+                        vo.setMessage(room[3]);
+
+                        Intent intent = new Intent(ACTION_REFRESH_NOTIF_FORM);
+                        intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                        intent.putExtra("TYPE_XZ", "yes");
+                        intent.putExtra(KEY_CONTACT_NAME, name + additionalInfo);
+                        sendOrderedBroadcast(intent, null);
+                        return;
+                    }
 
                     String SQL_UPDATE_MESSAGES = "Delete from " + Message.TABLE_NAME + " WHERE " + Message.MESSAGE + " = ?;";
                     String SQL_SELECT_MESSAGES = "SELECT *  FROM "
@@ -5682,5 +5747,99 @@ Log.w("every",co.getJabberId());
             return !mockLocation.equals("0");
         }
     }
+
+    class updateStatusDeliverNotif extends AsyncTask<String, Void, String> {
+        //https://bb.byonchat.com/bc_voucher_client/webservice/proses/update_history_list_task.php
+        private static final int REGISTRATION_TIMEOUT = 3 * 1000;
+        private static final int WAIT_TIMEOUT = 3 * 1000;
+        private final HttpClient httpclient = new DefaultHttpClient();
+
+        final HttpParams params = httpclient.getParams();
+        HttpResponse response;
+        private Context mContext;
+        private String content = null;
+        private boolean error = false;
+        String code2 = "400";
+        private MessengerDatabaseHelper messengerHelper;
+
+        public updateStatusDeliverNotif(Context context) {
+            this.mContext = context;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        InputStreamReader reader = null;
+
+        protected String doInBackground(String... key) {
+            Log.w("jojon1", key[0]);
+            Log.w("jojon2", key[1]);
+            Log.w("jojon3", key[2]);
+            try {
+                HttpClient httpClient = HttpHelper
+                        .createHttpClient(mContext);
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+                        2);
+
+                if (messengerHelper == null) {
+                    messengerHelper = MessengerDatabaseHelper.getInstance(mContext);
+                }
+
+                nameValuePairs.add(new BasicNameValuePair("task_id", key[1]));
+                nameValuePairs.add(new BasicNameValuePair("id_rooms_tab", key[2]));
+
+                HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
+                HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+                ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
+
+                HttpPost post = new HttpPost(key[0]);
+                post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+
+                //Response from the Http Request
+                response = httpclient.execute(post);
+                StatusLine statusLine = response.getStatusLine();
+
+                if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(out);
+                    out.close();
+
+                } else {
+                    //Closes the connection.
+                    error = true;
+                    // Log.w("HTTP1:", statusLine.getReasonPhrase());
+                    content = statusLine.getReasonPhrase();
+                    response.getEntity().getContent().close();
+                    throw new IOException(content);
+                }
+
+            } catch (ClientProtocolException e) {
+                // Log.w("HTTP2:", e);
+                content = e.getMessage();
+                error = true;
+            } catch (IOException e) {
+                // Log.w("HTTP3:", e);
+                content = e.getMessage();
+                error = true;
+            } catch (Exception e) {
+                error = true;
+            }
+
+            return content;
+        }
+
+        protected void onCancelled() {
+
+        }
+
+        protected void onPostExecute(String content) {
+//            Log.w("sudah", content);
+        }
+
+    }
+
 
 }

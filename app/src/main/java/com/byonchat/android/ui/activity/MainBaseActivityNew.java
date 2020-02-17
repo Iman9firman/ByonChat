@@ -712,30 +712,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", false);
         Byonchat.getRoomsDB().close();
 
-        if (botArrayLististPrimary.size() == 0) {
-            Intent intent = new Intent(this, NewSearchRoomActivity.class);
-            intent.putExtra("search", "brand");
-            intent.putExtra("addHonda", "2");
-            intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
-            intent.putExtra(Constants.EXTRA_COLOR, color);
-            startActivity(intent);
-            finish();
-        } else {
-            if (!botArrayLististPrimary.get(0).getName().equalsIgnoreCase("1_248162126admin")) {
-                Byonchat.getRoomsDB().open();
-                Byonchat.getRoomsDB().deleteRooms();
-                Byonchat.getRoomsDB().close();
-
-                Intent intent = new Intent(this, NewSearchRoomActivity.class);
-                intent.putExtra("search", "brand");
-                intent.putExtra("addHonda", "2");
-                intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
-                intent.putExtra(Constants.EXTRA_COLOR, color);
-                startActivity(intent);
-                finish();
-            }
-        }
-
 
         if (botArrayLististPrimary.size() > 0 && botArrayListist.size() == 0) {
             if (botArrayLististPrimary.size() > 0) {

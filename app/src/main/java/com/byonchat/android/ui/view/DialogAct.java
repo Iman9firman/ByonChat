@@ -150,9 +150,18 @@ public class DialogAct extends Activity {
         textTitle = findViewById(R.id.title_urgent);
         logoDialog = findViewById(R.id.logo_urgent);
 
+
         //SetData
-        Picasso.with(getBaseContext()).load(urlImageLogo).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(logoDialog);
-        textTitle.setText(tabName);
+        if (username.equalsIgnoreCase("1_8145429admin")) {
+            Picasso.with(getBaseContext()).load("http://www.markaindo.co.id/id/site/templates/src/img/logo.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(logoDialog);
+            textTitle.setText("History Sample");
+
+        } else {
+            Picasso.with(getBaseContext()).load(urlImageLogo).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(logoDialog);
+            textTitle.setText(tabName);
+        }
+
+
         textNote.setText(message);
 
         //OnClick Action
@@ -176,7 +185,7 @@ public class DialogAct extends Activity {
                 Intent intent = new Intent(getBaseContext(), MainActivityNew.class);
                 intent.putExtra(ConversationActivity.KEY_JABBER_ID, contact.getJabberId());
                 intent.putExtra("success", "oke");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
 
                 if (countDownTimer != null) {

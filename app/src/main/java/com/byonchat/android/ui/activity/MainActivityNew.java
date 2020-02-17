@@ -135,6 +135,8 @@ import okhttp3.internal.Util;
 
 public class MainActivityNew extends MainBaseActivityNew {
 
+    public static final int REQUEST_PERMISSION = 123;
+
     @Override
     protected int getResourceLayout() {
         return R.layout.main_activity_new;
@@ -410,6 +412,14 @@ public class MainActivityNew extends MainBaseActivityNew {
     protected void onResume() {
         super.onResume();
         assistant.start();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.v("App", "Build Version Greater than or equal to M: " + Build.VERSION_CODES.M);
+            checkDrawOverlayPermission();
+        } else {
+            Log.v("App", "OS Version Less than M");
+            //No need for Permission as less then M OS.
+        }
 
         IntentFilter f = new IntentFilter(
                 MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
@@ -863,4 +873,25 @@ public class MainActivityNew extends MainBaseActivityNew {
         }
         Toast.makeText(this, "Shortcut Created", Toast.LENGTH_SHORT).show();
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void checkDrawOverlayPermission() {
+        if (!Settings.canDrawOverlays(MainActivityNew.this)) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getApplicationContext().getPackageName()));
+            startActivityForResult(intent, REQUEST_PERMISSION);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_PERMISSION) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.canDrawOverlays(this)) {
+                }
+            }
+        }
+    }
+
 }

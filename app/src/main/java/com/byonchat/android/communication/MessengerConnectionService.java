@@ -2491,6 +2491,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                         if (room[4].equalsIgnoreCase("urgent")) {
                             DialogAct.startDialog(getApplicationContext(), 60000, room[1], room[2], room[3], 0);
                         } else if (room[4].equalsIgnoreCase("notif")) {
+                            Log.w("hasilDari", room[3]);
                             String title = room[3].split(";")[1];
                             String value = room[3].split(";")[0];
                             try {
@@ -2528,8 +2529,10 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
                                     }
 
+                                    new updateStatusDeliverNotif(getApplicationContext()).execute(new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl() + "bc_voucher_client/webservice/proses/update_history_list_task.php", id, parent_id);
+
                                     DialogAct.startDialog(getApplicationContext(), 0, room[1], room[2], title + " " + values, 0);
-                                    new updateStatusDeliverNotif(getApplicationContext()).execute(new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl()+"bc_voucher_client/webservice/proses/update_history_list_task.php", id, parent_id);
+
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -5759,7 +5762,6 @@ Log.w("every",co.getJabberId());
         private Context mContext;
         private String content = null;
         private boolean error = false;
-        String code2 = "400";
         private MessengerDatabaseHelper messengerHelper;
 
         public updateStatusDeliverNotif(Context context) {
@@ -5774,9 +5776,6 @@ Log.w("every",co.getJabberId());
         InputStreamReader reader = null;
 
         protected String doInBackground(String... key) {
-            Log.w("jojon1", key[0]);
-            Log.w("jojon2", key[1]);
-            Log.w("jojon3", key[2]);
             try {
                 HttpClient httpClient = HttpHelper
                         .createHttpClient(mContext);

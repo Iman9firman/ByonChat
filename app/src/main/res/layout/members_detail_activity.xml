@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 style="@style/TextMediumBlack"
                 android:textColor="@color/blueLine"
-                android:text="S-Team Member Card"
+                android:text="Sinarmas Bank Member Card"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />

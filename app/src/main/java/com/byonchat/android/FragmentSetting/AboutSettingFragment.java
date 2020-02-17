@@ -57,7 +57,7 @@ public class AboutSettingFragment extends Fragment {
 
     public final static String REQUEST_VERSION = "https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/api_luar/api_version.php";
     MessengerDatabaseHelper messengerHelper;
-    private static final String SD_CARD_FOLDER = "S-TeamAPK";
+    private static final String SD_CARD_FOLDER = "SinarmasAPK";
 
     ProgressBar progressBar;
     Button btnCekUpdate;
@@ -212,7 +212,7 @@ public class AboutSettingFragment extends Fragment {
         protected Boolean doInBackground(String... fileUrl) {
             try {
                 File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
-                File dbDownloadPath = new File(oldFolder, "S-Team.apk");
+                File dbDownloadPath = new File(oldFolder, "Sinarmas.apk");
                 if (!oldFolder.exists()) {
                     oldFolder.mkdirs();
                 }
@@ -285,7 +285,7 @@ public class AboutSettingFragment extends Fragment {
                 } else {
 
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/S-Team.apk")),
+                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/Sinarmas.apk")),
                             "application/vnd.android.package-archive");
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);

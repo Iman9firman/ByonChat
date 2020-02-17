@@ -195,11 +195,11 @@ public class UploadService extends IntentService {
 
         String channelId = "";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channelId = createNotificationChannel("S-Team", "Connected");
+            channelId = createNotificationChannel("Sinarmas  Bank", "Connected");
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
             Notification notification = notificationBuilder.setOngoing(true)
-                    .setContentTitle("S-Team")
+                    .setContentTitle("Sinarmas  Bank")
                     .setContentText(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext()) ? "Connected" : "No Connectivity")
                     .setSmallIcon(R.drawable.logo_byon)
                     .setContentIntent(pendingIntent)
@@ -652,9 +652,9 @@ public class UploadService extends IntentService {
                     vo.setMessage(jsonMessage(f.getAbsolutePath(), b, c));
                     int currentapiVersion = Build.VERSION.SDK_INT;
                     if (currentapiVersion >= Build.VERSION_CODES.KITKAT) {
-                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file:/" + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/S-Team/" + filename)));
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file:/" + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/Sinarmas/" + filename)));
                     } else {
-                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file:/" + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/S-Team/" + filename)));
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file:/" + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/Sinarmas/" + filename)));
                     }
 
                     vo.setStatus(Message.STATUS_DELIVERED);

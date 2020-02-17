@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:singleLine="true"
-        android:text="S-Team"
+        android:text="Sinarmas Bank"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@android:color/white" />
 

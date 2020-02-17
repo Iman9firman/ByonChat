@@ -143,7 +143,7 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                 public void onClick(View v) {
                     Log.w("Parking lt prestice 1st",item.id_history);
                     if(downloaded){
-                        File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "S-TeamDoc");
+                        File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "SinarmasDoc");
                         File oldFile = new File(oldFolder, "ISS_request_"+item.id_request+".pdf");
 
                         if(!oldFile.exists()){

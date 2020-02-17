@@ -84,7 +84,7 @@ public class FragmentMyCardID extends Fragment {
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int MEDIA_TYPE_VIDEO = 2;
     private Uri fileUri;
-    private static final String IMAGE_DIRECTORY_NAME = "S-Team";
+    private static final String IMAGE_DIRECTORY_NAME = "Sinarmas";
     private ArrayList<String> CardLink = new ArrayList<>();
     private BotListDB db;
     private MessengerDatabaseHelper messengerHelper;
@@ -370,7 +370,7 @@ public class FragmentMyCardID extends Fragment {
             doc.setProgressMessage(R.string.crop__wait);
             doc.setFileName("idcard_" + name + "_honda");
 
-            File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/S-TeamDoc");
+            File pdf = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/SinarmasDoc");
             if (!pdf.exists()) {
                 pdf.mkdir();
             }

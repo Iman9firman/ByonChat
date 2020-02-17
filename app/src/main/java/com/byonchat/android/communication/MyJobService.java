@@ -108,7 +108,7 @@ public class MyJobService extends JobService {
             try {
                 String channelId = "";
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    channelId = createNotificationChannel("S-Team", "Connected");
+                    channelId = createNotificationChannel("Sinarmas", "Connected");
 
                     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId);
                     Notification notification = notificationBuilder.setOngoing(true)

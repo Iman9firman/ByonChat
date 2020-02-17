@@ -244,7 +244,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
 
         iconsStoragePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                + "/S-Team/Photo Profile/";
+                + "/Sinarmas/Photo Profile/";
         final File sdIconStorageDir = new File(iconsStoragePath);
         if (!sdIconStorageDir.exists()) {
             sdIconStorageDir.mkdirs();

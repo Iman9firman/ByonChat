@@ -55,7 +55,7 @@ import java.util.Map;
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 
 public class DownloadFileByonchat extends AppCompatActivity {
-    private static final String SD_CARD_FOLDER = "S-TeamDoc";
+    private static final String SD_CARD_FOLDER = "SinarmasDoc";
     private ProgressDialog mProgressDialog;
     private String DOWNLOAD_PATH;
     private String NAME_FILE;
@@ -383,7 +383,7 @@ public class DownloadFileByonchat extends AppCompatActivity {
 
     private void prepareMerging(String path1, String path2) {
         String fileOne = path1;
-        String Nama_Merge = path1.replace("/storage/emulated/0/S-TeamDoc/","");
+        String Nama_Merge = path1.replace("/storage/emulated/0/SinarmasDoc/","");
         String fileTwo = path2;
         File hasil = new File(Environment.getExternalStorageDirectory(), Nama_Merge);
         hasil.getParentFile().mkdirs();

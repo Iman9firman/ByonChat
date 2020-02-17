@@ -652,7 +652,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         }
 
         image_url = "";
-        title = "S-Team";
+        title = "Sinarmas  Bank";
         logo = R.drawable.logo_byon;
         background = R.drawable.byonchat_room;
         percent = "70";
@@ -926,8 +926,8 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     .fitCenter()
                     .into(vNavLogo);
 
-            vNavTitle.setText("S-Team");
-            vToolbarSearchText.setText("S-Team");
+            vNavTitle.setText("Sinarmas  Bank");
+            vToolbarSearchText.setText("Sinarmas  Bank");
 
             Manhera.getInstance().get()
                     .load(background)

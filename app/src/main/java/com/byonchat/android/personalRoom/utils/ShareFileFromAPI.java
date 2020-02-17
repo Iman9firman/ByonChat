@@ -44,7 +44,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 
 public class ShareFileFromAPI extends AppCompatActivity {
-    private static final String SD_CARD_FOLDER = "S-TeamDoc";
+    private static final String SD_CARD_FOLDER = "SinarmasDoc";
     private ProgressDialog mProgressDialog;
     private String DOWNLOAD_PATH;
     private String CARD_PATH;

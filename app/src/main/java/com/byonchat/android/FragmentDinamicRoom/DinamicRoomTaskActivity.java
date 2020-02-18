@@ -5404,7 +5404,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
                                 JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                 if (values.has("value")) {
-                                    Picasso.with(context).load(new ValidationsKey().getInstance(context).getTargetUrl()+"/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
+                                    Picasso.with(context).load(new ValidationsKey().getInstance(context).getTargetUrl() + "/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
                                 }
                             }
                         }
@@ -12789,6 +12789,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 }
 
                 if (hashMapDropForm.size() > 0) {
+                    Log.w("JamBU", customersId);
                     Iterator it = hashMapDropForm.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry pair = (Map.Entry) it.next();
@@ -12827,7 +12828,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                             DataBaseDropDown mDB = new DataBaseDropDown(context, DBmaster);
                             if (mDB.getWritableDatabase() != null) {
 
-                                final Cursor c = mDB.getWritableDatabase().query(true, from, aass, where, new String[]{"318"}, null, null, null, null);
+                                final Cursor c = mDB.getWritableDatabase().query(true, from, aass, where, new String[]{customersId}, null, null, null, null);
 
                                 if (c.moveToFirst()) {
                                     String titleOld = "";
@@ -13585,7 +13586,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 jsonObject.put(title, JsArray);
             }
             jsonObject.put("customersId", customersId);
-            String flagRoom = "";
+            String flagRoom = "form_isian";
+
             JSONObject jsonObject1 = new JSONObject();
             if (idTab.equalsIgnoreCase("3355")) {
                 jsonObject1.put("a", "68396");
@@ -13594,7 +13596,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 jsonObject1.put("a", "68415");
                 flagRoom = "form_isian";
             }
-
 
 
             jsonObject1.put("b", "dropdown_form");

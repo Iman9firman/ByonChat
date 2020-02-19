@@ -203,7 +203,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     if (valid.equalsIgnoreCase("0")) {
                         String asiop4[] = {"pertanyaan"};
                         Log.w("hope", idItem);
-                        headerFour = getNameByIdSLA("pertanyaan", asiop4, removePosFromId(idItem));
+                        headerFour = getNameByIdSLA("pertanyaan", asiop4, idPertanyaan);
 
                         String idPrtnyaan = fifth.getString("id");
                         String id_task = fifth.getString("id_task");

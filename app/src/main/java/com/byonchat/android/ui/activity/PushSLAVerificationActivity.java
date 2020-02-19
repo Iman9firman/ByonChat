@@ -343,7 +343,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 //                            noTiga = String.valueOf(iv + 1);
                 for (int v = 0; v < pertanyaan.length(); v++) {
                     JSONObject fifth = pertanyaan.getJSONObject(v);
-                    idItem = fifth.getString("id_task");
+                    idItem = fifth.getString("id");
                     String valid = fifth.getString("v");
                     if (valid.equalsIgnoreCase("0")) {
                         String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;

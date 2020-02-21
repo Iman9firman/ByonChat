@@ -5,7 +5,6 @@ apply plugin: "com.jfrog.bintray"
 android {
     compileSdkVersion rootProject.compileSdkVersion
     buildToolsVersion rootProject.buildToolsVersion
-    useLibrary 'org.apache.http.legacy'
 
 
     defaultConfig {
@@ -261,14 +260,6 @@ dependencies {
     implementation "com.google.firebase:firebase-analytics"
     implementation "com.google.firebase:firebase-messaging"
     implementation "com.google.firebase:firebase-iid:16.0.0 "
-    //implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
-    /*implementation('org.apache.httpcomponents:httpclient-android:4.3.5.1') {
-        exclude group: 'org.apache.http'
-    }
 
-    implementation('org.apache.httpcomponents:httpcore:4.3.2') {
-        exclude group: 'org.apache.http'
-    }*/
 
-    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
 }

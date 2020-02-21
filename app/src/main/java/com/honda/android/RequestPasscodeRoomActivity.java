@@ -28,7 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
-import com.honda.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.MessengerDatabaseHelper;
 import com.honda.android.utils.GPSTracker;
@@ -46,8 +45,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
@@ -247,55 +244,6 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
             String responseString = null;
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/api_generate_passcode.php");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                                vCircleProgress.setProgress((int) ((num / (float) totalSize) * 100));
-                                uploadProgress.setText("Upload " + (int) ((num / (float) totalSize) * 100) + "%");
-                            }
-                        });
-
-
-                File sourceFile = new File(resizeAndCompressImageBeforeSend(getApplicationContext(), photo, "fileUploadBC_" + new Date().getTime() + ".jpg"));
-
-                if (!sourceFile.exists()) {
-                    return "File not exists";
-                }
-
-                ContentType contentType = ContentType.create("image/jpeg");
-                entity.addPart("username_room", new StringBody(usernameRoom));
-                entity.addPart("bc_user", new StringBody(messengerHelper.getMyContact().getJabberId()));
-                entity.addPart("lat", new StringBody(lat));
-                entity.addPart("long", new StringBody(longi));
-                entity.addPart("foto", new FileBody(sourceFile, contentType, sourceFile.getName()));
-
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                Log.w("siiip3", statusCode + "");
-                if (statusCode == 200) {
-                    responseString = EntityUtils.toString(r_entity);
-                    Log.w("garin", responseString);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
 
             return responseString;
         }

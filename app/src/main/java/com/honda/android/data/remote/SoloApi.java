@@ -68,6 +68,7 @@ public enum SoloApi {
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()
                 .create(Api.class);
+
     }
 
     private Response headersInterceptor(Interceptor.Chain chain) throws IOException {

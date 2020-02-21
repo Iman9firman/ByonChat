@@ -40,7 +40,6 @@ import com.honda.android.provider.BotListDB;
 import com.honda.android.provider.RoomsDetail;
 import com.honda.android.ui.adapter.OnPreviewItemClickListener;
 import com.honda.android.ui.view.ByonchatRecyclerView;
-import com.honda.android.utils.AndroidMultiPartEntity;
 import com.honda.android.utils.MediaProcessingUtil;
 
 import org.apache.http.HttpEntity;
@@ -49,8 +48,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -425,51 +422,6 @@ public class PushRepairReportActivity extends AppCompatActivity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(URL);
 
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                java.io.File sourceFile = new java.io.File(resizeAndCompressImageBeforeSend(getApplicationContext(), ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
-
-                if (!sourceFile.exists()) {
-                    return "File not exists";
-                }
-
-                ContentType contentType = ContentType.create("image/jpeg");
-                entity.addPart("username_room", new StringBody(username));
-                entity.addPart("id_rooms_tab", new StringBody(id_room));
-                entity.addPart("id_list_task", new StringBody(id_list));
-                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
-
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    String _response = EntityUtils.toString(r_entity); // content will be consume only once
-                    return _response;
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
             return responseString;
         }
 
@@ -542,64 +494,6 @@ public class PushRepairReportActivity extends AppCompatActivity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(URL);
 
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-
-                java.io.File gpxfile = null;
-                try {
-                    java.io.File root = new java.io.File(Environment.getExternalStorageDirectory(), "ByonChat_Upload");
-                    if (!root.exists()) {
-                        root.mkdirs();
-                    }
-                    gpxfile = new java.io.File(root, username + id_room + bc_user + ".json");
-                    FileWriter writer = new FileWriter(gpxfile);
-                    writer.append(fileJson());
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                if (!gpxfile.exists()) {
-                    return "File not exists";
-                }
-
-                ContentType contentType = ContentType.create("multipart/form-data");
-                entity.addPart("username_room", new StringBody(username));
-                entity.addPart("bc_user", new StringBody(bc_user));
-                entity.addPart("id_rooms_tab", new StringBody(id_room));
-                entity.addPart("json", new FileBody(gpxfile, contentType, gpxfile.getName()));
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    String _response = EntityUtils.toString(r_entity); // content will be consume only once
-                    return _response;
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
 
             return responseString;
         }

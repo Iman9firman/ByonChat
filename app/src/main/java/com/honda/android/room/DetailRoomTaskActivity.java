@@ -35,7 +35,6 @@ import com.honda.android.communication.MessengerConnectionService;
 import com.honda.android.provider.ContentRoom;
 import com.honda.android.provider.ContentRoomDB;
 import com.honda.android.provider.MessengerDatabaseHelper;
-import com.honda.android.utils.AndroidMultiPartEntity;
 import com.honda.android.utils.GPSTracker;
 import com.honda.android.utils.MediaProcessingUtil;
 import com.honda.android.utils.TouchImageView;
@@ -46,8 +45,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
@@ -456,48 +453,6 @@ public class DetailRoomTaskActivity extends AppCompatActivity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost("https://"+ MessengerConnectionService.HTTP_SERVER+"/demo_pamjaya/terima_upload.php");
 
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                File sourceFile = new File(filePath);
-                ContentType contentType = ContentType.create("image/jpeg");
-                entity.addPart("foto1",  new FileBody( sourceFile, contentType, sourceFile.getName()));
-                entity.addPart("note1",new StringBody(textMessage.getText().toString()));
-                entity.addPart("koordinat", new StringBody(longitude+","+latitude));
-                Date date = new Date();
-                entity.addPart("waktu", new StringBody(hourFormat.format(date).toString()));
-                entity.addPart("bcid", new StringBody(dbhelper.getMyContact().getJabberId()));
-                entity.addPart("room", new StringBody("b6542sdr"));
-                entity.addPart("job", new StringBody(idTask));
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
 
             return responseString;
 

@@ -1,15 +1,12 @@
 package com.honda.android.personalRoom;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -18,7 +15,6 @@ import android.widget.Toast;
 
 import com.honda.android.R;
 import com.honda.android.communication.MessengerConnectionService;
-import com.honda.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.honda.android.utils.ImageCompress;
 import com.honda.android.utils.UtilsPD;
 
@@ -28,8 +24,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
@@ -120,43 +114,6 @@ public class PRCoverUploadActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
 
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                File sourceFile = new File(imageCompress.compressImage(getApplicationContext(), filePath));
-                ContentType contentType = ContentType.create("image/jpeg");
-
-                entity.addPart("userid", new StringBody(userid));
-                entity.addPart("file", new FileBody(sourceFile, contentType, sourceFile.getName()));
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
 
             return responseString;
 

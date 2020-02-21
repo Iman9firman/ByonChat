@@ -25,7 +25,6 @@ import android.widget.VideoView;
 
 import com.honda.android.R;
 import com.honda.android.communication.MessengerConnectionService;
-import com.honda.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.honda.android.provider.Message;
 import com.honda.android.widget.VideoSlaceSeekBar;
 
@@ -35,8 +34,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
@@ -297,42 +294,6 @@ public class DialogFragmentVideo extends DialogFragment implements DialogInterfa
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
 
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                File sourceFile = new File(filePath);
-                ContentType contentType = ContentType.create("video/mp4");
-                entity.addPart("userid", new StringBody(userid));
-                entity.addPart("file", new FileBody(sourceFile, contentType, sourceFile.getName()));
-                entity.addPart("judul_video", new StringBody(mTitle.getText().toString()));
-                entity.addPart("deskripsi_video", new StringBody(mDescription.getText().toString()));
-                entity.addPart("durasi", new StringBody(waktu));
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
 
             return responseString;
 

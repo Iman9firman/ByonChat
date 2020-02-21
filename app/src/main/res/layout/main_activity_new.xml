@@ -427,7 +427,7 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:itemBackground="?selectableItemBackground"
-        app:menu="@menu/ims_nav_menu_main">
+        >
 
         <ListView
             android:id="@+id/list_view"

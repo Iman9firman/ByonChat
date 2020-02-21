@@ -705,7 +705,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         vBtnOpenRooms.setImageDrawable(isTrue ? getResources().getDrawable(R.drawable.ico_arrow_down) : getResources().getDrawable(R.drawable.ico_arrow_up));
         vListRooms.setVisibility(isTrue ? View.GONE : View.VISIBLE);
 
-        Menu nav_Menu = navigationView.getMenu();
+    /*    Menu nav_Menu = navigationView.getMenu();
         nav_Menu.findItem(R.id.nav_item_one).setVisible(false);
         nav_Menu.findItem(R.id.nav_item_two).setVisible(isTrue);
         nav_Menu.findItem(R.id.nav_item_three).setVisible(isTrue);
@@ -726,7 +726,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     protected void refreshList() {

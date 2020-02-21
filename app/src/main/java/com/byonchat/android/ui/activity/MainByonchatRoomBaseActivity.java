@@ -216,11 +216,16 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     }
 
     protected void onSetStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+            }
+        } catch (Exception e) {
+
         }
+
     }
 
     protected abstract int getResourceLayout();
@@ -411,7 +416,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
 
     protected void resolveFragment() {
         Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        Log.w("CEK WV GANDHIP", category + "  -  " + title+" -----   "+id_rooms_tab+" --> "+username);
+        Log.w("CekGANDHIP", category + "  -  " + title + " -----   " + id_rooms_tab + " --> " + username);
         if (cur.getCount() > 0) {
             try {
                 if (category.equalsIgnoreCase("1")) {
@@ -640,7 +645,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 if (value.get(5).toString().equalsIgnoreCase("show") || value.get(5).toString().equalsIgnoreCase("showMultiple")) {
                     vFloatingButton.show();
                     Intent intent = new Intent(getApplicationContext(), DinamicRoomTaskActivity.class);
-                    if (value.get(2).toString().equalsIgnoreCase("2613")||value.get(2).toString().equalsIgnoreCase("3336")) {
+                    if (value.get(2).toString().equalsIgnoreCase("2613") || value.get(2).toString().equalsIgnoreCase("3336")) {
                         intent = new Intent(getApplicationContext(), DinamicSLATaskActivity.class);
                     }
 

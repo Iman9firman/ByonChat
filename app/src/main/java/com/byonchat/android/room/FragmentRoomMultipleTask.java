@@ -242,7 +242,6 @@ public class FragmentRoomMultipleTask extends Fragment {
     }
 
     public String abs(String ctn, String type) {
-        Log.w("hasilABS", type + "::" + ctn);
         String content = ctn;
         if (type != null) {
             if (type.equalsIgnoreCase("rear_camera") || type.equalsIgnoreCase("front_camera")) {
@@ -388,7 +387,6 @@ public class FragmentRoomMultipleTask extends Fragment {
 
         protected String doInBackground(String... key) {
             try {
-                Log.w("hallo", linkTembak);
                 HttpClient httpClient = HttpHelper
                         .createHttpClient(mContext);
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
@@ -417,7 +415,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                     response.getEntity().writeTo(out);
                     out.close();
                     content = out.toString();
-                    Log.w("kasus", content);
                     JSONObject result = new JSONObject(content.toString());
 
                     JSONArray menuitemArray = result.getJSONArray("list_pull");
@@ -451,9 +448,6 @@ public class FragmentRoomMultipleTask extends Fragment {
                             if (oParent.has("report_status")) {
                                 report_status = oParent.getString("report_status");
                             }
-
-                            Log.w("subami1", report_status);
-                            Log.w("subami2", is_reject);
 
                             Cursor cursorParent = botListDB.getSingleRoomDetailFormWithFlag(id + "|" + parent_id, username, idTab, "parent");
 

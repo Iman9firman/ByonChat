@@ -181,20 +181,8 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         et2.setHint("Name");
 
 
-//        TextView textViewDua = new TextView(PushSLAVerificationActivity.this);
-//        textViewDua.setText(Html.fromHtml("Signature"));
-//        textViewDua.setTextSize(15);
-
-
         LinearLayout photoSignLayout = (LinearLayout) findViewById(R.id.photo_sign_layout);
-//        imageViewSignature = (ImageView) getLayoutInflater().inflate(R.layout.frame_signature_form_black, null);
         imageViewSignature = (ImageView) findViewById(R.id.get_sign);
-//        imageViewSignature.setImageDrawable(getResources().getDrawable(R.drawable.ico_signature));
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        params.setMargins(5, 15, 0, 0);
-
-//        imageViewSignature.setLayoutParams(params);
-//        params.addRule(RelativeLayout.CENTER_IN_PARENT);
         imageViewSignature.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -204,20 +192,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
             }
         });
-
-
-//        TextView textViewTiga = new TextView(PushSLAVerificationActivity.this);
-//        textViewTiga.setText("Photo");
-//        textViewTiga.setTextSize(15);
-
-//        imageviewPhoto = (ImageView) getLayoutInflater().inflate(R.layout.image_view_frame, null);
         imageviewPhoto = (ImageView) findViewById(R.id.get_photo);
-//        int width = getWindowManager().getDefaultDisplay().getWidth();
-//        RelativeLayout.LayoutParams paramsDua = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width / 2);
-//        paramsDua.setMargins(5, 15, 0, 0);
-//        imageviewPhoto.setLayoutParams(paramsDua);
-//        paramsDua.addRule(RelativeLayout.CENTER_IN_PARENT);
-
         spinner = new Spinner(this);
         ArrayList<String> spinArr = new ArrayList<>();
         spinArr.add("-- Select Type --");
@@ -248,11 +223,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         layoutForCheck.addView(et, params2);
         layoutForCheck.addView(et2, params2);
         photoSignLayout.setVisibility(View.VISIBLE);
-//        layoutForCheck.addView(textViewDua, params1);
-//        layoutForCheck.addView(imageViewSignature, params2);
-//        layoutForCheck.addView(textViewTiga, params1);
-//        layoutForCheck.addView(imageviewPhoto, paramsDua);
-
 
         imageviewPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,8 +270,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     protected void resolveData() {
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
-            Log.w("OKee argus", gvcs + "");
-//            id_task = gvcs.getString("task_id");
             id_task_list = gvcs.getString("id_list_task");
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
             name_title = gvcs.getString("title");
@@ -346,7 +314,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                     idItem = fifth.getString("id");
                     String valid = fifth.getString("v");
                     if (valid.equalsIgnoreCase("0")) {
-                        String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+                        String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + fifth.getString("id_task");
 
                         noEmpat = String.valueOf(v + 1);
                         String asiop4[] = {"pertanyaan"};
@@ -380,7 +348,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 }
             }
         } catch (JSONException e) {
-            Log.w("ERROR argus", e.getMessage());
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -741,9 +708,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             }
 
             stringdong = gvcs.toString();
-            Log.w("brurhur argus", stringdong);
         } catch (JSONException e) {
-            Log.w("brorhur argus", e.getMessage());
         }
 
         return stringdong;
@@ -819,19 +784,15 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 200) {
                     String _response = EntityUtils.toString(r_entity); // content will be consume only once
-                    Log.w("waterews", "1. " + _response);
                     return _response;
                 } else {
-                    Log.w("waterews", "2. " + "error");
                     responseString = "Error occurred! Http Status Code: "
                             + statusCode;
                 }
 
             } catch (ClientProtocolException e) {
-                Log.w("waterews", "3. " + e.getMessage());
                 responseString = e.toString();
             } catch (IOException e) {
-                Log.w("waterews", "4. " + e.getMessage());
                 responseString = e.toString();
             }
 
@@ -840,7 +801,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.w("waterews", "5. " + result);
             Toast.makeText(getApplicationContext(), "Success Uploading Report", Toast.LENGTH_LONG).show();
             rdialog.dismiss();
             finish();

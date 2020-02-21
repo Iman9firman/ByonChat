@@ -202,7 +202,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     noEmpat = String.valueOf(v + 1);
                     if (valid.equalsIgnoreCase("0")) {
                         String asiop4[] = {"pertanyaan"};
-                        Log.w("hope", idItem);
                         headerFour = getNameByIdSLA("pertanyaan", asiop4, idPertanyaan);
 
                         String idPrtnyaan = fifth.getString("id");
@@ -217,7 +216,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         }
 
                         String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
-                        Log.w("idpaslagi insert", id);
                         String header = headerTwo + " - " + headerFour;
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
@@ -233,7 +231,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 }
             }
         } catch (JSONException e) {
-            Log.w("Nangkringbocah 3", e.getMessage());
         }
     }
 
@@ -415,7 +412,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Log.w("ketemmnu json",fileJson());
                 rdialog = new ProgressDialog(PustSLAFollowUpActivity.this);
                 rdialog.setMessage("Loading...");
                 rdialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -444,7 +440,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getAfter() != null) {
-                            Log.w("jahannamKau", foto.get(i).getAfter().toString());
                             new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
                                     getIntent().getStringExtra("username_room"),
                                     id_rooms_tab, id_task_list,
@@ -504,15 +499,12 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask;
                     String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask + "-" + v;
                     for (int vi = 0; vi < uploadfoto.size(); vi++) {
-                        Log.w("FollPush Nangkringbocah", uploadfoto.get(vi).getId());
                         if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                             fifth.put("a", uploadfoto.get(vi).getAfterString());
                             byTwo.put("a", uploadfoto.get(vi).getAfterString());
-                            Log.w("idpaslagi view", id_text);
                             if (checkDB(id_text)) {
                                 fifth.put("ket", getTheDB(id_text));
                                 byTwo.put("ket", getTheDB(id_text));
-                                Log.w("yang ketemmnu", getTheDB(id_text));
                             }
                         }
                     }
@@ -557,7 +549,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                     idItem = fifth.getString("id");
                     String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
                     String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem + "-" + v;
-                    Log.w("idpaslagi delete", id_text);
                     for (int vi = 0; vi < uploadfoto.size(); vi++) {
                         if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
                             fifth.put("a", uploadfoto.get(vi).getAfterString());
@@ -570,7 +561,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 }
             }
         } catch (JSONException e) {
-            Log.w("error idpaslagi", e.getMessage());
         }
     }
 
@@ -629,7 +619,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.w("segituStart", "de");
         }
 
         @Override
@@ -656,13 +645,11 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
 
                 java.io.File sourceFile = new java.io.File(resizeAndCompressImageBeforeSend(getApplicationContext(), ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
-//                java.io.File sourceFile = new java.io.File(ii);
 
                 if (!sourceFile.exists()) {
                     return "File not exists";
@@ -724,7 +711,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.w("Bukan itu", e.getMessage());
             }
             super.onPostExecute(result);
         }
@@ -759,7 +745,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                             @Override
                             public void transferred(long num) {
-                                Log.w("segitu", (int) ((num / (float) totalSize) * 100) + "");
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
@@ -914,7 +899,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         try {
             return idWithPosition.substring(0, idWithPosition.lastIndexOf("-"));
         } catch (Exception e) {
-            Log.w("Jambore::" + idWithPosition, e.getMessage());
         }
         return idWithPosition;
 

@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+
         SLAmodelNew foto = allList.get(position);
 
         Picasso.with(context).load(foto.getBefore())

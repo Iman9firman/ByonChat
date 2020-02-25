@@ -292,23 +292,14 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
                 JSONObject pembobotan = first.getJSONObject("pembobotan");
-//                for (int ii = 0; ii < pembobotan.length(); ii++) {
                 JSONObject second = pembobotan.getJSONObject("section");
-//                    JSONArray section = second.getJSONArray("section");
                 idSection = pembobotan.getString("id");
-//                    noSatu = String.valueOf(ii + 1);
-//                    for (int iii = 0; iii < section.length(); iii++) {
-//                        JSONObject third = section.getJSONObject(iii);
                 JSONObject subsection = second.getJSONObject("subsection");
                 idSubSection = second.getString("id");
                 String asiop2[] = {"title"};
                 headerTwo = getNameByIdSLA("section", asiop2, idSubSection);
-//                        noDua = String.valueOf(iii + 1);
-//                        for (int iv = 0; iv < subsection.length(); iv++) {
-//                            JSONObject fourth = subsection.getJSONObject(iv);
                 JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
                 idPertanyaan = subsection.getString("id");
-//                            noTiga = String.valueOf(iv + 1);
                 for (int v = 0; v < pertanyaan.length(); v++) {
                     JSONObject fifth = pertanyaan.getJSONObject(v);
                     idItem = fifth.getString("id");
@@ -342,9 +333,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                         SLAmodelNew fotonya = new SLAmodelNew(id_task, header, id, title, fotony, aftera, valid, ket);
                         foto.add(fotonya);
                     }
-//                            }
-//                        }
-//                    }
                 }
             }
         } catch (JSONException e) {
@@ -453,19 +441,6 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                                 "2613",
                                 "66989",
                                 returnString);
-//                        myBase64Image = encodeToBase64(result, Bitmap.CompressFormat.JPEG, 80);
-
-                           /* Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
-                            if (cEdit.getCount() > 0) {
-                                SimpleDateFormat dateFormatNew = new SimpleDateFormat(
-                                        "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-
-                                long date = System.currentTimeMillis();
-                                String dateString = dateFormatNew.format(date);
-
-                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateTaken(myBase64Image, dateString), jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
-                                db.updateDetailRoomWithFlagContent(orderModel);
-                            }*/
                     }
 
                 } else {
@@ -473,29 +448,10 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 }
 
             } else if (resultCode == RESULT_CANCELED) {
-/*
-
-                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
-                    if (cEdit.getCount() > 0) {
-                        if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
-                            db.deleteDetailRoomWithFlagContent(orderModel);
-                        }
-                    }
-*/
 
 
                 Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
             } else {
-
-/*
-                    Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
-                    if (cEdit.getCount() > 0) {
-                        if (cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)).equalsIgnoreCase("")) {
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
-                            db.deleteDetailRoomWithFlagContent(orderModel);
-                        }
-                    }*/
 
                 Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
             }

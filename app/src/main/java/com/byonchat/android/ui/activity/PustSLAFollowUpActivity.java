@@ -162,6 +162,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         try {
             JSONObject gvcs = new JSONObject(getIntent().getStringExtra("data"));
+            Log.w("dISINI", gvcs.toString());
             kode_jjt = gvcs.getString("kode_jjt");
             /*id_task = gvcs.getString("task_id");*/
             id_task_list = gvcs.getString("id_list_task");
@@ -195,19 +196,22 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 JSONObject subsection = section.getJSONObject("subsection");
 
                 JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
-                idPertanyaan = subsection.getString("id");
+
                 for (int v = 0; v < pertanyaan.length(); v++) {
                     JSONObject fifth = pertanyaan.getJSONObject(v);
                     String valid = fifth.getString("v");
+
                     noEmpat = String.valueOf(v + 1);
                     if (valid.equalsIgnoreCase("0")) {
                         String asiop4[] = {"pertanyaan"};
-                        headerFour = getNameByIdSLA("pertanyaan", asiop4, idPertanyaan);
 
-                        String idPrtnyaan = fifth.getString("id");
+
+                        idPertanyaan = fifth.getString("id");
                         String id_task = fifth.getString("id_task");
                         String fotony = fifth.getString("f");
                         String title = fifth.getString("n");
+
+                        headerFour = getNameByIdSLA("pertanyaan", asiop4, idPertanyaan);
 
                         idItem = id_task + "-" + v;
 

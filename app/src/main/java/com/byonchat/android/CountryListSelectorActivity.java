@@ -51,7 +51,7 @@ public class CountryListSelectorActivity extends AppCompatActivity {
             toolbar.setBackgroundDrawable(back_draw_default);
         }
 
-        lv  =   (ListView) findViewById(android.R.id.list);
+        lv  =   (ListView) findViewById(R.id.list);
         name = Country.title;
         code = Country.code;
         setSupportActionBar(toolbar);

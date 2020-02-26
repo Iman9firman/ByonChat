@@ -37,12 +37,16 @@ import android.os.Handler;
 import android.provider.CallLog;
 import android.provider.MediaStore;
 import android.provider.Settings;
+
+import com.byonchat.android.widget.MapsMarker;
 import com.google.android.material.appbar.AppBarLayout;
+
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
@@ -3706,7 +3710,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 messengerHelper = MessengerDatabaseHelper.getInstance(context);
                             }
 
-                            Toast.makeText(getBaseContext(), valUEParent, Toast.LENGTH_SHORT).show();
                             Bitmap bitmap = null;
                             try {
                                 bitmap = TextToImageEncode(valUEParent);
@@ -3716,9 +3719,19 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                 e.printStackTrace();
                             }
 
-
-                            RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, valUEParent, jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
-                            db.insertRoomsDetail(orderModel);
+                            Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, String.valueOf(i)));
+                            if (cEdit.getCount() > 0) {
+                                RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(valUEParent), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                db.updateDetailRoomWithFlagContent(orderModel);
+                            } else {
+                                if (String.valueOf(valUEParent).trim().length() > 0) {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(valUEParent), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                    db.insertRoomsDetail(orderModel);
+                                } else {
+                                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, String.valueOf(valUEParent), jsonCreateType(idListTask, type, String.valueOf(i)), name, "cild");
+                                    db.deleteDetailRoomWithFlagContent(orderModel);
+                                }
+                            }
                         }
 
                     } else if (type.equalsIgnoreCase("copy_field")) {
@@ -9842,16 +9855,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         db.insertRoomsDetail(orderModel);
                     }
 
+                    Intent i = new Intent(DinamicRoomTaskActivity.this, MapsMarker.class);
+                    startActivityForResult(i, PLACE_PICKER_REQUEST);
 
-                    PlacePicker.IntentBuilder intentBuilder =
+
+                   /* PlacePicker.IntentBuilder intentBuilder =
                             new PlacePicker.IntentBuilder();
                     Intent intent = intentBuilder.build(this);
-                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
+                    startActivityForResult(intent, PLACE_PICKER_REQUEST);*/
 
-                } catch (GooglePlayServicesRepairableException e) {
+                } /*catch (GooglePlayServicesRepairableException e) {
                     e.printStackTrace();
                 } catch (GooglePlayServicesNotAvailableException e) {
                     e.printStackTrace();
+                }*/ catch (Exception e) {
+                    Log.w("Kenaoa", e.getMessage());
+
                 }
             } else {
                 gps.showSettingsAlert();
@@ -10713,21 +10732,30 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             showDialog = true;
             final List value = (List) hashMap.get(dummyIdDate);
             if (resultCode == Activity.RESULT_OK) {
+/*
+
                 final Place place = PlacePicker.getPlace(data, this);
                 final String name = place.getName() != null ? (String) place.getName() : " ";
                 final String address = place.getAddress() != null ? (String) place.getAddress() : " ";
                 final String web = String.valueOf(place.getWebsiteUri() != null ? place.getWebsiteUri() : " ");
+*/
+
+
+                String shortadd = data.getStringExtra(MapsMarker.SHORTADDRESS);
+                String fulladd = data.getStringExtra(MapsMarker.FULLADDRESS);
+                double latitude = data.getDoubleExtra(MapsMarker.LATITUDE, 0);
+                double longitude = data.getDoubleExtra(MapsMarker.LONGITUDE, 0);
 
 
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
-                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, place.getLatLng().latitude + ";" + place.getLatLng().longitude + ";" + name + ";" + address + ";" + web + ";", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, latitude + ";" + longitude + ";" + shortadd + ";" + fulladd + ";" + " " + ";", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                     db.updateDetailRoomWithFlagContent(orderModel);
                 }
 
 
-                String text = "<u><b>" + name + "</b></u><br/>";
-                et[Integer.valueOf(value.get(0).toString())].setText(Html.fromHtml(text + address));
+                String text = "<u><b>" + shortadd + "</b></u><br/>";
+                et[Integer.valueOf(value.get(0).toString())].setText(Html.fromHtml(text + fulladd));
 
                 Intent newIntent = new Intent("bLFormulas");
                 sendBroadcast(newIntent);
@@ -12682,6 +12710,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             JSONObject jsonOfficer = null;
             try {
                 jsonOfficer = new JSONObject(officer);
+                Log.w("getMartabak", jsonOfficer.toString());
                 type = jsonOfficer.getString(type);
             } catch (JSONException e) {
                 e.printStackTrace();

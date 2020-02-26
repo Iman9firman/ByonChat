@@ -117,7 +117,7 @@ public class ContactListFragment extends Fragment implements SwipeRefreshLayout.
             timeLineDB = TimeLineDB.getInstance(context);
         }
 
-        lv = (PinnedHeaderListView) rootView.findViewById(android.R.id.list);
+        lv = (PinnedHeaderListView) rootView.findViewById(R.id.list);
 
         rowItems = new ArrayList<Contact>();
 

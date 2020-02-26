@@ -147,7 +147,7 @@ public class NewSelectContactActivity extends AppCompatActivity implements Swipe
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setVisibility(View.VISIBLE);
         mInflater = LayoutInflater.from(getApplicationContext());
-        lv = (PinnedHeaderListView) findViewById(android.R.id.list);
+        lv = (PinnedHeaderListView) findViewById(R.id.list);
 
         emptyList = (TextView) findViewById(R.id.emptyList);
         linearTrending = (LinearLayout) findViewById(R.id.linearTrending);

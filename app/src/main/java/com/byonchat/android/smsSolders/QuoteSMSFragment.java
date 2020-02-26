@@ -2,28 +2,19 @@ package com.byonchat.android.smsSolders;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.byonchat.android.R;
-import com.byonchat.android.adapter.RecyclerViewAdapter;
-import com.byonchat.android.list.IconItem;
-import com.byonchat.android.provider.Contact;
-import com.byonchat.android.provider.MessengerDatabaseHelper;
 
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 /**
  * Created by byonc on 12/29/2017.

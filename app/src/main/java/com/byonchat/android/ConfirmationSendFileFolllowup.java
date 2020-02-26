@@ -1,96 +1,43 @@
 package com.byonchat.android;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.media.ExifInterface;
-import android.media.MediaPlayer;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.LruCache;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.Html;
-import android.text.Spanned;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.util.SparseBooleanArray;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
 
-import com.bumptech.glide.Glide;
 import com.byonchat.android.adapter.HorizontalAdapter;
-import com.byonchat.android.local.CacheManager;
 import com.byonchat.android.model.Image;
-import com.byonchat.android.model.ImageCompressed;
 import com.byonchat.android.model.ModelPicture;
 import com.byonchat.android.personalRoom.RecyclerItemClickListener;
 import com.byonchat.android.personalRoom.model.NotesPhoto;
 import com.byonchat.android.personalRoom.model.PictureModel;
 import com.byonchat.android.personalRoom.transformer.DepthPageTransformer;
-import com.byonchat.android.provider.FilesURL;
-import com.byonchat.android.provider.FilesURLDatabaseHelper;
-import com.byonchat.android.provider.Group;
-import com.byonchat.android.provider.Message;
-import com.byonchat.android.provider.MessengerDatabaseHelper;
-import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.ImageLoadingUtils;
-import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.TouchImageView;
-import com.byonchat.android.utils.UploadService;
-import com.byonchat.android.utils.UtilsPD;
 import com.byonchat.android.utils.Validations;
-import com.byonchat.android.videotrimmer.utils.FileUtils;
-import com.byonchat.android.widget.VideoSlaceSeekBar;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.StringTokenizer;
-import java.util.regex.Pattern;
 
 /**
  * Created by byonc on 4/20/2017.

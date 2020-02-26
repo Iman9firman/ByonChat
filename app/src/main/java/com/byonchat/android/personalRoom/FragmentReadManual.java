@@ -3,46 +3,29 @@ package com.byonchat.android.personalRoom;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.byonchat.android.R;
-import com.byonchat.android.SearchThemesActivity;
-import com.byonchat.android.communication.NetworkInternetConnectionStatus;
-import com.byonchat.android.list.ListSearchThemesAdapter;
-import com.byonchat.android.personalRoom.adapter.NewsFeedListAdapter;
 import com.byonchat.android.personalRoom.adapter.ReadManualListAdapter;
-import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
-import com.byonchat.android.personalRoom.model.NewsFeedItem;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.ContentRoom;
 import com.byonchat.android.provider.RoomsDetail;
-import com.byonchat.android.room.DividerItemDecoration;
-import com.byonchat.android.utils.OnLoadMoreListener;
-import com.byonchat.android.widget.LoadMoreListView;
 import com.github.ybq.endless.Endless;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by lukma on 3/4/2016.

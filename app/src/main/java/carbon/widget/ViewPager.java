@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,7 +23,7 @@ import carbon.drawable.TintPrimaryColorStateList;
 /**
  * Created by Marcin on 2015-02-28.
  */
-public class ViewPager extends android.support.v4.view.ViewPager implements TintedView {
+public class ViewPager extends androidx.viewpager.widget.ViewPager implements TintedView {
     private final int mTouchSlop;
     EdgeEffect leftGlow;
     EdgeEffect rightGlow;

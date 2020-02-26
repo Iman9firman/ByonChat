@@ -2,8 +2,6 @@ package com.byonchat.android.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -13,12 +11,11 @@ import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.byonchat.android.R;
-import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.UploadService;
 
 public class BCServiceSyncAdapter extends AbstractThreadedSyncAdapter {

@@ -2,18 +2,16 @@ package com.byonchat.android.personalRoom.viewHolder;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.byonchat.android.R;
 import com.byonchat.android.personalRoom.NoteFeedImageView;
 import com.byonchat.android.personalRoom.adapter.NoteCommentFollowUpListAdapter;
-import com.byonchat.android.utils.TouchImageView;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.squareup.picasso.Target;
 

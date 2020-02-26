@@ -4,7 +4,7 @@ package com.byonchat.android.personalRoom.transformer;
  * Created by lukma on 3/30/2016.
  */
 import android.graphics.Rect;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public class ItemDecorationAlbumColumns extends RecyclerView.ItemDecoration {

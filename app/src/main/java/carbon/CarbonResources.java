@@ -3,10 +3,9 @@ package carbon;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
-import android.util.AttributeSet;
+import androidx.annotation.Nullable;
+
 import android.util.DisplayMetrics;
 
 import carbon.drawable.VectorDrawable;

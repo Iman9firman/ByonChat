@@ -2,13 +2,12 @@ package com.byonchat.android.adapter;
 
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.byonchat.android.R;
-import com.byonchat.android.model.Image;
 import com.byonchat.android.personalRoom.model.PictureModel;
 
 import java.util.List;

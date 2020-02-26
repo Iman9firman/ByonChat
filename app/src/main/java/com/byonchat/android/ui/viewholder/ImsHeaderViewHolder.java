@@ -1,6 +1,6 @@
 package com.byonchat.android.ui.viewholder;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public class ImsHeaderViewHolder extends RecyclerView.ViewHolder {

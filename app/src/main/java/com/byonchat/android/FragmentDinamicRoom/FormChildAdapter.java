@@ -2,28 +2,16 @@ package com.byonchat.android.FragmentDinamicRoom;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.byonchat.android.R;
-import com.byonchat.android.communication.MessengerConnectionService;
-import com.byonchat.android.list.IconItem;
-import com.byonchat.android.list.utilLoadImage.ImageLoader;
-import com.byonchat.android.list.utilLoadImage.TextLoader;
-import com.byonchat.android.provider.BotListDB;
-import com.byonchat.android.provider.Group;
 import com.byonchat.android.utils.Validations;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;

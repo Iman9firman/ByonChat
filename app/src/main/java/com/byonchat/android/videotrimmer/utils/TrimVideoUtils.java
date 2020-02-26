@@ -1,6 +1,6 @@
 package com.byonchat.android.videotrimmer.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.byonchat.android.videotrimmer.interfaces.OnTrimVideoListener;
 import java.io.IOException;
 import java.util.Formatter;

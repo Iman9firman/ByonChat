@@ -1,13 +1,11 @@
 package com.byonchat.android.tabRequest;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,21 +23,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ConversationActivity;
-import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
-import com.byonchat.android.data.model.MkgServices;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.IconItem;
 import com.byonchat.android.provider.ChatParty;
 import com.byonchat.android.provider.Contact;
-import com.byonchat.android.ui.adapter.ChildRecyclerView;
-import com.byonchat.android.ui.adapter.HeaderRecyclerView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

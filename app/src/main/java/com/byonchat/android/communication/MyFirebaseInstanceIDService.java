@@ -1,12 +1,9 @@
 package com.byonchat.android.communication;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.byonchat.android.FinalizingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.google.firebase.iid.FirebaseInstanceId;

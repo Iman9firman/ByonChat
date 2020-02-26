@@ -1,4 +1,4 @@
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frame_tab_nine"
@@ -37,12 +37,12 @@
                     android:gravity="right|top"
                     android:visibility="gone">
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin5">
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/cardview"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -54,7 +54,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <android.support.constraint.ConstraintLayout
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/frame_click_tab_nine_one"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -80,9 +80,9 @@
                                         android:src="@drawable/ic_room_about" />
                                 </LinearLayout>
 
-                            </android.support.constraint.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:id="@+id/title_item_grid_nine_one"
@@ -106,7 +106,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/cardview" />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -116,12 +116,12 @@
                     android:gravity="top"
                     android:visibility="gone">
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin5">
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/cardview2"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -133,7 +133,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <android.support.constraint.ConstraintLayout
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/frame_click_tab_nine_two"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -160,9 +160,9 @@
                                         android:src="@drawable/ic_room_about" />
                                 </LinearLayout>
 
-                            </android.support.constraint.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:id="@+id/title_item_grid_nine_two"
@@ -186,7 +186,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/cardview2" />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -197,12 +197,12 @@
                     android:gravity="start"
                     android:visibility="gone">
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin5">
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/cardview3"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -214,7 +214,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <android.support.constraint.ConstraintLayout
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/frame_click_tab_nine_three"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -241,9 +241,9 @@
                                         android:src="@drawable/ic_room_about" />
                                 </LinearLayout>
 
-                            </android.support.constraint.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:id="@+id/title_item_grid_nine_three"
@@ -267,7 +267,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/cardview3" />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -288,12 +288,12 @@
                     android:gravity="end"
                     android:visibility="gone">
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin5">
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/cardview4"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -305,7 +305,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <android.support.constraint.ConstraintLayout
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/frame_click_tab_nine_four"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -332,9 +332,9 @@
                                         android:src="@drawable/ic_room_about" />
                                 </LinearLayout>
 
-                            </android.support.constraint.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:id="@+id/title_item_grid_nine_four"
@@ -358,7 +358,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/cardview4" />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -368,12 +368,12 @@
                     android:gravity="top"
                     android:visibility="gone">
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin5">
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/cardview5"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -385,7 +385,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <android.support.constraint.ConstraintLayout
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/frame_click_tab_nine_five"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -412,9 +412,9 @@
                                         android:src="@drawable/ic_room_about" />
                                 </LinearLayout>
 
-                            </android.support.constraint.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:id="@+id/title_item_grid_nine_five"
@@ -437,7 +437,7 @@
                             app:layout_constraintTop_toBottomOf="@+id/cardview5"
                             tools:layout_editor_absoluteY="107dp" />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -448,12 +448,12 @@
                     android:gravity="start"
                     android:visibility="gone">
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin5">
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/cardview6"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -465,7 +465,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <android.support.constraint.ConstraintLayout
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/frame_click_tab_nine_six"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -492,9 +492,9 @@
                                         android:src="@drawable/ic_room_about" />
                                 </LinearLayout>
 
-                            </android.support.constraint.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:id="@+id/title_item_grid_nine_six"
@@ -518,7 +518,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/cardview6" />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -544,12 +544,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
-                        <android.support.constraint.ConstraintLayout
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="110dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/margin5">
 
-                            <android.support.v7.widget.CardView
+                            <androidx.cardview.widget.CardView
                                 android:id="@+id/cardview7"
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
@@ -561,7 +561,7 @@
                                 app:layout_constraintRight_toRightOf="parent"
                                 app:layout_constraintTop_toTopOf="parent">
 
-                                <android.support.constraint.ConstraintLayout
+                                <androidx.constraintlayout.widget.ConstraintLayout
                                     android:id="@+id/frame_click_tab_nine_seven"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -588,9 +588,9 @@
                                             android:src="@drawable/ic_room_about" />
                                     </LinearLayout>
 
-                                </android.support.constraint.ConstraintLayout>
+                                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                            </android.support.v7.widget.CardView>
+                            </androidx.cardview.widget.CardView>
 
                             <TextView
                                 android:id="@+id/title_item_grid_nine_seven"
@@ -614,7 +614,7 @@
                                 app:layout_constraintRight_toRightOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/cardview7" />
 
-                        </android.support.constraint.ConstraintLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -625,12 +625,12 @@
                     android:gravity="top"
                     android:visibility="gone">
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin5">
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/cardview8"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -642,7 +642,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <android.support.constraint.ConstraintLayout
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/frame_click_tab_nine_eight"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -669,9 +669,9 @@
                                         android:src="@drawable/ic_room_about" />
                                 </LinearLayout>
 
-                            </android.support.constraint.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:id="@+id/title_item_grid_nine_eight"
@@ -695,7 +695,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/cardview8" />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -706,12 +706,12 @@
                     android:gravity="start"
                     android:visibility="gone">
 
-                    <android.support.constraint.ConstraintLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="110dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/margin5">
 
-                        <android.support.v7.widget.CardView
+                        <androidx.cardview.widget.CardView
                             android:id="@+id/cardview9"
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -723,7 +723,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
-                            <android.support.constraint.ConstraintLayout
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:id="@+id/frame_click_tab_nine_nine"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
@@ -750,9 +750,9 @@
                                         android:src="@drawable/ic_room_about" />
                                 </LinearLayout>
 
-                            </android.support.constraint.ConstraintLayout>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                        </android.support.v7.widget.CardView>
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                             android:id="@+id/title_item_grid_nine_nine"
@@ -776,12 +776,12 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/cardview9" />
 
-                    </android.support.constraint.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+</androidx.core.widget.NestedScrollView>
 
 
     <!--

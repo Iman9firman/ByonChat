@@ -4,9 +4,9 @@ import android.annotation.TargetApi;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -18,7 +18,6 @@ import com.byonchat.android.provider.Message;
 import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.utils.Fonts;
-import com.itextpdf.text.Font;
 import com.rockerhieu.emojicon.EmojiconTextView;
 
 public class ImsListHistoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,

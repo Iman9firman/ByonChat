@@ -18,7 +18,7 @@ package com.sysdata.widget.accordion.utils;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.os.BuildCompat;
+import androidx.core.os.BuildCompat;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;

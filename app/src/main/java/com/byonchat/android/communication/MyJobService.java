@@ -11,13 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import com.byonchat.android.R;
 import com.byonchat.android.utils.UploadService;
-import com.byonchat.android.utils.Utility;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;

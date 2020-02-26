@@ -110,7 +110,6 @@ public class DialogNewDropdown extends DialogFragment {
 
         mProceed.setText("Save ");
 
-        Log.w("SSSAD", kodeDealer);
         mProceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,14 +139,18 @@ public class DialogNewDropdown extends DialogFragment {
         if (new Validations().getInstance(getActivity()).getCars() != null) {
             try {
                 JSONArray jsonArray = new JSONArray(new Validations().getInstance(getActivity()).getCars());
-                buildDropdown(jsonArray.toString());
+                if (jsonArray.length() > 0) {
+                    buildDropdown(jsonArray.toString());
+                } else {
+                    Toast.makeText(getContext(), "Tidak Ada data Mobil", Toast.LENGTH_SHORT).show();
+                }
                 return;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        new getCars(getActivity()).execute("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/honda/convert_json_api_gzip.php", kodeDealer);
+        new getCars(getActivity()).execute("https://hondaikb.byonchat.com/bc_voucher_client/webservice/list_api/honda/convert_json_api_gzip.php", kodeDealer);
     }
 
     @Override
@@ -208,6 +211,10 @@ public class DialogNewDropdown extends DialogFragment {
 
         protected void onPostExecute(String result) {
 
+            if (error.length() > 0) {
+                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+            }
+
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
@@ -247,22 +254,33 @@ public class DialogNewDropdown extends DialogFragment {
                         String rr = decompress(decodedBytes);
                         new Validations().getInstance(context).setCarsTemp(rr);
                         JSONArray jsonArray = new JSONArray(rr);
-                        buildDropdown(jsonArray.toString());
+                        if (jsonArray.length() == 0) {
+                            error = "Tidak Ada Data Mobil.";
+                        } else {
+                            buildDropdown(jsonArray.toString());
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        Log.w("JSON", e.toString());
+                        error = "Tolong periksa koneksi internet1.";
                     }
                 } else {
-                    error = "Tolong periksa koneksi internet.";
+                    error = "Tolong periksa koneksi internet2.";
                 }
 
             } catch (ConnectTimeoutException e) {
                 e.printStackTrace();
+                error = "Tolong periksa koneksi internet3.";
             } catch (ClientProtocolException e) {
                 // TODO Auto-generated catch block
+                error = "Tolong periksa koneksi internet4.";
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+                error = "Tolong periksa koneksi internet5.";
             }
         }
+
 
     }
 

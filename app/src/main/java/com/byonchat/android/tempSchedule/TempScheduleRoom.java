@@ -151,7 +151,6 @@ public class TempScheduleRoom extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ADD_NOTE && resultCode == RESULT_OK) {
             MyEventDay myEventDay = data.getParcelableExtra(RESULT);
-            Log.w("sini", "onActivityResult: masuk"+myEventDay);
             calendarView.setDate(myEventDay.getCalendar());
             mEventDays.add(myEventDay);
             calendarView.setEvents(mEventDays);

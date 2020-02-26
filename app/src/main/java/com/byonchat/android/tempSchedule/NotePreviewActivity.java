@@ -1,5 +1,6 @@
 package com.byonchat.android.tempSchedule;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +11,14 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -80,6 +84,7 @@ public class NotePreviewActivity extends AppCompatActivity {
 
     NotePreviewActivity.requestTask requestTask;
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +111,7 @@ public class NotePreviewActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_notepreview);
         fab = (FloatingActionButton) findViewById(R.id.fab_notepreview);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_notepreview);
+
         if (!checkDate(startDate)) {
             fab.setVisibility(View.GONE);
         } else {
@@ -292,7 +298,48 @@ public class NotePreviewActivity extends AppCompatActivity {
         return noteList;
     }
 
+    private String getOficer(String type) {
+        BotListDB db = BotListDB.getInstance(getApplicationContext());
+
+        Cursor cur = db.getSingleRoom(username);
+        if (cur.getCount() > 0) {
+            final String officer = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "d");
+            JSONObject jsonOfficer = null;
+            try {
+                jsonOfficer = new JSONObject(officer);
+                type = jsonOfficer.getString(type);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            type = "";
+        }
+        return type;
+    }
+
+    private String jsonResultType(String json, String type) {
+        String hasil = "";
+        JSONObject jObject = null;
+        try {
+            jObject = new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (jObject != null) {
+            try {
+                hasil = jObject.getString(type);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return hasil;
+    }
+
     private boolean checkDate(String eventDate) {
+        if (getOficer("jabatan").contains("SUPERVISOR")) {
+            return true;
+        }
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 1);
         SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy");

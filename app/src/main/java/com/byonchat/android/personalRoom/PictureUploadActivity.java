@@ -18,18 +18,10 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.byonchat.android.R;
-import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by Lukmanpryg on 4/25/2016.

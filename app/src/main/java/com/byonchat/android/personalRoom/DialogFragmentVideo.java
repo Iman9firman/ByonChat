@@ -25,21 +25,14 @@ import android.widget.VideoView;
 
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
-import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.widget.VideoSlaceSeekBar;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by lukma on 3/17/2016.

@@ -250,5 +250,9 @@ dependencies {
 
     api 'com.github.HendrixString:Android-PdfMyXml:v1.0.1'
     api 'com.muditsen.multilevelrecyclerview:multilevelview:1.0.0'
+
+    api group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.10'
+
+
 }
 apply plugin: 'com.google.gms.google-services'

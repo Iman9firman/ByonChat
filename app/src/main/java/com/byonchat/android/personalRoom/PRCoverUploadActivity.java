@@ -1,15 +1,12 @@
 package com.byonchat.android.personalRoom;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -18,21 +15,12 @@ import android.widget.Toast;
 
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
-import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.ImageCompress;
 import com.byonchat.android.utils.UtilsPD;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by lukma on 3/17/2016.

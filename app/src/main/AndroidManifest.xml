@@ -706,8 +706,8 @@
             android:name=".smsSolders.HistorySmsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
+       <!-- <provider
+            android:name="androidx.core.content.FileProvider"
             android:authorities="com.byonchat.android.provider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -715,7 +715,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"
                 tools:replace="android:resource" />
-        </provider>
+        </provider>-->
 
         <activity
             android:name=".RequestPasscodeRoomActivity"

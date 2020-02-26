@@ -7,14 +7,14 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.util.LogWriter;
-import android.support.v7.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.util.LogWriter;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,15 +29,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
 import com.byonchat.android.R;
-import com.byonchat.android.application.Application;
 import com.byonchat.android.createMeme.FilteringImage;
-import com.byonchat.android.listeners.RecyclerItemClickListener;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
-import com.byonchat.android.utils.ValidationsKey;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -45,7 +41,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -57,8 +52,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.byonchat.android.ByonChatMainRoomActivity.jsonResultType;
 
 public class RelieverListActivity extends AppCompatActivity {
 
@@ -451,204 +444,6 @@ public class RelieverListActivity extends AppCompatActivity {
             // Create a new HttpClient and Post Header
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/api_submit_realiver_iss.php");
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-
-                ContentType contentType = ContentType.create("multipart/form-data");
-                BotListDB db = BotListDB.getInstance(getApplicationContext());
-                ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, username, idTab, "cild");
-
-                entity.addPart("id_rooms_tab", new StringBody("2775"));
-                entity.addPart("bc_user", new StringBody("628589111111"));
-                entity.addPart("assign_to", new StringBody("628588888892"));
-
-                JSONObject jsonObject1 = new JSONObject();
-                jsonObject1.put("value", "lokasi");
-                jsonObject1.put("type", "text");
-
-                JSONObject jsonObject2 = new JSONObject();
-                jsonObject2.put("value", "15:00");
-                jsonObject2.put("type", "text");
-
-                JSONObject jsonObject3 = new JSONObject();
-                jsonObject3.put("value", "15:00");
-                jsonObject3.put("type", "text");
-
-                JSONObject jsonObject4 = new JSONObject();
-                jsonObject4.put("value", "15:00");
-                jsonObject4.put("type", "text");
-
-
-                JSONObject jsonObject5 = new JSONObject();
-                jsonObject5.put("value", "15:00");
-                jsonObject5.put("type", "text");
-
-
-                JSONObject jsonObject6 = new JSONObject();
-                jsonObject6.put("value", "15:00");
-                jsonObject6.put("type", "text");
-
-
-                JSONObject jsonObject7 = new JSONObject();
-                jsonObject7.put("value", "15:00");
-                jsonObject7.put("type", "text");
-
-                JSONObject jsonObject8 = new JSONObject();
-                jsonObject8.put("value", "15:00");
-                jsonObject8.put("type", "number");
-
-                JSONObject jsonObject9 = new JSONObject();
-                jsonObject9.put("value", "15:00");
-                jsonObject9.put("type", "textarea");
-
-
-                entity.addPart("lokasi", new StringBody(jsonObject1.toString()));
-                entity.addPart("jenis_pekerjaan", new StringBody(jsonObject2.toString()));
-                entity.addPart("tanggal_mulai", new StringBody(jsonObject3.toString()));
-                entity.addPart("tanggal_selesai", new StringBody(jsonObject4.toString()));
-                entity.addPart("jam_mulai", new StringBody(jsonObject5.toString()));
-                entity.addPart("jam_selesai", new StringBody(jsonObject6.toString()));
-                entity.addPart("jumlah", new StringBody(jsonObject7.toString()));
-                entity.addPart("keterangan", new StringBody(jsonObject8.toString()));
-                entity.addPart("value", new StringBody(jsonObject9.toString()));
-
-
-                /*for (int u = 0; u < list.size(); u++) {
-
-                    JSONArray jsA = null;
-                    String content = "";
-
-                    String cc = list.get(u).getContent();
-
-                    try {
-                        if (cc.startsWith("{")) {
-                            if (!cc.startsWith("[")) {
-                                cc = "[" + cc + "]";
-                            }
-                            jsA = new JSONArray(cc);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-
-                    if (jsA != null) {
-                        if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis")) {
-
-                            if (list.get(u).getFlag_tab().equalsIgnoreCase("lokasi")) {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("key", list.get(u).getFlag_tab());
-                                jsonObject.put("value", list.get(u).getContent());
-                                jsonObject.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                                entity.addPart("lokasi", new StringBody(jsonObject.toString()));
-                            }
-
-                        }
-                    } else {
-                        if (list.get(u).getFlag_tab().equalsIgnoreCase("tanggal_mulai")) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("key", list.get(u).getFlag_tab());
-                            jsonObject.put("value", list.get(u).getContent());
-                            jsonObject.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                            entity.addPart("tanggal_mulai", new StringBody(jsonObject.toString()));
-                        }
-
-                        if (list.get(u).getFlag_tab().equalsIgnoreCase("tanggal_selesai")) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("key", list.get(u).getFlag_tab());
-                            jsonObject.put("value", list.get(u).getContent());
-                            jsonObject.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                            entity.addPart("tanggal_selesai", new StringBody(jsonObject.toString()));
-                        }
-
-                        if (list.get(u).getFlag_tab().equalsIgnoreCase("jam_mulai")) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("key", list.get(u).getFlag_tab());
-                            jsonObject.put("value", list.get(u).getContent());
-                            jsonObject.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                            entity.addPart("jam_mulai", new StringBody(jsonObject.toString()));
-                        }
-
-                        if (list.get(u).getFlag_tab().equalsIgnoreCase("jam_selesai")) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("key", list.get(u).getFlag_tab());
-                            jsonObject.put("value", list.get(u).getContent());
-                            jsonObject.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                            entity.addPart("jam_selesai", new StringBody(jsonObject.toString()));
-                        }
-
-                        if (list.get(u).getFlag_tab().equalsIgnoreCase("jumlah")) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("key", list.get(u).getFlag_tab());
-                            jsonObject.put("value", list.get(u).getContent());
-                            jsonObject.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                            entity.addPart("jumlah", new StringBody(jsonObject.toString()));
-                        }
-
-                        if (list.get(u).getFlag_tab().equalsIgnoreCase("jenis_pekerjaan")) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("key", list.get(u).getFlag_tab());
-                            jsonObject.put("value", list.get(u).getContent());
-                            jsonObject.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                            entity.addPart("jenis_pekerjaan", new StringBody(jsonObject.toString()));
-                        }
-
-                        if (list.get(u).getFlag_tab().equalsIgnoreCase("keterangan")) {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("key", list.get(u).getFlag_tab());
-                            jsonObject.put("value", list.get(u).getContent());
-                            jsonObject.put("type", jsonResultType(list.get(u).getFlag_content(), "b"));
-
-                            entity.addPart("keterangan", new StringBody(jsonObject.toString()));
-                        }
-                    }
-                }*/
-
-
-                Log.w("siiiip", entity.toString());
-
-                totalSize = entity.getContentLength();
-                Log.w("siiiip", totalSize + "");
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                Log.w("tabuR", statusCode + "");
-                if (statusCode == 200) {
-
-                    final String data = EntityUtils.toString(r_entity);
-                    Log.w("tabuR", data);
-                    //{"messages":"succes","datas":[{"id_officer":"1956","id_client":"117","name":"Yozia Josephine","telp_number":"6285719845956","last_lat":"-6.18950319","last_long":"106.76643372","distance":"1.4389605798435736","rating":"1.5"}]}
-
-                } else {
-                    error = "Tolong periksa koneksi internet.1";
-                }
-
-            } catch (ClientProtocolException e) {
-                return null;
-            } catch (IOException e) {
-                return null;
-            } catch (Exception e) {
-                return null;
-            }
 
             return null;
         }

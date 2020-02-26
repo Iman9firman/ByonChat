@@ -1,23 +1,15 @@
 package com.byonchat.android.personalRoom;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
-import android.util.Log;
+
+import androidx.fragment.app.DialogFragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +25,6 @@ import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.ImageCompress;
-import com.byonchat.android.utils.ImageLoadingUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -41,14 +32,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -195,43 +181,6 @@ public class DialogFragmentPicture extends DialogFragment implements DialogInter
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                File sourceFile = new File(imageCompress.compressImage(getActivity(), path));
-                ContentType contentType = ContentType.create("image/jpeg");
-                entity.addPart("userid", new StringBody(userid));
-                entity.addPart("title", new StringBody(mTitle.getText().toString()));
-                entity.addPart("description", new StringBody(mDescription.getText().toString()));
-                entity.addPart("file", new FileBody(sourceFile, contentType, sourceFile.getName()));
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
 
             return responseString;
 

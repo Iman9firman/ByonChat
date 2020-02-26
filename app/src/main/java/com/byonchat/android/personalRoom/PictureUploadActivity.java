@@ -18,10 +18,20 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.byonchat.android.R;
+import com.byonchat.android.utils.AndroidMultiPartEntity;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Lukmanpryg on 4/25/2016.
@@ -134,6 +144,47 @@ public class PictureUploadActivity extends Activity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
 
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                File sourceFile = new File(filePath);
+
+                // Adding file data to http body
+                entity.addPart("image", new FileBody(sourceFile));
+
+                // Extra parameters if you want to pass to server
+                entity.addPart("website",
+                        new StringBody("www.androidhive.info"));
+                entity.addPart("email", new StringBody("abc@gmail.com"));
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
 
             return responseString;
 

@@ -13,19 +13,21 @@ import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.os.Handler;
+import android.os.PersistableBundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -35,13 +37,18 @@ import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.data.model.File;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
+import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
+import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.MediaProcessingUtil;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -49,6 +56,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -61,8 +70,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import zharfan.com.cameralibrary.Camera;
@@ -79,7 +92,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
     private static final int REQ_CAMERA = 1201;
     Button btnSubmit, btnCancel;
     ProgressDialog rdialog;
-//    private OnTaskCompleted taskCompleted;
+    //    private OnTaskCompleted taskCompleted;
 //    ArrayList<String> prosesUpload = new ArrayList<>();
     Integer totalUpload = 0;
     BotListDB db;
@@ -329,7 +342,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-                RequestQueue queue = Volley.newRequestQueue(this);
+        RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
@@ -369,18 +382,18 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 JSONObject jsonObjectA = new JSONObject();
                 jsonObjectA.put("urutan",uploadfoto.get(i).getId());
 
-                    JSONArray jsonArray = new JSONArray();
-                    JSONObject jsonObject1 = new JSONObject();
-                    jsonObject1.put("key","before");
-                    jsonObject1.put("foto",uploadfoto.get(i).getBefore());
-                    jsonObject1.put("keterangan",uploadfoto.get(i).getTitle());
+                JSONArray jsonArray = new JSONArray();
+                JSONObject jsonObject1 = new JSONObject();
+                jsonObject1.put("key","before");
+                jsonObject1.put("foto",uploadfoto.get(i).getBefore());
+                jsonObject1.put("keterangan",uploadfoto.get(i).getTitle());
 
-                    JSONObject jsonObject2 = new JSONObject();
-                    jsonObject2.put("key","after");
-                    jsonObject2.put("foto",uploadfoto.get(i).getAfterString());
+                JSONObject jsonObject2 = new JSONObject();
+                jsonObject2.put("key","after");
+                jsonObject2.put("foto",uploadfoto.get(i).getAfterString());
 
-                    jsonArray.put(jsonObject1);
-                    jsonArray.put(jsonObject2);
+                jsonArray.put(jsonObject1);
+                jsonArray.put(jsonObject2);
 
                 jsonObjectA.put("data",jsonArray);
                 value_detail.put(jsonObjectA);
@@ -423,7 +436,50 @@ public class PushRepairReportActivity extends AppCompatActivity {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(URL);
 
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
 
+                            @Override
+                            public void transferred(long num) {
+                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                java.io.File sourceFile = new java.io.File(resizeAndCompressImageBeforeSend(getApplicationContext(), ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
+
+                if (!sourceFile.exists()) {
+                    return "File not exists";
+                }
+
+                ContentType contentType = ContentType.create("image/jpeg");
+                entity.addPart("username_room", new StringBody(username));
+                entity.addPart("id_rooms_tab", new StringBody(id_room));
+                entity.addPart("id_list_task", new StringBody(id_list));
+                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
+
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    String _response = EntityUtils.toString(r_entity); // content will be consume only once
+                    return _response;
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
 
             return responseString;
         }
@@ -496,6 +552,65 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(URL);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                Log.w("segitu",(int) ((num / (float) totalSize) * 100)+"");
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+
+                java.io.File gpxfile = null;
+                try {
+                    java.io.File root = new java.io.File(Environment.getExternalStorageDirectory(), "S-Team_Upload");
+                    if (!root.exists()) {
+                        root.mkdirs();
+                    }
+                    gpxfile = new java.io.File(root, username + id_room + bc_user + ".json");
+                    FileWriter writer = new FileWriter(gpxfile);
+                    writer.append(fileJson());
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                if (!gpxfile.exists()) {
+                    return "File not exists";
+                }
+
+                ContentType contentType = ContentType.create("multipart/form-data");
+                entity.addPart("username_room", new StringBody(username));
+                entity.addPart("bc_user", new StringBody(bc_user));
+                entity.addPart("id_rooms_tab", new StringBody(id_room));
+                entity.addPart("json", new FileBody(gpxfile, contentType, gpxfile.getName()));
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    String _response = EntityUtils.toString(r_entity); // content will be consume only once
+                    return _response;
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
 
             return responseString;
         }

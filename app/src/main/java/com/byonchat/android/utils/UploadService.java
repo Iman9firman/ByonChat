@@ -1,10 +1,13 @@
 package com.byonchat.android.utils;
 
+import android.app.Activity;
+import android.app.DownloadManager;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,19 +21,25 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import android.util.Log;
 
 import com.byonchat.android.ConversationGroupActivity;
+import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.config.Utils;
 import com.byonchat.android.config.WsConfig;
+import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.DataBaseHelper;
+import com.byonchat.android.provider.Files;
+import com.byonchat.android.provider.FilesDatabaseHelper;
 import com.byonchat.android.provider.FilesURL;
 import com.byonchat.android.provider.FilesURLDatabaseHelper;
 import com.byonchat.android.provider.Interval;
@@ -43,6 +52,7 @@ import com.byonchat.android.provider.SubmitingRoomDB;
 import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.videotrimmer.interfaces.ConvertTaskCompleted;
 import com.byonchat.android.videotrimmer.utils.RequestConvertTask;
+import com.byonchat.android.videotrimmer.videocompressor.MediaController;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -54,8 +64,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.FormBodyPart;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
@@ -89,6 +104,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.GETTABDETAILPULLMULTIPLE;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POSDETAIL;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.POST_FOTO;
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.PULLDETAIL;
@@ -772,6 +788,229 @@ public class UploadService extends IntentService {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(mUrl);
             InputStreamReader reader = null;
+            try {
+                final AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                if ((int) ((num / (float) totalSize) * 100) > lastPercent) {
+                                    lastPercent = (int) ((num / (float) totalSize) * 100);
+
+                                    FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                                    db.open();
+                                    db.updateFiles(new FilesURL((int) vo.getId(), String.valueOf(lastPercent), "upload", ""));
+                                    db.close();
+                                    vo.setStatus(Message.STATUS_INPROGRESS);
+                                    Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                                    intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                                    sendBroadcast(intent);
+                                }
+                            }
+                        });
+                if (this.type.equals(Message.TYPE_IMAGE)) {
+                    Bitmap bp = resize(fileToSend.getPath());
+                    if (bp != null) {
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        bp.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+                        FormBodyPart fbp = new FormBodyPart("file", new ByteArrayBody(bos.toByteArray(), contentType, fileToSend.getName()));
+                        entity.addPart(fbp);
+                    } else {
+                        FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                        db.open();
+                        db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                        db.close();
+                        vo.setStatus(Message.STATUS_NOTSEND);
+                        messengerHelper.updateData(vo);
+                        Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                        intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                        sendBroadcast(intent);
+                    }
+                } else if (this.type.equals(Message.TYPE_VIDEO)) {
+                    entity.addPart("file", new FileBody(fileToSend, contentType, fileToSend.getName()));
+                }
+
+                entity.addPart("session", new StringBody(sessionId));
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    reader = new InputStreamReader(response.getEntity().getContent(), "UTF-8");
+                    int r;
+                    StringBuilder buf = new StringBuilder();
+                    while ((r = reader.read()) != -1) {
+                        buf.append((char) r);
+                    }
+
+                    JSONObject jObject = null;
+                    try {
+                        jObject = new JSONObject(buf.toString());
+                    } catch (JSONException e) {
+                        FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                        db.open();
+                        db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                        db.close();
+                        vo.setStatus(Message.STATUS_NOTSEND);
+                        messengerHelper.updateData(vo);
+                        Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                        intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                        sendBroadcast(intent);
+                        e.printStackTrace();
+                    }
+                    if (jObject != null) {
+                        try {
+                            String s = jObject.getString("s");
+                            if (s.equalsIgnoreCase("0")) {
+                                String downloadURL = jObject.getString("u");
+                                if (downloadURL.length() > 0) {
+
+                                    String pesanNya = jsonMessage(outpath, caption, downloadURL);
+                                    JSONObject jObjectUrl = null;
+                                    try {
+                                        jObjectUrl = new JSONObject(pesanNya);
+                                        if (jObjectUrl != null) {
+                                            urlFile = jObjectUrl.getString("u");
+                                            caption = jObjectUrl.getString("c");
+                                            if (urlFile != null) {
+                                                FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                                                db.open();
+                                                db.updateFiles(new FilesURL((int) vo.getId(), "100", "success", ""));
+                                                db.close();
+                                                vo.setMessage(pesanNya);
+                                                if (vo.isGroupChat()) {
+                                                    Intent intent = new Intent(getApplicationContext(), UploadService.class);
+                                                    intent.putExtra(UploadService.ACTION, "sendTextGroup");
+                                                    intent.putExtra(UploadService.KEY_MESSAGE, vo);
+                                                    startService(intent);
+                                                } else {
+                                                    Intent i = new Intent();
+                                                    i.setAction(FILE_SEND_INTENT);
+                                                    i.putExtra(KEY_MESSAGE_OBJECT, vo);
+                                                    sendBroadcast(i);
+                                                }
+                                            } else {
+                                                FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                                                db.open();
+                                                db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                                                db.close();
+                                                vo.setStatus(Message.STATUS_NOTSEND);
+                                                messengerHelper.updateData(vo);
+                                                Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                                                intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                                                sendBroadcast(intent);
+                                            }
+                                        } else {
+                                            FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                                            db.open();
+                                            db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                                            db.close();
+                                            vo.setStatus(Message.STATUS_NOTSEND);
+                                            messengerHelper.updateData(vo);
+                                            Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                                            intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                                            sendBroadcast(intent);
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                                        db.open();
+                                        db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                                        db.close();
+                                        vo.setStatus(Message.STATUS_NOTSEND);
+                                        messengerHelper.updateData(vo);
+                                        Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                                        intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                                        sendBroadcast(intent);
+                                    }
+
+                                } else {
+                                    FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                                    db.open();
+                                    db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                                    db.close();
+                                    vo.setStatus(Message.STATUS_NOTSEND);
+                                    messengerHelper.updateData(vo);
+                                    Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                                    intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                                    sendBroadcast(intent);
+                                }
+                            } else {
+                                FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                                db.open();
+                                db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                                db.close();
+                                vo.setStatus(Message.STATUS_NOTSEND);
+                                messengerHelper.updateData(vo);
+                                Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                                intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                                sendBroadcast(intent);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                            db.open();
+                            db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                            db.close();
+                            vo.setStatus(Message.STATUS_NOTSEND);
+                            messengerHelper.updateData(vo);
+                            Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                            intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                            sendBroadcast(intent);
+                        }
+                    } else {
+                        FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                        db.open();
+                        db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                        db.close();
+                        vo.setStatus(Message.STATUS_NOTSEND);
+                        messengerHelper.updateData(vo);
+                        Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                        intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                        sendBroadcast(intent);
+                    }
+                } else {
+                    FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                    db.open();
+                    db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                    db.close();
+                    vo.setStatus(Message.STATUS_NOTSEND);
+                    messengerHelper.updateData(vo);
+                    Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                    intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                    sendBroadcast(intent);
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                db.open();
+                db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                db.close();
+                vo.setStatus(Message.STATUS_NOTSEND);
+                messengerHelper.updateData(vo);
+                Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                sendBroadcast(intent);
+                responseString = e.toString();
+            } catch (IOException e) {
+                FilesURLDatabaseHelper db = new FilesURLDatabaseHelper(context);
+                db.open();
+                db.updateFiles(new FilesURL((int) vo.getId(), "0", "failed", ""));
+                db.close();
+                vo.setStatus(Message.STATUS_NOTSEND);
+                messengerHelper.updateData(vo);
+                Intent intent = new Intent(UploadService.KEY_UPDATE_UPLOAD_BAR);
+                intent.putExtra(KEY_MESSAGE_OBJECT, vo);
+                sendBroadcast(intent);
+                responseString = e.toString();
+            }
         }
 
         private String jsonMessage(String uriImage, String caption, String mUrlServer) {
@@ -1040,6 +1279,60 @@ public class UploadService extends IntentService {
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(URL);
 
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+
+                                NotificationManager manager =
+                                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                                builder.setContentTitle("submit Form");
+                                builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(username));
+                                builder.setSmallIcon(R.drawable.ic_notif);
+                                builder.setProgress(100, (int) ((num / (float) totalSize) * 100), true);
+                                manager.notify(Integer.parseInt(idNotif), builder.build());
+                            }
+                        });
+
+                File sourceFile = new File(resizeAndCompressImageBeforeSend(getApplicationContext(), uri, "fileUploadBC_" + new Date().getTime() + ".jpg"));
+                if (!sourceFile.exists()) {
+                    return "File not exists";
+                }
+
+                ContentType contentType = ContentType.create("image/jpeg");
+                entity.addPart("username_room", new StringBody(username));
+                entity.addPart("id_rooms_tab", new StringBody(id_room));
+                entity.addPart("id_list_task", new StringBody(id_list));
+                entity.addPart("value", new FileBody(sourceFile, contentType, sourceFile.getName()));
+
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+
+                if (statusCode == 200) {
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
             return responseString;
         }
 
@@ -1099,6 +1392,347 @@ public class UploadService extends IntentService {
         public void postData(String valueIWantToSend, final String usr, final String idr, final String idDetail, final String fromList, final String customersId, String includeStatus, String isReject, final String idNotif) {
             // Create a new HttpClient and Post Header
 
+            try {
+                HttpParams httpParameters = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
+                HttpConnectionParams.setSoTimeout(httpParameters, 15000);
+                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpPost httppost = new HttpPost(valueIWantToSend);
+                InputStreamReader reader = null;
+
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+
+                                NotificationManager manager =
+                                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                                builder.setContentTitle("submit Form");
+                                builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(usr));
+                                builder.setSmallIcon(R.drawable.ic_notif);
+                                builder.setProgress(100, (int) ((num / (float) totalSize) * 100), false);
+                                manager.notify(Integer.parseInt(idNotif), builder.build());
+
+                            }
+                        });
+
+                entity.addPart("username_room", new StringBody(usr));
+                entity.addPart("id_rooms_tab", new StringBody(idr));
+                entity.addPart("id_detail_tab", new StringBody(idDetail));
+
+                BotListDB db = BotListDB.getInstance(getApplicationContext());
+                Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, usr, idr, "assignTo", "");
+                if (cEdit.getCount() > 0) {
+                    String cc = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                    String has = "";
+                    if (cc.contains("All")) {
+                        DataBaseHelper dataBaseHelper = DataBaseHelper.getInstance(getApplicationContext());
+                        Cursor curr = dataBaseHelper.selectAll("room", usr, idr);
+                        if (curr.getCount() > 0) {
+                            if (curr.moveToFirst()) {
+                                do {
+                                    if (has.length() == 0) {
+                                        has = curr.getString(5);
+                                    } else {
+                                        has += "," + curr.getString(5);
+                                    }
+
+                                } while (curr.moveToNext());
+                            }
+                        }
+                    } else {
+                        String[] su = cc.split(",");
+                        for (String ss : su) {
+                            if (has.length() == 0) {
+                                has = ss.split(" - ")[1];
+                            } else {
+                                has += "," + ss.split(" - ")[1];
+                            }
+                        }
+                    }
+                    entity.addPart("assign_to", new StringBody(has));
+                }
+
+
+                if (!includeStatus.equalsIgnoreCase("")) {
+                    Cursor cucuTv = db.getSingleRoomDetailFormWithFlagContent(idDetail, usr, idr, "includeStatus", "");
+                    if (cucuTv.getCount() > 0) {
+                        String cucuTvi = cucuTv.getString(cucuTv.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
+                        String resultti = "0";
+                        if (cucuTvi.equalsIgnoreCase("Approve")) {
+                            resultti = "1";
+                        } else if (cucuTvi.equalsIgnoreCase("Done")) {
+                            resultti = "2";
+                        }
+                        entity.addPart("status_task", new StringBody(resultti));
+                    }
+                }
+
+
+                if (!isReject.equalsIgnoreCase("")) {
+                    entity.addPart("is_reject", new StringBody(isReject));
+                }
+
+
+                Cursor cursorParent = db.getSingleRoomDetailFormWithFlag(idDetail, usr, idr, "parent");
+
+
+                if (cursorParent.getCount() > 0) {
+                    if (!cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)).equalsIgnoreCase("")) {
+                        entity.addPart("latlong_before", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "a")));
+                        entity.addPart("latlong_after", new StringBody(jsonResultType(cursorParent.getString(cursorParent.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "b")));
+                    } else {
+                        entity.addPart("latlong_before", new StringBody("null"));
+                        entity.addPart("latlong_after", new StringBody("null"));
+                    }
+                } else {
+                    entity.addPart("latlong_before", new StringBody("null"));
+                    entity.addPart("latlong_after", new StringBody("null"));
+                }
+
+                if (fromList.equalsIgnoreCase("hide") || fromList.equalsIgnoreCase("hideMultiple") || fromList.equalsIgnoreCase("showMultiple")) {
+
+                    if (idDetail != null || !idDetail.equalsIgnoreCase("")) {
+                        String[] ff = idDetail.split("\\|");
+                        if (ff.length == 2) {
+                            entity.addPart("parent_id", new StringBody(ff[1]));
+                            entity.addPart("id_list_push", new StringBody(ff[0]));
+                        }
+                    }
+                }
+
+                MessengerDatabaseHelper messengerHelper = null;
+                if (messengerHelper == null) {
+                    messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+                }
+
+                Contact contact = messengerHelper.getMyContact();
+                entity.addPart("bc_user", new StringBody(contact.getJabberId()));
+
+
+                ArrayList<RoomsDetail> list = db.allRoomDetailFormWithFlag(idDetail, usr, idr, "cild");
+
+
+                for (int u = 0; u < list.size(); u++) {
+
+                    JSONArray jsA = null;
+                    String content = "";
+
+                    String cc = list.get(u).getContent();
+                    Log.w("cinta", cc);
+
+                    if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("input_kodepos") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_wilayah")) {
+                        cc = jsoncreateC(list.get(u).getContent());
+                    } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("form_child")) {
+
+                    } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(cc);
+                            Iterator<String> iter = jsonObject.keys();
+
+                            JSONObject jsHead = new JSONObject();
+                            JSONArray jsAU = new JSONArray();
+                            while (iter.hasNext()) {
+                                JSONObject joN = new JSONObject();
+                                String key = iter.next();
+                                try {
+                                    JSONArray jsAdd = jsonObject.getJSONArray(key);
+                                    JSONArray newJS = new JSONArray();
+                                    for (int ic = 0; ic < jsAdd.length(); ic++) {
+                                        JSONObject oContent = new JSONObject(jsAdd.get(ic).toString());
+                                        String lastCusID = oContent.getString("iD");
+                                        String val = oContent.getString("v");
+                                        String not = oContent.getString("n");
+
+                                        JSONObject jOdetail = new JSONObject();
+                                        jOdetail.put("id", lastCusID);
+                                        jOdetail.put("val", val);
+                                        jOdetail.put("note", not);
+
+                                        newJS.put(jOdetail);
+
+                                    }
+                                    joN.put("id", key.toString());
+                                    joN.put("checklists", newJS);
+                                    jsAU.put(joN);
+
+                                } catch (JSONException e) {
+                                    // Something went wrong!
+                                }
+                            }
+
+                            jsHead.put("outlet_id", customersId);
+                            jsHead.put("audit", jsAU);
+                            cc = jsHead.toString();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    try {
+                        if (cc.startsWith("{")) {
+                            if (!cc.startsWith("[")) {
+                                cc = "[" + cc + "]";
+                            }
+                            jsA = new JSONArray(cc);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    if (jsA != null) {
+                        if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("distance_estimation") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("new_dropdown_dinamis") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("ocr") || jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("upload_document")) {
+                            entity.addPart("key[]", new StringBody(list.get(u).getFlag_tab()));
+                            entity.addPart("value[]", new StringBody(list.get(u).getContent()));
+                            entity.addPart("type[]", new StringBody(jsonResultType(list.get(u).getFlag_content(), "b")));
+                        } else if (jsonResultType(list.get(u).getFlag_content(), "b").equalsIgnoreCase("dropdown_form")) {
+                            entity.addPart("key[]", new StringBody(list.get(u).getFlag_tab()));
+                            entity.addPart("value[]", new StringBody(cc));
+                            entity.addPart("type[]", new StringBody(jsonResultType(list.get(u).getFlag_content(), "b")));
+                        } else {
+                            try {
+                                for (int ic = 0; ic < jsA.length(); ic++) {
+                                    final String icC = jsA.getJSONObject(ic).getString("c").toString();
+                                    content += icC + "|";
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            entity.addPart("key[]", new StringBody(list.get(u).getFlag_tab()));
+                            entity.addPart("value[]", new StringBody(content.substring(0, content.length() - 1)));
+                            entity.addPart("type[]", new StringBody(jsonResultType(list.get(u).getFlag_content(), "b")));
+
+                        }
+                    } else {
+
+                        entity.addPart("key[]", new StringBody(list.get(u).getFlag_tab()));
+                        entity.addPart("value[]", new StringBody(list.get(u).getContent()));
+                        entity.addPart("type[]", new StringBody(jsonResultType(list.get(u).getFlag_content(), "b")));
+
+                    }
+                }
+
+                Log.w("harlem", entity.toString());
+
+
+                totalSize = entity.getContentLength();
+
+
+                Log.w("totalSize", totalSize + "");
+
+
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    reader = new InputStreamReader(response.getEntity().getContent(), "UTF-8");
+                    int r;
+                    StringBuilder buf = new StringBuilder();
+                    while ((r = reader.read()) != -1) {
+                        buf.append((char) r);
+                    }
+
+                    if (buf.toString().equalsIgnoreCase("1")) {
+
+                        NotificationManager manager =
+                                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                        builder.setContentTitle("Submit Form");
+                        builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(usr));
+                        builder.setSmallIcon(R.drawable.ic_notif);
+                        builder.setContentText("Upload complete")
+                                .setProgress(0, 0, false);
+                        manager.notify(Integer.parseInt(idNotif), builder.build());
+
+                        db.deleteRoomsDetailbyId(idDetail, idr, usr);
+
+                        SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
+                        submitingRoomDB.deleteContact(Long.parseLong(idNotif));
+
+                    } else {
+
+                        NotificationManager manager =
+                                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                        builder.setContentTitle("submit Form");
+                        builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(usr));
+                        builder.setSmallIcon(R.drawable.ic_notif);
+                        builder.setContentText("Upload failed2")
+                                .setProgress(0, 0, false);
+                        manager.notify(Integer.parseInt(idNotif), builder.build());
+
+                        long date = System.currentTimeMillis();
+                        String dateString = hourFormat.format(date);
+                        RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
+                        db.updateDetailRoomWithFlagContentParent(orderModel);
+
+                        SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
+                        submitingRoomDB.deleteContact(Long.parseLong(idNotif));
+
+                    }
+                } else {
+
+                    NotificationManager manager =
+                            (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                    builder.setContentTitle("submit Form");
+                    builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(usr));
+                    builder.setSmallIcon(R.drawable.ic_notif);
+                    builder.setContentText("Upload failed3")
+                            .setProgress(0, 0, false);
+                    manager.notify(Integer.parseInt(idNotif), builder.build());
+
+                    long date = System.currentTimeMillis();
+                    String dateString = hourFormat.format(date);
+                    RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
+                    db.updateDetailRoomWithFlagContentParent(orderModel);
+
+                    SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
+                    submitingRoomDB.deleteContact(Long.parseLong(idNotif));
+                }
+            } catch (IOException e) {
+
+                NotificationManager manager =
+                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                builder.setContentTitle("submit Form");
+                builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(usr));
+                builder.setSmallIcon(R.drawable.ic_notif);
+                builder.setContentText("Upload failed4")
+                        .setProgress(0, 0, false);
+                manager.notify(Integer.parseInt(idNotif), builder.build());
+
+
+                long date = System.currentTimeMillis();
+                String dateString = hourFormat.format(date);
+                BotListDB db = BotListDB.getInstance(getApplicationContext());
+                RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
+                db.updateDetailRoomWithFlagContentParent(orderModel);
+
+                SubmitingRoomDB submitingRoomDB = SubmitingRoomDB.getInstance(getApplicationContext());
+                submitingRoomDB.deleteContact(Long.parseLong(idNotif));
+
+
+                // TODO Auto-generated catch block
+            }
         }
     }
 
@@ -2185,6 +2819,61 @@ public class UploadService extends IntentService {
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(URL);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+
+                                NotificationManager manager =
+                                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
+                                builder.setContentTitle("Download value");
+                                builder.setContentText(new GetRealNameRoom().getInstance(getApplicationContext()).getName(user));
+                                builder.setSmallIcon(R.drawable.ic_notif);
+                                builder.setProgress(100, (int) ((num / (float) totalSize) * 100), true);
+                                manager.notify(Integer.parseInt(idNotif), builder.build());
+                            }
+                        });
+
+                entity.addPart("username_room", new StringBody(user));
+                entity.addPart("id_rooms_tab", new StringBody(id_room));
+
+                if (pId != null || !pId.equalsIgnoreCase("")) {
+                    String[] ff = pId.split("\\|");
+                    if (ff.length == 2) {
+                        entity.addPart("parent_id", new StringBody(ff[1]));
+                        entity.addPart("id_list_push", new StringBody(ff[0]));
+                    }
+                }
+
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+
+
+                if (statusCode == 200) {
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
 
             return responseString;
         }

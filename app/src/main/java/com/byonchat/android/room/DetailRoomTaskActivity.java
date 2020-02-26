@@ -18,10 +18,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import androidx.core.view.MenuItemCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +27,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
@@ -46,6 +48,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
@@ -211,37 +215,37 @@ public class DetailRoomTaskActivity extends AppCompatActivity {
 
     private void configureActionItem(Menu menu) {
 
-            MenuItem item = menu.findItem(R.id.menu_action_upload);
+        MenuItem item = menu.findItem(R.id.menu_action_upload);
         if (status.equalsIgnoreCase("done")) {
             item.setVisible(false);
         }
-            Button btn = (Button) MenuItemCompat.getActionView(item).findViewById(
-                    R.id.buttonAbSave);
-            btn.setBackgroundColor(Color.TRANSPARENT);
-            btn.setTypeface(null, Typeface.BOLD);
-            btn.setText("Upload");
-            btn.setTextColor(Color.WHITE);
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (result != null) {
-                        contentRoomDB.open();
-                        Date date = new Date();
-                        contentRoomDB.updateDetail(new ContentRoom(Long.parseLong(idTask), hourFormat.format(date).toString(), longitude + "," + latitude+"<:>"+textMessage.getText().toString(), cameraFileOutput, "Send", "1"));
-                        contentRoomDB.close();
-                        if (isNetworkConnectionAvailable()) {
-                            new UploadFileToServer().execute();
-                        } else {
-                            sendSMSMessage();
-                            finish();
-                            Toast.makeText(getApplicationContext(), "No internet connection, SMS send", Toast.LENGTH_SHORT).show();
-                        }
+        Button btn = (Button) MenuItemCompat.getActionView(item).findViewById(
+                R.id.buttonAbSave);
+        btn.setBackgroundColor(Color.TRANSPARENT);
+        btn.setTypeface(null, Typeface.BOLD);
+        btn.setText("Upload");
+        btn.setTextColor(Color.WHITE);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (result != null) {
+                    contentRoomDB.open();
+                    Date date = new Date();
+                    contentRoomDB.updateDetail(new ContentRoom(Long.parseLong(idTask), hourFormat.format(date).toString(), longitude + "," + latitude+"<:>"+textMessage.getText().toString(), cameraFileOutput, "Send", "1"));
+                    contentRoomDB.close();
+                    if (isNetworkConnectionAvailable()) {
+                        new UploadFileToServer().execute();
                     } else {
-                        Toast.makeText(getApplicationContext(), "No photo, please take a photo", Toast.LENGTH_SHORT).show();
+                        sendSMSMessage();
+                        finish();
+                        Toast.makeText(getApplicationContext(), "No internet connection, SMS send", Toast.LENGTH_SHORT).show();
                     }
-
+                } else {
+                    Toast.makeText(getApplicationContext(), "No photo, please take a photo", Toast.LENGTH_SHORT).show();
                 }
-            });
+
+            }
+        });
     }
 
     protected void sendSMSMessage() {
@@ -317,8 +321,8 @@ public class DetailRoomTaskActivity extends AppCompatActivity {
     public void getgps(){
         gps = new GPSTracker(DetailRoomTaskActivity.this);
         if(gps.canGetLocation()) {
-             latitude = gps.getLatitude();
-             longitude = gps.getLongitude();
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
             if (latitude == 0.0 && longitude == 0.0) {
                 String action = Intent.ACTION_GET_CONTENT;
                 Intent i = new Intent();
@@ -431,7 +435,7 @@ public class DetailRoomTaskActivity extends AppCompatActivity {
         protected void onPreExecute() {
             Dialog.setMessage("Please wait a moment");
             Dialog.show();
-           // progressBar.setProgress(0);
+            // progressBar.setProgress(0);
             super.onPreExecute();
         }
 
@@ -453,6 +457,49 @@ public class DetailRoomTaskActivity extends AppCompatActivity {
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost("https://"+ MessengerConnectionService.HTTP_SERVER+"/demo_pamjaya/terima_upload.php");
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                File sourceFile = new File(filePath);
+                ContentType contentType = ContentType.create("image/jpeg");
+                entity.addPart("foto1",  new FileBody( sourceFile, contentType, sourceFile.getName()));
+                entity.addPart("note1",new StringBody(textMessage.getText().toString()));
+                entity.addPart("koordinat", new StringBody(longitude+","+latitude));
+                Date date = new Date();
+                entity.addPart("waktu", new StringBody(hourFormat.format(date).toString()));
+                entity.addPart("bcid", new StringBody(dbhelper.getMyContact().getJabberId()));
+                entity.addPart("room", new StringBody("b6542sdr"));
+                entity.addPart("job", new StringBody(idTask));
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
 
             return responseString;
 

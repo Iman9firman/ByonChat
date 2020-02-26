@@ -12,11 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.palette.graphics.Palette;
-import androidx.appcompat.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +27,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.palette.graphics.Palette;
+
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.list.IconItem;
 import com.byonchat.android.list.utilLoadImage.ImageLoader;
@@ -44,6 +44,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.utils.ColorUtils;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.MediaProcessingUtil;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -75,7 +76,7 @@ import java.util.List;
 public class GroupInfoActivity extends AppCompatActivity {
 
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
-   // private Contact contact;
+    // private Contact contact;
     private MessengerDatabaseHelper dbhelper;
     Bitmap PhotoProfile = null;
     private ImageView profile_id;
@@ -165,8 +166,8 @@ public class GroupInfoActivity extends AppCompatActivity {
         });*/
 
 
-     //   collapsingToolbarLayout.setTitle(contact.getName());
-     //   contact = dbhelper.getContact(jabberId);
+        //   collapsingToolbarLayout.setTitle(contact.getName());
+        //   contact = dbhelper.getContact(jabberId);
 
 
         //btnCall = (ImageButton) findViewById(R.id.btnCall);
@@ -183,7 +184,7 @@ public class GroupInfoActivity extends AppCompatActivity {
             }
         });
 */
-       // btnChat = (ImageButton) findViewById(R.id.btnChat);
+        // btnChat = (ImageButton) findViewById(R.id.btnChat);
         /*btnChat.setOnClickListener(new View.OnClickListener() {
 
             @Override

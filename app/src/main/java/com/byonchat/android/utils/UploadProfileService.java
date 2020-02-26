@@ -28,6 +28,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
@@ -190,6 +192,70 @@ public class UploadProfileService extends IntentService implements
 
         @Override
         protected String doInBackground(String... params) {
+            try {
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
+                InputStreamReader reader = null;
+                ContentType contentType = ContentType.create("image/jpeg");
+
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress();
+                            }
+                        });
+
+                entity.addPart("foto", new FileBody( imageOutput, contentType, imageOutput.getName()));
+                // Extra parameters if you want to pass to server
+                entity.addPart("key", new StringBody(params[0]));
+                entity.addPart("username", new StringBody(dbhelper.getMyContact().getJabberId()));
+                entity.addPart("status", new StringBody(URLEncoder.encode(status,"UTF-8")));
+                entity.addPart("action", new StringBody("semua"));
+
+                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    reader = new InputStreamReader(response.getEntity().getContent(), "UTF-8");
+                    int r;
+                    StringBuilder buf = new StringBuilder();
+                    while ((r = reader.read()) != -1) {
+                        buf.append((char) r);
+                    }
+                    content = buf.toString();
+                    JSONObject result = new JSONObject(content);
+                    code = result.getString("code");
+                    code_text = result.getString("code_text");
+                    desc = result.getString("description");
+                    date = result.getString("date");
+                    if(!code.equalsIgnoreCase("200")) error=true;
+                } else {
+                    error=true;
+                }
+
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+                content = e.getMessage();
+                error = true;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                content = e.getMessage();
+                error = true;
+            } catch (IOException e) {
+                content = e.getMessage();
+                e.printStackTrace();
+                error = true;
+            } catch (JSONException e) {
+                content = e.getMessage();
+                e.printStackTrace();
+                error = true;
+            }
             return null;
         }
 
@@ -203,13 +269,13 @@ public class UploadProfileService extends IntentService implements
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             if (error) {
-              //  pdialog.dismiss();
+                //  pdialog.dismiss();
                 if(content.contains("invalid_key")){
                     if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
                         String key = new ValidationsKey().getInstance(mContext).key(true);
                         if (key.equalsIgnoreCase("null")){
                             Toast.makeText(mContext,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
-                          //  pdialog.dismiss();
+                            //  pdialog.dismiss();
                         }else{
                             new PhotoUploaderHttp(mContext).execute(key);
                         }
@@ -222,7 +288,7 @@ public class UploadProfileService extends IntentService implements
             } else {
                 if(code.equalsIgnoreCase("200")){
                     if (!binder.isConnected()) {
-                       // showErrorDialog();
+                        // showErrorDialog();
                         return;
                     }
                     new PhotoUploader().execute();
@@ -392,7 +458,7 @@ public class UploadProfileService extends IntentService implements
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-        //    startMainActivity();
+            //    startMainActivity();
         }
 
         @Override
@@ -400,7 +466,7 @@ public class UploadProfileService extends IntentService implements
             super.onPostExecute(result);
             if (imageOutput != null)
                 imageOutput.delete();
-          //  pdialog.dismiss();
+            //  pdialog.dismiss();
 
             IntervalDB	db = new IntervalDB(getApplicationContext());
             db.open();

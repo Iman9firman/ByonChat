@@ -6,19 +6,18 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -36,19 +35,49 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.byonchat.android.Manhera.Manhera;
+import com.byonchat.android.adapter.ExpandableListAdapter;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.personalRoom.model.NotesPhoto;
+import com.byonchat.android.provider.BotListDB;
+import com.byonchat.android.provider.Message;
+import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.UtilsPD;
+import com.byonchat.android.utils.ValidationsKey;
+import com.byonchat.android.volley.VolleyMultipartRequest;
+import com.byonchat.android.volley.VolleySinglepartRequest;
+import com.byonchat.android.volley.VolleySingleton;
 import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -59,7 +88,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.github.memfis19.annca.Annca;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
@@ -349,6 +380,74 @@ public class GalleryBeforeAfterActivity extends Constants implements EmojiconGri
 
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(URL_POST);
+
+            try {
+                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+                        new AndroidMultiPartEntity.ProgressListener() {
+
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
+                        });
+
+                Log.w("kitalog", id_note + " -- " + bc_user + " -- " + textComment + " --" + photo_before);
+                ContentType contentType = ContentType.create("image/jpeg");
+                entity.addPart("attachment_id", new StringBody(id_note));
+                entity.addPart("bc_user", new StringBody(bc_user));
+                entity.addPart("content", new StringBody(textComment));
+                entity.addPart("photo_before", new StringBody(photo_before));
+                if (!parent_id.equalsIgnoreCase(""))
+                    entity.addPart("parent_id", new StringBody(parent_id));
+                if (photos != null) {
+                    for (NotesPhoto photo : photos) {
+                        File file = new File(resizeAndCompressImageBeforeSend(getApplicationContext(), photo.getPhotoFile().getPath(), "fileUploadBC_" + new Date().getTime() + ".jpg"));
+                        if (!file.exists()) {
+                            return null;
+                        }
+
+                        int size = (int) file.length();
+
+                        byte[] bytes = new byte[size];
+                        try {
+                            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+                            buf.read(bytes, 0, bytes.length);
+                            buf.close();
+
+                            entity.addPart("photo_after", new FileBody(file, contentType, photo.getPhotoFile().getName()));
+                        } catch (FileNotFoundException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+
+                } else {
+                    showError(getString(R.string.comment_error_failed_read_picture));
+                }
+
+                totalSize = entity.getContentLength();
+                httppost.setEntity(entity);
+
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
 
             return responseString;
 

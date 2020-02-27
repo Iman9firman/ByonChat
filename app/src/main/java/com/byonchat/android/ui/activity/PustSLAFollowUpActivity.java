@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -96,6 +97,8 @@ import java.util.Map;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
+import static com.byonchat.android.provider.SLANoteDB.COLUMN_FILEUPLOAD;
+import static com.byonchat.android.provider.SLANoteDB.COLUMN_ID_DETAIL;
 import static com.byonchat.android.provider.SLANoteDB.TABLE_NAME;
 
 public class PustSLAFollowUpActivity extends AppCompatActivity {
@@ -367,6 +370,31 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
     }
 
+    public void insertDBFoto(String id, String fileUrl) {
+        SQLiteDatabase db = NoteDB.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ID_DETAIL, id);
+        if (fileUrl != null) {
+            values.put(COLUMN_FILEUPLOAD, fileUrl);
+        }
+        db.insert(TABLE_NAME, null, values);
+        db.close();
+    }
+
+    public void updateFoto(String id, String fileUrl) {
+        SQLiteDatabase db = NoteDB.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        if (fileUrl != null) {
+            values.put(COLUMN_FILEUPLOAD, fileUrl);
+        }
+
+        db.update(TABLE_NAME, values, COLUMN_ID_DETAIL + " = ?",
+                new String[]{String.valueOf(id)});
+    }
+
+
     protected void resolveListFile() {
 
         mAdapter = new PustReportRepairAdapter(this, "",
@@ -434,7 +462,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             return;
                         }
 
-                        if (getTheDB(foto.get(ii).getId()).length() == 0) {
+                        if (getTheDB(foto.get(ii).getId(), "comment").length() == 0) {
                             Toast.makeText(getApplicationContext(), "Mohon tambahkan Keterangan update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
                             rdialog.dismiss();
                             return;
@@ -478,7 +506,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             String idSection = "";
             String idSubSection = "";
             String idPertanyaan = "";
-            String idItem = "";
 
             for (int i = 0; i < jar.length(); i++) {
                 JSONObject first = jar.getJSONObject(i);
@@ -493,23 +520,24 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                 JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
                 JSONArray byThree = new JSONArray();
-                idPertanyaan = subsection.getString("id");
                 for (int v = 0; v < pertanyaan.length(); v++) {
                     JSONObject fifth = pertanyaan.getJSONObject(v);
                     JSONObject byTwo = new JSONObject();
-                    idItem = fifth.getString("id");
+                    idPertanyaan = fifth.getString("id");
                     String idTask = fifth.getString("id_task");
                     byTwo.put("id_task", idTask);
                     String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask;
                     String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask + "-" + v;
-                    for (int vi = 0; vi < uploadfoto.size(); vi++) {
-                        if (uploadfoto.get(vi).getId().equalsIgnoreCase(id)) {
-                            fifth.put("a", uploadfoto.get(vi).getAfterString());
-                            byTwo.put("a", uploadfoto.get(vi).getAfterString());
+
+                    for (int vi = 0; vi < foto.size(); vi++) {
+                        if (foto.get(vi).getId().equalsIgnoreCase(id_text)) {
                             if (checkDB(id_text)) {
-                                fifth.put("ket", getTheDB(id_text));
-                                byTwo.put("ket", getTheDB(id_text));
+                                fifth.put("ket", getTheDB(id_text, "comment"));
+                                byTwo.put("ket", getTheDB(id_text, "comment"));
+                                fifth.put("a", getTheDB(id_text, "fileupload"));
+                                byTwo.put("a", getTheDB(id_text, "fileupload"));
                             }
+
                         }
                     }
                     byThree.put(byTwo);
@@ -517,10 +545,10 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 byOne.put("pertanyaan", byThree);
             }
 
-            Log.e("erte Nangkringbocah", byOne.toString());
+            Log.w("Nangkringbocah", byOne.toString());
             stringdong = byOne.toString();
         } catch (JSONException e) {
-            Log.e("eeror ketemmnu", e.getMessage());
+            Log.w("ketemmnu", e.getMessage());
         }
         return stringdong;
     }
@@ -582,7 +610,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         return isExist;
     }
 
-    private String getTheDB(String id) {
+    private String getTheDB(String id, String kolom) {
         String isExist = "";
 
         SQLiteDatabase db = NoteDB.getReadableDatabase();
@@ -590,7 +618,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME
                 + " WHERE id_detail =?", new String[]{String.valueOf(id)});
         while (cursor.moveToNext()) {
-            isExist = cursor.getString(cursor.getColumnIndex("comment"));
+            isExist = cursor.getString(cursor.getColumnIndex(kolom));
         }
         cursor.close();
         return isExist;
@@ -602,15 +630,6 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         db.execSQL("DELETE FROM " + TABLE_NAME
                 + " WHERE id_detail =?", new String[]{String.valueOf(id)});
-
-        db.close();
-    }
-
-    private void deleAALLromDB() {
-
-        SQLiteDatabase db = NoteDB.getWritableDatabase();
-
-        db.execSQL("DELETE FROM " + TABLE_NAME);
 
         db.close();
     }
@@ -703,6 +722,11 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         if (removePosFromId(foto.get(i).getId()).equalsIgnoreCase(id)) {
                             SLAmodelNew fotonya = new SLAmodelNew(foto.get(i).getId_task(), "Header", removePosFromId(foto.get(i).getId()), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
                             uploadfoto.add(fotonya);
+                            if (checkDB(foto.get(i).getId())) {
+                                updateFoto(foto.get(i).getId(), filePhott);
+                            } else {
+                                insertDBFoto(foto.get(i).getId(), filePhott);
+                            }
                         }
                     }
                 } else {
@@ -753,32 +777,11 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             }
                         });
 
-/*
-                java.io.File gpxfile = null;
-                try {
-                    java.io.File root = new java.io.File(Environment.getExternalStorageDirectory(), "ByonChat_Upload");
-                    if (!root.exists()) {
-                        root.mkdirs();
-                    }
-                    gpxfile = new java.io.File(root, username + id_room + bc_user + ".json");
-                    FileWriter writer = new FileWriter(gpxfile);
-                    writer.append(fileJson());
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                if (!gpxfile.exists()) {
-                    return "File not exists";
-                }*/
-
                 ContentType contentType = ContentType.create("multipart/form-data");
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("bc_user", new StringBody(bc_user));
                 entity.addPart("kode_jjt", new StringBody(kode_jjt));
-                entity.addPart("json", new StringBody(fileJson())/*new FileBody(gpxfile, contentType, gpxfile.getName())*/);
+                entity.addPart("json", new StringBody(fileJson()));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

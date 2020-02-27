@@ -34,6 +34,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import static com.byonchat.android.provider.SLANoteDB.COLUMN_COMMENT;
+import static com.byonchat.android.provider.SLANoteDB.COLUMN_FILEUPLOAD;
 import static com.byonchat.android.provider.SLANoteDB.COLUMN_ID_DETAIL;
 import static com.byonchat.android.provider.SLANoteDB.TABLE_NAME;
 
@@ -191,6 +192,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
         db.update(TABLE_NAME, values, COLUMN_ID_DETAIL + " = ?",
                 new String[]{String.valueOf(id)});
     }
+
 
     private boolean checkDB(String id) {
         boolean isExist = false;

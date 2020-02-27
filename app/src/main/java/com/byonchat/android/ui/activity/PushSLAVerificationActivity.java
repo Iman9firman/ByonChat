@@ -606,6 +606,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                     rdialog = new ProgressDialog(PushSLAVerificationActivity.this);
                     rdialog.setMessage("Loading...");
                     rdialog.show();
+
                     new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla_new.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"), kode_jjt);
@@ -643,8 +644,9 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                 for (int v = 0; v < pertanyaan.length(); v++) {
                     JSONObject fifth = pertanyaan.getJSONObject(v);
-                    idItem = fifth.getString("id");
+                    idItem = fifth.getString("id_task");
                     String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
+
                     for (int vi = 0; vi < foto.size(); vi++) {
                         if (foto.get(vi).getId().equalsIgnoreCase(id)) {
                             fifth.remove("v");

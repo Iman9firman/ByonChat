@@ -1,6 +1,7 @@
 package com.byonchat.android.ui.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +21,6 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -28,10 +28,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -80,6 +78,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class MainActivityNew extends MainBaseActivityNew {
 
     @Override
@@ -88,207 +88,166 @@ public class MainActivityNew extends MainBaseActivityNew {
     }
 
     protected void onSetupRoom() {
-        if (getIntent().getExtras() != null) {
-            if (getIntent().hasExtra(Constants.EXTRA_ROOM)) {
+        try {
+            if (getIntent().getExtras() != null) {
+                if (getIntent().hasExtra(Constants.EXTRA_ROOM)) {
 
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString(Constants.EXTRA_TAB_MOVEMENT, getIntent().getStringExtra(Constants.EXTRA_TAB_MOVEMENT));
-                editor.apply();
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString(Constants.EXTRA_TAB_MOVEMENT, getIntent().getStringExtra(Constants.EXTRA_TAB_MOVEMENT));
+                    editor.apply();
 
-                ContactBot item = new ContactBot();
-                try {
-                    username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
-                    targetURL = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
-                    JSONArray jsonArray = new JSONArray(getIntent().getStringExtra(Constants.EXTRA_ROOM));
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        item.id = jsonObject.getString("id");
-                        item.desc = jsonObject.getString("desc");
-                        item.link = jsonObject.getString("link");
-                        item.name = jsonObject.getString("name");
-                        item.realname = jsonObject.getString("realname");
-                        item.targetUrl = jsonObject.getString("targetUrl");
-                        item.type = jsonObject.getString("type");
+                    ContactBot item = new ContactBot();
+                    try {
+                        username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
+                        targetURL = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+                        JSONArray jsonArray = new JSONArray(getIntent().getStringExtra(Constants.EXTRA_ROOM));
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            item.id = jsonObject.getString("id");
+                            item.desc = jsonObject.getString("desc");
+                            item.link = jsonObject.getString("link");
+                            item.name = jsonObject.getString("name");
+                            item.realname = jsonObject.getString("realname");
+                            item.targetUrl = jsonObject.getString("targetUrl");
+                            item.type = jsonObject.getString("type");
+                        }
+
+                        Byonchat.getRoomsDB().open();
+                        Byonchat.getRoomsDB().updateActiveRoomsManual(item);
+                        Byonchat.getRoomsDB().close();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                    Byonchat.getRoomsDB().open();
-                    Byonchat.getRoomsDB().updateActiveRoomsManual(item);
-                    Byonchat.getRoomsDB().close();
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
             }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     protected void onLoadView() {
-        tb = findViewById(R.id.main_toolbar);
-        fab_logo = findViewById(R.id.fab_logo_main);
-        collapsingToolbarLayout = findViewById(R.id.main_collapsing);
-        appBarLayout = findViewById(R.id.main_appbar);
-        card_search_main = findViewById(R.id.card_search_main);
-        vBtnAddRooms = findViewById(R.id.button_add_rooms);
-        input_search_main = findViewById(R.id.input_search_main);
-        but_search_main = findViewById(R.id.but_search_main);
-        backgroundImage = findViewById(R.id.main_backdrop);
-        searchView = findViewById(R.id.search_view_main);
-        backdropBlur = findViewById(R.id.backdropblur);
-        vImgBlur = findViewById(R.id.bg_blur);
-        vSwipeRefresh = findViewById(R.id.swipe_refresh);
+        try{
+            tb = findViewById(R.id.main_toolbar);
+            fab_logo = findViewById(R.id.fab_logo_main);
+            collapsingToolbarLayout = findViewById(R.id.main_collapsing);
+            appBarLayout = findViewById(R.id.main_appbar);
+            card_search_main = findViewById(R.id.card_search_main);
+            vBtnAddRooms = findViewById(R.id.button_add_rooms);
+            input_search_main = findViewById(R.id.input_search_main);
+            but_search_main = findViewById(R.id.but_search_main);
+            backgroundImage = findViewById(R.id.main_backdrop);
+            searchView = findViewById(R.id.search_view_main);
+            backdropBlur = findViewById(R.id.backdropblur);
+            vImgBlur = findViewById(R.id.bg_blur);
+            vSwipeRefresh = findViewById(R.id.swipe_refresh);
 
-        root_view = findViewById(R.id.main_group);
-        drawerLayout = findViewById(R.id.drawer_main);
-        navigationView = findViewById(R.id.nav_view);
-        vListRooms = findViewById(R.id.list_view);
-        recyclerView = findViewById(R.id.recycler_main);
-        vBtnToolbarSearch = findViewById(R.id.ic_toolbar_title);
-        vToolbarSearchText = findViewById(R.id.text_toolbar_title);
+            root_view = findViewById(R.id.main_group);
+            drawerLayout = findViewById(R.id.drawer_main);
+            navigationView = findViewById(R.id.nav_view);
+            vListRooms = findViewById(R.id.list_view);
+            recyclerView = findViewById(R.id.recycler_main);
+            vBtnToolbarSearch = findViewById(R.id.ic_toolbar_title);
+            vToolbarSearchText = findViewById(R.id.text_toolbar_title);
 
-        card_menu_main = findViewById(R.id.card_nav_main);
-        vBlurView = findViewById(R.id.blurView);
-        vBlurTopBackground = findViewById(R.id.blur_top_background);
-        fab_menu_1 = findViewById(R.id.fab_menu_1_main);
-        fab_menu_2 = findViewById(R.id.fab_menu_2_main);
-//        fab_menu_3 = findViewById(R.id.fab_menu_3_main);
+            card_menu_main = findViewById(R.id.card_nav_main);
+            vBlurView = findViewById(R.id.blurView);
+            vBlurTopBackground = findViewById(R.id.blur_top_background);
+            fab_menu_1 = findViewById(R.id.fab_menu_1_main);
+            fab_menu_2 = findViewById(R.id.fab_menu_2_main);
 
-        vFrameWarning = findViewById(R.id.frame_warning);
-        vTxtStatusWarning = findViewById(R.id.text_status);
+            vFrameWarning = findViewById(R.id.frame_warning);
+            vTxtStatusWarning = findViewById(R.id.text_status);
 
-        View headerview = navigationView.getHeaderView(0);
-        vNavLogo = headerview.findViewById(R.id.nav_logo);
-        vNavTitle = headerview.findViewById(R.id.nav_title);
-        vBtnOpenRooms = headerview.findViewById(R.id.nav_button_open_room);
+            View headerview = navigationView.getHeaderView(0);
+            vNavLogo = headerview.findViewById(R.id.nav_logo);
+            vNavTitle = headerview.findViewById(R.id.nav_title);
+            vBtnOpenRooms = headerview.findViewById(R.id.nav_button_open_room);
 
-        vConstraintFiveOne = findViewById(R.id.constraint_item_grid_five_one);
-        vConstraintFiveTwo = findViewById(R.id.constraint_item_grid_five_four);
-        vConstraintFiveThree = findViewById(R.id.constraint_item_grid_five_five);
+            vConstraintFiveOne = findViewById(R.id.constraint_item_grid_five_one);
+            vConstraintFiveTwo = findViewById(R.id.constraint_item_grid_five_four);
+            vConstraintFiveThree = findViewById(R.id.constraint_item_grid_five_five);
 
-//        LinearLayout.LayoutParams constraintFive = new LinearLayout.LayoutParams(vConstraintFiveOne.getWidth(),
-//                vConstraintFiveOne.getHeight());
-//        vConstraintFiveTwo.setLayoutParams(constraintFive);
-//        vConstraintFiveThree.setLayoutParams(constraintFive);
+            vFrameTabOne = findViewById(R.id.frame_tab_one);
+            vFrameTabTwo = findViewById(R.id.frame_tab_two);
 
-        vFrameTabOne = findViewById(R.id.frame_tab_one);
-        vFrameTabTwo = findViewById(R.id.frame_tab_two);
-//        vFrameTabThree = findViewById(R.id.frame_tab_three);
-        vFrameTabFour = findViewById(R.id.frame_tab_four);
-//        vFrameTabFive = findViewById(R.id.frame_tab_five);
-//        vFrameTabSix = findViewById(R.id.frame_tab_six);
-//        vFrameTabSeven = findViewById(R.id.frame_tab_seven);
-//        vFrameTabEight = findViewById(R.id.frame_tab_eight);
-        vFrameTabNine = findViewById(R.id.frame_tab_nine);
+            vFrameTabFour = findViewById(R.id.frame_tab_four);
 
-        vFrameGridNineThree = findViewById(R.id.frame_grid_nine_three);
-        vFrameGridNineSix = findViewById(R.id.frame_grid_nine_six);
-        vFrameGridNineNine = findViewById(R.id.frame_grid_nine_nine);
+            vFrameTabNine = findViewById(R.id.frame_tab_nine);
 
-        vFrameGridNineNineOne = findViewById(R.id.frame_grid_nine_nine_one);
-        vFrameGridNineNineTwo = findViewById(R.id.frame_grid_nine_nine_two);
-        vFrameGridNineNineThree = findViewById(R.id.frame_grid_nine_nine_three);
-        vFrameGridNineNineFour = findViewById(R.id.frame_grid_nine_nine_four);
-        vFrameGridNineNineFive = findViewById(R.id.frame_grid_nine_nine_five);
-        vFrameGridNineNineSix = findViewById(R.id.frame_grid_nine_nine_six);
-        vFrameGridNineNineSeven = findViewById(R.id.frame_grid_nine_nine_seven);
-        vFrameGridNineNineEight = findViewById(R.id.frame_grid_nine_nine_eight);
-        vFrameGridNineNineNine = findViewById(R.id.frame_grid_nine_nine_nine);
+            vFrameGridNineThree = findViewById(R.id.frame_grid_nine_three);
+            vFrameGridNineSix = findViewById(R.id.frame_grid_nine_six);
+            vFrameGridNineNine = findViewById(R.id.frame_grid_nine_nine);
 
-        vFrameClickTabOne = findViewById(R.id.frame_click_tab_one);
+            vFrameGridNineNineOne = findViewById(R.id.frame_grid_nine_nine_one);
+            vFrameGridNineNineTwo = findViewById(R.id.frame_grid_nine_nine_two);
+            vFrameGridNineNineThree = findViewById(R.id.frame_grid_nine_nine_three);
+            vFrameGridNineNineFour = findViewById(R.id.frame_grid_nine_nine_four);
+            vFrameGridNineNineFive = findViewById(R.id.frame_grid_nine_nine_five);
+            vFrameGridNineNineSix = findViewById(R.id.frame_grid_nine_nine_six);
+            vFrameGridNineNineSeven = findViewById(R.id.frame_grid_nine_nine_seven);
+            vFrameGridNineNineEight = findViewById(R.id.frame_grid_nine_nine_eight);
+            vFrameGridNineNineNine = findViewById(R.id.frame_grid_nine_nine_nine);
 
-        vFrameClickTabTwoOne = findViewById(R.id.frame_click_tab_two_one);
-        vFrameClickTabTwoTwo = findViewById(R.id.frame_click_tab_two_two);
+            vFrameClickTabOne = findViewById(R.id.frame_click_tab_one);
 
-        vFrameClickTabFourOne = findViewById(R.id.frame_click_tab_four_one);
-        vFrameClickTabFourTwo = findViewById(R.id.frame_click_tab_four_two);
-        vFrameClickTabFourThree = findViewById(R.id.frame_click_tab_four_three);
-        vFrameClickTabFourFour = findViewById(R.id.frame_click_tab_four_four);
+            vFrameClickTabTwoOne = findViewById(R.id.frame_click_tab_two_one);
+            vFrameClickTabTwoTwo = findViewById(R.id.frame_click_tab_two_two);
 
-        vFrameClickTabNineOne = findViewById(R.id.frame_click_tab_nine_one);
-        vFrameClickTabNineTwo = findViewById(R.id.frame_click_tab_nine_two);
-        vFrameClickTabNineThree = findViewById(R.id.frame_click_tab_nine_three);
-        vFrameClickTabNineFour = findViewById(R.id.frame_click_tab_nine_four);
-        vFrameClickTabNineFive = findViewById(R.id.frame_click_tab_nine_five);
-        vFrameClickTabNineSix = findViewById(R.id.frame_click_tab_nine_six);
-        vFrameClickTabNineSeven = findViewById(R.id.frame_click_tab_nine_seven);
-        vFrameClickTabNineEight = findViewById(R.id.frame_click_tab_nine_eight);
-        vFrameClickTabNineNine = findViewById(R.id.frame_click_tab_nine_nine);
+            vFrameClickTabFourOne = findViewById(R.id.frame_click_tab_four_one);
+            vFrameClickTabFourTwo = findViewById(R.id.frame_click_tab_four_two);
+            vFrameClickTabFourThree = findViewById(R.id.frame_click_tab_four_three);
+            vFrameClickTabFourFour = findViewById(R.id.frame_click_tab_four_four);
 
-        vLogoItemGridOne = findViewById(R.id.logo_item_grid_one);
-        vTitleItemGridOne = findViewById(R.id.title_item_grid_one);
+            vFrameClickTabNineOne = findViewById(R.id.frame_click_tab_nine_one);
+            vFrameClickTabNineTwo = findViewById(R.id.frame_click_tab_nine_two);
+            vFrameClickTabNineThree = findViewById(R.id.frame_click_tab_nine_three);
+            vFrameClickTabNineFour = findViewById(R.id.frame_click_tab_nine_four);
+            vFrameClickTabNineFive = findViewById(R.id.frame_click_tab_nine_five);
+            vFrameClickTabNineSix = findViewById(R.id.frame_click_tab_nine_six);
+            vFrameClickTabNineSeven = findViewById(R.id.frame_click_tab_nine_seven);
+            vFrameClickTabNineEight = findViewById(R.id.frame_click_tab_nine_eight);
+            vFrameClickTabNineNine = findViewById(R.id.frame_click_tab_nine_nine);
 
-        vLogoItemGridTwoOne = findViewById(R.id.logo_item_grid_two_one);
-        vTitleItemGridTwoOne = findViewById(R.id.title_item_grid_two_one);
-        vLogoItemGridTwoTwo = findViewById(R.id.logo_item_grid_two_two);
-        vTitleItemGridTwoTwo = findViewById(R.id.title_item_grid_two_two);
+            vLogoItemGridOne = findViewById(R.id.logo_item_grid_one);
+            vTitleItemGridOne = findViewById(R.id.title_item_grid_one);
 
-        /*vLogoItemGridThreeOne = findViewById(R.id.logo_item_grid_three_one);
-        vTitleItemGridThreeOne = findViewById(R.id.title_item_grid_three_one);
-        vLogoItemGridThreeTwo = findViewById(R.id.logo_item_grid_three_two);
-        vTitleItemGridThreeTwo = findViewById(R.id.title_item_grid_three_two);
-        vLogoItemGridThreeThree = findViewById(R.id.logo_item_grid_three_three);
-        vTitleItemGridThreeThree = findViewById(R.id.title_item_grid_three_three);*/
+            vLogoItemGridTwoOne = findViewById(R.id.logo_item_grid_two_one);
+            vTitleItemGridTwoOne = findViewById(R.id.title_item_grid_two_one);
+            vLogoItemGridTwoTwo = findViewById(R.id.logo_item_grid_two_two);
+            vTitleItemGridTwoTwo = findViewById(R.id.title_item_grid_two_two);
 
-        vLogoItemGridFourOne = findViewById(R.id.logo_item_grid_four_one);
-        vTitleItemGridFourOne = findViewById(R.id.title_item_grid_four_one);
-        vLogoItemGridFourTwo = findViewById(R.id.logo_item_grid_four_two);
-        vTitleItemGridFourTwo = findViewById(R.id.title_item_grid_four_two);
-        vLogoItemGridFourThree = findViewById(R.id.logo_item_grid_four_three);
-        vTitleItemGridFourThree = findViewById(R.id.title_item_grid_four_three);
-        vLogoItemGridFourFour = findViewById(R.id.logo_item_grid_four_four);
-        vTitleItemGridFourFour = findViewById(R.id.title_item_grid_four_four);
+            vLogoItemGridFourOne = findViewById(R.id.logo_item_grid_four_one);
+            vTitleItemGridFourOne = findViewById(R.id.title_item_grid_four_one);
+            vLogoItemGridFourTwo = findViewById(R.id.logo_item_grid_four_two);
+            vTitleItemGridFourTwo = findViewById(R.id.title_item_grid_four_two);
+            vLogoItemGridFourThree = findViewById(R.id.logo_item_grid_four_three);
+            vTitleItemGridFourThree = findViewById(R.id.title_item_grid_four_three);
+            vLogoItemGridFourFour = findViewById(R.id.logo_item_grid_four_four);
+            vTitleItemGridFourFour = findViewById(R.id.title_item_grid_four_four);
 
-        /*vLogoItemGridFiveOne = findViewById(R.id.logo_item_grid_five_one);
-        vTitleItemGridFiveOne = findViewById(R.id.title_item_grid_four_one);
-        vLogoItemGridFiveTwo = findViewById(R.id.logo_item_grid_five_two);
-        vTitleItemGridFiveTwo = findViewById(R.id.title_item_grid_four_two);
-        vLogoItemGridFiveThree = findViewById(R.id.logo_item_grid_five_three);
-        vTitleItemGridFiveThree = findViewById(R.id.title_item_grid_four_three);
-        vLogoItemGridFiveFour = findViewById(R.id.logo_item_grid_five_four);
-        vTitleItemGridFiveFour = findViewById(R.id.title_item_grid_four_four);
-
-        vLogoItemGridFiveOne = findViewById(R.id.logo_item_grid_five_one);
-        vTitleItemGridFiveOne = findViewById(R.id.title_item_grid_five_one);
-        vLogoItemGridFiveTwo = findViewById(R.id.logo_item_grid_five_two);
-        vTitleItemGridFiveTwo = findViewById(R.id.title_item_grid_five_two);
-        vLogoItemGridFiveThree = findViewById(R.id.logo_item_grid_five_three);
-        vTitleItemGridFiveThree = findViewById(R.id.title_item_grid_five_three);
-        vLogoItemGridFiveFour = findViewById(R.id.logo_item_grid_five_four);
-        vTitleItemGridFiveFour = findViewById(R.id.title_item_grid_five_four);
-        vLogoItemGridFiveFive = findViewById(R.id.logo_item_grid_five_five);
-        vTitleItemGridFiveFive = findViewById(R.id.title_item_grid_five_five);
-
-        vLogoItemGridSixOne = findViewById(R.id.logo_item_grid_six_one);
-        vTitleItemGridSixOne = findViewById(R.id.title_item_grid_six_one);
-        vLogoItemGridSixTwo = findViewById(R.id.logo_item_grid_six_two);
-        vTitleItemGridSixTwo = findViewById(R.id.title_item_grid_six_two);
-        vLogoItemGridSixThree = findViewById(R.id.logo_item_grid_six_three);
-        vTitleItemGridSixThree = findViewById(R.id.title_item_grid_six_three);
-        vLogoItemGridSixFour = findViewById(R.id.logo_item_grid_six_four);
-        vTitleItemGridSixFour = findViewById(R.id.title_item_grid_six_four);
-        vLogoItemGridSixFive = findViewById(R.id.logo_item_grid_six_five);
-        vTitleItemGridSixFive = findViewById(R.id.title_item_grid_six_five);
-        vLogoItemGridSixSix = findViewById(R.id.logo_item_grid_six_six);
-        vTitleItemGridSixSix = findViewById(R.id.title_item_grid_six_six);*/
-
-        vLogoItemGridNineOne = findViewById(R.id.logo_item_grid_nine_one);
-        vTitleItemGridNineOne = findViewById(R.id.title_item_grid_nine_one);
-        vLogoItemGridNineTwo = findViewById(R.id.logo_item_grid_nine_two);
-        vTitleItemGridNineTwo = findViewById(R.id.title_item_grid_nine_two);
-        vLogoItemGridNineThree = findViewById(R.id.logo_item_grid_nine_three);
-        vTitleItemGridNineThree = findViewById(R.id.title_item_grid_nine_three);
-        vLogoItemGridNineFour = findViewById(R.id.logo_item_grid_nine_four);
-        vTitleItemGridNineFour = findViewById(R.id.title_item_grid_nine_four);
-        vLogoItemGridNineFive = findViewById(R.id.logo_item_grid_nine_five);
-        vTitleItemGridNineFive = findViewById(R.id.title_item_grid_nine_five);
-        vLogoItemGridNineSix = findViewById(R.id.logo_item_grid_nine_six);
-        vTitleItemGridNineSix = findViewById(R.id.title_item_grid_nine_six);
-        vLogoItemGridNineSeven = findViewById(R.id.logo_item_grid_nine_seven);
-        vTitleItemGridNineSeven = findViewById(R.id.title_item_grid_nine_seven);
-        vLogoItemGridNineEight = findViewById(R.id.logo_item_grid_nine_eight);
-        vTitleItemGridNineEight = findViewById(R.id.title_item_grid_nine_eight);
-        vLogoItemGridNineNine = findViewById(R.id.logo_item_grid_nine_nine);
-        vTitleItemGridNineNine = findViewById(R.id.title_item_grid_nine_nine);
+            vLogoItemGridNineOne = findViewById(R.id.logo_item_grid_nine_one);
+            vTitleItemGridNineOne = findViewById(R.id.title_item_grid_nine_one);
+            vLogoItemGridNineTwo = findViewById(R.id.logo_item_grid_nine_two);
+            vTitleItemGridNineTwo = findViewById(R.id.title_item_grid_nine_two);
+            vLogoItemGridNineThree = findViewById(R.id.logo_item_grid_nine_three);
+            vTitleItemGridNineThree = findViewById(R.id.title_item_grid_nine_three);
+            vLogoItemGridNineFour = findViewById(R.id.logo_item_grid_nine_four);
+            vTitleItemGridNineFour = findViewById(R.id.title_item_grid_nine_four);
+            vLogoItemGridNineFive = findViewById(R.id.logo_item_grid_nine_five);
+            vTitleItemGridNineFive = findViewById(R.id.title_item_grid_nine_five);
+            vLogoItemGridNineSix = findViewById(R.id.logo_item_grid_nine_six);
+            vTitleItemGridNineSix = findViewById(R.id.title_item_grid_nine_six);
+            vLogoItemGridNineSeven = findViewById(R.id.logo_item_grid_nine_seven);
+            vTitleItemGridNineSeven = findViewById(R.id.title_item_grid_nine_seven);
+            vLogoItemGridNineEight = findViewById(R.id.logo_item_grid_nine_eight);
+            vTitleItemGridNineEight = findViewById(R.id.title_item_grid_nine_eight);
+            vLogoItemGridNineNine = findViewById(R.id.logo_item_grid_nine_nine);
+            vTitleItemGridNineNine = findViewById(R.id.title_item_grid_nine_nine);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @RequiresApi(23)
@@ -297,118 +256,137 @@ public class MainActivityNew extends MainBaseActivityNew {
         super.onViewReady(savedInstanceState);
         resolveRoomConfig();
 
-        resolveView();
-        resolveAnimation();
-        resolveListRooms();
-        resolveOpenRooms();
+        try {
+            resolveView();
+            resolveAnimation();
+            resolveListRooms();
+            resolveOpenRooms();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveVersion() {
-        UpdateListDB db = new UpdateListDB(getApplicationContext());
-        db.open();
+        try{
+            UpdateListDB db = new UpdateListDB(getApplicationContext());
+            db.open();
 
-        Cursor crs = db.getUnrefreshedData("0");
-        while (crs.moveToNext()) {
-            if (crs.getString(crs.getColumnIndex(UpdateListDB.UPD_NAME)).equalsIgnoreCase("refresh_version")) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                try {
-                    Date d = sdf.parse(crs.getString(crs.getColumnIndexOrThrow(UpdateListDB.UPD_DATE_EXP)));
-                    Date c = Calendar.getInstance().getTime();
+            Cursor crs = db.getUnrefreshedData("0");
+            while (crs.moveToNext()) {
+                if (crs.getString(crs.getColumnIndex(UpdateListDB.UPD_NAME)).equalsIgnoreCase("refresh_version")) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    try {
+                        Date d = sdf.parse(crs.getString(crs.getColumnIndexOrThrow(UpdateListDB.UPD_DATE_EXP)));
+                        Date c = Calendar.getInstance().getTime();
 
-                    long diff = d.getTime() - c.getTime();
+                        long diff = d.getTime() - c.getTime();
 
-                    UpdateViewDialog dialog = new UpdateViewDialog(this);
-                    dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
-                    dialog.show();
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                        UpdateViewDialog dialog = new UpdateViewDialog(this);
+                        dialog.getWindow().setGravity(Gravity.CENTER_HORIZONTAL);
+                        dialog.show();
+                        dialog.setCancelable(false);
+                        dialog.setCanceledOnTouchOutside(false);
+                        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-                } catch (ParseException ex) {
-                    Log.w("Exception", ex.getLocalizedMessage());
+                    } catch (ParseException ex) {
+                        Log.w("Exception", ex.getLocalizedMessage());
+                    }
                 }
             }
+            crs.close();
+            db.close();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-        crs.close();
-        db.close();
     }
 
     protected void resolveRoomConfig() {
-        if (getIntent() != null) {
-            if (!getIntent().hasExtra(Constants.EXTRA_ROOM)) {
-                success = getIntent().getStringExtra("success");
-                username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
-                targetURL = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
-            }
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
-
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.READ_CONTACTS,
-                            Manifest.permission.WRITE_CONTACTS,
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.CALL_PHONE,
-                            Manifest.permission.RECEIVE_SMS},
-                    TAG_CODE_PERMISSION_LOCATION);
-        }
-
         try {
-            int off = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
-            if (off == 0) {
-                Intent onGPS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(onGPS);
+            if (getIntent() != null) {
+                if (!getIntent().hasExtra(Constants.EXTRA_ROOM)) {
+                    success = getIntent().getStringExtra("success");
+                    username = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
+                    targetURL = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+                }
             }
-        } catch (Exception e) {
-        }
 
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED) {
+
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.READ_CONTACTS,
+                                Manifest.permission.WRITE_CONTACTS,
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.CALL_PHONE,
+                                Manifest.permission.RECEIVE_SMS},
+                        TAG_CODE_PERMISSION_LOCATION);
+            }
+
+            try {
+                int off = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+                if (off == 0) {
+                    Intent onGPS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(onGPS);
+                }
+            } catch (Exception e) {
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 
     @Override
     protected void onPause() {
-        unregisterReceiver(broadcastHandler);
-        if (lanjut) {
-            assistant.stop();
-            numbers.clear();
-            appBarLayout.removeOnOffsetChangedListener(this);
+        try {
+            unregisterReceiver(broadcastHandler);
+            if (lanjut) {
+                assistant.stop();
+                numbers.clear();
+                appBarLayout.removeOnOffsetChangedListener(this);
+            }
+            super.onPause();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-        super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (assistant != null) {
-            assistant.start();
-        }
+        try {
+            if (assistant != null) {
+                assistant.start();
+            }
 
 
-        IntentFilter f = new IntentFilter(
-                MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
-        f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
-        f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
-        f.setPriority(1);
+            IntentFilter f = new IntentFilter(
+                    MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
+            f.addAction(MainBaseActivityNew.ACTION_REFRESH_BADGER);
+            f.addAction(MainBaseActivityNew.ACTION_REFRESH_NOTIF);
+            f.setPriority(1);
 
-        registerReceiver(broadcastHandler, f);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID_CARD);
-        if (lanjut) {
-            addShortcutBadger(getApplicationContext());
+            registerReceiver(broadcastHandler, f);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+            if (lanjut) {
+                addShortcutBadger(getApplicationContext());
 
-            onHomeRefresh();
-            resolveVersion();
+                onHomeRefresh();
+                resolveVersion();
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -416,119 +394,131 @@ public class MainActivityNew extends MainBaseActivityNew {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs != null) {
-            extra_grid_size = prefs.getString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_THREE);
-            if (extra_grid_size.equalsIgnoreCase(Constants.EXTRA_GRID_SIZE_THREE)) {
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs != null) {
+                extra_grid_size = prefs.getString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_THREE);
+                if (extra_grid_size.equalsIgnoreCase(Constants.EXTRA_GRID_SIZE_THREE)) {
+                    resourceAdapterId = R.layout.list_grid_item;
+                    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
+                    } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+                    }
+                } else {
+                    resourceAdapterId = R.layout.list_grid_item_four;
+                    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        layoutManager = new GridLayoutManager(this, 7, RecyclerView.VERTICAL, false);
+                    } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        layoutManager = new GridLayoutManager(this, 4, RecyclerView.VERTICAL, false);
+                    }
+                }
+            } else {
                 resourceAdapterId = R.layout.list_grid_item;
                 if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
                 } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
                     layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
                 }
-            } else {
-                resourceAdapterId = R.layout.list_grid_item_four;
-                if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    layoutManager = new GridLayoutManager(this, 7, RecyclerView.VERTICAL, false);
-                } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    layoutManager = new GridLayoutManager(this, 4, RecyclerView.VERTICAL, false);
+            }
+
+            recyclerViewDragDropManager = new RecyclerViewDragDropManager();
+            recyclerViewDragDropManager.setInitiateOnLongPress(true);
+            recyclerViewDragDropManager.setInitiateOnMove(false);
+            recyclerViewDragDropManager.setLongPressTimeout(750);
+            recyclerViewDragDropManager.setDragStartItemAnimationDuration(250);
+            recyclerViewDragDropManager.setDraggingItemAlpha(0.8f);
+            recyclerViewDragDropManager.setDraggingItemScale(1.3f);
+            recyclerViewDragDropManager.setDraggingItemRotation(15.0f);
+
+            recyclerViewDragDropManager.setOnItemDragEventListener(new RecyclerViewDragDropManager.OnItemDragEventListener() {
+                @Override
+                public void onItemDragStarted(int position) {
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        v.vibrate(50);
+                    }
                 }
-            }
-        } else {
-            resourceAdapterId = R.layout.list_grid_item;
-            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
-            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
-            }
+
+                @Override
+                public void onItemDragPositionChanged(int fromPosition, int toPosition) {
+                }
+
+                @Override
+                public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
+                }
+
+                @Override
+                public void onItemDragMoveDistanceUpdated(int offsetX, int offsetY) {
+                }
+            });
+
+            final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, resourceAdapterId, room_id, positionList);
+            adapter = myItemAdapter;
+            wrappedAdapter = recyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
+            GeneralItemAnimator animator = new DraggableItemAnimator();
+
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(wrappedAdapter);
+            recyclerView.setItemAnimator(animator);
+
+            recyclerViewDragDropManager.attachRecyclerView(recyclerView);
+
+            adapter.setOnItemClickListener((view, position) -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+
+            adapter.setOnLongItemClickListener((view, position) -> {
+                showToastTab(adapter.getData().get(position).tab_name);
+            });
+
+            resolveNavHeader();
+            resolveListRooms();
+            resolveOpenRooms();
+            resolveRefreshGrid();
+            resolveVisibleLayout();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
-        recyclerViewDragDropManager = new RecyclerViewDragDropManager();
-        recyclerViewDragDropManager.setInitiateOnLongPress(true);
-        recyclerViewDragDropManager.setInitiateOnMove(false);
-        recyclerViewDragDropManager.setLongPressTimeout(750);
-        recyclerViewDragDropManager.setDragStartItemAnimationDuration(250);
-        recyclerViewDragDropManager.setDraggingItemAlpha(0.8f);
-        recyclerViewDragDropManager.setDraggingItemScale(1.3f);
-        recyclerViewDragDropManager.setDraggingItemRotation(15.0f);
-
-        recyclerViewDragDropManager.setOnItemDragEventListener(new RecyclerViewDragDropManager.OnItemDragEventListener() {
-            @Override
-            public void onItemDragStarted(int position) {
-                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
-                } else {
-                    v.vibrate(50);
-                }
-            }
-
-            @Override
-            public void onItemDragPositionChanged(int fromPosition, int toPosition) {
-            }
-
-            @Override
-            public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
-            }
-
-            @Override
-            public void onItemDragMoveDistanceUpdated(int offsetX, int offsetY) {
-            }
-        });
-
-        final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, resourceAdapterId, room_id, positionList);
-        adapter = myItemAdapter;
-        wrappedAdapter = recyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
-        GeneralItemAnimator animator = new DraggableItemAnimator();
-
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(wrappedAdapter);
-        recyclerView.setItemAnimator(animator);
-
-        recyclerViewDragDropManager.attachRecyclerView(recyclerView);
-
-        adapter.setOnItemClickListener((view, position) -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
-
-        adapter.setOnLongItemClickListener((view, position) -> {
-            showToastTab(adapter.getData().get(position).tab_name);
-        });
-
-        resolveNavHeader();
-        resolveListRooms();
-        resolveOpenRooms();
-        resolveRefreshGrid();
-        resolveVisibleLayout();
     }
 
     public void resolveVisibleLayout() {
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            recyclerView.setVisibility(View.VISIBLE);
-            vFrameTabOne.setVisibility(View.INVISIBLE);
-            vFrameTabTwo.setVisibility(View.INVISIBLE);
-            vFrameTabFour.setVisibility(View.INVISIBLE);
-            vFrameTabNine.setVisibility(View.INVISIBLE);
-        } else {
-            if (itemList.size() < 9) {
-                recyclerView.setVisibility(View.INVISIBLE);
+        try {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                recyclerView.setVisibility(View.VISIBLE);
+                vFrameTabOne.setVisibility(View.INVISIBLE);
+                vFrameTabTwo.setVisibility(View.INVISIBLE);
+                vFrameTabFour.setVisibility(View.INVISIBLE);
+                vFrameTabNine.setVisibility(View.INVISIBLE);
+            } else {
+                if (itemList.size() < 9) {
+                    recyclerView.setVisibility(View.INVISIBLE);
+                }
             }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!isVisible) {
-            getMenuInflater().inflate(R.menu.ims_menu_main_search, menu);
-            MenuItem item = menu.findItem(R.id.main_search);
-            searchView.setMenuItem(item);
-            if (searchView.isSearchOpen()) {
-                tb.setVisibility(View.GONE);
-            } else {
-                tb.setVisibility(View.VISIBLE);
+        try {
+            if (!isVisible) {
+                getMenuInflater().inflate(R.menu.ims_menu_main_search, menu);
+                MenuItem item = menu.findItem(R.id.main_search);
+                searchView.setMenuItem(item);
+                if (searchView.isSearchOpen()) {
+                    tb.setVisibility(View.GONE);
+                } else {
+                    tb.setVisibility(View.VISIBLE);
+                }
+                return true;
             }
-            return true;
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -742,68 +732,63 @@ public class MainActivityNew extends MainBaseActivityNew {
                 startActivity(intent);
             });
 
-        } catch (
-                Exception e) {
-            e.printStackTrace();
+        } catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
     }
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-        if (Math.abs(i) - appBarLayout.getTotalScrollRange() == 0) {
-            card_search_main.setVisibility(View.GONE);
-            isVisible = true;
-            invalidateOptionsMenu();
-        } else {
-            card_search_main.setVisibility(View.GONE);
-            isVisible = true;
+        try {
+            if (Math.abs(i) - appBarLayout.getTotalScrollRange() == 0) {
+                card_search_main.setVisibility(View.GONE);
+                isVisible = true;
+                invalidateOptionsMenu();
+            } else {
+                card_search_main.setVisibility(View.GONE);
+                isVisible = true;
                     /*if (searchView.isSearchOpen()) {
                         searchView.closeSearch();
                         tb.setVisibility(View.VISIBLE);
                     }*/
-            invalidateOptionsMenu();
-        }
+                invalidateOptionsMenu();
+            }
 
-        float logic1 = Math.abs(i) - appBarLayout.getTotalScrollRange();
-        float logic2 = (logic1 / appBarLayout.getTotalScrollRange());
-        float pusing = 1 - (logic2 * -1);
-        vBlurTopBackground.setAlpha(pusing);
+            float logic1 = Math.abs(i) - appBarLayout.getTotalScrollRange();
+            float logic2 = (logic1 / appBarLayout.getTotalScrollRange());
+            float pusing = 1 - (logic2 * -1);
+            vBlurTopBackground.setAlpha(pusing);
 
-        vSwipeRefresh.setEnabled(i == 0);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(Gravity.START)) {
-            drawerLayout.closeDrawer(Gravity.START);
-        } else if (searchView.isSearchOpen()) {
-            searchView.closeSearch();
-        } else {
-            super.onBackPressed();
+            vSwipeRefresh.setEnabled(i == 0);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public void onDestroy() {
-        if (recyclerViewDragDropManager != null) {
-            recyclerViewDragDropManager.release();
-            recyclerViewDragDropManager = null;
-        }
+        try {
+            if (recyclerViewDragDropManager != null) {
+                recyclerViewDragDropManager.release();
+                recyclerViewDragDropManager = null;
+            }
 
-        if (recyclerView != null) {
-            recyclerView.setItemAnimator(null);
-            recyclerView.setAdapter(null);
-            recyclerView = null;
-        }
+            if (recyclerView != null) {
+                recyclerView.setItemAnimator(null);
+                recyclerView.setAdapter(null);
+                recyclerView = null;
+            }
 
-        if (wrappedAdapter != null) {
-            WrapperAdapterUtils.releaseAll(wrappedAdapter);
-            wrappedAdapter = null;
+            if (wrappedAdapter != null) {
+                WrapperAdapterUtils.releaseAll(wrappedAdapter);
+                wrappedAdapter = null;
+            }
+            adapter = null;
+            layoutManager = null;
+            super.onDestroy();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-        adapter = null;
-        layoutManager = null;
-        super.onDestroy();
     }
 
     private int dpToPx(int dp) {
@@ -814,39 +799,59 @@ public class MainActivityNew extends MainBaseActivityNew {
     }
 
     private void createShortcutOfApp() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(MainActivityNew.this, getString(R.string.app_name));
-            mShortcutInfoBuilder.setShortLabel(getString(R.string.app_name));
-            mShortcutInfoBuilder.setLongLabel(getString(R.string.app_name));
-            mShortcutInfoBuilder.setIcon(Icon.createWithResource(MainActivityNew.this, R.drawable.logo_byon));
-            Intent shortcutIntent = new Intent(getApplicationContext(), MainActivityNew.class);
-            shortcutIntent.setAction(Intent.ACTION_CREATE_SHORTCUT);
-            mShortcutInfoBuilder.setIntent(shortcutIntent);
-            ShortcutInfo mShortcutInfo = mShortcutInfoBuilder.build();
-            ShortcutManager mShortcutManager = getSystemService(ShortcutManager.class);
-            mShortcutManager.requestPinShortcut(mShortcutInfo, null);
+                ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(MainActivityNew.this, getString(R.string.app_name));
+                mShortcutInfoBuilder.setShortLabel(getString(R.string.app_name));
+                mShortcutInfoBuilder.setLongLabel(getString(R.string.app_name));
+                mShortcutInfoBuilder.setIcon(Icon.createWithResource(MainActivityNew.this, R.drawable.logo_byon));
+                Intent shortcutIntent = new Intent(getApplicationContext(), MainActivityNew.class);
+                shortcutIntent.setAction(Intent.ACTION_CREATE_SHORTCUT);
+                mShortcutInfoBuilder.setIntent(shortcutIntent);
+                ShortcutInfo mShortcutInfo = mShortcutInfoBuilder.build();
+                ShortcutManager mShortcutManager = getSystemService(ShortcutManager.class);
+                mShortcutManager.requestPinShortcut(mShortcutInfo, null);
 
-        } else {
+            } else {
 
-            Intent shortcutIntent = new Intent(getApplicationContext(),
-                    MainActivityNew.class);
-            shortcutIntent.setAction(Intent.ACTION_MAIN);
+                Intent shortcutIntent = new Intent(getApplicationContext(),
+                        MainActivityNew.class);
+                shortcutIntent.setAction(Intent.ACTION_MAIN);
 
-            Intent addIntent = new Intent();
-            addIntent
-                    .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Shortcut");
-            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-                    Intent.ShortcutIconResource.fromContext(getApplicationContext(),
-                            R.drawable.logo_byon));
+                Intent addIntent = new Intent();
+                addIntent
+                        .putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+                addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Shortcut");
+                addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
+                        Intent.ShortcutIconResource.fromContext(getApplicationContext(),
+                                R.drawable.logo_byon));
 
-            addIntent
-                    .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-            addIntent.putExtra("duplicate", false);  //may it's already there so   don't duplicate
-            getApplicationContext().sendBroadcast(addIntent);
+                addIntent
+                        .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                addIntent.putExtra("duplicate", false);  //may it's already there so   don't duplicate
+                getApplicationContext().sendBroadcast(addIntent);
 
+            }
+            Toast.makeText(this, "Shortcut Created", Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-        Toast.makeText(this, "Shortcut Created", Toast.LENGTH_SHORT).show();
+    }
+
+    @SuppressLint("WrongConstant")
+    @Override
+    public void onBackPressed() {
+        try {
+            if (drawerLayout.isDrawerOpen(Gravity.START)) {
+                drawerLayout.closeDrawer(Gravity.START);
+            } else if (searchView.isSearchOpen()) {
+                searchView.closeSearch();
+            } else {
+                super.onBackPressed();
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 }

@@ -246,4 +246,8 @@ public class Utility {
         return sb.toString();
 
     }
+
+    public static void reportCatch(String error){
+        Log.w("ZeeCatchError",error);
+    }
 }

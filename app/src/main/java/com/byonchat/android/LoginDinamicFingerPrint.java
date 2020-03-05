@@ -70,6 +70,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class LoginDinamicFingerPrint extends AppCompatActivity {
 
     private KeyStore keyStore;
@@ -101,83 +103,87 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fingerprint);
 
-        final Intent inti = getIntent();
+        try {
+            final Intent inti = getIntent();
 
-        username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
-        contentMain = (CardView) findViewById(R.id.content_main);
+            username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
+            contentMain = (CardView) findViewById(R.id.content_main);
 
-        contentMain.setVisibility(View.GONE);
-        if (roomsDB == null) {
-            roomsDB = new RoomsDB(LoginDinamicFingerPrint.this);
-        }
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
-        }
-        if (botListDB == null) {
-            botListDB = BotListDB.getInstance(getApplicationContext());
-        }
-
-        if (mAuthTask != null) {
-            mAuthTask = null;
-        }
-
-        String ss = getIntent().getStringExtra(ConversationActivity.KEY_MESSAGE_FORWARD);
-        if (ss == null) {
-            showProgress();
-            mAuthTask = new UserLoginTask();
-            mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login_expired.php", username);
-
-        } else {
-            showProgress();
-            mAuthTask = new UserLoginTask();
-            mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login.php", username, "is_fingerprint");
-
-        }
-
-
-        Cursor cur = botListDB.getSingleRoom(username);
-
-        if (cur.getCount() > 0) {
-            name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
-
-            color = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
-            colorText = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
-            content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
-            icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
-
-            if (current.equalsIgnoreCase("")) {
-                current = cur.getString(cur.getColumnIndex(BotListDB.ROOM_FIRST_TAB));
+            contentMain.setVisibility(View.GONE);
+            if (roomsDB == null) {
+                roomsDB = new RoomsDB(LoginDinamicFingerPrint.this);
             }
-            if (color == null || color.equalsIgnoreCase("") || color.equalsIgnoreCase("null")) {
-                color = "006b9c";
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
             }
-            if (colorText == null || colorText.equalsIgnoreCase("") || colorText.equalsIgnoreCase("null")) {
-                colorText = "ffffff";
+            if (botListDB == null) {
+                botListDB = BotListDB.getInstance(getApplicationContext());
             }
 
-            login_roomname = (TextView) findViewById(R.id.login_roomname);
-            imageView = (ImageView) findViewById(R.id.imageView);
-
-            Picasso.with(this).load(icon).into(imageView);
-
-            login_roomname.setText("Login to " + name);
-
-            RelativeLayout someView = (RelativeLayout) findViewById(R.id.all_background);
-            someView.setBackgroundColor(Color.parseColor("#" + color));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                getWindow().setStatusBarColor(Color.parseColor("#" + color));
+            if (mAuthTask != null) {
+                mAuthTask = null;
             }
 
-            //loginBtn.setCardBackgroundColor(Color.parseColor("#" + color));
+            String ss = getIntent().getStringExtra(ConversationActivity.KEY_MESSAGE_FORWARD);
+            if (ss == null) {
+                showProgress();
+                mAuthTask = new UserLoginTask();
+                mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login_expired.php", username);
+
+            } else {
+                showProgress();
+                mAuthTask = new UserLoginTask();
+                mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login.php", username, "is_fingerprint");
+
+            }
+
+
+            Cursor cur = botListDB.getSingleRoom(username);
+
+            if (cur.getCount() > 0) {
+                name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
+
+                color = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
+                colorText = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
+                content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+                icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
+
+                if (current.equalsIgnoreCase("")) {
+                    current = cur.getString(cur.getColumnIndex(BotListDB.ROOM_FIRST_TAB));
+                }
+                if (color == null || color.equalsIgnoreCase("") || color.equalsIgnoreCase("null")) {
+                    color = "006b9c";
+                }
+                if (colorText == null || colorText.equalsIgnoreCase("") || colorText.equalsIgnoreCase("null")) {
+                    colorText = "ffffff";
+                }
+
+                login_roomname = (TextView) findViewById(R.id.login_roomname);
+                imageView = (ImageView) findViewById(R.id.imageView);
+
+                Picasso.with(this).load(icon).into(imageView);
+
+                login_roomname.setText("Login to " + name);
+
+                RelativeLayout someView = (RelativeLayout) findViewById(R.id.all_background);
+                someView.setBackgroundColor(Color.parseColor("#" + color));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    getWindow().setStatusBarColor(Color.parseColor("#" + color));
+                }
+
+                //loginBtn.setCardBackgroundColor(Color.parseColor("#" + color));
+            }
+
+
+            // Initializing both Android Keyguard Manager and Fingerprint Manager
+
+
+            // Check whether the device has a Fingerprint sensor.
+
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-
-        // Initializing both Android Keyguard Manager and Fingerprint Manager
-
-
-        // Check whether the device has a Fingerprint sensor.
-
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -265,14 +271,16 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Please wait...");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-
+        try {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Please wait...");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public static void LoadingLogin() {

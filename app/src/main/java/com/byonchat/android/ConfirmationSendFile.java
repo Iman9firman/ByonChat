@@ -59,6 +59,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.regex.Pattern;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /*import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
@@ -107,116 +109,117 @@ public class ConfirmationSendFile extends AppCompatActivity {
         setContentView(R.layout.confirmation_send_file);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header(getWindow()));
-        //   getSupportActionBar().setIcon(new Validations().getInstance(getApplicationContext()).logoCustome());
-        uriImage = getIntent().getStringExtra("file");
-        name = getIntent().getStringExtra("name");
-
-        ConfirmationSendFileMultiple.message.clear();
-        if (getIntent().getExtras().containsKey("isFrom")) {
-            isFrom = true;
-        }
-        type = getIntent().getStringExtra("type");
-        from = getIntent().getStringExtra("from");
-        title = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
-        typeChat = getIntent().getIntExtra(ConversationActivity.KEY_CONVERSATION_TYPE, 0);
-
-        textMessage = (EditText) findViewById(R.id.textMessage);
-        imageView = (TouchImageView) findViewById(R.id.imageView);
-        imagePlay = (ImageView) findViewById(R.id.imagePlay);
-        btnCancel = (Button) findViewById(R.id.btnCancel);
-        btnSend = (Button) findViewById(R.id.btnSend);
-
 
         try {
-            JSONObject filud = new JSONObject(uriImage);
-            if (filud != null) {
-                uriImage = filud.getString("s");
-                if (filud.getString("c") != null) {
-                    Pattern htmlPattern = Pattern.compile(".*\\<[^>]+>.*", Pattern.DOTALL);
-                    boolean isHTML = htmlPattern.matcher(filud.getString("c")).matches();
-                    if (isHTML) {
-                        if (filud.getString("c").contains("<")) {
-                            textMessage.setText(Html.fromHtml(Html.fromHtml(filud.getString("c")).toString()));
+            uriImage = getIntent().getStringExtra("file");
+            name = getIntent().getStringExtra("name");
+
+            ConfirmationSendFileMultiple.message.clear();
+            if (getIntent().getExtras().containsKey("isFrom")) {
+                isFrom = true;
+            }
+            type = getIntent().getStringExtra("type");
+            from = getIntent().getStringExtra("from");
+            title = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+            typeChat = getIntent().getIntExtra(ConversationActivity.KEY_CONVERSATION_TYPE, 0);
+
+            textMessage = (EditText) findViewById(R.id.textMessage);
+            imageView = (TouchImageView) findViewById(R.id.imageView);
+            imagePlay = (ImageView) findViewById(R.id.imagePlay);
+            btnCancel = (Button) findViewById(R.id.btnCancel);
+            btnSend = (Button) findViewById(R.id.btnSend);
+
+
+            try {
+                JSONObject filud = new JSONObject(uriImage);
+                if (filud != null) {
+                    uriImage = filud.getString("s");
+                    if (filud.getString("c") != null) {
+                        Pattern htmlPattern = Pattern.compile(".*\\<[^>]+>.*", Pattern.DOTALL);
+                        boolean isHTML = htmlPattern.matcher(filud.getString("c")).matches();
+                        if (isHTML) {
+                            if (filud.getString("c").contains("<")) {
+                                textMessage.setText(Html.fromHtml(Html.fromHtml(filud.getString("c")).toString()));
+                            } else {
+                                textMessage.setText(Html.fromHtml(filud.getString("c")));
+                            }
                         } else {
                             textMessage.setText(Html.fromHtml(filud.getString("c")));
                         }
-                    } else {
-                        textMessage.setText(Html.fromHtml(filud.getString("c")));
-                    }
 
+                    }
+                }
+            } catch (Exception e) {
+
+            }
+
+
+            if (type.equalsIgnoreCase(Message.TYPE_VIDEO)) {
+                imageView.setVisibility(View.GONE);
+                textViewLeft = (TextView) findViewById(R.id.left_pointer);
+                textViewRight = (TextView) findViewById(R.id.right_pointer);
+
+                videoSliceSeekBar = (VideoSlaceSeekBar) findViewById(R.id.seek_bar);
+                videoView = (VideoView) findViewById(R.id.video);
+                videoControlBtn = findViewById(R.id.video_control_btn);
+                videoSabeBtn = findViewById(R.id.saveButton);
+                initVideoView(uriImage);
+                loadFFMpegBinary();
+
+                imagePlay.setVisibility(View.VISIBLE);
+                imagePlay.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        performVideoViewClick();
+                    }
+                });
+
+            } else {
+                if (!isFrom) {
+                    utils = new ImageLoadingUtils(this);
+                    imagePlay.setVisibility(View.GONE);
+                    new NystromImageCompression(true).execute(uriImage);
+                } else {
+                    imagePlay.setVisibility(View.GONE);
+                    photos = getIntent().getParcelableArrayListExtra("photos");
+                    if (photos != null) {
+                        initPhotos();
+                    } else {
+                        finish();
+                        return;
+                    }
                 }
             }
-        } catch (Exception e) {
-
-        }
 
 
-        if (type.equalsIgnoreCase(Message.TYPE_VIDEO)) {
-            imageView.setVisibility(View.GONE);
-            textViewLeft = (TextView) findViewById(R.id.left_pointer);
-            textViewRight = (TextView) findViewById(R.id.right_pointer);
-
-            videoSliceSeekBar = (VideoSlaceSeekBar) findViewById(R.id.seek_bar);
-            videoView = (VideoView) findViewById(R.id.video);
-            videoControlBtn = findViewById(R.id.video_control_btn);
-            videoSabeBtn = findViewById(R.id.saveButton);
-            initVideoView(uriImage);
-            loadFFMpegBinary();
-
-            imagePlay.setVisibility(View.VISIBLE);
-            imagePlay.setOnClickListener(new View.OnClickListener() {
+            btnSend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    performVideoViewClick();
-                }
-            });
-
-        } else {
-            if (!isFrom) {
-                utils = new ImageLoadingUtils(this);
-                imagePlay.setVisibility(View.GONE);
-                new NystromImageCompression(true).execute(uriImage);
-            } else {
-                imagePlay.setVisibility(View.GONE);
-                photos = getIntent().getParcelableArrayListExtra("photos");
-                if (photos != null) {
-                    initPhotos();
-                } else {
-                    finish();
-                    return;
-                }
-            }
-        }
-
-
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (type.equalsIgnoreCase(Message.TYPE_VIDEO)) {
-
-                    boolean send = true;
 
                     if (type.equalsIgnoreCase(Message.TYPE_VIDEO)) {
-                        final File file = new File(uriImage);
-                        double bytes = file.length();
-                        double kilobytes = (bytes / 1024);
-                        double megabytes = (kilobytes / 1024);
-                        if (megabytes > 16) {
-                            send = false;
-                        }
-                    }
 
-                    if (send) {
-                        btnSend.setEnabled(false);
+                        boolean send = true;
+
                         if (type.equalsIgnoreCase(Message.TYPE_VIDEO)) {
-                            String textCaption = textMessage.getText().toString() != null ? textMessage.getText().toString() : "";
-                            MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
-
-                            Message msg = createNewMessage(jsonMessage(uriImage, uriImage, "", "", "", textCaption), messengerHelper.getMyContact().getJabberId(), name, typeChat, type);
-                            sendFile(msg);
-                            DoDone();
+                            final File file = new File(uriImage);
+                            double bytes = file.length();
+                            double kilobytes = (bytes / 1024);
+                            double megabytes = (kilobytes / 1024);
+                            if (megabytes > 16) {
+                                send = false;
+                            }
                         }
+
+                        if (send) {
+                            btnSend.setEnabled(false);
+                            if (type.equalsIgnoreCase(Message.TYPE_VIDEO)) {
+                                String textCaption = textMessage.getText().toString() != null ? textMessage.getText().toString() : "";
+                                MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+
+                                Message msg = createNewMessage(jsonMessage(uriImage, uriImage, "", "", "", textCaption), messengerHelper.getMyContact().getJabberId(), name, typeChat, type);
+                                sendFile(msg);
+                                DoDone();
+                            }
 
 
                /*     String textCaption = textMessage.getText().toString() != null ? textMessage.getText().toString().replaceAll(";", ",") : "";
@@ -236,123 +239,141 @@ public class ConfirmationSendFile extends AppCompatActivity {
                     finish();*/
 
 
-                    } else {
-                        Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getText(R.string.file_too_large), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    if (!isFrom) {
-                        String textCaption = textMessage.getText().toString() != null ? textMessage.getText().toString() : "";
-                        MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
-
-                        Message msg = createNewMessage(jsonMessage(uriImage, uriImage, "", "", "", textCaption), messengerHelper.getMyContact().getJabberId(), name, typeChat, type);
-                        sendFile(msg);
-                        DoDone();
-//                    saveImage(utils.decodeBitmapFromPath(uriDecoded));
-                    } else {
-                        if (TextUtils.isEmpty(textMessage.getText().toString().trim())) {
-                            textMessage.setError("Content is required!");
                         } else {
-                            notesPhotos = new ArrayList<>();
-                            NotesPhoto nphoto = new NotesPhoto(compressedFile, textMessage.getText().toString().trim());
-                            notesPhotos.add(nphoto);
+                            Toast.makeText(getApplicationContext(), getApplicationContext().getResources().getText(R.string.file_too_large), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        if (!isFrom) {
+                            String textCaption = textMessage.getText().toString() != null ? textMessage.getText().toString() : "";
+                            MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
 
-                            Intent data = new Intent();
-                            data.putExtra(EXTRA_CAPTIONS, textMessage.getText().toString().trim());
-                            data.putParcelableArrayListExtra(EXTRA_PHOTOS, (ArrayList<NotesPhoto>) notesPhotos);
-                            setResult(RESULT_OK, data);
-                            finish();
+                            Message msg = createNewMessage(jsonMessage(uriImage, uriImage, "", "", "", textCaption), messengerHelper.getMyContact().getJabberId(), name, typeChat, type);
+                            sendFile(msg);
+                            DoDone();
+//                    saveImage(utils.decodeBitmapFromPath(uriDecoded));
+                        } else {
+                            if (TextUtils.isEmpty(textMessage.getText().toString().trim())) {
+                                textMessage.setError("Content is required!");
+                            } else {
+                                notesPhotos = new ArrayList<>();
+                                NotesPhoto nphoto = new NotesPhoto(compressedFile, textMessage.getText().toString().trim());
+                                notesPhotos.add(nphoto);
+
+                                Intent data = new Intent();
+                                data.putExtra(EXTRA_CAPTIONS, textMessage.getText().toString().trim());
+                                data.putParcelableArrayListExtra(EXTRA_PHOTOS, (ArrayList<NotesPhoto>) notesPhotos);
+                                setResult(RESULT_OK, data);
+                                finish();
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     void initPhotos() {
-        NotesPhoto photo = photos.get(0);
-        CompressFile(photo.getPhotoFile());
+        try {
+            NotesPhoto photo = photos.get(0);
+            CompressFile(photo.getPhotoFile());
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     void CompressFile(File file) {
-        compressedFile = file;
-        if (ImageUtil.isImage(file)) {
-            try {
-                compressedFile = ImageUtil.compressImage(file);
-            } catch (NullPointerException e) {
+        try {
+            compressedFile = file;
+            if (ImageUtil.isImage(file)) {
+                try {
+                    compressedFile = ImageUtil.compressImage(file);
+                } catch (NullPointerException e) {
+                    showError(getString(R.string.corrupted_file));
+                    return;
+                }
+            }
+
+            if (!file.exists()) { //File have been removed, so we can not upload it anymore
                 showError(getString(R.string.corrupted_file));
                 return;
             }
+            Picasso.with(getApplicationContext()).load(compressedFile).into(imageView);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        if (!file.exists()) { //File have been removed, so we can not upload it anymore
-            showError(getString(R.string.corrupted_file));
-            return;
-        }
-        Picasso.with(getApplicationContext()).load(compressedFile).into(imageView);
     }
 
     public void DoDone() {
-        Intent intent = new Intent(CLOSEMEMEACTIVITY);
-        sendOrderedBroadcast(intent, null);
-        finish();
+        try {
+            Intent intent = new Intent(CLOSEMEMEACTIVITY);
+            sendOrderedBroadcast(intent, null);
+            finish();
 
-        if (ConversationActivity.instance != null) {
-            try {
-                ConversationActivity.instance.finish();
-            } catch (Exception e) {
-            }
-        }
-
-        Intent i = new Intent(this, ConversationActivity.class);
-        String jabberId = name;
-        String action = this.getIntent().getAction();
-        if (Intent.ACTION_SEND.equals(action)) {
-            Bundle extras = this.getIntent().getExtras();
-            if (extras.containsKey(Intent.EXTRA_STREAM)) {
+            if (ConversationActivity.instance != null) {
                 try {
-                    Uri uri = (Uri) extras.getParcelable(Intent.EXTRA_STREAM);
-                    String pathToSend = MediaProcessingUtil.getRealPathFromURI(
-                            this.getContentResolver(), uri);
-                    i.putExtra(ConversationActivity.KEY_FILE_TO_SEND,
-                            pathToSend);
+                    ConversationActivity.instance.finish();
                 } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(),
-                            "Error getting file from action send: "
-                                    + e.getMessage(), e);
                 }
             }
-        }
 
-        i.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
-        startActivity(i);
+            Intent i = new Intent(this, ConversationActivity.class);
+            String jabberId = name;
+            String action = this.getIntent().getAction();
+            if (Intent.ACTION_SEND.equals(action)) {
+                Bundle extras = this.getIntent().getExtras();
+                if (extras.containsKey(Intent.EXTRA_STREAM)) {
+                    try {
+                        Uri uri = (Uri) extras.getParcelable(Intent.EXTRA_STREAM);
+                        String pathToSend = MediaProcessingUtil.getRealPathFromURI(
+                                this.getContentResolver(), uri);
+                        i.putExtra(ConversationActivity.KEY_FILE_TO_SEND,
+                                pathToSend);
+                    } catch (Exception e) {
+                        Log.e(getClass().getSimpleName(),
+                                "Error getting file from action send: "
+                                        + e.getMessage(), e);
+                    }
+                }
+            }
+
+            i.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+            startActivity(i);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void sendFile(Message message) {
+        try {
+            Message vo = message;
+            MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+            messengerHelper.insertData(vo);
 
-        Message vo = message;
-        MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
-        messengerHelper.insertData(vo);
+            FilesURLDatabaseHelper dbUpload = new FilesURLDatabaseHelper(this);
+            FilesURL files = new FilesURL((int) vo.getId(), "1", "upload");
+            dbUpload.open();
+            dbUpload.insertFilesUpload(files);
+            dbUpload.close();
 
-        FilesURLDatabaseHelper dbUpload = new FilesURLDatabaseHelper(this);
-        FilesURL files = new FilesURL((int) vo.getId(), "1", "upload");
-        dbUpload.open();
-        dbUpload.insertFilesUpload(files);
-        dbUpload.close();
-
-        Intent intent = new Intent(this, UploadService.class);
-        intent.putExtra(UploadService.ACTION, "getLinkUpload");
-        intent.putExtra(UploadService.KEY_MESSAGE, vo);
-        if (type.equals(Message.TYPE_VIDEO))
-            intent.putExtra(UploadService.KEY_STATUS_VIDEO, "2"); /* 1 = first upload, 2 = second upload when failed */
-        startService(intent);
+            Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, "getLinkUpload");
+            intent.putExtra(UploadService.KEY_MESSAGE, vo);
+            if (type.equals(Message.TYPE_VIDEO))
+                intent.putExtra(UploadService.KEY_STATUS_VIDEO, "2"); /* 1 = first upload, 2 = second upload when failed */
+            startService(intent);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private Message createNewMessage(String message, String sourceAddr, String destination, int conversationType, String type) {
@@ -402,87 +423,57 @@ public class ConfirmationSendFile extends AppCompatActivity {
     }
 
     private void loadFFMpegBinary() {
-      /*  try {
-            if(ffmpeg == null) {
-                Log.d(TAG, "ffmpeg : era nulo");
-                ffmpeg = FFmpeg.getInstance(this);
-            }
-            ffmpeg.loadBinary(new LoadBinaryResponseHandler() {
-                @Override
-                public void onFailure() {
-                    showUnsupportedExceptionDialog();
-                }
-                @Override
-                public void onSuccess() {
-                    Log.d(TAG, "ffmpeg : correct Loaded");
-                }
-            });
-        } catch (FFmpegNotSupportedException e) {
-            showUnsupportedExceptionDialog();
-        } catch (Exception e) {
-            Log.d(TAG, "EXception no controlada : "  + e);
-        }*/
     }
 
     private void showUnsupportedExceptionDialog() {
-      /*  new AlertDialog.Builder(ConfirmationSendFile.this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(getString(R.string.device_not_supported))
-                .setMessage(getString(R.string.device_not_supported_message))
-                .setCancelable(false)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ConfirmationSendFile.this.finish();
-                    }
-                })
-                .create()
-                .show();
-*/
     }
 
     private void initVideoView(String path) {
-        Log.w("ada", "disini");
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(final MediaPlayer mp) {
-                videoSliceSeekBar.setSeekBarChangeListener(new VideoSlaceSeekBar.SeekBarChangeListener() {
-                    @Override
-                    public void SeekBarValueChanged(int leftThumb, int rightThumb) {
-                        textViewLeft.setText(getTimeForTrackFormat(leftThumb, true));
-                        textViewRight.setText(getTimeForTrackFormat(rightThumb, true));
-                    }
-                });
+        try {
+            Log.w("ada", "disini");
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(final MediaPlayer mp) {
+                    videoSliceSeekBar.setSeekBarChangeListener(new VideoSlaceSeekBar.SeekBarChangeListener() {
+                        @Override
+                        public void SeekBarValueChanged(int leftThumb, int rightThumb) {
+                            textViewLeft.setText(getTimeForTrackFormat(leftThumb, true));
+                            textViewRight.setText(getTimeForTrackFormat(rightThumb, true));
+                        }
+                    });
 
-                videoSliceSeekBar.setMaxValue(mp.getDuration());
-                videoSliceSeekBar.setLeftProgress(0);
-                //videoSliceSeekBar.setRightProgress(mp.getDuration());
-                videoSliceSeekBar.setRightProgress(10000); //10 segundos como máximo de entrada
-                videoSliceSeekBar.setProgressMinDiff((5000 * 100) / mp.getDuration()); //Diferencia mínima de 5 segundos
-                videoSliceSeekBar.setProgressMaxDiff((10000 * 100) / mp.getDuration());//Diferencia máxima de 10 segundos
+                    videoSliceSeekBar.setMaxValue(mp.getDuration());
+                    videoSliceSeekBar.setLeftProgress(0);
+                    //videoSliceSeekBar.setRightProgress(mp.getDuration());
+                    videoSliceSeekBar.setRightProgress(10000); //10 segundos como máximo de entrada
+                    videoSliceSeekBar.setProgressMinDiff((5000 * 100) / mp.getDuration()); //Diferencia mínima de 5 segundos
+                    videoSliceSeekBar.setProgressMaxDiff((10000 * 100) / mp.getDuration());//Diferencia máxima de 10 segundos
 
-                videoControlBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        performVideoViewClick();
-                    }
-                });
+                    videoControlBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            performVideoViewClick();
+                        }
+                    });
 
-                videoSabeBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "Left progress : " + videoSliceSeekBar.getLeftProgress() / 1000);
-                        Log.d(TAG, "Right progress : " + videoSliceSeekBar.getRightProgress() / 1000);
+                    videoSabeBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.d(TAG, "Left progress : " + videoSliceSeekBar.getLeftProgress() / 1000);
+                            Log.d(TAG, "Right progress : " + videoSliceSeekBar.getRightProgress() / 1000);
 
-                        Log.d(TAG, "Total Duration : " + mp.getDuration() / 1000);
-                        executeTrimCommand(videoSliceSeekBar.getLeftProgress(), videoSliceSeekBar.getRightProgress());
-                    }
+                            Log.d(TAG, "Total Duration : " + mp.getDuration() / 1000);
+                            executeTrimCommand(videoSliceSeekBar.getLeftProgress(), videoSliceSeekBar.getRightProgress());
+                        }
 
-                });
+                    });
 
-            }
-        });
-        videoView.setVideoPath(path);
+                }
+            });
+            videoView.setVideoPath(path);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public static String getTimeForTrackFormat(int timeInMills, boolean display2DigitsInMinsSection) {
@@ -499,18 +490,22 @@ public class ConfirmationSendFile extends AppCompatActivity {
     }
 
     private void performVideoViewClick() {
-        if (videoView.isPlaying()) {
-            imagePlay.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_play_white));
-            videoView.pause();
-            videoSliceSeekBar.setSliceBlocked(false);
-            videoSliceSeekBar.removeVideoStatusThumb();
-        } else {
-            imagePlay.setImageBitmap(null);
-            videoView.seekTo(videoSliceSeekBar.getLeftProgress());
-            videoView.start();
-            videoSliceSeekBar.setSliceBlocked(true);
-            videoSliceSeekBar.videoPlayingProgress(videoSliceSeekBar.getLeftProgress());
-            videoStateObserver.startVideoProgressObserving();
+        try {
+            if (videoView.isPlaying()) {
+                imagePlay.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_play_white));
+                videoView.pause();
+                videoSliceSeekBar.setSliceBlocked(false);
+                videoSliceSeekBar.removeVideoStatusThumb();
+            } else {
+                imagePlay.setImageBitmap(null);
+                videoView.seekTo(videoSliceSeekBar.getLeftProgress());
+                videoView.start();
+                videoSliceSeekBar.setSliceBlocked(true);
+                videoSliceSeekBar.videoPlayingProgress(videoSliceSeekBar.getLeftProgress());
+                videoStateObserver.startVideoProgressObserving();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -535,52 +530,60 @@ public class ConfirmationSendFile extends AppCompatActivity {
         };
 
         public void handleMessage(Message msg) {
-            alreadyStarted = false;
-            videoSliceSeekBar.videoPlayingProgress(videoView.getCurrentPosition());
-            if (videoView.isPlaying() && videoView.getCurrentPosition() < videoSliceSeekBar.getRightProgress()) {
-                postDelayed(observerWork, 50);
-            } else {
+            try {
+                alreadyStarted = false;
+                videoSliceSeekBar.videoPlayingProgress(videoView.getCurrentPosition());
+                if (videoView.isPlaying() && videoView.getCurrentPosition() < videoSliceSeekBar.getRightProgress()) {
+                    postDelayed(observerWork, 50);
+                } else {
 
-                if (videoView.isPlaying()) videoView.pause();
+                    if (videoView.isPlaying()) videoView.pause();
 
-                videoSliceSeekBar.setSliceBlocked(false);
-                videoSliceSeekBar.removeVideoStatusThumb();
+                    videoSliceSeekBar.setSliceBlocked(false);
+                    videoSliceSeekBar.removeVideoStatusThumb();
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
 
     private void executeTrimCommand(int startMs, int endMs) {
-        File moviesDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_MOVIES
-        );
-
-        String filePrefix = "make_your_song";
-        String fileExtn = ".mp4";
-        String fileName = filePrefix + fileExtn;
-
         try {
-            InputStream inputStream = getAssets().open(fileName);
-            File src = new File(moviesDir, fileName);
+            File moviesDir = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_MOVIES
+            );
 
-            storeFile(inputStream, src);
+            String filePrefix = "make_your_song";
+            String fileExtn = ".mp4";
+            String fileName = filePrefix + fileExtn;
+
+            try {
+                InputStream inputStream = getAssets().open(fileName);
+                File src = new File(moviesDir, fileName);
+
+                storeFile(inputStream, src);
 
 
-            File dest = new File(moviesDir, filePrefix + "_1" + fileExtn);
-            if (dest.exists()) {
-                dest.delete();
+                File dest = new File(moviesDir, filePrefix + "_1" + fileExtn);
+                if (dest.exists()) {
+                    dest.delete();
+                }
+
+
+                Log.d(TAG, "startTrim: src: " + src.getAbsolutePath());
+                Log.d(TAG, "startTrim: dest: " + dest.getAbsolutePath());
+                Log.d(TAG, "startTrim: startMs: " + startMs);
+                Log.d(TAG, "startTrim: endMs: " + endMs);
+
+                //execFFmpegBinary("-i " + src.getAbsolutePath() + " -ss "+ startMs/1000 + " -to " + endMs/1000 + " -strict -2 -async 1 "+ dest.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-
-            Log.d(TAG, "startTrim: src: " + src.getAbsolutePath());
-            Log.d(TAG, "startTrim: dest: " + dest.getAbsolutePath());
-            Log.d(TAG, "startTrim: startMs: " + startMs);
-            Log.d(TAG, "startTrim: endMs: " + endMs);
-
-            //execFFmpegBinary("-i " + src.getAbsolutePath() + " -ss "+ startMs/1000 + " -to " + endMs/1000 + " -strict -2 -async 1 "+ dest.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -772,42 +775,46 @@ public class ConfirmationSendFile extends AppCompatActivity {
     }
 
     private void saveImage(Bitmap finalBitmap) {
-        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
-        System.out.println(root + " Root value in saveImage Function");
-        File myDir = new File(root + "/S-Team Images");
-        if (!myDir.exists()) {
-            myDir.mkdirs();
-        }
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        iname = "bc-" + n + ".jpg";
-        File file = new File(myDir, iname);
-        if (file.exists())
-            file.delete();
         try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+            System.out.println(root + " Root value in saveImage Function");
+            File myDir = new File(root + "/S-Team Images");
+            if (!myDir.exists()) {
+                myDir.mkdirs();
+            }
+            Random generator = new Random();
+            int n = 10000;
+            n = generator.nextInt(n);
+            iname = "bc-" + n + ".jpg";
+            File file = new File(myDir, iname);
+            if (file.exists())
+                file.delete();
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Tell the media scanner about the new file so that it is
+            // immediately available to the user.
+            MediaScannerConnection.scanFile(ConfirmationSendFile.this, new String[]{file.toString()}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+                            Log.i("ExternalStorage", "Scanned " + path + ":");
+                            Log.i("ExternalStorage", "-> uri=" + uri);
+                        }
+                    });
+            Image_path = Environment.getExternalStorageDirectory() + "/Pictures/folder_name/" + iname;
+
+            File[] files = myDir.listFiles();
+            numberOfImages = files.length;
+            System.out.println("Total images in Folder " + numberOfImages);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportCatch(e.getLocalizedMessage());
         }
-
-        // Tell the media scanner about the new file so that it is
-        // immediately available to the user.
-        MediaScannerConnection.scanFile(ConfirmationSendFile.this, new String[]{file.toString()}, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    public void onScanCompleted(String path, Uri uri) {
-                        Log.i("ExternalStorage", "Scanned " + path + ":");
-                        Log.i("ExternalStorage", "-> uri=" + uri);
-                    }
-                });
-        Image_path = Environment.getExternalStorageDirectory() + "/Pictures/folder_name/" + iname;
-
-        File[] files = myDir.listFiles();
-        numberOfImages = files.length;
-        System.out.println("Total images in Folder " + numberOfImages);
     }
     /*private void execFFmpegBinary(final String command) {
         try {

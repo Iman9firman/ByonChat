@@ -17,6 +17,8 @@ import com.byonchat.android.ui.adapter.OnItemClickListener;
 import com.byonchat.android.ui.adapter.OnLongItemClickListener;
 import com.byonchat.android.ui.view.SoloCircleProgress;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ByonchatVideoTubeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
         View.OnLongClickListener,
         Video.ProgressListener,
@@ -68,79 +70,107 @@ public class ByonchatVideoTubeViewHolder extends RecyclerView.ViewHolder impleme
     }
 
     protected void loadConfig() {
-        selectionBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_divider_light));
-        selectionBackground.setAlpha(51);
-        selectionChecked = ContextCompat.getColor(itemView.getContext(), android.R.color.black);
-        downloadedBackground = ContextCompat.getColor(itemView.getContext(), android.R.color.holo_blue_dark);
-        downloadingBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_downloading_transparent));
+        try {
+            selectionBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_divider_light));
+            selectionBackground.setAlpha(51);
+            selectionChecked = ContextCompat.getColor(itemView.getContext(), android.R.color.black);
+            downloadedBackground = ContextCompat.getColor(itemView.getContext(), android.R.color.holo_blue_dark);
+            downloadingBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_downloading_transparent));
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @TargetApi(16)
     public void onCommentSelected(Video video) {
-        this.video = video;
+        try {
+            this.video = video;
 
-        video.setProgressListener(this);
-        video.setDownloadingListener(this);
-        showProgressOrNot(video);
+            video.setProgressListener(this);
+            video.setDownloadingListener(this);
+            showProgressOrNot(video);
 
-        itemView.setBackground(video.isSelected() ? selectionBackground : null);
-        if (video.isSelected())
-            vCheck.setColorFilter(selectionChecked, PorterDuff.Mode.SRC_ATOP);
-        if (video.isDownloaded())
-            vCheck.setColorFilter(downloadedBackground, PorterDuff.Mode.SRC_ATOP);
+            itemView.setBackground(video.isSelected() ? selectionBackground : null);
+            if (video.isSelected())
+                vCheck.setColorFilter(selectionChecked, PorterDuff.Mode.SRC_ATOP);
+            if (video.isDownloaded())
+                vCheck.setColorFilter(downloadedBackground, PorterDuff.Mode.SRC_ATOP);
 
-        vDownloaded.setVisibility(video.isDownloaded() ? View.VISIBLE : View.GONE);
-        vCheck.setVisibility(video.isSelected() ? View.VISIBLE : View.GONE);
+            vDownloaded.setVisibility(video.isDownloaded() ? View.VISIBLE : View.GONE);
+            vCheck.setVisibility(video.isSelected() ? View.VISIBLE : View.GONE);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @TargetApi(16)
     protected void showProgressOrNot(Video video) {
-        if (vProgressView != null) {
-            vProgressView.setProgress(video.getProgress());
-            vProgressView.setVisibility(
-                    video.isDownloading()
-                            ? View.VISIBLE : View.GONE
-            );
+        try {
+            if (vProgressView != null) {
+                vProgressView.setProgress(video.getProgress());
+                vProgressView.setVisibility(
+                        video.isDownloading()
+                                ? View.VISIBLE : View.GONE
+                );
 
-            vFrameList.setBackground(video.isDownloading()
-                    ? downloadingBackground : null);
+                vFrameList.setBackground(video.isDownloading()
+                        ? downloadingBackground : null);
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public void onClick(View v) {
-        int position = getAdapterPosition();
-        if (position >= 0) {
-            itemClickListener.onItemClick(v, position);
+        try {
+            int position = getAdapterPosition();
+            if (position >= 0) {
+                itemClickListener.onItemClick(v, position);
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public boolean onLongClick(View v) {
-        if (longItemClickListener != null) {
-            int position = getAdapterPosition();
-            if (position >= 0) {
-                longItemClickListener.onLongItemClick(v, position);
+        try {
+            if (longItemClickListener != null) {
+                int position = getAdapterPosition();
+                if (position >= 0) {
+                    longItemClickListener.onLongItemClick(v, position);
+                }
+                return true;
             }
-            return true;
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
         return false;
     }
 
     @Override
     public void onProgress(Video video, int percentage) {
-        if (video.equals(this.video) && vProgressView != null) {
-            vProgressView.setProgress(percentage);
+        try {
+            if (video.equals(this.video) && vProgressView != null) {
+                vProgressView.setProgress(percentage);
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @TargetApi(16)
     @Override
     public void onDownloading(Video video, boolean downloading) {
-        if (video.equals(this.video) && vProgressView != null) {
-            itemView.setBackground(video.isSelected() ? selectionBackground : null);
-            vCheck.setVisibility(video.isSelected() ? View.VISIBLE : View.GONE);
-            vProgressView.setVisibility(downloading ? View.VISIBLE : View.GONE);
+        try {
+            if (video.equals(this.video) && vProgressView != null) {
+                itemView.setBackground(video.isSelected() ? selectionBackground : null);
+                vCheck.setVisibility(video.isSelected() ? View.VISIBLE : View.GONE);
+                vProgressView.setVisibility(downloading ? View.VISIBLE : View.GONE);
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 

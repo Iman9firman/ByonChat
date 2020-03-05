@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Iman Firmansyah on 11/23/2015.
  */
@@ -33,17 +35,20 @@ public class MainFragmentOffers extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View x =  inflater.inflate(R.layout.main_fragment_offers,null);
-        tabLayout = (TabLayout) x.findViewById(R.id.tabs);
-        viewPager = (ViewPager) x.findViewById(R.id.viewpager);
+        try {
+            tabLayout = (TabLayout) x.findViewById(R.id.tabs);
+            viewPager = (ViewPager) x.findViewById(R.id.viewpager);
 
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
-        tabLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                tabLayout.setupWithViewPager(viewPager);
-            }
-        });
-
+            viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+            tabLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    tabLayout.setupWithViewPager(viewPager);
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         //setHasOptionsMenu(true);
         return x;
 

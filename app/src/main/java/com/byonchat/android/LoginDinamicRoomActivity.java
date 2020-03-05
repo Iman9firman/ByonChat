@@ -54,6 +54,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 
 /**
  * ByonChat Login to GroupRoom use Username & Password
@@ -101,122 +103,125 @@ public class LoginDinamicRoomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_login);
+        try {
+            login_roomname = (TextView) findViewById(R.id.login_roomname);
+            loginBtn = (Button) findViewById(R.id.loginBtn);
+            contentMain = (CardView) findViewById(R.id.content_main);
 
-        login_roomname = (TextView) findViewById(R.id.login_roomname);
-        loginBtn = (Button) findViewById(R.id.loginBtn);
-        contentMain = (CardView) findViewById(R.id.content_main);
+            contentMain.setVisibility(View.GONE);
 
-        contentMain.setVisibility(View.GONE);
-
-        loginUsr = (TextInputEditText) findViewById(R.id.login_userid);
-        loginPass = (TextInputEditText) findViewById(R.id.login_password);
-        etNikLayout = (TextInputLayout) findViewById(R.id.etNikLayout);
-        etPasswordLayout = (TextInputLayout) findViewById(R.id.etPasswordLayout);
+            loginUsr = (TextInputEditText) findViewById(R.id.login_userid);
+            loginPass = (TextInputEditText) findViewById(R.id.login_password);
+            etNikLayout = (TextInputLayout) findViewById(R.id.etNikLayout);
+            etPasswordLayout = (TextInputLayout) findViewById(R.id.etPasswordLayout);
 
 
-        imageView = (ImageView) findViewById(R.id.imageView);
-        jsonArrayList = new ArrayList<>();
+            imageView = (ImageView) findViewById(R.id.imageView);
+            jsonArrayList = new ArrayList<>();
 
-        final Intent inti = getIntent();
+            final Intent inti = getIntent();
 
-        username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
+            username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
 
-        if (inti.getStringExtra("firstTab") != null) {
-            current = inti.getStringExtra("firstTab");
-        }
-
-        if (roomsDB == null) {
-            roomsDB = new RoomsDB(LoginDinamicRoomActivity.this);
-        }
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
-        }
-        if (botListDB == null) {
-            botListDB = BotListDB.getInstance(getApplicationContext());
-        }
-
-        if (mAuthTask != null) {
-            mAuthTask = null;
-        }
-
-        showProgress();
-        mAuthTask = new UserLoginTask();
-        mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login_expired.php", username);
-
-        Cursor cur = botListDB.getSingleRoom(username);
-
-        if (cur.getCount() > 0) {
-            name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
-            if (jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a").equalsIgnoreCase("error")) {
-                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                    finish();
-                    Intent ii = new Intent(LoginDinamicRoomActivity.this, LoadingGetTabRoomActivity.class);
-                    ii.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                    ii.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(ii);
-                } else {
-                    Toast.makeText(LoginDinamicRoomActivity.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                return;
+            if (inti.getStringExtra("firstTab") != null) {
+                current = inti.getStringExtra("firstTab");
             }
 
-            color = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
-            colorText = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
-            content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
-            icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
-
-            if (current.equalsIgnoreCase("")) {
-                current = cur.getString(cur.getColumnIndex(BotListDB.ROOM_FIRST_TAB));
+            if (roomsDB == null) {
+                roomsDB = new RoomsDB(LoginDinamicRoomActivity.this);
             }
-            if (color == null || color.equalsIgnoreCase("") || color.equalsIgnoreCase("null")) {
-                color = "006b9c";
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
             }
-            if (colorText == null || colorText.equalsIgnoreCase("") || colorText.equalsIgnoreCase("null")) {
-                colorText = "ffffff";
-            }
-            Picasso.with(LoginDinamicRoomActivity.this).load(icon).into(imageView);
-
-            login_roomname.setText(name);
-
-            RelativeLayout someView = (RelativeLayout) findViewById(R.id.all_background);
-            someView.setBackgroundColor(Color.parseColor("#" + color));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                getWindow().setStatusBarColor(Color.parseColor("#" + color));
+            if (botListDB == null) {
+                botListDB = BotListDB.getInstance(getApplicationContext());
             }
 
-            //loginBtn.setCardBackgroundColor(Color.parseColor("#" + color));
-        }
+            if (mAuthTask != null) {
+                mAuthTask = null;
+            }
 
-        final Intent intent = getIntent();
-        usr = intent.getStringExtra(ConversationActivity.KEY_JABBER_ID);
-        p = intent.getStringExtra("p");
-        u = intent.getStringExtra("u");
+            showProgress();
+            mAuthTask = new UserLoginTask();
+            mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login_expired.php", username);
 
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            Cursor cur = botListDB.getSingleRoom(username);
 
-                if (loginUsr.getText().toString().equalsIgnoreCase("")) {
-                    etNikLayout.setError("Please input NIK");
-                    return;
-                }
-                if (loginPass.getText().toString().equalsIgnoreCase("")) {
-                    etPasswordLayout.setError("Please input Password");
+            if (cur.getCount() > 0) {
+                name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
+                if (jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a").equalsIgnoreCase("error")) {
+                    if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                        finish();
+                        Intent ii = new Intent(LoginDinamicRoomActivity.this, LoadingGetTabRoomActivity.class);
+                        ii.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                        ii.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(ii);
+                    } else {
+                        Toast.makeText(LoginDinamicRoomActivity.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                     return;
                 }
 
-                if (mAuthTask != null) {
-                    mAuthTask = null;
-                }
-                showProgress();
-                mAuthTask = new UserLoginTask();
-                mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login.php", username, loginUsr.getText().toString(), loginPass.getText().toString());
+                color = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
+                colorText = jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
+                content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+                icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
 
+                if (current.equalsIgnoreCase("")) {
+                    current = cur.getString(cur.getColumnIndex(BotListDB.ROOM_FIRST_TAB));
+                }
+                if (color == null || color.equalsIgnoreCase("") || color.equalsIgnoreCase("null")) {
+                    color = "006b9c";
+                }
+                if (colorText == null || colorText.equalsIgnoreCase("") || colorText.equalsIgnoreCase("null")) {
+                    colorText = "ffffff";
+                }
+                Picasso.with(LoginDinamicRoomActivity.this).load(icon).into(imageView);
+
+                login_roomname.setText(name);
+
+                RelativeLayout someView = (RelativeLayout) findViewById(R.id.all_background);
+                someView.setBackgroundColor(Color.parseColor("#" + color));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    getWindow().setStatusBarColor(Color.parseColor("#" + color));
+                }
+
+                //loginBtn.setCardBackgroundColor(Color.parseColor("#" + color));
             }
 
-        });
+            final Intent intent = getIntent();
+            usr = intent.getStringExtra(ConversationActivity.KEY_JABBER_ID);
+            p = intent.getStringExtra("p");
+            u = intent.getStringExtra("u");
+
+            loginBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (loginUsr.getText().toString().equalsIgnoreCase("")) {
+                        etNikLayout.setError("Please input NIK");
+                        return;
+                    }
+                    if (loginPass.getText().toString().equalsIgnoreCase("")) {
+                        etPasswordLayout.setError("Please input Password");
+                        return;
+                    }
+
+                    if (mAuthTask != null) {
+                        mAuthTask = null;
+                    }
+                    showProgress();
+                    mAuthTask = new UserLoginTask();
+                    mAuthTask.execute(new ValidationsKey().getInstance(context).getTargetUrl(username) + "/bc_voucher_client/webservice/list_api/login.php", username, loginUsr.getText().toString(), loginPass.getText().toString());
+
+                }
+
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private String jsonResultType(String json, String type) {
@@ -245,14 +250,16 @@ public class LoginDinamicRoomActivity extends AppCompatActivity {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Please wait...");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-
+        try {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Please wait...");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 

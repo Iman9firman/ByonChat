@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ActivationCodeActivity extends AppCompatActivity {
     private static final String ACTIVATION_URL = "https://"
             + MessengerConnectionService.UTIL_SERVER + "/v1/codes/verify";
@@ -83,130 +85,148 @@ public class ActivationCodeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        FilteringImage.headerColor(getWindow(), ActivationCodeActivity.this, getResources().getColor(R.color.colorPrimary));
-        if (!isNetworkConnectionAvailable()) {
-            setContentView(R.layout.custom_information);
-            ((TextView) findViewById(R.id.customInformationText))
-                    .setText(R.string.registration_no_internet);
-        } else {
-            setContentView(R.layout.registration_activation_code);
-            textTimer = (TextView) findViewById(R.id.textTimer);
-            textTimeRemaning = (TextView) findViewById(R.id.textTimeRemaning);
-            buttonResend = (Button) findViewById(R.id.activationButtonResend);
-            textResend = (TextView) findViewById(R.id.textResend);
+        try {
+            FilteringImage.headerColor(getWindow(), ActivationCodeActivity.this, getResources().getColor(R.color.colorPrimary));
+            if (!isNetworkConnectionAvailable()) {
+                setContentView(R.layout.custom_information);
+                ((TextView) findViewById(R.id.customInformationText))
+                        .setText(R.string.registration_no_internet);
+            } else {
+                setContentView(R.layout.registration_activation_code);
+                textTimer = (TextView) findViewById(R.id.textTimer);
+                textTimeRemaning = (TextView) findViewById(R.id.textTimeRemaning);
+                buttonResend = (Button) findViewById(R.id.activationButtonResend);
+                textResend = (TextView) findViewById(R.id.textResend);
 
-            number = getIntent().getStringExtra(
-                    RegistrationActivity.KEY_REGISTER_MSISDN);
+                number = getIntent().getStringExtra(
+                        RegistrationActivity.KEY_REGISTER_MSISDN);
 
-            IntervalDB db = new IntervalDB(getApplicationContext());
-            db.open();
-            Cursor cursor = db.getSingleContact(12);
-            if (cursor.getCount() > 0) {
-                number = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+                IntervalDB db = new IntervalDB(getApplicationContext());
+                db.open();
+                Cursor cursor = db.getSingleContact(12);
+                if (cursor.getCount() > 0) {
+                    number = cursor.getString(cursor.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+                }
+                cursor.close();
+                db.close();
+                setTimer();
+                EditText textPnumber = (EditText) findViewById(R.id.activationPhoneNumber);
+                textPnumber.setText("+" + Utility.formatPhoneNumber(number));
+                ImageButton buttonEditNumber = (ImageButton) findViewById(R.id.activationEditBtn);
+                buttonEditNumber.setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        doStartActivity(RegistrationActivity.class);
+                    }
+                });
+
+                buttonResend.setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        new RegistrationRequest().execute();
+                    }
+                });
+
+                buttonEditNumber.setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        doStartActivity(RegistrationActivity.class);
+                    }
+                });
+
+                textActivationCode = (EditText) findViewById(R.id.activationTextCode);
+                buttonOK = (Button) findViewById(R.id.activationButton);
+                buttonOK.setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        confirmActivation();
+                    }
+                });
+
             }
-            cursor.close();
-            db.close();
-            setTimer();
-            EditText textPnumber = (EditText) findViewById(R.id.activationPhoneNumber);
-            textPnumber.setText("+" + Utility.formatPhoneNumber(number));
-            ImageButton buttonEditNumber = (ImageButton) findViewById(R.id.activationEditBtn);
-            buttonEditNumber.setOnClickListener(new OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    doStartActivity(RegistrationActivity.class);
-                }
-            });
+            if (pdialog == null) {
+                pdialog = new ProgressDialog(this);
+                pdialog.setIndeterminate(true);
+                pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            }
 
-            buttonResend.setOnClickListener(new OnClickListener() {
+            if (savedInstanceState != null) {
+                dialogShown = savedInstanceState
+                        .getBoolean(BUNDLE_KEY_DIALOG_SHOWN);
+            }
 
-                @Override
-                public void onClick(View v) {
-                    new RegistrationRequest().execute();
-                }
-            });
+            if (dialogShown) {
+                pdialog.show();
+            }
 
-            buttonEditNumber.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    doStartActivity(RegistrationActivity.class);
-                }
-            });
-
-            textActivationCode = (EditText) findViewById(R.id.activationTextCode);
-            buttonOK = (Button) findViewById(R.id.activationButton);
-            buttonOK.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    confirmActivation();
-                }
-            });
-
+            if (dbHelper == null) {
+                dbHelper = MessengerDatabaseHelper.getInstance(this);
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
-        if (pdialog == null) {
-            pdialog = new ProgressDialog(this);
-            pdialog.setIndeterminate(true);
-            pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        }
-
-        if (savedInstanceState != null) {
-            dialogShown = savedInstanceState
-                    .getBoolean(BUNDLE_KEY_DIALOG_SHOWN);
-        }
-
-        if (dialogShown) {
-            pdialog.show();
-        }
-
-        if (dbHelper == null) {
-            dbHelper = MessengerDatabaseHelper.getInstance(this);
-        }
-
     }
 
     @Override
     protected void onPause() {
-        unregisterReceiver(receiver);
-        overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+        try {
+            unregisterReceiver(receiver);
+            overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter(SmsListener.SMS_RECEIVED);
-        registerReceiver(receiver, filter);
-
+        try {
+            IntentFilter filter = new IntentFilter(SmsListener.SMS_RECEIVED);
+            registerReceiver(receiver, filter);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void setTimer() {
-        new CountDownTimer(300000, 1000) {//300000 5 menit
-            public void onTick(long millisUntilFinished) {
-                String FORMAT = "%02d:%02d";
-                textTimer.setText("" + String.format(FORMAT,
-                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(
-                                TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
-                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
-                                TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
-            }
+        try {
+            new CountDownTimer(300000, 1000) {//300000 5 menit
+                public void onTick(long millisUntilFinished) {
+                    String FORMAT = "%02d:%02d";
+                    textTimer.setText("" + String.format(FORMAT,
+                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(
+                                    TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
+                                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                }
 
-            public void onFinish() {
-                textTimer.setVisibility(View.INVISIBLE);
-                textTimeRemaning.setVisibility(View.GONE);
-                buttonOK.setVisibility(View.GONE);
-                buttonResend.setVisibility(View.VISIBLE);
-                textResend.setVisibility(View.VISIBLE);
-            }
-        }.start();
+                public void onFinish() {
+                    textTimer.setVisibility(View.INVISIBLE);
+                    textTimeRemaning.setVisibility(View.GONE);
+                    buttonOK.setVisibility(View.GONE);
+                    buttonResend.setVisibility(View.VISIBLE);
+                    textResend.setVisibility(View.VISIBLE);
+                }
+            }.start();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void confirmActivation() {
-        code = textActivationCode.getText().toString();
-        if (!code.equals("")) {
-            new ActivationRequestHelper().execute();
+        try {
+            code = textActivationCode.getText().toString();
+            if (!code.equals("")) {
+                new ActivationRequestHelper().execute();
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -219,45 +239,57 @@ public class ActivationCodeActivity extends AppCompatActivity {
     }
 
     private void doStartActivity(Class theClass) {
-        if (theClass.equals(LoadContactScreen.class)) {
-            IntervalDB db = new IntervalDB(getApplicationContext());
-            db.open();
-            Cursor cursor = db.getSingleContact(12);
-            if (cursor.getCount() > 0) {
-                db.deleteContact(12);
+        try {
+            if (theClass.equals(LoadContactScreen.class)) {
+                IntervalDB db = new IntervalDB(getApplicationContext());
+                db.open();
+                Cursor cursor = db.getSingleContact(12);
+                if (cursor.getCount() > 0) {
+                    db.deleteContact(12);
+                }
+                cursor.close();
+                Interval interval = new Interval();
+                interval.setId(12);
+                interval.setTime("settingUp");
+                db.createContact(interval);
+                db.close();
+            } else {
+                IntervalDB db = new IntervalDB(getApplicationContext());
+                db.open();
+                Cursor cursor = db.getSingleContact(12);
+                if (cursor.getCount() > 0) {
+                    db.deleteContact(12);
+                }
+                cursor.close();
+                db.close();
             }
-            cursor.close();
-            Interval interval = new Interval();
-            interval.setId(12);
-            interval.setTime("settingUp");
-            db.createContact(interval);
-            db.close();
-        } else {
-            IntervalDB db = new IntervalDB(getApplicationContext());
-            db.open();
-            Cursor cursor = db.getSingleContact(12);
-            if (cursor.getCount() > 0) {
-                db.deleteContact(12);
-            }
-            cursor.close();
-            db.close();
+
+
+            Intent intent = new Intent(this, theClass);
+            startActivity(intent);
+            finish();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
-
-        Intent intent = new Intent(this, theClass);
-        startActivity(intent);
-        finish();
     }
 
     private void onActivationSuccess() {
-        doStartActivity(LoadContactScreen.class);
+        try {
+            doStartActivity(LoadContactScreen.class);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void showErrorDialog(String message) {
-        AlertDialog.Builder dlg = DialogUtil.generateAlertDialog(this, "Error",
-                message);
-        dlg.setPositiveButton("OK", null);
-        dlg.show();
+        try {
+            AlertDialog.Builder dlg = DialogUtil.generateAlertDialog(this, "Error",
+                    message);
+            dlg.setPositiveButton("OK", null);
+            dlg.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private boolean isNetworkConnectionAvailable() {
@@ -277,31 +309,33 @@ public class ActivationCodeActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub
+            try {
+                // TODO Auto-generated method stub
 
-            if (intent.getAction().equals(SMS_RECEIVED)) {
-                Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
-                SmsMessage[] msgs = null;
-                if (bundle != null) {
-                    try {
-                        Object[] pdus = (Object[]) bundle.get("pdus");
-                        msgs = new SmsMessage[pdus.length];
-                        for (int i = 0; i < msgs.length; i++) {
-                            msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                            String msgBody = msgs[i].getMessageBody();
-                            int start = msgBody.indexOf(":") + 2;
-                            if (isInteger(msgBody.substring(start, start + 6))) {
-                                confirmActivation(msgBody.substring(start, start + 6));
+                if (intent.getAction().equals(SMS_RECEIVED)) {
+                    Bundle bundle = intent.getExtras();           //---get the SMS message passed in---
+                    SmsMessage[] msgs = null;
+                    if (bundle != null) {
+                        try {
+                            Object[] pdus = (Object[]) bundle.get("pdus");
+                            msgs = new SmsMessage[pdus.length];
+                            for (int i = 0; i < msgs.length; i++) {
+                                msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                                String msgBody = msgs[i].getMessageBody();
+                                int start = msgBody.indexOf(":") + 2;
+                                if (isInteger(msgBody.substring(start, start + 6))) {
+                                    confirmActivation(msgBody.substring(start, start + 6));
+                                }
                             }
+                        }catch (Exception e){
+                            reportCatch(e.getLocalizedMessage());
                         }
-                    } catch (Exception e) {
-//                            Log.d("Exception caught",e.getMessage());
                     }
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
-
-
     }
 
     public static boolean isInteger(String s) {
@@ -342,6 +376,7 @@ public class ActivationCodeActivity extends AppCompatActivity {
                 publishProgress(new Integer[]{Integer.valueOf(response
                         .getStatusLine().getStatusCode())});
             } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
                 Log.e(getLocalClassName(), "Error requesting activation code: "
                         + e.getMessage(), e);
                 publishProgress(new Integer[]{Integer.valueOf(0)});
@@ -364,10 +399,14 @@ public class ActivationCodeActivity extends AppCompatActivity {
     }
 
     private void showRegistrationError(String message) {
-        AlertDialog.Builder builder = DialogUtil.generateAlertDialog(this,
-                "Error", message);
-        builder.setPositiveButton("OK", null);
-        builder.show();
+        try {
+            AlertDialog.Builder builder = DialogUtil.generateAlertDialog(this,
+                    "Error", message);
+            builder.setPositiveButton("OK", null);
+            builder.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class ActivationRequestHelper extends AsyncTask<Void, Integer, Void> {
@@ -414,6 +453,7 @@ public class ActivationCodeActivity extends AppCompatActivity {
                     }
                 }
             } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
                 Log.e(getLocalClassName(), "Error requesting activation code: "
                         + e.getMessage(), e);
             } finally {
@@ -421,6 +461,7 @@ public class ActivationCodeActivity extends AppCompatActivity {
                     try {
                         reader.close();
                     } catch (IOException e) {
+                        reportCatch(e.getLocalizedMessage());
                     }
             }
             publishProgress(new Integer[]{Integer.valueOf(result)});
@@ -429,14 +470,18 @@ public class ActivationCodeActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            pdialog.dismiss();
-            int res = values[0].intValue();
-            if (res == 0) {
-                onActivationSuccess();
-            } else if (res == 1) {
-                showErrorDialog("Activation failed. Please verify your activation code.");
-            } else if (res == 2) {
-                showErrorDialog("Activation failed. Please try again later.");
+            try {
+                pdialog.dismiss();
+                int res = values[0].intValue();
+                if (res == 0) {
+                    onActivationSuccess();
+                } else if (res == 1) {
+                    showErrorDialog("Activation failed. Please verify your activation code.");
+                } else if (res == 2) {
+                    showErrorDialog("Activation failed. Please try again later.");
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }

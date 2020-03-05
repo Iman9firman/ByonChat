@@ -54,6 +54,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by byonc on 4/18/2017.
  */
@@ -123,81 +125,85 @@ public class ImagePickerActivity extends AppCompatActivity implements OnImageCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_picker);
 
-        Intent intent = getIntent();
-        if (intent == null) {
-            finish();
-        }
-
-        mainLayout = (RelativeLayout) findViewById(R.id.main);
-        emptyTextView = (TextView) findViewById(R.id.tv_empty_images);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        actionBar = getSupportActionBar();
-
-        Bitmap back_default = FilteringImage.headerColor(getWindow(), ImagePickerActivity.this, getResources().getColor(R.color.colorPrimary));
-        Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            toolbar.setBackground(back_draw_default);
-        } else {
-            toolbar.setBackgroundDrawable(back_draw_default);
-        }
-
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white);
-            actionBar.setDisplayShowTitleEnabled(true);
-        }
-
-        limit = intent.getIntExtra(ImagePickerActivity.INTENT_EXTRA_LIMIT, Constants.MAX_LIMIT);
-        mode = intent.getIntExtra(ImagePickerActivity.INTENT_EXTRA_MODE, ImagePickerActivity.MODE_MULTIPLE);
-        folderMode = intent.getBooleanExtra(ImagePickerActivity.INTENT_EXTRA_FOLDER_MODE, false);
-
-        if (intent.hasExtra(INTENT_EXTRA_DESTINATION)) {
-            folderTitle = getString(R.string.send_to) + " " + intent.getStringExtra(ImagePickerActivity.INTENT_EXTRA_DESTINATION);
-            destination = intent.getStringExtra(ImagePickerActivity.INTENT_EXTRA_DESTINATION);
-        }
-
-        if (intent.hasExtra(INTENT_EXTRA_IMAGE_TITLE)) {
-            imageTitle = intent.getStringExtra(ImagePickerActivity.INTENT_EXTRA_IMAGE_TITLE);
-        } else {
-            imageTitle = getString(R.string.title_select_image);
-        }
-
-        imageDirectory = intent.getStringExtra(ImagePickerActivity.INTENT_EXTRA_IMAGE_DIRECTORY);
-        if (imageDirectory == null || TextUtils.isEmpty(imageDirectory)) {
-            imageDirectory = getString(R.string.image_directory);
-        }
-
-        showCamera = intent.getBooleanExtra(ImagePickerActivity.INTENT_EXTRA_SHOW_CAMERA, true);
-        if (mode == ImagePickerActivity.MODE_MULTIPLE && intent.hasExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES)) {
-            selectedImages = intent.getParcelableArrayListExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES);
-        }
-
-        if (intent.getBooleanExtra(ImagePickerActivity.INTENT_EXTRA_RESET, true)) {
-            selectedImages = new ArrayList<>();
-        } else {
-            if (selectedImages == null)
-                selectedImages = new ArrayList<>();
-        }
-        images = new ArrayList<>();
-
-        if (actionBar != null) {
-            actionBar.setTitle(folderMode ? folderTitle : imageTitle);
-        }
-
-        imageAdapter = new ImagePickerAdapter(this, images, selectedImages, this);
-        folderAdapter = new FolderPickerAdapter(this, new OnFolderClickListener() {
-            @Override
-            public void onFolderClick(Folder bucket) {
-                foldersState = recyclerView.getLayoutManager().onSaveInstanceState();
-                setImageAdapter(bucket.getImages());
+        try {
+            Intent intent = getIntent();
+            if (intent == null) {
+                finish();
             }
-        });
 
-        orientationBasedUI(getResources().getConfiguration().orientation);
+            mainLayout = (RelativeLayout) findViewById(R.id.main);
+            emptyTextView = (TextView) findViewById(R.id.tv_empty_images);
+            recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            actionBar = getSupportActionBar();
+
+            Bitmap back_default = FilteringImage.headerColor(getWindow(), ImagePickerActivity.this, getResources().getColor(R.color.colorPrimary));
+            Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                toolbar.setBackground(back_draw_default);
+            } else {
+                toolbar.setBackgroundDrawable(back_draw_default);
+            }
+
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white);
+                actionBar.setDisplayShowTitleEnabled(true);
+            }
+
+            limit = intent.getIntExtra(ImagePickerActivity.INTENT_EXTRA_LIMIT, Constants.MAX_LIMIT);
+            mode = intent.getIntExtra(ImagePickerActivity.INTENT_EXTRA_MODE, ImagePickerActivity.MODE_MULTIPLE);
+            folderMode = intent.getBooleanExtra(ImagePickerActivity.INTENT_EXTRA_FOLDER_MODE, false);
+
+            if (intent.hasExtra(INTENT_EXTRA_DESTINATION)) {
+                folderTitle = getString(R.string.send_to) + " " + intent.getStringExtra(ImagePickerActivity.INTENT_EXTRA_DESTINATION);
+                destination = intent.getStringExtra(ImagePickerActivity.INTENT_EXTRA_DESTINATION);
+            }
+
+            if (intent.hasExtra(INTENT_EXTRA_IMAGE_TITLE)) {
+                imageTitle = intent.getStringExtra(ImagePickerActivity.INTENT_EXTRA_IMAGE_TITLE);
+            } else {
+                imageTitle = getString(R.string.title_select_image);
+            }
+
+            imageDirectory = intent.getStringExtra(ImagePickerActivity.INTENT_EXTRA_IMAGE_DIRECTORY);
+            if (imageDirectory == null || TextUtils.isEmpty(imageDirectory)) {
+                imageDirectory = getString(R.string.image_directory);
+            }
+
+            showCamera = intent.getBooleanExtra(ImagePickerActivity.INTENT_EXTRA_SHOW_CAMERA, true);
+            if (mode == ImagePickerActivity.MODE_MULTIPLE && intent.hasExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES)) {
+                selectedImages = intent.getParcelableArrayListExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES);
+            }
+
+            if (intent.getBooleanExtra(ImagePickerActivity.INTENT_EXTRA_RESET, true)) {
+                selectedImages = new ArrayList<>();
+            } else {
+                if (selectedImages == null)
+                    selectedImages = new ArrayList<>();
+            }
+            images = new ArrayList<>();
+
+            if (actionBar != null) {
+                actionBar.setTitle(folderMode ? folderTitle : imageTitle);
+            }
+
+            imageAdapter = new ImagePickerAdapter(this, images, selectedImages, this);
+            folderAdapter = new FolderPickerAdapter(this, new OnFolderClickListener() {
+                @Override
+                public void onFolderClick(Folder bucket) {
+                    foldersState = recyclerView.getLayoutManager().onSaveInstanceState();
+                    setImageAdapter(bucket.getImages());
+                }
+            });
+
+            orientationBasedUI(getResources().getConfiguration().orientation);
+
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -207,22 +213,30 @@ public class ImagePickerActivity extends AppCompatActivity implements OnImageCli
     }
 
     private void setImageAdapter(ArrayList<Image> images) {
-        imageAdapter.setData(images);
-        setItemDecoration(imageColumns);
-        recyclerView.setAdapter(imageAdapter);
-        updateTitle();
+        try {
+            imageAdapter.setData(images);
+            setItemDecoration(imageColumns);
+            recyclerView.setAdapter(imageAdapter);
+            updateTitle();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void setFolderAdapter() {
-        folderAdapter.setData(folders);
-        setItemDecoration(folderColumns);
-        recyclerView.setAdapter(folderAdapter);
+        try {
+            folderAdapter.setData(folders);
+            setItemDecoration(folderColumns);
+            recyclerView.setAdapter(folderAdapter);
 
-        if (foldersState != null) {
-            layoutManager.setSpanCount(folderColumns);
-            recyclerView.getLayoutManager().onRestoreInstanceState(foldersState);
+            if (foldersState != null) {
+                layoutManager.setSpanCount(folderColumns);
+                recyclerView.getLayoutManager().onRestoreInstanceState(foldersState);
+            }
+            updateTitle();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        updateTitle();
     }
 
     @Override
@@ -289,90 +303,112 @@ public class ImagePickerActivity extends AppCompatActivity implements OnImageCli
     }
 
     private void orientationBasedUI(int orientation) {
-        imageColumns = orientation == Configuration.ORIENTATION_PORTRAIT ? 3 : 5;
-        folderColumns = orientation == Configuration.ORIENTATION_PORTRAIT ? 2 : 4;
+        try {
+            imageColumns = orientation == Configuration.ORIENTATION_PORTRAIT ? 3 : 5;
+            folderColumns = orientation == Configuration.ORIENTATION_PORTRAIT ? 2 : 4;
 
-        int columns = isDisplayingFolderView() ? folderColumns : imageColumns;
-        layoutManager = new GridLayoutManager(this, columns);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-        setItemDecoration(columns);
+            int columns = isDisplayingFolderView() ? folderColumns : imageColumns;
+            layoutManager = new GridLayoutManager(this, columns);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setHasFixedSize(true);
+            setItemDecoration(columns);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void setItemDecoration(int columns) {
-        layoutManager.setSpanCount(columns);
-        if (itemOffsetDecoration != null)
-            recyclerView.removeItemDecoration(itemOffsetDecoration);
-        itemOffsetDecoration = new GridSpacingItemDecoration(columns, getResources().getDimensionPixelSize(R.dimen.item_padding), false);
-        recyclerView.addItemDecoration(itemOffsetDecoration);
+        try {
+            layoutManager.setSpanCount(columns);
+            if (itemOffsetDecoration != null)
+                recyclerView.removeItemDecoration(itemOffsetDecoration);
+            itemOffsetDecoration = new GridSpacingItemDecoration(columns, getResources().getDimensionPixelSize(R.dimen.item_padding), false);
+            recyclerView.addItemDecoration(itemOffsetDecoration);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
-
     private void getDataWithPermission() {
-        int rc = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (rc == PackageManager.PERMISSION_GRANTED)
-            getData();
-        else
-            requestWriteExternalPermission();
+        try {
+            int rc = ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (rc == PackageManager.PERMISSION_GRANTED)
+                getData();
+            else
+                requestWriteExternalPermission();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void getData() {
-        abortLoading();
+        try {
+            abortLoading();
 
-        ImageLoaderRunnable runnable = new ImageLoaderRunnable();
-        thread = new Thread(runnable);
-        thread.start();
+            ImageLoaderRunnable runnable = new ImageLoaderRunnable();
+            thread = new Thread(runnable);
+            thread.start();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void requestWriteExternalPermission() {
-        Log.w(TAG, "Write External permission is not granted. Requesting permission");
+        try {
+            Log.w(TAG, "Write External permission is not granted. Requesting permission");
 
-        final String[] permissions = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            final String[] permissions = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            ActivityCompat.requestPermissions(this, permissions, Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
-        } else {
-            if (!isPermissionRequested(Constants.PREF_WRITE_EXTERNAL_STORAGE_REQUESTED)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 ActivityCompat.requestPermissions(this, permissions, Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
-                setPermissionRequested(Constants.PREF_WRITE_EXTERNAL_STORAGE_REQUESTED);
             } else {
-                Snackbar snackbar = Snackbar.make(mainLayout, R.string.msg_no_write_external_permission,
-                        Snackbar.LENGTH_INDEFINITE);
-                snackbar.setAction(R.string.ok, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        openAppSettings();
-                    }
-                });
-                snackbar.show();
+                if (!isPermissionRequested(Constants.PREF_WRITE_EXTERNAL_STORAGE_REQUESTED)) {
+                    ActivityCompat.requestPermissions(this, permissions, Constants.PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE);
+                    setPermissionRequested(Constants.PREF_WRITE_EXTERNAL_STORAGE_REQUESTED);
+                } else {
+                    Snackbar snackbar = Snackbar.make(mainLayout, R.string.msg_no_write_external_permission,
+                            Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            openAppSettings();
+                        }
+                    });
+                    snackbar.show();
+                }
             }
-        }
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
-
     private void requestCameraPermission() {
-        Log.w(TAG, "Write External permission is not granted. Requesting permission");
+        try {
+            Log.w(TAG, "Write External permission is not granted. Requesting permission");
 
-        final String[] permissions = new String[]{android.Manifest.permission.CAMERA};
+            final String[] permissions = new String[]{android.Manifest.permission.CAMERA};
 
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CAMERA)) {
-            ActivityCompat.requestPermissions(this, permissions, Constants.PERMISSION_REQUEST_CAMERA);
-        } else {
-            if (!isPermissionRequested(Constants.PREF_CAMERA_REQUESTED)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CAMERA)) {
                 ActivityCompat.requestPermissions(this, permissions, Constants.PERMISSION_REQUEST_CAMERA);
-                setPermissionRequested(Constants.PREF_CAMERA_REQUESTED);
             } else {
-                Snackbar snackbar = Snackbar.make(mainLayout, R.string.msg_no_camera_permission,
-                        Snackbar.LENGTH_INDEFINITE);
-                snackbar.setAction(R.string.ok, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        openAppSettings();
-                    }
-                });
-                snackbar.show();
+                if (!isPermissionRequested(Constants.PREF_CAMERA_REQUESTED)) {
+                    ActivityCompat.requestPermissions(this, permissions, Constants.PERMISSION_REQUEST_CAMERA);
+                    setPermissionRequested(Constants.PREF_CAMERA_REQUESTED);
+                } else {
+                    Snackbar snackbar = Snackbar.make(mainLayout, R.string.msg_no_camera_permission,
+                            Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            openAppSettings();
+                        }
+                    });
+                    snackbar.show();
+                }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -433,46 +469,54 @@ public class ImagePickerActivity extends AppCompatActivity implements OnImageCli
     }
 
     private void clickImage(int position) {
-        int selectedItemPosition = selectedImagePosition(images.get(position));
-        if (mode == ImagePickerActivity.MODE_MULTIPLE) {
-            if (selectedItemPosition == -1) {
-                if (selectedImages.size() < limit) {
-                    imageAdapter.addSelected(images.get(position));
-                } else {
+        try {
+            int selectedItemPosition = selectedImagePosition(images.get(position));
+            if (mode == ImagePickerActivity.MODE_MULTIPLE) {
+                if (selectedItemPosition == -1) {
+                    if (selectedImages.size() < limit) {
+                        imageAdapter.addSelected(images.get(position));
+                    } else {
 //                    Toast.makeText(this, R.string.msg_limit_images, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    imageAdapter.removeSelectedPosition(selectedItemPosition, position);
                 }
             } else {
-                imageAdapter.removeSelectedPosition(selectedItemPosition, position);
-            }
-        } else {
-            if (selectedItemPosition != -1)
-                imageAdapter.removeSelectedPosition(selectedItemPosition, position);
-            else {
-                if (selectedImages.size() > 0) {
-                    imageAdapter.removeAllSelectedSingleClick();
+                if (selectedItemPosition != -1)
+                    imageAdapter.removeSelectedPosition(selectedItemPosition, position);
+                else {
+                    if (selectedImages.size() > 0) {
+                        imageAdapter.removeAllSelectedSingleClick();
+                    }
+                    imageAdapter.addSelected(images.get(position));
                 }
-                imageAdapter.addSelected(images.get(position));
             }
+            updateTitle();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        updateTitle();
     }
 
     private int selectedImagePosition(Image image) {
-        for (int i = 0; i < selectedImages.size(); i++) {
-            if (selectedImages.get(i).getPath().equals(image.getPath())) {
-                return i;
+        try {
+            for (int i = 0; i < selectedImages.size(); i++) {
+                if (selectedImages.get(i).getPath().equals(image.getPath())) {
+                    return i;
+                }
             }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
         return -1;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.REQUEST_CODE_CAPTURE) {
-            if (resultCode == RESULT_OK && currentImagePath != null) {
-                Uri imageUri = Uri.parse(currentImagePath);
+        try {
+            if (requestCode == Constants.REQUEST_CODE_CAPTURE) {
+                if (resultCode == RESULT_OK && currentImagePath != null) {
+                    Uri imageUri = Uri.parse(currentImagePath);
                 /*if (imageUri != null) {
                     MediaScannerConnection.scanFile(this,
                             new String[]{imageUri.getPath()}, null,
@@ -484,48 +528,58 @@ public class ImagePickerActivity extends AppCompatActivity implements OnImageCli
                                 }
                             });
                 }*/
-                Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
-                String jabberId = destination;
-                intent.putExtra("file", imageUri.getPath());
-                intent.putExtra("name", jabberId);
-                intent.putExtra("type", com.byonchat.android.provider.Message.TYPE_IMAGE);
-                startActivity(intent);
+                    Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
+                    String jabberId = destination;
+                    intent.putExtra("file", imageUri.getPath());
+                    intent.putExtra("name", jabberId);
+                    intent.putExtra("type", com.byonchat.android.provider.Message.TYPE_IMAGE);
+                    startActivity(intent);
+                }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void captureImageWithPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-            if (rc == PackageManager.PERMISSION_GRANTED) {
-                captureImage();
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+                if (rc == PackageManager.PERMISSION_GRANTED) {
+                    captureImage();
+                } else {
+                    Log.w(TAG, "Camera permission is not granted. Requesting permission");
+                    requestCameraPermission();
+                }
             } else {
-                Log.w(TAG, "Camera permission is not granted. Requesting permission");
-                requestCameraPermission();
+                captureImage();
             }
-        } else {
-            captureImage();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void captureImage() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            File imageFile = ImageUtils.createImageFile(imageDirectory);
-            if (imageFile != null) {
-                String authority = getPackageName() + ".fileprovider";
-                Uri uri = FileProvider.getUriForFile(this, authority, imageFile);
-                currentImagePath = "file:" + imageFile.getAbsolutePath();
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                startActivityForResult(intent, Constants.REQUEST_CODE_CAPTURE);
+        try {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                File imageFile = ImageUtils.createImageFile(imageDirectory);
+                if (imageFile != null) {
+                    String authority = getPackageName() + ".fileprovider";
+                    Uri uri = FileProvider.getUriForFile(this, authority, imageFile);
+                    currentImagePath = "file:" + imageFile.getAbsolutePath();
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                    startActivityForResult(intent, Constants.REQUEST_CODE_CAPTURE);
+                } else {
+                    Toast.makeText(this, getString(R.string.error_create_image_file), Toast.LENGTH_LONG).show();
+                }
             } else {
-                Toast.makeText(this, getString(R.string.error_create_image_file), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.error_no_camera), Toast.LENGTH_LONG).show();
             }
-        } else {
-            Toast.makeText(this, getString(R.string.error_no_camera), Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
-
 
     @Override
     protected void onStart() {
@@ -580,15 +634,19 @@ public class ImagePickerActivity extends AppCompatActivity implements OnImageCli
     }
 
     private void abortLoading() {
-        if (thread == null)
-            return;
-        if (thread.isAlive()) {
-            thread.interrupt();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        try {
+            if (thread == null)
+                return;
+            if (thread.isAlive()) {
+                thread.interrupt();
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -598,59 +656,75 @@ public class ImagePickerActivity extends AppCompatActivity implements OnImageCli
     }
 
     private void updateTitle() {
-        if (menuDone != null && menuCamera != null) {
-            if (isDisplayingFolderView()) {
-                actionBar.setTitle(folderTitle);
-                menuDone.setVisible(false);
-            } else {
-                if (selectedImages.size() == 0) {
-                    actionBar.setTitle(imageTitle);
-                    if (menuDone != null)
-                        menuDone.setVisible(false);
+        try {
+            if (menuDone != null && menuCamera != null) {
+                if (isDisplayingFolderView()) {
+                    actionBar.setTitle(folderTitle);
+                    menuDone.setVisible(false);
                 } else {
-                    if (mode == ImagePickerActivity.MODE_MULTIPLE) {
-                        if (limit == Constants.MAX_LIMIT)
-                            actionBar.setTitle(String.format(getString(R.string.selected), selectedImages.size()));
-                        else
-                            actionBar.setTitle(String.format(getString(R.string.selected_with_limit), selectedImages.size(), limit));
+                    if (selectedImages.size() == 0) {
+                        actionBar.setTitle(imageTitle);
+                        if (menuDone != null)
+                            menuDone.setVisible(false);
+                    } else {
+                        if (mode == ImagePickerActivity.MODE_MULTIPLE) {
+                            if (limit == Constants.MAX_LIMIT)
+                                actionBar.setTitle(String.format(getString(R.string.selected), selectedImages.size()));
+                            else
+                                actionBar.setTitle(String.format(getString(R.string.selected_with_limit), selectedImages.size(), limit));
+                        }
+                        if (menuDone != null)
+                            menuDone.setVisible(true);
                     }
-                    if (menuDone != null)
-                        menuDone.setVisible(true);
                 }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void showLoading() {
-//        progressBar.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
-        emptyTextView.setVisibility(View.GONE);
+        try {
+            recyclerView.setVisibility(View.GONE);
+            emptyTextView.setVisibility(View.GONE);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void hideLoading() {
-//        progressBar.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
-        emptyTextView.setVisibility(View.GONE);
+        try {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyTextView.setVisibility(View.GONE);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void showEmpty() {
-//        progressBar.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.GONE);
-        emptyTextView.setVisibility(View.VISIBLE);
+        try {
+            recyclerView.setVisibility(View.GONE);
+            emptyTextView.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         abortLoading();
+        try {
+            getContentResolver().unregisterContentObserver(observer);
 
-        getContentResolver().unregisterContentObserver(observer);
+            observer = null;
 
-        observer = null;
-
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(null);
-            handler = null;
+            if (handler != null) {
+                handler.removeCallbacksAndMessages(null);
+                handler = null;
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -658,78 +732,82 @@ public class ImagePickerActivity extends AppCompatActivity implements OnImageCli
 
         @Override
         public void run() {
-            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            try {
+                android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
-            Message message;
-            if (recyclerView.getAdapter() == null) {
-                message = handler.obtainMessage();
-                message.what = Constants.FETCH_STARTED;
-                message.sendToTarget();
-            }
+                Message message;
+                if (recyclerView.getAdapter() == null) {
+                    message = handler.obtainMessage();
+                    message.what = Constants.FETCH_STARTED;
+                    message.sendToTarget();
+                }
 
-            if (Thread.interrupted()) {
-                return;
-            }
+                if (Thread.interrupted()) {
+                    return;
+                }
 
-            Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
-                    null, null, MediaStore.Images.Media.DATE_ADDED);
+                Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
+                        null, null, MediaStore.Images.Media.DATE_ADDED);
 
-            if (cursor == null) {
-                message = handler.obtainMessage();
-                message.what = Constants.ERROR;
-                message.sendToTarget();
-                return;
-            }
+                if (cursor == null) {
+                    message = handler.obtainMessage();
+                    message.what = Constants.ERROR;
+                    message.sendToTarget();
+                    return;
+                }
 
-            ArrayList<Image> temp = new ArrayList<>(cursor.getCount());
-            File file;
-            folders = new ArrayList<>();
+                ArrayList<Image> temp = new ArrayList<>(cursor.getCount());
+                File file;
+                folders = new ArrayList<>();
 
-            if (cursor.moveToLast()) {
-                do {
-                    if (Thread.interrupted()) {
-                        return;
-                    }
-
-                    long id = cursor.getLong(cursor.getColumnIndex(projection[0]));
-                    String name = cursor.getString(cursor.getColumnIndex(projection[1]));
-                    String path = cursor.getString(cursor.getColumnIndex(projection[2]));
-                    String bucket = cursor.getString(cursor.getColumnIndex(projection[3]));
-
-                    file = new File(path);
-                    if (file.exists()) {
-                        Image image = new Image(id, name, path, false);
-                        temp.add(image);
-
-
-                        if (folderMode) {
-                            Folder folder = getFolder(bucket);
-                            if (folder == null) {
-                                folder = new Folder(bucket);
-                                folders.add(folder);
-                            }
-
-                            folder.getImages().add(image);
+                if (cursor.moveToLast()) {
+                    do {
+                        if (Thread.interrupted()) {
+                            return;
                         }
-                    }
 
-                } while (cursor.moveToPrevious());
+                        long id = cursor.getLong(cursor.getColumnIndex(projection[0]));
+                        String name = cursor.getString(cursor.getColumnIndex(projection[1]));
+                        String path = cursor.getString(cursor.getColumnIndex(projection[2]));
+                        String bucket = cursor.getString(cursor.getColumnIndex(projection[3]));
+
+                        file = new File(path);
+                        if (file.exists()) {
+                            Image image = new Image(id, name, path, false);
+                            temp.add(image);
+
+
+                            if (folderMode) {
+                                Folder folder = getFolder(bucket);
+                                if (folder == null) {
+                                    folder = new Folder(bucket);
+                                    folders.add(folder);
+                                }
+
+                                folder.getImages().add(image);
+                            }
+                        }
+
+                    } while (cursor.moveToPrevious());
+                }
+                cursor.close();
+                if (images == null) {
+                    images = new ArrayList<>();
+                }
+                images.clear();
+                images.addAll(temp);
+
+                if (handler != null) {
+                    message = handler.obtainMessage();
+                    message.what = Constants.FETCH_COMPLETED;
+                    message.sendToTarget();
+                }
+
+                Thread.interrupted();
+
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-            cursor.close();
-            if (images == null) {
-                images = new ArrayList<>();
-            }
-            images.clear();
-            images.addAll(temp);
-
-            if (handler != null) {
-                message = handler.obtainMessage();
-                message.what = Constants.FETCH_COMPLETED;
-                message.sendToTarget();
-            }
-
-            Thread.interrupted();
-
         }
     }
 
@@ -744,12 +822,16 @@ public class ImagePickerActivity extends AppCompatActivity implements OnImageCli
 
     @Override
     public void onBackPressed() {
-        if (folderMode && !isDisplayingFolderView()) {
-            setFolderAdapter();
-            return;
-        }
+        try {
+            if (folderMode && !isDisplayingFolderView()) {
+                setFolderAdapter();
+                return;
+            }
 
-        setResult(RESULT_CANCELED);
-        super.onBackPressed();
+            setResult(RESULT_CANCELED);
+            super.onBackPressed();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 }

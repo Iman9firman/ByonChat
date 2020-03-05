@@ -57,6 +57,8 @@ import java.util.Iterator;
 
 import lb.library.PinnedHeaderListView;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class NewSelectContactActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     Context context;
@@ -94,190 +96,213 @@ public class NewSelectContactActivity extends AppCompatActivity implements Swipe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_search_room);
 
-        getintent = getIntent();
-        action = getintent.getAction();
-        type = getintent.getType();
-        memeFile = getintent.getStringExtra("file") != null ? getintent.getStringExtra("file") : "";
-        messageText = getintent.getStringExtra("messageText") != null ? getintent.getStringExtra("messageText") : "";
+        try {
+            getintent = getIntent();
+            action = getintent.getAction();
+            type = getintent.getType();
+            memeFile = getintent.getStringExtra("file") != null ? getintent.getStringExtra("file") : "";
+            messageText = getintent.getStringExtra("messageText") != null ? getintent.getStringExtra("messageText") : "";
 
-        if (type == null) {
-            type = getintent.getStringExtra("type") != null ? getintent.getStringExtra("type") : "";
-        }
-
-
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(context);
-        }
-
-        if (context != null) {
-            context = getApplicationContext();
-        }
-
-        contact = messengerHelper.getMyContact();
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-
-        IntervalDB db = new IntervalDB(this);
-        db.open();
-        Cursor cursorSelect = db.getSingleContact(4);
-        if (cursorSelect.getCount() > 0) {
-            String skin = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
-            Skin skins = null;
-            Cursor c = db.getCountSkin();
-            if (c.getCount() > 0) {
-                skins = db.retriveSkinDetails(skin);
-                colorAttachment = skins.getColor();
-                initBackground(Color.parseColor(colorAttachment));
+            if (type == null) {
+                type = getintent.getStringExtra("type") != null ? getintent.getStringExtra("type") : "";
             }
-            c.close();
-        }
-        cursorSelect.close();
-        db.close();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.parseColor(colorAttachment));
-        }
 
-        goneLv = (ListView) findViewById(R.id.gonelist);
-        goneLv.setVisibility(View.GONE);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setVisibility(View.VISIBLE);
-        mInflater = LayoutInflater.from(getApplicationContext());
-        lv = (PinnedHeaderListView) findViewById(R.id.list);
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(context);
+            }
 
-        emptyList = (TextView) findViewById(R.id.emptyList);
-        linearTrending = (LinearLayout) findViewById(R.id.linearTrending);
-        linearTrending.setVisibility(View.GONE);
-        lv.setClickable(true);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                finish();
-                Contact item = (Contact) adapter.getItem(position);
-                if (item.getJabberId().equalsIgnoreCase("") || item.getJabberId().equalsIgnoreCase(messengerHelper.getMyContact().getJabberId())) {
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, PersonalRoomActivity.class);
-                    intent.putExtra(PersonalRoomActivity.EXTRA_ID, messengerHelper.getMyContact());
-                    context.startActivity(intent);
-                } else {
-                    if (Intent.ACTION_SEND.equals(action) && type != null) {
-                        if ("text/plain".equals(type)) {
-                            // handleSendText(intent); // Handle text being sent
-                        } else if (type.startsWith("image/")) {
-                            handleSendImage(getintent, Message.TYPE_IMAGE, item.getJabberId());
-                        } else if (type.startsWith("video/")) {
-                            handleSendImage(getintent, Message.TYPE_VIDEO, item.getJabberId());
-                        }
-                    } else if (!memeFile.equalsIgnoreCase("")) {
+            if (context != null) {
+                context = getApplicationContext();
+            }
 
-                        String jabberId = item.getJabberId().toString();
-                        Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
-                        intent.putExtra("name", jabberId);
-                        intent.putExtra("file", memeFile);
-                        intent.putExtra("type", type);
-                        startActivity(intent);
+            contact = messengerHelper.getMyContact();
 
-                    } else if ("text/plain".equals(type) || "text/select".equals(type)) {
-                        String jabberId = item.getJabberId().toString();
-                        Intent intent;
-                        intent = new Intent(getApplicationContext(), ConversationActivity.class);
-                        intent.putExtra(ConversationActivity.KEY_TITLE, "");
-                        intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE, 0);
-                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
-                        intent.putExtra(ConversationActivity.KEY_MESSAGE_FORWARD, messageText);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(intent);
-                        finish();
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setTitle("");
 
+            IntervalDB db = new IntervalDB(this);
+            db.open();
+            Cursor cursorSelect = db.getSingleContact(4);
+            if (cursorSelect.getCount() > 0) {
+                String skin = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+                Skin skins = null;
+                Cursor c = db.getCountSkin();
+                if (c.getCount() > 0) {
+                    skins = db.retriveSkinDetails(skin);
+                    colorAttachment = skins.getColor();
+                    initBackground(Color.parseColor(colorAttachment));
+                }
+                c.close();
+            }
+            cursorSelect.close();
+            db.close();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                getWindow().setStatusBarColor(Color.parseColor(colorAttachment));
+            }
+
+            goneLv = (ListView) findViewById(R.id.gonelist);
+            goneLv.setVisibility(View.GONE);
+            swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+            swipeRefreshLayout.setOnRefreshListener(this);
+            swipeRefreshLayout.setVisibility(View.VISIBLE);
+            mInflater = LayoutInflater.from(getApplicationContext());
+            lv = (PinnedHeaderListView) findViewById(R.id.list);
+
+            emptyList = (TextView) findViewById(R.id.emptyList);
+            linearTrending = (LinearLayout) findViewById(R.id.linearTrending);
+            linearTrending.setVisibility(View.GONE);
+            lv.setClickable(true);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    finish();
+                    Contact item = (Contact) adapter.getItem(position);
+                    if (item.getJabberId().equalsIgnoreCase("") || item.getJabberId().equalsIgnoreCase(messengerHelper.getMyContact().getJabberId())) {
+                        Context context = v.getContext();
+                        Intent intent = new Intent(context, PersonalRoomActivity.class);
+                        intent.putExtra(PersonalRoomActivity.EXTRA_ID, messengerHelper.getMyContact());
+                        context.startActivity(intent);
                     } else {
+                        if (Intent.ACTION_SEND.equals(action) && type != null) {
+                            if ("text/plain".equals(type)) {
+                                // handleSendText(intent); // Handle text being sent
+                            } else if (type.startsWith("image/")) {
+                                handleSendImage(getintent, Message.TYPE_IMAGE, item.getJabberId());
+                            } else if (type.startsWith("video/")) {
+                                handleSendImage(getintent, Message.TYPE_VIDEO, item.getJabberId());
+                            }
+                        } else if (!memeFile.equalsIgnoreCase("")) {
+
+                            String jabberId = item.getJabberId().toString();
+                            Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
+                            intent.putExtra("name", jabberId);
+                            intent.putExtra("file", memeFile);
+                            intent.putExtra("type", type);
+                            startActivity(intent);
+
+                        } else if ("text/plain".equals(type) || "text/select".equals(type)) {
+                            String jabberId = item.getJabberId().toString();
+                            Intent intent;
+                            intent = new Intent(getApplicationContext(), ConversationActivity.class);
+                            intent.putExtra(ConversationActivity.KEY_TITLE, "");
+                            intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE, 0);
+                            intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+                            intent.putExtra(ConversationActivity.KEY_MESSAGE_FORWARD, messageText);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            startActivity(intent);
+                            finish();
+
+                        } else {
              /*blm material
              String jabberId = item.getJabberId().toString();
               Intent intent = new Intent(this, TransferActivity.class);
               intent.putExtra("number",jabberId);
               startActivity(intent);*/
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        rowItems = new ArrayList<Contact>();
+            rowItems = new ArrayList<Contact>();
 
-        refreshContactList();
-        registerForContextMenu(lv);
-    }
-
-    public void handleSendImage(Intent intent, String type, String jabber) {
-        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        if (imageUri != null) {
-            String selectedImagePath = ImageFilePath.getPath(getApplicationContext(), imageUri);
-            Intent intent2 = new Intent(getApplicationContext(), ConfirmationSendFile.class);
-            String jabberId = jabber;
-            intent2.putExtra("file", selectedImagePath);
-            intent2.putExtra("name", jabberId);
-            intent2.putExtra("type", type);
-            startActivity(intent2);
+            refreshContactList();
+            registerForContextMenu(lv);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
+    public void handleSendImage(Intent intent, String type, String jabber) {
+        try {
+            Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            if (imageUri != null) {
+                String selectedImagePath = ImageFilePath.getPath(getApplicationContext(), imageUri);
+                Intent intent2 = new Intent(getApplicationContext(), ConfirmationSendFile.class);
+                String jabberId = jabber;
+                intent2.putExtra("file", selectedImagePath);
+                intent2.putExtra("name", jabberId);
+                intent2.putExtra("type", type);
+                startActivity(intent2);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
+    }
 
     @Override
     public void onRefresh() {
-        swipeRefreshLayout.post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
+        try {
+            swipeRefreshLayout.post(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
                     }
-                }
-        );
+            );
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        adapterContextSelected = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        Contact iconItem = (Contact) rowItems.get(
-                adapterContextSelected.position);
-        if (!messengerHelper.getMyContact().getJabberId().equalsIgnoreCase(iconItem.getJabberId())) {
-            menu.add(Menu.NONE, 0, 1, "View Profile");
-            menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    int menuindex = item.getItemId();
+        try {
+            adapterContextSelected = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            Contact iconItem = (Contact) rowItems.get(
+                    adapterContextSelected.position);
+            if (!messengerHelper.getMyContact().getJabberId().equalsIgnoreCase(iconItem.getJabberId())) {
+                menu.add(Menu.NONE, 0, 1, "View Profile");
+                menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        int menuindex = item.getItemId();
 
-                    switch (menuindex) {
-                        case 0:
-                            Contact iconItem = (Contact) rowItems.get(
-                                    adapterContextSelected.position);
-                            Intent i = new Intent(getApplicationContext(), ViewProfileActivity.class);
-                            i.putExtra(ViewProfileActivity.KEY_JABBER_ID, iconItem.getJabberId());
-                            i.putExtra(ViewProfileActivity.KEY_REFERENCE,
-                                    ViewProfileActivity.REFERENCE_MAIN);
-                            startActivity(i);
-                            break;
-                        default:
-                            break;
+                        switch (menuindex) {
+                            case 0:
+                                Contact iconItem = (Contact) rowItems.get(
+                                        adapterContextSelected.position);
+                                Intent i = new Intent(getApplicationContext(), ViewProfileActivity.class);
+                                i.putExtra(ViewProfileActivity.KEY_JABBER_ID, iconItem.getJabberId());
+                                i.putExtra(ViewProfileActivity.KEY_REFERENCE,
+                                        ViewProfileActivity.REFERENCE_MAIN);
+                                startActivity(i);
+                                break;
+                            default:
+                                break;
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            });
-        }
+                });
+            }
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        overridePendingTransition(R.anim.activity_slide_in_down, R.anim.activity_slide_out_down);
+        try {
+            overridePendingTransition(R.anim.activity_slide_in_down, R.anim.activity_slide_out_down);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void refreshContactList() {
-        AsyncTask<Void, Contact, Void> contactLoader = new ContactLoader();
-        contactLoader.execute();
+        try {
+            AsyncTask<Void, Contact, Void> contactLoader = new ContactLoader();
+            contactLoader.execute();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class ContactLoader extends AsyncTask<Void, Contact, Void> {
@@ -316,14 +341,18 @@ public class NewSelectContactActivity extends AppCompatActivity implements Swipe
 
         @Override
         protected void onPostExecute(Void result) {
-            rowItems.clear();
-            // rowItems.add(arrayListContactMe);
-            Collections.sort(arrayListContact, nameSortComparator);
-            for (Contact itemss : arrayListContact) {
-                rowItems.add(itemss);
-            }
+            try {
+                rowItems.clear();
+                // rowItems.add(arrayListContactMe);
+                Collections.sort(arrayListContact, nameSortComparator);
+                for (Contact itemss : arrayListContact) {
+                    rowItems.add(itemss);
+                }
 
-            refreshList();
+                refreshList();
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
+            }
         }
 
     }
@@ -340,28 +369,31 @@ public class NewSelectContactActivity extends AppCompatActivity implements Swipe
     };
 
     public void refreshList() {
+        try {
+            new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
+                @Override
+                public void run() {
+                    boolean a = "text/select".equals(type) ? false : true;
+                    adapter = new NewContactAdapter(NewSelectContactActivity.this, rowItems, a, new Validations().getInstance(getApplicationContext()).colorTheme(false));
+                    TypedValue typedValue = new TypedValue();
+                    Resources.Theme theme = getApplicationContext().getTheme();
+                    theme.resolveAttribute(R.attr.background, typedValue, true);
+                    int pinnedHeaderBackgroundColor = typedValue.data;
 
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-                boolean a = "text/select".equals(type) ? false : true;
-                adapter = new NewContactAdapter(NewSelectContactActivity.this, rowItems, a, new Validations().getInstance(getApplicationContext()).colorTheme(false));
-                TypedValue typedValue = new TypedValue();
-                Resources.Theme theme = getApplicationContext().getTheme();
-                theme.resolveAttribute(R.attr.background, typedValue, true);
-                int pinnedHeaderBackgroundColor = typedValue.data;
-
-                adapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
-                adapter.setPinnedHeaderTextColor(getResources().getColor(R.color.colorPrimary));
-                lv.setPinnedHeaderView(mInflater.inflate(R.layout.pinned_header_listview_side_header_divider, lv, false));
-                lv.setOnScrollListener(adapter);
-                lv.setEnableHeaderTransparencyChanges(false);
-                lv.setAdapter(adapter);
+                    adapter.setPinnedHeaderBackgroundColor(pinnedHeaderBackgroundColor);
+                    adapter.setPinnedHeaderTextColor(getResources().getColor(R.color.colorPrimary));
+                    lv.setPinnedHeaderView(mInflater.inflate(R.layout.pinned_header_listview_side_header_divider, lv, false));
+                    lv.setOnScrollListener(adapter);
+                    lv.setEnableHeaderTransparencyChanges(false);
+                    lv.setAdapter(adapter);
         /*if (adapter != null) {
 			adapter.notifyDataSetChanged();
 		}*/
-            }
-        });
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private HashMap<Long, Contact> loadContactFromDb() {
@@ -432,12 +464,16 @@ public class NewSelectContactActivity extends AppCompatActivity implements Swipe
     }
 
     private void initBackground(int color) {
-        Bitmap back_default = FilteringImage.headerColor(getWindow(), this, color);
-        Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            toolbar.setBackground(back_draw_default);
-        } else {
-            toolbar.setBackgroundDrawable(back_draw_default);
+        try {
+            Bitmap back_default = FilteringImage.headerColor(getWindow(), this, color);
+            Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                toolbar.setBackground(back_draw_default);
+            } else {
+                toolbar.setBackgroundDrawable(back_draw_default);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 }

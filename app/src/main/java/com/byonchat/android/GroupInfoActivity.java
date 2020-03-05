@@ -73,6 +73,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class GroupInfoActivity extends AppCompatActivity {
 
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
@@ -99,60 +101,60 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_info);
 
-        groupId = getIntent().getStringExtra(EXTRA_KEY_GROUP_JID);
+        try {
+            groupId = getIntent().getStringExtra(EXTRA_KEY_GROUP_JID);
 
 /* String jabberId = getIntent().getStringExtra(KEY_JABBER_ID);
         reference = getIntent().getStringExtra(KEY_REFERENCE);*/
-        if (dbhelper == null) {
-            dbhelper = MessengerDatabaseHelper.getInstance(this);
-        }
+            if (dbhelper == null) {
+                dbhelper = MessengerDatabaseHelper.getInstance(this);
+            }
        /* contact = dbhelper.getContact(jabberId);
         if (contact == null) {
             contact = new Contact("+" + jabberId, jabberId, "");
         }
 */
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.BLACK);
-        }
-
-        profile_id = (ImageView) findViewById(R.id.profile_id);
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-
-        linearLayout  = (LinearLayout) findViewById(R.id.linearLayout);
-        btnExit  = (Button) findViewById(R.id.btn_exit);
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String delMessage = "Exit '" + "gropu" + "' group?";
-                AlertDialog.Builder builder = DialogUtil.generateAlertDialog(GroupInfoActivity.this,
-                        "Confirm Exit Group", delMessage);
-                builder.setPositiveButton("Exit",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                pdialog = ProgressDialog.show(GroupInfoActivity.this, null,"please wait a moment", true);
-                                PostExitGroup postExitGroup = new PostExitGroup();
-                                postExitGroup.execute(new String[]{MessengerConnectionService.GROUP_SERVER + "disconnect", dbhelper.getMyContact().getJabberId()});
-                            }
-                        });
-                builder.setNegativeButton("No", null);
-                builder.show();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(Color.BLACK);
             }
-        });
+
+            profile_id = (ImageView) findViewById(R.id.profile_id);
+            collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+
+            linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
+            btnExit = (Button) findViewById(R.id.btn_exit);
+            btnExit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String delMessage = "Exit '" + "gropu" + "' group?";
+                    AlertDialog.Builder builder = DialogUtil.generateAlertDialog(GroupInfoActivity.this,
+                            "Confirm Exit Group", delMessage);
+                    builder.setPositiveButton("Exit",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    pdialog = ProgressDialog.show(GroupInfoActivity.this, null, "please wait a moment", true);
+                                    PostExitGroup postExitGroup = new PostExitGroup();
+                                    postExitGroup.execute(new String[]{MessengerConnectionService.GROUP_SERVER + "disconnect", dbhelper.getMyContact().getJabberId()});
+                                }
+                            });
+                    builder.setNegativeButton("No", null);
+                    builder.show();
+                }
+            });
 
 
-        rowItems = new ArrayList<IconItem>();
+            rowItems = new ArrayList<IconItem>();
        /* lv = (ListView) findViewById(R.id.list_participant);
         rowItems = new ArrayList<IconItem>();
         adapter = new ContactAdapter(getApplicationContext(), rowItems);
@@ -166,11 +168,11 @@ public class GroupInfoActivity extends AppCompatActivity {
         });*/
 
 
-        //   collapsingToolbarLayout.setTitle(contact.getName());
-        //   contact = dbhelper.getContact(jabberId);
+            //   collapsingToolbarLayout.setTitle(contact.getName());
+            //   contact = dbhelper.getContact(jabberId);
 
 
-        //btnCall = (ImageButton) findViewById(R.id.btnCall);
+            //btnCall = (ImageButton) findViewById(R.id.btnCall);
        /* btnCall.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -184,7 +186,7 @@ public class GroupInfoActivity extends AppCompatActivity {
             }
         });
 */
-        // btnChat = (ImageButton) findViewById(R.id.btnChat);
+            // btnChat = (ImageButton) findViewById(R.id.btnChat);
         /*btnChat.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -236,145 +238,154 @@ public class GroupInfoActivity extends AppCompatActivity {
         }else{
             PhotoProfile = BitmapFactory.decodeResource(getResources(), R.drawable.ic_no_photo);
         }*/
-        //dynamicToolbarColor();
-        //toolbarTextAppernce();
+            //dynamicToolbarColor();
+            //toolbarTextAppernce();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //refreshContactList();
-        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
-        sendPostReqAsyncTask.execute(new String[]{MessengerConnectionService.GROUP_SERVER + "get_profile_group", groupId});
+        try {
+            SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+            sendPostReqAsyncTask.execute(new String[]{MessengerConnectionService.GROUP_SERVER + "get_profile_group", groupId});
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
-    private void showParticipan(ArrayList<IconItem> list, final boolean admin){
+    private void showParticipan(ArrayList<IconItem> list, final boolean admin) {
+        try {
+            if (admin) {
+                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayoutAdd);
+                linearLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getApplicationContext(), PickUserActivity.class);
+                        intent.putExtra(PickUserActivity.FROMACTIVITY, "Invite User");
+                        intent.putExtra(PickUserActivity.INVITEGROUP, memberList.substring(0, memberList.length() - 1));
+                        intent.putExtra(PickUserActivity.SENDERINVITEGROUP, dbhelper.getMyContact().getJabberId());
+                        intent.putExtra(PickUserActivity.GROUPID, groupId);
+                        intent.putExtra(PickUserActivity.NAMEGROUP, dbhelper.getGroup(groupId).getName());
+                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(intent);
+                    }
 
-        if (admin){
-            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayoutAdd);
-            linearLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getApplicationContext(), PickUserActivity.class);
-                    intent.putExtra(PickUserActivity.FROMACTIVITY, "Invite User");
-                    intent.putExtra(PickUserActivity.INVITEGROUP, memberList.substring(0,memberList.length()-1));
-                    intent.putExtra(PickUserActivity.SENDERINVITEGROUP, dbhelper.getMyContact().getJabberId());
-                    intent.putExtra(PickUserActivity.GROUPID, groupId);
-                    intent.putExtra(PickUserActivity.NAMEGROUP, dbhelper.getGroup(groupId).getName());
-                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    startActivity(intent);
+
+                });
+            }
+
+            this.linearLayout.removeAllViews();
+            for (IconItem iconItem : list) {
+                IconItem e = list.get(list.size() - 1);
+                ImageLoader imageLoader;
+                ImageLoaderFromSD imageLoaderSD;
+                TextLoader textLoader;
+
+                imageLoader = new ImageLoader(getApplicationContext());
+                imageLoaderSD = new ImageLoaderFromSD(getApplicationContext());
+                textLoader = new TextLoader(getApplicationContext());
+
+                LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View v = vi.inflate(R.layout.list_item, null);
+                TextView textTitle = (TextView) v.findViewById(R.id.textTitle);
+                ImageView iconView = (ImageView) v.findViewById(R.id.imagePhoto);
+                TextView textInfo = (TextView) v.findViewById(R.id.textInfo);
+                TextView textDate = (TextView) v.findViewById(R.id.dateInfo);
+                ImageButton roomsOpen = (ImageButton) v.findViewById(R.id.roomsOpen);
+                View line = (View) v.findViewById(R.id.relativeLayout2);
+
+                if (iconItem.equals(e)) {
+                    line.setVisibility(View.GONE);
                 }
 
-
-            });
-        }
-
-        this.linearLayout.removeAllViews();
-        for (IconItem iconItem : list) {
-            IconItem e = list.get(list.size() - 1);
-            ImageLoader imageLoader;
-            ImageLoaderFromSD imageLoaderSD;
-            TextLoader textLoader;
-
-            imageLoader = new ImageLoader(getApplicationContext());
-            imageLoaderSD = new ImageLoaderFromSD(getApplicationContext());
-            textLoader = new TextLoader(getApplicationContext());
-
-            LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View v = vi.inflate(R.layout.list_item, null);
-            TextView textTitle = (TextView) v.findViewById(R.id.textTitle);
-            ImageView iconView = (ImageView) v.findViewById(R.id.imagePhoto);
-            TextView textInfo = (TextView) v.findViewById(R.id.textInfo);
-            TextView textDate = (TextView) v.findViewById(R.id.dateInfo);
-            ImageButton roomsOpen = (ImageButton) v.findViewById(R.id.roomsOpen);
-            View line = (View) v.findViewById(R.id.relativeLayout2);
-
-            if(iconItem.equals(e)){
-                line.setVisibility(View.GONE);
-            }
-
-            roomsOpen.setVisibility(View.GONE);
-            String text = Html.fromHtml(URLDecoder.decode(iconItem.getInfo())).toString();
-            if (text.contains("<")) {
-                text = Html.fromHtml(Html.fromHtml(text).toString()).toString();
-            }
-            textTitle.setText(iconItem.getTitle());
-            textDate.setText(iconItem.getDateInfo());
-            textInfo.setText(text);
-            if (iconItem.getChatParty() instanceof Group) {
-                iconView.setImageResource(R.drawable.ic_group);
-            } else {
-                String regex = "[0-9]+";
-                if (!iconItem.getJabberId().matches(regex)) {
-                    textLoader.DisplayImage(iconItem.getTitle(), textTitle);
-                    imageLoader.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/" + iconItem.getJabberId() + "_thumb.png", iconView);
-                }else{
-                    imageLoaderSD.DisplayImage(MediaProcessingUtil
-                            .getProfilePic(iconItem.getJabberId()), iconView, false);
+                roomsOpen.setVisibility(View.GONE);
+                String text = Html.fromHtml(URLDecoder.decode(iconItem.getInfo())).toString();
+                if (text.contains("<")) {
+                    text = Html.fromHtml(Html.fromHtml(text).toString()).toString();
                 }
-            }
-
-            v.setBackground(getResources().getDrawable(R.drawable.selector_no_stroke));
-            final String finalI = iconItem.getJabberId();
-            final String finalName = iconItem.getTitle();
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (!finalName.equalsIgnoreCase("You")) {
-                        AlertDialog.Builder builderSingle = new AlertDialog.Builder(
-                                GroupInfoActivity.this);
-                        builderSingle.setTitle("Select an action");
-                        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                                GroupInfoActivity.this,
-                                android.R.layout.simple_list_item_1);
-                        arrayAdapter.add("Message " + finalName);
-                        arrayAdapter.add("View " + finalName);
-                        if (admin) arrayAdapter.add("Remove " + finalName);
-                        builderSingle.setAdapter(arrayAdapter,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String listName = arrayAdapter.getItem(which);
-                                        if (listName.equalsIgnoreCase("Message " + finalName)) {
-                                            Intent intent = new Intent(GroupInfoActivity.this, ConversationActivity.class);
-                                            intent.putExtra(ConversationActivity.KEY_JABBER_ID, finalI);
-                                            startActivity(intent);
-                                        } else if (listName.equalsIgnoreCase("View " + finalName)) {
-                                            Intent i = new Intent(GroupInfoActivity.this, ViewProfileActivity.class);
-                                            i.putExtra(ViewProfileActivity.KEY_JABBER_ID, finalI);
-                                            i.putExtra(ViewProfileActivity.KEY_REFERENCE,
-                                                    ViewProfileActivity.REFERENCE_GROUP);
-                                            startActivity(i);
-
-                                        }
-                                        if (listName.equalsIgnoreCase("Remove " + finalName)) {
-                                            String delMessage = "Remove " + finalName + "from '" + "gropu" + "' group?";
-                                            AlertDialog.Builder builder = DialogUtil.generateAlertDialog(GroupInfoActivity.this,
-                                                    "Confirm Remove", delMessage);
-                                            builder.setPositiveButton("Yes",
-                                                    new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            pdialog = ProgressDialog.show(GroupInfoActivity.this, null,"please wait a moment", true);
-                                                            PostRemoveMembers removeMembers = new PostRemoveMembers();
-                                                            removeMembers.execute(new String[]{MessengerConnectionService.GROUP_SERVER + "removeperson", groupId, finalI,dbhelper.getMyContact().getJabberId()});
-                                                        }
-                                                    });
-                                            builder.setNegativeButton("No", null);
-                                            builder.show();
-                                        }
-                                    }
-                                });
-                        builderSingle.show();
+                textTitle.setText(iconItem.getTitle());
+                textDate.setText(iconItem.getDateInfo());
+                textInfo.setText(text);
+                if (iconItem.getChatParty() instanceof Group) {
+                    iconView.setImageResource(R.drawable.ic_group);
+                } else {
+                    String regex = "[0-9]+";
+                    if (!iconItem.getJabberId().matches(regex)) {
+                        textLoader.DisplayImage(iconItem.getTitle(), textTitle);
+                        imageLoader.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/" + iconItem.getJabberId() + "_thumb.png", iconView);
+                    } else {
+                        imageLoaderSD.DisplayImage(MediaProcessingUtil
+                                .getProfilePic(iconItem.getJabberId()), iconView, false);
                     }
                 }
 
+                v.setBackground(getResources().getDrawable(R.drawable.selector_no_stroke));
+                final String finalI = iconItem.getJabberId();
+                final String finalName = iconItem.getTitle();
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!finalName.equalsIgnoreCase("You")) {
+                            AlertDialog.Builder builderSingle = new AlertDialog.Builder(
+                                    GroupInfoActivity.this);
+                            builderSingle.setTitle("Select an action");
+                            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                                    GroupInfoActivity.this,
+                                    android.R.layout.simple_list_item_1);
+                            arrayAdapter.add("Message " + finalName);
+                            arrayAdapter.add("View " + finalName);
+                            if (admin) arrayAdapter.add("Remove " + finalName);
+                            builderSingle.setAdapter(arrayAdapter,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String listName = arrayAdapter.getItem(which);
+                                            if (listName.equalsIgnoreCase("Message " + finalName)) {
+                                                Intent intent = new Intent(GroupInfoActivity.this, ConversationActivity.class);
+                                                intent.putExtra(ConversationActivity.KEY_JABBER_ID, finalI);
+                                                startActivity(intent);
+                                            } else if (listName.equalsIgnoreCase("View " + finalName)) {
+                                                Intent i = new Intent(GroupInfoActivity.this, ViewProfileActivity.class);
+                                                i.putExtra(ViewProfileActivity.KEY_JABBER_ID, finalI);
+                                                i.putExtra(ViewProfileActivity.KEY_REFERENCE,
+                                                        ViewProfileActivity.REFERENCE_GROUP);
+                                                startActivity(i);
 
-            });
-            this.linearLayout.addView(v);
+                                            }
+                                            if (listName.equalsIgnoreCase("Remove " + finalName)) {
+                                                String delMessage = "Remove " + finalName + "from '" + "gropu" + "' group?";
+                                                AlertDialog.Builder builder = DialogUtil.generateAlertDialog(GroupInfoActivity.this,
+                                                        "Confirm Remove", delMessage);
+                                                builder.setPositiveButton("Yes",
+                                                        new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                pdialog = ProgressDialog.show(GroupInfoActivity.this, null, "please wait a moment", true);
+                                                                PostRemoveMembers removeMembers = new PostRemoveMembers();
+                                                                removeMembers.execute(new String[]{MessengerConnectionService.GROUP_SERVER + "removeperson", groupId, finalI, dbhelper.getMyContact().getJabberId()});
+                                                            }
+                                                        });
+                                                builder.setNegativeButton("No", null);
+                                                builder.show();
+                                            }
+                                        }
+                                    });
+                            builderSingle.show();
+                        }
+                    }
+
+
+                });
+                this.linearLayout.addView(v);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
-
 
     private void displayPhoto(File f) {
        /* Intent intent = new Intent(this, FullScreenUpdateProfileActivity.class);
@@ -385,20 +396,27 @@ public class GroupInfoActivity extends AppCompatActivity {
     }
 
     private void dynamicToolbarColor() {
-
-        final int color = ColorUtils.getDominantColor1(PhotoProfile);
-        Palette.from(PhotoProfile).generate(new Palette.PaletteAsyncListener() {
-            @Override
-            public void onGenerated(Palette palette) {
-                collapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(color));
-                collapsingToolbarLayout.setStatusBarScrimColor(palette.getMutedColor(color));
-            }
-        });
+        try {
+            final int color = ColorUtils.getDominantColor1(PhotoProfile);
+            Palette.from(PhotoProfile).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(Palette palette) {
+                    collapsingToolbarLayout.setContentScrimColor(palette.getMutedColor(color));
+                    collapsingToolbarLayout.setStatusBarScrimColor(palette.getMutedColor(color));
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void toolbarTextAppernce() {
-        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
-        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
+        try {
+            collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
+            collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 
@@ -500,18 +518,22 @@ public class GroupInfoActivity extends AppCompatActivity {
          * **/
         @Override
         protected void onPostExecute(String file_url) {
-            File imgFile = new  File(iconsStoragePath);
-            if(imgFile.exists()){
-                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                int currentapiVersion = Build.VERSION.SDK_INT;
-                if (currentapiVersion >= Build.VERSION_CODES.KITKAT){
-                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file:/" + imgFile.getAbsolutePath())));
-                } else{
-                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file:/" + imgFile.getAbsolutePath())));
+            try {
+                File imgFile = new File(iconsStoragePath);
+                if (imgFile.exists()) {
+                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    int currentapiVersion = Build.VERSION.SDK_INT;
+                    if (currentapiVersion >= Build.VERSION_CODES.KITKAT) {
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file:/" + imgFile.getAbsolutePath())));
+                    } else {
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file:/" + imgFile.getAbsolutePath())));
+                    }
+
+                    profile_id.setImageBitmap(myBitmap);
+
                 }
-
-                profile_id.setImageBitmap(myBitmap);
-
+            }catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
@@ -547,6 +569,7 @@ public class GroupInfoActivity extends AppCompatActivity {
                 }
             } catch (UnsupportedEncodingException uee) {
                 uee.printStackTrace();
+                reportCatch(uee.getLocalizedMessage());
             }
 
             return null;
@@ -555,58 +578,62 @@ public class GroupInfoActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if(result.startsWith("error") || result==null){
-                Toast.makeText(getApplicationContext(), "terjadi kesalahan jaringan ", Toast.LENGTH_LONG).show();
-            }else{
-                JSONObject jObject = null;
-                try {
-                    jObject = new JSONObject(result);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (jObject != null) {
+            try {
+                if (result.startsWith("error") || result == null) {
+                    Toast.makeText(getApplicationContext(), "terjadi kesalahan jaringan ", Toast.LENGTH_LONG).show();
+                } else {
+                    JSONObject jObject = null;
                     try {
-                        String creatorGroup = jObject.getString("creator_group");
-                        String createTimestamp = jObject.getString("create_timestamp");
-                        String groupIcon = jObject.getString("icon");
-                        String groupname = jObject.getString("groupname");
-
-                        ArrayList<IconItem> arrayListContact = new ArrayList<IconItem>();
-                        JSONArray cast = jObject.getJSONArray("member_list");
-                        for (int i=0; i<cast.length(); i++) {
-                            JSONObject actor = cast.getJSONObject(i);
-                            String name = actor.getString("name");
-                            memberList+=name+",";
-                            Contact contact = dbhelper.getContact(name);
-                            IconItem item ;
-                            contact = dbhelper.getContact(name);
-                            if (contact == null) {
-                                contact = new Contact("+" + name, name, "");
-                                item = new IconItem(contact.getJabberId(),
-                                        contact.getName(), "", creatorGroup.equalsIgnoreCase(contact.getJabberId())?"Admin":"", contact,0,null,true);
-                            }else {
-                                if (contact.getJabberId().equals(dbhelper.getMyContact().getJabberId())){
-                                    item = new IconItem(contact.getJabberId(),
-                                            "You", contact.getStatus() != null ? contact.getStatus() : "I love byonchat", creatorGroup.equalsIgnoreCase(contact.getJabberId())?"Admin":"", contact,0,null,true);
-                                }else {
-                                    item = new IconItem(contact.getJabberId(),
-                                            contact.getName(), contact.getStatus() != null ? contact.getStatus() : "I love byonchat", creatorGroup.equalsIgnoreCase(contact.getJabberId())?"Admin":"", contact,0,null,true);
-                                }
-
-                            }
-                            arrayListContact.add(item);
-                        }
-                        rowItems.clear();
-                        Collections.sort(arrayListContact, IconItem.nameSortComparator);
-                        for(IconItem itemss: arrayListContact){
-                            rowItems.add(itemss);
-                        }
-                        showParticipan(rowItems,true);
+                        jObject = new JSONObject(result);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
+                    if (jObject != null) {
+                        try {
+                            String creatorGroup = jObject.getString("creator_group");
+                            String createTimestamp = jObject.getString("create_timestamp");
+                            String groupIcon = jObject.getString("icon");
+                            String groupname = jObject.getString("groupname");
 
+                            ArrayList<IconItem> arrayListContact = new ArrayList<IconItem>();
+                            JSONArray cast = jObject.getJSONArray("member_list");
+                            for (int i = 0; i < cast.length(); i++) {
+                                JSONObject actor = cast.getJSONObject(i);
+                                String name = actor.getString("name");
+                                memberList += name + ",";
+                                Contact contact = dbhelper.getContact(name);
+                                IconItem item;
+                                contact = dbhelper.getContact(name);
+                                if (contact == null) {
+                                    contact = new Contact("+" + name, name, "");
+                                    item = new IconItem(contact.getJabberId(),
+                                            contact.getName(), "", creatorGroup.equalsIgnoreCase(contact.getJabberId()) ? "Admin" : "", contact, 0, null, true);
+                                } else {
+                                    if (contact.getJabberId().equals(dbhelper.getMyContact().getJabberId())) {
+                                        item = new IconItem(contact.getJabberId(),
+                                                "You", contact.getStatus() != null ? contact.getStatus() : "I love byonchat", creatorGroup.equalsIgnoreCase(contact.getJabberId()) ? "Admin" : "", contact, 0, null, true);
+                                    } else {
+                                        item = new IconItem(contact.getJabberId(),
+                                                contact.getName(), contact.getStatus() != null ? contact.getStatus() : "I love byonchat", creatorGroup.equalsIgnoreCase(contact.getJabberId()) ? "Admin" : "", contact, 0, null, true);
+                                    }
+
+                                }
+                                arrayListContact.add(item);
+                            }
+                            rowItems.clear();
+                            Collections.sort(arrayListContact, IconItem.nameSortComparator);
+                            for (IconItem itemss : arrayListContact) {
+                                rowItems.add(itemss);
+                            }
+                            showParticipan(rowItems, true);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
@@ -658,15 +685,19 @@ public class GroupInfoActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             pdialog.dismiss();
-            if(result.startsWith("error") || result==null){
-                Toast.makeText(getApplicationContext(), "terjadi kesalahan jaringan ", Toast.LENGTH_LONG).show();
-            }else{
-                if (result.equalsIgnoreCase("1")){
-                    SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
-                    sendPostReqAsyncTask.execute(new String[]{MessengerConnectionService.GROUP_SERVER + "get_profile_group", groupId});
-                }else{
+            try {
+                if (result.startsWith("error") || result == null) {
                     Toast.makeText(getApplicationContext(), "terjadi kesalahan jaringan ", Toast.LENGTH_LONG).show();
+                } else {
+                    if (result.equalsIgnoreCase("1")) {
+                        SendPostReqAsyncTask sendPostReqAsyncTask = new SendPostReqAsyncTask();
+                        sendPostReqAsyncTask.execute(new String[]{MessengerConnectionService.GROUP_SERVER + "get_profile_group", groupId});
+                    } else {
+                        Toast.makeText(getApplicationContext(), "terjadi kesalahan jaringan ", Toast.LENGTH_LONG).show();
+                    }
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
@@ -712,28 +743,30 @@ public class GroupInfoActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             pdialog.dismiss();
-            if(result.startsWith("error") || result==null){
-                Toast.makeText(getApplicationContext(), "terjadi kesalahan jaringan ", Toast.LENGTH_LONG).show();
-            }else{
-                if (result.equalsIgnoreCase("1")){
-
-                    com.byonchat.android.provider.Group g = dbhelper.getGroup(groupId);
-                    g.setStatus(com.byonchat.android.model.Group.STATUS_INACTIVE);
-                    dbhelper.updateData(g);
-                    dbhelper
-                            .deleteRows(
-                                    Message.TABLE_NAME,
-                                    " destination=? OR source =? ",
-                                    new String[]{groupId,
-                                            groupId}
-                            );
-                    finish();
-                }else{
+            try {
+                if (result.startsWith("error") || result == null) {
                     Toast.makeText(getApplicationContext(), "terjadi kesalahan jaringan ", Toast.LENGTH_LONG).show();
+                } else {
+                    if (result.equalsIgnoreCase("1")) {
+
+                        com.byonchat.android.provider.Group g = dbhelper.getGroup(groupId);
+                        g.setStatus(com.byonchat.android.model.Group.STATUS_INACTIVE);
+                        dbhelper.updateData(g);
+                        dbhelper
+                                .deleteRows(
+                                        Message.TABLE_NAME,
+                                        " destination=? OR source =? ",
+                                        new String[]{groupId,
+                                                groupId}
+                                );
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "terjadi kesalahan jaringan ", Toast.LENGTH_LONG).show();
+                    }
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
-
-
 }

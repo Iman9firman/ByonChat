@@ -54,6 +54,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
@@ -92,96 +94,99 @@ public class DialogUseVoucherTwo extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_voucher_use_2, container, false);
-        mlinear_name = (FrameLayout) dialog.findViewById(R.id.linear_name);
-        mJudul = (TextView) dialog.findViewById(R.id.name) ;
-        mBackground = (ImageView) dialog.findViewById(R.id.background);
-        mSerialNumber = (TextView) dialog.findViewById(R.id.serial_number);
-        mSerialNumber2 = (TextView) dialog.findViewById(R.id.serial_number2);
-        mTanggalValid = (TextView) dialog.findViewById(R.id.tanggal_valid);
-        mTanggalValid2 = (TextView) dialog.findViewById(R.id.tanggal_valid2);
-        mAmount = (TextView) dialog.findViewById(R.id.amount);
-        mAmount2 = (TextView) dialog.findViewById(R.id.amount2);
-        mParticipantOutlets = (Button) dialog.findViewById(R.id.participant_outlets);
-        mOutlet_id = (TextView) dialog.findViewById(R.id.outlet_id);
-        mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
-        mCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+        try {
+            mlinear_name = (FrameLayout) dialog.findViewById(R.id.linear_name);
+            mJudul = (TextView) dialog.findViewById(R.id.name);
+            mBackground = (ImageView) dialog.findViewById(R.id.background);
+            mSerialNumber = (TextView) dialog.findViewById(R.id.serial_number);
+            mSerialNumber2 = (TextView) dialog.findViewById(R.id.serial_number2);
+            mTanggalValid = (TextView) dialog.findViewById(R.id.tanggal_valid);
+            mTanggalValid2 = (TextView) dialog.findViewById(R.id.tanggal_valid2);
+            mAmount = (TextView) dialog.findViewById(R.id.amount);
+            mAmount2 = (TextView) dialog.findViewById(R.id.amount2);
+            mParticipantOutlets = (Button) dialog.findViewById(R.id.participant_outlets);
+            mOutlet_id = (TextView) dialog.findViewById(R.id.outlet_id);
+            mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
+            mCancel = (Button) dialog.findViewById(R.id.btn_cancel);
 
-        Glide.with(getContext()).load(background).into(mBackground);
-        String color = "";
-        if(bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")){
-            color = "1e8cc4";
-        }else{
-            color = bgcolor;
-        }
+            Glide.with(getContext()).load(background).into(mBackground);
+            String color = "";
+            if (bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")) {
+                color = "1e8cc4";
+            } else {
+                color = bgcolor;
+            }
 
-        GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
-        drawable.setColor(Color.parseColor("#"+color));
-        String txtcolor = "";
-        if(textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")){
-            txtcolor = "ffffff";
-        }else{
-            txtcolor = textcolor;
-        }
+            GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
+            drawable.setColor(Color.parseColor("#" + color));
+            String txtcolor = "";
+            if (textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")) {
+                txtcolor = "ffffff";
+            } else {
+                txtcolor = textcolor;
+            }
 
-        mJudul.setText(judul);
-        mJudul.setTextColor(Color.parseColor("#"+txtcolor));
-        mSerialNumber.setText(serial);
-        mSerialNumber2.setText(serial);
-        mTanggalValid.setText("Valid until "+tglvalid);
-        mTanggalValid2.setText(tglvalid);
-        NumberFormat nf = NumberFormat.getNumberInstance(new Locale("in", "ID"));
-        mAmount2.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
-        mAmount.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
-        mOutlet_id.setText(outletID);
+            mJudul.setText(judul);
+            mJudul.setTextColor(Color.parseColor("#" + txtcolor));
+            mSerialNumber.setText(serial);
+            mSerialNumber2.setText(serial);
+            mTanggalValid.setText("Valid until " + tglvalid);
+            mTanggalValid2.setText(tglvalid);
+            NumberFormat nf = NumberFormat.getNumberInstance(new Locale("in", "ID"));
+            mAmount2.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
+            mAmount.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
+            mOutlet_id.setText(outletID);
 
-        if (activity == null) {
-            activity = getActivity();
-        }
+            if (activity == null) {
+                activity = getActivity();
+            }
 
-        if (context == null) {
-            context = getContext();
-        }
+            if (context == null) {
+                context = getContext();
+            }
 
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(activity);
-        }
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(activity);
+            }
 
-        contact = messengerHelper.getMyContact();
-        requestTransferVoucher = new RequestTransferVoucher(context);
+            contact = messengerHelper.getMyContact();
+            requestTransferVoucher = new RequestTransferVoucher(context);
 
-        mParticipantOutlets.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(getDialog() != null){
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment prev = getFragmentManager().findFragmentByTag("DialogUseVoucher1");
-                    if(prev != null){
-                        prev.isRemoving();
+            mParticipantOutlets.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("DialogUseVoucher1");
+                        if (prev != null) {
+                            prev.isRemoving();
+                        }
+                        ft.addToBackStack(null);
+
+                        DialogFragment newFragment = DialogVoucherParticipantOutlets.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor);
+                        newFragment.show(ft, "DialogVoucherParticipantOutlets");
                     }
-                    ft.addToBackStack(null);
-
-                    DialogFragment newFragment = DialogVoucherParticipantOutlets.newInstance(id,judul,serial,tglvalid,nominal,bgcolor,textcolor);
-                    newFragment.show(ft, "DialogVoucherParticipantOutlets");
                 }
-            }
-        });
+            });
 
-        mProceed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestKey();
-            }
-        });
-        mCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    getDialog().dismiss();
+            mProceed.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    requestKey();
                 }
-            }
-        });
+            });
+            mCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
+                }
+            });
 //        mlinear_name.setBackgroundColor(getResources().getColor(R.color.color_primary_red_dark));
-
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return dialog;
     }
 
@@ -195,11 +200,14 @@ public class DialogUseVoucherTwo extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        Dialog dialog = getDialog();
-        if (dialog != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+        try {
+            Dialog dialog = getDialog();
+            if (dialog != null) {
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -218,19 +226,23 @@ public class DialogUseVoucherTwo extends DialogFragment {
     }
 
     private void requestKey() {
-        RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-            @Override
-            public void onTaskDone(String key) {
-                if (key.equalsIgnoreCase("null")) {
-                    Toast.makeText(activity, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                } else {
-                    requestTransferVoucher = new RequestTransferVoucher(activity);
-                    requestTransferVoucher.execute(key);
+        try {
+            RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                @Override
+                public void onTaskDone(String key) {
+                    if (key.equalsIgnoreCase("null")) {
+                        Toast.makeText(activity, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                    } else {
+                        requestTransferVoucher = new RequestTransferVoucher(activity);
+                        requestTransferVoucher.execute(key);
+                    }
                 }
-            }
-        }, activity);
+            }, activity);
 
-        testAsyncTask.execute();
+            testAsyncTask.execute();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class RequestTransferVoucher extends AsyncTask<String, Void, String> {
@@ -317,39 +329,43 @@ public class DialogUseVoucherTwo extends DialogFragment {
         }
 
         protected void onPostExecute(String content) {
-            progressDialog.dismiss();
-            if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
+            try {
+                progressDialog.dismiss();
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
 //                            swipeRefreshLayout.setRefreshing(false);
-                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        }else{
-                            requestTransferVoucher = new RequestTransferVoucher(context);
-                            requestTransferVoucher.execute(key);
-                        }
-                    }else{
+                                Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                requestTransferVoucher = new RequestTransferVoucher(context);
+                                requestTransferVoucher.execute(key);
+                            }
+                        } else {
 //                        swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
-                    }
-                }else{
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
 //                    swipeRefreshLayout.setRefreshing(false);
-                    Toast.makeText(mContext,  R.string.pleaseTryAgain, Toast.LENGTH_LONG).show();
-                }
-            } else {
-                if (getDialog() != null) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment prev = getFragmentManager().findFragmentByTag("DialogUseVoucher2");
-                    if (prev != null) {
-                        DialogFragment df = (DialogFragment) prev;
-                        df.dismiss();
+                        Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_LONG).show();
                     }
-                    ft.addToBackStack(null);
+                } else {
+                    if (getDialog() != null) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("DialogUseVoucher2");
+                        if (prev != null) {
+                            DialogFragment df = (DialogFragment) prev;
+                            df.dismiss();
+                        }
+                        ft.addToBackStack(null);
 
-                    DialogFragment newFragment = DialogUseVoucherThree.newInstance(id, judul, serial, tglvalid, nominal, outletID,bgcolor,textcolor,background);
-                    newFragment.show(ft, "DialogUseVoucher3");
+                        DialogFragment newFragment = DialogUseVoucherThree.newInstance(id, judul, serial, tglvalid, nominal, outletID, bgcolor, textcolor, background);
+                        newFragment.show(ft, "DialogUseVoucher3");
+                    }
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }

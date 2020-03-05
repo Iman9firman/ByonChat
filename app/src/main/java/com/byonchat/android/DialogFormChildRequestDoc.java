@@ -34,6 +34,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class DialogFormChildRequestDoc extends DialogFragment {
 
     String username = "";
@@ -77,90 +79,93 @@ public class DialogFormChildRequestDoc extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
 
-        dbHelper = new UserDB(getContext());
-        databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
+        try {
+            dbHelper = new UserDB(getContext());
+            databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
 
-        linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
-        linearLayout.setPadding(16, 16, 16, 16);
+            linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
+            linearLayout.setPadding(16, 16, 16, 16);
 
-        RelativeLayout titleLayout = new RelativeLayout(getContext());
-        titleLayout.setGravity(Gravity.CENTER);
-        TextView titleView = new TextView(getContext());
-        titleView.setText(title);
-        titleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-        titleView.setSingleLine(true);
-        titleView.setMarqueeRepeatLimit(-1);
-        titleView.setSelected(true);
-        titleView.setTextSize(20);
-        titleView.canScrollHorizontally(View.SCROLL_AXIS_HORIZONTAL);
-        titleView.setTypeface(Typeface.DEFAULT_BOLD);
-        LinearLayout.LayoutParams titlePars = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams viewpas = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        viewpas.setMargins(30, 15, 30, 15);
-        titleLayout.addView(titleView, titlePars);
-        View view = new View(getContext());
-        view.setBackgroundColor(getActivity().getResources().getColor(R.color.black_alpha_50));
+            RelativeLayout titleLayout = new RelativeLayout(getContext());
+            titleLayout.setGravity(Gravity.CENTER);
+            TextView titleView = new TextView(getContext());
+            titleView.setText(title);
+            titleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            titleView.setSingleLine(true);
+            titleView.setMarqueeRepeatLimit(-1);
+            titleView.setSelected(true);
+            titleView.setTextSize(20);
+            titleView.canScrollHorizontally(View.SCROLL_AXIS_HORIZONTAL);
+            titleView.setTypeface(Typeface.DEFAULT_BOLD);
+            LinearLayout.LayoutParams titlePars = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams viewpas = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
+            viewpas.setMargins(30, 15, 30, 15);
+            titleLayout.addView(titleView, titlePars);
+            View view = new View(getContext());
+            view.setBackgroundColor(getActivity().getResources().getColor(R.color.black_alpha_50));
 
-        TextView textView = new TextView(getContext());
-        textView.setText("Request to download the document?");
-        textView.setTextSize(15);
+            TextView textView = new TextView(getContext());
+            textView.setText("Request to download the document?");
+            textView.setTextSize(15);
 
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params1.setMargins(30, 10, 30, 0);
-        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 200);
-        params2.setMargins(30, 10, 30, 0);
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params1.setMargins(30, 10, 30, 0);
+            LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 200);
+            params2.setMargins(30, 10, 30, 0);
 
-        EditText editText = new EditText(getContext());
-        editText.setHint("Information for approval *");
-        editText.setTextSize(15);
-        editText.setLines(8);
-        editText.setPadding(10, 10, 10, 10);
-        editText.setMaxLines(10);
-        editText.setGravity(Gravity.TOP);
+            EditText editText = new EditText(getContext());
+            editText.setHint("Information for approval *");
+            editText.setTextSize(15);
+            editText.setLines(8);
+            editText.setPadding(10, 10, 10, 10);
+            editText.setMaxLines(10);
+            editText.setGravity(Gravity.TOP);
 //        editText.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        editText.setBackground(getActivity().getResources().getDrawable(R.drawable.rounder_editext));
+            editText.setBackground(getActivity().getResources().getDrawable(R.drawable.rounder_editext));
 
-        linearLayout.addView(titleLayout, params1);
-        linearLayout.addView(view, viewpas);
-        linearLayout.addView(textView, params1);
-        linearLayout.addView(editText, params2);
+            linearLayout.addView(titleLayout, params1);
+            linearLayout.addView(view, viewpas);
+            linearLayout.addView(textView, params1);
+            linearLayout.addView(editText, params2);
 
-        mCancel = (Button) dialog.findViewById(R.id.btn_proceed);
-        mCancel.setText("Cancel");
-        mOkay = (Button) dialog.findViewById(R.id.btn_cancel);
-        mOkay.setText("Request");
+            mCancel = (Button) dialog.findViewById(R.id.btn_proceed);
+            mCancel.setText("Cancel");
+            mOkay = (Button) dialog.findViewById(R.id.btn_cancel);
+            mOkay.setText("Request");
 
-        mOkay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Map<String, String> params = new HashMap<>();
-                params.put("bc_user_requester", databaseHelper.getMyContact().getJabberId());
-                params.put("id_file", id + "");
-                params.put("link_file", url);
-                params.put("keterangan", editText.getText() + "");
-                params.put("nama_user_requester", dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
-                params.put("nik_requester", dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
-                params.put("nama_file", title);
-                params.put("datas", jsonData());
+            mOkay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("bc_user_requester", databaseHelper.getMyContact().getJabberId());
+                    params.put("id_file", id + "");
+                    params.put("link_file", url);
+                    params.put("keterangan", editText.getText() + "");
+                    params.put("nama_user_requester", dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
+                    params.put("nik_requester", dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
+                    params.put("nama_file", title);
+                    params.put("datas", jsonData());
 
-                Log.w("ating yinguut", jsonData());
-                if (editText.getText().toString().equalsIgnoreCase("")) {
-                    editText.setError("Must be filled");
-                } else {
-                    getDialog().dismiss();
-                    getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Request", params, true);
-                    Toast.makeText(getActivity(), "Mohon tunggu untuk approvement", Toast.LENGTH_SHORT).show();
+                    Log.w("ating yinguut", jsonData());
+                    if (editText.getText().toString().equalsIgnoreCase("")) {
+                        editText.setError("Must be filled");
+                    } else {
+                        getDialog().dismiss();
+                        getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Request", params, true);
+                        Toast.makeText(getActivity(), "Mohon tunggu untuk approvement", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        });
+            });
 
-        mCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getDialog().dismiss();
-            }
-        });
-
+            mCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getDialog().dismiss();
+                }
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return dialog;
     }
 
@@ -201,6 +206,7 @@ public class DialogFormChildRequestDoc extends DialogFragment {
 
         } catch (Exception e) {
             e.printStackTrace();
+            reportCatch(e.getLocalizedMessage());
         }
         return datas.toString();
     }
@@ -215,13 +221,16 @@ public class DialogFormChildRequestDoc extends DialogFragment {
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
-                    if (hide) {
-                        Log.w("sukses harusee", response);
-                        //Toast.makeText((FragmentActivity) getActivity(), "sukses", Toast.LENGTH_SHORT).show();
-                        /*ByonchatBaseMallKelapaGadingActivity ss = (ByonchatBaseMallKelapaGadingActivity) (FragmentActivity) getActivity();
-                        ss.finish();*/
+                    try {
+                        if (hide) {
+                            Log.w("sukses harusee", response);
+                            //Toast.makeText((FragmentActivity) getActivity(), "sukses", Toast.LENGTH_SHORT).show();
+                                /*ByonchatBaseMallKelapaGadingActivity ss = (ByonchatBaseMallKelapaGadingActivity) (FragmentActivity) getActivity();
+                                ss.finish();*/
+                        }
+                    }catch (Exception e) {
+                        reportCatch(e.getLocalizedMessage());
                     }
-
                 },
                 error -> {
                     rdialog.dismiss();

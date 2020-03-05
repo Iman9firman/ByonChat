@@ -29,6 +29,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.Date;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by byonc on 5/9/2017.
  */
@@ -53,120 +55,134 @@ public class ConfirmationSendFileVideo extends AppCompatActivity implements OnTr
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header(getWindow()));
 
-        uriImage = getIntent().getStringExtra("file");
-        name = getIntent().getStringExtra("name");
-        type = getIntent().getStringExtra("type");
-        from = getIntent().getStringExtra("from");
-        title = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
-        typeChat = getIntent().getIntExtra(ConversationActivity.KEY_CONVERSATION_TYPE, 0);
+        try {
+            uriImage = getIntent().getStringExtra("file");
+            name = getIntent().getStringExtra("name");
+            type = getIntent().getStringExtra("type");
+            from = getIntent().getStringExtra("from");
+            title = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+            typeChat = getIntent().getIntExtra(ConversationActivity.KEY_CONVERSATION_TYPE, 0);
 
-        //setting progressbar
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.setMessage("Trimming your video...");
+            //setting progressbar
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.setMessage("Trimming your video...");
 
-        mVideoTrimmer = ((K4LVideoTrimmer) findViewById(R.id.timeLine));
+            mVideoTrimmer = ((K4LVideoTrimmer) findViewById(R.id.timeLine));
 
-        if (mVideoTrimmer != null) {
+            if (mVideoTrimmer != null) {
 
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(getApplicationContext(), Uri.parse(uriImage));
-            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            File file = new File(uriImage);
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(getApplicationContext(), Uri.parse(uriImage));
+                String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                File file = new File(uriImage);
 
-            if (file.exists()) {
-                double bytes = file.length();
-                double kilobytes = (bytes / 1024);
-                double megabytes = (kilobytes / 1024);
-                if (megabytes > 16) {
-                    if (Integer.parseInt(String.valueOf(time)) > (3 * 60000)) {
-                        //video dipotong dan tidak di resize//169877
-                        mVideoTrimmer.setMaxDuration(10, true);
+                if (file.exists()) {
+                    double bytes = file.length();
+                    double kilobytes = (bytes / 1024);
+                    double megabytes = (kilobytes / 1024);
+                    if (megabytes > 16) {
+                        if (Integer.parseInt(String.valueOf(time)) > (3 * 60000)) {
+                            //video dipotong dan tidak di resize//169877
+                            mVideoTrimmer.setMaxDuration(10, true);
+                        } else {
+                            //video tidak di potong dan di resize
+                            mVideoTrimmer.setMaxDuration(Integer.parseInt(String.valueOf(time)), false);
+                        }
                     } else {
-                        //video tidak di potong dan di resize
+                        //video tidak di resize
                         mVideoTrimmer.setMaxDuration(Integer.parseInt(String.valueOf(time)), false);
                     }
                 } else {
-                    //video tidak di resize
+                    //tidak di compress
                     mVideoTrimmer.setMaxDuration(Integer.parseInt(String.valueOf(time)), false);
                 }
-            } else {
-                //tidak di compress
-                mVideoTrimmer.setMaxDuration(Integer.parseInt(String.valueOf(time)), false);
-            }
 
-            mVideoTrimmer.setOnTrimVideoListener(this);
-            mVideoTrimmer.setOnK4LVideoListener(this);
-            mVideoTrimmer.setVideoURI(Uri.parse(uriImage));
-            mVideoTrimmer.setVideoInformationVisibility(true);
+                mVideoTrimmer.setOnTrimVideoListener(this);
+                mVideoTrimmer.setOnK4LVideoListener(this);
+                mVideoTrimmer.setVideoURI(Uri.parse(uriImage));
+                mVideoTrimmer.setVideoInformationVisibility(true);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
-
     public void DoDone() {
-        Intent intent = new Intent(CLOSEMEMEACTIVITY);
-        sendOrderedBroadcast(intent, null);
-        finish();
+        try {
+            Intent intent = new Intent(CLOSEMEMEACTIVITY);
+            sendOrderedBroadcast(intent, null);
+            finish();
 
-        if (ConversationActivity.instance != null) {
-            try {
-                ConversationActivity.instance.finish();
-            } catch (Exception e) {
-            }
-        }
-
-        Intent i = new Intent(this, ConversationActivity.class);
-        String jabberId = name;
-        String action = this.getIntent().getAction();
-        if (Intent.ACTION_SEND.equals(action)) {
-            Bundle extras = this.getIntent().getExtras();
-            if (extras.containsKey(Intent.EXTRA_STREAM)) {
+            if (ConversationActivity.instance != null) {
                 try {
-                    Uri uri = (Uri) extras.getParcelable(Intent.EXTRA_STREAM);
-                    String pathToSend = MediaProcessingUtil.getRealPathFromURI(
-                            this.getContentResolver(), uri);
-                    i.putExtra(ConversationActivity.KEY_FILE_TO_SEND,
-                            pathToSend);
+                    ConversationActivity.instance.finish();
                 } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(),
-                            "Error getting file from action send: "
-                                    + e.getMessage(), e);
                 }
             }
-        }
 
-        i.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
-        startActivity(i);
+            Intent i = new Intent(this, ConversationActivity.class);
+            String jabberId = name;
+            String action = this.getIntent().getAction();
+            if (Intent.ACTION_SEND.equals(action)) {
+                Bundle extras = this.getIntent().getExtras();
+                if (extras.containsKey(Intent.EXTRA_STREAM)) {
+                    try {
+                        Uri uri = (Uri) extras.getParcelable(Intent.EXTRA_STREAM);
+                        String pathToSend = MediaProcessingUtil.getRealPathFromURI(
+                                this.getContentResolver(), uri);
+                        i.putExtra(ConversationActivity.KEY_FILE_TO_SEND,
+                                pathToSend);
+                    } catch (Exception e) {
+                        Log.e(getClass().getSimpleName(),
+                                "Error getting file from action send: "
+                                        + e.getMessage(), e);
+                    }
+                }
+            }
+
+            i.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+            startActivity(i);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void sendFile(Message message) {
+        try {
+            Message vo = message;
+            MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+            messengerHelper.insertData(vo);
 
-        Message vo = message;
-        MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
-        messengerHelper.insertData(vo);
+            FilesURLDatabaseHelper dbUpload = new FilesURLDatabaseHelper(this);
+            FilesURL files = new FilesURL((int) vo.getId(), "1", "upload");
+            dbUpload.open();
+            dbUpload.insertFilesUpload(files);
+            dbUpload.close();
 
-        FilesURLDatabaseHelper dbUpload = new FilesURLDatabaseHelper(this);
-        FilesURL files = new FilesURL((int) vo.getId(), "1", "upload");
-        dbUpload.open();
-        dbUpload.insertFilesUpload(files);
-        dbUpload.close();
-
-        Intent intent = new Intent(this, UploadService.class);
-        intent.putExtra(UploadService.ACTION, "getLinkUpload");
-        intent.putExtra(UploadService.KEY_MESSAGE, vo);
-        intent.putExtra(UploadService.KEY_STATUS_VIDEO, "1"); /* 1 = first upload, 2 = second upload when failed */
-        startService(intent);
+            Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, "getLinkUpload");
+            intent.putExtra(UploadService.KEY_MESSAGE, vo);
+            intent.putExtra(UploadService.KEY_STATUS_VIDEO, "1"); /* 1 = first upload, 2 = second upload when failed */
+            startService(intent);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private Message createNewMessage(String message, String sourceAddr, String destination, int conversationType, String type) {
         Message vo = new Message(sourceAddr, destination, message);
-        vo.setType(type);
-        vo.setSendDate(new Date());
-        vo.setStatus(Message.STATUS_INPROGRESS);
-        vo.generatePacketId();
-        if (conversationType == ConversationActivity.CONVERSATION_TYPE_GROUP) {
-            vo.setGroupChat(true);
-            vo.setSourceInfo(sourceAddr);
+        try {
+            vo.setType(type);
+            vo.setSendDate(new Date());
+            vo.setStatus(Message.STATUS_INPROGRESS);
+            vo.generatePacketId();
+            if (conversationType == ConversationActivity.CONVERSATION_TYPE_GROUP) {
+                vo.setGroupChat(true);
+                vo.setSourceInfo(sourceAddr);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
         return vo;
     }
@@ -220,43 +236,56 @@ public class ConfirmationSendFileVideo extends AppCompatActivity implements OnTr
             e.printStackTrace();
         }
 
-        if (type.equalsIgnoreCase(Message.TYPE_VIDEO)) {
-            String textCaption = textMessage != null ? textMessage : "";
-            MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+        try {
+            if (type.equalsIgnoreCase(Message.TYPE_VIDEO)) {
+                String textCaption = textMessage != null ? textMessage : "";
+                MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
 
-            Message msg = createNewMessage(jsonMessage(path, outpath, startpos, endpos, fileSizeInMB, textCaption), messengerHelper.getMyContact().getJabberId(), name, typeChat, type);
-            sendFile(msg);
-            DoDone();
+                Message msg = createNewMessage(jsonMessage(path, outpath, startpos, endpos, fileSizeInMB, textCaption), messengerHelper.getMyContact().getJabberId(), name, typeChat, type);
+                sendFile(msg);
+                DoDone();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public void cancelAction() {
-        /*mProgressDialog.cancel();*/
-        mVideoTrimmer.destroy();
-        finish();
+        try {
+            mVideoTrimmer.destroy();
+            finish();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onError(final String message) {
-        /*mProgressDialog.cancel();*/
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ConfirmationSendFileVideo.this, message, Toast.LENGTH_SHORT).show();
-            }
-        });
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(ConfirmationSendFileVideo.this, message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onVideoPrepared() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-//                Toast.makeText(ConfirmationSendFileVideo.this, "onVideoPrepared", Toast.LENGTH_SHORT).show();
-            }
-        });
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+//                    Toast.makeText(ConfirmationSendFileVideo.this, "onVideoPrepared", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 

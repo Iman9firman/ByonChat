@@ -60,6 +60,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 @SuppressLint("ValidFragment")
 public class ListContactBotFragment extends Fragment {
 
@@ -85,19 +87,28 @@ public class ListContactBotFragment extends Fragment {
 
     @Override
     public void onResume() {
-     //   refreshList();
-        IntentFilter f = new IntentFilter(
-               MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY);
-        f.setPriority(2);
-        context.registerReceiver(broadcastHandler, f);
+        //   refreshList();
+        try {
+            IntentFilter f = new IntentFilter(
+                    MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY);
+            f.setPriority(2);
+            context.registerReceiver(broadcastHandler, f);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        context.unregisterReceiver(broadcastHandler);
-        super.onPause();
+        try {
+            context.unregisterReceiver(broadcastHandler);
+            super.onPause();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
+
     public void setMenuId(int menuId) {
         this.menuId = menuId;
     }
@@ -119,81 +130,60 @@ public class ListContactBotFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.list_contact_bot, container, false);
+        try {
+            if (context == null) {
+                context = getActivity().getApplicationContext();
+            }
 
-        if(context==null){
-            context = getActivity().getApplicationContext();
+            if (dbhelper == null) {
+                dbhelper = MessengerDatabaseHelper.getInstance(context);
+            }
+            if (botListDB == null) {
+                botListDB = BotListDB.getInstance(context);
+            }
+
+            lv = (ListView) rootView.findViewById(R.id.list_view);
+
+            if (pdialog == null) {
+                pdialog = new ProgressDialog(getActivity());
+                pdialog.setIndeterminate(true);
+                pdialog.setMessage("Loading ");
+                pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            }
+
+            // Adding items to listview
+            adapter = new BotAdapter(getActivity(), botArrayListist, true);
+            lv.setAdapter(adapter);
+            lv.setClickable(true);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
+                    String idList = adapter.newList().get(position).getId();
+
+                    Cursor cur = botListDB.getSingleById(idList);
+                    String jbId = "";
+                    if (cur.getCount() > 0) {
+                        jbId = cur.getString(cur.getColumnIndex(BotListDB.BOT_NAME));
+                    }
+                    cur.close();
+                    if (jbId.startsWith("https://")) {
+                        Intent intent = new Intent(context, WebViewByonActivity.class);
+                        intent.putExtra(WebViewByonActivity.KEY_LINK_LOAD, jbId);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(context, ConversationActivity.class);
+                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, jbId.toLowerCase());
+                        startActivity(intent);
+                    }
+                }
+            });
+
+            registerForContextMenu(lv);
+            setHasOptionsMenu(true);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        if (dbhelper == null) {
-            dbhelper = MessengerDatabaseHelper.getInstance(context);
-        }
-        if (botListDB == null) {
-            botListDB = BotListDB.getInstance(context);
-        }
-
-        lv = (ListView) rootView.findViewById(R.id.list_view);
-
-        if (pdialog == null) {
-            pdialog = new ProgressDialog(getActivity());
-            pdialog.setIndeterminate(true);
-            pdialog.setMessage("Loading ");
-            pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        }
-
-        // Adding items to listview
-        adapter = new BotAdapter(getActivity(),botArrayListist,true);
-        lv.setAdapter(adapter);
-        lv.setClickable(true);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
-            String idList = adapter.newList().get(position).getId();
-
-            Cursor cur = botListDB.getSingleById(idList);
-            String jbId = "";
-            if (cur.getCount() > 0) {
-                jbId = cur.getString(cur.getColumnIndex(BotListDB.BOT_NAME));
-            }
-            cur.close();
-            if (jbId.startsWith("https://")) {
-                Intent intent = new Intent(context, WebViewByonActivity.class);
-                intent.putExtra(WebViewByonActivity.KEY_LINK_LOAD, jbId);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(context, ConversationActivity.class);
-                intent.putExtra(ConversationActivity.KEY_JABBER_ID, jbId.toLowerCase());
-                startActivity(intent);
-            }
-            }
-        });
-
-/*
-        inputSearch.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                // When user changed the Text
-
-                ListContactBotFragment.this.adapter.getFilter().filter(cs);
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                          int arg3) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
-            }
-        });
-*/
-
-        registerForContextMenu(lv);
-        setHasOptionsMenu(true);
         return rootView;
     }
 
@@ -208,114 +198,109 @@ public class ListContactBotFragment extends Fragment {
         }
     }
 
-    /*Intent intent = new Intent(context, WebViewByonActivity.class);
-                        intent.putExtra(WebViewByonActivity.KEY_LINK_LOAD, "https://" + MessengerConnectionService.FILE_SERVER + "/personal_room/index.php?userid=" + dbhelper.getMyContact().getJabberId());
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
-                        return true;
-                    case R.id.menu_other_room:
-                        Intent intent2 = new Intent(context, WebViewByonActivity.class);
-                        intent2.putExtra(WebViewByonActivity.KEY_LINK_LOAD, "https://" + MessengerConnectionService.FILE_SERVER + "/other_room/index.php");
-                        intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent2);*/
-
-
-
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,  ContextMenu.ContextMenuInfo menuInfo){
+    public void onCreateContextMenu(ContextMenu menu, View v,  ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        AdapterView.AdapterContextMenuInfo aInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        final Integer idList = Integer.valueOf(adapter.newList().get(aInfo.position).getId());
-        if (!adapter.newList().get(aInfo.position).getName().equalsIgnoreCase(roomSticky)){
-            menu.add(1, idList, 1, "Delete");
-        }
-        menu.add(2, idList, 1, "Info");
-        menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int menuindex = item.getItemId();
-
-                switch (menuindex) {
-                    case 1:
-                        if(NetworkInternetConnectionStatus.getInstance(context).isOnline(context)){
-                            pdialog.show();
-
-                            Cursor cur = botListDB.getSingleById(String.valueOf(item.getItemId()));
-                            String jbId = "";
-                            if (cur.getCount()>0) {
-                                jbId =  cur.getString(cur.getColumnIndex(BotListDB.BOT_NAME));
-                            }
-                            cur.close();
-
-                            String key = new ValidationsKey().getInstance(context).key(true);
-                            if (key.equalsIgnoreCase("null")){
-                                //Toast.makeText(context,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
-                                pdialog.dismiss();
-                            }else{
-                                new removeBotRequest(context).execute(key,jbId,String.valueOf(item.getItemId()));
-                            }
-                        }else{
-                            Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    case 2:
-                        if(NetworkInternetConnectionStatus.getInstance(context).isOnline(context)){
-
-                            Cursor cur = botListDB.getSingleById(String.valueOf(item.getItemId()));
-                            String jbId = "";
-                            if (cur.getCount()>0) {
-                                jbId =  cur.getString(cur.getColumnIndex(BotListDB.BOT_NAME));
-                            }
-                            cur.close();
-
-                            String key = new ValidationsKey().getInstance(context).key(false);
-                            if (key.equalsIgnoreCase("null")){
-                                //Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                            }else{
-                                new requestDetail(context).execute(key,jbId);
-                            }
-
-                        }else{
-                            Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-                        }
-                        break;
-                    default:
-                        Toast.makeText(getView().getContext(), "invalid option!", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                return false;
+        try {
+            AdapterView.AdapterContextMenuInfo aInfo = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            final Integer idList = Integer.valueOf(adapter.newList().get(aInfo.position).getId());
+            if (!adapter.newList().get(aInfo.position).getName().equalsIgnoreCase(roomSticky)) {
+                menu.add(1, idList, 1, "Delete");
             }
-        });
+            menu.add(2, idList, 1, "Info");
+            menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    int menuindex = item.getItemId();
+
+                    switch (menuindex) {
+                        case 1:
+                            if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                                pdialog.show();
+
+                                Cursor cur = botListDB.getSingleById(String.valueOf(item.getItemId()));
+                                String jbId = "";
+                                if (cur.getCount() > 0) {
+                                    jbId = cur.getString(cur.getColumnIndex(BotListDB.BOT_NAME));
+                                }
+                                cur.close();
+
+                                String key = new ValidationsKey().getInstance(context).key(true);
+                                if (key.equalsIgnoreCase("null")) {
+                                    //Toast.makeText(context,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                                    pdialog.dismiss();
+                                } else {
+                                    new removeBotRequest(context).execute(key, jbId, String.valueOf(item.getItemId()));
+                                }
+                            } else {
+                                Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+                        case 2:
+                            if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+
+                                Cursor cur = botListDB.getSingleById(String.valueOf(item.getItemId()));
+                                String jbId = "";
+                                if (cur.getCount() > 0) {
+                                    jbId = cur.getString(cur.getColumnIndex(BotListDB.BOT_NAME));
+                                }
+                                cur.close();
+
+                                String key = new ValidationsKey().getInstance(context).key(false);
+                                if (key.equalsIgnoreCase("null")) {
+                                    //Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    new requestDetail(context).execute(key, jbId);
+                                }
+
+                            } else {
+                                Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+                        default:
+                            Toast.makeText(getView().getContext(), "invalid option!", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    return false;
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // TODO Auto-generated method stub
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_rooms, menu);
-        final SearchManager searchManager =
-                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        try {
+            inflater.inflate(R.menu.menu_rooms, menu);
+            final SearchManager searchManager =
+                    (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
 
-        // Retrieves the SearchView from the search menu item
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+            // Retrieves the SearchView from the search menu item
+            final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
 
-        // Assign searchable info to SearchView
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getActivity().getComponentName()));
+            // Assign searchable info to SearchView
+            searchView.setSearchableInfo(
+                    searchManager.getSearchableInfo(getActivity().getComponentName()));
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String queryText) {
-                // Nothing needs to happen when the user submits the search string
-                return true;
-            }
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String queryText) {
+                    // Nothing needs to happen when the user submits the search string
+                    return true;
+                }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                ListContactBotFragment.this.adapter.getFilter().filter(newText);
-                return true;
-            }
-        });
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    ListContactBotFragment.this.adapter.getFilter().filter(newText);
+                    return true;
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -340,30 +325,36 @@ public class ListContactBotFragment extends Fragment {
     }
 
 
-    public void refreshList(){
+    public void refreshList() {
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    botArrayListist = botListDB.retriveallList();
+                    adapter.refresAdapter(botArrayListist);
+                }
+            });
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                botArrayListist = botListDB.retriveallList();
-                adapter.refresAdapter(botArrayListist);
-            }
-        });
-
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
-    public void showInfo(String bot,String desc){
+    public void showInfo(String bot,String desc) {
+        try {
+            AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
+            alertbox.setTitle(Utility.roomName(getActivity().getApplicationContext(), bot, true));
+            alertbox.setMessage(desc);
+            alertbox.setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
 
-        AlertDialog.Builder alertbox = new AlertDialog.Builder(getActivity());
-        alertbox.setTitle(Utility.roomName(getActivity().getApplicationContext(),bot,true));
-        alertbox.setMessage(desc);
-        alertbox.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
+                }
+            });
 
-            }
-        });
-
-        alertbox.show();
+            alertbox.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 
@@ -456,28 +447,31 @@ public class ListContactBotFragment extends Fragment {
 
         protected void onPostExecute(String content) {
             pdialog.dismiss();
-            if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
-                        pdialog.show();
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
-                          //  Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                            pdialog.dismiss();
-                        }else{
-                            new requestDetail(mContext).execute(key,bot);
+            try {
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            pdialog.show();
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                //  Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                                pdialog.dismiss();
+                            } else {
+                                new requestDetail(mContext).execute(key, bot);
+                            }
+                        } else {
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
-                    }else{
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, desc, Toast.LENGTH_SHORT).show();
                     }
-                }else {
-                    Toast.makeText(context, desc, Toast.LENGTH_SHORT).show();
+                } else {
+                    showInfo(bot, desc);
                 }
-            } else {
-                showInfo( bot, desc);
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
-
     }
 
     class removeBotRequest extends AsyncTask<String, Void, String> {
@@ -584,35 +578,37 @@ public class ListContactBotFragment extends Fragment {
 
         protected void onPostExecute(String content) {
             pdialog.dismiss();
-            if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
-                        pdialog.show();
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
-                           // Toast.makeText(context,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
-                            pdialog.dismiss();
-                        }else{
-                            new removeBotRequest(mContext).execute(key,nameBot,id);
+            try {
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            pdialog.show();
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                // Toast.makeText(context,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                                pdialog.dismiss();
+                            } else {
+                                new removeBotRequest(mContext).execute(key, nameBot, id);
+                            }
+                        } else {
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
-                    }else{
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
+                } else {
+                    if (code.equalsIgnoreCase("200")) {
+                        botListDB.deletebyId(id);
+                        refreshList();
+                    } else {
+                        Toast.makeText(context, desc, Toast.LENGTH_SHORT);
+                    }
                 }
-            } else {
-                if(code.equalsIgnoreCase("200")){
-                    botListDB.deletebyId(id);
-                    refreshList();
-                }else{
-                    Toast.makeText(context, desc, Toast.LENGTH_SHORT);
-                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
     }
-
-
 
  }

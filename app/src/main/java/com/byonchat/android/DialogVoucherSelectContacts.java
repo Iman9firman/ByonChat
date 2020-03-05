@@ -43,6 +43,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
@@ -232,39 +234,56 @@ public class DialogVoucherSelectContacts extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        id = getArguments().getString("pid");
-        judul = getArguments().getString("pjudul");
-        serial = getArguments().getString("pserial");
-        tglvalid = getArguments().getString("ptglvalid");
-        nominal = getArguments().getString("pnominal");
-        bgcolor = getArguments().getString("pbgcolor");
-        textcolor = getArguments().getString("ptextcolor");
-        background = getArguments().getString("pbackground");
+        try {
+            id = getArguments().getString("pid");
+            judul = getArguments().getString("pjudul");
+            serial = getArguments().getString("pserial");
+            tglvalid = getArguments().getString("ptglvalid");
+            nominal = getArguments().getString("pnominal");
+            bgcolor = getArguments().getString("pbgcolor");
+            textcolor = getArguments().getString("ptextcolor");
+            background = getArguments().getString("pbackground");
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void handleSendImage(Intent intent, String type, String jabber) {
-        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        if (imageUri != null) {
-            String selectedImagePath = ImageFilePath.getPath(getContext().getApplicationContext(), imageUri);
-            Intent intent2 = new Intent(getContext().getApplicationContext(), ConfirmationSendFile.class);
-            String jabberId = jabber;
-            intent2.putExtra("file", selectedImagePath);
-            intent2.putExtra("name", jabberId);
-            intent2.putExtra("type", type);
-            startActivity(intent2);
+        try {
+            Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            if (imageUri != null) {
+                String selectedImagePath = ImageFilePath.getPath(getContext().getApplicationContext(), imageUri);
+                Intent intent2 = new Intent(getContext().getApplicationContext(), ConfirmationSendFile.class);
+                String jabberId = jabber;
+                intent2.putExtra("file", selectedImagePath);
+                intent2.putExtra("name", jabberId);
+                intent2.putExtra("type", type);
+                startActivity(intent2);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+        try {
+            getActivity().overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void refreshContactList() {
-        AsyncTask<Void, Contact, Void> contactLoader = new ContactLoader();
-        contactLoader.execute();
+        try {
+            AsyncTask<Void, Contact, Void> contactLoader = new ContactLoader();
+            contactLoader.execute();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
+
     class ContactLoader extends AsyncTask<Void, Contact, Void> {
         ArrayList<IconItem> arrayListContact = new ArrayList<IconItem>();
 
@@ -273,45 +292,53 @@ public class DialogVoucherSelectContacts extends DialogFragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            if (contactIsRefereshing)
-                return null;
-            contactIsRefereshing = true;
+            try {
+                if (contactIsRefereshing)
+                    return null;
+                contactIsRefereshing = true;
 //            if(contactsFragment != null){
 //                contactsFragment.clearItems();
 //            }
-            if (items != null) {
-                items.clear();
-            }
-
-            contacts.clear();
-            HashMap<Long, Contact> dbMap = loadContactFromDb();
-            if (dbMap.size() > 0) {
-                for (Iterator<Long> iterator = dbMap.keySet().iterator(); iterator
-                        .hasNext(); ) {
-                    Long l = iterator.next();
-                    Contact c = dbMap.get(l);
-                    publishProgress(c);
+                if (items != null) {
+                    items.clear();
                 }
-            } else {
-                publishProgress(new Contact[]{null});
+
+                contacts.clear();
+                HashMap<Long, Contact> dbMap = loadContactFromDb();
+                if (dbMap.size() > 0) {
+                    for (Iterator<Long> iterator = dbMap.keySet().iterator(); iterator
+                            .hasNext(); ) {
+                        Long l = iterator.next();
+                        Contact c = dbMap.get(l);
+                        publishProgress(c);
+                    }
+                } else {
+                    publishProgress(new Contact[]{null});
+                }
+            }catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
             return null;
         }
 
         @Override
         protected void onProgressUpdate(Contact... values) {
-            Contact data = values[0];
-            if (data != null) {
-                IconItem item = new IconItem(data.getJabberId(),
-                        data.getName(), data.getStatus() != null ? data.getStatus() : "", null, data);
-                setProfilePicture(item, data);
-                arrayListContact.add(item);
-                contacts.put(data.getJabberId(), data);
+            try {
+                Contact data = values[0];
+                if (data != null) {
+                    IconItem item = new IconItem(data.getJabberId(),
+                            data.getName(), data.getStatus() != null ? data.getStatus() : "", null, data);
+                    setProfilePicture(item, data);
+                    arrayListContact.add(item);
+                    contacts.put(data.getJabberId(), data);
 
-            } else {
-                mAdapter = new ListVoucherContactAdapter(getContext(), arrayListContact);
-                mAdapter.notifyDataSetChanged();
-                mRecyclerView.setAdapter(mAdapter);
+                } else {
+                    mAdapter = new ListVoucherContactAdapter(getContext(), arrayListContact);
+                    mAdapter.notifyDataSetChanged();
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
@@ -343,10 +370,14 @@ public class DialogVoucherSelectContacts extends DialogFragment {
     }
 
     private void setProfilePicture(IconItem item, Contact contact) {
-        File f = getActivity().getFileStreamPath(MediaProcessingUtil
-                .getProfilePicName(contact));
-        if (f.exists()) {
-            item.setImageUri(Uri.fromFile(f));
+        try {
+            File f = getActivity().getFileStreamPath(MediaProcessingUtil
+                    .getProfilePicName(contact));
+            if (f.exists()) {
+                item.setImageUri(Uri.fromFile(f));
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 }

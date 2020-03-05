@@ -16,6 +16,8 @@ import android.view.View;
 import com.byonchat.android.R;
 import com.byonchat.android.utils.AndroidUtil;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class SoloCircleProgress extends View implements SoloProgressView {
     private Paint textPaint;
     private RectF rectF = new RectF();
@@ -33,8 +35,8 @@ public class SoloCircleProgress extends View implements SoloProgressView {
     private final int defaultUnfinishedColor = Color.rgb(204, 204, 204);
     private final int defaultTextColor = Color.WHITE;
     private final int defaultMax = 100;
-    private final float defaultTextSize;
-    private final int minSize;
+    private float defaultTextSize;
+    private int minSize;
 
     private static final String INSTANCE_STATE = "saved_instance";
     private static final String INSTANCE_TEXT_COLOR = "text_color";
@@ -59,40 +61,52 @@ public class SoloCircleProgress extends View implements SoloProgressView {
     public SoloCircleProgress(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        defaultTextSize = AndroidUtil.sp2px(getResources(), 18);
-        minSize = (int) AndroidUtil.dp2px(getResources(), 100);
+        try {
+            defaultTextSize = AndroidUtil.sp2px(getResources(), 18);
+            minSize = (int) AndroidUtil.dp2px(getResources(), 100);
 
-        final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CircleProgress, defStyleAttr, 0);
-        initByAttributes(attributes);
-        attributes.recycle();
+            final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CircleProgress, defStyleAttr, 0);
+            initByAttributes(attributes);
+            attributes.recycle();
 
-        initPainters();
+            initPainters();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void initByAttributes(TypedArray attributes) {
-        finishedColor = attributes.getColor(R.styleable.CircleProgress_qcircle_finished_color, defaultFinishedColor);
-        unfinishedColor = attributes.getColor(R.styleable.CircleProgress_qcircle_unfinished_color, defaultUnfinishedColor);
-        textColor = attributes.getColor(R.styleable.CircleProgress_qcircle_text_color, defaultTextColor);
-        textSize = attributes.getDimension(R.styleable.CircleProgress_qcircle_text_size, defaultTextSize);
+        try {
+            finishedColor = attributes.getColor(R.styleable.CircleProgress_qcircle_finished_color, defaultFinishedColor);
+            unfinishedColor = attributes.getColor(R.styleable.CircleProgress_qcircle_unfinished_color, defaultUnfinishedColor);
+            textColor = attributes.getColor(R.styleable.CircleProgress_qcircle_text_color, defaultTextColor);
+            textSize = attributes.getDimension(R.styleable.CircleProgress_qcircle_text_size, defaultTextSize);
 
-        setMax(attributes.getInt(R.styleable.CircleProgress_qcircle_max, defaultMax));
-        setProgress(attributes.getInt(R.styleable.CircleProgress_qcircle_progress, 0));
+            setMax(attributes.getInt(R.styleable.CircleProgress_qcircle_max, defaultMax));
+            setProgress(attributes.getInt(R.styleable.CircleProgress_qcircle_progress, 0));
 
-        if (attributes.getString(R.styleable.CircleProgress_qcircle_prefix_text) != null) {
-            setPrefixText(attributes.getString(R.styleable.CircleProgress_qcircle_prefix_text));
-        }
-        if (attributes.getString(R.styleable.CircleProgress_qcircle_suffix_text) != null) {
-            setSuffixText(attributes.getString(R.styleable.CircleProgress_qcircle_suffix_text));
+            if (attributes.getString(R.styleable.CircleProgress_qcircle_prefix_text) != null) {
+                setPrefixText(attributes.getString(R.styleable.CircleProgress_qcircle_prefix_text));
+            }
+            if (attributes.getString(R.styleable.CircleProgress_qcircle_suffix_text) != null) {
+                setSuffixText(attributes.getString(R.styleable.CircleProgress_qcircle_suffix_text));
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     protected void initPainters() {
-        textPaint = new TextPaint();
-        textPaint.setColor(textColor);
-        textPaint.setTextSize(textSize);
-        textPaint.setAntiAlias(true);
+        try {
+            textPaint = new TextPaint();
+            textPaint.setColor(textColor);
+            textPaint.setTextSize(textSize);
+            textPaint.setAntiAlias(true);
 
-        paint.setAntiAlias(true);
+            paint.setAntiAlias(true);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -210,28 +224,32 @@ public class SoloCircleProgress extends View implements SoloProgressView {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        float yHeight = getProgress() / (float) getMax() * getHeight();
-        float radius = getWidth() / 2f;
-        float angle = (float) (Math.acos((radius - yHeight) / radius) * 180 / Math.PI);
-        float startAngle = 90 + angle;
-        float sweepAngle = 360 - angle * 2;
-        paint.setColor(getUnfinishedColor());
-        canvas.drawArc(rectF, startAngle, sweepAngle, false, paint);
+        try {
+            float yHeight = getProgress() / (float) getMax() * getHeight();
+            float radius = getWidth() / 2f;
+            float angle = (float) (Math.acos((radius - yHeight) / radius) * 180 / Math.PI);
+            float startAngle = 90 + angle;
+            float sweepAngle = 360 - angle * 2;
+            paint.setColor(getUnfinishedColor());
+            canvas.drawArc(rectF, startAngle, sweepAngle, false, paint);
 
-        canvas.save();
-        canvas.rotate(180, getWidth() / 2, getHeight() / 2);
-        paint.setColor(getFinishedColor());
-        canvas.drawArc(rectF, 270 - angle, angle * 2, false, paint);
-        canvas.restore();
+            canvas.save();
+            canvas.rotate(180, getWidth() / 2, getHeight() / 2);
+            paint.setColor(getFinishedColor());
+            canvas.drawArc(rectF, 270 - angle, angle * 2, false, paint);
+            canvas.restore();
 
-        // Also works.
+            // Also works.
 //        paint.setColor(getFinishedColor());
 //        canvas.drawArc(rectF, 90 - angle, angle * 2, false, paint);
 
-        String text = getDrawText();
-        if (!TextUtils.isEmpty(text)) {
-            float textHeight = textPaint.descent() + textPaint.ascent();
-            canvas.drawText(text, (getWidth() - textPaint.measureText(text)) / 2.0f, (getWidth() - textHeight) / 2.0f, textPaint);
+            String text = getDrawText();
+            if (!TextUtils.isEmpty(text)) {
+                float textHeight = textPaint.descent() + textPaint.ascent();
+                canvas.drawText(text, (getWidth() - textPaint.measureText(text)) / 2.0f, (getWidth() - textHeight) / 2.0f, textPaint);
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -252,19 +270,23 @@ public class SoloCircleProgress extends View implements SoloProgressView {
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        if (state instanceof Bundle) {
-            final Bundle bundle = (Bundle) state;
-            textColor = bundle.getInt(INSTANCE_TEXT_COLOR);
-            textSize = bundle.getFloat(INSTANCE_TEXT_SIZE);
-            finishedColor = bundle.getInt(INSTANCE_FINISHED_STROKE_COLOR);
-            unfinishedColor = bundle.getInt(INSTANCE_UNFINISHED_STROKE_COLOR);
-            initPainters();
-            setMax(bundle.getInt(INSTANCE_MAX));
-            setProgress(bundle.getInt(INSTANCE_PROGRESS));
-            prefixText = bundle.getString(INSTANCE_PREFIX);
-            suffixText = bundle.getString(INSTANCE_SUFFIX);
-            super.onRestoreInstanceState(bundle.getParcelable(INSTANCE_STATE));
-            return;
+        try {
+            if (state instanceof Bundle) {
+                final Bundle bundle = (Bundle) state;
+                textColor = bundle.getInt(INSTANCE_TEXT_COLOR);
+                textSize = bundle.getFloat(INSTANCE_TEXT_SIZE);
+                finishedColor = bundle.getInt(INSTANCE_FINISHED_STROKE_COLOR);
+                unfinishedColor = bundle.getInt(INSTANCE_UNFINISHED_STROKE_COLOR);
+                initPainters();
+                setMax(bundle.getInt(INSTANCE_MAX));
+                setProgress(bundle.getInt(INSTANCE_PROGRESS));
+                prefixText = bundle.getString(INSTANCE_PREFIX);
+                suffixText = bundle.getString(INSTANCE_SUFFIX);
+                super.onRestoreInstanceState(bundle.getParcelable(INSTANCE_STATE));
+                return;
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
         super.onRestoreInstanceState(state);
     }

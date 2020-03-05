@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.ExecutionException;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class FinalizingActivity extends AppCompatActivity {
 
     private static final String TAG = "FinalizingActivity";
@@ -36,21 +38,24 @@ public class FinalizingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finalizing);
-        FilteringImage.headerColor(getWindow(),FinalizingActivity.this,getResources().getColor(R.color.colorPrimary));
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(this);
-        }
-        IntervalDB db = new IntervalDB(getApplicationContext());
-        db.open();
+        try {
+            FilteringImage.headerColor(getWindow(), FinalizingActivity.this, getResources().getColor(R.color.colorPrimary));
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(this);
+            }
+            IntervalDB db = new IntervalDB(getApplicationContext());
+            db.open();
 
-        Cursor cursor = db.getSingleContact(12);
-        if(cursor.getCount()>0) {
-            db.deleteContact(12);
+            Cursor cursor = db.getSingleContact(12);
+            if (cursor.getCount() > 0) {
+                db.deleteContact(12);
+            }
+            cursor.close();
+            db.close();
+            getVersion();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        cursor.close();
-        db.close();
-        getVersion();
-
     }
 
     public void getVersion(){
@@ -74,8 +79,10 @@ public class FinalizingActivity extends AppCompatActivity {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+            reportCatch(e.getLocalizedMessage());
         } catch (ExecutionException e) {
             e.printStackTrace();
+            reportCatch(e.getLocalizedMessage());
         }
 
     }

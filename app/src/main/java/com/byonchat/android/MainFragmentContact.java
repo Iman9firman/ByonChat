@@ -21,6 +21,8 @@ import android.view.ViewGroup;
 
 import com.byonchat.android.contacts.ContactListFragment;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Iman Firmansyah on 11/23/2015.
  */
@@ -60,19 +62,23 @@ public class MainFragmentContact extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_rooms, menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(getContext(), NewSelectContactActivity.class);
-                intent.putExtra("messageText","");
-                intent.putExtra("type", "text/select");
-                startActivity(intent);
-                return false;
-            }
-        });
+        try {
+            inflater.inflate(R.menu.menu_rooms, menu);
+            MenuItem item = menu.findItem(R.id.action_search);
+            item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Intent intent = new Intent(getContext(), NewSelectContactActivity.class);
+                    intent.putExtra("messageText", "");
+                    intent.putExtra("type", "text/select");
+                    startActivity(intent);
+                    return false;
+                }
+            });
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class MyAdapter extends FragmentPagerAdapter{

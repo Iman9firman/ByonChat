@@ -13,6 +13,8 @@ import android.widget.VideoView;
 import com.byonchat.android.R;
 import com.byonchat.android.data.model.Video;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ByonchatStreamingVideoTubeActivity extends AppCompatActivity {
     public static String EXTRA_VIDEO = "extra_videos";
     public static String EXTRA_COLOR = "color";
@@ -41,30 +43,34 @@ public class ByonchatStreamingVideoTubeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.b_videotube_streaming_activity);
 
-        resolveVideos(savedInstanceState);
+        try {
+            resolveVideos(savedInstanceState);
 
-        vidView = (VideoView) findViewById(R.id.myVideo);
+            vidView = (VideoView) findViewById(R.id.myVideo);
 
-        progressDialog = new ProgressDialog(ByonchatStreamingVideoTubeActivity.this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+            progressDialog = new ProgressDialog(ByonchatStreamingVideoTubeActivity.this);
+            progressDialog.setMessage("Loading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
 
-        Uri vidUri = Uri.parse(video.url);
-        vidView.setVideoURI(vidUri);
-        vidView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
+            Uri vidUri = Uri.parse(video.url);
+            vidView.setVideoURI(vidUri);
+            vidView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.setLooping(true);
 
-                MediaController mediaController = new MediaController(ByonchatStreamingVideoTubeActivity.this);
-                mediaController.setAnchorView(vidView);
-                vidView.setMediaController(mediaController);
-                vidView.requestFocus();
-                progressDialog.dismiss();
-                vidView.start();
-            }
-        });
+                    MediaController mediaController = new MediaController(ByonchatStreamingVideoTubeActivity.this);
+                    mediaController.setAnchorView(vidView);
+                    vidView.setMediaController(mediaController);
+                    vidView.requestFocus();
+                    progressDialog.dismiss();
+                    vidView.start();
+                }
+            });
+        } catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveVideos(Bundle savedInstanceState) {

@@ -19,6 +19,8 @@ import com.byonchat.android.utils.PermanentLoggerUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class TestWhatsappLogActivity extends AppCompatActivity {
 
     public static Intent generateIntent(Context context) {
@@ -37,14 +39,18 @@ public class TestWhatsappLogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_whatsapp_log_activity);
 
-        recyclerView = findViewById(R.id.recyclerView);
-        vBtnRefresh = findViewById(R.id.button_refresh);
+        try {
+            recyclerView = findViewById(R.id.recyclerView);
+            vBtnRefresh = findViewById(R.id.button_refresh);
 
-        setupRecyclerView();
+            setupRecyclerView();
 
-        vBtnRefresh.setOnClickListener(v -> {
-            refreshLogs();
-        });
+            vBtnRefresh.setOnClickListener(v -> {
+                refreshLogs();
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void setupRecyclerView() {

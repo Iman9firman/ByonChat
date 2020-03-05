@@ -57,6 +57,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 @SuppressLint("ValidFragment")
 public class ListHistoryChatFragment extends Fragment implements HistoryChatAdapter.ContactAdapterListener {
     /**
@@ -90,19 +92,23 @@ public class ListHistoryChatFragment extends Fragment implements HistoryChatAdap
     @Override
     public void onResume() {
         super.onResume();
-        listChatHistory();
-        ((NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID);
+        try {
+            listChatHistory();
+            ((NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID);
 
-        IntentFilter f = new IntentFilter(
-                MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
-        f.addAction(MessengerConnectionService.ACTION_MESSAGE_DELIVERED);
-        f.addAction(MessengerConnectionService.ACTION_MESSAGE_SENT);
-        f.addAction(MessengerConnectionService.ACTION_MESSAGE_FAILED);
-        f.addAction(MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY);
-        f.addAction(MessengerConnectionService.ACTION_STATUS_CHANGED_CONTACT);
-        f.setPriority(2);
-        context.registerReceiver(broadcastHandler, f);
+            IntentFilter f = new IntentFilter(
+                    MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
+            f.addAction(MessengerConnectionService.ACTION_MESSAGE_DELIVERED);
+            f.addAction(MessengerConnectionService.ACTION_MESSAGE_SENT);
+            f.addAction(MessengerConnectionService.ACTION_MESSAGE_FAILED);
+            f.addAction(MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY);
+            f.addAction(MessengerConnectionService.ACTION_STATUS_CHANGED_CONTACT);
+            f.setPriority(2);
+            context.registerReceiver(broadcastHandler, f);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -122,52 +128,66 @@ public class ListHistoryChatFragment extends Fragment implements HistoryChatAdap
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_history_chat, container, false);
 
+        try {
+            recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(mLayoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(context);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(context);
+            }
 
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(context);
+            contactList = new ArrayList<>();
+            mAdapter = new HistoryChatAdapter(context, contactList, this);
+            recyclerView.setAdapter(mAdapter);
+            actionModeCallback = new ActionModeCallback();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        contactList = new ArrayList<>();
-        mAdapter = new HistoryChatAdapter(context, contactList, this);
-        recyclerView.setAdapter(mAdapter);
-        actionModeCallback = new ActionModeCallback();
         return rootView;
     }
 
     private void enableActionMode(int position) {
-        if (actionMode == null) {
-            actionMode = ((AppCompatActivity) activity).startSupportActionMode(actionModeCallback);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                activity.getWindow().setStatusBarColor(getResources().getColor(R.color.grayOffTab));
+        try {
+            if (actionMode == null) {
+                actionMode = ((AppCompatActivity) activity).startSupportActionMode(actionModeCallback);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    activity.getWindow().setStatusBarColor(getResources().getColor(R.color.grayOffTab));
+                }
             }
+            toggleSelection(position);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        toggleSelection(position);
     }
 
-
     private void toggleSelection(int position) {
-        mAdapter.toggleSelection(position);
-        int count = mAdapter.getSelectedItemCount();
+        try {
+            mAdapter.toggleSelection(position);
+            int count = mAdapter.getSelectedItemCount();
 
-        if (count == 0) {
-            actionMode.finish();
-            new Validations().getInstance(context).header(activity.getWindow());
-        } else {
-            actionMode.setTitle(String.valueOf(count));
-            actionMode.invalidate();
+            if (count == 0) {
+                actionMode.finish();
+                new Validations().getInstance(context).header(activity.getWindow());
+            } else {
+                actionMode.setTitle(String.valueOf(count));
+                actionMode.invalidate();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     public void finishActionMode() {
-        if (this.actionMode != null){
-            this.actionMode.finish();
-            new Validations().getInstance(context).header(activity.getWindow());
+        try {
+            if (this.actionMode != null) {
+                this.actionMode.finish();
+                new Validations().getInstance(context).header(activity.getWindow());
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -186,28 +206,32 @@ public class ListHistoryChatFragment extends Fragment implements HistoryChatAdap
     public void onMessageRowClicked(int position, View view) {
         // verify whether action mode is enabled or not
         // if enabled, change the row state to activated
-        if (mAdapter.getSelectedItemCount() > 0) {
-            enableActionMode(position);
-        } else {
-
-            IconItem item = contactList.get(position);
-            if (item.getJabberId().equalsIgnoreCase("")) {
+        try {
+            if (mAdapter.getSelectedItemCount() > 0) {
+                enableActionMode(position);
             } else {
-                Intent intent = new Intent(context, ConversationActivity.class);
-                String jabberId = item.getJabberId();
-                intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    View imageView = view.findViewById(R.id.imagePhoto);
-                    Pair<View, String> pair1 = Pair.create(imageView, imageView.getTransitionName());
-                    ActivityOptionsCompat options = ActivityOptionsCompat.
-                            makeSceneTransitionAnimation(activity, pair1);
-                    startActivity(intent, options.toBundle());
+                IconItem item = contactList.get(position);
+                if (item.getJabberId().equalsIgnoreCase("")) {
                 } else {
-                    startActivity(intent);
-                }
+                    Intent intent = new Intent(context, ConversationActivity.class);
+                    String jabberId = item.getJabberId();
+                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
 
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        View imageView = view.findViewById(R.id.imagePhoto);
+                        Pair<View, String> pair1 = Pair.create(imageView, imageView.getTransitionName());
+                        ActivityOptionsCompat options = ActivityOptionsCompat.
+                                makeSceneTransitionAnimation(activity, pair1);
+                        startActivity(intent, options.toBundle());
+                    } else {
+                        startActivity(intent);
+                    }
+
+                }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -252,245 +276,270 @@ public class ListHistoryChatFragment extends Fragment implements HistoryChatAdap
     }
 
     private void deleteMessages() {
-        List<Integer> selectedItemPositions = mAdapter.getSelectedItems();
-        final List<String> jabId = new ArrayList<>();
-        for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
-            IconItem item = contactList.get(selectedItemPositions.get(i));
-            jabId.add(item.getJabberId());
-        }
-
-        String title = "Confirm Delete";
-        String message = "Once you delete your chat history you won't be able to get it back. Delete?";
-
-        final Dialog dialogConfirmation;
-        dialogConfirmation = DialogUtil.customDialogConversationConfirmation(activity);
-        dialogConfirmation.show();
-
-        TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
-        TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
-        txtConfirmation.setText(title);
-        descConfirmation.setVisibility(View.VISIBLE);
-        descConfirmation.setText(message);
-
-        Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
-        Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
-
-        btnNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialogConfirmation.dismiss();
+        try {
+            List<Integer> selectedItemPositions = mAdapter.getSelectedItems();
+            final List<String> jabId = new ArrayList<>();
+            for (int i = selectedItemPositions.size() - 1; i >= 0; i--) {
+                IconItem item = contactList.get(selectedItemPositions.get(i));
+                jabId.add(item.getJabberId());
             }
-        });
 
-        btnYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (String jj : jabId){
+            String title = "Confirm Delete";
+            String message = "Once you delete your chat history you won't be able to get it back. Delete?";
 
-                    messengerHelper
-                            .deleteRows(
-                                    Message.TABLE_NAME,
-                                    " destination=? OR source =? ",
-                                    new String[]{jj,
-                                            jj}
-                            );
-                    Intent intent = new Intent(MainActivity.ACTION_REFRESH_NOTIF);
-                    getContext().sendBroadcast(intent);
+            final Dialog dialogConfirmation;
+            dialogConfirmation = DialogUtil.customDialogConversationConfirmation(activity);
+            dialogConfirmation.show();
+
+            TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
+            TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
+            txtConfirmation.setText(title);
+            descConfirmation.setVisibility(View.VISIBLE);
+            descConfirmation.setText(message);
+
+            Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
+            Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogConfirmation.dismiss();
                 }
-                listChatHistory();
-                dialogConfirmation.dismiss();
-            }
-        });
+            });
 
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    for (String jj : jabId) {
 
+                        messengerHelper
+                                .deleteRows(
+                                        Message.TABLE_NAME,
+                                        " destination=? OR source =? ",
+                                        new String[]{jj,
+                                                jj}
+                                );
+                        Intent intent = new Intent(MainActivity.ACTION_REFRESH_NOTIF);
+                        getContext().sendBroadcast(intent);
+                    }
+                    listChatHistory();
+                    dialogConfirmation.dismiss();
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     //Implement item click and long click over recycler view
     private void implementRecyclerViewClickListeners() {
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerClick_Listener() {
-            @Override
-            public void onClick(View view, int position) {
-                //If ActionMode not null select item
-                if (actionMode != null)
-                    onListItemSelect(position);
-            }
+        try {
+            recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new RecyclerClick_Listener() {
+                @Override
+                public void onClick(View view, int position) {
+                    //If ActionMode not null select item
+                    if (actionMode != null)
+                        onListItemSelect(position);
+                }
 
-            @Override
-            public void onLongClick(View view, int position) {
-                //Select item on long click
-                onListItemSelect(position);
-            }
-        }));
+                @Override
+                public void onLongClick(View view, int position) {
+                    //Select item on long click
+                    onListItemSelect(position);
+                }
+            }));
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     //List item select method
     private void onListItemSelect(int position) {
-        mAdapter.toggleSelection(position);//Toggle the selection
-        boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;//Check if any items are already selected or not
-        if (hasCheckedItems && actionMode == null)
-            // there are some selected items, start the actionMode
-            actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new Toolbar_ActionMode_Callback(context, mAdapter, contactList));
+        try {
+            mAdapter.toggleSelection(position);//Toggle the selection
+            boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;//Check if any items are already selected or not
+            if (hasCheckedItems && actionMode == null)
+                // there are some selected items, start the actionMode
+                actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new Toolbar_ActionMode_Callback(context, mAdapter, contactList));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                 activity.getWindow().setStatusBarColor(getResources().getColor(R.color.grayOffTab));
-            }
-        else if (!hasCheckedItems && actionMode != null)
-            // there no selected items, finish the actionMode
-            actionMode.finish();
+            } else if (!hasCheckedItems && actionMode != null)
+                // there no selected items, finish the actionMode
+                actionMode.finish();
             new Validations().getInstance(context).header(activity.getWindow());
-        if (actionMode != null)
-            //set action mode title on item selection
-            actionMode.setTitle(String.valueOf(mAdapter
-                    .getSelectedCount()) + " selected");
+            if (actionMode != null)
+                //set action mode title on item selection
+                actionMode.setTitle(String.valueOf(mAdapter
+                        .getSelectedCount()) + " selected");
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void listChatHistory() {
-        Cursor cursor;
+        try {
+            Cursor cursor;
 
-        String myJabberId = messengerHelper.getMyContact().getJabberId();
-        cursor = messengerHelper.query(
-                context.getString(R.string.sql_chat_list),
-                new String[]{myJabberId, Message.TYPE_READSTATUS, myJabberId, Message.TYPE_READSTATUS});
+            String myJabberId = messengerHelper.getMyContact().getJabberId();
+            cursor = messengerHelper.query(
+                    context.getString(R.string.sql_chat_list),
+                    new String[]{myJabberId, Message.TYPE_READSTATUS, myJabberId, Message.TYPE_READSTATUS});
 
-        int indexName = cursor.getColumnIndex(Contact.NAME);
-        int indexJabberId = cursor.getColumnIndex("number");
-        int indexMessage = cursor.getColumnIndex(Message.MESSAGE);
+            int indexName = cursor.getColumnIndex(Contact.NAME);
+            int indexJabberId = cursor.getColumnIndex("number");
+            int indexMessage = cursor.getColumnIndex(Message.MESSAGE);
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
-                cal.get(Calendar.DATE), 0, 0, 0);
-        if (cursor.getCount() > 0) {
-            contactList.clear();
-        }
-        while (cursor.moveToNext()) {
-            String jabberId = cursor.getString(indexJabberId);
-            String name = cursor.getString(indexName);
+            Calendar cal = Calendar.getInstance();
+            cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DATE), 0, 0, 0);
+            if (cursor.getCount() > 0) {
+                contactList.clear();
+            }
+            while (cursor.moveToNext()) {
+                String jabberId = cursor.getString(indexJabberId);
+                String name = cursor.getString(indexName);
 
-            String message = cursor.getString(indexMessage);
-            if (message == null)
-                continue;
+                String message = cursor.getString(indexMessage);
+                if (message == null)
+                    continue;
 
-            Message vo = new Message(cursor);
-            message = Message.parsedMessageBodyHtmlCode(vo, context);
-            Date d = null;
+                Message vo = new Message(cursor);
+                message = Message.parsedMessageBodyHtmlCode(vo, context);
+                Date d = null;
 
-            d = vo.getSendDate();
+                d = vo.getSendDate();
 
-            String dInfo = null;
-            if (d != null) {
-                if (d.getTime() < cal.getTimeInMillis()) {
-                    dInfo = dateInfoFormat.format(d);
+                String dInfo = null;
+                if (d != null) {
+                    if (d.getTime() < cal.getTimeInMillis()) {
+                        dInfo = dateInfoFormat.format(d);
+                    } else {
+                        dInfo = hourInfoFormat.format(d);
+                    }
+                }
+                ChatParty cparty = null;
+                if (vo.isGroupChat()) {
+                    cparty = messengerHelper.getGroup(jabberId);
                 } else {
-                    dInfo = hourInfoFormat.format(d);
+                    if (name != null) {
+                        cparty = new Contact(name, jabberId, "");
+                    } else {
+                        name = jabberId;
+                    }
                 }
-            }
-            ChatParty cparty = null;
-            if (vo.isGroupChat()) {
-                cparty = messengerHelper.getGroup(jabberId);
-            } else {
-                if (name != null) {
-                    cparty = new Contact(name, jabberId, "");
-                } else {
-                    name = jabberId;
+
+
+                long total = 0;
+                Cursor cursor2 = messengerHelper.query(
+                        SQL_SELECT_TOTAL_MESSAGES_UNREAD,
+                        new String[]{jabberId,
+                                jabberId});
+                int indexTotal = cursor2.getColumnIndex("total");
+                while (cursor2.moveToNext()) {
+                    total = cursor2.getLong(indexTotal);
                 }
+                cursor2.close();
+
+                String signature = new Validations().getInstance(getActivity()).getSignatureProfilePicture(jabberId, messengerHelper);
+
+                IconItem iconItem = new IconItem(jabberId, name, message,
+                        dInfo, cparty, total, Message.getStatusMessage(vo, myJabberId), signature);
+                if (cparty instanceof Contact) {
+                    // setProfilePicture(iconItem, (Contact) cparty);
+                }
+                contactList.add(iconItem);
             }
 
+            new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
+                @Override
+                public void run() {
 
-            long total = 0;
-            Cursor cursor2 = messengerHelper.query(
-                    SQL_SELECT_TOTAL_MESSAGES_UNREAD,
-                    new String[]{jabberId,
-                            jabberId});
-            int indexTotal = cursor2.getColumnIndex("total");
-            while (cursor2.moveToNext()) {
-                total = cursor2.getLong(indexTotal);
-            }
-            cursor2.close();
+                    if (mAdapter != null) {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            });
 
-            String signature =  new Validations().getInstance(getActivity()).getSignatureProfilePicture(jabberId,messengerHelper);
-
-            IconItem iconItem = new IconItem(jabberId, name, message,
-                    dInfo, cparty, total, Message.getStatusMessage(vo, myJabberId), signature);
-            if (cparty instanceof Contact) {
-                // setProfilePicture(iconItem, (Contact) cparty);
-            }
-            contactList.add(iconItem);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-
-                if (mAdapter != null) {
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-
     }
 
     class BroadcastHandler extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context ctx, Intent intent) {
-            if (MessengerConnectionService.ACTION_MESSAGE_RECEIVED
-                    .equals(intent.getAction())) {
-                Message vo = intent .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+            try {
+                if (MessengerConnectionService.ACTION_MESSAGE_RECEIVED
+                        .equals(intent.getAction())) {
+                    Message vo = intent.getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
 
-                Intent intRefresh = new Intent(MainActivity.ACTION_REFRESH_BADGER);
-                activity.sendOrderedBroadcast(intRefresh, null);
+                    Intent intRefresh = new Intent(MainActivity.ACTION_REFRESH_BADGER);
+                    activity.sendOrderedBroadcast(intRefresh, null);
 
-                new MessageReceivedHandler().execute(new Message[]{vo});
+                    new MessageReceivedHandler().execute(new Message[]{vo});
 
-            } else if (MessengerConnectionService.ACTION_MESSAGE_SENT
-                    .equals(intent.getAction())||
-                    MessengerConnectionService.ACTION_MESSAGE_FAILED
-                    .equals(intent.getAction()) ||
-                    MessengerConnectionService.ACTION_MESSAGE_DELIVERED
-                    .equals(intent.getAction())) {
+                } else if (MessengerConnectionService.ACTION_MESSAGE_SENT
+                        .equals(intent.getAction()) ||
+                        MessengerConnectionService.ACTION_MESSAGE_FAILED
+                                .equals(intent.getAction()) ||
+                        MessengerConnectionService.ACTION_MESSAGE_DELIVERED
+                                .equals(intent.getAction())) {
 
-                Message vo = intent
-                        .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if (!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
-                    updateMessage(vo);
-                    Contact c = messengerHelper.getContact(vo.getSource());
+                    Message vo = intent
+                            .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+                    if (!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                        updateMessage(vo);
+                        Contact c = messengerHelper.getContact(vo.getSource());
+                    }
+                } else if (MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY
+                        .equals(intent.getAction())) {
+                    listChatHistory();
+                } else if (MessengerConnectionService.ACTION_STATUS_CHANGED_CONTACT
+                        .equals(intent.getAction())) {
+                    refreshOneContactList();
+                    Intent i = new Intent(context, ThrowProfileService.class);
+                    i.putExtra("broadcast", MessengerConnectionService.ACTION_STATUS_CHANGED_CONVERSATION);
+                    context.startService(i);
                 }
-            } else if (MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY
-                    .equals(intent.getAction())) {
-                listChatHistory();
-            } else if (MessengerConnectionService.ACTION_STATUS_CHANGED_CONTACT
-                    .equals(intent.getAction())) {
-                 refreshOneContactList();
-                Intent i = new Intent(context, ThrowProfileService.class);
-                i.putExtra("broadcast", MessengerConnectionService.ACTION_STATUS_CHANGED_CONVERSATION);
-                context.startService(i);
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
 
 
-    private void updateMessage(Message vo){
+    private void updateMessage(Message vo) {
+        try {
+            if (!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                String jaberId = vo.getDestination() != messengerHelper.getMyContact().getJabberId() ? vo.getDestination() : vo.getSource();
+                for (int i = 0; i < contactList.size(); i++) {
+                    if (contactList.get(i).getJabberId().equalsIgnoreCase(jaberId)) {
+                        IconItem baru = contactList.get(i);
+                        baru.setValue(Message.getStatusMessage(vo, messengerHelper.getMyContact().getJabberId()));
+                        contactList.set(i, baru);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
+    }
 
-        if (!vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
-            String jaberId = vo.getDestination() != messengerHelper.getMyContact().getJabberId() ? vo.getDestination() : vo.getSource();
-            for (int i = 0; i < contactList.size(); i++) {
-                if (contactList.get(i).getJabberId().equalsIgnoreCase(jaberId)) {
-                    IconItem baru = contactList.get(i);
-                    baru.setValue(Message.getStatusMessage(vo, messengerHelper.getMyContact().getJabberId()));
-                    contactList.set(i,baru);
+    private void refreshOneContactList() {
+        try {
+            for (IconItem iconItem : contactList) {
+                String signature = new Validations().getInstance(getActivity()).getSignatureProfilePicture(iconItem.getJabberId(), messengerHelper);
+                if (!signature.equalsIgnoreCase(iconItem.getSignature())) {
+                    iconItem.setSignature(signature);
+                    contactList.set(contactList.indexOf(iconItem), iconItem);
                     mAdapter.notifyDataSetChanged();
                 }
             }
-        }
-    }
-    private void refreshOneContactList() {
-        for (IconItem iconItem :contactList){
-            String signature =  new Validations().getInstance(getActivity()).getSignatureProfilePicture(iconItem.getJabberId(),messengerHelper);
-            if (!signature.equalsIgnoreCase(iconItem.getSignature())){
-                iconItem.setSignature(signature);
-                contactList.set(contactList.indexOf(iconItem),iconItem);
-                mAdapter.notifyDataSetChanged();
-            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -498,43 +547,47 @@ public class ListHistoryChatFragment extends Fragment implements HistoryChatAdap
 
         @Override
         protected Void doInBackground(Message... params) {
-            Message msg = params[0];
-            ChatParty cparty = null;
-            String from = msg.getSource();
-            if (msg.isGroupChat()) {
-                cparty = messengerHelper.getGroup(msg.getSource());
-            } else {
-                cparty = messengerHelper.getContact(msg.getSource());
-                String regex = "[0-9]+";
-                //disini ditutup
-                // from = "+" + Utility.formatPhoneNumber(msg.getSource());
-               /* if (!msg.getSource().matches(regex))*/
-                from = msg.getSource();
-            }
-            if (cparty != null) {
-                from = cparty.getName();
-            }
+            try {
+                Message msg = params[0];
+                ChatParty cparty = null;
+                String from = msg.getSource();
+                if (msg.isGroupChat()) {
+                    cparty = messengerHelper.getGroup(msg.getSource());
+                } else {
+                    cparty = messengerHelper.getContact(msg.getSource());
+                    String regex = "[0-9]+";
+                    //disini ditutup
+                    // from = "+" + Utility.formatPhoneNumber(msg.getSource());
+                    /* if (!msg.getSource().matches(regex))*/
+                    from = msg.getSource();
+                }
+                if (cparty != null) {
+                    from = cparty.getName();
+                }
 
-            long total = 0;
-            Cursor cursor = messengerHelper.query(
-                    SQL_SELECT_TOTAL_MESSAGES_UNREAD,
-                    new String[]{msg.getSource(),
-                            msg.getSource()});
-            int indexTotal = cursor.getColumnIndex("total");
-            while (cursor.moveToNext()) {
-                total = cursor.getLong(indexTotal);
-            }
-            cursor.close();
+                long total = 0;
+                Cursor cursor = messengerHelper.query(
+                        SQL_SELECT_TOTAL_MESSAGES_UNREAD,
+                        new String[]{msg.getSource(),
+                                msg.getSource()});
+                int indexTotal = cursor.getColumnIndex("total");
+                while (cursor.moveToNext()) {
+                    total = cursor.getLong(indexTotal);
+                }
+                cursor.close();
 
-            String signature =  new Validations().getInstance(getActivity()).getSignatureProfilePicture(msg.getSource(),messengerHelper);
-            IconItem item = new IconItem(msg.getSource(), from,
-                    Message.parsedMessageBodyHtmlCode(msg, context), hourInfoFormat.format(msg
-                    .getSendDate()), cparty, total, Message.getStatusMessage(msg, messengerHelper.getMyContact().getJabberId()),signature
-            );
-            if (cparty instanceof Contact) {
-                //  setProfilePicture(item, (Contact) cparty);
+                String signature = new Validations().getInstance(getActivity()).getSignatureProfilePicture(msg.getSource(), messengerHelper);
+                IconItem item = new IconItem(msg.getSource(), from,
+                        Message.parsedMessageBodyHtmlCode(msg, context), hourInfoFormat.format(msg
+                        .getSendDate()), cparty, total, Message.getStatusMessage(msg, messengerHelper.getMyContact().getJabberId()), signature
+                );
+                if (cparty instanceof Contact) {
+                    //  setProfilePicture(item, (Contact) cparty);
+                }
+                publishProgress(item);
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-            publishProgress(item);
             return null;
         }
 
@@ -547,20 +600,20 @@ public class ListHistoryChatFragment extends Fragment implements HistoryChatAdap
     }
 
     public void moveItemToTop(final IconItem item) {
-
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-                int index = contactList.indexOf(item);
-                if (index != -1) {
-                    contactList.remove(index);
+        try {
+            new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
+                @Override
+                public void run() {
+                    int index = contactList.indexOf(item);
+                    if (index != -1) {
+                        contactList.remove(index);
+                    }
+                    contactList.add(0, item);
+                    mAdapter.notifyDataSetChanged();
                 }
-                contactList.add(0, item);
-                mAdapter.notifyDataSetChanged();
-            }
-        });
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
-
-
-
 }

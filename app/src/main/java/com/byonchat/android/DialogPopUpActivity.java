@@ -20,6 +20,8 @@ import com.byonchat.android.utils.UploadService;
 
 import java.util.Date;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Iman Firmansyah on 2/16/2016.
  */
@@ -33,60 +35,66 @@ String pesan = "";
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_popup_activity);
-        gps = new GPSTracker(DialogPopUpActivity.this);
 
-        pesan = getIntent().getStringExtra("pesan");
+        try {
+            gps = new GPSTracker(DialogPopUpActivity.this);
 
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+            pesan = getIntent().getStringExtra("pesan");
+
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+            }
+
+            submitBtn = (Button) findViewById(R.id.submitBtn);
+            cancelBtn = (Button) findViewById(R.id.cancelBtn);
+
+            submitBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+
+            cancelBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        submitBtn = (Button)findViewById(R.id.submitBtn);
-        cancelBtn = (Button)findViewById(R.id.cancelBtn);
-
-        submitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
-        });
-
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            finish();
-            }
-        });
-
-
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (!gps.canGetLocation()) {
-        }else{
-            String pesan2[] = pesan.split(";");
-            double  latitude = gps.getLatitude();
-            double  longitude = gps.getLongitude();
-            String planText = "location;"+pesan2[1] + ";"+latitude+","+longitude+";"+pesan2[2];
-            if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                Message report = new Message(messengerHelper.getMyContact().getJabberId(), "x_byonchatbackground", planText);
-                report.setType("text");
-                report.setSendDate(new Date());
-                report.setStatus(Message.STATUS_INPROGRESS);
-                report.generatePacketId();
+        try {
+            if (!gps.canGetLocation()) {
+            } else {
+                String pesan2[] = pesan.split(";");
+                double latitude = gps.getLatitude();
+                double longitude = gps.getLongitude();
+                String planText = "location;" + pesan2[1] + ";" + latitude + "," + longitude + ";" + pesan2[2];
+                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                    Message report = new Message(messengerHelper.getMyContact().getJabberId(), "x_byonchatbackground", planText);
+                    report.setType("text");
+                    report.setSendDate(new Date());
+                    report.setStatus(Message.STATUS_INPROGRESS);
+                    report.generatePacketId();
 
-                Intent i = new Intent();
-                i.setAction(UploadService.FILE_SEND_INTENT);
-                i.putExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT, report);
-                sendBroadcast(i);
-            }else{
-                sendSMSMessage(planText);
+                    Intent i = new Intent();
+                    i.setAction(UploadService.FILE_SEND_INTENT);
+                    i.putExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT, report);
+                    sendBroadcast(i);
+                } else {
+                    sendSMSMessage(planText);
+                }
+                finish();
             }
-            finish();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 

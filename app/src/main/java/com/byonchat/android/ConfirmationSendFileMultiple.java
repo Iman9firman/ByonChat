@@ -72,6 +72,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by byonc on 4/20/2017.
  */
@@ -135,167 +137,168 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header(getWindow()));
 
-        if (getIntent().getExtras().containsKey("isFrom")) {
-            isFrom = true;
-        }
-        uriImage = getIntent().getStringExtra("file");
-        destination = getIntent().getStringExtra("name");
-        type = getIntent().getStringExtra("type");
-        title = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
-        typeChat = getIntent().getIntExtra(ConversationActivity.KEY_CONVERSATION_TYPE, 0);
-        images = getIntent().getParcelableArrayListExtra("selected");
-
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        recyclerView = (RecyclerView) findViewById(R.id.horizontal_recyclerView);
-        textMessage = (EditText) findViewById(R.id.textMessage);
-        buttonAddImage = (ImageView) findViewById(R.id.buttonAddImage);
-        bigImageView = (TouchImageView) findViewById(R.id.imageView);
-        btnCancel = (Button) findViewById(R.id.btnCancel);
-        btnSend = (Button) findViewById(R.id.btnSend);
-
-        if (isFrom) {
-            textMessage.setVisibility(View.VISIBLE);
-        }
-        recyclerView.setHasFixedSize(true);
-        recyclerView
-                .setLayoutManager(new LinearLayoutManager(ConfirmationSendFileMultiple.this, LinearLayoutManager.HORIZONTAL, false));
-
-        buttonAddImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start(destination);
-            }
-        });
-
         try {
-            pictureModel = new ArrayList<>();
-            modelPictures = new ArrayList<>();
-            JSONArray jsonArray = new JSONArray(uriImage);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                PictureModel data = new PictureModel();
-                ModelPicture model = new ModelPicture();
-                String uri = jsonArray.getString(i);
-                data.setUrl(uri);
-                data.setId_photo(i + "");
-                model.setUrl(uri);
-                model.setId_photo(i + "");
-                if (i == 0) {
-                    data.setSelected(true);
-                    model.setSelected(true);
-                } else {
-                    data.setSelected(false);
-                    model.setSelected(false);
-                }
-                pictureModel.add(data);
-                modelPictures.add(model);
+            if (getIntent().getExtras().containsKey("isFrom")) {
+                isFrom = true;
             }
-            horizontalAdapter = new HorizontalAdapter(getApplicationContext(), pictureModel);
-            recyclerView.setAdapter(horizontalAdapter);
-            horizontalAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-        }
+            uriImage = getIntent().getStringExtra("file");
+            destination = getIntent().getStringExtra("name");
+            type = getIntent().getStringExtra("type");
+            title = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+            typeChat = getIntent().getIntExtra(ConversationActivity.KEY_CONVERSATION_TYPE, 0);
+            images = getIntent().getParcelableArrayListExtra("selected");
+
+            mViewPager = (ViewPager) findViewById(R.id.viewpager);
+            recyclerView = (RecyclerView) findViewById(R.id.horizontal_recyclerView);
+            textMessage = (EditText) findViewById(R.id.textMessage);
+            buttonAddImage = (ImageView) findViewById(R.id.buttonAddImage);
+            bigImageView = (TouchImageView) findViewById(R.id.imageView);
+            btnCancel = (Button) findViewById(R.id.btnCancel);
+            btnSend = (Button) findViewById(R.id.btnSend);
+
+            if (isFrom) {
+                textMessage.setVisibility(View.VISIBLE);
+            }
+            recyclerView.setHasFixedSize(true);
+            recyclerView
+                    .setLayoutManager(new LinearLayoutManager(ConfirmationSendFileMultiple.this, LinearLayoutManager.HORIZONTAL, false));
+
+            buttonAddImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    start(destination);
+                }
+            });
+
+            try {
+                pictureModel = new ArrayList<>();
+                modelPictures = new ArrayList<>();
+                JSONArray jsonArray = new JSONArray(uriImage);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    PictureModel data = new PictureModel();
+                    ModelPicture model = new ModelPicture();
+                    String uri = jsonArray.getString(i);
+                    data.setUrl(uri);
+                    data.setId_photo(i + "");
+                    model.setUrl(uri);
+                    model.setId_photo(i + "");
+                    if (i == 0) {
+                        data.setSelected(true);
+                        model.setSelected(true);
+                    } else {
+                        data.setSelected(false);
+                        model.setSelected(false);
+                    }
+                    pictureModel.add(data);
+                    modelPictures.add(model);
+                }
+                horizontalAdapter = new HorizontalAdapter(getApplicationContext(), pictureModel);
+                recyclerView.setAdapter(horizontalAdapter);
+                horizontalAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+            }
 
 
-        mViewPager.setPageTransformer(true, new DepthPageTransformer());
+            mViewPager.setPageTransformer(true, new DepthPageTransformer());
 
-        adapter = new DetailPictureAdapter(getSupportFragmentManager(), modelPictures, isFrom);
-        mViewPager.setAdapter(adapter);
-        mViewPager.setPageTransformer(true, new DepthPageTransformer());
+            adapter = new DetailPictureAdapter(getSupportFragmentManager(), modelPictures, isFrom);
+            mViewPager.setAdapter(adapter);
+            mViewPager.setPageTransformer(true, new DepthPageTransformer());
 
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP) {
+            ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP) {
 
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                @Override
+                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 /*Collections.swap(pictureModel, viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 // and notify the adapter that its dataset has changed
                 horizontalAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());*/
 
-                return false;
-            }
+                    return false;
+                }
 
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                final int position = viewHolder.getAdapterPosition(); //get position which is swipe
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                    final int position = viewHolder.getAdapterPosition(); //get position which is swipe
 
-                if (direction == ItemTouchHelper.UP) {
-                    images.remove(position);
-                    if (position == mViewPager.getCurrentItem()) {
-                        horizontalAdapter.deletePage(position);
-                        adapter.deletePage(position);
-                    } else {
-                        horizontalAdapter.deletePage(position);
-                        adapter.deletePage(position);
+                    if (direction == ItemTouchHelper.UP) {
+                        images.remove(position);
+                        if (position == mViewPager.getCurrentItem()) {
+                            horizontalAdapter.deletePage(position);
+                            adapter.deletePage(position);
+                        } else {
+                            horizontalAdapter.deletePage(position);
+                            adapter.deletePage(position);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                int position = viewHolder.getAdapterPosition();
+                @Override
+                public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                    int position = viewHolder.getAdapterPosition();
 
                 /*if (viewHolder.getAdapterPosition() == 0) {
                     if (viewHolder instanceof HorizontalAdapter.MyViewHolder) return 0;
                 }*/
 
-                if (pictureModel.size() == 1) {
-                    if (viewHolder instanceof HorizontalAdapter.MyViewHolder) return 0;
-                }
+                    if (pictureModel.size() == 1) {
+                        if (viewHolder instanceof HorizontalAdapter.MyViewHolder) return 0;
+                    }
 
-                return super.getSwipeDirs(recyclerView, viewHolder);
+                    return super.getSwipeDirs(recyclerView, viewHolder);
 
 //                return position == 0 ? 0 : super.getSwipeDirs(recyclerView, viewHolder);
-            }
-
-        };
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-
-        mViewPager.setPageTransformer(false, new ViewPager.PageTransformer() {
-            @Override
-            public void transformPage(View page, float position) {
-                // do transformation here
-                final float normalizedposition = Math.abs(Math.abs(position) - 1);
-                page.setAlpha(normalizedposition);
-            }
-        });
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            private int index = 0;
-
-            @Override
-            public void onPageSelected(int position) {
-                index = position;
-
-            }
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                int width = mViewPager.getWidth();
-//                recyclerView.scrollTo((int) (width * position + width * positionOffset), 0);
-                horizontalAdapter.setSelected(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    mViewPager.setCurrentItem(index);
                 }
 
-            }
-        });
+            };
 
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+            itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this,
-                new RecyclerItemClickListener.OnItemClickListener() {
+            mViewPager.setPageTransformer(false, new ViewPager.PageTransformer() {
+                @Override
+                public void transformPage(View page, float position) {
+                    // do transformation here
+                    final float normalizedposition = Math.abs(Math.abs(position) - 1);
+                    page.setAlpha(normalizedposition);
+                }
+            });
 
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        horizontalAdapter.setSelected(position);
-                        mViewPager.setCurrentItem(position);
+            mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+                private int index = 0;
+
+                @Override
+                public void onPageSelected(int position) {
+                    index = position;
+
+                }
+
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//                int width = mViewPager.getWidth();
+//                recyclerView.scrollTo((int) (width * position + width * positionOffset), 0);
+                    horizontalAdapter.setSelected(position);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                    if (state == ViewPager.SCROLL_STATE_IDLE) {
+                        mViewPager.setCurrentItem(index);
                     }
-                }));
+
+                }
+            });
+
+
+            recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this,
+                    new RecyclerItemClickListener.OnItemClickListener() {
+
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            horizontalAdapter.setSelected(position);
+                            mViewPager.setCurrentItem(position);
+                        }
+                    }));
 
         /*try {
             JSONObject filud = new JSONObject(uriImage);
@@ -321,48 +324,55 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
         }*/
 
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            btnSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                if (!isFrom) {
-                    new sendMultiple(pictureModel).execute();
-                } else {
-                    if (TextUtils.isEmpty(textMessage.getText().toString().trim())) {
-                        textMessage.setError("Content is required!");
+                    if (!isFrom) {
+                        new sendMultiple(pictureModel).execute();
                     } else {
-                        notesPhotos = new ArrayList<>();
-                        for (PictureModel photo : pictureModel) {
-                            File imageFile = new File(photo.getUrl());
-                            NotesPhoto nphoto = new NotesPhoto(imageFile, textMessage.getText().toString());
-                            notesPhotos.add(nphoto);
+                        if (TextUtils.isEmpty(textMessage.getText().toString().trim())) {
+                            textMessage.setError("Content is required!");
+                        } else {
+                            notesPhotos = new ArrayList<>();
+                            for (PictureModel photo : pictureModel) {
+                                File imageFile = new File(photo.getUrl());
+                                NotesPhoto nphoto = new NotesPhoto(imageFile, textMessage.getText().toString());
+                                notesPhotos.add(nphoto);
+                            }
+                            Intent data = new Intent();
+                            data.putParcelableArrayListExtra(EXTRA_PHOTOS, (ArrayList<NotesPhoto>) notesPhotos);
+                            setResult(RESULT_OK, data);
+                            finish();
                         }
-                        Intent data = new Intent();
-                        data.putParcelableArrayListExtra(EXTRA_PHOTOS, (ArrayList<NotesPhoto>) notesPhotos);
-                        setResult(RESULT_OK, data);
-                        finish();
                     }
-                }
 //                imageCompressed.clear();
-            }
-        });
+                }
+            });
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     void onTextChanged(String text, String position) {
-        this.text = text;
-        this.pos = position;
-        pictureModel.get(Integer.valueOf(position)).setTitle(text);
-        message.clear();
-        if (isFrom) {
-            message.put("content", text);
+        try {
+            this.text = text;
+            this.pos = position;
+            pictureModel.get(Integer.valueOf(position)).setTitle(text);
+            message.clear();
+            if (isFrom) {
+                message.put("content", text);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -392,53 +402,55 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
         }
 
         protected void onPostExecute(String s) {
-
-            if (pictureModel.size() > 0) {
-                for (int i = 0; i < pictureModel.size(); i++) {
+            try {
+                if (pictureModel.size() > 0) {
+                    for (int i = 0; i < pictureModel.size(); i++) {
 
 //                    new NystromImageCompression(true, i).execute(uriImage);
 //                    Log.w("bismillah ah", pictureModel.get(i).getUrl() + "     " + pictureModel.get(i).getTitle());
-                    String textCaption = pictureModel.get(i).getTitle() != null ? pictureModel.get(i).getTitle() : "";
-                    MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+                        String textCaption = pictureModel.get(i).getTitle() != null ? pictureModel.get(i).getTitle() : "";
+                        MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
 
-                    Message msg = createNewMessage(jsonMessage(compressImage(pictureModel.get(i).getUrl()), compressImage(pictureModel.get(i).getUrl()), "", "", "", textCaption), messengerHelper.getMyContact().getJabberId(), destination, typeChat, type);
-                    sendFile(msg);
+                        Message msg = createNewMessage(jsonMessage(compressImage(pictureModel.get(i).getUrl()), compressImage(pictureModel.get(i).getUrl()), "", "", "", textCaption), messengerHelper.getMyContact().getJabberId(), destination, typeChat, type);
+                        sendFile(msg);
 //                    saveImage(utils.decodeBitmapFromPath(pictureModel.get(i).getUrl()));
+                    }
                 }
+                DoDone();
+                progressDialog.dismiss();
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-            DoDone();
-            progressDialog.dismiss();
         }
     }
 
     @Override
     public void onFragmentCreated(String purl, String purlthumb, String ptitle, String ptimestamp, String pdesc, String pmyuserid, String puserid, String pid, String pflag, String pColor) {
-        this.purl = purl;
-        this.purlthumb = purlthumb;
-        this.ptitle = ptitle;
-        this.ptimestamp = ptimestamp;
-        this.pdesc = pdesc;
-        this.pmyuserid = pmyuserid;
-        this.puserid = puserid;
-        this.pid = pid;
-        this.pflag = pflag;
-        this.pColor = pColor;
-
-//        textMessage.setText(title);
-        /*mTitle.setText(ptitle);
-        mTimestamp.setText("Updates on : " + ptimestamp);
-        mDescription.setText(Html.fromHtml(pdesc));*/
+        try {
+            this.purl = purl;
+            this.purlthumb = purlthumb;
+            this.ptitle = ptitle;
+            this.ptimestamp = ptimestamp;
+            this.pdesc = pdesc;
+            this.pmyuserid = pmyuserid;
+            this.puserid = puserid;
+            this.pid = pid;
+            this.pflag = pflag;
+            this.pColor = pColor;
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void onUserSelectValue(String title, String timestamp, String desc) {
-        ptitle = title;
-        ptimestamp = timestamp;
-        pdesc = desc;
+        try {
+            ptitle = title;
+            ptimestamp = timestamp;
+            pdesc = desc;
 
-//        textMessage.setText(title);
-//        mTimestamp.setText("Updates on : " + timestamp);
-//        Spanned spanned = Html.fromHtml(desc);
-//        mDescription.setText(spanned);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class DetailPictureAdapter extends FragmentPagerAdapter {
@@ -499,68 +511,79 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
     }
 
     public void DoDone() {
-        Intent intent = new Intent(CLOSEMEMEACTIVITY);
-        sendOrderedBroadcast(intent, null);
-        finish();
+        try {
+            Intent intent = new Intent(CLOSEMEMEACTIVITY);
+            sendOrderedBroadcast(intent, null);
+            finish();
 
-        if (ConversationActivity.instance != null) {
-            try {
-                ConversationActivity.instance.finish();
-            } catch (Exception e) {
-            }
-        }
-
-        Intent i = new Intent(this, ConversationActivity.class);
-        String jabberId = destination;
-        String action = this.getIntent().getAction();
-        if (Intent.ACTION_SEND.equals(action)) {
-            Bundle extras = this.getIntent().getExtras();
-            if (extras.containsKey(Intent.EXTRA_STREAM)) {
+            if (ConversationActivity.instance != null) {
                 try {
-                    Uri uri = (Uri) extras.getParcelable(Intent.EXTRA_STREAM);
-                    String pathToSend = MediaProcessingUtil.getRealPathFromURI(
-                            this.getContentResolver(), uri);
-                    i.putExtra(ConversationActivity.KEY_FILE_TO_SEND,
-                            pathToSend);
+                    ConversationActivity.instance.finish();
                 } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(),
-                            "Error getting file from action send: "
-                                    + e.getMessage(), e);
                 }
             }
-        }
 
-        i.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
-        startActivity(i);
+            Intent i = new Intent(this, ConversationActivity.class);
+            String jabberId = destination;
+            String action = this.getIntent().getAction();
+            if (Intent.ACTION_SEND.equals(action)) {
+                Bundle extras = this.getIntent().getExtras();
+                if (extras.containsKey(Intent.EXTRA_STREAM)) {
+                    try {
+                        Uri uri = (Uri) extras.getParcelable(Intent.EXTRA_STREAM);
+                        String pathToSend = MediaProcessingUtil.getRealPathFromURI(
+                                this.getContentResolver(), uri);
+                        i.putExtra(ConversationActivity.KEY_FILE_TO_SEND,
+                                pathToSend);
+                    } catch (Exception e) {
+                        Log.e(getClass().getSimpleName(),
+                                "Error getting file from action send: "
+                                        + e.getMessage(), e);
+                    }
+                }
+            }
+
+            i.putExtra(ConversationActivity.KEY_JABBER_ID, jabberId);
+            startActivity(i);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void sendFile(Message message) {
+        try {
+            Message vo = message;
+            MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
+            messengerHelper.insertData(vo);
 
-        Message vo = message;
-        MessengerDatabaseHelper messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
-        messengerHelper.insertData(vo);
+            FilesURLDatabaseHelper dbUpload = new FilesURLDatabaseHelper(this);
+            FilesURL files = new FilesURL((int) vo.getId(), "1", "upload");
+            dbUpload.open();
+            dbUpload.insertFilesUpload(files);
+            dbUpload.close();
 
-        FilesURLDatabaseHelper dbUpload = new FilesURLDatabaseHelper(this);
-        FilesURL files = new FilesURL((int) vo.getId(), "1", "upload");
-        dbUpload.open();
-        dbUpload.insertFilesUpload(files);
-        dbUpload.close();
-
-        Intent intent = new Intent(this, UploadService.class);
-        intent.putExtra(UploadService.ACTION, "getLinkUpload");
-        intent.putExtra(UploadService.KEY_MESSAGE, vo);
-        startService(intent);
+            Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, "getLinkUpload");
+            intent.putExtra(UploadService.KEY_MESSAGE, vo);
+            startService(intent);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private Message createNewMessage(String message, String sourceAddr, String destination, int conversationType, String type) {
         Message vo = new Message(sourceAddr, destination, message);
-        vo.setType(type);
-        vo.setSendDate(new Date());
-        vo.setStatus(Message.STATUS_INPROGRESS);
-        vo.generatePacketId();
-        if (conversationType == ConversationActivity.CONVERSATION_TYPE_GROUP) {
-            vo.setGroupChat(true);
-            vo.setSourceInfo(sourceAddr);
+        try {
+            vo.setType(type);
+            vo.setSendDate(new Date());
+            vo.setStatus(Message.STATUS_INPROGRESS);
+            vo.generatePacketId();
+            if (conversationType == ConversationActivity.CONVERSATION_TYPE_GROUP) {
+                vo.setGroupChat(true);
+                vo.setSourceInfo(sourceAddr);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
         return vo;
     }
@@ -768,15 +791,20 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
     }
 
     private String getRealPathFromURI(String contentURI) {
-        Uri contentUri = Uri.parse(contentURI);
-        Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
-        if (cursor == null) {
-            return contentUri.getPath();
-        } else {
-            cursor.moveToFirst();
-            int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            return cursor.getString(index);
+        try {
+            Uri contentUri = Uri.parse(contentURI);
+            Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
+            if (cursor == null) {
+                return contentUri.getPath();
+            } else {
+                cursor.moveToFirst();
+                int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                return cursor.getString(index);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
+        return null;
     }
 
     public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -784,15 +812,19 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
         final int width = options.outWidth;
         int inSampleSize = 1;
 
-        if (height > reqHeight || width > reqWidth) {
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-        }
-        final float totalPixels = width * height;
-        final float totalReqPixelsCap = reqWidth * reqHeight * 2;
-        while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
-            inSampleSize++;
+        try {
+            if (height > reqHeight || width > reqWidth) {
+                final int heightRatio = Math.round((float) height / (float) reqHeight);
+                final int widthRatio = Math.round((float) width / (float) reqWidth);
+                inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+            }
+            final float totalPixels = width * height;
+            final float totalReqPixelsCap = reqWidth * reqHeight * 2;
+            while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+                inSampleSize++;
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
 
         return inSampleSize;
@@ -954,42 +986,46 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
     }
 
     private void saveImage(Bitmap finalBitmap) {
-        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
-        System.out.println(root + " Root value in saveImage Function");
-        File myDir = new File(root + "/S-Team Images");
-        if (!myDir.exists()) {
-            myDir.mkdirs();
-        }
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        iname = "bc-" + n + ".jpg";
-        File file = new File(myDir, iname);
-        if (file.exists())
-            file.delete();
         try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+            System.out.println(root + " Root value in saveImage Function");
+            File myDir = new File(root + "/S-Team Images");
+            if (!myDir.exists()) {
+                myDir.mkdirs();
+            }
+            Random generator = new Random();
+            int n = 10000;
+            n = generator.nextInt(n);
+            iname = "bc-" + n + ".jpg";
+            File file = new File(myDir, iname);
+            if (file.exists())
+                file.delete();
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Tell the media scanner about the new file so that it is
+            // immediately available to the user.
+            MediaScannerConnection.scanFile(this, new String[]{file.toString()}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+                            Log.i("ExternalStorage", "Scanned " + path + ":");
+                            Log.i("ExternalStorage", "-> uri=" + uri);
+                        }
+                    });
+            Image_path = Environment.getExternalStorageDirectory() + "/Pictures/folder_name/" + iname;
+
+            File[] files = myDir.listFiles();
+            numberOfImages = files.length;
+            System.out.println("Total images in Folder " + numberOfImages);
         } catch (Exception e) {
-            e.printStackTrace();
+            reportCatch(e.getLocalizedMessage());
         }
-
-        // Tell the media scanner about the new file so that it is
-        // immediately available to the user.
-        MediaScannerConnection.scanFile(this, new String[]{file.toString()}, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    public void onScanCompleted(String path, Uri uri) {
-                        Log.i("ExternalStorage", "Scanned " + path + ":");
-                        Log.i("ExternalStorage", "-> uri=" + uri);
-                    }
-                });
-        Image_path = Environment.getExternalStorageDirectory() + "/Pictures/folder_name/" + iname;
-
-        File[] files = myDir.listFiles();
-        numberOfImages = files.length;
-        System.out.println("Total images in Folder " + numberOfImages);
     }
 
     @Override
@@ -1030,18 +1066,22 @@ public class ConfirmationSendFileMultiple extends AppCompatActivity implements P
     }
 
     public void start(String destination_id) {
-        ImagePicker.create(this)
-                .folderMode(true)
-                .destination(destination_id)
-                .imageTitle("Tap to select")
-                .single()
-                .reset(false)
-                .multi()
-                .limit(10)
-                .showCamera(true)
-                .imageDirectory("Camera")
-                .origin(images)
-                .start(REQUEST_CODE_PICKER);
+        try {
+            ImagePicker.create(this)
+                    .folderMode(true)
+                    .destination(destination_id)
+                    .imageTitle("Tap to select")
+                    .single()
+                    .reset(false)
+                    .multi()
+                    .limit(10)
+                    .showCamera(true)
+                    .imageDirectory("Camera")
+                    .origin(images)
+                    .start(REQUEST_CODE_PICKER);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 }

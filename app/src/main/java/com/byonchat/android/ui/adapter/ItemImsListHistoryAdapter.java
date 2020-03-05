@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     protected static final int VIEWTYPE_ITEM_HEADER = 0;
@@ -84,36 +86,79 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int i) {
-        IconItem item = itemsFiltered.get(i);
-        if (viewHolder instanceof ImsListHistoryViewHolder) {
+        try {
+            IconItem item = itemsFiltered.get(i);
+            if (viewHolder instanceof ImsListHistoryViewHolder) {
 
-            ((ImsListHistoryViewHolder) viewHolder).vTextInfo.setText(item.info);
+                ((ImsListHistoryViewHolder) viewHolder).vTextInfo.setText(item.info);
 
-            ((ImsListHistoryViewHolder) viewHolder).vDateInfo.setText(item.dateInfo);
+                ((ImsListHistoryViewHolder) viewHolder).vDateInfo.setText(item.dateInfo);
 
-            ((ImsListHistoryViewHolder) viewHolder).vTextUnread.setText(item.unread > 99 ? "99+" : item.unread + "");
+                ((ImsListHistoryViewHolder) viewHolder).vTextUnread.setText(item.unread > 99 ? "99+" : item.unread + "");
 
-            resolveContent(viewHolder, item);
+                resolveContent(viewHolder, item);
 
-            ((ImsListHistoryViewHolder) viewHolder).onCommentSelected(item);
-        } else if (viewHolder instanceof ImsListHistoryFindViewHolder) {
+                ((ImsListHistoryViewHolder) viewHolder).onCommentSelected(item);
+            } else if (viewHolder instanceof ImsListHistoryFindViewHolder) {
 
-            ((ImsListHistoryFindViewHolder) viewHolder).vTextInfo.setText(item.info);
+                ((ImsListHistoryFindViewHolder) viewHolder).vTextInfo.setText(item.info);
 
-            ((ImsListHistoryFindViewHolder) viewHolder).vDateInfo.setText(item.dateInfo);
+                ((ImsListHistoryFindViewHolder) viewHolder).vDateInfo.setText(item.dateInfo);
 
-            resolveContentFind(viewHolder, item);
+                resolveContentFind(viewHolder, item);
 
-            ((ImsListHistoryFindViewHolder) viewHolder).onCommentSelected(item);
+                ((ImsListHistoryFindViewHolder) viewHolder).onCommentSelected(item);
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void resolveContent(RecyclerView.ViewHolder viewHolder, IconItem item) {
-        String regex = "[0-9]+";
-        if (item.getJabberId().matches(regex)) {
+        try {
+            String regex = "[0-9]+";
+            if (item.getJabberId().matches(regex)) {
 
-            if (item.getTitle().matches(regex)) {
-                String title = "fetching id...";
+                if (item.getTitle().matches(regex)) {
+                    String title = "fetching id...";
+                    ((ImsListHistoryViewHolder) viewHolder).vTextTitle.setText(title);
+                    textLoader.DisplayImage(item.getTitle(), ((ImsListHistoryViewHolder) viewHolder).vTextTitle);
+
+                    Cursor cur = Byonchat.getBotListDB().getRealNameByName(item.getTitle().toLowerCase());
+                    if (cur.getCount() > 0) {
+                        title = cur.getString(cur.getColumnIndex(BotListDB.ROOMS_REALNAME));
+                    }
+                    cur.close();
+
+                    resolveSearchContent(((ImsListHistoryViewHolder) viewHolder), title);
+                } else {
+                    ((ImsListHistoryViewHolder) viewHolder).vTextTitle.setText(Html.fromHtml(item.getTitle()));
+
+                    resolveSearchContent(((ImsListHistoryViewHolder) viewHolder), item.getTitle());
+                }
+
+                File photoFile = context.getFileStreamPath(MediaProcessingUtil
+                        .getProfilePicName(item.getJabberId()));
+                Drawable d = context.getResources().getDrawable(R.drawable.ic_no_photo);
+                if (photoFile.exists()) {
+                    d = Drawable.createFromPath(photoFile.getAbsolutePath());
+                }
+
+                Glide.with(context).load("https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + item.getJabberId() + ".jpg").asBitmap()
+                        .centerCrop()
+                        .signature(new StringSignature(item.getSignature()))
+                        .placeholder(d)
+                        .animate(R.anim.fade_in_sort)
+                        .into(new BitmapImageViewTarget(((ImsListHistoryViewHolder) viewHolder).vImagePhoto) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                ((ImsListHistoryViewHolder) viewHolder).vImagePhoto.setImageBitmap(resource);
+                                SaveMedia task = new SaveMedia();
+                                task.execute(new MyTaskParams[]{new MyTaskParams(resource, item.getJabberId())});
+                            }
+                        });
+            } else {
+                String title = "fetching room...";
                 ((ImsListHistoryViewHolder) viewHolder).vTextTitle.setText(title);
                 textLoader.DisplayImage(item.getTitle(), ((ImsListHistoryViewHolder) viewHolder).vTextTitle);
 
@@ -124,126 +169,107 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                 cur.close();
 
                 resolveSearchContent(((ImsListHistoryViewHolder) viewHolder), title);
-            } else {
-                ((ImsListHistoryViewHolder) viewHolder).vTextTitle.setText(Html.fromHtml(item.getTitle()));
 
-                resolveSearchContent(((ImsListHistoryViewHolder) viewHolder), item.getTitle());
+                Glide.with(context).load("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/" + item.getJabberId() + "_thumb.png")
+                        .asBitmap()
+                        .animate(R.anim.fade_in_sort)
+                        .placeholder(R.drawable.ic_room_door)
+                        .into(new BitmapImageViewTarget(((ImsListHistoryViewHolder) viewHolder).vImagePhoto) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                ((ImsListHistoryViewHolder) viewHolder).vImagePhoto.setImageBitmap(resource);
+                            }
+                        });
             }
-
-            File photoFile = context.getFileStreamPath(MediaProcessingUtil
-                    .getProfilePicName(item.getJabberId()));
-            Drawable d = context.getResources().getDrawable(R.drawable.ic_no_photo);
-            if (photoFile.exists()) {
-                d = Drawable.createFromPath(photoFile.getAbsolutePath());
-            }
-
-            Glide.with(context).load("https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + item.getJabberId() + ".jpg").asBitmap()
-                    .centerCrop()
-                    .signature(new StringSignature(item.getSignature()))
-                    .placeholder(d)
-                    .animate(R.anim.fade_in_sort)
-                    .into(new BitmapImageViewTarget(((ImsListHistoryViewHolder) viewHolder).vImagePhoto) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            ((ImsListHistoryViewHolder) viewHolder).vImagePhoto.setImageBitmap(resource);
-                            SaveMedia task = new SaveMedia();
-                            task.execute(new MyTaskParams[]{new MyTaskParams(resource, item.getJabberId())});
-                        }
-                    });
-        } else {
-            String title = "fetching room...";
-            ((ImsListHistoryViewHolder) viewHolder).vTextTitle.setText(title);
-            textLoader.DisplayImage(item.getTitle(), ((ImsListHistoryViewHolder) viewHolder).vTextTitle);
-
-            Cursor cur = Byonchat.getBotListDB().getRealNameByName(item.getTitle().toLowerCase());
-            if (cur.getCount() > 0) {
-                title = cur.getString(cur.getColumnIndex(BotListDB.ROOMS_REALNAME));
-            }
-            cur.close();
-
-            resolveSearchContent(((ImsListHistoryViewHolder) viewHolder), title);
-
-            Glide.with(context).load("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/" + item.getJabberId() + "_thumb.png")
-                    .asBitmap()
-                    .animate(R.anim.fade_in_sort)
-                    .placeholder(R.drawable.ic_room_door)
-                    .into(new BitmapImageViewTarget(((ImsListHistoryViewHolder) viewHolder).vImagePhoto) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            ((ImsListHistoryViewHolder) viewHolder).vImagePhoto.setImageBitmap(resource);
-                        }
-                    });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void resolveContentFind(RecyclerView.ViewHolder viewHolder, IconItem item) {
-        String regex = "[0-9]+";
-        if (item.getJabberId().matches(regex)) {
+        try {
+            String regex = "[0-9]+";
+            if (item.getJabberId().matches(regex)) {
 
-            if (item.getTitle().matches(regex)) {
-                String title = "fetching id...";
+                if (item.getTitle().matches(regex)) {
+                    String title = "fetching id...";
+                    ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle.setText(title);
+                    textLoader.DisplayImage(item.getTitle(), ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle);
+
+                    resolveSearchContentFind(((ImsListHistoryFindViewHolder) viewHolder), item.info);
+                } else {
+                    ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle.setText(Html.fromHtml(item.getTitle()));
+
+                    resolveSearchContentFind(((ImsListHistoryFindViewHolder) viewHolder), item.info);
+                }
+
+            } else {
+                String title = "fetching room...";
                 ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle.setText(title);
                 textLoader.DisplayImage(item.getTitle(), ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle);
 
                 resolveSearchContentFind(((ImsListHistoryFindViewHolder) viewHolder), item.info);
-            } else {
-                ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle.setText(Html.fromHtml(item.getTitle()));
-
-                resolveSearchContentFind(((ImsListHistoryFindViewHolder) viewHolder), item.info);
             }
-
-        } else {
-            String title = "fetching room...";
-            ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle.setText(title);
-            textLoader.DisplayImage(item.getTitle(), ((ImsListHistoryFindViewHolder) viewHolder).vTextTitle);
-
-            resolveSearchContentFind(((ImsListHistoryFindViewHolder) viewHolder), item.info);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     protected void resolveSearchContent(ImsListHistoryViewHolder holder, String title) {
-        if (mSearchText != null && !mSearchText.isEmpty()) {
-            int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
-            int endPos = startPos + mSearchText.length();
+        try {
+            if (mSearchText != null && !mSearchText.isEmpty()) {
+                int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
+                int endPos = startPos + mSearchText.length();
 
-            if (startPos != -1) {
-                Spannable spannable = new SpannableString(title);
-                ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
-                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                holder.vTextTitle.setText(spannable);
+                if (startPos != -1) {
+                    Spannable spannable = new SpannableString(title);
+                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    holder.vTextTitle.setText(spannable);
+                } else {
+                    holder.vTextTitle.setText(title);
+                }
             } else {
                 holder.vTextTitle.setText(title);
             }
-        } else {
-            holder.vTextTitle.setText(title);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     protected void resolveSearchContentFind(ImsListHistoryFindViewHolder holder, String message) {
-        if (mSearchText != null && !mSearchText.isEmpty()) {
-            int startPos = message.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
-            int endPos = startPos + mSearchText.length();
+        try {
+            if (mSearchText != null && !mSearchText.isEmpty()) {
+                int startPos = message.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
+                int endPos = startPos + mSearchText.length();
 
-            if (startPos != -1) {
-                Spannable spannable = new SpannableString(message);
-                ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
-                TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                holder.vTextInfo.setText(spannable);
+                if (startPos != -1) {
+                    Spannable spannable = new SpannableString(message);
+                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    holder.vTextInfo.setText(spannable);
+                } else {
+                    holder.vTextInfo.setText(message);
+                }
             } else {
                 holder.vTextInfo.setText(message);
             }
-        } else {
-            holder.vTextInfo.setText(message);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void showFileImage(RecyclerView.ViewHolder viewHolder, String jabberId) {
-        Glide.with(context).load("https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + jabberId + ".jpg")
-                .dontAnimate()
-                .error(R.drawable.ic_no_photo)
-                .into(((ImsListHistoryViewHolder) viewHolder).vImagePhoto);
+        try {
+            Glide.with(context).load("https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + jabberId + ".jpg")
+                    .dontAnimate()
+                    .error(R.drawable.ic_no_photo)
+                    .into(((ImsListHistoryViewHolder) viewHolder).vImagePhoto);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public List<IconItem> getData() {
@@ -369,18 +395,34 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
             String charString = charSequence.toString();
-            if (charString.isEmpty()) {
-                mSearchText = "";
-                itemsFiltered = items;
-            } else {
-                mSearchText = charString;
-                List<IconItem> filteredList = new ArrayList<>();
-                for (IconItem row : items) {
-                    if (row.type.equalsIgnoreCase(IconItem.TYPE_ORIGIN)) {
-                        String regex = "[0-9]+";
-                        if (row.getJabberId().matches(regex)) {
-                            if (row.getTitle().matches(regex)) {
-                                String title = "fetching id...";
+            try {
+                if (charString.isEmpty()) {
+                    mSearchText = "";
+                    itemsFiltered = items;
+                } else {
+                    mSearchText = charString;
+                    List<IconItem> filteredList = new ArrayList<>();
+                    for (IconItem row : items) {
+                        if (row.type.equalsIgnoreCase(IconItem.TYPE_ORIGIN)) {
+                            String regex = "[0-9]+";
+                            if (row.getJabberId().matches(regex)) {
+                                if (row.getTitle().matches(regex)) {
+                                    String title = "fetching id...";
+                                    Cursor cur = Byonchat.getBotListDB().getRealNameByName(row.getTitle().toLowerCase());
+                                    if (cur.getCount() > 0) {
+                                        title = cur.getString(cur.getColumnIndex(BotListDB.ROOMS_REALNAME));
+                                    }
+                                    cur.close();
+                                    if (title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
+                                        filteredList.add(row);
+                                    }
+                                } else {
+                                    if (row.getTitle().toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
+                                        filteredList.add(row);
+                                    }
+                                }
+                            } else {
+                                String title = "fetching rooms...";
                                 Cursor cur = Byonchat.getBotListDB().getRealNameByName(row.getTitle().toLowerCase());
                                 if (cur.getCount() > 0) {
                                     title = cur.getString(cur.getColumnIndex(BotListDB.ROOMS_REALNAME));
@@ -389,34 +431,22 @@ public class ItemImsListHistoryAdapter extends RecyclerView.Adapter<RecyclerView
                                 if (title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
                                     filteredList.add(row);
                                 }
-                            } else {
-                                if (row.getTitle().toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
-                                    filteredList.add(row);
-                                }
                             }
-                        } else {
-                            String title = "fetching rooms...";
-                            Cursor cur = Byonchat.getBotListDB().getRealNameByName(row.getTitle().toLowerCase());
-                            if (cur.getCount() > 0) {
-                                title = cur.getString(cur.getColumnIndex(BotListDB.ROOMS_REALNAME));
-                            }
-                            cur.close();
-                            if (title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
-                                filteredList.add(row);
-                            }
-                        }
                     /*if (row.title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))
                             || row.info.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
                         filteredList.add(row);
                     }*/
-                    } else if (row.type.equalsIgnoreCase(IconItem.TYPE_MESSAGE_FIND)) {
-                        if (row.info.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
-                            filteredList.add(row);
+                        } else if (row.type.equalsIgnoreCase(IconItem.TYPE_MESSAGE_FIND)) {
+                            if (row.info.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
+                                filteredList.add(row);
+                            }
                         }
                     }
-                }
 
-                itemsFiltered = filteredList;
+                    itemsFiltered = filteredList;
+                }
+            }catch (Exception e){
+                reportCatch(e.getLocalizedMessage());
             }
 
             FilterResults filterResults = new FilterResults();

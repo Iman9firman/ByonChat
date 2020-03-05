@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import static com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity.encodeToBase64;
+import static com.byonchat.android.utils.Utility.reportCatch;
 
 public class CaptureSignature extends Activity { 
  
@@ -45,55 +46,53 @@ public class CaptureSignature extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.signature);
 
-        mContent = (LinearLayout) findViewById(R.id.linearLayout);
-        mSignature = new signature(this, null);
-        mSignature.setBackgroundColor(Color.WHITE);
-        mContent.addView(mSignature);
-        mClear = (Button)findViewById(R.id.clear);
-        mGetSign = (Button)findViewById(R.id.getsign);
-        mGetSign.setEnabled(false);
-        mCancel = (Button)findViewById(R.id.cancel);
-        mView = mContent;
- 
-        yourName = (EditText) findViewById(R.id.yourName);
- 
-        mClear.setOnClickListener(new View.OnClickListener()
-        {        
-            public void onClick(View v) 
-            {
-                Log.v("log_tag", "Panel Cleared");
-                mSignature.clear();
-                mGetSign.setEnabled(false);
-            }
-        });
- 
-        mGetSign.setOnClickListener(new View.OnClickListener()
-        {        
-            public void onClick(View v) 
-            {
-                Log.v("log_tag", "Panel Saved");
-                boolean error = captureSignature();
-                if(!error){
-                    mView.setDrawingCacheEnabled(true);
-                    Bundle b = new Bundle();
-                    b.putString("status", mSignature.save(mView));
+        try {
+            mContent = (LinearLayout) findViewById(R.id.linearLayout);
+            mSignature = new signature(this, null);
+            mSignature.setBackgroundColor(Color.WHITE);
+            mContent.addView(mSignature);
+            mClear = (Button) findViewById(R.id.clear);
+            mGetSign = (Button) findViewById(R.id.getsign);
+            mGetSign.setEnabled(false);
+            mCancel = (Button) findViewById(R.id.cancel);
+            mView = mContent;
+
+            yourName = (EditText) findViewById(R.id.yourName);
+
+            mClear.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Log.v("log_tag", "Panel Cleared");
+                    mSignature.clear();
+                    mGetSign.setEnabled(false);
+                }
+            });
+
+            mGetSign.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Log.v("log_tag", "Panel Saved");
+                    boolean error = captureSignature();
+                    if (!error) {
+                        mView.setDrawingCacheEnabled(true);
+                        Bundle b = new Bundle();
+                        b.putString("status", mSignature.save(mView));
+                        Intent intent = new Intent();
+                        intent.putExtras(b);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                }
+            });
+
+            mCancel.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
                     Intent intent = new Intent();
-                    intent.putExtras(b);
-                    setResult(RESULT_OK,intent);   
+                    setResult(RESULT_CANCELED, intent);
                     finish();
                 }
-            }
-        });
- 
-        mCancel.setOnClickListener(new View.OnClickListener()
-        {        
-            public void onClick(View v) 
-            {
-                Intent intent = new Intent();
-                setResult(RESULT_CANCELED,intent);
-                finish();
-            }
-        });
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
  
     @Override
@@ -222,24 +221,21 @@ public class CaptureSignature extends Activity {
         private void debug(String string){
         }
  
-        private void expandDirtyRect(float historicalX, float historicalY) 
-        {
-            if (historicalX < dirtyRect.left) 
-            {
-                dirtyRect.left = historicalX;
-            } 
-            else if (historicalX > dirtyRect.right) 
-            {
-                dirtyRect.right = historicalX;
-            }
- 
-            if (historicalY < dirtyRect.top) 
-            {
-                dirtyRect.top = historicalY;
-            } 
-            else if (historicalY > dirtyRect.bottom) 
-            {
-                dirtyRect.bottom = historicalY;
+        private void expandDirtyRect(float historicalX, float historicalY) {
+            try {
+                if (historicalX < dirtyRect.left) {
+                    dirtyRect.left = historicalX;
+                } else if (historicalX > dirtyRect.right) {
+                    dirtyRect.right = historicalX;
+                }
+
+                if (historicalY < dirtyRect.top) {
+                    dirtyRect.top = historicalY;
+                } else if (historicalY > dirtyRect.bottom) {
+                    dirtyRect.bottom = historicalY;
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
  

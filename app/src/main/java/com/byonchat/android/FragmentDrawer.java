@@ -36,6 +36,8 @@ import com.byonchat.android.utils.MediaProcessingUtil;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 
 public class FragmentDrawer extends Fragment {
 
@@ -89,49 +91,48 @@ public class FragmentDrawer extends Fragment {
                              Bundle savedInstanceState) {
         // Inflating view layout
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
+        try {
+            textView = (TextView) layout.findViewById(R.id.name_menu_slide);
+            imageView = (ImageView) layout.findViewById(R.id.photo_menu_slide);
+            listView = (LinearLayout) layout.findViewById(R.id.list_menu_slide);
 
-        textView = (TextView) layout.findViewById(R.id.name_menu_slide);
-        imageView = (ImageView) layout.findViewById(R.id.photo_menu_slide);
-        listView = (LinearLayout) layout.findViewById(R.id.list_menu_slide);
 
+            for (int i = 0; i < mArrayListData.size(); i++) {
+                LayoutInflater inflater2 = (LayoutInflater) getActivity().getApplicationContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View mLinearView = inflater2.inflate(R.layout.list_item_slide_menu, null);
+                ImageView image = (ImageView) mLinearView
+                        .findViewById(R.id.image);
+                final TextView title = (TextView) mLinearView
+                        .findViewById(R.id.textTitle);
 
+                image.setImageResource(mArrayListData.get(i).icon);
+                title.setText(mArrayListData.get(i).title);
 
-        for (int i = 0; i < mArrayListData.size(); i++) {
-            LayoutInflater inflater2 = (LayoutInflater) getActivity().getApplicationContext()
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View mLinearView = inflater2.inflate(R.layout.list_item_slide_menu, null);
-            ImageView image = (ImageView) mLinearView
-                    .findViewById(R.id.image);
-            final TextView title = (TextView) mLinearView
-                    .findViewById(R.id.textTitle);
-
-            image.setImageResource(mArrayListData.get(i).icon);
-            title.setText(mArrayListData.get(i).title);
-
-            listView.addView(mLinearView);
-            mLinearView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = null;
-                    if (title.getText().toString().equalsIgnoreCase("Set Status")) {
-                        i = new Intent(getActivity().getApplicationContext(), UpdateProfileActivity.class);
-                    } else if (title.getText().toString().equalsIgnoreCase("Themes Selection")) {
-                        i = new Intent(getActivity().getApplicationContext(), SkinSelectorActivity.class);
-                    } else if (title.getText().toString().equalsIgnoreCase("Settings")) {
-                     //   i = new Intent(getActivity().getApplicationContext(), ActivityDirection.class);
-                       i = new Intent(getActivity().getApplicationContext(), MainSettingActivity.class);
-                    } else if (title.getText().toString().equalsIgnoreCase("Message Broadcast")) {
-                        i = new Intent(getActivity().getApplicationContext(), PickUserActivity.class);
-                        i.putExtra(PickUserActivity.FROMACTIVITY,"Message Broadcast");
-                    } else if (title.getText().toString().equalsIgnoreCase("Refresh Contacts")) {
+                listView.addView(mLinearView);
+                mLinearView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = null;
+                        if (title.getText().toString().equalsIgnoreCase("Set Status")) {
+                            i = new Intent(getActivity().getApplicationContext(), UpdateProfileActivity.class);
+                        } else if (title.getText().toString().equalsIgnoreCase("Themes Selection")) {
+                            i = new Intent(getActivity().getApplicationContext(), SkinSelectorActivity.class);
+                        } else if (title.getText().toString().equalsIgnoreCase("Settings")) {
+                            //   i = new Intent(getActivity().getApplicationContext(), ActivityDirection.class);
+                            i = new Intent(getActivity().getApplicationContext(), MainSettingActivity.class);
+                        } else if (title.getText().toString().equalsIgnoreCase("Message Broadcast")) {
+                            i = new Intent(getActivity().getApplicationContext(), PickUserActivity.class);
+                            i.putExtra(PickUserActivity.FROMACTIVITY, "Message Broadcast");
+                        } else if (title.getText().toString().equalsIgnoreCase("Refresh Contacts")) {
 
                             /*actionBar.setSelectedNavigationItem(0);
                             slide_me.closeRightSide();
                             progressbar.setVisibility(View.VISIBLE);
                             startService(new Intent(getBaseContext(), RefreshContactService.class));*/
-                    }  else if (title.getText().toString().equalsIgnoreCase("Create Groups")) {
-                        //  i = new Intent(getActivity().getApplicationContext(), GroupAddInfoActivity.class);
-                    } else if (title.getText().toString().equalsIgnoreCase("Invite Friend")) {
+                        } else if (title.getText().toString().equalsIgnoreCase("Create Groups")) {
+                            //  i = new Intent(getActivity().getApplicationContext(), GroupAddInfoActivity.class);
+                        } else if (title.getText().toString().equalsIgnoreCase("Invite Friend")) {
                       /*  i=new Intent(getActivity().getApplicationContext(), MoveToFriend.class);
                         i.putExtra("frnd_lat", "-6.1908002");
                         i.putExtra("frnd_longi","106.7679434");
@@ -140,54 +141,60 @@ public class FragmentDrawer extends Fragment {
                         i.putExtra("name", "iamn");
                         i.putExtra("id", "123");
                         startActivity(i);*/
-                      shareIt();
+                            shareIt();
+                        }
+                        if (i != null) startActivity(i);
+                        mDrawerLayout.closeDrawers();
                     }
-                    if (i != null)  startActivity(i);
-                    mDrawerLayout.closeDrawers();
-                }
-            });
+                });
 
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         Intent i = new Intent(getActivity().getApplicationContext(), UpdateProfileActivity.class);
                         startActivity(i);
                         mDrawerLayout.closeDrawers();
                     }
-            });
-
+                });
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-
         return layout;
     }
-    public void refreshMenuBroadcast(){
-        Contact contact = messengerHelper.getMyContact();
-        File photoFile = getActivity().getApplicationContext().getFileStreamPath(MediaProcessingUtil
-                .getProfilePicName(contact));
-        if (photoFile.exists()) {
-            if(Integer.valueOf(messengerHelper.getMyContact().getChangeProfile()) == 1){
-                Glide.with(getActivity()).load(photoFile).asBitmap().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).signature(new StringSignature(Long.toString(System.currentTimeMillis()))).into(new BitmapImageViewTarget(imageView) {
-                    @Override
-                    protected void setResource(Bitmap resource) {
-                        RoundedBitmapDrawable circularBitmapDrawable =
-                                RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
-                        circularBitmapDrawable.setCornerRadius(22);
-                        imageView.setImageDrawable(circularBitmapDrawable);
-                    }
-                });
-                messengerHelper.getMyContact().setChangeProfile(0);
-            }
 
-        }else {
-            imageView.setImageBitmap(MediaProcessingUtil.getRoundedCornerBitmap(BitmapFactory.decodeResource(getActivity().getApplicationContext().getResources(), R.drawable.ic_no_photo), 22));
-        }
+    public void refreshMenuBroadcast() {
+        try {
+            Contact contact = messengerHelper.getMyContact();
+            File photoFile = getActivity().getApplicationContext().getFileStreamPath(MediaProcessingUtil
+                    .getProfilePicName(contact));
+            if (photoFile.exists()) {
+                if (Integer.valueOf(messengerHelper.getMyContact().getChangeProfile()) == 1) {
+                    Glide.with(getActivity()).load(photoFile).asBitmap().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).signature(new StringSignature(Long.toString(System.currentTimeMillis()))).into(new BitmapImageViewTarget(imageView) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(getActivity().getResources(), resource);
+                            circularBitmapDrawable.setCornerRadius(22);
+                            imageView.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+                    messengerHelper.getMyContact().setChangeProfile(0);
+                }
+
+            } else {
+                imageView.setImageBitmap(MediaProcessingUtil.getRoundedCornerBitmap(BitmapFactory.decodeResource(getActivity().getApplicationContext().getResources(), R.drawable.ic_no_photo), 22));
+            }
 //        imageLoaderFromSD.DisplayImage(MediaProcessingUtil.getProfilePic(messengerHelper.getMyContact().getJabberId()), imageView, true);
-        textView.setText(contact.getRealname());
+            textView.setText(contact.getRealname());
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
-    public void refreshMenu(){
-        Contact contact = messengerHelper.getMyContact();
+    public void refreshMenu() {
+        try {
+            Contact contact = messengerHelper.getMyContact();
         /*File photoFile = getActivity().getApplicationContext().getFileStreamPath(MediaProcessingUtil
                 .getProfilePicName(contact));
         if (photoFile.exists()) {
@@ -197,9 +204,9 @@ public class FragmentDrawer extends Fragment {
             imageView.setImageBitmap(MediaProcessingUtil.getRoundedCornerBitmap(BitmapFactory.decodeResource(getActivity().getApplicationContext().getResources(), R.drawable.ic_no_photo), 22));
         }*/
 
-        File photoFile = getActivity().getApplicationContext().getFileStreamPath(MediaProcessingUtil
-                .getProfilePicName(contact));
-        if (photoFile.exists()) {
+            File photoFile = getActivity().getApplicationContext().getFileStreamPath(MediaProcessingUtil
+                    .getProfilePicName(contact));
+            if (photoFile.exists()) {
                 Glide.with(getActivity()).load(photoFile).asBitmap().centerCrop().signature(new StringSignature(Long.toString(System.currentTimeMillis()))).into(new BitmapImageViewTarget(imageView) {
                     @Override
                     protected void setResource(Bitmap resource) {
@@ -210,16 +217,24 @@ public class FragmentDrawer extends Fragment {
                     }
                 });
             }
-        textView.setText(contact.getRealname());
+            textView.setText(contact.getRealname());
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onResume() {
-        refreshMenu();
-        IntentFilter f = new IntentFilter(UpdateProfileActivity.UPDATE_PROFILE);
-        f.addAction(MessengerConnectionService.ACTION_STATUS_CHANGED);
-        f.setPriority(2);
-        getActivity().registerReceiver(broadcastHandler, f);
+        try {
+
+            refreshMenu();
+            IntentFilter f = new IntentFilter(UpdateProfileActivity.UPDATE_PROFILE);
+            f.addAction(MessengerConnectionService.ACTION_STATUS_CHANGED);
+            f.setPriority(2);
+            getActivity().registerReceiver(broadcastHandler, f);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         super.onResume();
 
     }
@@ -243,47 +258,54 @@ public class FragmentDrawer extends Fragment {
     }
 
     private void shareIt() {
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        String shareSubject = getResources().getString(R.string.share_subject) ;
-        String shareTitle = getResources().getString(R.string.share_title) ;
-        String shareBody = getResources().getString(R.string.share_body) ;
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-        startActivity(Intent.createChooser(sharingIntent, shareTitle));
+        try {
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            String shareSubject = getResources().getString(R.string.share_subject);
+            String shareTitle = getResources().getString(R.string.share_title);
+            String shareBody = getResources().getString(R.string.share_body);
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(sharingIntent, shareTitle));
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void setUp(int fragmentId, DrawerLayout drawerLayout, final Toolbar toolbar) {
-        containerView = getActivity().findViewById(fragmentId);
-        mDrawerLayout = drawerLayout;
-        mDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                getActivity().invalidateOptionsMenu();
-            }
+        try {
+            containerView = getActivity().findViewById(fragmentId);
+            mDrawerLayout = drawerLayout;
+            mDrawerToggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+                @Override
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                    getActivity().invalidateOptionsMenu();
+                }
 
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                getActivity().invalidateOptionsMenu();
-            }
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    super.onDrawerClosed(drawerView);
+                    getActivity().invalidateOptionsMenu();
+                }
 
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-                toolbar.setAlpha(1 - slideOffset / 2);
-            }
-        };
+                @Override
+                public void onDrawerSlide(View drawerView, float slideOffset) {
+                    super.onDrawerSlide(drawerView, slideOffset);
+                    toolbar.setAlpha(1 - slideOffset / 2);
+                }
+            };
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mDrawerToggle.syncState();
-            }
-        });
-
+            mDrawerLayout.setDrawerListener(mDrawerToggle);
+            mDrawerLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawerToggle.syncState();
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public static interface ClickListener {

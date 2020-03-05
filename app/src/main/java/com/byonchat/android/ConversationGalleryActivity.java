@@ -20,6 +20,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ConversationGalleryActivity extends AppCompatActivity {
     public static final int TYPE_GALLERY = 0;
     public static final int TYPE_PROFILE_PICTURE = 1;
@@ -145,57 +147,29 @@ public class ConversationGalleryActivity extends AppCompatActivity {
 
     private ImageFragment getImageFragment(String fname,String caption) {
         ImageFragment fragment = new ImageFragment();
-        Bundle b = new Bundle();
-        b.putString(ImageFragment.KEY_BUNDLE_FILENAME, fname);
-        b.putString(ImageFragment.KEY_BUNDLE_FILECAPTION, caption);
-        fragment.setArguments(b);
+        try {
+            Bundle b = new Bundle();
+            b.putString(ImageFragment.KEY_BUNDLE_FILENAME, fname);
+            b.putString(ImageFragment.KEY_BUNDLE_FILECAPTION, caption);
+            fragment.setArguments(b);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return fragment;
     }
 
     private VideoFragment getVideoFragment(String fname) {
         VideoFragment fragment = new VideoFragment();
-        Bundle b = new Bundle();
-        b.putBoolean(VideoFragment.KEY_BUNDLE_START_VIDEO,
-                Boolean.valueOf(start));
-        b.putString(VideoFragment.KEY_BUNDLE_FILENAME, fname);
-        fragment.setArguments(b);
-        start = false;
+        try {
+            Bundle b = new Bundle();
+            b.putBoolean(VideoFragment.KEY_BUNDLE_START_VIDEO,
+                    Boolean.valueOf(start));
+            b.putString(VideoFragment.KEY_BUNDLE_FILENAME, fname);
+            fragment.setArguments(b);
+            start = false;
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return fragment;
     }
-
-    /*class ImageLoader extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Cursor cursor = messengerHelper.query(SQL_SELECT_MEDIA,
-                    new String[] { jabberId, jabberId });
-
-            while (cursor.moveToNext()) {
-                Message msg = new Message(cursor);
-              *//*  String fname = msg.getMessage();
-                File f = new File(fname);*//*
-                String[] s = msg.getMessage().split(";");
-                if (!(s[0]).equalsIgnoreCase("")) {
-                    File f = new File(s[0]);
-                    if (f.exists()) {
-                        if (s[0].equals(selectedFile))
-                            position = fileNames.size();
-                        fileNames.add(msg);
-                    }
-                }
-            }
-            cursor.close();
-
-            viewPager.getAdapter().notifyDataSetChanged();
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            viewPager.setCurrentItem(position);
-        }
-
-    }*/
 }

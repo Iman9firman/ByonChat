@@ -43,6 +43,8 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.util.HashMap;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class NewsDetailActivity extends AppCompatActivity  implements AppBarLayout.OnOffsetChangedListener {
 
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
@@ -68,251 +70,255 @@ public class NewsDetailActivity extends AppCompatActivity  implements AppBarLayo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                getWindow().setStatusBarColor(Color.BLACK);
+            }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.BLACK);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+
+            titles = (TextView) findViewById(R.id.titleNews);
+            linearLayout = (LinearLayout) findViewById(R.id.linear);
+            mAppBarLayout = (AppBarLayout) findViewById(R.id.main_appbar);
+            iconView = (Target) findViewById(R.id.backdrop);
+            btLoves = (LinearLayout) findViewById(R.id.btLoves);
+            btNix = (LinearLayout) findViewById(R.id.btNix);
+            btComment = (LinearLayout) findViewById(R.id.btComment);
+            totalComments = (TextView) findViewById(R.id.totalComments);
+            totalLoves = (TextView) findViewById(R.id.totalLoves);
+            hiddenComment = (TextView) findViewById(R.id.hiddenComment);
+            mLinearHiddenComment = (LinearLayout) findViewById(R.id.LinearHiddenComment);
+            profilePic = (Target) findViewById(R.id.imagePhoto);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        titles = (TextView) findViewById(R.id.titleNews);
-        linearLayout = (LinearLayout) findViewById(R.id.linear);
-        mAppBarLayout   = (AppBarLayout) findViewById(R.id.main_appbar);
-        iconView =(Target) findViewById(R.id.backdrop);
-        btLoves =(LinearLayout) findViewById(R.id.btLoves);
-        btNix =(LinearLayout) findViewById(R.id.btNix);
-        btComment =(LinearLayout) findViewById(R.id.btComment);
-        totalComments =(TextView) findViewById(R.id.totalComments);
-        totalLoves =(TextView) findViewById(R.id.totalLoves);
-        hiddenComment =(TextView) findViewById(R.id.hiddenComment);
-        mLinearHiddenComment =(LinearLayout) findViewById(R.id.LinearHiddenComment);
-        profilePic=(Target) findViewById(R.id.imagePhoto);
     }
 
     @Override
     protected void onResume() {
+        try {
+            if (botListDB == null) {
+                botListDB = BotListDB.getInstance(this);
+            }
 
-        if (botListDB==null){
-            botListDB = BotListDB.getInstance(this);
-        }
-
-        title = getIntent().getStringExtra("title");
-        String time = getIntent().getStringExtra("time");
-        String content = getIntent().getStringExtra("content");
-        final String image = getIntent().getStringExtra("image");
-        final String totalComment = getIntent().getStringExtra("totalComment");
-        String userLike = getIntent().getStringExtra("userLike");
-        String userDislike = getIntent().getStringExtra("userDislike");
-        String totalLove = getIntent().getStringExtra("totalLove");
-        final String userid = getIntent().getStringExtra("userid");
-        final String id_note = getIntent().getStringExtra("id_note");
-        final String bc_user = getIntent().getStringExtra("bc_user");
-        final String id_room_tab = getIntent().getStringExtra("id_room_tab");
-        final String coment = getIntent().getStringExtra("coment");
-        final String comentName = getIntent().getStringExtra("comentName");
-        final String foto_file = getIntent().getStringExtra("foto_file");
-        color = getIntent().getStringExtra("color");
+            title = getIntent().getStringExtra("title");
+            String time = getIntent().getStringExtra("time");
+            String content = getIntent().getStringExtra("content");
+            final String image = getIntent().getStringExtra("image");
+            final String totalComment = getIntent().getStringExtra("totalComment");
+            String userLike = getIntent().getStringExtra("userLike");
+            String userDislike = getIntent().getStringExtra("userDislike");
+            String totalLove = getIntent().getStringExtra("totalLove");
+            final String userid = getIntent().getStringExtra("userid");
+            final String id_note = getIntent().getStringExtra("id_note");
+            final String bc_user = getIntent().getStringExtra("bc_user");
+            final String id_room_tab = getIntent().getStringExtra("id_room_tab");
+            final String coment = getIntent().getStringExtra("coment");
+            final String comentName = getIntent().getStringExtra("comentName");
+            final String foto_file = getIntent().getStringExtra("foto_file");
+            color = getIntent().getStringExtra("color");
 
 
+            Cursor cur = botListDB.getSingleRoom(userid);
+            if (cur.getCount() > 0) {
+                Picasso.with(getApplicationContext())
+                        .load(cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON)).toString())
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                        .into(profilePic);
+            } else {
+                Picasso.with(getApplicationContext()).load(R.drawable.ic_no_photo)
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                        .into(profilePic);
+            }
 
-        Cursor cur = botListDB.getSingleRoom(userid);
-        if (cur.getCount() > 0) {
-            Picasso.with(getApplicationContext())
-                    .load(cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON)).toString())
-                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                    .into(profilePic);
-        } else {
-            Picasso.with(getApplicationContext()).load(R.drawable.ic_no_photo)
-                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                    .into(profilePic);
-        }
+            if (!comentName.equalsIgnoreCase("")) {
+                hiddenComment.setText(comentName + " : " + coment);
+                int jComment = Integer.parseInt(totalComment);
+                if (jComment > 0) {
+                    hiddenComment.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), NoteCommentActivity.class);
+                            intent.putExtra("userid", userid);
+                            intent.putExtra("id_note", id_note);
+                            intent.putExtra("bc_user", bc_user);
+                            intent.putExtra("id_room_tab", id_room_tab);
+                            intent.putExtra("color", color);
+                            startActivity(intent);
+                        }
+                    });
+                }
+            } else {
+                mLinearHiddenComment.setVisibility(View.GONE);
+            }
 
-        if(!comentName.equalsIgnoreCase("")){
-            hiddenComment.setText(comentName+" : "+ coment);
-            int jComment = Integer.parseInt(totalComment);
-            if (jComment > 0) {
-                hiddenComment.setOnClickListener(new View.OnClickListener() {
+
+            Cursor cursorValue = botListDB.getSingleRoomDetailFormWithFlag(id_note, userid, id_room_tab, "value");
+            if (cursorValue.getCount() > 0) {
+                final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
+                try {
+                    JSONObject c = new JSONObject(contentValue);
+                    String jLove = c.isNull("amount_of_like") ? null : c.getString("amount_of_like");
+                    totalLoves.setText(jLove);
+                    String jComment = c.isNull("amount_of_comment") ? null : c.getString("amount_of_comment");
+                    totalComments.setText(jComment);
+
+                    if (c.getJSONArray("comment_note").length() > 0) {
+                        mLinearHiddenComment.setVisibility(View.VISIBLE);
+                        JSONArray commentNoteJsonArr = c.getJSONArray("comment_note");
+                        for (int j = 0; j < commentNoteJsonArr.length(); j++) {
+                            JSONObject d = commentNoteJsonArr.getJSONObject(j);
+
+                            String pName2 = d.isNull("profile_name") ? null : d.getString("profile_name");
+                            String pId2 = d.isNull("userid") ? null : d.getString("userid");
+                            String pComment2 = d.isNull("content_comment") ? null : d.getString("content_comment");
+                            Log.w("cuciKaki1", (pName2 != null ? pName2 : pId2));
+                            Log.w("cuciKaki2", pComment2);
+                            hiddenComment.setText((pName2 != null ? pName2 : pId2) + " : " + pComment2);
+                        }
+                    } else {
+                        mLinearHiddenComment.setVisibility(View.GONE);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.w("buntut", "kuving");
+            }
+
+
+            if (userLike.equals("false")) {
+                btLoves.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getApplicationContext(), NoteCommentActivity.class);
-                        intent.putExtra("userid", userid);
-                        intent.putExtra("id_note", id_note);
-                        intent.putExtra("bc_user", bc_user);
-                        intent.putExtra("id_room_tab",id_room_tab);
-                        intent.putExtra("color",color);
-                        startActivity(intent);
+                        Cursor cursorValue = botListDB.getSingleRoomDetailFormWithFlag(id_note, userid, id_room_tab, "value");
+
+                        if (cursorValue.getCount() > 0) {
+                            final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
+                            if (!contentValue.equalsIgnoreCase("")) {
+                                try {
+                                    JSONObject c = new JSONObject(contentValue);
+                                    if (c.getString("user_like").equalsIgnoreCase("false")) {
+                                        new saveLikeNotes().execute(bc_user, userid, id_note, totalComment, id_room_tab, URL_SAVE_LOVES);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     }
                 });
-            }
-        }else{
-            mLinearHiddenComment.setVisibility(View.GONE);
-        }
-
-
-        Cursor cursorValue = botListDB.getSingleRoomDetailFormWithFlag(id_note, userid, id_room_tab, "value");
-        if (cursorValue.getCount() > 0) {
-            final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
-            try {
-                JSONObject c = new JSONObject(contentValue);
-                String jLove = c.isNull("amount_of_like") ? null : c.getString("amount_of_like");
-                totalLoves.setText(jLove);
-                String jComment = c.isNull("amount_of_comment") ? null : c.getString("amount_of_comment");
-                totalComments.setText(jComment);
-
-                if (c.getJSONArray("comment_note").length() > 0) {
-                    mLinearHiddenComment.setVisibility(View.VISIBLE);
-                    JSONArray commentNoteJsonArr = c.getJSONArray("comment_note");
-                    for (int j = 0; j < commentNoteJsonArr.length(); j++) {
-                        JSONObject d = commentNoteJsonArr.getJSONObject(j);
-
-                        String pName2 = d.isNull("profile_name") ? null : d.getString("profile_name");
-                        String pId2 = d.isNull("userid") ? null : d.getString("userid");
-                        String pComment2 = d.isNull("content_comment") ? null : d.getString("content_comment");
-                        Log.w("cuciKaki1",(pName2 != null ? pName2 : pId2));
-                        Log.w("cuciKaki2",pComment2);
-                        hiddenComment.setText((pName2 != null ? pName2 : pId2) + " : " + pComment2);
-                    }
-                }else{
-                    mLinearHiddenComment.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    btLoves.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.button_timeline_background));
                 }
 
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else if (userLike.equals("true")) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    btLoves.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.button_timeline_unfocused_pressed));
+                    btLoves.setEnabled(false);
+                }
             }
-        }else {
-            Log.w("buntut","kuving");
-        }
 
+            if (userDislike.equals("false")) {
+                btNix.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Cursor cursorValue = botListDB.getSingleRoomDetailFormWithFlag(id_note, userid, id_room_tab, "value");
 
-        if (userLike.equals("false")) {
-            btLoves.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Cursor cursorValue = botListDB.getSingleRoomDetailFormWithFlag(id_note, userid,id_room_tab, "value");
-
-                    if (cursorValue.getCount() > 0) {
-                        final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
-                        if(!contentValue.equalsIgnoreCase("")){
-                            try {
-                                JSONObject c = new JSONObject(contentValue);
-                                if (c.getString("user_like").equalsIgnoreCase("false")){
-                                    new saveLikeNotes().execute(bc_user,userid,id_note,totalComment,id_room_tab,URL_SAVE_LOVES);
+                        if (cursorValue.getCount() > 0) {
+                            final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
+                            if (!contentValue.equalsIgnoreCase("")) {
+                                try {
+                                    JSONObject c = new JSONObject(contentValue);
+                                    if (c.getString("user_like").equalsIgnoreCase("false")) {
+                                        new saveLikeNotes().execute(bc_user, userid, id_note, totalComment, id_room_tab, URL_SAVE_DISLIKE);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
                         }
                     }
+                });
+
+            } else if (userDislike.equals("true")) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    btNix.setEnabled(false);
                 }
-            });
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                btLoves.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.button_timeline_background));
             }
 
-        } else if (userLike.equals("true")) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                btLoves.setBackground(getApplicationContext().getResources().getDrawable(R.drawable.button_timeline_unfocused_pressed));
-                btLoves.setEnabled(false);
-            }
-        }
 
-        if (userDislike.equals("false")) {
-            btNix.setOnClickListener(new View.OnClickListener() {
+            btComment.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Cursor cursorValue = botListDB.getSingleRoomDetailFormWithFlag(id_note, userid,id_room_tab, "value");
+                    Intent intent = new Intent(getApplicationContext(), NoteCommentActivity.class);
+                    intent.putExtra("userid", userid);
+                    intent.putExtra("id_note", id_note);
+                    intent.putExtra("bc_user", bc_user);
+                    intent.putExtra("id_room_tab", id_room_tab);
+                    intent.putExtra("color", color);
+                    startActivity(intent);
+                }
+            });
+            Picasso.with(getApplicationContext())
+                    .load(image)
+                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                    .into(iconView);
+            titles.setText(title);
+            linearLayout.setBackgroundColor(Color.parseColor("#" + color));
 
-                    if (cursorValue.getCount() > 0) {
-                        final String contentValue = cursorValue.getString(cursorValue.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
-                        if(!contentValue.equalsIgnoreCase("")){
-                            try {
-                                JSONObject c = new JSONObject(contentValue);
-                                if (c.getString("user_like").equalsIgnoreCase("false")){
-                                    new saveLikeNotes().execute(bc_user,userid,id_note,totalComment,id_room_tab,URL_SAVE_DISLIKE);
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
+            setSupportActionBar(toolbar);
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+            toolbar.setTitle(" ");
+            collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+            collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+            collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+            collapsingToolbarLayout.setTitle(" ");
+
+            collapsingToolbarLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, image);
+                    startActivity(intent);
                 }
             });
 
-        } else if (userDislike.equals("true")) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                btNix.setEnabled(false);
+            dynamicToolbarColor();
+            toolbarTextAppernce();
+
+            mAppBarLayout.addOnOffsetChangedListener(this);
+
+            TextView messageInfo = (TextView) findViewById(R.id.message_info);
+
+            Drawable dIcon = getResources().getDrawable(R.drawable.news_top_left);
+            int leftMargin = dIcon.getIntrinsicWidth();
+
+            SpannableString ssInfo = new SpannableString("Updates on : 10-08-2016");
+            ssInfo.setSpan(new MyLeadingMarginSpan2(1, leftMargin), 0, ssInfo.length(), 0);
+            messageInfo.setText(ssInfo);
+
+            String news = "<img src=\"file:///android_res/drawable/news_top_left_bagi.png\" style=\"float:left; visibility: hidden\">" +
+                    "<div style=\"font-family: sans-serif-light; font-style: normal; font-size: 12pt\">" +
+                    content + "</div>\n";
+
+            WebView webView = (WebView) findViewById(R.id.webView);
+            webView.getSettings().setJavaScriptEnabled(true);
+            webView.setBackgroundColor(0x00000000);
+            webView.loadDataWithBaseURL(null, news, "text/html", "utf-8", null);
+
+            if (title.equalsIgnoreCase("") || title == null) {
+                toolbar.setVisibility(View.GONE);
             }
+
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-
-        btComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), NoteCommentActivity.class);
-                intent.putExtra("userid", userid);
-                intent.putExtra("id_note", id_note);
-                intent.putExtra("bc_user",bc_user);
-                intent.putExtra("id_room_tab",id_room_tab);
-                intent.putExtra("color",color);
-                startActivity(intent);
-            }
-        });
-        Picasso.with(getApplicationContext())
-                .load(image)
-                .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                .into(iconView);
-        titles.setText(title);
-        linearLayout.setBackgroundColor(Color.parseColor("#"+color));
-
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        toolbar.setTitle(" ");
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
-        collapsingToolbarLayout.setTitle(" ");
-
-        collapsingToolbarLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
-                intent.putExtra(ZoomImageViewActivity.KEY_FILE,image);
-                startActivity(intent);
-            }
-        });
-
-        dynamicToolbarColor();
-        toolbarTextAppernce();
-
-        mAppBarLayout.addOnOffsetChangedListener(this);
-
-        TextView messageInfo = (TextView) findViewById(R.id.message_info);
-
-        Drawable dIcon = getResources().getDrawable(R.drawable.news_top_left);
-        int leftMargin = dIcon.getIntrinsicWidth();
-
-        SpannableString ssInfo = new SpannableString("Updates on : 10-08-2016");
-        ssInfo.setSpan(new MyLeadingMarginSpan2(1, leftMargin), 0, ssInfo.length(), 0);
-        messageInfo.setText(ssInfo);
-
-        String news = "<img src=\"file:///android_res/drawable/news_top_left_bagi.png\" style=\"float:left; visibility: hidden\">"+
-                "<div style=\"font-family: sans-serif-light; font-style: normal; font-size: 12pt\">"+
-                content +"</div>\n";
-
-        WebView webView = (WebView) findViewById(R.id.webView);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setBackgroundColor(0x00000000);
-        webView.loadDataWithBaseURL(null,news, "text/html", "utf-8", null);
-
-        if(title.equalsIgnoreCase("")||title==null){
-            toolbar.setVisibility(View.GONE);
-        }
-
-
         super.onResume();
     }
 
@@ -416,13 +422,21 @@ public class NewsDetailActivity extends AppCompatActivity  implements AppBarLayo
 
 
     private void dynamicToolbarColor() {
-        collapsingToolbarLayout.setContentScrimColor(Color.parseColor("#"+color));
-        collapsingToolbarLayout.setStatusBarScrimColor(Color.parseColor("#"+color));
+        try {
+            collapsingToolbarLayout.setContentScrimColor(Color.parseColor("#" + color));
+            collapsingToolbarLayout.setStatusBarScrimColor(Color.parseColor("#" + color));
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void toolbarTextAppernce() {
-        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
-        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
+        try {
+            collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
+            collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -437,50 +451,62 @@ public class NewsDetailActivity extends AppCompatActivity  implements AppBarLayo
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
-        int maxScroll = appBarLayout.getTotalScrollRange();
-        float percentage = (float) Math.abs(offset) / (float) maxScroll;
+        try {
+            int maxScroll = appBarLayout.getTotalScrollRange();
+            float percentage = (float) Math.abs(offset) / (float) maxScroll;
 
-        handleAlphaOnTitle(percentage);
-        handleToolbarTitleVisibility(percentage);
+            handleAlphaOnTitle(percentage);
+            handleToolbarTitleVisibility(percentage);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void handleToolbarTitleVisibility(float percentage) {
-        if (percentage >= PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR) {
+        try {
+            if (percentage >= PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR) {
 
-            if(!mIsTheTitleVisible) {
-                mIsTheTitleVisible = true;
-                collapsingToolbarLayout.setTitle(title);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    getWindow().setStatusBarColor(Color.parseColor("#"+color));
-                }
-            }
-
-        } else {
-
-            if (mIsTheTitleVisible) {
-                mIsTheTitleVisible = false;
-                collapsingToolbarLayout.setTitle(" ");
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                    getWindow().setStatusBarColor(Color.BLACK);
+                if (!mIsTheTitleVisible) {
+                    mIsTheTitleVisible = true;
+                    collapsingToolbarLayout.setTitle(title);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        getWindow().setStatusBarColor(Color.parseColor("#" + color));
+                    }
                 }
 
+            } else {
+
+                if (mIsTheTitleVisible) {
+                    mIsTheTitleVisible = false;
+                    collapsingToolbarLayout.setTitle(" ");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        getWindow().setStatusBarColor(Color.BLACK);
+                    }
+
+                }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void handleAlphaOnTitle(float percentage) {
-        if (percentage >= PERCENTAGE_TO_HIDE_TITLE_DETAILS) {
-            if(mIsTheTitleContainerVisible) {
-                mIsTheTitleContainerVisible = false;
-            }
+        try {
+            if (percentage >= PERCENTAGE_TO_HIDE_TITLE_DETAILS) {
+                if (mIsTheTitleContainerVisible) {
+                    mIsTheTitleContainerVisible = false;
+                }
 
-        } else {
+            } else {
 
-            if (!mIsTheTitleContainerVisible) {
-                mIsTheTitleContainerVisible = true;
+                if (!mIsTheTitleContainerVisible) {
+                    mIsTheTitleContainerVisible = true;
+                }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 }

@@ -34,6 +34,8 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
@@ -71,100 +73,103 @@ public class DialogVouchersPic extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.activity_vouchers_pic, container, false);
-        mBgvouchers = (com.joooonho.SelectableRoundedImageView) dialog.findViewById(R.id.bg_vouchers);
-        mUserVoucher = (Button) dialog.findViewById(R.id.use_voucher);
-        mTransferVoucher = (Button) dialog.findViewById(R.id.transfer_voucher);
-        mParticipantOutlets = (Button) dialog.findViewById(R.id.participant_outlets);
-        mTermsAndConditions = (Button) dialog.findViewById(R.id.terms_and_conditions);
-        mVoucherValue = (TextView) dialog.findViewById(R.id.voucher_value);
-        mTglValid = (TextView) dialog.findViewById(R.id.tgl_valid);
-        mSerialNumber = (TextView) dialog.findViewById(R.id.serial_number);
-        mBtnBack = (ImageView) dialog.findViewById(R.id.btn_back);
+        try {
+            mBgvouchers = (com.joooonho.SelectableRoundedImageView) dialog.findViewById(R.id.bg_vouchers);
+            mUserVoucher = (Button) dialog.findViewById(R.id.use_voucher);
+            mTransferVoucher = (Button) dialog.findViewById(R.id.transfer_voucher);
+            mParticipantOutlets = (Button) dialog.findViewById(R.id.participant_outlets);
+            mTermsAndConditions = (Button) dialog.findViewById(R.id.terms_and_conditions);
+            mVoucherValue = (TextView) dialog.findViewById(R.id.voucher_value);
+            mTglValid = (TextView) dialog.findViewById(R.id.tgl_valid);
+            mSerialNumber = (TextView) dialog.findViewById(R.id.serial_number);
+            mBtnBack = (ImageView) dialog.findViewById(R.id.btn_back);
 
-        mContext = getContext().getApplicationContext();
-        mResources = getResources();
-
-
-        NumberFormat nf = NumberFormat.getNumberInstance(new Locale("in", "ID"));
-        mVoucherValue.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
-        mSerialNumber.setText("SN : " + serial);
-        mTglValid.setText("Valid until " + tglvalid);
+            mContext = getContext().getApplicationContext();
+            mResources = getResources();
 
 
-        mUserVoucher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment prev = getFragmentManager().findFragmentByTag("DialogVouchersPic");
+            NumberFormat nf = NumberFormat.getNumberInstance(new Locale("in", "ID"));
+            mVoucherValue.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
+            mSerialNumber.setText("SN : " + serial);
+            mTglValid.setText("Valid until " + tglvalid);
+
+
+            mUserVoucher.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("DialogVouchersPic");
 //                    if(prev != null){
 //                        prev.isRemoving();
 //                    }
-                    ft.addToBackStack(null);
+                        ft.addToBackStack(null);
 
-                    DialogFragment testDialog = DialogUseVoucherOne.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor, strbackground);
-                    testDialog.setRetainInstance(true);
-                    testDialog.show(ft, "DialogUseVoucher1");
+                        DialogFragment testDialog = DialogUseVoucherOne.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor, strbackground);
+                        testDialog.setRetainInstance(true);
+                        testDialog.show(ft, "DialogUseVoucher1");
+                    }
                 }
-            }
-        });
+            });
 
-        mTransferVoucher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment prev = getFragmentManager().findFragmentByTag("DialogVouchersPic");
-                    ft.addToBackStack(null);
+            mTransferVoucher.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("DialogVouchersPic");
+                        ft.addToBackStack(null);
 
-                    DialogFragment testDialog = DialogTransferVoucherOne.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor, strbackground);
-                    testDialog.setRetainInstance(true);
-                    testDialog.show(ft, "DialogTransferVoucher1");
+                        DialogFragment testDialog = DialogTransferVoucherOne.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor, strbackground);
+                        testDialog.setRetainInstance(true);
+                        testDialog.show(ft, "DialogTransferVoucher1");
+                    }
                 }
-            }
-        });
+            });
 
-        mParticipantOutlets.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment prev = getFragmentManager().findFragmentByTag("DialogVouchersPic");
-                    ft.addToBackStack(null);
+            mParticipantOutlets.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("DialogVouchersPic");
+                        ft.addToBackStack(null);
 
-                    DialogFragment testDialog = DialogVoucherParticipantOutlets.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor);
-                    testDialog.setRetainInstance(true);
-                    testDialog.show(ft, "DialogVoucherParticipantOutlets");
+                        DialogFragment testDialog = DialogVoucherParticipantOutlets.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor);
+                        testDialog.setRetainInstance(true);
+                        testDialog.show(ft, "DialogVoucherParticipantOutlets");
+                    }
                 }
-            }
-        });
+            });
 
-        mTermsAndConditions.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment prev = getFragmentManager().findFragmentByTag("DialogVouchersPic");
-                    ft.addToBackStack(null);
+            mTermsAndConditions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Fragment prev = getFragmentManager().findFragmentByTag("DialogVouchersPic");
+                        ft.addToBackStack(null);
 
-                    DialogFragment testDialog = DialogVoucherTermsAndConditions.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor);
-                    testDialog.setRetainInstance(true);
-                    testDialog.show(ft, "DialogVoucherTermsAndConditions");
+                        DialogFragment testDialog = DialogVoucherTermsAndConditions.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor);
+                        testDialog.setRetainInstance(true);
+                        testDialog.show(ft, "DialogVoucherTermsAndConditions");
+                    }
                 }
-            }
-        });
+            });
 
-        mBtnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    getDialog().dismiss();
+            mBtnBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
                 }
-            }
-        });
+            });
 
-        mBgvouchers.setImageBitmap(background);
-
+            mBgvouchers.setImageBitmap(background);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return dialog;
     }
 
@@ -178,11 +183,14 @@ public class DialogVouchersPic extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        Dialog dialog = getDialog();
-        if (dialog != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+        try {
+            Dialog dialog = getDialog();
+            if (dialog != null) {
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 

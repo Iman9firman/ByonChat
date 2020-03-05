@@ -15,6 +15,8 @@ import android.widget.EditText;
 
 import com.github.clans.fab.FloatingActionButton;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class CreateGroupActivity extends AppCompatActivity {
 
     EditText editTextNameGroup;
@@ -24,63 +26,67 @@ public class CreateGroupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
-        editTextNameGroup = (EditText) findViewById(R.id.editTextNameGroup);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.show(false);
-        editTextNameGroup.addTextChangedListener(new TextWatcher() {
+        try {
+            editTextNameGroup = (EditText) findViewById(R.id.editTextNameGroup);
+            fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.show(false);
+            editTextNameGroup.addTextChangedListener(new TextWatcher() {
 
-            @Override
-            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                // When user changed the Text
-                if (cs.toString().length() > 1) {
-                    if (fab.isHidden()) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                fab.show(true);
-                                fab.setShowAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_from_bottom));
-                                fab.setHideAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_to_bottom));
-                            }
-                        }, 300);
+                @Override
+                public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                    // When user changed the Text
+                    if (cs.toString().length() > 1) {
+                        if (fab.isHidden()) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    fab.show(true);
+                                    fab.setShowAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.show_from_bottom));
+                                    fab.setHideAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.hide_to_bottom));
+                                }
+                            }, 300);
 
+                        }
+                    } else if (cs.length() == 0) {
+                        fab.show(false);
                     }
-                } else if (cs.length() == 0) {
-                    fab.show(false);
-                }
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                          int arg3) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
-            }
-        });
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = editTextNameGroup.getText().toString();
-                if (name.length() > 0) {
-                    Intent i2 = new Intent(getApplicationContext(), PickUserActivity.class);
-                    i2.putExtra(PickUserActivity.FROMACTIVITY, "Create Group");
-                    i2.putExtra(PickUserActivity.NAMEGROUP, name);
-                    startActivity(i2);
-                } else {
-                    editTextNameGroup.setError("your group need name");
                 }
 
-            }
-        });
+                @Override
+                public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                              int arg3) {
+                    // TODO Auto-generated method stub
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(tutup);
-        registerReceiver(receiver, filter);
+                }
 
+                @Override
+                public void afterTextChanged(Editable arg0) {
+                    // TODO Auto-generated method stub
+                }
+            });
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String name = editTextNameGroup.getText().toString();
+                    if (name.length() > 0) {
+                        Intent i2 = new Intent(getApplicationContext(), PickUserActivity.class);
+                        i2.putExtra(PickUserActivity.FROMACTIVITY, "Create Group");
+                        i2.putExtra(PickUserActivity.NAMEGROUP, name);
+                        startActivity(i2);
+                    } else {
+                        editTextNameGroup.setError("your group need name");
+                    }
+
+                }
+            });
+
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(tutup);
+            registerReceiver(receiver, filter);
+
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override

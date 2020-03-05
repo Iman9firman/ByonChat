@@ -61,6 +61,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 
 public class AccountSettingActivity extends AppCompatActivity {
 
@@ -97,95 +99,106 @@ public class AccountSettingActivity extends AppCompatActivity {
 
 
     public void initView() {
-        setContentView(R.layout.account_setting);
-        textGender = (Spinner) findViewById(R.id.textGender);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.spinner_gender, gender);
+        try {
+            setContentView(R.layout.account_setting);
+            textGender = (Spinner) findViewById(R.id.textGender);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    R.layout.spinner_gender, gender);
 
-        textGender.setAdapter(adapter);
+            textGender.setAdapter(adapter);
 
-        bcUser_txt = (EditText) findViewById(R.id.bcUser_txt);
-        bcUser_txt.setVisibility(View.GONE);
-        textName = (EditText) findViewById(R.id.txt_name);
-        textCountName = (TextView) findViewById(R.id.txt_count_name);
-        textBirth = (EditText) findViewById(R.id.txt_birth);
-        textEmail = (EditText) findViewById(R.id.txt_email);
-        textCity = (EditText) findViewById(R.id.txt_city);
-        textFacebook = (EditText) findViewById(R.id.txt_facebook);
-        switchBanner = (Switch) findViewById(R.id.switchBanner);
+            bcUser_txt = (EditText) findViewById(R.id.bcUser_txt);
+            bcUser_txt.setVisibility(View.GONE);
+            textName = (EditText) findViewById(R.id.txt_name);
+            textCountName = (TextView) findViewById(R.id.txt_count_name);
+            textBirth = (EditText) findViewById(R.id.txt_birth);
+            textEmail = (EditText) findViewById(R.id.txt_email);
+            textCity = (EditText) findViewById(R.id.txt_city);
+            textFacebook = (EditText) findViewById(R.id.txt_facebook);
+            switchBanner = (Switch) findViewById(R.id.switchBanner);
 
-        textName.addTextChangedListener(mTextEditorWatcher);
+            textName.addTextChangedListener(mTextEditorWatcher);
 
 
-        // get the current date
-        final Calendar c = Calendar.getInstance();
-        mYear = c.get(Calendar.YEAR);
-        yearDefault = c.get(Calendar.YEAR) - 8;
+            // get the current date
+            final Calendar c = Calendar.getInstance();
+            mYear = c.get(Calendar.YEAR);
+            yearDefault = c.get(Calendar.YEAR) - 8;
 
-        textBirth.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                showDialog(DATE_DIALOG_ID);
-                textBirth.setError(null);
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-                return false;
-            }
-        });
-
+            textBirth.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    showDialog(DATE_DIALOG_ID);
+                    textBirth.setError(null);
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                    return false;
+                }
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if (dbhelper == null) {
-            dbhelper = MessengerDatabaseHelper.getInstance(this);
-        }
-        contact = dbhelper.getMyContact();
+        try {
+            if (dbhelper == null) {
+                dbhelper = MessengerDatabaseHelper.getInstance(this);
+            }
+            contact = dbhelper.getMyContact();
 
-        if (pdialog == null) {
-            pdialog = new ProgressDialog(this);
-            pdialog.setIndeterminate(true);
-            pdialog.setMessage("Please wait a moment ..");
-            pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        }
-        initView();
-        if (cekLoad()) {
-            if (isNetworkConnectionAvailable()) {
-                setContentView(R.layout.loading_screen);
-                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                    String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
-                    if (!key.equalsIgnoreCase("null")) {
-                        new getProfile(getApplicationContext()).execute(key);
+            if (pdialog == null) {
+                pdialog = new ProgressDialog(this);
+                pdialog.setIndeterminate(true);
+                pdialog.setMessage("Please wait a moment ..");
+                pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            }
+            initView();
+            if (cekLoad()) {
+                if (isNetworkConnectionAvailable()) {
+                    setContentView(R.layout.loading_screen);
+                    if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                        String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
+                        if (!key.equalsIgnoreCase("null")) {
+                            new getProfile(getApplicationContext()).execute(key);
+                        }
                     }
                 }
+            } else {
+                setSetting();
             }
-        } else {
-            setSetting();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void setSetting() {
-        bcUser_txt.setText(contact.getJabberId());
-        textName.setText(contact.getRealname());
-        textName.setSelection(textName.length());
-        textCountName.setText(String.valueOf(30 - textName.length()));
-        setDate(contact.getBirthdate());
-        textEmail.setText(contact.getEmail());
-        textFacebook.setText(contact.getFacebookid());
-        textCity.setText(contact.getCity());
-        if (new Validations().getInstance(getApplicationContext()).getShow(8)) {
-            switchBanner.setChecked(true);
-        } else {
-            switchBanner.setChecked(false);
-        }
-        if (contact.getGender() != null) {
-            if (contact.getGender().equals("Male")) {
-                textGender.setSelection(0);
+        try {
+            bcUser_txt.setText(contact.getJabberId());
+            textName.setText(contact.getRealname());
+            textName.setSelection(textName.length());
+            textCountName.setText(String.valueOf(30 - textName.length()));
+            setDate(contact.getBirthdate());
+            textEmail.setText(contact.getEmail());
+            textFacebook.setText(contact.getFacebookid());
+            textCity.setText(contact.getCity());
+            if (new Validations().getInstance(getApplicationContext()).getShow(8)) {
+                switchBanner.setChecked(true);
             } else {
-                textGender.setSelection(1);
+                switchBanner.setChecked(false);
             }
+            if (contact.getGender() != null) {
+                if (contact.getGender().equals("Male")) {
+                    textGender.setSelection(0);
+                } else {
+                    textGender.setSelection(1);
+                }
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -238,78 +251,60 @@ public class AccountSettingActivity extends AppCompatActivity {
     }
 
     private void configureActionItem(Menu menu) {
-        MenuItem item = menu.findItem(R.id.menu_action_save);
-        Button btn = (Button) MenuItemCompat.getActionView(item).findViewById(
-                R.id.buttonAbSave);
-        btn.setBackgroundColor(Color.TRANSPARENT);
-        btn.setTypeface(null, Typeface.BOLD);
-        btn.setText("Save");
-        btn.setTextColor(Color.WHITE);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-             /*   Toast.makeText(getApplicationContext(), "Berhasil,Harap22 close apps", Toast.LENGTH_SHORT).show();
-                if (dbhelper == null) {
-                    dbhelper = MessengerDatabaseHelper.getInstance(AccountSettingActivity.this);
-                }
-                Contact c = dbhelper.getMyContact();
-                c.setJabberId(bcUser_txt.getText().toString());
-                dbhelper.updateData(c);
-                Toast.makeText(getApplicationContext(), "Berhasil,Harap close apps", Toast.LENGTH_SHORT).show();
-                finish();*/
-
-               /* if (!dbhelper.getMyContact().getJabberId().equalsIgnoreCase(bcUser_txt.getText().toString()) && bcUser_txt.getText().toString().length() > 0) {
-                    Contact c = dbhelper.getMyContact();
-                    c.setJabberId(bcUser_txt.getText().toString());
-                    dbhelper.updateData(c);
-                    Toast.makeText(getApplicationContext(), "Berhasil,Harap close apps", Toast.LENGTH_SHORT).show();
-                    finish();
-                }else{
-                    Toast.makeText(getApplicationContext(), "Berhasil,Harap close gagal", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-*/
-
-                if (isNetworkConnectionAvailable()) {
-                    textEmail.setError(null);
-                    textBirth.setError(null);
-                    String a = textName.getText().toString();
-                    String b = textGender.getSelectedItem().toString();
-                    String c = textBirth.getText().toString();
-                    String d = textEmail.getText().toString();
-                    String e = textFacebook.getText().toString();
-                    String f = textCity.getText().toString();
-                    if (cekUpdate(contact, a, b, c, d, e, f)) {
-                        if (validDate(textBirth.getText().toString(), yearDefault)) {
-                            if (validEmail(textEmail.getText().toString())) {
-                                pdialog.show();
-                                String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
-                                if (key.equalsIgnoreCase("null")) {
-                                    //    Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
-                                    pdialog.dismiss();
+        try {
+            MenuItem item = menu.findItem(R.id.menu_action_save);
+            Button btn = (Button) MenuItemCompat.getActionView(item).findViewById(
+                    R.id.buttonAbSave);
+            btn.setBackgroundColor(Color.TRANSPARENT);
+            btn.setTypeface(null, Typeface.BOLD);
+            btn.setText("Save");
+            btn.setTextColor(Color.WHITE);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isNetworkConnectionAvailable()) {
+                        textEmail.setError(null);
+                        textBirth.setError(null);
+                        String a = textName.getText().toString();
+                        String b = textGender.getSelectedItem().toString();
+                        String c = textBirth.getText().toString();
+                        String d = textEmail.getText().toString();
+                        String e = textFacebook.getText().toString();
+                        String f = textCity.getText().toString();
+                        if (cekUpdate(contact, a, b, c, d, e, f)) {
+                            if (validDate(textBirth.getText().toString(), yearDefault)) {
+                                if (validEmail(textEmail.getText().toString())) {
+                                    pdialog.show();
+                                    String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
+                                    if (key.equalsIgnoreCase("null")) {
+                                        //    Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                                        pdialog.dismiss();
+                                    } else {
+                                        new updateProfile(getApplicationContext()).execute(key);
+                                    }
                                 } else {
-                                    new updateProfile(getApplicationContext()).execute(key);
+                                    textEmail.setError("Email not valid");
                                 }
                             } else {
-                                textEmail.setError("Email not valid");
+                                textBirth.setError("Birth date not valid");
                             }
                         } else {
-                            textBirth.setError("Birth date not valid");
+                            Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+                            if (switchBanner.isChecked()) {
+                                new Validations().getInstance(getApplicationContext()).setShow(8);
+                            } else {
+                                new Validations().getInstance(getApplicationContext()).setNotShow(8);
+                            }
+                            finish();
                         }
                     } else {
-                        Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-                        if (switchBanner.isChecked()) {
-                            new Validations().getInstance(getApplicationContext()).setShow(8);
-                        } else {
-                            new Validations().getInstance(getApplicationContext()).setNotShow(8);
-                        }
-                        finish();
+                        Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), "No internet connection", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 
@@ -341,14 +336,18 @@ public class AccountSettingActivity extends AppCompatActivity {
 
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    mYear = year;
-                    mMonth = monthOfYear;
-                    mDay = dayOfMonth;
-                    String sdate = LPad(mDay + "", "0", 2) + " " + arrMonth[mMonth] + " " + mYear;
-                    if (year > yearDefault) {
-                        textBirth.setError("Birth date not valid");
+                    try {
+                        mYear = year;
+                        mMonth = monthOfYear;
+                        mDay = dayOfMonth;
+                        String sdate = LPad(mDay + "", "0", 2) + " " + arrMonth[mMonth] + " " + mYear;
+                        if (year > yearDefault) {
+                            textBirth.setError("Birth date not valid");
+                        }
+                        textBirth.setText(sdate);
+                    }catch (Exception e){
+                        reportCatch(e.getLocalizedMessage());
                     }
-                    textBirth.setText(sdate);
                 }
             };
 
@@ -379,13 +378,17 @@ public class AccountSettingActivity extends AppCompatActivity {
     }
 
     public void setDate(String date) {
-        if (date != null && date.length() > 0) {
-            String tglLahir[] = date.split("-");
-            String sdate = date;
-            if (tglLahir.length == 3) {
-                sdate = LPad(tglLahir[2] + "", "0", 2) + " " + arrMonth[Integer.valueOf(tglLahir[1]) - 1] + " " + tglLahir[0];
+        try {
+            if (date != null && date.length() > 0) {
+                String tglLahir[] = date.split("-");
+                String sdate = date;
+                if (tglLahir.length == 3) {
+                    sdate = LPad(tglLahir[2] + "", "0", 2) + " " + arrMonth[Integer.valueOf(tglLahir[1]) - 1] + " " + tglLahir[0];
+                }
+                textBirth.setText(sdate);
             }
-            textBirth.setText(sdate);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -512,12 +515,15 @@ public class AccountSettingActivity extends AppCompatActivity {
                 }
 
             } catch (ClientProtocolException e) {
+                reportCatch(e.getLocalizedMessage());
                 content = e.getMessage();
                 error = true;
             } catch (IOException e) {
+                reportCatch(e.getLocalizedMessage());
                 content = e.getMessage();
                 error = true;
             } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
                 error = true;
             }
 
@@ -529,44 +535,48 @@ public class AccountSettingActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String content) {
-            pdialog.dismiss();
-            if (error) {
-                if (content.contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        pdialog.show();
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            // Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
-                            pdialog.dismiss();
+            try {
+                pdialog.dismiss();
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            pdialog.show();
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                // Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                                pdialog.dismiss();
+                            } else {
+                                new updateProfile(mContext).execute(key);
+                            }
                         } else {
-                            new updateProfile(mContext).execute(key);
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                if (code2.equalsIgnoreCase("200")) {
-                    Contact c = dbhelper.getMyContact();
-                    c.setRealname(realname);
-                    c.setGender(gender);
-                    c.setBirthdate(textBirth.getText().toString());
-                    c.setEmail(email);
-                    c.setFacebookid(facebookId);
-                    c.setCity(city);
-                    dbhelper.updateData(c);
-                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-                    if (switchBanner.isChecked()) {
-                        new Validations().getInstance(mContext).setShow(8);
+                    if (code2.equalsIgnoreCase("200")) {
+                        Contact c = dbhelper.getMyContact();
+                        c.setRealname(realname);
+                        c.setGender(gender);
+                        c.setBirthdate(textBirth.getText().toString());
+                        c.setEmail(email);
+                        c.setFacebookid(facebookId);
+                        c.setCity(city);
+                        dbhelper.updateData(c);
+                        Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+                        if (switchBanner.isChecked()) {
+                            new Validations().getInstance(mContext).setShow(8);
+                        } else {
+                            new Validations().getInstance(mContext).setNotShow(8);
+                        }
+                        finish();
                     } else {
-                        new Validations().getInstance(mContext).setNotShow(8);
+                        Toast.makeText(getApplicationContext(), desc, Toast.LENGTH_SHORT).show();
                     }
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), desc, Toast.LENGTH_SHORT).show();
                 }
+            }catch (Exception e){
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
@@ -668,16 +678,18 @@ public class AccountSettingActivity extends AppCompatActivity {
                     response.getEntity().getContent().close();
                     throw new IOException(content);
                 }
-
             } catch (ClientProtocolException e) {
+                reportCatch(e.getLocalizedMessage());
                 desc = e.getMessage();
                 content = e.getMessage();
                 error = true;
             } catch (IOException e) {
+                reportCatch(e.getLocalizedMessage());
                 desc = e.getMessage();
                 content = e.getMessage();
                 error = true;
             } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
                 error = true;
             }
 
@@ -688,20 +700,24 @@ public class AccountSettingActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String content) {
-            initView();
-            if (error) {
-                if (desc.equalsIgnoreCase("Invalid Login Key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (!key.equalsIgnoreCase("null")) {
-                            new getProfile(mContext).execute(key);
+            try {
+                initView();
+                if (error) {
+                    if (desc.equalsIgnoreCase("Invalid Login Key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (!key.equalsIgnoreCase("null")) {
+                                new getProfile(mContext).execute(key);
+                            }
                         }
+                    } else {
+                        Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
+                    setSetting();
                 }
-            } else {
-                setSetting();
+            }catch (Exception e){
+                reportCatch(e.getLocalizedMessage());
             }
         }
 

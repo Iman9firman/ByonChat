@@ -27,6 +27,8 @@ import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
 
     public static Intent generateIntent(Context context, String color, String colorText) {
@@ -43,22 +45,26 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
 
     @Override
     protected void onLoadView() {
-        vAppBar = getAppbar();
-        vToolbar = getToolbar();
-        vFrameChatLists = getFrameChatLists();
-        vFrameMessageLists = getFrameMessageLists();
-        vImgToolbarBack = getImgToolbarBack();
-        vSearchView = getMaterialSearchView();
-        vToolbarBack = getToolbarBack();
-        vToolbarTitle = getToolbarTitle();
-        vListHistory = getListHistory();
-        vListHistoryFind = getListHistoryFind();
-        vSearchEdt = getSearchView();
-        vFrameSearch = getFrameSearch();
-        vBtnCreateMessage = getFloatingButtonCreateMsg();
-        vScrollView = getScrollView();
-        vNestedScroll = getNestedScrollView();
-        vFrameBottom = getBottomFrame();
+        try {
+            vAppBar = getAppbar();
+            vToolbar = getToolbar();
+            vFrameChatLists = getFrameChatLists();
+            vFrameMessageLists = getFrameMessageLists();
+            vImgToolbarBack = getImgToolbarBack();
+            vSearchView = getMaterialSearchView();
+            vToolbarBack = getToolbarBack();
+            vToolbarTitle = getToolbarTitle();
+            vListHistory = getListHistory();
+            vListHistoryFind = getListHistoryFind();
+            vSearchEdt = getSearchView();
+            vFrameSearch = getFrameSearch();
+            vBtnCreateMessage = getFloatingButtonCreateMsg();
+            vScrollView = getScrollView();
+            vNestedScroll = getNestedScrollView();
+            vFrameBottom = getBottomFrame();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -95,22 +101,26 @@ public class ImsListHistoryChatActivity extends ImsBaseListHistoryChatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        vSearchView.closeSearch();
-        resolveOriginView(false);
-        resolveChatHistory();
-        resolveChatHistorySearch();
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID);
+        try {
+            vSearchView.closeSearch();
+            resolveOriginView(false);
+            resolveChatHistory();
+            resolveChatHistorySearch();
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID);
 
-        IntentFilter f = new IntentFilter(
-                MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
-        f.addAction(MessengerConnectionService.ACTION_MESSAGE_DELIVERED);
-        f.addAction(MessengerConnectionService.ACTION_MESSAGE_SENT);
-        f.addAction(MessengerConnectionService.ACTION_MESSAGE_FAILED);
-        f.addAction(MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY);
-        f.addAction(MessengerConnectionService.ACTION_STATUS_CHANGED_CONTACT);
-        f.setPriority(2);
-        registerReceiver(broadcastHandler, f);
+            IntentFilter f = new IntentFilter(
+                    MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
+            f.addAction(MessengerConnectionService.ACTION_MESSAGE_DELIVERED);
+            f.addAction(MessengerConnectionService.ACTION_MESSAGE_SENT);
+            f.addAction(MessengerConnectionService.ACTION_MESSAGE_FAILED);
+            f.addAction(MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY);
+            f.addAction(MessengerConnectionService.ACTION_STATUS_CHANGED_CONTACT);
+            f.setPriority(2);
+            registerReceiver(broadcastHandler, f);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override

@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class GroupAddInfoActivity extends ABNextActivity {
     public static final String EXTRA_KEY_GROUP_NAME = "GROUP_NAME";
     public static final String EXTRA_KEY_GROUP_PICTURE_PATH = "GROUP_PICTURE_PATH";
@@ -17,27 +19,39 @@ public class GroupAddInfoActivity extends ABNextActivity {
     }
 
     private void showInviteActivity(String groupName) {
-        Intent i = new Intent(this, GroupAddInviteUsersActivity.class);
-        i.putExtra(EXTRA_KEY_GROUP_NAME, groupName);
-        startActivity(i);
+        try {
+            Intent i = new Intent(this, GroupAddInviteUsersActivity.class);
+            i.putExtra(EXTRA_KEY_GROUP_NAME, groupName);
+            startActivity(i);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.group_create);
-        groupNameText = (EditText) findViewById(R.id.creategroupName);
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.group_create);
+            groupNameText = (EditText) findViewById(R.id.creategroupName);
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onClick(View v) {
-        String gname = groupNameText.getText().toString();
-        if ("".equals(gname)) {
-            showToast();
-        } else {
-            showInviteActivity(gname);
-            finish();
+        try {
+            String gname = groupNameText.getText().toString();
+            if ("".equals(gname)) {
+                showToast();
+            } else {
+                showInviteActivity(gname);
+                finish();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 

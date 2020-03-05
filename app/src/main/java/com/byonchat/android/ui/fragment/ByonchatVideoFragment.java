@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.byonchat.android.helpers.Constants.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE;
+import static com.byonchat.android.utils.Utility.reportCatch;
 
 @SuppressLint("ValidFragment")
 public class ByonchatVideoFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -116,17 +117,21 @@ public class ByonchatVideoFragment extends Fragment implements SwipeRefreshLayou
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        resolveConnectionProblem();
-        resolveListVideoTube();
-        resolveRefreshList();
+        try {
+            resolveConnectionProblem();
+            resolveListVideoTube();
+            resolveRefreshList();
 
-        vFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            vFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 //                Intent intent = ByonchatVideoBeforeDownloadActivity.generateIntent(getContext());
 //                startActivity(intent);
-            }
-        });
+                }
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -139,80 +144,100 @@ public class ByonchatVideoFragment extends Fragment implements SwipeRefreshLayou
     public void onResume() {
         super.onResume();
 
-        videos = new ArrayList<>();
-        videos = Byonchat.getVideoTubeDataStore().getDownloadedFiles();
-        if (videos.size() > 0)
-            vFrameEmpty.setVisibility(View.GONE);
-        else
-            vFrameEmpty.setVisibility(View.VISIBLE);
+        try {
+            videos = new ArrayList<>();
+            videos = Byonchat.getVideoTubeDataStore().getDownloadedFiles();
+            if (videos.size() > 0)
+                vFrameEmpty.setVisibility(View.GONE);
+            else
+                vFrameEmpty.setVisibility(View.VISIBLE);
 
-        mAdapter.setItems(videos);
+            mAdapter.setItems(videos);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveConnectionProblem() {
-        vTextError.setText("Home isn't responding");
-        vTextContentError.setText("Thats why we can't show videos right now\nPlease check back later.");
+        try {
+            vTextError.setText("Home isn't responding");
+            vTextContentError.setText("Thats why we can't show videos right now\nPlease check back later.");
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveListVideoTube() {
-        videos = new ArrayList<>();
-        vListVideoTube.setUpAsList();
-        vListVideoTube.setNestedScrollingEnabled(false);
-        chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
-        mAdapter = new ByonchatVideoAdapter(getContext(), videos, new ForwardItemClickListener() {
-            @Override
-            public void onItemVideoClick(Video video) {
-                if (mAdapter.getSelectedComments().isEmpty()) {
-                    adapterSelected(video);
-                } else {
-                    adapterSelected(video);
+        try {
+            videos = new ArrayList<>();
+            vListVideoTube.setUpAsList();
+            vListVideoTube.setNestedScrollingEnabled(false);
+            chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
+            mAdapter = new ByonchatVideoAdapter(getContext(), videos, new ForwardItemClickListener() {
+                @Override
+                public void onItemVideoClick(Video video) {
+                    if (mAdapter.getSelectedComments().isEmpty()) {
+                        adapterSelected(video);
+                    } else {
+                        adapterSelected(video);
+                    }
                 }
-            }
 
-            @Override
-            public void onItemVideoLongClick(Video contact) {
+                @Override
+                public void onItemVideoLongClick(Video contact) {
 
-            }
-        }, (view, position, video) -> {
-            showPopup(view, video);
-        });
+                }
+            }, (view, position, video) -> {
+                showPopup(view, video);
+            });
 
-        mAdapter.setOnItemClickListener((view, position) -> {
-            if (isChanged) {
-                Intent intent = ByonchatDetailVideoTubeActivity.generateIntent(getContext(), mAdapter.getData().get(position));
-                startActivity(intent);
-            } else
-                adapterSelected((Video) mAdapter.getData().get(position));
-        });
+            mAdapter.setOnItemClickListener((view, position) -> {
+                if (isChanged) {
+                    Intent intent = ByonchatDetailVideoTubeActivity.generateIntent(getContext(), mAdapter.getData().get(position));
+                    startActivity(intent);
+                } else
+                    adapterSelected((Video) mAdapter.getData().get(position));
+            });
 
-        mAdapter.setOnLongItemClickListener((view, position) -> {
-            /*adapterSelected((Video) mAdapter.getData().get(position));*/
-        });
+            mAdapter.setOnLongItemClickListener((view, position) -> {
+                /*adapterSelected((Video) mAdapter.getData().get(position));*/
+            });
 
-        vListVideoTube.setAdapter(mAdapter);
+            vListVideoTube.setAdapter(mAdapter);
 
-        videos = Byonchat.getVideoTubeDataStore().getDownloadedFiles();
-        if (videos.size() > 0)
-            vFrameEmpty.setVisibility(View.GONE);
-        else
-            vFrameEmpty.setVisibility(View.VISIBLE);
+            videos = Byonchat.getVideoTubeDataStore().getDownloadedFiles();
+            if (videos.size() > 0)
+                vFrameEmpty.setVisibility(View.GONE);
+            else
+                vFrameEmpty.setVisibility(View.VISIBLE);
 
-        mAdapter.setItems(videos);
+            mAdapter.setItems(videos);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void adapterSelected(Video video) {
-        video.isSelected = !video.isSelected();
-        mAdapter.notifyDataSetChanged();
-        onContactSelected(mAdapter.getSelectedComments());
+        try {
+            video.isSelected = !video.isSelected();
+            mAdapter.notifyDataSetChanged();
+            onContactSelected(mAdapter.getSelectedComments());
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void onContactSelected(List<Video> selectedContacts) {
-        int total = selectedContacts.size();
-        boolean hasCheckedItems = total > 0;
-        if (hasCheckedItems) {
-            isChanged = false;
-        } else {
-            isChanged = true;
+        try {
+            int total = selectedContacts.size();
+            boolean hasCheckedItems = total > 0;
+            if (hasCheckedItems) {
+                isChanged = false;
+            } else {
+                isChanged = true;
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -221,23 +246,27 @@ public class ByonchatVideoFragment extends Fragment implements SwipeRefreshLayou
     }
 
     protected void showPopup(View view, final Video video) {
-        View menuItemView = view.findViewById(R.id.more);
-        final PopupMenu popup = new PopupMenu(view.getContext(), menuItemView);
-        MenuInflater inflate = popup.getMenuInflater();
+        try {
+            View menuItemView = view.findViewById(R.id.more);
+            final PopupMenu popup = new PopupMenu(view.getContext(), menuItemView);
+            MenuInflater inflate = popup.getMenuInflater();
 
-        inflate.inflate(R.menu.byonchat_menu_delete_file, popup.getMenu());
-        popup.setOnMenuItemClickListener(menuItem -> {
-            switch (menuItem.getItemId()) {
-                case R.id.action_delete:
-                    Byonchat.getVideoTubeDataStore().delete(video);
-                    onResume();
-                    break;
-                default:
-                    return false;
-            }
-            return false;
-        });
-        popup.show();
+            inflate.inflate(R.menu.byonchat_menu_delete_file, popup.getMenu());
+            popup.setOnMenuItemClickListener(menuItem -> {
+                switch (menuItem.getItemId()) {
+                    case R.id.action_delete:
+                        Byonchat.getVideoTubeDataStore().delete(video);
+                        onResume();
+                        break;
+                    default:
+                        return false;
+                }
+                return false;
+            });
+            popup.show();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected RelativeLayout getFrameError(View view) {

@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class BroadcastSendActivity extends ABNextServiceActivity {
     public static final String EXTRA_KEY_BROADCAST_CONTACTS = "com.byonchat.android.BroadcastSendActivity.BROADCAST_CONTACTS";
     private static final String BUTTON_TITLE = "SEND";
@@ -47,69 +49,81 @@ public class BroadcastSendActivity extends ABNextServiceActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.broadcast_message);
         getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header(getWindow()));
-      //  getSupportActionBar().setIcon(new Validations().getInstance(getApplicationContext()).logoCustome());
-        txtMessage = (EditText) findViewById(R.id.txtBroadcastMessage);
-        if (selectedContacts == null)
-            selectedContacts = new HashMap<String, Contact>();
-        Parcelable[] participants = getIntent().getParcelableArrayExtra(
-                EXTRA_KEY_BROADCAST_CONTACTS);
-        for (int i = 0; i < participants.length; i++) {
-            Contact c = (Contact) participants[i];
-            selectedContacts.put(c.getJabberId(), c);
-        }
 
-        items = new ArrayList<IconItem>();
-        adapter = new IconAdapter(this, R.layout.list_item_with_image,
-                R.id.textTitle, items);
-        adapter.setListType(IconAdapter.TYPE_IMAGE);
-        adapter.setClickListener(new ItemClickListener() {
-
-            @Override
-            public void onClick(View v, IconItem item) {
-                selectedContacts.remove(item.getJabberId());
-                refreshList();
+        try {
+            txtMessage = (EditText) findViewById(R.id.txtBroadcastMessage);
+            if (selectedContacts == null)
+                selectedContacts = new HashMap<String, Contact>();
+            Parcelable[] participants = getIntent().getParcelableArrayExtra(
+                    EXTRA_KEY_BROADCAST_CONTACTS);
+            for (int i = 0; i < participants.length; i++) {
+                Contact c = (Contact) participants[i];
+                selectedContacts.put(c.getJabberId(), c);
             }
-        });
-        refreshList();
 
-        listContacts = (ListView) findViewById(R.id.listBroadcastContacts);
-        listContacts.setAdapter(adapter);
+            items = new ArrayList<IconItem>();
+            adapter = new IconAdapter(this, R.layout.list_item_with_image,
+                    R.id.textTitle, items);
+            adapter.setListType(IconAdapter.TYPE_IMAGE);
+            adapter.setClickListener(new ItemClickListener() {
 
-        source = MessengerDatabaseHelper.getInstance(this).getMyContact()
-                .getJabberId();
+                @Override
+                public void onClick(View v, IconItem item) {
+                    selectedContacts.remove(item.getJabberId());
+                    refreshList();
+                }
+            });
+            refreshList();
+
+            listContacts = (ListView) findViewById(R.id.listBroadcastContacts);
+            listContacts.setAdapter(adapter);
+
+            source = MessengerDatabaseHelper.getInstance(this).getMyContact()
+                    .getJabberId();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onClick(View view) {
-        if (items.size() == 0) {
-            Toast.makeText(this, "You need to add at least one participant",
-                    Toast.LENGTH_SHORT).show();
-            return;
+        try {
+            if (items.size() == 0) {
+                Toast.makeText(this, "You need to add at least one participant",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!binder.isConnected()) {
+                Toast.makeText(this,
+                        "Not connected to server. Please try again later.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            new BroadcastMessageSender().execute();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        if (!binder.isConnected()) {
-            Toast.makeText(this,
-                    "Not connected to server. Please try again later.",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-        new BroadcastMessageSender().execute();
     }
 
     private void refreshList() {
-        items.clear();
-        for (Iterator<String> iterator = selectedContacts.keySet().iterator(); iterator
-                .hasNext();) {
-            Contact data = selectedContacts.get(iterator.next());
-            IconItem item = new IconItem(data.getJabberId(), data.getName(),
-                    data.getStatus(), null, data);
-            File f = getFileStreamPath(MediaProcessingUtil
-                    .getProfilePicName(data));
-            if (f.exists()) {
-                item.setImageUri(Uri.fromFile(f));
+        try {
+            items.clear();
+            for (Iterator<String> iterator = selectedContacts.keySet().iterator(); iterator
+                    .hasNext(); ) {
+                Contact data = selectedContacts.get(iterator.next());
+                IconItem item = new IconItem(data.getJabberId(), data.getName(),
+                        data.getStatus(), null, data);
+                File f = getFileStreamPath(MediaProcessingUtil
+                        .getProfilePicName(data));
+                if (f.exists()) {
+                    item.setImageUri(Uri.fromFile(f));
+                }
+                items.add(item);
             }
-            items.add(item);
+            adapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -128,10 +142,14 @@ public class BroadcastSendActivity extends ABNextServiceActivity {
     }
 
     private void onSendingDone() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivity(intent);
-        finish();
+        try {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+            finish();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class BroadcastMessageSender extends AsyncTask<Void, String, Void> {
@@ -148,14 +166,18 @@ public class BroadcastSendActivity extends ABNextServiceActivity {
                         String message = txtMessage.getText().toString();
                 for (Iterator<String> iterator = selectedContacts.keySet()
                         .iterator(); iterator.hasNext();) {
-                    Contact data = selectedContacts.get(iterator.next());
-                Message vo = new Message(source, data.getJabberId(), message);
-                vo.setStatus(Message.STATUS_INPROGRESS);
-                vo.setType(Message.TYPE_BROADCAST);
-                vo.generatePacketId();
-                binder.sendBroadCast(vo);
-                publishProgress(data.getName());
-            }
+                    try {
+                        Contact data = selectedContacts.get(iterator.next());
+                        Message vo = new Message(source, data.getJabberId(), message);
+                        vo.setStatus(Message.STATUS_INPROGRESS);
+                        vo.setType(Message.TYPE_BROADCAST);
+                        vo.generatePacketId();
+                        binder.sendBroadCast(vo);
+                        publishProgress(data.getName());
+                    }catch (Exception e){
+                        reportCatch(e.getLocalizedMessage());
+                    }
+                }
             return null;
         }
 

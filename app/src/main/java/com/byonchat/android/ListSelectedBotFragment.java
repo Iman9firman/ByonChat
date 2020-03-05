@@ -70,6 +70,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 @SuppressLint("ValidFragment")
 public class ListSelectedBotFragment extends Fragment {
 
@@ -119,150 +121,154 @@ public class ListSelectedBotFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.list_contact_bot, container, false);
 
-        if (roomsDB == null) {
-            roomsDB = new RoomsDB(context);
-        }
-        if (botListDB == null) {
-            botListDB = BotListDB.getInstance(context);
-        }
+        try {
+            if (roomsDB == null) {
+                roomsDB = new RoomsDB(context);
+            }
+            if (botListDB == null) {
+                botListDB = BotListDB.getInstance(context);
+            }
 
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(context);
-        }
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(context);
+            }
 
-        lv = (ListView) rootView.findViewById(R.id.list_view);
-        emptyList = (TextView) rootView.findViewById(R.id.emptyList);
-        emptyList.setText("You have not selected any room.");
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+            lv = (ListView) rootView.findViewById(R.id.list_view);
+            emptyList = (TextView) rootView.findViewById(R.id.emptyList);
+            emptyList.setText("You have not selected any room.");
+            swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
 
-        swipeRefreshLayout.setColorSchemeColors(
-                Color.GRAY, //This method will rotate
-                Color.GRAY, //colors given to it when
-                Color.GRAY,//loader continues to
-                Color.GRAY);//refresh.
-        //  swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
-        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.gray);
+            swipeRefreshLayout.setColorSchemeColors(
+                    Color.GRAY, //This method will rotate
+                    Color.GRAY, //colors given to it when
+                    Color.GRAY,//loader continues to
+                    Color.GRAY);//refresh.
+            //  swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
+            swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.gray);
 
-        roomsDB.open();
-        botArrayListist = roomsDB.retrieveRooms("2");
-        roomsDB.close();
+            roomsDB.open();
+            botArrayListist = roomsDB.retrieveRooms("2");
+            roomsDB.close();
 
-        if (botArrayListist.size() > 0) {
-            refreshList();
-        } else {
-            lv.setVisibility(View.GONE);
-            emptyList.setVisibility(View.VISIBLE);
-        }
+            if (botArrayListist.size() > 0) {
+                refreshList();
+            } else {
+                lv.setVisibility(View.GONE);
+                emptyList.setVisibility(View.VISIBLE);
+            }
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.post(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                roomsDB.open();
-                                botArrayListist = roomsDB.retrieveRooms("2");
-                                roomsDB.close();
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    swipeRefreshLayout.post(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    roomsDB.open();
+                                    botArrayListist = roomsDB.retrieveRooms("2");
+                                    roomsDB.close();
 
-                                if (botArrayListist.size() > 0) {
-                                    refreshList();
-                                } else {
-                                    lv.setVisibility(View.GONE);
-                                    emptyList.setVisibility(View.VISIBLE);
+                                    if (botArrayListist.size() > 0) {
+                                        refreshList();
+                                    } else {
+                                        lv.setVisibility(View.GONE);
+                                        emptyList.setVisibility(View.VISIBLE);
+                                    }
+                                    swipeRefreshLayout.setRefreshing(false);
                                 }
-                                swipeRefreshLayout.setRefreshing(false);
                             }
-                        }
-                );
-            }
-        });
-
-        lv.setClickable(true);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
-                if (Message.isJSONValid(botArrayListist.get(position).getDesc())){
-                    JSONObject jObject = null;
-                    try {
-                        jObject = new JSONObject(botArrayListist.get(position).getDesc());
-                        String desc = jObject.getString("desc");
-                        String classs = jObject.getString("apps");
-                        final String url = jObject.getString("url");
-
-                        boolean isAppInstalled = appInstalledOrNot(classs);
-
-                        if(isAppInstalled) {
-                            Intent LaunchIntent = context.getPackageManager()
-                                    .getLaunchIntentForPackage(classs);
-                            startActivity(LaunchIntent);
-                        } else {
-                            AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
-                            alertbox.setMessage("Please Install the Plug-in first ");
-                            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    openWebPage(url);
-                                }
-
-                            });
-                            alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                }
-                            });
-                            alertbox.show();
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-                    Intent intent = new Intent(context, ByonChatMainRoomActivity.class);
-                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    );
                 }
+            });
 
-            }
-        });
+            lv.setClickable(true);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
+                    if (Message.isJSONValid(botArrayListist.get(position).getDesc())) {
+                        JSONObject jObject = null;
+                        try {
+                            jObject = new JSONObject(botArrayListist.get(position).getDesc());
+                            String desc = jObject.getString("desc");
+                            String classs = jObject.getString("apps");
+                            final String url = jObject.getString("url");
 
-        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView parent, View view, int position, long id) {
-                roomid = botArrayListist.get(position).getName();
-                final Dialog dialogConfirmation;
-                dialogConfirmation = DialogUtil.customDialogConversationConfirmation((Activity) context);
-                dialogConfirmation.show();
+                            boolean isAppInstalled = appInstalledOrNot(classs);
 
-                TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
-                TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
-                txtConfirmation.setText("Delete Confirmation");
-                descConfirmation.setVisibility(View.VISIBLE);
-                descConfirmation.setText("Do you want to delete this room?");
+                            if (isAppInstalled) {
+                                Intent LaunchIntent = context.getPackageManager()
+                                        .getLaunchIntentForPackage(classs);
+                                startActivity(LaunchIntent);
+                            } else {
+                                AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
+                                alertbox.setMessage("Please Install the Plug-in first ");
+                                alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        openWebPage(url);
+                                    }
 
-                Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
-                Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+                                });
+                                alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                    }
+                                });
+                                alertbox.show();
+                            }
 
-                btnNo.setText("Cancel");
-                btnNo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialogConfirmation.dismiss();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Intent intent = new Intent(context, ByonChatMainRoomActivity.class);
+                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                     }
-                });
 
-                btnYes.setText("Delete");
-                btnYes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        requestKey();
-                        dialogConfirmation.dismiss();
-                    }
-                });
-                return true;
-            }
-        });
+                }
+            });
 
-        registerForContextMenu(lv);
-        setHasOptionsMenu(true);
+            lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                public boolean onItemLongClick(AdapterView parent, View view, int position, long id) {
+                    roomid = botArrayListist.get(position).getName();
+                    final Dialog dialogConfirmation;
+                    dialogConfirmation = DialogUtil.customDialogConversationConfirmation((Activity) context);
+                    dialogConfirmation.show();
+
+                    TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
+                    TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
+                    txtConfirmation.setText("Delete Confirmation");
+                    descConfirmation.setVisibility(View.VISIBLE);
+                    descConfirmation.setText("Do you want to delete this room?");
+
+                    Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
+                    Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+
+                    btnNo.setText("Cancel");
+                    btnNo.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialogConfirmation.dismiss();
+                        }
+                    });
+
+                    btnYes.setText("Delete");
+                    btnYes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            requestKey();
+                            dialogConfirmation.dismiss();
+                        }
+                    });
+                    return true;
+                }
+            });
+
+            registerForContextMenu(lv);
+            setHasOptionsMenu(true);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return rootView;
     }
 
@@ -290,75 +296,99 @@ public class ListSelectedBotFragment extends Fragment {
 
 
     private void showProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = UtilsPD.createProgressDialog(context);
+        try {
+            if (progressDialog == null) {
+                progressDialog = UtilsPD.createProgressDialog(context);
+            }
+            progressDialog.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        progressDialog.show();
     }
 
     private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
+        try {
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        roomsDB.open();
-        botArrayListist = roomsDB.retrieveRooms("2");
-        roomsDB.close();
+        try {
+            roomsDB.open();
+            botArrayListist = roomsDB.retrieveRooms("2");
+            roomsDB.close();
 
-        if (botArrayListist.size() > 0) {
-            refreshList();
-        } else {
-            lv.setVisibility(View.GONE);
-            emptyList.setVisibility(View.VISIBLE);
+            if (botArrayListist.size() > 0) {
+                refreshList();
+            } else {
+                lv.setVisibility(View.GONE);
+                emptyList.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public void onDestroy() {
-        dismissProgressDialog();
+        try{
+            dismissProgressDialog();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         super.onDestroy();
     }
 
     public void refreshList() {
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-                emptyList.setVisibility(View.GONE);
-                lv.setVisibility(View.VISIBLE);
-                adapter = new BotAdapter(context, botArrayListist, show);
-                roomsDB.open();
-                botArrayListist = roomsDB.retrieveRooms("2");
-                roomsDB.close();
-                adapter = new BotAdapter(context, botArrayListist, show);
-                lv.setAdapter(adapter);
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+        try {
+            new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
+                @Override
+                public void run() {
+                    emptyList.setVisibility(View.GONE);
+                    lv.setVisibility(View.VISIBLE);
+                    adapter = new BotAdapter(context, botArrayListist, show);
+                    roomsDB.open();
+                    botArrayListist = roomsDB.retrieveRooms("2");
+                    roomsDB.close();
+                    adapter = new BotAdapter(context, botArrayListist, show);
+                    lv.setAdapter(adapter);
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void requestKey() {
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-                RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-                    @Override
-                    public void onTaskDone(String key) {
-                        if (key.equalsIgnoreCase("null")) {
-                            // Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        } else {
-                            laporSelectedRoom = new LaporSelectedRoom(context);
-                            laporSelectedRoom.execute(key);
+        try {
+            new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
+                @Override
+                public void run() {
+                    RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                        @Override
+                        public void onTaskDone(String key) {
+                            if (key.equalsIgnoreCase("null")) {
+                                // Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                laporSelectedRoom = new LaporSelectedRoom(context);
+                                laporSelectedRoom.execute(key);
+                            }
                         }
-                    }
-                }, context);
+                    }, context);
 
-                testAsyncTask.execute();
-            }
-        });
+                    testAsyncTask.execute();
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class LaporSelectedRoom extends AsyncTask<String, Void, String> {
@@ -437,55 +467,56 @@ public class ListSelectedBotFragment extends Fragment {
         }
 
         protected void onPostExecute(String content) {
-            dismissProgressDialog();
-            if (error) {
-                if (content.contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+            try {
+                dismissProgressDialog();
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                laporSelectedRoom = new LaporSelectedRoom(context);
+                                laporSelectedRoom.execute(key);
+                            }
                         } else {
-                            laporSelectedRoom = new LaporSelectedRoom(context);
-                            laporSelectedRoom.execute(key);
+                            // Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        // Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(mContext, content, Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    // Toast.makeText(mContext, content, Toast.LENGTH_LONG).show();
-                }
-            } else {
 
-                Cursor cur = botListDB.getSingleRoom(roomid);
+                    Cursor cur = botListDB.getSingleRoom(roomid);
 
-                if (cur.getCount() > 0) {
-                    String aaContent = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(aaContent);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            String aaId = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
-                            String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
-                            if (category.equalsIgnoreCase("4")) {
-                                Cursor cursor = botListDB.getSingleRoomDetailForm(roomid, aaId);
-                                if (cursor.getCount() > 0) {
-                                    String contentDetail = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
-                                    JSONArray jsonArrayDetail = new JSONArray(contentDetail);
-                                    for (int ii = 0; ii < jsonArrayDetail.length(); ii++) {
-                                        String value = jsonArrayDetail.getJSONObject(ii).getString("value").toString();
-                                        String tt = jsonArrayDetail.getJSONObject(ii).getString("type").toString();
-                                        if (tt.equalsIgnoreCase("dropdown_dinamis")) {
-                                            JSONObject jObject = new JSONObject(value);
-                                            String url = jObject.getString("url");
-                                            String[] aa = url.split("/");
-                                            final String nama = aa[aa.length - 1].toString();
+                    if (cur.getCount() > 0) {
+                        String aaContent = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray(aaContent);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                String aaId = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
+                                String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
+                                if (category.equalsIgnoreCase("4")) {
+                                    Cursor cursor = botListDB.getSingleRoomDetailForm(roomid, aaId);
+                                    if (cursor.getCount() > 0) {
+                                        String contentDetail = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
+                                        JSONArray jsonArrayDetail = new JSONArray(contentDetail);
+                                        for (int ii = 0; ii < jsonArrayDetail.length(); ii++) {
+                                            String value = jsonArrayDetail.getJSONObject(ii).getString("value").toString();
+                                            String tt = jsonArrayDetail.getJSONObject(ii).getString("type").toString();
+                                            if (tt.equalsIgnoreCase("dropdown_dinamis")) {
+                                                JSONObject jObject = new JSONObject(value);
+                                                String url = jObject.getString("url");
+                                                String[] aa = url.split("/");
+                                                final String nama = aa[aa.length - 1].toString();
 
-                                            File newDB = new File(DataBaseDropDown.getDatabaseFolder() + nama);
-                                            if (newDB.exists()) {
-                                                newDB.delete();
+                                                File newDB = new File(DataBaseDropDown.getDatabaseFolder() + nama);
+                                                if (newDB.exists()) {
+                                                    newDB.delete();
+                                                }
+
                                             }
-
-                                        }
                                         /*kodepos delete otomatis by system
                                          else if (tt.equalsIgnoreCase("dropdown_wilayah") || tt.equalsIgnoreCase("input_kodepos")) {
                                             File newDB = new File(DataBaseDropDown.getDatabaseFolder() + "daftarkodepos.sqlite");
@@ -494,35 +525,38 @@ public class ListSelectedBotFragment extends Fragment {
                                             }
 
                                         }*/
+                                        }
+
                                     }
 
                                 }
-
                             }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+                    }
 
+                    botListDB.deleteRoomsbyTAB(roomid);
+                    botListDB.deleteRoomsDetailAllItemSku(roomid);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    roomsDB.open();
+                    roomsDB.deletebyName(roomid);
+                    roomsDB.close();
+
+                    roomsDB.open();
+                    botArrayListist = roomsDB.retrieveRooms("2");
+                    roomsDB.close();
+                    if (botArrayListist.size() > 0) {
+                        refreshList();
+                    } else {
+                        lv.setVisibility(View.GONE);
+                        emptyList.setVisibility(View.VISIBLE);
                     }
                 }
-
-                botListDB.deleteRoomsbyTAB(roomid);
-                botListDB.deleteRoomsDetailAllItemSku(roomid);
-
-                roomsDB.open();
-                roomsDB.deletebyName(roomid);
-                roomsDB.close();
-
-                roomsDB.open();
-                botArrayListist = roomsDB.retrieveRooms("2");
-                roomsDB.close();
-                if (botArrayListist.size() > 0) {
-                    refreshList();
-                } else {
-                    lv.setVisibility(View.GONE);
-                    emptyList.setVisibility(View.VISIBLE);
-                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }

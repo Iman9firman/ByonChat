@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class DialogRejectRequest extends DialogFragment {
 
     String id_hps = "";
@@ -61,48 +63,52 @@ public class DialogRejectRequest extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
 
-        dbHelper = new UserDB(getContext());
-        databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
+        try {
+            dbHelper = new UserDB(getContext());
+            databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
 
-        linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
-        linearLayout.setPadding(16,16,16,16);
+            linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
+            linearLayout.setPadding(16, 16, 16, 16);
 
-        TextView textView = new TextView(getContext());
-        textView.setText("Are you sure to delete your request?");
-        textView.setTextSize(15);
+            TextView textView = new TextView(getContext());
+            textView.setText("Are you sure to delete your request?");
+            textView.setTextSize(15);
 
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params1.setMargins(30, 10, 30, 0);
-        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 200);
-        params2.setMargins(30, 10, 30, 0);
+            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params1.setMargins(30, 10, 30, 0);
+            LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, 200);
+            params2.setMargins(30, 10, 30, 0);
 
-        linearLayout.addView(textView, params1);
+            linearLayout.addView(textView, params1);
 
-        mCancel = (Button) dialog.findViewById(R.id.btn_proceed);
-        mCancel.setText("Cancel");
-        mOkay = (Button) dialog.findViewById(R.id.btn_cancel);
-        mOkay.setText("Delete");
+            mCancel = (Button) dialog.findViewById(R.id.btn_proceed);
+            mCancel.setText("Cancel");
+            mOkay = (Button) dialog.findViewById(R.id.btn_cancel);
+            mOkay.setText("Delete");
 
-        mOkay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Map<String, String> params = new HashMap<>();
-                params.put("id", id_hps);
-                getDialog().dismiss();
-                getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Request/delete", params, true);
-                Toast.makeText(getActivity(), "Request Deleted", Toast.LENGTH_SHORT).show();
-                if (listener != null){
-                    listener.onReject();
+            mOkay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("id", id_hps);
+                    getDialog().dismiss();
+                    getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Request/delete", params, true);
+                    Toast.makeText(getActivity(), "Request Deleted", Toast.LENGTH_SHORT).show();
+                    if (listener != null) {
+                        listener.onReject();
+                    }
                 }
-            }
-        });
+            });
 
-        mCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getDialog().dismiss();
-            }
-        });
+            mCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getDialog().dismiss();
+                }
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
 
         return dialog;
     }
@@ -112,20 +118,6 @@ public class DialogRejectRequest extends DialogFragment {
         JSONArray datas = new JSONArray();
         JSONObject approver = new JSONObject();
         try {
-            /*if(!dbHelper.getColValue(UserDB.ATASAN_1_NIK).equalsIgnoreCase("")){
-                approver.put("bc_user_approval",dbHelper.getColValue(UserDB.ATASAN_1_PHONE));
-                approver.put("nama",dbHelper.getColValue(UserDB.ATASAN_1_NAMA));
-                approver.put("nik",dbHelper.getColValue(UserDB.ATASAN_1_NIK));
-                approver.put("order","1");
-                datas.put(approver);
-            }
-            if(!dbHelper.getColValue(UserDB.ATASAN_2_NIK).equalsIgnoreCase("")){
-                approver.put("bc_user_approval",dbHelper.getColValue(UserDB.ATASAN_2_PHONE));
-                approver.put("nama",dbHelper.getColValue(UserDB.ATASAN_2_NAMA));
-                approver.put("nik",dbHelper.getColValue(UserDB.ATASAN_2_NIK));
-                approver.put("order","2");
-                datas.put(approver);
-            }*/
             approver.put("bc_user_approval",databaseHelper.getMyContact().getJabberId());
             approver.put("nama",dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
             approver.put("nik",dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
@@ -139,35 +131,36 @@ public class DialogRejectRequest extends DialogFragment {
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
-        rdialog.setMessage("Loading...");
-        rdialog.show();
+        try {
+            ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
+            rdialog.setMessage("Loading...");
+            rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
+            RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
 
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    rdialog.dismiss();
-                    if (hide) {
-                        Log.w("sukses harusee",response);
-                        //Toast.makeText((FragmentActivity) getActivity(), "sukses", Toast.LENGTH_SHORT).show();
-                        /*ByonchatBaseMallKelapaGadingActivity ss = (ByonchatBaseMallKelapaGadingActivity) (FragmentActivity) getActivity();
-                        ss.finish();*/
+            StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                    response -> {
+                        rdialog.dismiss();
+                        if (hide) {
+                            Log.w("sukses harusee", response);
+                        }
+
+                    },
+                    error -> {
+                        rdialog.dismiss();
                     }
+            ) {
 
-                },
-                error -> {
-                    rdialog.dismiss();
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    return params2;
                 }
-        ) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        queue.add(sr);
+            };
+            queue.add(sr);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public DialogRejectListener getListener() {
@@ -181,152 +174,5 @@ public class DialogRejectRequest extends DialogFragment {
     public interface DialogRejectListener{
         void onReject();
     }
-
-    /*private class posTask extends AsyncTask<String, Integer, String> {
-
-        String error = "";
-        long totalSize = 0;
-        File gpxfile = null;
-
-        @Override
-        protected String doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            postData(params[0], params[1], params[2], params[3]);
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-           // taskCompleted.onTaskUpdate(0, "");
-        }
-
-        protected void onPostExecute(String result) {
-           *//* if (error.length() > 0) {
-                taskCompleted.onTaskCompleted(20, error);
-            }*//*
-        }
-
-        protected void onProgressUpdate(Integer... progress) {
-//            taskCompleted.onTaskUpdate(progress[0], "Upload Value...");
-
-        }
-
-        public void postData(String valueIWantToSend, final String usr, final String idr, final String idDetail) {
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(valueIWantToSend);
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                Log.w("asslams", (int) ((num / (float) totalSize) * 100) + "");
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-
-                ContentType contentType = ContentType.create("multipart/form-data");
-                entity.addPart("username_room", new StringBody(usr));
-                entity.addPart("id_rooms_tab", new StringBody(idr));
-                entity.addPart("id_detail_tab", new StringBody(idDetail));
-
-
-                MessengerDatabaseHelper messengerHelper = null;
-                if (messengerHelper == null) {
-                    messengerHelper = MessengerDatabaseHelper.getInstance(getActivity());
-                }
-
-                Contact contact = messengerHelper.getMyContact();
-                entity.addPart("bc_user", new StringBody(contact.getJabberId()));
-
-
-                entity.addPart("file_json", new FileBody(gpxfile, contentType, gpxfile.getName()));
-
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                Log.w("kask", statusCode + "");
-                if (statusCode == 200) {
-                    Log.w("berhasil", "hore");
-                    if (gpxfile.exists()) {
-                        gpxfile.delete();
-                    }
-
-                    final String data = EntityUtils.toString(r_entity);
-                    Log.w("harr", data);
-
-                    if (data.equalsIgnoreCase("0")) {
-                        long date = System.currentTimeMillis();
-                        String dateString = hourFormat.format(date);
-                        RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
-                        db.updateDetailRoomWithFlagContentParent(orderModel);
-                        taskCompleted.onTaskCompleted(20, "gagal upload");
-                    } else if (data.equalsIgnoreCase("1")) {
-                        db.deleteRoomsDetailbyId(idDetail, idTab, usr);
-
-                        if (calendar != null) {
-                            if (calendar.equalsIgnoreCase("true boi")) {
-                                MyEventDatabase database = new MyEventDatabase(context);
-                                SQLiteDatabase db;
-                                db = database.getWritableDatabase();
-                                String[] args = {idDetail};
-                                db.delete(MyEventDatabase.TABLE_EVENT, MyEventDatabase.EVENT_ID_DETAIL + "=?", args);
-                                db.close();
-                            }
-                        }
-                        taskCompleted.onTaskCompleted(0, "success");
-                    } else {
-                        taskCompleted.onTaskCompleted(50, data);
-
-                    }
-                } else {
-                    Log.w("gagal", "hore");
-                    if (gpxfile.exists()) {
-                        gpxfile.delete();
-                    }
-                    long date = System.currentTimeMillis();
-                    String dateString = hourFormat.format(date);
-
-                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, dateString, "3", null, "parent");
-                    db.updateDetailRoomWithFlagContentParent(orderModel);
-
-                    error = "Tolong periksa koneksi internet.1";
-                    taskCompleted.onTaskCompleted(20, "gagal upload");
-                }
-
-            } catch (ClientProtocolException e) {
-                Log.w("gagal1", e.toString());
-                if (gpxfile.exists()) {
-                    gpxfile.delete();
-                }
-                long date = System.currentTimeMillis();
-                String dateString = hourFormat.format(date);
-
-                RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
-                db.updateDetailRoomWithFlagContentParent(orderModel);
-                taskCompleted.onTaskCompleted(20, "gagal upload");
-
-            } catch (IOException e) {
-                if (gpxfile.exists()) {
-                    gpxfile.delete();
-                }
-                long date = System.currentTimeMillis();
-                String dateString = hourFormat.format(date);
-
-                RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
-                db.updateDetailRoomWithFlagContentParent(orderModel);
-                taskCompleted.onTaskCompleted(20, "gagal upload");
-            }
-        }
-    }*/
-
 
 }

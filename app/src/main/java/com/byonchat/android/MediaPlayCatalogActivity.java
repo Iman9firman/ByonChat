@@ -10,6 +10,8 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class MediaPlayCatalogActivity  extends YouTubeBaseActivity implements
         YouTubePlayer.OnInitializedListener{
 
@@ -22,30 +24,41 @@ public class MediaPlayCatalogActivity  extends YouTubeBaseActivity implements
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.media_play_catalog);
+        try {
+            Intent i = getIntent();
+            VIDEO_ID = i.getStringExtra("url");
 
-        Intent i = getIntent();
-        VIDEO_ID  = i.getStringExtra("url");
+            YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtubeplayerview);
+            youTubePlayerView.initialize(API_KEY, this);
 
-        YouTubePlayerView youTubePlayerView = (YouTubePlayerView)findViewById(R.id.youtubeplayerview);
-        youTubePlayerView.initialize(API_KEY, this);
-
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider,
                                         YouTubeInitializationResult result) {
-        Toast.makeText(getApplicationContext(),
-                "onInitializationFailure()",
-                Toast.LENGTH_LONG).show();
+        try {
+            Toast.makeText(getApplicationContext(),
+                    "onInitializationFailure()",
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
                                         boolean wasRestored) {
-        if (!wasRestored) {
-            player.setFullscreen(true);
-            player.loadVideo(VIDEO_ID);
+        try {
+            if (!wasRestored) {
+                player.setFullscreen(true);
+                player.loadVideo(VIDEO_ID);
 
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 

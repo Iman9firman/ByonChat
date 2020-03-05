@@ -107,6 +107,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.byonchat.android.ConfirmationSendFileFolllowup.EXTRA_TEXT_CAPTIONS;
+import static com.byonchat.android.utils.Utility.reportCatch;
 
 public class NoteCommentActivityV2 extends Constants implements EmojiconGridFragment.OnEmojiconClickedListener,
         EmojiconsFragment.OnEmojiconBackspaceClickedListener, DialogInterface.OnClickListener {
@@ -170,250 +171,261 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pr_mynote_comment);
-
-        if (savedInstanceState != null) {
-            isJumlahComment = (Map<String, String>) savedInstanceState.getSerializable("saved_isJumlahComment");
-            isPosition = (Map<String, String>) savedInstanceState.getSerializable("saved_isPosition");
-        }
-
-        if (isPosition == null) {
-            isPosition = new HashMap<>();
-        }
-
-        if (isJumlahComment == null) {
-            isJumlahComment = new HashMap<>();
-        }
-
-        toolbar = (Toolbar) findViewById(R.id.abMain);
-        toolbar.setTitleTextColor(Color.WHITE);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.list);
-        contentRoot = (RelativeLayout) findViewById(R.id.contentRoot);
-        mWriteComment = (EmojiconEditText) findViewById(R.id.writeComment);
-        mButtonSend = (Button) findViewById(R.id.btnSend);
-        mswipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        vCircleProgress = (CircleProgressBar) findViewById(R.id.progress);
-        vFrameHighlight = (RelativeLayout) findViewById(R.id.frame_highlight);
-        vButtonGallery = (ImageView) findViewById(R.id.button_gallery);
-        vFramePage = (RelativeLayout) findViewById(R.id.frame_page);
-        vTextThisPage = (EditText) findViewById(R.id.text_thispage);
-        vTextTotalPage = (TextView) findViewById(R.id.text_totalpage);
-        vButtonFirstPage = (ImageView) findViewById(R.id.button_first_page);
-        vButtonPreviousPage = (ImageView) findViewById(R.id.button_previous);
-        vButtonNextPage = (ImageView) findViewById(R.id.button_next_page);
-        vButtonLastPage = (ImageView) findViewById(R.id.button_last_page);
-
-        vButtonGallery.setVisibility(View.VISIBLE);
-        vButtonGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getIntent().getExtras().containsKey("id_comment")) {
-                    String userid = getIntent().getStringExtra("userid");
-                    String id_note = getIntent().getStringExtra("id_note");
-                    String id_comment = getIntent().getStringExtra("id_comment");
-                    String id_task = getIntent().getStringExtra("id_task");
-                    String bc_user = getIntent().getStringExtra("bc_user");
-                    String idRoomTab = "";
-
-                    if (getIntent().getExtras().containsKey("id_room_tab")) {
-                        idRoomTab = getIntent().getStringExtra("id_room_tab");
-                    }
-
-                    Intent intent = new Intent(getApplicationContext(), GalleryTaskActivity.class);
-                    intent.putExtra("userid", userid);
-                    intent.putExtra("id_note", id_note);
-                    intent.putExtra("id_comment", id_comment);
-                    intent.putExtra("id_task", id_task);
-                    intent.putExtra("bc_user", bc_user);
-                    intent.putExtra("id_room_tab", idRoomTab);
-                    intent.putExtra("color", getIntent().getStringExtra("color"));
-                    intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
-                    startActivityForResult(intent, POST_BEFORE_AFTER);
-                } else {
-                    String userid = getIntent().getStringExtra("userid");
-                    String id_note = getIntent().getStringExtra("id_note");
-                    String bc_user = getIntent().getStringExtra("bc_user");
-                    String id_task = getIntent().getStringExtra("id_task");
-                    String idRoomTab = "";
-                    if (getIntent().getExtras().containsKey("id_room_tab")) {
-                        idRoomTab = getIntent().getStringExtra("id_room_tab");
-                    }
-
-                    Intent intent = new Intent(getApplicationContext(), GalleryTaskActivity.class);
-                    intent.putExtra("userid", userid);
-                    intent.putExtra("id_note", id_note);
-                    intent.putExtra("id_task", id_task);
-                    intent.putExtra("bc_user", bc_user);
-                    intent.putExtra("id_room_tab", idRoomTab);
-                    intent.putExtra("color", getIntent().getStringExtra("color"));
-                    intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
-                    startActivityForResult(intent, POST_BEFORE_AFTER);
-                }
-            }
-        });
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-        personal = getIntent().getExtras().getBoolean("flag");
-
-        if (!personal) {
-            color = getIntent().getStringExtra("color");
-            if (color != null) {
-                toolbar.setBackgroundColor(Color.parseColor("#" + color));
-            }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.BLACK);
-        }
-
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(NoteCommentActivityV2.this));
-        feedItems = new ArrayList<CommentModel>();
-        adapter = new NoteCommentFollowUpListAdapter(NoteCommentActivityV2.this, feedItems, getIntent().getStringExtra("id_task"));
-        adapter.setHasStableIds(true);
-        mRecyclerView.setAdapter(adapter);
-
-        mRecyclerView.addOnScrollListener(new HidingScrollListener() {
-            @Override
-            public void onHide() {
-                hideViews();
+        try {
+            if (savedInstanceState != null) {
+                isJumlahComment = (Map<String, String>) savedInstanceState.getSerializable("saved_isJumlahComment");
+                isPosition = (Map<String, String>) savedInstanceState.getSerializable("saved_isPosition");
             }
 
-            @Override
-            public void onShow() {
-                showViews();
+            if (isPosition == null) {
+                isPosition = new HashMap<>();
             }
-        });
 
-        refreshItems(true);
+            if (isJumlahComment == null) {
+                isJumlahComment = new HashMap<>();
+            }
 
-        mButtonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateComment()) {
-                    registerUser();
-                    mWriteComment.setText(null);
-                    View view = getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            toolbar = (Toolbar) findViewById(R.id.abMain);
+            toolbar.setTitleTextColor(Color.WHITE);
+
+            mRecyclerView = (RecyclerView) findViewById(R.id.list);
+            contentRoot = (RelativeLayout) findViewById(R.id.contentRoot);
+            mWriteComment = (EmojiconEditText) findViewById(R.id.writeComment);
+            mButtonSend = (Button) findViewById(R.id.btnSend);
+            mswipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+            vCircleProgress = (CircleProgressBar) findViewById(R.id.progress);
+            vFrameHighlight = (RelativeLayout) findViewById(R.id.frame_highlight);
+            vButtonGallery = (ImageView) findViewById(R.id.button_gallery);
+            vFramePage = (RelativeLayout) findViewById(R.id.frame_page);
+            vTextThisPage = (EditText) findViewById(R.id.text_thispage);
+            vTextTotalPage = (TextView) findViewById(R.id.text_totalpage);
+            vButtonFirstPage = (ImageView) findViewById(R.id.button_first_page);
+            vButtonPreviousPage = (ImageView) findViewById(R.id.button_previous);
+            vButtonNextPage = (ImageView) findViewById(R.id.button_next_page);
+            vButtonLastPage = (ImageView) findViewById(R.id.button_last_page);
+
+            vButtonGallery.setVisibility(View.VISIBLE);
+            vButtonGallery.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getIntent().getExtras().containsKey("id_comment")) {
+                        String userid = getIntent().getStringExtra("userid");
+                        String id_note = getIntent().getStringExtra("id_note");
+                        String id_comment = getIntent().getStringExtra("id_comment");
+                        String id_task = getIntent().getStringExtra("id_task");
+                        String bc_user = getIntent().getStringExtra("bc_user");
+                        String idRoomTab = "";
+
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            idRoomTab = getIntent().getStringExtra("id_room_tab");
+                        }
+
+                        Intent intent = new Intent(getApplicationContext(), GalleryTaskActivity.class);
+                        intent.putExtra("userid", userid);
+                        intent.putExtra("id_note", id_note);
+                        intent.putExtra("id_comment", id_comment);
+                        intent.putExtra("id_task", id_task);
+                        intent.putExtra("bc_user", bc_user);
+                        intent.putExtra("id_room_tab", idRoomTab);
+                        intent.putExtra("color", getIntent().getStringExtra("color"));
+                        intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
+                        startActivityForResult(intent, POST_BEFORE_AFTER);
+                    } else {
+                        String userid = getIntent().getStringExtra("userid");
+                        String id_note = getIntent().getStringExtra("id_note");
+                        String bc_user = getIntent().getStringExtra("bc_user");
+                        String id_task = getIntent().getStringExtra("id_task");
+                        String idRoomTab = "";
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            idRoomTab = getIntent().getStringExtra("id_room_tab");
+                        }
+
+                        Intent intent = new Intent(getApplicationContext(), GalleryTaskActivity.class);
+                        intent.putExtra("userid", userid);
+                        intent.putExtra("id_note", id_note);
+                        intent.putExtra("id_task", id_task);
+                        intent.putExtra("bc_user", bc_user);
+                        intent.putExtra("id_room_tab", idRoomTab);
+                        intent.putExtra("color", getIntent().getStringExtra("color"));
+                        intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
+                        startActivityForResult(intent, POST_BEFORE_AFTER);
                     }
                 }
-            }
-        });
+            });
 
-        mswipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+            personal = getIntent().getExtras().getBoolean("flag");
+
+            if (!personal) {
+                color = getIntent().getStringExtra("color");
+                if (color != null) {
+                    toolbar.setBackgroundColor(Color.parseColor("#" + color));
+                }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                getWindow().setStatusBarColor(Color.BLACK);
+            }
+
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(NoteCommentActivityV2.this));
+            feedItems = new ArrayList<CommentModel>();
+            adapter = new NoteCommentFollowUpListAdapter(NoteCommentActivityV2.this, feedItems, getIntent().getStringExtra("id_task"));
+            adapter.setHasStableIds(true);
+            mRecyclerView.setAdapter(adapter);
+
+            mRecyclerView.addOnScrollListener(new HidingScrollListener() {
+                @Override
+                public void onHide() {
+                    hideViews();
+                }
+
+                @Override
+                public void onShow() {
+                    showViews();
+                }
+            });
+
+            refreshItems(true);
+
+            mButtonSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (validateComment()) {
+                        registerUser();
+                        mWriteComment.setText(null);
+                        View view = getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                    }
+                }
+            });
+
+            mswipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
 //                feedItems = new ArrayList<>();
-                refreshItems(true);
-            }
-        });
+                    refreshItems(true);
+                }
+            });
 
-        emojicons = (LinearLayout) findViewById(R.id.emojiconsLayout);
-        btn_add_emoticon = (ImageButton) findViewById(R.id.btn_add_emoticon);
-        btn_attach_file = (ImageButton) findViewById(R.id.btn_attach_file);
+            emojicons = (LinearLayout) findViewById(R.id.emojiconsLayout);
+            btn_add_emoticon = (ImageButton) findViewById(R.id.btn_add_emoticon);
+            btn_attach_file = (ImageButton) findViewById(R.id.btn_attach_file);
 
-        btn_attach_file.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(NoteCommentActivityV2.this)
-                        .setItems(R.array.attach_file, NoteCommentActivityV2.this)
-                        .show();
-            }
-        });
+            btn_attach_file.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AlertDialog.Builder(NoteCommentActivityV2.this)
+                            .setItems(R.array.attach_file, NoteCommentActivityV2.this)
+                            .show();
+                }
+            });
 
-        btn_add_emoticon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (emojicons.getVisibility() == View.GONE) {
-                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            btn_add_emoticon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (emojicons.getVisibility() == View.GONE) {
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
-                    Animation animFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_bottom);
-                    emojicons.setVisibility(View.VISIBLE);
-                    emojicons.startAnimation(animFade);
+                        Animation animFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_bottom);
+                        emojicons.setVisibility(View.VISIBLE);
+                        emojicons.startAnimation(animFade);
 
-                    mWriteComment.setFocusable(false);
-                } else {
+                        mWriteComment.setFocusable(false);
+                    } else {
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                        mWriteComment.setFocusableInTouchMode(true);
+                        mWriteComment.requestFocus();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(mWriteComment, InputMethodManager.SHOW_IMPLICIT);
+                        emojicons.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+
+            mWriteComment.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View arg0, MotionEvent arg1) {
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                     mWriteComment.setFocusableInTouchMode(true);
                     mWriteComment.requestFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(mWriteComment, InputMethodManager.SHOW_IMPLICIT);
+                    if (emojicons.getVisibility() == View.VISIBLE) {
+                        emojicons.setVisibility(View.GONE);
+                    }
+
+                    return false;
+                }
+            });
+
+            vTextThisPage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                    vTextThisPage.setFocusableInTouchMode(true);
+                    vTextThisPage.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(vTextThisPage, InputMethodManager.SHOW_IMPLICIT);
                     emojicons.setVisibility(View.GONE);
                 }
-            }
-        });
+            });
 
+            vTextThisPage.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View arg0, MotionEvent arg1) {
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                    vTextThisPage.setFocusableInTouchMode(true);
+                    vTextThisPage.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(vTextThisPage, InputMethodManager.SHOW_IMPLICIT);
+                    if (emojicons.getVisibility() == View.VISIBLE) {
+                        emojicons.setVisibility(View.GONE);
+                    }
 
-        mWriteComment.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                mWriteComment.setFocusableInTouchMode(true);
-                mWriteComment.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(mWriteComment, InputMethodManager.SHOW_IMPLICIT);
-                if (emojicons.getVisibility() == View.VISIBLE) {
-                    emojicons.setVisibility(View.GONE);
+                    return false;
                 }
+            });
 
-                return false;
-            }
-        });
+            mWriteComment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
-        vTextThisPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                vTextThisPage.setFocusableInTouchMode(true);
-                vTextThisPage.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(vTextThisPage, InputMethodManager.SHOW_IMPLICIT);
-                emojicons.setVisibility(View.GONE);
-            }
-        });
-
-        vTextThisPage.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                vTextThisPage.setFocusableInTouchMode(true);
-                vTextThisPage.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(vTextThisPage, InputMethodManager.SHOW_IMPLICIT);
-                if (emojicons.getVisibility() == View.VISIBLE) {
-                    emojicons.setVisibility(View.GONE);
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        scrollListConversationToBottom();
+                    }
                 }
+            });
 
-                return false;
-            }
-        });
-
-        mWriteComment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    scrollListConversationToBottom();
-                }
-            }
-        });
-
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void hideViews() {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) vFramePage.getLayoutParams();
-        int layBottomMargin = lp.bottomMargin;
-        vFramePage.animate().translationY(vFramePage.getHeight() + layBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+        try {
+            RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) vFramePage.getLayoutParams();
+            int layBottomMargin = lp.bottomMargin;
+            vFramePage.animate().translationY(vFramePage.getHeight() + layBottomMargin).setInterpolator(new AccelerateInterpolator(2)).start();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void showViews() {
-        vFramePage.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+        try {
+            vFramePage.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private boolean validateComment() {
@@ -437,32 +449,40 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     }
 
     public void showError(String errorMessage) {
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+        try {
+            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void takeImage() {
-        String action = Intent.ACTION_GET_CONTENT;
-        action = MediaStore.ACTION_IMAGE_CAPTURE;
-        File f = MediaProcessingUtil
-                .getOutputFile("jpeg");
-        cameraFileOutput = f.getAbsolutePath();
+        try {
+            String action = Intent.ACTION_GET_CONTENT;
+            action = MediaStore.ACTION_IMAGE_CAPTURE;
+            File f = MediaProcessingUtil
+                    .getOutputFile("jpeg");
+            cameraFileOutput = f.getAbsolutePath();
 
-        Intent i = new Intent();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            i.putExtra(MediaStore.EXTRA_OUTPUT,
-                    FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", f));
-            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        } else {
-            i.putExtra(MediaStore.EXTRA_OUTPUT,
-                    Uri.fromFile(f));
+            Intent i = new Intent();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                i.putExtra(MediaStore.EXTRA_OUTPUT,
+                        FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", f));
+                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            } else {
+                i.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(f));
+            }
+            int req = REQ_CAMERA;
+            i.setAction(action);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+            }
+            startActivityForResult(i, req);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        int req = REQ_CAMERA;
-        i.setAction(action);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            StrictMode.setVmPolicy(builder.build());
-        }
-        startActivityForResult(i, req);
     }
 
     protected void requestCameraPermission() {
@@ -502,41 +522,45 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if (emojicons.getVisibility() == View.GONE) {
-                if (isPostComment) {
-                    Intent data = new Intent();
-                    if (getIntent().getExtras().containsKey("id_comment")) {
+        try {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+                if (emojicons.getVisibility() == View.GONE) {
+                    if (isPostComment) {
+                        Intent data = new Intent();
+                        if (getIntent().getExtras().containsKey("id_comment")) {
 //                        isJumlahComment.put(EXTRA_TEXT_JUMLAH_COMMENT, String.valueOf(feedItems.size()));
-                        data.putExtra("userid", getIntent().getStringExtra("userid"));
-                        data.putExtra("id_note", getIntent().getStringExtra("id_note"));
-                        data.putExtra("id_task", getIntent().getStringExtra("id_task"));
-                        data.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
-                        String idRoomTab = "", position = "";
-                        if (getIntent().getExtras().containsKey("id_room_tab")) {
-                            idRoomTab = getIntent().getStringExtra("id_room_tab");
-                            data.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
-                        }
-                        if (getIntent().getExtras().containsKey("position")) {
-                            data.putExtra("position", getIntent().getStringExtra("position"));
-                        }
-                        data.putExtra(EXTRA_TEXT_JUMLAH_COMMENT, feedItems.size() + "");
-                        data.putExtra(EXTRA_TEXT_CONTENT_COMMENT, contentComment);
+                            data.putExtra("userid", getIntent().getStringExtra("userid"));
+                            data.putExtra("id_note", getIntent().getStringExtra("id_note"));
+                            data.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                            data.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                            String idRoomTab = "", position = "";
+                            if (getIntent().getExtras().containsKey("id_room_tab")) {
+                                idRoomTab = getIntent().getStringExtra("id_room_tab");
+                                data.putExtra("id_room_tab", getIntent().getStringExtra("id_room_tab"));
+                            }
+                            if (getIntent().getExtras().containsKey("position")) {
+                                data.putExtra("position", getIntent().getStringExtra("position"));
+                            }
+                            data.putExtra(EXTRA_TEXT_JUMLAH_COMMENT, feedItems.size() + "");
+                            data.putExtra(EXTRA_TEXT_CONTENT_COMMENT, contentComment);
 //                        data.putExtra(EXTRA_JUMLAH_COMMENT, (HashMap<String, String>) isJumlahComment);
-                        setResult(RESULT_OK, data);
+                            setResult(RESULT_OK, data);
+                        }
                     }
-                }
 
-                finish();
-            } else {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                mWriteComment.setFocusableInTouchMode(true);
-                mWriteComment.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(mWriteComment, InputMethodManager.SHOW_IMPLICIT);
-                emojicons.setVisibility(View.GONE);
+                    finish();
+                } else {
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                    mWriteComment.setFocusableInTouchMode(true);
+                    mWriteComment.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(mWriteComment, InputMethodManager.SHOW_IMPLICIT);
+                    emojicons.setVisibility(View.GONE);
+                }
+                return true;
             }
-            return true;
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -551,107 +575,115 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_CAMERA && resultCode == Activity.RESULT_OK) {
-            if (decodeFile(cameraFileOutput)) {
-                final File f = new File(cameraFileOutput);
-                if (f.exists()) {
-                    List<NotesPhoto> photos = new ArrayList<>();
-                    photos.add(new NotesPhoto(f));
-                    String jabberId = getIntent().getStringExtra("userid");
-                    startActivityForResult(ConfirmationSendFileV2.generateIntent(this,
-                            jabberId, photos, Message.TYPE_IMAGE),
-                            SEND_PICTURE_SINGLE_CONFIRMATION_REQUEST);
+        try {
+            if (requestCode == REQ_CAMERA && resultCode == Activity.RESULT_OK) {
+                if (decodeFile(cameraFileOutput)) {
+                    final File f = new File(cameraFileOutput);
+                    if (f.exists()) {
+                        List<NotesPhoto> photos = new ArrayList<>();
+                        photos.add(new NotesPhoto(f));
+                        String jabberId = getIntent().getStringExtra("userid");
+                        startActivityForResult(ConfirmationSendFileV2.generateIntent(this,
+                                jabberId, photos, Message.TYPE_IMAGE),
+                                SEND_PICTURE_SINGLE_CONFIRMATION_REQUEST);
+                    }
+                } else {
+                    Toast.makeText(this, R.string.comment_error_failed_read_picture, Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                Toast.makeText(this, R.string.comment_error_failed_read_picture, Toast.LENGTH_SHORT).show();
+            } else if (requestCode == REQ_GALLERY && resultCode == RESULT_OK && data != null) {
+                images = data.getParcelableArrayListExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES);
+                StringBuilder sb = new StringBuilder();
+                JSONArray jsonArray = new JSONArray();
+                for (int i = 0, l = images.size(); i < l; i++) {
+                    sb.append(images.get(i).getPath() + "\n");
+                    jsonArray.put(images.get(i).getPath());
+                }
+
+                Intent i = new Intent(getApplicationContext(), ConfirmationSendFileFolllowup.class);
+                i.putParcelableArrayListExtra("selected", images);
+                i.putExtra("file", jsonArray.toString());
+                i.putExtra("name", getIntent().getStringExtra("userid"));
+                i.putExtra("type", Message.TYPE_IMAGE);
+                i.putExtra("isFrom", "comment");
+                startActivityForResult(i, SEND_PICTURE_CONFIRMATION_REQUEST);
+            } else if (requestCode == SEND_PICTURE_CONFIRMATION_REQUEST && resultCode == Activity.RESULT_OK) {
+                Utility.hideKeyboard(getApplicationContext(), mWriteComment);
+                if (data == null) {
+                    showError(getString(R.string.comment_error_failed_open_picture));
+                    return;
+                }
+
+                Map<String, String> captions = (Map<String, String>)
+                        data.getSerializableExtra(ConfirmationSendFileV2.EXTRA_CAPTIONS);
+                List<NotesPhoto> photos = data.getParcelableArrayListExtra(ConfirmationSendFileFolllowup.EXTRA_PHOTOS);
+                postComment(captions, photos);
+            } else if (requestCode == SEND_PICTURE_SINGLE_CONFIRMATION_REQUEST && resultCode == Activity.RESULT_OK) {
+                Utility.hideKeyboard(getApplicationContext(), mWriteComment);
+                if (data == null) {
+                    showError(getString(R.string.comment_error_failed_open_picture));
+                    return;
+                }
+
+                Map<String, String> captions = (Map<String, String>)
+                        data.getSerializableExtra(ConfirmationSendFileV2.EXTRA_CAPTIONS);
+                List<NotesPhoto> photos = data.getParcelableArrayListExtra(ConfirmationSendFileMultiple.EXTRA_PHOTOS);
+                postComment(captions, photos);
+            } else if (requestCode == POST_BEFORE_AFTER && resultCode == Activity.RESULT_OK) {
+                Utility.hideKeyboard(getApplicationContext(), mWriteComment);
+                if (data.getExtras().containsKey("id_comment")) {
+                    goToLastPage(true);
+                } else {
+                    goToLastPage(false);
+                }
+            } else if (requestCode == COMMENT_TREE && resultCode == Activity.RESULT_OK) {
+                Utility.hideKeyboard(getApplicationContext(), mWriteComment);
+
+                int position = Integer.valueOf(data.getStringExtra("position"));
+                String jumlahcomment = data.getStringExtra(EXTRA_TEXT_JUMLAH_COMMENT);
+                String contentcomment = data.getStringExtra(EXTRA_TEXT_CONTENT_COMMENT);
+
+                CommentModel item = feedItems.get(position);
+                item.setJumlahComment(jumlahcomment);
+                item.setComment2(contentcomment);
+                feedItems.set(position, item);
+
+                adapter.notifyDataSetChanged();
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+
             }
-        } else if (requestCode == REQ_GALLERY && resultCode == RESULT_OK && data != null) {
-            images = data.getParcelableArrayListExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES);
-            StringBuilder sb = new StringBuilder();
-            JSONArray jsonArray = new JSONArray();
-            for (int i = 0, l = images.size(); i < l; i++) {
-                sb.append(images.get(i).getPath() + "\n");
-                jsonArray.put(images.get(i).getPath());
-            }
-
-            Intent i = new Intent(getApplicationContext(), ConfirmationSendFileFolllowup.class);
-            i.putParcelableArrayListExtra("selected", images);
-            i.putExtra("file", jsonArray.toString());
-            i.putExtra("name", getIntent().getStringExtra("userid"));
-            i.putExtra("type", Message.TYPE_IMAGE);
-            i.putExtra("isFrom", "comment");
-            startActivityForResult(i, SEND_PICTURE_CONFIRMATION_REQUEST);
-        } else if (requestCode == SEND_PICTURE_CONFIRMATION_REQUEST && resultCode == Activity.RESULT_OK) {
-            Utility.hideKeyboard(getApplicationContext(), mWriteComment);
-            if (data == null) {
-                showError(getString(R.string.comment_error_failed_open_picture));
-                return;
-            }
-
-            Map<String, String> captions = (Map<String, String>)
-                    data.getSerializableExtra(ConfirmationSendFileV2.EXTRA_CAPTIONS);
-            List<NotesPhoto> photos = data.getParcelableArrayListExtra(ConfirmationSendFileFolllowup.EXTRA_PHOTOS);
-            postComment(captions, photos);
-        } else if (requestCode == SEND_PICTURE_SINGLE_CONFIRMATION_REQUEST && resultCode == Activity.RESULT_OK) {
-            Utility.hideKeyboard(getApplicationContext(), mWriteComment);
-            if (data == null) {
-                showError(getString(R.string.comment_error_failed_open_picture));
-                return;
-            }
-
-            Map<String, String> captions = (Map<String, String>)
-                    data.getSerializableExtra(ConfirmationSendFileV2.EXTRA_CAPTIONS);
-            List<NotesPhoto> photos = data.getParcelableArrayListExtra(ConfirmationSendFileMultiple.EXTRA_PHOTOS);
-            postComment(captions, photos);
-        } else if (requestCode == POST_BEFORE_AFTER && resultCode == Activity.RESULT_OK) {
-            Utility.hideKeyboard(getApplicationContext(), mWriteComment);
-            if (data.getExtras().containsKey("id_comment")) {
-                goToLastPage(true);
-            } else {
-                goToLastPage(false);
-            }
-        } else if (requestCode == COMMENT_TREE && resultCode == Activity.RESULT_OK) {
-            Utility.hideKeyboard(getApplicationContext(), mWriteComment);
-
-            int position = Integer.valueOf(data.getStringExtra("position"));
-            String jumlahcomment = data.getStringExtra(EXTRA_TEXT_JUMLAH_COMMENT);
-            String contentcomment = data.getStringExtra(EXTRA_TEXT_CONTENT_COMMENT);
-
-            CommentModel item = feedItems.get(position);
-            item.setJumlahComment(jumlahcomment);
-            item.setComment2(contentcomment);
-            feedItems.set(position, item);
-
-            adapter.notifyDataSetChanged();
-        } else if (resultCode == Activity.RESULT_CANCELED) {
-
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     void postComment(Map<String, String> captions, List<NotesPhoto> photos) {
-        if (getIntent().getExtras().containsKey("id_comment")) {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String id_comment = getIntent().getStringExtra("id_comment");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
+        try {
+            if (getIntent().getExtras().containsKey("id_comment")) {
+                String userid = getIntent().getStringExtra("userid");
+                String id_note = getIntent().getStringExtra("id_note");
+                String id_comment = getIntent().getStringExtra("id_comment");
+                String bc_user = getIntent().getStringExtra("bc_user");
+                String idRoomTab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    idRoomTab = getIntent().getStringExtra("id_room_tab");
+                }
+                progressDialog = UtilsPD.createProgressDialog(NoteCommentActivityV2.this);
+                progressDialog.show();
+                postComment(userid, captions, id_note, bc_user, idRoomTab, id_comment, photos);
+            } else {
+                String userid = getIntent().getStringExtra("userid");
+                String id_note = getIntent().getStringExtra("id_note");
+                String bc_user = getIntent().getStringExtra("bc_user");
+                String idRoomTab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    idRoomTab = getIntent().getStringExtra("id_room_tab");
+                }
+                progressDialog = UtilsPD.createProgressDialog(NoteCommentActivityV2.this);
+                progressDialog.show();
+                postComment(userid, captions, id_note, bc_user, idRoomTab, "", photos);
             }
-            progressDialog = UtilsPD.createProgressDialog(NoteCommentActivityV2.this);
-            progressDialog.show();
-            postComment(userid, captions, id_note, bc_user, idRoomTab, id_comment, photos);
-        } else {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
-            }
-            progressDialog = UtilsPD.createProgressDialog(NoteCommentActivityV2.this);
-            progressDialog.show();
-            postComment(userid, captions, id_note, bc_user, idRoomTab, "", photos);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 

@@ -26,6 +26,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class DownloadUtilsActivity extends AppCompatActivity {
     private static final String SD_CARD_FOLDER = "ByonChatDB";
     private static final String DB_DOWNLOAD_PATH = "http://campaignmanager.asia/simple/db/daftarkodepos.sqlite";
@@ -99,26 +101,34 @@ public class DownloadUtilsActivity extends AppCompatActivity {
         }
 
         protected void onProgressUpdate(Integer... values) {
-            if (mProgressDialog != null) {
-                if (mProgressDialog.isShowing()) {
-                    mProgressDialog.setProgress(values[0]);
+            try {
+                if (mProgressDialog != null) {
+                    if (mProgressDialog.isShowing()) {
+                        mProgressDialog.setProgress(values[0]);
+                    }
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-            }
-            if (result.equals(Boolean.TRUE)) {
-                Toast.makeText(DownloadUtilsActivity.this, "Success", Toast.LENGTH_LONG).show();
-                mDatabaseOpenTask = new DatabaseOpenTask();
-                mDatabaseOpenTask.execute(new Context[]{DownloadUtilsActivity.this});
-            } else {
-                Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
-                finish();
+            try {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                    mProgressDialog = null;
+                }
+                if (result.equals(Boolean.TRUE)) {
+                    Toast.makeText(DownloadUtilsActivity.this, "Success", Toast.LENGTH_LONG).show();
+                    mDatabaseOpenTask = new DatabaseOpenTask();
+                    mDatabaseOpenTask.execute(new Context[]{DownloadUtilsActivity.this});
+                } else {
+                    Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
@@ -147,6 +157,7 @@ public class DownloadUtilsActivity extends AppCompatActivity {
                     return null;
                 }
             } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
                 return null;
             }
         }
@@ -158,17 +169,21 @@ public class DownloadUtilsActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(DatabaseKodePos newDB) {
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-            }
-            if (newDB == null) {
-                mDB = null;
-                mDatabaseDownloadTask = new DatabaseDownloadTask();
-                mDatabaseDownloadTask.execute();
-            } else {
-                mDB = newDB;
-                finish();
+            try {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                    mProgressDialog = null;
+                }
+                if (newDB == null) {
+                    mDB = null;
+                    mDatabaseDownloadTask = new DatabaseDownloadTask();
+                    mDatabaseDownloadTask.execute();
+                } else {
+                    mDB = newDB;
+                    finish();
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
@@ -176,23 +191,27 @@ public class DownloadUtilsActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mDatabaseDownloadTask != null) {
-            if (mDatabaseDownloadTask.getStatus() != AsyncTask.Status.FINISHED) {
-                mDatabaseDownloadTask.cancel(true);
+        try {
+            if (mDatabaseDownloadTask != null) {
+                if (mDatabaseDownloadTask.getStatus() != AsyncTask.Status.FINISHED) {
+                    mDatabaseDownloadTask.cancel(true);
+                }
             }
-        }
-        if (mDatabaseOpenTask != null) {
-            if (mDatabaseOpenTask.getStatus() != AsyncTask.Status.FINISHED) {
-                mDatabaseOpenTask.cancel(true);
+            if (mDatabaseOpenTask != null) {
+                if (mDatabaseOpenTask.getStatus() != AsyncTask.Status.FINISHED) {
+                    mDatabaseOpenTask.cancel(true);
+                }
             }
-        }
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-            mProgressDialog = null;
-        }
-        if (mDB != null) {
-            mDB.close();
-            mDB = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            if (mDB != null) {
+                mDB.close();
+                mDB = null;
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -200,20 +219,23 @@ public class DownloadUtilsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_pnumber);
-        LinearLayout linearLayoutContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
-        linearLayoutContent.setVisibility(View.GONE);
-        mDB = new DatabaseKodePos(getApplicationContext());
-        if (mDB.getWritableDatabase() != null) {
-            finish();
-        } else {
-            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                Toast.makeText(getApplicationContext(), "Please insert memmory card", Toast.LENGTH_LONG).show();
+        try {
+            LinearLayout linearLayoutContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
+            linearLayoutContent.setVisibility(View.GONE);
+            mDB = new DatabaseKodePos(getApplicationContext());
+            if (mDB.getWritableDatabase() != null) {
                 finish();
+            } else {
+                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    Toast.makeText(getApplicationContext(), "Please insert memmory card", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                mDatabaseOpenTask = new DatabaseOpenTask();
+                mDatabaseOpenTask.execute(new Context[]{this});
             }
-            mDatabaseOpenTask = new DatabaseOpenTask();
-            mDatabaseOpenTask.execute(new Context[]{this});
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
     }
 
     class ModelWilayah {

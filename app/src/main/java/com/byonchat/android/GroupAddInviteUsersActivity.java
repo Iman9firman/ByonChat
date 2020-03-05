@@ -31,6 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class GroupAddInviteUsersActivity extends ABNextServiceActivity {
 
     private static final int ACTION_PICK_PARTICIPANT = 1301;
@@ -50,48 +52,54 @@ public class GroupAddInviteUsersActivity extends ABNextServiceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.group_create_add_participants);
+        try {
+            btnAddParticipant = (Button) findViewById(R.id.btnCreateGroupAddParticipant);
+            btnAddParticipant.setOnClickListener(this);
 
-        btnAddParticipant = (Button) findViewById(R.id.btnCreateGroupAddParticipant);
-        btnAddParticipant.setOnClickListener(this);
+            groupName = getIntent().getStringExtra(
+                    GroupAddInfoActivity.EXTRA_KEY_GROUP_NAME);
 
-        groupName = getIntent().getStringExtra(
-                GroupAddInfoActivity.EXTRA_KEY_GROUP_NAME);
+            items = new ArrayList<IconItem>();
+            adapter = new IconAdapter(this, R.layout.list_item_with_image,
+                    R.id.textTitle, items);
+            adapter.setListType(IconAdapter.TYPE_IMAGE);
+            adapter.setClickListener(new ItemClickListener() {
 
-        items = new ArrayList<IconItem>();
-        adapter = new IconAdapter(this, R.layout.list_item_with_image,
-                R.id.textTitle, items);
-        adapter.setListType(IconAdapter.TYPE_IMAGE);
-        adapter.setClickListener(new ItemClickListener() {
+                @Override
+                public void onClick(View v, IconItem item) {
+                    selectedContacts.remove(item.getJabberId());
+                    refreshList();
+                }
+            });
 
-            @Override
-            public void onClick(View v, IconItem item) {
-                selectedContacts.remove(item.getJabberId());
-                refreshList();
-            }
-        });
+            listParticipants = (ListView) findViewById(R.id.createGroupParticipantList);
+            listParticipants.setAdapter(adapter);
 
-        listParticipants = (ListView) findViewById(R.id.createGroupParticipantList);
-        listParticipants.setAdapter(adapter);
-
-        if (selectedContacts == null)
-            selectedContacts = new HashMap<String, Contact>();
+            if (selectedContacts == null)
+                selectedContacts = new HashMap<String, Contact>();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void showActionPick() {
-        Intent i = new Intent(this, GroupAddPickUserActivity.class);
-        Parcelable[] participants = new Parcelable[selectedContacts.size()];
-        int c = 0;
-        for (Iterator<String> iterator = selectedContacts.keySet().iterator(); iterator
-                .hasNext();) {
-            String k = iterator.next();
-            participants[c] = selectedContacts.get(k);
-            c++;
+        try {
+            Intent i = new Intent(this, GroupAddPickUserActivity.class);
+            Parcelable[] participants = new Parcelable[selectedContacts.size()];
+            int c = 0;
+            for (Iterator<String> iterator = selectedContacts.keySet().iterator(); iterator
+                    .hasNext(); ) {
+                String k = iterator.next();
+                participants[c] = selectedContacts.get(k);
+                c++;
+            }
+            i.putExtra(GroupAddPickUserActivity.EXTRA_KEY_GROUP_PARTICIPANTS,
+                    participants);
+            startActivityForResult(i, ACTION_PICK_PARTICIPANT);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        i.putExtra(GroupAddPickUserActivity.EXTRA_KEY_GROUP_PARTICIPANTS,
-                participants);
-        startActivityForResult(i, ACTION_PICK_PARTICIPANT);
     }
 
     @Override
@@ -110,98 +118,122 @@ public class GroupAddInviteUsersActivity extends ABNextServiceActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null)
-            return;
-        if (requestCode == ACTION_PICK_PARTICIPANT) {
-            selectedContacts.clear();
-            Parcelable[] participants = data
-                    .getParcelableArrayExtra(GroupAddPickUserActivity.EXTRA_KEY_GROUP_PARTICIPANTS);
-            for (int i = 0; i < participants.length; i++) {
-                Contact c = (Contact) participants[i];
-                selectedContacts.put(c.getJabberId(), c);
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            if (data == null)
+                return;
+            if (requestCode == ACTION_PICK_PARTICIPANT) {
+                selectedContacts.clear();
+                Parcelable[] participants = data
+                        .getParcelableArrayExtra(GroupAddPickUserActivity.EXTRA_KEY_GROUP_PARTICIPANTS);
+                for (int i = 0; i < participants.length; i++) {
+                    Contact c = (Contact) participants[i];
+                    selectedContacts.put(c.getJabberId(), c);
+                }
+                refreshList();
             }
-            refreshList();
-        }
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void refreshList() {
-        items.clear();
-        for (Iterator<String> iterator = selectedContacts.keySet().iterator(); iterator
-                .hasNext();) {
-            Contact data = selectedContacts.get(iterator.next());
-            IconItem item = new IconItem(data.getJabberId(), data.getName(),
-                    data.getStatus(), null, data);
-            File f = getFileStreamPath(MediaProcessingUtil
-                    .getProfilePicName(data));
-            if (f.exists()) {
-                item.setImageUri(Uri.fromFile(f));
+        try {
+            items.clear();
+            for (Iterator<String> iterator = selectedContacts.keySet().iterator(); iterator
+                    .hasNext(); ) {
+                Contact data = selectedContacts.get(iterator.next());
+                IconItem item = new IconItem(data.getJabberId(), data.getName(),
+                        data.getStatus(), null, data);
+                File f = getFileStreamPath(MediaProcessingUtil
+                        .getProfilePicName(data));
+                if (f.exists()) {
+                    item.setImageUri(Uri.fromFile(f));
+                }
+                items.add(item);
             }
-            items.add(item);
+            adapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        adapter.notifyDataSetChanged();
     }
 
     private void createGroup() {
-        if (selectedContacts.size() == 0) {
-            Toast.makeText(this, "You need to add at least one participant",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (selectedContacts.size() > 20) {
-            Toast.makeText(this, "Only 20 participants at maximum.",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
+        try {
+            if (selectedContacts.size() == 0) {
+                Toast.makeText(this, "You need to add at least one participant",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (selectedContacts.size() > 20) {
+                Toast.makeText(this, "Only 20 participants at maximum.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        pdialog = new ProgressDialog(this);
-        pdialog.setIndeterminate(true);
-        pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        pdialog.setMessage("Creating group...");
-        pdialog.show();
-        new GroupCreateHandler().execute();
+            pdialog = new ProgressDialog(this);
+            pdialog.setIndeterminate(true);
+            pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            pdialog.setMessage("Creating group...");
+            pdialog.show();
+            new GroupCreateHandler().execute();
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void onGroupCreated(String groupId) {
-        pdialog.dismiss();
-        finish();
+        try {
+            pdialog.dismiss();
+            finish();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void onGroupCreateError() {
-        pdialog.dismiss();
-        AlertDialog.Builder dlg = DialogUtil.generateAlertDialog(this, "Error",
-                "Failed creating group. Please try again later.");
-        dlg.setPositiveButton("OK", null);
-        dlg.show();
+        try {
+            pdialog.dismiss();
+            AlertDialog.Builder dlg = DialogUtil.generateAlertDialog(this, "Error",
+                    "Failed creating group. Please try again later.");
+            dlg.setPositiveButton("OK", null);
+            dlg.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class GroupCreateHandler extends AsyncTask<Void, String, Void> {
         @Override
         protected Void doInBackground(Void... arg0) {
-
-            int c = 0;
-            while (!binder.isConnected() && c < 5) {
-                SystemClock.sleep(200);
-                c++;
-            }
-            if (c == 5) {
-                publishProgress(new String[] { null });
-                return null;
-            }
-
-            List<Contact> participants = new ArrayList<Contact>();
-            for (Iterator<String> iterator = selectedContacts.keySet()
-                    .iterator(); iterator.hasNext();) {
-                Contact contact = selectedContacts.get(iterator.next());
-                participants.add(contact);
-            }
             try {
-                String groupId = binder.createGroupChatD(participants);
-                binder.changeGroupChatSubject(groupId, groupName);
-                publishProgress(new String[] { groupId });
-            } catch (XMPPException e) {
-                publishProgress(new String[] { null });
+                int c = 0;
+                while (!binder.isConnected() && c < 5) {
+                    SystemClock.sleep(200);
+                    c++;
+                }
+                if (c == 5) {
+                    publishProgress(new String[]{null});
+                    return null;
+                }
+
+                List<Contact> participants = new ArrayList<Contact>();
+                for (Iterator<String> iterator = selectedContacts.keySet()
+                        .iterator(); iterator.hasNext(); ) {
+                    Contact contact = selectedContacts.get(iterator.next());
+                    participants.add(contact);
+                }
+                try {
+                    String groupId = binder.createGroupChatD(participants);
+                    binder.changeGroupChatSubject(groupId, groupName);
+                    publishProgress(new String[]{groupId});
+                } catch (XMPPException e) {
+                    publishProgress(new String[]{null});
+                }
+            }catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
 
             return null;
@@ -209,11 +241,15 @@ public class GroupAddInviteUsersActivity extends ABNextServiceActivity {
 
         @Override
         protected void onProgressUpdate(String... values) {
-            String s = values[0];
-            if (s != null) {
-                onGroupCreated(s);
-            } else {
-                onGroupCreateError();
+            try {
+                String s = values[0];
+                if (s != null) {
+                    onGroupCreated(s);
+                } else {
+                    onGroupCreateError();
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
@@ -221,12 +257,14 @@ public class GroupAddInviteUsersActivity extends ABNextServiceActivity {
 
     @Override
     public void onClick(View v) {
-
-        if (v.equals(btnAddParticipant)) {
-            showActionPick();
-        } else {
-            createGroup();
+        try {
+            if (v.equals(btnAddParticipant)) {
+                showActionPick();
+            } else {
+                createGroup();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
-
 }

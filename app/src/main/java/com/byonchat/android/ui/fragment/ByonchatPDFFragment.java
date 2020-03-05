@@ -62,6 +62,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 @SuppressLint("ValidFragment")
 public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -151,53 +153,64 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.b_video_fragment, container, false);
 
-        vFrameError = getFrameError(view);
-        vFrameEmpty = getFrameEmpty(view);
-        vListVideoTube = getListFrequently(view);
-        vRefreshList = getRefreshList(view);
-        vFab = getFabView(view);
-        vTextError = getTextError(view);
-        vTextEmpty = getTextEmpty(view);
-        vTextContentError = getTextContentError(view);
-//        vTagGroup = getTagContent(view);
-        vTagLayout = getTagContent(view);
-        vTag1 = getTagSatu(view);
-        vTag2 = getTagDua(view);
-        vTag3 = getTagTiga(view);
-        vTag4 = getTagEmpat(view);
+        try {
+            vFrameError = getFrameError(view);
+            vFrameEmpty = getFrameEmpty(view);
+            vListVideoTube = getListFrequently(view);
+            vRefreshList = getRefreshList(view);
+            vFab = getFabView(view);
+            vTextError = getTextError(view);
+            vTextEmpty = getTextEmpty(view);
+            vTextContentError = getTextContentError(view);
+//          vTagGroup = getTagContent(view);
+            vTagLayout = getTagContent(view);
+            vTag1 = getTagSatu(view);
+            vTag2 = getTagDua(view);
+            vTag3 = getTagTiga(view);
+            vTag4 = getTagEmpat(view);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
 
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        resolveConnectionProblem();
-        resolveListFile();
-        resolveRefreshList();
-        resolesTagGroup();
-        onRefresh();
+        try {
+            resolveConnectionProblem();
+            resolveListFile();
+            resolveRefreshList();
+            resolesTagGroup();
+            onRefresh();
 
-        vTextEmpty.setText("No file in this directory");
-        vFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+            vTextEmpty.setText("No file in this directory");
+            vFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 //                Intent intent = ByonchatVideoBeforeDownloadActivity.generateIntent(getContext());
 //                startActivity(intent);
-            }
-        });
+                }
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onRefresh() {
-//        onResume();
-        vRefreshList.setRefreshing(true);
-        if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-            urlBack.add("OnBack");
-            new getFile().execute("https://iss.byonchat.com/index.php/Api/Files");
-            Log.w("Apa ini harusee",urlTembak);
-        } else {
-            vRefreshList.setRefreshing(false);
-            Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        try {
+            vRefreshList.setRefreshing(true);
+            if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
+                urlBack.add("OnBack");
+                new getFile().execute("https://iss.byonchat.com/index.php/Api/Files");
+                Log.w("Apa ini harusee", urlTembak);
+            } else {
+                vRefreshList.setRefreshing(false);
+                Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -205,83 +218,90 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     public void onResume() {
         super.onResume();
 
-//        urlBack = urlTembak;
-        /*vRefreshList.setRefreshing(true);
-        if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-            new getFile().execute(urlTembak);
-            Log.w("Apa ini harusee",urlTembak);
-        } else {
-            vRefreshList.setRefreshing(false);
-            Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
-        }*/
     }
 
     protected void resolveConnectionProblem() {
-        vTextError.setText("Home isn't responding");
-        vTextContentError.setText("Thats why we can't show videos right now\nPlease check back later.");
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(getContext());
+        try {
+            vTextError.setText("Home isn't responding");
+            vTextContentError.setText("Thats why we can't show videos right now\nPlease check back later.");
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(getContext());
+            }
+            dbHelper = new UserDB(getContext());
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-        dbHelper = new UserDB(getContext());
     }
 
     protected void resolveListFile() {
-        files = new ArrayList<>();
+        try {
+            files = new ArrayList<>();
 //        folders = new ArrayList<>();
-        vListVideoTube.setUpAsList();
-        vListVideoTube.setNestedScrollingEnabled(false);
-        chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
-        mAdapter = new ByonchatPDFAdapter(getContext(), files, new OnPreviewItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, File item, String type) {
-                if(type.equalsIgnoreCase("folder")){
-                    urlBack.add(item._id+"");
-                    new getFile().execute("https://iss.byonchat.com/index.php/Api/Files/"+item.id);
-                }else {
-                    Intent intent = new Intent(getContext(), ByonchatPDFPreviewActivity.class);
-                    intent.putExtra(Constants.EXTRA_URL, item.url);
-                    startActivity(intent);
-                    traceView(item);
+            vListVideoTube.setUpAsList();
+            vListVideoTube.setNestedScrollingEnabled(false);
+            chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
+            mAdapter = new ByonchatPDFAdapter(getContext(), files, new OnPreviewItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position, File item, String type) {
+                    if (type.equalsIgnoreCase("folder")) {
+                        urlBack.add(item._id + "");
+                        new getFile().execute("https://iss.byonchat.com/index.php/Api/Files/" + item.id);
+                    } else {
+                        Intent intent = new Intent(getContext(), ByonchatPDFPreviewActivity.class);
+                        intent.putExtra(Constants.EXTRA_URL, item.url);
+                        startActivity(intent);
+                        traceView(item);
+                    }
                 }
-            }
-        }, new OnRequestItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, File item) {
-                FragmentManager fm = activity.getSupportFragmentManager();
-                DialogFormChildRequestDoc testDialog = DialogFormChildRequestDoc.newInstance(username, idRoomTab, item.id, item.title, item.subtitle, item.url);
-                testDialog.setRetainInstance(true);
-                testDialog.show(fm, "Dialog");
-            }
-        });
+            }, new OnRequestItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position, File item) {
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    DialogFormChildRequestDoc testDialog = DialogFormChildRequestDoc.newInstance(username, idRoomTab, item.id, item.title, item.subtitle, item.url);
+                    testDialog.setRetainInstance(true);
+                    testDialog.show(fm, "Dialog");
+                }
+            });
 
-        mAdapter.setOnItemClickListener((view, position) -> {
-            if (isChanged) {
+            mAdapter.setOnItemClickListener((view, position) -> {
+                if (isChanged) {
 //                Intent intent = ByonchatDetailVideoTubeActivity.generateIntent(getContext(), mAdapter.getData().get(position));
 //                startActivity(intent);
-            } else
-                adapterSelected((File) mAdapter.getData().get(position));
-        });
+                } else
+                    adapterSelected((File) mAdapter.getData().get(position));
+            });
 
-        mAdapter.setOnLongItemClickListener((view, position) -> {
-            /*adapterSelected((Video) mAdapter.getData().get(position));*/
-        });
+            mAdapter.setOnLongItemClickListener((view, position) -> {
+                /*adapterSelected((Video) mAdapter.getData().get(position));*/
+            });
 
-        vListVideoTube.setAdapter(mAdapter);
+            vListVideoTube.setAdapter(mAdapter);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void adapterSelected(File file) {
-        file.isSelected = !file.isSelected();
-        mAdapter.notifyDataSetChanged();
-        onContactSelected(mAdapter.getSelectedComments());
+        try {
+            file.isSelected = !file.isSelected();
+            mAdapter.notifyDataSetChanged();
+            onContactSelected(mAdapter.getSelectedComments());
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void onContactSelected(List<File> selectedContacts) {
-        int total = selectedContacts.size();
-        boolean hasCheckedItems = total > 0;
-        if (hasCheckedItems) {
-            isChanged = false;
-        } else {
-            isChanged = true;
+        try {
+            int total = selectedContacts.size();
+            boolean hasCheckedItems = total > 0;
+            if (hasCheckedItems) {
+                isChanged = false;
+            } else {
+                isChanged = true;
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -290,67 +310,79 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     protected void resolesTagGroup(){
-        vTagLayout.setVisibility(View.VISIBLE);
+        try {
+            vTagLayout.setVisibility(View.VISIBLE);
 
-        vTag1.setText("Kebijakan");
-        vTag1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.getFilter().filter(vTag1.getText().toString().toLowerCase());
-            }
-        });
-        vTag2.setText("SOP");
-        vTag2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.getFilter().filter(vTag2.getText().toString());
-            }
-        });
-        vTag3.setText("SWI");
-        vTag3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.getFilter().filter(vTag3.getText().toString());
-            }
-        });
-        vTag4.setText("Operational");
-        vTag4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.getFilter().filter(vTag4.getText().toString());
-            }
-        });
+            vTag1.setText("Kebijakan");
+            vTag1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mAdapter.getFilter().filter(vTag1.getText().toString().toLowerCase());
+                }
+            });
+            vTag2.setText("SOP");
+            vTag2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mAdapter.getFilter().filter(vTag2.getText().toString());
+                }
+            });
+            vTag3.setText("SWI");
+            vTag3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mAdapter.getFilter().filter(vTag3.getText().toString());
+                }
+            });
+            vTag4.setText("Operational");
+            vTag4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mAdapter.getFilter().filter(vTag4.getText().toString());
+                }
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void traceView(File file){
-        Map<String, String> params = new HashMap<>();
-        params.put("nama_file",  file.title);
-        params.put("desc_file", file.subtitle);
-        params.put("nik", dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
-        params.put("nama", dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
-        params.put("bc_user", messengerHelper.getMyContact().getJabberId());
+        try {
+            Map<String, String> params = new HashMap<>();
+            params.put("nama_file", file.title);
+            params.put("desc_file", file.subtitle);
+            params.put("nik", dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
+            params.put("nama", dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
+            params.put("bc_user", messengerHelper.getMyContact().getJabberId());
 
-        getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/View_history", params, true);
+            getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/View_history", params, true);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void showPopup(View view, final Video video) {
-        View menuItemView = view.findViewById(R.id.more);
-        final PopupMenu popup = new PopupMenu(view.getContext(), menuItemView);
-        MenuInflater inflate = popup.getMenuInflater();
+        try {
+            View menuItemView = view.findViewById(R.id.more);
+            final PopupMenu popup = new PopupMenu(view.getContext(), menuItemView);
+            MenuInflater inflate = popup.getMenuInflater();
 
-        inflate.inflate(R.menu.byonchat_menu_delete_file, popup.getMenu());
-        popup.setOnMenuItemClickListener(menuItem -> {
-            switch (menuItem.getItemId()) {
-                case R.id.action_delete:
-                    Byonchat.getVideoTubeDataStore().delete(video);
-                    onResume();
-                    break;
-                default:
-                    return false;
-            }
-            return false;
-        });
-        popup.show();
+            inflate.inflate(R.menu.byonchat_menu_delete_file, popup.getMenu());
+            popup.setOnMenuItemClickListener(menuItem -> {
+                switch (menuItem.getItemId()) {
+                    case R.id.action_delete:
+                        Byonchat.getVideoTubeDataStore().delete(video);
+                        onResume();
+                        break;
+                    default:
+                        return false;
+                }
+                return false;
+            });
+            popup.show();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected RelativeLayout getFrameError(View view) {
@@ -478,6 +510,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
                 mAdapter.setItems(files);
             } catch (JSONException e) {
                 e.printStackTrace();
+                reportCatch(e.getLocalizedMessage());
             }
             vRefreshList.setRefreshing(false);
         }
@@ -548,6 +581,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
                 mAdapter.setItems(files);
             } catch (JSONException e) {
                 e.printStackTrace();
+                reportCatch(e.getLocalizedMessage());
             }
             vRefreshList.setRefreshing(false);
         }
@@ -570,6 +604,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
             Log.w("fdsafdsa", statusLine + " -- " + result);
         } catch (Exception e) {
             Log.d("InputStream", e.getLocalizedMessage());
+            reportCatch(e.getLocalizedMessage());
         }
 
         return result;
@@ -587,58 +622,70 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
     }
 
     public void onActionSearch(String args) {
-        vRefreshList.setRefreshing(true);
-        if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-            new sercFile().execute(urlTembak+"/"+args);
-        } else {
-            vRefreshList.setRefreshing(false);
-            Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void onBackClick(){
-        if(urlBack.get(urlBack.size()-1).equalsIgnoreCase("OnBack")){
-            getActivity().onBackPressed();
-        }else {
+        try {
             vRefreshList.setRefreshing(true);
             if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-                new getFile().execute("https://iss.byonchat.com/index.php/Api/Files/" + urlBack.get(urlBack.size() - 1));
-                urlBack.remove(urlBack.size() - 1);
-                Log.w("Apa ini harusee", urlTembak);
+                new sercFile().execute(urlTembak + "/" + args);
             } else {
                 vRefreshList.setRefreshing(false);
                 Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
             }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
+    }
+
+    public void onBackClick(){
+        try {
+            if (urlBack.get(urlBack.size() - 1).equalsIgnoreCase("OnBack")) {
+                getActivity().onBackPressed();
+            } else {
+                vRefreshList.setRefreshing(true);
+                if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
+                    new getFile().execute("https://iss.byonchat.com/index.php/Api/Files/" + urlBack.get(urlBack.size() - 1));
+                    urlBack.remove(urlBack.size() - 1);
+                    Log.w("Apa ini harusee", urlTembak);
+                } else {
+                    vRefreshList.setRefreshing(false);
+                    Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
-        rdialog.setMessage("Loading...");
-        rdialog.show();
+        try {
+            ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
+            rdialog.setMessage("Loading...");
+            rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
+            RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
 
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    rdialog.dismiss();
-                    if (hide) {
-                        Log.w("sukses harusee",response);
+            StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                    response -> {
+                        rdialog.dismiss();
+                        if (hide) {
+                            Log.w("sukses harusee", response);
+                        }
+
+                    },
+                    error -> {
+                        rdialog.dismiss();
                     }
+            ) {
 
-                },
-                error -> {
-                    rdialog.dismiss();
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    return params2;
                 }
-        ) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        queue.add(sr);
+            };
+            queue.add(sr);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 }
 

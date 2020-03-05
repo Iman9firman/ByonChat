@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
@@ -78,86 +80,98 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
     }
 
     private void getMainPekerjaan(String Url) {
-        dialog.show();
-        RequestQueue queue = Volley.newRequestQueue(getContext());
+        try {
+            dialog.show();
+            RequestQueue queue = Volley.newRequestQueue(getContext());
 
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    dialog.dismiss();
-                    try {
-                        JSONArray jsonArray = new JSONArray(response);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            String id = jsonArray.getJSONObject(i).getString("id");
-                            String namaPekerjaan = jsonArray.getJSONObject(i).getString("nama_pekerjaan");
-                            MainPekerjaan mP = new MainPekerjaan(id, namaPekerjaan);
-                            spinnerArrayMain.add(namaPekerjaan);
-                            mainPekerjaans.add(mP);
+            StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                    response -> {
+                        dialog.dismiss();
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                String id = jsonArray.getJSONObject(i).getString("id");
+                                String namaPekerjaan = jsonArray.getJSONObject(i).getString("nama_pekerjaan");
+                                MainPekerjaan mP = new MainPekerjaan(id, namaPekerjaan);
+                                spinnerArrayMain.add(namaPekerjaan);
+                                mainPekerjaans.add(mP);
 
+                            }
+                            spinnerArrayMainAdapter.notifyDataSetChanged();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        spinnerArrayMainAdapter.notifyDataSetChanged();
+                    },
+                    error ->
+                            dialog.dismiss());
+            {
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                },
-                error ->
-                        dialog.dismiss());
-        {
-
+            }
+            queue.add(sr);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        queue.add(sr);
     }
 
     private void getSubPekerjaan(String Url, Map<String, String> params2) {
-        dialog.show();
-        subPekerjaans.clear();
-        spinnerArraySub.clear();
-        RequestQueue queue = Volley.newRequestQueue(getContext());
+        try {
+            dialog.show();
+            subPekerjaans.clear();
+            spinnerArraySub.clear();
+            RequestQueue queue = Volley.newRequestQueue(getContext());
 
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    dialog.dismiss();
-                    try {
-                        JSONArray jsonArray = new JSONArray(response);
-                        spinnerArraySub.add("-Pilih sub posisi-");
-                        SubPekerjaan sPs = new SubPekerjaan("0", "0");
-                        subPekerjaans.add(sPs);
+            StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                    response -> {
+                        dialog.dismiss();
+                        try {
+                            JSONArray jsonArray = new JSONArray(response);
+                            spinnerArraySub.add("-Pilih sub posisi-");
+                            SubPekerjaan sPs = new SubPekerjaan("0", "0");
+                            subPekerjaans.add(sPs);
 
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            String id = jsonArray.getJSONObject(i).getString("id");
-                            String namaPekerjaan = jsonArray.getJSONObject(i).getString("nama_pekerjaan");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                String id = jsonArray.getJSONObject(i).getString("id");
+                                String namaPekerjaan = jsonArray.getJSONObject(i).getString("nama_pekerjaan");
 
-                            SubPekerjaan sP = new SubPekerjaan(id, namaPekerjaan);
+                                SubPekerjaan sP = new SubPekerjaan(id, namaPekerjaan);
 
-                            spinnerArraySub.add(namaPekerjaan);
-                            subPekerjaans.add(sP);
+                                spinnerArraySub.add(namaPekerjaan);
+                                subPekerjaans.add(sP);
 
-                            subIdnya = "";
-                            subNamenya = "";
+                                subIdnya = "";
+                                subNamenya = "";
+                            }
+
+                            spinnerArraySubAdapter.notifyDataSetChanged();
+                            spinnerSub.setSelection(0);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+                    },
+                    error ->
+                            dialog.dismiss()) {
 
-                        spinnerArraySubAdapter.notifyDataSetChanged();
-                        spinnerSub.setSelection(0);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                },
-                error ->
-                        dialog.dismiss()) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
 
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        queue.add(sr);
+                    return params2;
+                }
+            };
+            queue.add(sr);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        getMainPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Pekerjaan/daftar");
+        try {
+            getMainPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Pekerjaan/daftar");
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -166,199 +180,201 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_form_child_requester_layout);
 
-        jumlah = (EditText) findViewById(R.id.txtKuota1Jumlah);
+        try {
+            jumlah = (EditText) findViewById(R.id.txtKuota1Jumlah);
 //        keterangan = (EditText) findViewById(R.id.txtKeterangan);
-        spinnerKet = (Spinner) findViewById(R.id.spinKeterangan) ;
-        valueAkhir = (TextView) findViewById(R.id.value_akhir);
-        valueAwal = (TextView) findViewById(R.id.value_awal);
-        add = (Button) findViewById(R.id.btn_add_cild);
-        cancel = (Button) findViewById(R.id.btn_cancel);
-        spinnerSub = (Spinner) findViewById(R.id.spinner_sub);
-        spinnerMain = (SearchableSpinner) findViewById(R.id.spinner_main);
-        btnDateAwal = (ImageButton) findViewById(R.id.btn_date_awal);
-        btnDateAkhir = (ImageButton) findViewById(R.id.btn_date_Akhir);
+            spinnerKet = (Spinner) findViewById(R.id.spinKeterangan);
+            valueAkhir = (TextView) findViewById(R.id.value_akhir);
+            valueAwal = (TextView) findViewById(R.id.value_awal);
+            add = (Button) findViewById(R.id.btn_add_cild);
+            cancel = (Button) findViewById(R.id.btn_cancel);
+            spinnerSub = (Spinner) findViewById(R.id.spinner_sub);
+            spinnerMain = (SearchableSpinner) findViewById(R.id.spinner_main);
+            btnDateAwal = (ImageButton) findViewById(R.id.btn_date_awal);
+            btnDateAkhir = (ImageButton) findViewById(R.id.btn_date_Akhir);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            spinnerMain.setBackground(activity.getResources().getDrawable(R.drawable.spinner_background));
-            spinnerSub.setBackground(activity.getResources().getDrawable(R.drawable.spinner_background));
-            spinnerKet.setBackground(activity.getResources().getDrawable(R.drawable.spinner_background));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                spinnerMain.setBackground(activity.getResources().getDrawable(R.drawable.spinner_background));
+                spinnerSub.setBackground(activity.getResources().getDrawable(R.drawable.spinner_background));
+                spinnerKet.setBackground(activity.getResources().getDrawable(R.drawable.spinner_background));
+            }
+
+            mainPekerjaans = new ArrayList<>();
+            subPekerjaans = new ArrayList<>();
+
+
+            spinnerArrayMain = new ArrayList<String>();
+
+            spinnerArrayMainAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArrayMain);
+            spinnerArrayMainAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinnerArraySub = new ArrayList<String>();
+
+            spinnerArraySubAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArraySub);
+            spinnerArraySubAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinnerArrayKet = new ArrayList<String>();
+            spinnerArrayKet.add("-Pilih keterangan-");
+
+            spinnerArrayKetAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArrayKet);
+            spinnerArrayKetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinnerMain.setAdapter(spinnerArrayMainAdapter);
+            spinnerSub.setAdapter(spinnerArraySubAdapter);
+            spinnerKet.setAdapter(spinnerArrayKetAdapter);
+
+            spinnerArrayKet.add("Sakit");
+            spinnerArrayKet.add("Cuti");
+            spinnerArrayKet.add("Alpa");
+            spinnerArrayKet.add("PKWT");
+            spinnerArrayKet.add("OOJ");
+            spinnerArrayKet.add("Turnover");
+
+            cancel.setOnClickListener(this);
+            add.setOnClickListener(this);
+            btnDateAwal.setOnClickListener(this);
+            btnDateAkhir.setOnClickListener(this);
+
+            spinnerMain.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    String idNya = mainPekerjaans.get(position).getId();
+                    pekerjaanNamenya = mainPekerjaans.get(position).getNamaPekerjaan();
+                    Map<String, String> params = new HashMap<>();
+                    params.put("id", idNya);
+
+                    getSubPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Pekerjaan/sub", params);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            spinnerSub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    Log.w("gamungkin2", subPekerjaans.get(position).getId());
+                    subIdnya = subPekerjaans.get(position).getId();
+                    subNamenya = subPekerjaans.get(position).getNamaPekerjaan();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
+            spinnerKet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    ketPosisi = position;
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        mainPekerjaans = new ArrayList<>();
-        subPekerjaans = new ArrayList<>();
-
-
-        spinnerArrayMain = new ArrayList<String>();
-
-        spinnerArrayMainAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArrayMain);
-        spinnerArrayMainAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinnerArraySub = new ArrayList<String>();
-
-        spinnerArraySubAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArraySub);
-        spinnerArraySubAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinnerArrayKet = new ArrayList<String>();
-        spinnerArrayKet.add("-Pilih keterangan-");
-
-        spinnerArrayKetAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, spinnerArrayKet);
-        spinnerArrayKetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinnerMain.setAdapter(spinnerArrayMainAdapter);
-        spinnerSub.setAdapter(spinnerArraySubAdapter);
-        spinnerKet.setAdapter(spinnerArrayKetAdapter);
-
-        spinnerArrayKet.add("Sakit");
-        spinnerArrayKet.add("Cuti");
-        spinnerArrayKet.add("Alpa");
-        spinnerArrayKet.add("PKWT");
-        spinnerArrayKet.add("OOJ");
-        spinnerArrayKet.add("Turnover");
-
-        cancel.setOnClickListener(this);
-        add.setOnClickListener(this);
-        btnDateAwal.setOnClickListener(this);
-        btnDateAkhir.setOnClickListener(this);
-
-        spinnerMain.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String idNya = mainPekerjaans.get(position).getId();
-                pekerjaanNamenya = mainPekerjaans.get(position).getNamaPekerjaan();
-                Map<String, String> params = new HashMap<>();
-                params.put("id", idNya);
-
-                getSubPekerjaan("https://bb.byonchat.com/ApiReliever/index.php/Pekerjaan/sub", params);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        spinnerSub.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.w("gamungkin2", subPekerjaans.get(position).getId());
-                subIdnya = subPekerjaans.get(position).getId();
-                subNamenya = subPekerjaans.get(position).getNamaPekerjaan();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        spinnerKet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ketPosisi = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-
     }
-
 
     @Override
     public void onClick(View v) {
-
-        if (v == cancel) {
-            listener.userCanceled();
-            dismiss();
-        }
-        if (v == add) {
-            if (subNamenya.length() == 0) {
-                Toast.makeText(getContext(), "Harap Pilih Posisi", Toast.LENGTH_SHORT).show();
-                return;
+        try {
+            if (v == cancel) {
+                listener.userCanceled();
+                dismiss();
             }
+            if (v == add) {
+                if (subNamenya.length() == 0) {
+                    Toast.makeText(getContext(), "Harap Pilih Posisi", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (subIdnya.length() == 0) {
-                Toast.makeText(getContext(), "Harap Pilih Sub Posisi", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (subIdnya.length() == 0) {
+                    Toast.makeText(getContext(), "Harap Pilih Sub Posisi", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (valueAwal.getText().toString().length() == 0) {
-                Toast.makeText(getContext(), "Harap masukan jam mulai kerja", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (valueAwal.getText().toString().length() == 0) {
+                    Toast.makeText(getContext(), "Harap masukan jam mulai kerja", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (valueAkhir.getText().toString().length() == 0) {
-                Toast.makeText(getContext(), "Harap masukan jam akhir kerja", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (valueAkhir.getText().toString().length() == 0) {
+                    Toast.makeText(getContext(), "Harap masukan jam akhir kerja", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (jumlah.getText().toString().length() == 0) {
-                Toast.makeText(getContext(), "Harap masukan Jumlah", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (jumlah.getText().toString().length() == 0) {
+                    Toast.makeText(getContext(), "Harap masukan Jumlah", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
 
-            JSONObject jsonObject = new JSONObject();
-            Log.w("gamungkin", subIdnya);
-            Log.w("gamungkin", subIdnya);
-            try {
-                jsonObject.put("pekerjaan", pekerjaanNamenya);
-                jsonObject.put("subPekerjaa", subNamenya);
-                jsonObject.put("idSub", subIdnya);
-                jsonObject.put("jadwalMulai", valueAwal.getText().toString());
-                jsonObject.put("jadwalAkhir", valueAkhir.getText().toString());
-                jsonObject.put("jumlah", jumlah.getText().toString());
-                jsonObject.put("keterangan", spinnerKet.getItemAtPosition(ketPosisi));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                JSONObject jsonObject = new JSONObject();
+                Log.w("gamungkin", subIdnya);
+                Log.w("gamungkin", subIdnya);
+                try {
+                    jsonObject.put("pekerjaan", pekerjaanNamenya);
+                    jsonObject.put("subPekerjaa", subNamenya);
+                    jsonObject.put("idSub", subIdnya);
+                    jsonObject.put("jadwalMulai", valueAwal.getText().toString());
+                    jsonObject.put("jadwalAkhir", valueAkhir.getText().toString());
+                    jsonObject.put("jumlah", jumlah.getText().toString());
+                    jsonObject.put("keterangan", spinnerKet.getItemAtPosition(ketPosisi));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-            RoomsDB roomsDB = new RoomsDB(getContext());
-            roomsDB.open();
+                RoomsDB roomsDB = new RoomsDB(getContext());
+                roomsDB.open();
 //            SQLiteDatabase db = roomsDB.getWritableDatabase();
 //            db.execSQL('INSERT INTO strings (string_name) VALUES ('+jsonObject.toString()+')');
-            roomsDB.insertSaveString(jsonObject.toString()+"");
-            roomsDB.close();
-            listener.userSelectedAValue(jsonObject.toString());
-            dismiss();
+                roomsDB.insertSaveString(jsonObject.toString() + "");
+                roomsDB.close();
+                listener.userSelectedAValue(jsonObject.toString());
+                dismiss();
+            }
+
+            if (v == btnDateAkhir) {
+                CalendarDialog calendarDialog = new CalendarDialog(activity);
+                calendarDialog.setListener(new CalendarDialog.MyDialogListener() {
+                    @Override
+                    public void userSelectedAValue(String value) {
+                        valueAkhir.setText(value);
+                    }
+
+                    @Override
+                    public void userCanceled() {
+                        //  Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                calendarDialog.show();
+            }
+
+            if (v == btnDateAwal) {
+                CalendarDialog calendarDialog = new CalendarDialog(activity);
+                calendarDialog.setListener(new CalendarDialog.MyDialogListener() {
+                    @Override
+                    public void userSelectedAValue(String value) {
+                        valueAwal.setText(value);
+                    }
+
+                    @Override
+                    public void userCanceled() {
+                        // Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                calendarDialog.show();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        if (v == btnDateAkhir) {
-            CalendarDialog calendarDialog = new CalendarDialog(activity);
-            calendarDialog.setListener(new CalendarDialog.MyDialogListener() {
-                @Override
-                public void userSelectedAValue(String value) {
-                    valueAkhir.setText(value);
-                }
-
-                @Override
-                public void userCanceled() {
-                    //  Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
-                }
-            });
-            calendarDialog.show();
-        }
-
-        if (v == btnDateAwal) {
-            CalendarDialog calendarDialog = new CalendarDialog(activity);
-            calendarDialog.setListener(new CalendarDialog.MyDialogListener() {
-                @Override
-                public void userSelectedAValue(String value) {
-                    valueAwal.setText(value);
-                }
-
-                @Override
-                public void userCanceled() {
-                    // Toast.makeText(getContext(), "Canceled", Toast.LENGTH_SHORT).show();
-                }
-            });
-            calendarDialog.show();
-        }
-
-
     }
 
     class MainPekerjaan {

@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.byonchat.android.NoteCommentActivityV2.URL_LIST_NOTE_COMMENT;
+import static com.byonchat.android.utils.Utility.reportCatch;
 
 public class GalleryTaskActivity extends AppCompatActivity {
 
@@ -79,217 +80,239 @@ public class GalleryTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_task);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.BLACK);
-        }
-
-        vRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        vProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        toolbar = (Toolbar) findViewById(R.id.abMain);
-        vTitle = (TextView) findViewById(R.id.title_toolbar);
-        toolbar.setTitleTextColor(Color.WHITE);
-        vTitle.setText("Gallery");
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-        color = getIntent().getStringExtra("color");
-        if (color != null) {
-            toolbar.setBackgroundColor(Color.parseColor("#" + color));
-        }
-
-        pictureModels = new ArrayList<>();
-        setRecyclerView();
-        refreshItem();
-
-        /*RequestGet getAsync = new RequestGet(new JobCompleted() {
-            @Override
-            public void onTaskBegin() {
-
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                getWindow().setStatusBarColor(Color.BLACK);
             }
 
-            @Override
-            public void onTaskDone(String result) {
+            vRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+            vProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+            toolbar = (Toolbar) findViewById(R.id.abMain);
+            vTitle = (TextView) findViewById(R.id.title_toolbar);
+            toolbar.setTitleTextColor(Color.WHITE);
+            vTitle.setText("Gallery");
 
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+            color = getIntent().getStringExtra("color");
+            if (color != null) {
+                toolbar.setBackgroundColor(Color.parseColor("#" + color));
             }
-        }, getApplicationContext());
-        getAsync.execute("/bc_voucher_client/webservice/list_api/get_audit_rutin_galleries.php");*/
+
+            pictureModels = new ArrayList<>();
+            setRecyclerView();
+            refreshItem();
+
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     void setRecyclerView() {
-        pictureModels = new ArrayList<PictureModel>();
-        mAdapter = new GalleryAdapter(this, pictureModels, new RecyclerItemGalleryViewHolder.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                PictureModel item = pictureModels.get(position);
-                if (getIntent().getExtras().containsKey("id_comment")) {
-                    String userid = getIntent().getStringExtra("userid");
-                    String id_note = getIntent().getStringExtra("id_note");
-                    String id_comment = getIntent().getStringExtra("id_comment");
-                    String id_task = getIntent().getStringExtra("id_task");
-                    String bc_user = getIntent().getStringExtra("bc_user");
-                    String idRoomTab = "";
-                    if (getIntent().getExtras().containsKey("id_room_tab")) {
-                        idRoomTab = getIntent().getStringExtra("id_room_tab");
-                    }
+        try {
+            pictureModels = new ArrayList<PictureModel>();
+            mAdapter = new GalleryAdapter(this, pictureModels, new RecyclerItemGalleryViewHolder.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    PictureModel item = pictureModels.get(position);
+                    if (getIntent().getExtras().containsKey("id_comment")) {
+                        String userid = getIntent().getStringExtra("userid");
+                        String id_note = getIntent().getStringExtra("id_note");
+                        String id_comment = getIntent().getStringExtra("id_comment");
+                        String id_task = getIntent().getStringExtra("id_task");
+                        String bc_user = getIntent().getStringExtra("bc_user");
+                        String idRoomTab = "";
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            idRoomTab = getIntent().getStringExtra("id_room_tab");
+                        }
 
-                    Intent intent = new Intent(getApplicationContext(), GalleryBeforeAfterActivity.class);
-                    intent.putExtra("userid", userid);
-                    intent.putExtra("id_note", id_note);
-                    intent.putExtra("id_task", id_task);
-                    intent.putExtra("id_comment", id_comment);
-                    intent.putExtra("bc_user", bc_user);
-                    intent.putExtra("id_room_tab", idRoomTab);
-                    intent.putExtra("color", getIntent().getStringExtra("color"));
-                    intent.putExtra("url_before", item.getUrl());
-                    intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
-                    startActivityForResult(intent, BeforeAfter);
-                } else {
-                    String userid = getIntent().getStringExtra("userid");
-                    String id_note = getIntent().getStringExtra("id_note");
-                    String bc_user = getIntent().getStringExtra("bc_user");
-                    String id_task = getIntent().getStringExtra("id_task");
-                    String idRoomTab = "";
-                    if (getIntent().getExtras().containsKey("id_room_tab")) {
-                        idRoomTab = getIntent().getStringExtra("id_room_tab");
-                    }
+                        Intent intent = new Intent(getApplicationContext(), GalleryBeforeAfterActivity.class);
+                        intent.putExtra("userid", userid);
+                        intent.putExtra("id_note", id_note);
+                        intent.putExtra("id_task", id_task);
+                        intent.putExtra("id_comment", id_comment);
+                        intent.putExtra("bc_user", bc_user);
+                        intent.putExtra("id_room_tab", idRoomTab);
+                        intent.putExtra("color", getIntent().getStringExtra("color"));
+                        intent.putExtra("url_before", item.getUrl());
+                        intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
+                        startActivityForResult(intent, BeforeAfter);
+                    } else {
+                        String userid = getIntent().getStringExtra("userid");
+                        String id_note = getIntent().getStringExtra("id_note");
+                        String bc_user = getIntent().getStringExtra("bc_user");
+                        String id_task = getIntent().getStringExtra("id_task");
+                        String idRoomTab = "";
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            idRoomTab = getIntent().getStringExtra("id_room_tab");
+                        }
 
-                    Intent intent = new Intent(getApplicationContext(), GalleryBeforeAfterActivity.class);
-                    intent.putExtra("userid", userid);
-                    intent.putExtra("id_note", id_note);
-                    intent.putExtra("id_task", id_task);
-                    intent.putExtra("bc_user", bc_user);
-                    intent.putExtra("id_room_tab", idRoomTab);
-                    intent.putExtra("color", getIntent().getStringExtra("color"));
-                    intent.putExtra("url_before", item.getUrl());
-                    intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
-                    startActivityForResult(intent, BeforeAfter);
+                        Intent intent = new Intent(getApplicationContext(), GalleryBeforeAfterActivity.class);
+                        intent.putExtra("userid", userid);
+                        intent.putExtra("id_note", id_note);
+                        intent.putExtra("id_task", id_task);
+                        intent.putExtra("bc_user", bc_user);
+                        intent.putExtra("id_room_tab", idRoomTab);
+                        intent.putExtra("color", getIntent().getStringExtra("color"));
+                        intent.putExtra("url_before", item.getUrl());
+                        intent.putExtra("api_url", getIntent().getStringExtra("api_url"));
+                        startActivityForResult(intent, BeforeAfter);
+                    }
                 }
-            }
-        }, new RecyclerItemGalleryViewHolder.OnItemLongClickListener() {
-            @Override
-            public void onItemLongPress(int position) {
+            }, new RecyclerItemGalleryViewHolder.OnItemLongClickListener() {
+                @Override
+                public void onItemLongPress(int position) {
 
-            }
-        });
-        orientationBasedUI(getResources().getConfiguration().orientation);
-        setItemDecoration(imageColumns);
-        vRecyclerView.setAdapter(mAdapter);
+                }
+            });
+            orientationBasedUI(getResources().getConfiguration().orientation);
+            setItemDecoration(imageColumns);
+            vRecyclerView.setAdapter(mAdapter);
 
-        vRecyclerView.addOnScrollListener(new HidingScrollListener() {
-            @Override
-            public void onHide() {
-            }
+            vRecyclerView.addOnScrollListener(new HidingScrollListener() {
+                @Override
+                public void onHide() {
+                }
 
-            @Override
-            public void onShow() {
-            }
-        });
+                @Override
+                public void onShow() {
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void orientationBasedUI(int orientation) {
-        imageColumns = orientation == Configuration.ORIENTATION_PORTRAIT ? 4 : 6;
+        try {
+            imageColumns = orientation == Configuration.ORIENTATION_PORTRAIT ? 4 : 6;
 
-        int columns = imageColumns;
-        gridLayoutManager = new GridLayoutManager(this, columns);
-        vRecyclerView.setLayoutManager(gridLayoutManager);
-        vRecyclerView.setHasFixedSize(true);
-        setItemDecoration(columns);
+            int columns = imageColumns;
+            gridLayoutManager = new GridLayoutManager(this, columns);
+            vRecyclerView.setLayoutManager(gridLayoutManager);
+            vRecyclerView.setHasFixedSize(true);
+            setItemDecoration(columns);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void setItemDecoration(int columns) {
-        gridLayoutManager.setSpanCount(columns);
-        if (itemOffsetDecoration != null)
-            vRecyclerView.removeItemDecoration(itemOffsetDecoration);
-        itemOffsetDecoration = new GridSpacingItemDecoration(columns, getResources().getDimensionPixelSize(R.dimen.item_padding), false);
-        vRecyclerView.addItemDecoration(itemOffsetDecoration);
+        try {
+            gridLayoutManager.setSpanCount(columns);
+
+            if (itemOffsetDecoration != null)
+                vRecyclerView.removeItemDecoration(itemOffsetDecoration);
+            itemOffsetDecoration = new GridSpacingItemDecoration(columns, getResources().getDimensionPixelSize(R.dimen.item_padding), false);
+            vRecyclerView.addItemDecoration(itemOffsetDecoration);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void setImageAdapter(ArrayList<PictureModel> images) {
-        mAdapter.setData(images);
-        setItemDecoration(imageColumns);
-        vRecyclerView.setAdapter(mAdapter);
+        try {
+            mAdapter.setData(images);
+            setItemDecoration(imageColumns);
+            vRecyclerView.setAdapter(mAdapter);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     void refreshList(String result) {
-        if (Utility.isJSONValid(result)) {
-            pictureModels.clear();
-            try {
-                JSONObject jObj = new JSONObject(result);
-                JSONArray jArr = new JSONArray(jObj.getString("galleries"));
-                if (jArr.length() > 0) {
-                    for (int i = 0; i < jArr.length(); i++) {
-                        String json = jArr.getString(i).toString();
-                        PictureModel data = new PictureModel();
-                        data.setUrl(json.toString());
-                        data.setDrawable(0);
-                        pictureModels.add(data);
-                    }
-                    mAdapter.notifyDataSetChanged();
-                    showContent();
+        try {
+            if (Utility.isJSONValid(result)) {
+                pictureModels.clear();
+                try {
+                    JSONObject jObj = new JSONObject(result);
+                    JSONArray jArr = new JSONArray(jObj.getString("galleries"));
+                    if (jArr.length() > 0) {
+                        for (int i = 0; i < jArr.length(); i++) {
+                            String json = jArr.getString(i).toString();
+                            PictureModel data = new PictureModel();
+                            data.setUrl(json.toString());
+                            data.setDrawable(0);
+                            pictureModels.add(data);
+                        }
+                        mAdapter.notifyDataSetChanged();
+                        showContent();
 //                    setImageAdapter(pictureModels);
-                } else {
-                    showContent();
-                    Toast.makeText(this, "Empty data.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        showContent();
+                        Toast.makeText(this, "Empty data.", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     void showContent() {
-        vProgressBar.setVisibility(View.GONE);
-        vRecyclerView.setVisibility(View.VISIBLE);
+        try {
+            vProgressBar.setVisibility(View.GONE);
+            vRecyclerView.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     void refreshItem() {
-        if (getIntent().getExtras().containsKey("id_comment")) {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String id_comment = getIntent().getStringExtra("id_comment");
-            String id_task = getIntent().getStringExtra("id_task");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
-            }
-            Log.w("intentIDTASKCOMMENT", id_task);
-            new HATPost().execute(getIntent().getStringExtra("api_url"), id_task);
+        try {
+            if (getIntent().getExtras().containsKey("id_comment")) {
+                String userid = getIntent().getStringExtra("userid");
+                String id_note = getIntent().getStringExtra("id_note");
+                String id_comment = getIntent().getStringExtra("id_comment");
+                String id_task = getIntent().getStringExtra("id_task");
+                String bc_user = getIntent().getStringExtra("bc_user");
+                String idRoomTab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    idRoomTab = getIntent().getStringExtra("id_room_tab");
+                }
+                Log.w("intentIDTASKCOMMENT", id_task);
+                new HATPost().execute(getIntent().getStringExtra("api_url"), id_task);
 
-        } else {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String id_task = getIntent().getStringExtra("id_task");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
-            }
-            Log.w("intentIDTASK", id_task);
+            } else {
+                String userid = getIntent().getStringExtra("userid");
+                String id_note = getIntent().getStringExtra("id_note");
+                String bc_user = getIntent().getStringExtra("bc_user");
+                String id_task = getIntent().getStringExtra("id_task");
+                String idRoomTab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    idRoomTab = getIntent().getStringExtra("id_room_tab");
+                }
+                Log.w("intentIDTASK", id_task);
 
-            new HATPost().execute(getIntent().getStringExtra("api_url"), id_task);
+                new HATPost().execute(getIntent().getStringExtra("api_url"), id_task);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == BeforeAfter && resultCode == Activity.RESULT_OK) {
-            Intent intent = new Intent();
-            if (data.getExtras().containsKey("id_comment")) {
-                intent.putExtra("userid", data.getStringExtra("userid"));
-                intent.putExtra("id_note", data.getStringExtra("id_note"));
-                intent.putExtra("id_comment", data.getStringExtra("id_comment"));
-                intent.putExtra("id_task", data.getStringExtra("id_task"));
-                intent.putExtra("bc_user", data.getStringExtra("bc_user"));
-                if (data.getExtras().containsKey("id_room_tab")) {
-                    intent.putExtra("id_room_tab", data.getExtras().containsKey("id_room_tab"));
-                }
-                intent.putExtra("api_url", data.getStringExtra("api_url"));
+        try {
+            if (requestCode == BeforeAfter && resultCode == Activity.RESULT_OK) {
+                Intent intent = new Intent();
+                if (data.getExtras().containsKey("id_comment")) {
+                    intent.putExtra("userid", data.getStringExtra("userid"));
+                    intent.putExtra("id_note", data.getStringExtra("id_note"));
+                    intent.putExtra("id_comment", data.getStringExtra("id_comment"));
+                    intent.putExtra("id_task", data.getStringExtra("id_task"));
+                    intent.putExtra("bc_user", data.getStringExtra("bc_user"));
+                    if (data.getExtras().containsKey("id_room_tab")) {
+                        intent.putExtra("id_room_tab", data.getExtras().containsKey("id_room_tab"));
+                    }
+                    intent.putExtra("api_url", data.getStringExtra("api_url"));
 
                 /*String userid = data.getStringExtra("userid");
                 String id_note = data.getStringExtra("id_note");
@@ -303,15 +326,15 @@ public class GalleryTaskActivity extends AppCompatActivity {
 
                 NoteCommentActivityV2.activity.getListCommentinComment(userid, id_note, id_comment, bc_user, idRoomTab, true);*/
 
-            } else {
-                intent.putExtra("userid", data.getStringExtra("userid"));
-                intent.putExtra("id_note", data.getStringExtra("id_note"));
-                intent.putExtra("id_task", data.getStringExtra("id_task"));
-                intent.putExtra("bc_user", data.getStringExtra("bc_user"));
-                if (data.getExtras().containsKey("id_room_tab")) {
-                    intent.putExtra("id_room_tab", data.getExtras().containsKey("id_room_tab"));
-                }
-                intent.putExtra("api_url", data.getStringExtra("api_url"));
+                } else {
+                    intent.putExtra("userid", data.getStringExtra("userid"));
+                    intent.putExtra("id_note", data.getStringExtra("id_note"));
+                    intent.putExtra("id_task", data.getStringExtra("id_task"));
+                    intent.putExtra("bc_user", data.getStringExtra("bc_user"));
+                    if (data.getExtras().containsKey("id_room_tab")) {
+                        intent.putExtra("id_room_tab", data.getExtras().containsKey("id_room_tab"));
+                    }
+                    intent.putExtra("api_url", data.getStringExtra("api_url"));
                 /*String userid = data.getStringExtra("userid");
                 String id_note = data.getStringExtra("id_note");
                 String bc_user = data.getStringExtra("bc_user");
@@ -321,9 +344,12 @@ public class GalleryTaskActivity extends AppCompatActivity {
                     idRoomTab = data.getStringExtra("id_room_tab");
                 }
                 NoteCommentActivityV2.activity.getListComment(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, true);*/
+                }
+                setResult(RESULT_OK, intent);
+                finish();
             }
-            setResult(RESULT_OK, intent);
-            finish();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
@@ -165,6 +166,7 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 
 import static com.byonchat.android.helpers.Constants.SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL;
 import static com.byonchat.android.helpers.Constants.URL_LAPOR_SELECTED;
+import static com.byonchat.android.utils.Utility.reportCatch;
 
 public abstract class MainBaseActivityNew extends AppCompatActivity implements LocationAssistant.Listener,
         AppBarLayout.OnOffsetChangedListener, SwipeRefreshLayout.OnRefreshListener {
@@ -263,19 +265,10 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected NestedScrollView vFrameTabOne;
     @NonNull
     protected NestedScrollView vFrameTabTwo;
-    /*@NonNull
-    protected NestedScrollView vFrameTabThree;*/
+
     @NonNull
     protected NestedScrollView vFrameTabFour;
-    /*@NonNull
-    protected NestedScrollView vFrameTabFive;
-    @NonNull
-    protected NestedScrollView vFrameTabSix;
-    @NonNull
-    protected NestedScrollView vFrameTabSeven;
-    @NonNull
-    protected NestedScrollView vFrameTabEight;*/
-    @NonNull
+
     protected NestedScrollView vFrameTabNine;
 
     protected ConstraintLayout vConstraintFiveOne;
@@ -330,19 +323,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     @NonNull
     protected TextView vTitleItemGridTwoTwo;
 
-    /*@NonNull
-    protected ImageView vLogoItemGridThreeOne;
-    @NonNull
-    protected TextView vTitleItemGridThreeOne;
-    @NonNull
-    protected ImageView vLogoItemGridThreeTwo;
-    @NonNull
-    protected TextView vTitleItemGridThreeTwo;
-    @NonNull
-    protected ImageView vLogoItemGridThreeThree;
-    @NonNull
-    protected TextView vTitleItemGridThreeThree;*/
-
     @NonNull
     protected ImageView vLogoItemGridFourOne;
     @NonNull
@@ -359,85 +339,6 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected ImageView vLogoItemGridFourFour;
     @NonNull
     protected TextView vTitleItemGridFourFour;
-
-    /*@NonNull
-    protected ImageView vLogoItemGridFiveOne;
-    @NonNull
-    protected TextView vTitleItemGridFiveOne;
-    @NonNull
-    protected ImageView vLogoItemGridFiveTwo;
-    @NonNull
-    protected TextView vTitleItemGridFiveTwo;
-    @NonNull
-    protected ImageView vLogoItemGridFiveThree;
-    @NonNull
-    protected TextView vTitleItemGridFiveThree;
-    @NonNull
-    protected ImageView vLogoItemGridFiveFour;
-    @NonNull
-    protected TextView vTitleItemGridFiveFour;
-    @NonNull
-    protected ImageView vLogoItemGridFiveFive;
-    @NonNull
-    protected TextView vTitleItemGridFiveFive;
-
-    @NonNull
-    protected ImageView vLogoItemGridSixOne;
-    @NonNull
-    protected TextView vTitleItemGridSixOne;
-    @NonNull
-    protected ImageView vLogoItemGridSixTwo;
-    @NonNull
-    protected TextView vTitleItemGridSixTwo;
-    @NonNull
-    protected ImageView vLogoItemGridSixThree;
-    @NonNull
-    protected TextView vTitleItemGridSixThree;
-    @NonNull
-    protected ImageView vLogoItemGridSixFour;
-    @NonNull
-    protected TextView vTitleItemGridSixFour;
-    @NonNull
-    protected ImageView vLogoItemGridSixFive;
-    @NonNull
-    protected TextView vTitleItemGridSixFive;
-    @NonNull
-    protected ImageView vLogoItemGridSixSix;
-    @NonNull
-    protected TextView vTitleItemGridSixSix;
-
-    @NonNull
-    protected ImageView vLogoItemGridEightOne;
-    @NonNull
-    protected TextView vTitleItemGridEightOne;
-    @NonNull
-    protected ImageView vLogoItemGridEightTwo;
-    @NonNull
-    protected TextView vTitleItemGridEightTwo;
-    @NonNull
-    protected ImageView vLogoItemGridEightThree;
-    @NonNull
-    protected TextView vTitleItemGridEightThree;
-    @NonNull
-    protected ImageView vLogoItemGridEightFour;
-    @NonNull
-    protected TextView vTitleItemGridEightFour;
-    @NonNull
-    protected ImageView vLogoItemGridEightFive;
-    @NonNull
-    protected TextView vTitleItemGridEightFive;
-    @NonNull
-    protected ImageView vLogoItemGridEightSix;
-    @NonNull
-    protected TextView vTitleItemGridEightSix;
-    @NonNull
-    protected ImageView vLogoItemGridEightSeven;
-    @NonNull
-    protected TextView vTitleItemGridEightSeven;
-    @NonNull
-    protected ImageView vLogoItemGridEightEight;
-    @NonNull
-    protected TextView vTitleItemGridEightEight;*/
 
     @NonNull
     protected ImageView vLogoItemGridNineOne;
@@ -610,20 +511,24 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void explain(String msg) {
-        new AlertDialog.Builder(this)
-                .setMessage(msg)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:com.byonchat.android")));
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                }).show();
+        try {
+            new AlertDialog.Builder(this)
+                    .setMessage(msg)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:com.byonchat.android")));
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).show();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void onSetStatusBarColor() {
@@ -641,26 +546,30 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     protected abstract void onSetupRoom();
 
     protected void applyChatConfig() {
-        assistant = new LocationAssistant(this, this, LocationAssistant.Accuracy.HIGH, 5000, false);
-        assistant.setVerbose(true);
+        try {
+            assistant = new LocationAssistant(this, this, LocationAssistant.Accuracy.HIGH, 5000, false);
+            assistant.setVerbose(true);
 
-        if (getIntent().getExtras() != null) {
-            if (!getIntent().hasExtra(Constants.EXTRA_ROOM)) {
-                success = getIntent().getStringExtra("success");
+            if (getIntent().getExtras() != null) {
+                if (!getIntent().hasExtra(Constants.EXTRA_ROOM)) {
+                    success = getIntent().getStringExtra("success");
+                }
             }
+
+            image_url = "";
+            title = "S-Team";
+            logo = R.drawable.logo_byon;
+            background = R.drawable.byonchat_room;
+            percent = "70";
+            color = "006b9c";
+            colorText = "FFFFFF";
+            room_id = 1;
+
+            resolveRecyclerView();
+            resolveNavHeader();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
-        image_url = "";
-        title = "S-Team";
-        logo = R.drawable.logo_byon;
-        background = R.drawable.byonchat_room;
-        percent = "70";
-        color = "006b9c";
-        colorText = "FFFFFF";
-        room_id = 1;
-
-        resolveRecyclerView();
-        resolveNavHeader();
     }
 
     protected void onViewReady(Bundle savedInstanceState) {
@@ -668,63 +577,55 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void resolveToolbar(ContactBot contactBot) {
-        setSupportActionBar(tb);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle(title);
-        collapsingToolbarLayout.setTitle(title);
+        try {
+            setSupportActionBar(tb);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setTitle(title);
+            collapsingToolbarLayout.setTitle(title);
 
-        tb.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
+            tb.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
 
-        Cursor cur = Byonchat.getBotListDB().getSingleRoom(botArrayListist.get(0).name);
-        if (cur.getCount() > 0) {
-            String bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));
+            Cursor cur = Byonchat.getBotListDB().getSingleRoom(botArrayListist.get(0).name);
+            if (cur.getCount() > 0) {
+                String bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));
 
-            if (bcakdrop == null || bcakdrop.equalsIgnoreCase("") || bcakdrop.equalsIgnoreCase("null")) {
-                Manhera.getInstance().get()
-                        .load(background)
-                        .fitCenter()
-                        .into(backgroundImage);
+                if (bcakdrop == null || bcakdrop.equalsIgnoreCase("") || bcakdrop.equalsIgnoreCase("null")) {
+                    Manhera.getInstance().get()
+                            .load(background)
+                            .fitCenter()
+                            .into(backgroundImage);
+                } else {
+                    Manhera.getInstance().get()
+                            .load(bcakdrop)
+                            .fitCenter()
+                            .into(backgroundImage);
+                }
+                resolveListTabRooms(botArrayListist.get(0), cur);
             } else {
-                Manhera.getInstance().get()
-                        .load(bcakdrop)
-                        .fitCenter()
-                        .into(backgroundImage);
+
             }
-            resolveListTabRooms(botArrayListist.get(0), cur);
-        } else {
 
+            resolveCollapsingToolbar(color);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
-        resolveCollapsingToolbar(color);
     }
 
     protected void resolveListRooms() {
-        Byonchat.getRoomsDB().open();
-        botArrayLististPrimary = Byonchat.getRoomsDB().retrieveRooms("2", true);
-        botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", false);
-        Byonchat.getRoomsDB().close();
+        try {
+            Byonchat.getRoomsDB().open();
+            botArrayLististPrimary = Byonchat.getRoomsDB().retrieveRooms("2", true);
+            botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", false);
+            Byonchat.getRoomsDB().close();
 
-        if (botArrayLististPrimary.size() == 0) {
-            Intent intent = new Intent(this, NewSearchRoomActivity.class);
-            intent.putExtra("search", "brand");
-            intent.putExtra("addHonda", "2");
-            intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
-            intent.putExtra(Constants.EXTRA_COLOR, color);
-            startActivity(intent);
-            finish();
-        } else {
-            if (!botArrayLististPrimary.get(0).getName().equalsIgnoreCase("1_248162126admin")) {
-                Byonchat.getRoomsDB().open();
-                Byonchat.getRoomsDB().deleteRooms();
-                Byonchat.getRoomsDB().close();
-
+            if (botArrayLististPrimary.size() == 0) {
                 Intent intent = new Intent(this, NewSearchRoomActivity.class);
                 intent.putExtra("search", "brand");
                 intent.putExtra("addHonda", "2");
@@ -732,57 +633,73 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 intent.putExtra(Constants.EXTRA_COLOR, color);
                 startActivity(intent);
                 finish();
-            }
-        }
-
-
-        if (botArrayLististPrimary.size() > 0 && botArrayListist.size() == 0) {
-            if (botArrayLististPrimary.size() > 0) {
-                resolveNavHeader();
-                refreshList();
-
-                vTxtStatusWarning.setVisibility(View.GONE);
-                vFrameWarning.setVisibility(View.INVISIBLE);
-                vBtnAddRooms.setVisibility(View.INVISIBLE);
-
-                vBtnOpenRooms.setVisibility(View.INVISIBLE);
-                card_search_main.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.VISIBLE);
-            }
-        } else {
-            if (botArrayListist.size() == 1) {
-                resolveNavHeader();
-                refreshList();
-                vTxtStatusWarning.setVisibility(View.GONE);
-                vFrameWarning.setVisibility(View.INVISIBLE);
-                vBtnAddRooms.setVisibility(View.INVISIBLE);
-
-                vBtnOpenRooms.setVisibility(View.VISIBLE);
-                card_search_main.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.VISIBLE);
-            } else if (botArrayListist.size() > 1) {
-                resolveNavHeader();
-                refreshList();
-
-                vTxtStatusWarning.setVisibility(View.GONE);
-                vFrameWarning.setVisibility(View.INVISIBLE);
-                vBtnAddRooms.setVisibility(View.INVISIBLE);
-
-                vBtnOpenRooms.setVisibility(View.VISIBLE);
-                card_search_main.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.VISIBLE);
             } else {
-                vTxtStatusWarning.setVisibility(View.VISIBLE);
-                vFrameWarning.setVisibility(View.VISIBLE);
-                vBtnAddRooms.setVisibility(View.VISIBLE);
+                if (!botArrayLististPrimary.get(0).getName().equalsIgnoreCase("1_248162126admin")) {
+                    Byonchat.getRoomsDB().open();
+                    Byonchat.getRoomsDB().deleteRooms();
+                    Byonchat.getRoomsDB().close();
 
-                vBtnOpenRooms.setVisibility(View.INVISIBLE);
-                card_search_main.setVisibility(View.INVISIBLE);
-                recyclerView.setVisibility(View.INVISIBLE);
-
-                isRecyclerViewShowed = false;
-
+                    Intent intent = new Intent(this, NewSearchRoomActivity.class);
+                    intent.putExtra("search", "brand");
+                    intent.putExtra("addHonda", "2");
+                    intent.putExtra(Constants.EXTRA_COLORTEXT, colorText);
+                    intent.putExtra(Constants.EXTRA_COLOR, color);
+                    startActivity(intent);
+                    finish();
+                }
             }
+
+
+            if (botArrayLististPrimary.size() > 0 && botArrayListist.size() == 0) {
+                if (botArrayLististPrimary.size() > 0) {
+                    resolveNavHeader();
+                    refreshList();
+
+                    vTxtStatusWarning.setVisibility(View.GONE);
+                    vFrameWarning.setVisibility(View.INVISIBLE);
+                    vBtnAddRooms.setVisibility(View.INVISIBLE);
+
+                    vBtnOpenRooms.setVisibility(View.INVISIBLE);
+                    card_search_main.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+            } else {
+                if (botArrayListist.size() == 1) {
+                    resolveNavHeader();
+                    refreshList();
+                    vTxtStatusWarning.setVisibility(View.GONE);
+                    vFrameWarning.setVisibility(View.INVISIBLE);
+                    vBtnAddRooms.setVisibility(View.INVISIBLE);
+
+                    vBtnOpenRooms.setVisibility(View.VISIBLE);
+                    card_search_main.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                } else if (botArrayListist.size() > 1) {
+                    resolveNavHeader();
+                    refreshList();
+
+                    vTxtStatusWarning.setVisibility(View.GONE);
+                    vFrameWarning.setVisibility(View.INVISIBLE);
+                    vBtnAddRooms.setVisibility(View.INVISIBLE);
+
+                    vBtnOpenRooms.setVisibility(View.VISIBLE);
+                    card_search_main.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    vTxtStatusWarning.setVisibility(View.VISIBLE);
+                    vFrameWarning.setVisibility(View.VISIBLE);
+                    vBtnAddRooms.setVisibility(View.VISIBLE);
+
+                    vBtnOpenRooms.setVisibility(View.INVISIBLE);
+                    card_search_main.setVisibility(View.INVISIBLE);
+                    recyclerView.setVisibility(View.INVISIBLE);
+
+                    isRecyclerViewShowed = false;
+
+                }
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -803,334 +720,474 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void roomsOpened() {
-        if (vListRooms.getVisibility() == View.GONE) {
-            resolveNavMenu(false);
-        } else {
-            resolveNavMenu(true);
+        try {
+            if (vListRooms.getVisibility() == View.GONE) {
+                resolveNavMenu(false);
+            } else {
+                resolveNavMenu(true);
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     protected void resolveNavMenu(boolean isTrue) {
-        vBtnOpenRooms.setImageDrawable(isTrue ? getResources().getDrawable(R.drawable.ico_arrow_down) : getResources().getDrawable(R.drawable.ico_arrow_up));
-        vListRooms.setVisibility(isTrue ? View.GONE : View.VISIBLE);
+        try {
+            vBtnOpenRooms.setImageDrawable(isTrue ? getResources().getDrawable(R.drawable.ico_arrow_down) : getResources().getDrawable(R.drawable.ico_arrow_up));
+            vListRooms.setVisibility(isTrue ? View.GONE : View.VISIBLE);
 
-        Menu nav_Menu = navigationView.getMenu();
-        nav_Menu.findItem(R.id.nav_item_one).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_two).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_three).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_refresh).setVisible(false);
-        nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
-        nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
+            Menu nav_Menu = navigationView.getMenu();
+            nav_Menu.findItem(R.id.nav_item_one).setVisible(isTrue);
+            nav_Menu.findItem(R.id.nav_item_two).setVisible(isTrue);
+            nav_Menu.findItem(R.id.nav_item_three).setVisible(isTrue);
+            nav_Menu.findItem(R.id.nav_item_four).setVisible(isTrue);
+            nav_Menu.findItem(R.id.nav_item_refresh).setVisible(false);
+            nav_Menu.findItem(R.id.nav_item_create_shortcut).setVisible(isTrue);
+            nav_Menu.findItem(R.id.nav_item_legal).setVisible(false);
 
-        Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        if (cur.getCount() > 0) {
-            String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
-            try {
-                JSONArray jsonArray = new JSONArray(content);
-                if (jsonArray.length() < 9)
-                    nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(false);
-                else
-                    nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(isTrue);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
+            if (cur.getCount() > 0) {
+                String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+                try {
+                    JSONArray jsonArray = new JSONArray(content);
+                    if (jsonArray.length() < 9)
+                        nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(false);
+                    else
+                        nav_Menu.findItem(R.id.nav_item_grid_size).setVisible(isTrue);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
+    @SuppressLint("WrongConstant")
     protected void refreshList() {
-        new Handler(Looper.getMainLooper()).post(() -> {
-            mAdapterRoomList = new BotAdapter(this, botArrayListist, true);
-            Byonchat.getRoomsDB().open();
-            botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", false);
-            Byonchat.getRoomsDB().close();
-            mAdapterRoomList = new BotAdapter(this, botArrayListist, true);
-            vListRooms.setAdapter(mAdapterRoomList);
-        });
-
-        vListRooms.setClickable(true);
-        vListRooms.setOnItemClickListener((a, v, position, id) -> {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.clear();
-            editor.commit();
-
-            drawerLayout.closeDrawer(Gravity.START);
-
-            ContactBot item = botArrayListist.get(position);
-            Byonchat.getRoomsDB().open();
-            Byonchat.getRoomsDB().updateActiveRooms(item);
-            Byonchat.getRoomsDB().close();
-
-            resolveNavHeader();
-            refreshList();
-        });
-
-        vListRooms.setOnItemLongClickListener((parent, view, position, id) -> {
-            roomid = botArrayListist.get(position).getName();
-            final Dialog dialogConfirmation;
-            dialogConfirmation = DialogUtil.customDialogConversationConfirmation(MainBaseActivityNew.this);
-            dialogConfirmation.show();
-
-            TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
-            TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
-            txtConfirmation.setText("Delete Confirmation");
-            descConfirmation.setVisibility(View.VISIBLE);
-            descConfirmation.setText("Do you want to delete this room?");
-
-            Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
-            Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
-
-            btnNo.setText("Cancel");
-            btnNo.setOnClickListener(v -> {
-                dialogConfirmation.dismiss();
+        try {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                mAdapterRoomList = new BotAdapter(this, botArrayListist, true);
+                Byonchat.getRoomsDB().open();
+                botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", false);
+                Byonchat.getRoomsDB().close();
+                mAdapterRoomList = new BotAdapter(this, botArrayListist, true);
+                vListRooms.setAdapter(mAdapterRoomList);
             });
 
-            btnYes.setText("Delete");
-            btnYes.setOnClickListener(v -> {
-                requestKey();
-                dialogConfirmation.dismiss();
+            vListRooms.setClickable(true);
+            vListRooms.setOnItemClickListener((a, v, position, id) -> {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                editor.commit();
+
+                drawerLayout.closeDrawer(Gravity.START);
+
+                ContactBot item = botArrayListist.get(position);
+                Byonchat.getRoomsDB().open();
+                Byonchat.getRoomsDB().updateActiveRooms(item);
+                Byonchat.getRoomsDB().close();
+
+                resolveNavHeader();
+                refreshList();
             });
-            return true;
-        });
+
+            vListRooms.setOnItemLongClickListener((parent, view, position, id) -> {
+                roomid = botArrayListist.get(position).getName();
+                final Dialog dialogConfirmation;
+                dialogConfirmation = DialogUtil.customDialogConversationConfirmation(MainBaseActivityNew.this);
+                dialogConfirmation.show();
+
+                TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
+                TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
+                txtConfirmation.setText("Delete Confirmation");
+                descConfirmation.setVisibility(View.VISIBLE);
+                descConfirmation.setText("Do you want to delete this room?");
+
+                Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
+                Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+
+                btnNo.setText("Cancel");
+                btnNo.setOnClickListener(v -> {
+                    dialogConfirmation.dismiss();
+                });
+
+                btnYes.setText("Delete");
+                btnYes.setOnClickListener(v -> {
+                    requestKey();
+                    dialogConfirmation.dismiss();
+                });
+                return true;
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNavHeader() {
-        Byonchat.getRoomsDB().open();
-        botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
-        Byonchat.getRoomsDB().close();
+        try {
+            Byonchat.getRoomsDB().open();
+            botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
+            Byonchat.getRoomsDB().close();
 
-        if (botArrayListist.size() > 0) {
-            vBtnToolbarSearch.setVisibility(View.VISIBLE);
+            if (botArrayListist.size() > 0) {
+                vBtnToolbarSearch.setVisibility(View.VISIBLE);
 
-            Manhera.getInstance()
-                    .get()
-                    .load(botArrayListist.get(0).link)
-                    .fitCenter()
-                    .into(vNavLogo);
+                Manhera.getInstance()
+                        .get()
+                        .load(botArrayListist.get(0).link)
+                        .fitCenter()
+                        .into(vNavLogo);
 
-            vNavTitle.setText(botArrayListist.get(0).realname);
-            vToolbarSearchText.setText(botArrayListist.get(0).realname);
+                vNavTitle.setText(botArrayListist.get(0).realname);
+                vToolbarSearchText.setText(botArrayListist.get(0).realname);
 
-            title = botArrayListist.get(0).realname;
-            username = botArrayListist.get(0).getName();
+                title = botArrayListist.get(0).realname;
+                username = botArrayListist.get(0).getName();
 
-            resolveToolbar(botArrayListist.get(0));
-        } else {
-            vBtnToolbarSearch.setVisibility(View.GONE);
+                resolveToolbar(botArrayListist.get(0));
+            } else {
+                vBtnToolbarSearch.setVisibility(View.GONE);
 
-            Manhera.getInstance()
-                    .get()
-                    .load(R.drawable.logo_byon)
-                    .fitCenter()
-                    .into(vNavLogo);
+                Manhera.getInstance()
+                        .get()
+                        .load(R.drawable.logo_byon)
+                        .fitCenter()
+                        .into(vNavLogo);
 
-            vNavTitle.setText("S-Team");
-            vToolbarSearchText.setText("S-Team");
+                vNavTitle.setText("S-Team");
+                vToolbarSearchText.setText("S-Team");
 
-            Manhera.getInstance().get()
-                    .load(background)
-                    .fitCenter()
-                    .into(backgroundImage);
+                Manhera.getInstance().get()
+                        .load(background)
+                        .fitCenter()
+                        .into(backgroundImage);
+            }
+
+            BitmapDrawable d = (BitmapDrawable) vImgBlur.getDrawable();
+            Bitmap b = d.getBitmap();
+            Blurry.with(getApplicationContext())
+                    .radius(10)
+                    .sampling(10)
+                    .from(b)
+                    .into(vImgBlur);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
-        BitmapDrawable d = (BitmapDrawable) vImgBlur.getDrawable();
-        Bitmap b = d.getBitmap();
-        Blurry.with(getApplicationContext())
-                .radius(10)
-                .sampling(10)
-                .from(b)
-                .into(vImgBlur);
     }
 
     protected void resolveRecyclerView() {
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs != null) {
-            extra_grid_size = prefs.getString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_THREE);
-            if (extra_grid_size.equalsIgnoreCase(Constants.EXTRA_GRID_SIZE_THREE)) {
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (prefs != null) {
+                extra_grid_size = prefs.getString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_THREE);
+                if (extra_grid_size.equalsIgnoreCase(Constants.EXTRA_GRID_SIZE_THREE)) {
+                    resourceAdapterId = R.layout.list_grid_item;
+                    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
+                    } else {
+                        layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
+                    }
+                } else {
+                    resourceAdapterId = R.layout.list_grid_item_four;
+                    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        layoutManager = new GridLayoutManager(this, 4, RecyclerView.VERTICAL, false);
+                    } else {
+                        layoutManager = new GridLayoutManager(this, 7, RecyclerView.VERTICAL, false);
+                    }
+                }
+            } else {
                 resourceAdapterId = R.layout.list_grid_item;
                 if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                     layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
                 } else {
                     layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
                 }
-            } else {
-                resourceAdapterId = R.layout.list_grid_item_four;
-                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    layoutManager = new GridLayoutManager(this, 4, RecyclerView.VERTICAL, false);
-                } else {
-                    layoutManager = new GridLayoutManager(this, 7, RecyclerView.VERTICAL, false);
+            }
+
+            recyclerViewDragDropManager = new RecyclerViewDragDropManager();
+            recyclerViewDragDropManager.setInitiateOnLongPress(true);
+            recyclerViewDragDropManager.setInitiateOnMove(false);
+            recyclerViewDragDropManager.setLongPressTimeout(750);
+            recyclerViewDragDropManager.setDragStartItemAnimationDuration(250);
+            recyclerViewDragDropManager.setDraggingItemAlpha(0.8f);
+            recyclerViewDragDropManager.setDraggingItemScale(1.3f);
+            recyclerViewDragDropManager.setDraggingItemRotation(15.0f);
+
+            recyclerViewDragDropManager.setOnItemDragEventListener(new RecyclerViewDragDropManager.OnItemDragEventListener() {
+                @Override
+                public void onItemDragStarted(int position) {
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        //deprecated in API 26
+                        v.vibrate(50);
+                    }
                 }
-            }
-        } else {
-            resourceAdapterId = R.layout.list_grid_item;
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                layoutManager = new GridLayoutManager(this, 3, RecyclerView.VERTICAL, false);
-            } else {
-                layoutManager = new GridLayoutManager(this, 5, RecyclerView.VERTICAL, false);
-            }
+
+                @Override
+                public void onItemDragPositionChanged(int fromPosition, int toPosition) {
+                }
+
+                @Override
+                public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
+                }
+
+                @Override
+                public void onItemDragMoveDistanceUpdated(int offsetX, int offsetY) {
+                }
+            });
+
+
+            final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, resourceAdapterId, room_id, positionList);
+            adapter = myItemAdapter;
+            wrappedAdapter = recyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
+            GeneralItemAnimator animator = new DraggableItemAnimator();
+
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(wrappedAdapter);
+            recyclerView.setItemAnimator(animator);
+
+            recyclerViewDragDropManager.attachRecyclerView(recyclerView);
+
+            adapter.setOnItemClickListener((view, position) -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+
+            adapter.setOnLongItemClickListener((view, position) -> {
+                showToastTab(adapter.getData().get(position).tab_name);
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
-        recyclerViewDragDropManager = new RecyclerViewDragDropManager();
-        recyclerViewDragDropManager.setInitiateOnLongPress(true);
-        recyclerViewDragDropManager.setInitiateOnMove(false);
-        recyclerViewDragDropManager.setLongPressTimeout(750);
-        recyclerViewDragDropManager.setDragStartItemAnimationDuration(250);
-        recyclerViewDragDropManager.setDraggingItemAlpha(0.8f);
-        recyclerViewDragDropManager.setDraggingItemScale(1.3f);
-        recyclerViewDragDropManager.setDraggingItemRotation(15.0f);
-
-        recyclerViewDragDropManager.setOnItemDragEventListener(new RecyclerViewDragDropManager.OnItemDragEventListener() {
-            @Override
-            public void onItemDragStarted(int position) {
-                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
-                } else {
-                    //deprecated in API 26
-                    v.vibrate(50);
-                }
-            }
-
-            @Override
-            public void onItemDragPositionChanged(int fromPosition, int toPosition) {
-            }
-
-            @Override
-            public void onItemDragFinished(int fromPosition, int toPosition, boolean result) {
-            }
-
-            @Override
-            public void onItemDragMoveDistanceUpdated(int offsetX, int offsetY) {
-            }
-        });
-
-
-        final DraggableGridExampleAdapter myItemAdapter = new DraggableGridExampleAdapter(this, itemList, resourceAdapterId, room_id, positionList);
-        adapter = myItemAdapter;
-        wrappedAdapter = recyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
-        GeneralItemAnimator animator = new DraggableItemAnimator();
-
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(wrappedAdapter);
-        recyclerView.setItemAnimator(animator);
-
-        recyclerViewDragDropManager.attachRecyclerView(recyclerView);
-
-        adapter.setOnItemClickListener((view, position) -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
-
-        adapter.setOnLongItemClickListener((view, position) -> {
-            showToastTab(adapter.getData().get(position).tab_name);
-        });
     }
 
     protected void resolveListTabRooms(ContactBot item, Cursor sdf) {
-        Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
-        color = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a")
-                .equalsIgnoreCase("null")
-                || Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a")
-                .equalsIgnoreCase("") ? color :
-                Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
-        colorText = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b")
-                .equalsIgnoreCase("null")
-                || Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b")
-                .equalsIgnoreCase("") ? color :
-                Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
-        String description = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "c");
-        String targetURL = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "e");
-        String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
-        String icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
-        String bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));
-
-        protect = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "p");
-
-        if (Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a").equalsIgnoreCase("error")) {
-            if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                finish();
-                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, null);
-                startActivity(ii);
-            } else {
-                Toast.makeText(MainBaseActivityNew.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-            return;
-        }
-
-        String current = "";
-        if (current.equalsIgnoreCase("")) {
-            current = cur.getString(cur.getColumnIndex(BotListDB.ROOM_FIRST_TAB));
-        }
-
-        if (bcakdrop == null
-                || bcakdrop.equalsIgnoreCase("")
-                || bcakdrop.equalsIgnoreCase("null")) {
-            Manhera.getInstance().get()
-                    .load(background)
-                    .fitCenter()
-                    .into(backgroundImage);
-        }
-
-        if (bcakdrop != null
-                || !bcakdrop.equalsIgnoreCase("")
-                || !bcakdrop.equalsIgnoreCase("null"))
-            new LoadImageFromURL(backdropBlur).execute(bcakdrop);
-
         try {
-            JSONArray jsonArray = new JSONArray(content);
-            itemList.clear();
-            positionList.clear();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (prefs != null) {
-                extra_tab = prefs.getString(Constants.EXTRA_TAB_MOVEMENT, "");
-                if (!extra_tab.equalsIgnoreCase("")) {
-                    jsonArray = new JSONArray(extra_tab);
+            Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
+            String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
+            color = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a")
+                    .equalsIgnoreCase("null")
+                    || Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a")
+                    .equalsIgnoreCase("") ? color :
+                    Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a");
+            colorText = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b")
+                    .equalsIgnoreCase("null")
+                    || Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b")
+                    .equalsIgnoreCase("") ? color :
+                    Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "b");
+            String description = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "c");
+            String targetURL = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "e");
+            String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+            String icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
+            String bcakdrop = cur.getString(cur.getColumnIndex(BotListDB.ROOM_BACKDROP));
+
+            protect = Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "p");
+
+            if (Utility.jsonResultType(cur.getString(cur.getColumnIndex(BotListDB.ROOM_COLOR)), "a").equalsIgnoreCase("error")) {
+                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                    finish();
+                    Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, null);
+                    startActivity(ii);
+                } else {
+                    Toast.makeText(MainBaseActivityNew.this, "No Internet Akses", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
+                return;
             }
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
-                String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
-                String include_latlong = jsonArray.getJSONObject(i).getString("include_latlong").toString();
-                String include_pull = jsonArray.getJSONObject(i).getString("include_pull").toString();
-                String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
-                String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
-                String status = jsonArray.getJSONObject(i).getString("status").toString();
-                String icon_name = "";
-                if (jsonArray.getJSONObject(i).has("icon_name")) {
-                    icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
+            String current = "";
+            if (current.equalsIgnoreCase("")) {
+                current = cur.getString(cur.getColumnIndex(BotListDB.ROOM_FIRST_TAB));
+            }
+
+            if (bcakdrop == null
+                    || bcakdrop.equalsIgnoreCase("")
+                    || bcakdrop.equalsIgnoreCase("null")) {
+                Manhera.getInstance().get()
+                        .load(background)
+                        .fitCenter()
+                        .into(backgroundImage);
+            }
+
+            if (bcakdrop != null
+                    || !bcakdrop.equalsIgnoreCase("")
+                    || !bcakdrop.equalsIgnoreCase("null"))
+                new LoadImageFromURL(backdropBlur).execute(bcakdrop);
+
+            try {
+                JSONArray jsonArray = new JSONArray(content);
+                itemList.clear();
+                positionList.clear();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                if (prefs != null) {
+                    extra_tab = prefs.getString(Constants.EXTRA_TAB_MOVEMENT, "");
+                    if (!extra_tab.equalsIgnoreCase("")) {
+                        jsonArray = new JSONArray(extra_tab);
+                    }
                 }
 
-                if (!extra_tab.equalsIgnoreCase("")) {
-                    username = jsonArray.getJSONObject(i).getString("username");
-                    color = jsonArray.getJSONObject(i).getString("color");
-                    colorText = jsonArray.getJSONObject(i).getString("colorText");
-                    targetURL = jsonArray.getJSONObject(i).getString("targetURL");
-                    name = jsonArray.getJSONObject(i).getString("name");
-                    icon = jsonArray.getJSONObject(i).getString("icon");
-                    icon_name = jsonArray.getJSONObject(i).getString("icon_name");
-                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
+                    String title = jsonArray.getJSONObject(i).getString("tab_name").toString();
+                    String include_latlong = jsonArray.getJSONObject(i).getString("include_latlong").toString();
+                    String include_pull = jsonArray.getJSONObject(i).getString("include_pull").toString();
+                    String url_tembak = jsonArray.getJSONObject(i).getString("url_tembak").toString();
+                    String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
+                    String status = jsonArray.getJSONObject(i).getString("status").toString();
+                    String icon_name = "";
+                    if (jsonArray.getJSONObject(i).has("icon_name")) {
+                        icon_name = jsonArray.getJSONObject(i).getString("icon_name").toString();
+                    }
 
-                ItemMain itemMain = new ItemMain(i, category, title, url_tembak, include_pull,
-                        username, id_rooms_tab, color, colorText, targetURL, include_latlong,
-                        status, name, icon, icon_name);
+                    if (!extra_tab.equalsIgnoreCase("")) {
+                        username = jsonArray.getJSONObject(i).getString("username");
+                        color = jsonArray.getJSONObject(i).getString("color");
+                        colorText = jsonArray.getJSONObject(i).getString("colorText");
+                        targetURL = jsonArray.getJSONObject(i).getString("targetURL");
+                        name = jsonArray.getJSONObject(i).getString("name");
+                        icon = jsonArray.getJSONObject(i).getString("icon");
+                        icon_name = jsonArray.getJSONObject(i).getString("icon_name");
+                    }
 
-                if (category.equalsIgnoreCase("1")) {
-                    Constants.map.put(i, null);
-                    itemMain.iconTest = R.drawable.ic_001;
-                } else if (category.equalsIgnoreCase("2")) {
-                    Constants.map.put(i, null);
-                    itemMain.iconTest = R.drawable.ic_029;
-                } else if (category.equalsIgnoreCase("3")) {
-                    Constants.map.put(i, null);
-                    itemMain.iconTest = R.drawable.ic_024;
-                } else if (category.equalsIgnoreCase("4")) {
-                    itemMain.iconTest = R.drawable.ic_003;
-                    if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
+                    ItemMain itemMain = new ItemMain(i, category, title, url_tembak, include_pull,
+                            username, id_rooms_tab, color, colorText, targetURL, include_latlong,
+                            status, name, icon, icon_name);
+
+                    if (category.equalsIgnoreCase("1")) {
+                        Constants.map.put(i, null);
+                        itemMain.iconTest = R.drawable.ic_001;
+                    } else if (category.equalsIgnoreCase("2")) {
+                        Constants.map.put(i, null);
+                        itemMain.iconTest = R.drawable.ic_029;
+                    } else if (category.equalsIgnoreCase("3")) {
+                        Constants.map.put(i, null);
+                        itemMain.iconTest = R.drawable.ic_024;
+                    } else if (category.equalsIgnoreCase("4")) {
+                        itemMain.iconTest = R.drawable.ic_003;
+                        if (include_pull.equalsIgnoreCase("1") || include_pull.equalsIgnoreCase("3")) {
+                            List<String> valSetOne = new ArrayList<String>();
+                            valSetOne.add(title);
+                            valSetOne.add(username);
+                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                            valSetOne.add(color);
+                            valSetOne.add(include_latlong);
+                            valSetOne.add("hide");
+                            Constants.map.put(i, valSetOne);
+                        } else if (include_pull.equalsIgnoreCase("0")) {
+                            List<String> valSetOne = new ArrayList<String>();
+                            valSetOne.add(title);
+                            valSetOne.add(username);
+                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                            valSetOne.add(color);
+                            valSetOne.add(include_latlong);
+                            valSetOne.add("show");
+                            Constants.map.put(i, valSetOne);
+                        } else if (include_pull.equalsIgnoreCase("2")) {
+                            Constants.map.put(i, null);
+                        } else if (include_pull.equalsIgnoreCase("4") || include_pull.equalsIgnoreCase("5")) {
+                            List<String> valSetOne = new ArrayList<String>();
+                            valSetOne.add(title);
+                            valSetOne.add(username);
+                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                            valSetOne.add(color);
+                            valSetOne.add(include_latlong);
+                            valSetOne.add("hideMultiple");
+                            Constants.map.put(i, valSetOne);
+                        } else if (include_pull.equalsIgnoreCase("6")) {
+                            JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
+                            List<String> valSetOne = new ArrayList<String>();
+                            valSetOne.add(title);
+                            valSetOne.add(username);
+                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                            valSetOne.add(color);
+                            valSetOne.add(include_latlong);
+                            valSetOne.add("showMultiple");
+                            Constants.map.put(i, valSetOne);
+                        } else if (include_pull.equalsIgnoreCase("7")) {
+                            JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
+                            List<String> valSetOne = new ArrayList<String>();
+                            valSetOne.add(title);
+                            valSetOne.add(username);
+                            valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                            valSetOne.add(color);
+                            valSetOne.add(include_latlong);
+                            valSetOne.add("hideMultiple");
+                            Constants.map.put(i, valSetOne);
+
+                        }
+                    } else if (category.equalsIgnoreCase("5")) {
+                        itemMain.iconTest = R.drawable.ic_028;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("14")) {
+                        itemMain.iconTest = R.drawable.ic_040;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("6")) {
+                        itemMain.iconTest = R.drawable.ic_040;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("7")) {
+                        itemMain.iconTest = R.drawable.ic_002;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("8")) {
+                        itemMain.iconTest = R.drawable.ic_038;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("9")) {
+                        itemMain.iconTest = R.drawable.ic_045;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("10")) {
+                        itemMain.iconTest = R.drawable.ic_037;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("11")) {
+                        itemMain.iconTest = R.drawable.ic_017;
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add("pos");
+                        valSetOne.add(username);
+                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                        valSetOne.add(color);
+                        valSetOne.add(include_latlong);
+                        valSetOne.add("show");
+                        valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
+                        Constants.map.put(i, valSetOne);
+                    } else if (category.equalsIgnoreCase("15")) {
+                        itemMain.iconTest = R.drawable.ic_024;
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add("btube");
+                        valSetOne.add(username);
+                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                        valSetOne.add(color);
+                        valSetOne.add(include_latlong);
+                        valSetOne.add("showvideo");
+                        valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
+                        Constants.map.put(i, valSetOne);
+                    } else if (category.equalsIgnoreCase("16")) {
+                        itemMain.iconTest = R.drawable.ic_040;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("17")) {
+                        itemMain.iconTest = R.drawable.ic_012;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("18")) {
+                        itemMain.iconTest = R.drawable.ic_012;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("19")) {
+//                    loginIss = true;
+                        itemMain.iconTest = R.drawable.ic_040;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("20")) {
+//                    loginIss = true;
+                        itemMain.iconTest = R.drawable.ic_015;
+                        List<String> valSetOne = new ArrayList<String>();
+                        valSetOne.add(title);
+                        valSetOne.add(username);
+                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
+                        valSetOne.add(color);
+                        valSetOne.add(include_latlong);
+                        valSetOne.add("fabSearch");
+                        Constants.map.put(i, valSetOne);
+                    } else if (category.equalsIgnoreCase("21")) {
+                        itemMain.iconTest = R.drawable.ic_015;
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);
                         valSetOne.add(username);
@@ -1139,330 +1196,215 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                         valSetOne.add(include_latlong);
                         valSetOne.add("hide");
                         Constants.map.put(i, valSetOne);
-                    } else if (include_pull.equalsIgnoreCase("0")) {
+                    } else if (category.equalsIgnoreCase("22")) {
+                        itemMain.iconTest = R.drawable.ic_015;
                         List<String> valSetOne = new ArrayList<String>();
                         valSetOne.add(title);
                         valSetOne.add(username);
                         valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
                         valSetOne.add(color);
                         valSetOne.add(include_latlong);
-                        valSetOne.add("show");
+                        valSetOne.add("hide");
                         Constants.map.put(i, valSetOne);
-                    } else if (include_pull.equalsIgnoreCase("2")) {
+                    } else if (category.equalsIgnoreCase("23")) {
+                        itemMain.iconTest = R.drawable.ic_008;
                         Constants.map.put(i, null);
-                    } else if (include_pull.equalsIgnoreCase("4") || include_pull.equalsIgnoreCase("5")) {
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(title);
-                        valSetOne.add(username);
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                        valSetOne.add(color);
-                        valSetOne.add(include_latlong);
-                        valSetOne.add("hideMultiple");
-                        Constants.map.put(i, valSetOne);
-                    } else if (include_pull.equalsIgnoreCase("6")) {
-                        JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(title);
-                        valSetOne.add(username);
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                        valSetOne.add(color);
-                        valSetOne.add(include_latlong);
-                        valSetOne.add("showMultiple");
-                        Constants.map.put(i, valSetOne);
-                    } else if (include_pull.equalsIgnoreCase("7")) {
-                        JSONObject jsonRootObject = new JSONObject(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                        List<String> valSetOne = new ArrayList<String>();
-                        valSetOne.add(title);
-                        valSetOne.add(username);
-                        valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                        valSetOne.add(color);
-                        valSetOne.add(include_latlong);
-                        valSetOne.add("hideMultiple");
-                        Constants.map.put(i, valSetOne);
-
+                    } else if (category.equalsIgnoreCase("24")) {
+                        itemMain.iconTest = R.drawable.ic_015;
+                        Constants.map.put(i, null);
+                    } else if (category.equalsIgnoreCase("26")) {
+                        itemMain.iconTest = R.drawable.ic_015;
+                        Constants.map.put(i, null);
                     }
-                } else if (category.equalsIgnoreCase("5")) {
-                    itemMain.iconTest = R.drawable.ic_028;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("14")) {
-                    itemMain.iconTest = R.drawable.ic_040;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("6")) {
-                    itemMain.iconTest = R.drawable.ic_040;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("7")) {
-                    itemMain.iconTest = R.drawable.ic_002;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("8")) {
-                    itemMain.iconTest = R.drawable.ic_038;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("9")) {
-                    itemMain.iconTest = R.drawable.ic_045;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("10")) {
-                    itemMain.iconTest = R.drawable.ic_037;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("11")) {
-                    itemMain.iconTest = R.drawable.ic_017;
-                    List<String> valSetOne = new ArrayList<String>();
-                    valSetOne.add("pos");
-                    valSetOne.add(username);
-                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                    valSetOne.add(color);
-                    valSetOne.add(include_latlong);
-                    valSetOne.add("show");
-                    valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                    Constants.map.put(i, valSetOne);
-                } else if (category.equalsIgnoreCase("15")) {
-                    itemMain.iconTest = R.drawable.ic_024;
-                    List<String> valSetOne = new ArrayList<String>();
-                    valSetOne.add("btube");
-                    valSetOne.add(username);
-                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                    valSetOne.add(color);
-                    valSetOne.add(include_latlong);
-                    valSetOne.add("showvideo");
-                    valSetOne.add(jsonArray.getJSONObject(i).getString("url_tembak").toString());
-                    Constants.map.put(i, valSetOne);
-                } else if (category.equalsIgnoreCase("16")) {
-                    itemMain.iconTest = R.drawable.ic_040;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("17")) {
-                    itemMain.iconTest = R.drawable.ic_012;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("18")) {
-                    itemMain.iconTest = R.drawable.ic_012;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("19")) {
-//                    loginIss = true;
-                    itemMain.iconTest = R.drawable.ic_040;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("20")) {
-//                    loginIss = true;
-                    itemMain.iconTest = R.drawable.ic_015;
-                    List<String> valSetOne = new ArrayList<String>();
-                    valSetOne.add(title);
-                    valSetOne.add(username);
-                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                    valSetOne.add(color);
-                    valSetOne.add(include_latlong);
-                    valSetOne.add("fabSearch");
-                    Constants.map.put(i, valSetOne);
-                } else if (category.equalsIgnoreCase("21")) {
-                    itemMain.iconTest = R.drawable.ic_015;
-                    List<String> valSetOne = new ArrayList<String>();
-                    valSetOne.add(title);
-                    valSetOne.add(username);
-                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                    valSetOne.add(color);
-                    valSetOne.add(include_latlong);
-                    valSetOne.add("hide");
-                    Constants.map.put(i, valSetOne);
-                } else if (category.equalsIgnoreCase("22")) {
-                    itemMain.iconTest = R.drawable.ic_015;
-                    List<String> valSetOne = new ArrayList<String>();
-                    valSetOne.add(title);
-                    valSetOne.add(username);
-                    valSetOne.add(jsonArray.getJSONObject(i).getString("id_rooms_tab").toString());
-                    valSetOne.add(color);
-                    valSetOne.add(include_latlong);
-                    valSetOne.add("hide");
-                    Constants.map.put(i, valSetOne);
-                } else if (category.equalsIgnoreCase("23")) {
-                    itemMain.iconTest = R.drawable.ic_008;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("24")) {
-                    itemMain.iconTest = R.drawable.ic_015;
-                    Constants.map.put(i, null);
-                } else if (category.equalsIgnoreCase("26")) {
-                    itemMain.iconTest = R.drawable.ic_015;
-                    Constants.map.put(i, null);
+
+
+                    itemList.add(i, itemMain);
+                    positionList.add(i, title);
+
+                    if (jsonArray.length() == 1) {
+                        resolveOneGrid(itemList);
+                    } else if (jsonArray.length() == 2) {
+                        Log.w(";lkj", "masuksini");
+                        if (i == 0)
+                            resolveTwoGridOne(itemList, i);
+                        else
+                            resolveTwoGridTwo(itemList, i);
+                    } else if (jsonArray.length() == 3) {
+                        vFrameGridNineThree.setVisibility(View.INVISIBLE);
+                        vFrameGridNineSix.setVisibility(View.VISIBLE);
+                        vFrameGridNineNine.setVisibility(View.INVISIBLE);
+
+                        vFrameGridNineNineOne.setVisibility(View.INVISIBLE);
+
+                        if (i == 0)
+                            resolveNineGridFour(itemList, i);
+                        else if (i == 1)
+                            resolveNineGridFive(itemList, i);
+                        else if (i == 2)
+                            resolveNineGridSix(itemList, i);
+                    } else if (jsonArray.length() == 4) {
+                        if (i == 0)
+                            resolveFourGridOne(itemList, i);
+                        else if (i == 1)
+                            resolveFourGridTwo(itemList, i);
+                        else if (i == 2)
+                            resolveFourGridThree(itemList, i);
+                        else if (i == 3)
+                            resolveFourGridFour(itemList, i);
+                    } else if (jsonArray.length() > 4 && jsonArray.length() <= 8) {
+                        if (jsonArray.length() == 5) {
+                            vFrameGridNineThree.setVisibility(View.VISIBLE);
+                            vFrameGridNineSix.setVisibility(View.VISIBLE);
+
+                            if (i == 0)
+                                resolveNineGridOne(itemList, i);
+                            else if (i == 1)
+                                resolveNineGridTwo(itemList, i);
+                            else if (i == 2)
+                                resolveNineGridThree(itemList, i);
+                            else if (i == 3)
+                                resolveNineGridFour(itemList, i);
+                            else if (i == 4)
+                                resolveNineGridSix(itemList, i);
+                        } else if (jsonArray.length() == 6) {
+                            vFrameGridNineThree.setVisibility(View.VISIBLE);
+                            vFrameGridNineSix.setVisibility(View.VISIBLE);
+
+                            if (i == 0)
+                                resolveNineGridOne(itemList, i);
+                            else if (i == 1)
+                                resolveNineGridTwo(itemList, i);
+                            else if (i == 2)
+                                resolveNineGridThree(itemList, i);
+                            else if (i == 3)
+                                resolveNineGridFour(itemList, i);
+                            else if (i == 4)
+                                resolveNineGridFive(itemList, i);
+                            else if (i == 5)
+                                resolveNineGridSix(itemList, i);
+                        } else if (jsonArray.length() == 7) {
+                            vFrameGridNineThree.setVisibility(View.VISIBLE);
+                            vFrameGridNineSix.setVisibility(View.VISIBLE);
+                            vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                            if (i == 0)
+                                resolveNineGridOne(itemList, i);
+                            else if (i == 1)
+                                resolveNineGridTwo(itemList, i);
+                            else if (i == 2)
+                                resolveNineGridThree(itemList, i);
+                            else if (i == 3)
+                                resolveNineGridFour(itemList, i);
+                            else if (i == 4)
+                                resolveNineGridFive(itemList, i);
+                            else if (i == 5)
+                                resolveNineGridSix(itemList, i);
+                            else if (i == 6)
+                                resolveNineGridEight(itemList, i);
+                        } else if (jsonArray.length() == 8) {
+                            vFrameGridNineThree.setVisibility(View.VISIBLE);
+                            vFrameGridNineSix.setVisibility(View.VISIBLE);
+                            vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                            if (i == 0)
+                                resolveNineGridOne(itemList, i);
+                            else if (i == 1)
+                                resolveNineGridTwo(itemList, i);
+                            else if (i == 2)
+                                resolveNineGridThree(itemList, i);
+                            else if (i == 3)
+                                resolveNineGridFour(itemList, i);
+                            else if (i == 4)
+                                resolveNineGridFive(itemList, i);
+                            else if (i == 5)
+                                resolveNineGridSix(itemList, i);
+                            else if (i == 6)
+                                resolveNineGridSeven(itemList, i);
+                            else if (i == 7)
+                                resolveNineGridNine(itemList, i);
+                        } else {
+                            vFrameGridNineThree.setVisibility(View.VISIBLE);
+                            vFrameGridNineSix.setVisibility(View.VISIBLE);
+                            vFrameGridNineNine.setVisibility(View.VISIBLE);
+
+                            if (i == 0)
+                                resolveNineGridOne(itemList, i);
+                            else if (i == 1)
+                                resolveNineGridTwo(itemList, i);
+                            else if (i == 2)
+                                resolveNineGridThree(itemList, i);
+                            else if (i == 3)
+                                resolveNineGridFour(itemList, i);
+                            else if (i == 4)
+                                resolveNineGridFive(itemList, i);
+                            else if (i == 5)
+                                resolveNineGridSix(itemList, i);
+                            else if (i == 6)
+                                resolveNineGridSeven(itemList, i);
+                            else if (i == 7)
+                                resolveNineGridEight(itemList, i);
+                            else if (i == 8)
+                                resolveNineGridNine(itemList, i);
+                        }
+                    }
                 }
-
-
-                itemList.add(i, itemMain);
-                positionList.add(i, title);
+                Constants.map.put(jsonArray.length(), null);
 
                 if (jsonArray.length() == 1) {
-                    resolveOneGrid(itemList);
+                    isRecyclerViewShowed = false;
+                    vFrameTabOne.setVisibility(View.VISIBLE);
+                    vFrameTabTwo.setVisibility(View.GONE);
+                    vFrameTabFour.setVisibility(View.GONE);
+                    vFrameTabNine.setVisibility(View.GONE);
+
+                    recyclerView.setVisibility(View.INVISIBLE);
                 } else if (jsonArray.length() == 2) {
-                    Log.w(";lkj", "masuksini");
-                    if (i == 0)
-                        resolveTwoGridOne(itemList, i);
-                    else
-                        resolveTwoGridTwo(itemList, i);
-                } else if (jsonArray.length() == 3) {
-                    vFrameGridNineThree.setVisibility(View.INVISIBLE);
-                    vFrameGridNineSix.setVisibility(View.VISIBLE);
-                    vFrameGridNineNine.setVisibility(View.INVISIBLE);
-
-                    vFrameGridNineNineOne.setVisibility(View.INVISIBLE);
-
-                    if (i == 0)
-                        resolveNineGridFour(itemList, i);
-                    else if (i == 1)
-                        resolveNineGridFive(itemList, i);
-                    else if (i == 2)
-                        resolveNineGridSix(itemList, i);
+                    vFrameTabOne.setVisibility(View.GONE);
+                    vFrameTabTwo.setVisibility(View.VISIBLE);
+                    vFrameTabFour.setVisibility(View.GONE);
+                    vFrameTabNine.setVisibility(View.GONE);
+                    isRecyclerViewShowed = false;
+                    recyclerView.setVisibility(View.INVISIBLE);
                 } else if (jsonArray.length() == 4) {
-                    if (i == 0)
-                        resolveFourGridOne(itemList, i);
-                    else if (i == 1)
-                        resolveFourGridTwo(itemList, i);
-                    else if (i == 2)
-                        resolveFourGridThree(itemList, i);
-                    else if (i == 3)
-                        resolveFourGridFour(itemList, i);
-                } else if (jsonArray.length() > 4 && jsonArray.length() <= 8) {
-                    if (jsonArray.length() == 5) {
-                        vFrameGridNineThree.setVisibility(View.VISIBLE);
-                        vFrameGridNineSix.setVisibility(View.VISIBLE);
-
-                        if (i == 0)
-                            resolveNineGridOne(itemList, i);
-                        else if (i == 1)
-                            resolveNineGridTwo(itemList, i);
-                        else if (i == 2)
-                            resolveNineGridThree(itemList, i);
-                        else if (i == 3)
-                            resolveNineGridFour(itemList, i);
-                        else if (i == 4)
-                            resolveNineGridSix(itemList, i);
-                    } else if (jsonArray.length() == 6) {
-                        vFrameGridNineThree.setVisibility(View.VISIBLE);
-                        vFrameGridNineSix.setVisibility(View.VISIBLE);
-
-                        if (i == 0)
-                            resolveNineGridOne(itemList, i);
-                        else if (i == 1)
-                            resolveNineGridTwo(itemList, i);
-                        else if (i == 2)
-                            resolveNineGridThree(itemList, i);
-                        else if (i == 3)
-                            resolveNineGridFour(itemList, i);
-                        else if (i == 4)
-                            resolveNineGridFive(itemList, i);
-                        else if (i == 5)
-                            resolveNineGridSix(itemList, i);
-                    } else if (jsonArray.length() == 7) {
-                        vFrameGridNineThree.setVisibility(View.VISIBLE);
-                        vFrameGridNineSix.setVisibility(View.VISIBLE);
-                        vFrameGridNineNine.setVisibility(View.VISIBLE);
-
-                        if (i == 0)
-                            resolveNineGridOne(itemList, i);
-                        else if (i == 1)
-                            resolveNineGridTwo(itemList, i);
-                        else if (i == 2)
-                            resolveNineGridThree(itemList, i);
-                        else if (i == 3)
-                            resolveNineGridFour(itemList, i);
-                        else if (i == 4)
-                            resolveNineGridFive(itemList, i);
-                        else if (i == 5)
-                            resolveNineGridSix(itemList, i);
-                        else if (i == 6)
-                            resolveNineGridEight(itemList, i);
-                    } else if (jsonArray.length() == 8) {
-                        vFrameGridNineThree.setVisibility(View.VISIBLE);
-                        vFrameGridNineSix.setVisibility(View.VISIBLE);
-                        vFrameGridNineNine.setVisibility(View.VISIBLE);
-
-                        if (i == 0)
-                            resolveNineGridOne(itemList, i);
-                        else if (i == 1)
-                            resolveNineGridTwo(itemList, i);
-                        else if (i == 2)
-                            resolveNineGridThree(itemList, i);
-                        else if (i == 3)
-                            resolveNineGridFour(itemList, i);
-                        else if (i == 4)
-                            resolveNineGridFive(itemList, i);
-                        else if (i == 5)
-                            resolveNineGridSix(itemList, i);
-                        else if (i == 6)
-                            resolveNineGridSeven(itemList, i);
-                        else if (i == 7)
-                            resolveNineGridNine(itemList, i);
-                    } else {
-                        vFrameGridNineThree.setVisibility(View.VISIBLE);
-                        vFrameGridNineSix.setVisibility(View.VISIBLE);
-                        vFrameGridNineNine.setVisibility(View.VISIBLE);
-
-                        if (i == 0)
-                            resolveNineGridOne(itemList, i);
-                        else if (i == 1)
-                            resolveNineGridTwo(itemList, i);
-                        else if (i == 2)
-                            resolveNineGridThree(itemList, i);
-                        else if (i == 3)
-                            resolveNineGridFour(itemList, i);
-                        else if (i == 4)
-                            resolveNineGridFive(itemList, i);
-                        else if (i == 5)
-                            resolveNineGridSix(itemList, i);
-                        else if (i == 6)
-                            resolveNineGridSeven(itemList, i);
-                        else if (i == 7)
-                            resolveNineGridEight(itemList, i);
-                        else if (i == 8)
-                            resolveNineGridNine(itemList, i);
-                    }
+                    vFrameTabOne.setVisibility(View.GONE);
+                    vFrameTabTwo.setVisibility(View.GONE);
+                    vFrameTabFour.setVisibility(View.VISIBLE);
+                    vFrameTabNine.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    isRecyclerViewShowed = false;
+                } else if (jsonArray.length() == 3 || jsonArray.length() > 4 && jsonArray.length() <= 8) {
+                    vFrameTabOne.setVisibility(View.GONE);
+                    vFrameTabTwo.setVisibility(View.GONE);
+                    vFrameTabFour.setVisibility(View.GONE);
+                    vFrameTabNine.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    isRecyclerViewShowed = false;
+                } else {
+                    vFrameTabOne.setVisibility(View.GONE);
+                    vFrameTabTwo.setVisibility(View.GONE);
+                    vFrameTabFour.setVisibility(View.GONE);
+                    vFrameTabNine.setVisibility(View.GONE);
+                    isRecyclerViewShowed = true;
+                    recyclerView.setVisibility(View.VISIBLE);
                 }
-            }
-            Constants.map.put(jsonArray.length(), null);
 
-            if (jsonArray.length() == 1) {
-                isRecyclerViewShowed = false;
-                vFrameTabOne.setVisibility(View.VISIBLE);
-                vFrameTabTwo.setVisibility(View.GONE);
-                vFrameTabFour.setVisibility(View.GONE);
-                vFrameTabNine.setVisibility(View.GONE);
-
-                recyclerView.setVisibility(View.INVISIBLE);
-            } else if (jsonArray.length() == 2) {
-                vFrameTabOne.setVisibility(View.GONE);
-                vFrameTabTwo.setVisibility(View.VISIBLE);
-                vFrameTabFour.setVisibility(View.GONE);
-                vFrameTabNine.setVisibility(View.GONE);
-                isRecyclerViewShowed = false;
-                recyclerView.setVisibility(View.INVISIBLE);
-            } else if (jsonArray.length() == 4) {
-                vFrameTabOne.setVisibility(View.GONE);
-                vFrameTabTwo.setVisibility(View.GONE);
-                vFrameTabFour.setVisibility(View.VISIBLE);
-                vFrameTabNine.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.INVISIBLE);
-                isRecyclerViewShowed = false;
-            } else if (jsonArray.length() == 3 || jsonArray.length() > 4 && jsonArray.length() <= 8) {
-                vFrameTabOne.setVisibility(View.GONE);
-                vFrameTabTwo.setVisibility(View.GONE);
-                vFrameTabFour.setVisibility(View.GONE);
-                vFrameTabNine.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.INVISIBLE);
-                isRecyclerViewShowed = false;
-            } else {
-                vFrameTabOne.setVisibility(View.GONE);
-                vFrameTabTwo.setVisibility(View.GONE);
-                vFrameTabFour.setVisibility(View.GONE);
-                vFrameTabNine.setVisibility(View.GONE);
-                isRecyclerViewShowed = true;
-                recyclerView.setVisibility(View.VISIBLE);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+            adapter.setItems(itemList, positionList);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
-        adapter.setItems(itemList, positionList);
     }
 
     protected void resolveCollapsingToolbar(String color) {
-        int colors = Integer.parseInt(color.replaceFirst("^#", ""), 16);
-        collapsingToolbarLayout.setContentScrimColor(colors);
-        collapsingToolbarLayout.setStatusBarScrimColor(colors);
-        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
-        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
+        try {
+            int colors = Integer.parseInt(color.replaceFirst("^#", ""), 16);
+            collapsingToolbarLayout.setContentScrimColor(colors);
+            collapsingToolbarLayout.setStatusBarScrimColor(colors);
+            collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.collapsedappbar);
+            collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.expandedappbar);
 
         /*FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + color));
 //        tb.setBackgroundColor(Color.parseColor("#" + color));
@@ -1477,105 +1419,123 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         gd.setCornerRadius(0f);
         tb.setBackground(gd);*/
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                try {
 //                backgroundImage.setForeground(new ColorDrawable(Color.parseColor("#" + percent + color)));
-            } catch (Exception e) {
-                colorForeground = color.replace("#", "#" + percent);
+                } catch (Exception e) {
+                    colorForeground = color.replace("#", "#" + percent);
 //                backgroundImage.setForeground(new ColorDrawable(Color.parseColor(colorForeground)));
+                }
             }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     protected void resolveAppBar() {
-        vSwipeRefresh.setProgressViewOffset(false, 100, 200);
+        try {
+            vSwipeRefresh.setProgressViewOffset(false, 100, 200);
 
-        appBarLayout.addOnOffsetChangedListener(this);
-        vSwipeRefresh.setOnRefreshListener(this);
+            appBarLayout.addOnOffsetChangedListener(this);
+            vSwipeRefresh.setOnRefreshListener(this);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveValidationLogin() {
-        if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(25) == 1) {
-            if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("1")) {
-                if (success == null) {
-                    finish();
-                    Intent a = new Intent(getApplicationContext(), LoginDinamicRoomActivity.class);
-                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                    a.putExtra(ConversationActivity.KEY_TITLE, Byonchat.getMessengerHelper().getMyContact().getJabberId());
-                    startActivity(a);
-                }
-            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("2")) {
-                if (success == null) {
-                    finish();
-                    Intent a = new Intent(getApplicationContext(), LoginDinamicFingerPrint.class);
-                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                    a.putExtra(ConversationActivity.KEY_TITLE, Byonchat.getMessengerHelper().getMyContact().getJabberId());
-                    startActivity(a);
-                }
-            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("5")) {
-                if (success == null) {
-                    finish();
-                    Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
-                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                    a.putExtra(ConversationActivity.KEY_TITLE, "request");
-                    startActivity(a);
-                }
-            } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("6")) {
-                if (success == null) {
-                    finish();
-                    Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
-                    a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-                    a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
-                    startActivity(a);
-                }
-            }
-
-        }
-        if (loginIss) {
-            if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(26) == 1) {
-                if (title.equalsIgnoreCase("ISS INDONESIA")) {
+        try {
+            if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(25) == 1) {
+                if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("1")) {
                     if (success == null) {
-                        Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                        finish();
+                        Intent a = new Intent(getApplicationContext(), LoginDinamicRoomActivity.class);
+                        a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                        a.putExtra(ConversationActivity.KEY_TITLE, Byonchat.getMessengerHelper().getMyContact().getJabberId());
+                        startActivity(a);
+                    }
+                } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("2")) {
+                    if (success == null) {
+                        finish();
+                        Intent a = new Intent(getApplicationContext(), LoginDinamicFingerPrint.class);
+                        a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                        a.putExtra(ConversationActivity.KEY_TITLE, Byonchat.getMessengerHelper().getMyContact().getJabberId());
+                        startActivity(a);
+                    }
+                } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("5")) {
+                    if (success == null) {
+                        finish();
+                        Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
+                        a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                        a.putExtra(ConversationActivity.KEY_TITLE, "request");
+                        startActivity(a);
+                    }
+                } else if (!protect.equalsIgnoreCase("error") && protect.equalsIgnoreCase("6")) {
+                    if (success == null) {
+                        finish();
+                        Intent a = new Intent(getApplicationContext(), RequestPasscodeRoomActivity.class);
                         a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
                         a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
                         startActivity(a);
-                        finish();
+                    }
+                }
+
+            }
+            if (loginIss) {
+                if (new Validations().getInstance(getApplicationContext()).getValidationLoginById(26) == 1) {
+                    if (title.equalsIgnoreCase("ISS INDONESIA")) {
+                        if (success == null) {
+                            Intent a = new Intent(getApplicationContext(), LoginISS.class);
+                            a.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+                            a.putExtra(ConversationActivity.KEY_TITLE, "waiting");
+                            startActivity(a);
+                            finish();
+                        }
                     }
                 }
             }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-
     }
 
     protected void resolveToolbarExpanded() {
-        appBarLayout.setExpanded(true, false);
-        if (searchView.isSearchOpen())
-            searchView.closeSearch();
+        try {
+            appBarLayout.setExpanded(true, false);
+            if (searchView.isSearchOpen())
+                searchView.closeSearch();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     void resolveAnimation() {
-        if (i == 0)
-            vTxtStatusWarning.setText(getResources().getString(R.string.text_empty_selected));
-        else if (i == 1)
-            vTxtStatusWarning.setText(getResources().getString(R.string.text_manage_selected));
+        try {
+            if (i == 0)
+                vTxtStatusWarning.setText(getResources().getString(R.string.text_empty_selected));
+            else if (i == 1)
+                vTxtStatusWarning.setText(getResources().getString(R.string.text_manage_selected));
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                vTxtStatusWarning.setVisibility(View.VISIBLE);
-                ObjectAnimator animatorY = ObjectAnimator.ofFloat(vTxtStatusWarning, "y", 400f);
-                animatorY.setDuration(700);
-                ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(vTxtStatusWarning, View.ALPHA, 0.0f, 1.0f);
-                alphaAnimation.setDuration(700);
-                AnimatorSet animatorSet = new AnimatorSet();
-                animatorSet.playTogether(animatorY, alphaAnimation);
-                animatorSet.start();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    vTxtStatusWarning.setVisibility(View.VISIBLE);
+                    ObjectAnimator animatorY = ObjectAnimator.ofFloat(vTxtStatusWarning, "y", 400f);
+                    animatorY.setDuration(700);
+                    ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(vTxtStatusWarning, View.ALPHA, 0.0f, 1.0f);
+                    alphaAnimation.setDuration(700);
+                    AnimatorSet animatorSet = new AnimatorSet();
+                    animatorSet.playTogether(animatorY, alphaAnimation);
+                    animatorSet.start();
 
-                animation();
+                    animation();
 
-            }
-        }, 500);
+                }
+            }, 500);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -1645,115 +1605,122 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     void animation() {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ObjectAnimator animatorY = ObjectAnimator.ofFloat(vTxtStatusWarning, "y", 300f);
-                animatorY.setDuration(700);
-                ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(vTxtStatusWarning, View.ALPHA, 1.0f, 0.0f);
-                alphaAnimation.setDuration(700);
-                final AnimatorSet animatorSet = new AnimatorSet();
-                animatorSet.playTogether(animatorY, alphaAnimation);
-                animatorSet.start();
-                animatorSet.addListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animator) {
+        try {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ObjectAnimator animatorY = ObjectAnimator.ofFloat(vTxtStatusWarning, "y", 300f);
+                    animatorY.setDuration(700);
+                    ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(vTxtStatusWarning, View.ALPHA, 1.0f, 0.0f);
+                    alphaAnimation.setDuration(700);
+                    final AnimatorSet animatorSet = new AnimatorSet();
+                    animatorSet.playTogether(animatorY, alphaAnimation);
+                    animatorSet.start();
+                    animatorSet.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animator) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
+                        @Override
+                        public void onAnimationEnd(Animator animator) {
 
-                        vTxtStatusWarning.setVisibility(View.GONE);
-                        animator = ObjectAnimator.ofFloat(vTxtStatusWarning, "y", 500f);
-                        animator.setDuration(0);
-                        animator.start();
+                            vTxtStatusWarning.setVisibility(View.GONE);
+                            animator = ObjectAnimator.ofFloat(vTxtStatusWarning, "y", 500f);
+                            animator.setDuration(0);
+                            animator.start();
 
-                        i++;
+                            i++;
 
-                        if (i == 2) {
-                            i = 0;
-                            resolveAnimation();
-                        } else
-                            resolveAnimation();
-                    }
+                            if (i == 2) {
+                                i = 0;
+                                resolveAnimation();
+                            } else
+                                resolveAnimation();
+                        }
 
-                    @Override
-                    public void onAnimationCancel(Animator animator) {
+                        @Override
+                        public void onAnimationCancel(Animator animator) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onAnimationRepeat(Animator animator) {
-                    }
-                });
+                        @Override
+                        public void onAnimationRepeat(Animator animator) {
+                        }
+                    });
 
-            }
-        }, 2000);
-
+                }
+            }, 2000);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void addShortcutBadger(Context context) {
-        int badgeCount = 0;
-        Cursor cursor = Byonchat.getMessengerHelper().query(
-                SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
-                new String[]{String.valueOf(Message.STATUS_UNREAD)});
-        int indexTotal = cursor.getColumnIndex("total");
-        while (cursor.moveToNext()) {
-            badgeCount = cursor.getInt(indexTotal);
+        try {
+            int badgeCount = 0;
+            Cursor cursor = Byonchat.getMessengerHelper().query(
+                    SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
+                    new String[]{String.valueOf(Message.STATUS_UNREAD)});
+            int indexTotal = cursor.getColumnIndex("total");
+            while (cursor.moveToNext()) {
+                badgeCount = cursor.getInt(indexTotal);
+            }
+            cursor.close();
+
+            fab_menu_2.setCount(badgeCount);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-        cursor.close();
-
-        fab_menu_2.setCount(badgeCount);
-
-        /*ShortcutBadger.applyCount(context, badgeCount);
-
-        bv1.setVisibility(badgeCount == 0 ? View.GONE : View.VISIBLE);
-        bv1.setText(badgeCount + "");
-
-        if (badgeCount > 0)
-            bv1.show();*/
     }
 
     class BroadcastHandler extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (MessengerConnectionService.ACTION_MESSAGE_RECEIVED
-                    .equals(intent.getAction())) {
-                addShortcutBadger(context);
-            } else if (ACTION_REFRESH_BADGER.equals(intent.getAction())) {
-                addShortcutBadger(context);
-            } else if (ACTION_REFRESH_NOTIF.equals(intent.getAction())) {
-                addShortcutBadger(context);
-                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                        .cancel(NotificationReceiver.NOTIFY_ID);
-                ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                        .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+            try {
+                if (MessengerConnectionService.ACTION_MESSAGE_RECEIVED
+                        .equals(intent.getAction())) {
+                    addShortcutBadger(context);
+                } else if (ACTION_REFRESH_BADGER.equals(intent.getAction())) {
+                    addShortcutBadger(context);
+                } else if (ACTION_REFRESH_NOTIF.equals(intent.getAction())) {
+                    addShortcutBadger(context);
+                    ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                            .cancel(NotificationReceiver.NOTIFY_ID);
+                    ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                            .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+                }
+            }catch (Exception e){
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
 
     private void requestKey() {
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-                RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-                    @Override
-                    public void onTaskDone(String key) {
-                        if (key.equalsIgnoreCase("null")) {
-                            // Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        } else {
-                            laporSelectedRoom = new LaporSelectedRoom(getApplicationContext());
-                            laporSelectedRoom.execute(key);
+        try {
+            new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
+                @Override
+                public void run() {
+                    RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                        @Override
+                        public void onTaskDone(String key) {
+                            if (key.equalsIgnoreCase("null")) {
+                                // Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                laporSelectedRoom = new LaporSelectedRoom(getApplicationContext());
+                                laporSelectedRoom.execute(key);
+                            }
                         }
-                    }
-                }, getApplicationContext());
+                    }, getApplicationContext());
 
-                testAsyncTask.execute();
-            }
-        });
+                    testAsyncTask.execute();
+                }
+            });
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class LaporSelectedRoom extends AsyncTask<String, Void, String> {
@@ -1813,12 +1780,15 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                 }
 
             } catch (ClientProtocolException e) {
+                reportCatch(e.getLocalizedMessage());
                 content = e.getMessage();
                 error = true;
             } catch (IOException e) {
+                reportCatch(e.getLocalizedMessage());
                 content = e.getMessage();
                 error = true;
             } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
                 error = true;
             }
 
@@ -1829,55 +1799,56 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         }
 
         protected void onPostExecute(String content) {
-            dismissProgressDialog();
-            if (error) {
-                if (content.contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+            try {
+                dismissProgressDialog();
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                laporSelectedRoom = new LaporSelectedRoom(getApplicationContext());
+                                laporSelectedRoom.execute(key);
+                            }
                         } else {
-                            laporSelectedRoom = new LaporSelectedRoom(getApplicationContext());
-                            laporSelectedRoom.execute(key);
+                            // Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        // Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(mContext, content, Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    // Toast.makeText(mContext, content, Toast.LENGTH_LONG).show();
-                }
-            } else {
 
-                Cursor cur = Byonchat.getBotListDB().getSingleRoom(roomid);
+                    Cursor cur = Byonchat.getBotListDB().getSingleRoom(roomid);
 
-                if (cur.getCount() > 0) {
-                    String aaContent = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(aaContent);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            String aaId = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
-                            String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
-                            if (category.equalsIgnoreCase("4")) {
-                                Cursor cursor = Byonchat.getBotListDB().getSingleRoomDetailForm(roomid, aaId);
-                                if (cursor.getCount() > 0) {
-                                    String contentDetail = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
-                                    JSONArray jsonArrayDetail = new JSONArray(contentDetail);
-                                    for (int ii = 0; ii < jsonArrayDetail.length(); ii++) {
-                                        String value = jsonArrayDetail.getJSONObject(ii).getString("value").toString();
-                                        String tt = jsonArrayDetail.getJSONObject(ii).getString("type").toString();
-                                        if (tt.equalsIgnoreCase("dropdown_dinamis")) {
-                                            JSONObject jObject = new JSONObject(value);
-                                            String url = jObject.getString("url");
-                                            String[] aa = url.split("/");
-                                            final String nama = aa[aa.length - 1].toString();
+                    if (cur.getCount() > 0) {
+                        String aaContent = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray(aaContent);
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                String aaId = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
+                                String category = jsonArray.getJSONObject(i).getString("category_tab").toString();
+                                if (category.equalsIgnoreCase("4")) {
+                                    Cursor cursor = Byonchat.getBotListDB().getSingleRoomDetailForm(roomid, aaId);
+                                    if (cursor.getCount() > 0) {
+                                        String contentDetail = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_CONTENT));
+                                        JSONArray jsonArrayDetail = new JSONArray(contentDetail);
+                                        for (int ii = 0; ii < jsonArrayDetail.length(); ii++) {
+                                            String value = jsonArrayDetail.getJSONObject(ii).getString("value").toString();
+                                            String tt = jsonArrayDetail.getJSONObject(ii).getString("type").toString();
+                                            if (tt.equalsIgnoreCase("dropdown_dinamis")) {
+                                                JSONObject jObject = new JSONObject(value);
+                                                String url = jObject.getString("url");
+                                                String[] aa = url.split("/");
+                                                final String nama = aa[aa.length - 1].toString();
 
-                                            File newDB = new File(DataBaseDropDown.getDatabaseFolder() + nama);
-                                            if (newDB.exists()) {
-                                                newDB.delete();
+                                                File newDB = new File(DataBaseDropDown.getDatabaseFolder() + nama);
+                                                if (newDB.exists()) {
+                                                    newDB.delete();
+                                                }
+
                                             }
-
-                                        }
                                         /*kodepos delete otomatis by system
                                          else if (tt.equalsIgnoreCase("dropdown_wilayah") || tt.equalsIgnoreCase("input_kodepos")) {
                                             File newDB = new File(DataBaseDropDown.getDatabaseFolder() + "daftarkodepos.sqlite");
@@ -1886,27 +1857,30 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                                             }
 
                                         }*/
+                                        }
+
                                     }
 
                                 }
-
                             }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
+
+                    Byonchat.getBotListDB().deleteRoomsbyTAB(roomid);
+                    Byonchat.getBotListDB().deleteRoomsDetailAllItemSku(roomid);
+
+                    Byonchat.getRoomsDB().open();
+                    Byonchat.getRoomsDB().deletebyName(roomid);
+                    Byonchat.getRoomsDB().close();
+
+                    resolveListRooms();
                 }
-
-                Byonchat.getBotListDB().deleteRoomsbyTAB(roomid);
-                Byonchat.getBotListDB().deleteRoomsDetailAllItemSku(roomid);
-
-                Byonchat.getRoomsDB().open();
-                Byonchat.getRoomsDB().deletebyName(roomid);
-                Byonchat.getRoomsDB().close();
-
-                resolveListRooms();
+            }catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
@@ -1967,115 +1941,130 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void RefreshRoom(Boolean show) {
-
-        File newDB = new File(DataBaseDropDown.getDatabaseFolder() + "sqlite_honda.sqlite");
-        if (newDB.exists()) {
-            newDB.delete();
-        }
-
-        vSwipeRefresh.setRefreshing(false);
-        Byonchat.getRoomsDB().open();
-        botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
-        Byonchat.getRoomsDB().close();
-        if (botArrayListist.size() > 0) {
-            try {
-                JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
-                String targetURL = jObj.getString("path");
-
-
-                AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
-                alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
-                alertbox.setMessage("Are you sure you want to Refresh?");
-                alertbox.setCancelable(false);
-                alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
-                    if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-
-                        refreshRoomForm();
-
-                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
-                        editor.apply();
-
-                        finish();
-
-                        Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                        startActivity(ii);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                if (show) {
-                    alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
-                    });
-                }
-                alertbox.show();
-            } catch (JSONException e) {
-                e.printStackTrace();
+        try {
+            File newDB = new File(DataBaseDropDown.getDatabaseFolder() + "sqlite_honda.sqlite");
+            if (newDB.exists()) {
+                newDB.delete();
             }
+
+            vSwipeRefresh.setRefreshing(false);
+            Byonchat.getRoomsDB().open();
+            botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
+            Byonchat.getRoomsDB().close();
+            if (botArrayListist.size() > 0) {
+                try {
+                    JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+                    String targetURL = jObj.getString("path");
+
+
+                    AlertDialog.Builder alertbox = new AlertDialog.Builder(MainBaseActivityNew.this);
+                    alertbox.setTitle("Refresh Room " + botArrayListist.get(0).realname);
+                    alertbox.setMessage("Are you sure you want to Refresh?");
+                    alertbox.setCancelable(false);
+                    alertbox.setPositiveButton("Ok", (arg0, arg1) -> {
+                        if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+
+                            refreshRoomForm();
+
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                            editor.apply();
+
+                            finish();
+
+                            Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                            startActivity(ii);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    if (show) {
+                        alertbox.setNegativeButton("Cancel", (arg0, arg1) -> {
+                        });
+                    }
+                    alertbox.show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     protected void refreshRoomForm() {
-        Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
-        if (cur.getCount() > 0) {
+        try {
+            Cursor cur = Byonchat.getBotListDB().getSingleRoom(username);
+            if (cur.getCount() > 0) {
 
-            String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
+                String content = cur.getString(cur.getColumnIndex(BotListDB.ROOM_CONTENT));
 
-            try {
-                JSONArray jsonArray = new JSONArray(content);
-                itemList.clear();
-                positionList.clear();
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                if (prefs != null) {
-                    extra_tab = prefs.getString(Constants.EXTRA_TAB_MOVEMENT, "");
-                    if (!extra_tab.equalsIgnoreCase("")) {
-                        jsonArray = new JSONArray(extra_tab);
+                try {
+                    JSONArray jsonArray = new JSONArray(content);
+                    itemList.clear();
+                    positionList.clear();
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                    if (prefs != null) {
+                        extra_tab = prefs.getString(Constants.EXTRA_TAB_MOVEMENT, "");
+                        if (!extra_tab.equalsIgnoreCase("")) {
+                            jsonArray = new JSONArray(extra_tab);
+                        }
                     }
-                }
 
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        String id_rooms_tab = jsonArray.getJSONObject(i).getString("id_rooms_tab").toString();
 
-                    Byonchat.getBotListDB().deleteDetailRoomById(username, id_rooms_tab);
+                        Byonchat.getBotListDB().deleteDetailRoomById(username, id_rooms_tab);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     protected void SwipeRoom() {
-        Byonchat.getRoomsDB().open();
-        botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
-        Byonchat.getRoomsDB().close();
-
         try {
-            JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
-            String targetURL = jObj.getString("path");
+            Byonchat.getRoomsDB().open();
+            botArrayListist = Byonchat.getRoomsDB().retrieveRooms("2", true);
+            Byonchat.getRoomsDB().close();
 
-            if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                finish();
-                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
-                startActivity(ii);
-            } else {
-                Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
+            try {
+                JSONObject jObj = new JSONObject(botArrayListist.get(0).getTargetUrl());
+                String targetURL = jObj.getString("path");
+
+                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                    finish();
+                    Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), username, targetURL);
+                    startActivity(ii);
+                } else {
+                    Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     protected void shareIt() {
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        String shareSubject = getResources().getString(R.string.share_subject);
-        String shareTitle = getResources().getString(R.string.share_title);
-        String shareBody = getResources().getString(R.string.share_body);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-        startActivity(Intent.createChooser(sharingIntent, shareTitle));
+        try {
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            String shareSubject = getResources().getString(R.string.share_subject);
+            String shareTitle = getResources().getString(R.string.share_title);
+            String shareBody = getResources().getString(R.string.share_body);
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareSubject);
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(sharingIntent, shareTitle));
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -2120,86 +2109,90 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void createShortcut() {
-        Byonchat.getRoomsDB().open();
-        contactBotsShortcut = Byonchat.getRoomsDB().retrieveRooms("2", true);
-        Byonchat.getRoomsDB().close();
+        try {
+            Byonchat.getRoomsDB().open();
+            contactBotsShortcut = Byonchat.getRoomsDB().retrieveRooms("2", true);
+            Byonchat.getRoomsDB().close();
 
-        if (contactBotsShortcut.size() > 0) {
-            Cursor cur = Byonchat.getBotListDB().getSingleRoom(contactBotsShortcut.get(0).name);
+            if (contactBotsShortcut.size() > 0) {
+                Cursor cur = Byonchat.getBotListDB().getSingleRoom(contactBotsShortcut.get(0).name);
 
-            if (cur.getCount() > 0) {
-                String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
-                String icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
-                String username = Byonchat.getMessengerHelper().getMyContact().getJabberId();
+                if (cur.getCount() > 0) {
+                    String name = cur.getString(cur.getColumnIndex(BotListDB.ROOM_REALNAME));
+                    String icon = cur.getString(cur.getColumnIndex(BotListDB.ROOM_ICON));
+                    String username = Byonchat.getMessengerHelper().getMyContact().getJabberId();
 
-                final Dialog dialogConfirmation;
-                dialogConfirmation = DialogUtil.customDialogConversationConfirmation(this);
-                dialogConfirmation.show();
+                    final Dialog dialogConfirmation;
+                    dialogConfirmation = DialogUtil.customDialogConversationConfirmation(this);
+                    dialogConfirmation.show();
 
-                TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
-                TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
-                txtConfirmation.setText(contactBotsShortcut.get(0).realname + " Shortcut");
-                descConfirmation.setVisibility(View.VISIBLE);
-                descConfirmation.setText("Are you sure you want to create shortcut for "
-                        + contactBotsShortcut.get(0).realname + "?");
+                    TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
+                    TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
+                    txtConfirmation.setText(contactBotsShortcut.get(0).realname + " Shortcut");
+                    descConfirmation.setVisibility(View.VISIBLE);
+                    descConfirmation.setText("Are you sure you want to create shortcut for "
+                            + contactBotsShortcut.get(0).realname + "?");
 
-                Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
-                Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
-                btnNo.setText("Cancel");
-                btnNo.setOnClickListener(v -> {
-                    dialogConfirmation.dismiss();
-                });
+                    Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
+                    Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+                    btnNo.setText("Cancel");
+                    btnNo.setOnClickListener(v -> {
+                        dialogConfirmation.dismiss();
+                    });
 
-                btnYes.setOnClickListener(v -> {
-                    dialogConfirmation.dismiss();
-                    Picasso.with(MainBaseActivityNew.this)
-                            .load(icon)
-                            .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                            .transform(new RoundedCornersTransformation(30, 0, RoundedCornersTransformation.CornerType.ALL))
-                            .into(new Target() {
-                                @Override
-                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                    if (bitmap != null) {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                            ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(MainBaseActivityNew.this, name);
-                                            mShortcutInfoBuilder.setShortLabel(name);
-                                            mShortcutInfoBuilder.setLongLabel(name);
-                                            mShortcutInfoBuilder.setIcon(Icon.createWithBitmap(bitmap));
-                                            mShortcutInfoBuilder.setIntent(generateShortcutIntent());
+                    btnYes.setOnClickListener(v -> {
+                        dialogConfirmation.dismiss();
+                        Picasso.with(MainBaseActivityNew.this)
+                                .load(icon)
+                                .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                                .transform(new RoundedCornersTransformation(30, 0, RoundedCornersTransformation.CornerType.ALL))
+                                .into(new Target() {
+                                    @Override
+                                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                        if (bitmap != null) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                ShortcutInfo.Builder mShortcutInfoBuilder = new ShortcutInfo.Builder(MainBaseActivityNew.this, name);
+                                                mShortcutInfoBuilder.setShortLabel(name);
+                                                mShortcutInfoBuilder.setLongLabel(name);
+                                                mShortcutInfoBuilder.setIcon(Icon.createWithBitmap(bitmap));
+                                                mShortcutInfoBuilder.setIntent(generateShortcutIntent());
 
-                                            ShortcutInfo mShortcutInfo = mShortcutInfoBuilder.build();
-                                            ShortcutManager mShortcutManager = getSystemService(ShortcutManager.class);
-                                            mShortcutManager.requestPinShortcut(mShortcutInfo, null);
-                                        } else {
-                                            Intent addIntent = new Intent();
-                                            addIntent
-                                                    .putExtra(Intent.EXTRA_SHORTCUT_INTENT, generateShortcutIntent());
-                                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
-                                            addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+                                                ShortcutInfo mShortcutInfo = mShortcutInfoBuilder.build();
+                                                ShortcutManager mShortcutManager = getSystemService(ShortcutManager.class);
+                                                mShortcutManager.requestPinShortcut(mShortcutInfo, null);
+                                            } else {
+                                                Intent addIntent = new Intent();
+                                                addIntent
+                                                        .putExtra(Intent.EXTRA_SHORTCUT_INTENT, generateShortcutIntent());
+                                                addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+                                                addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
 
-                                            addIntent
-                                                    .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-                                            addIntent.putExtra("duplicate", false);  //may it's already there so   don't duplicate
-                                            getApplicationContext().sendBroadcast(addIntent);
+                                                addIntent
+                                                        .setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+                                                addIntent.putExtra("duplicate", false);  //may it's already there so   don't duplicate
+                                                getApplicationContext().sendBroadcast(addIntent);
 
+                                            }
+                                            finish();
+                                            Toast.makeText(MainBaseActivityNew.this, "Shortcut Created", Toast.LENGTH_SHORT).show();
                                         }
-                                        finish();
-                                        Toast.makeText(MainBaseActivityNew.this, "Shortcut Created", Toast.LENGTH_SHORT).show();
                                     }
-                                }
 
-                                @Override
-                                public void onBitmapFailed(Drawable errorDrawable) {
-                                    Toast.makeText(MainBaseActivityNew.this, "Create Shortcut failed", Toast.LENGTH_SHORT).show();
-                                }
+                                    @Override
+                                    public void onBitmapFailed(Drawable errorDrawable) {
+                                        Toast.makeText(MainBaseActivityNew.this, "Create Shortcut failed", Toast.LENGTH_SHORT).show();
+                                    }
 
-                                @Override
-                                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                    Toast.makeText(MainBaseActivityNew.this, "Please Wait", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                });
+                                    @Override
+                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                        Toast.makeText(MainBaseActivityNew.this, "Please Wait", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    });
+                }
             }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -2211,50 +2204,62 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
         contactBots.add(contactBot);
 
         Intent intent = new Intent(getApplicationContext(), MainActivityNew.class);
-        intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
-        intent.putExtra(Constants.EXTRA_ROOM, gson.toJson(contactBots));
-        intent.putExtra(Constants.EXTRA_TAB_MOVEMENT, gson.toJson(itemList));
-        intent.putExtra(ConversationActivity.KEY_TITLE, contactBotsShortcut.get(0).targetUrl);
-        intent.setAction(Intent.ACTION_MAIN);
+        try {
+            intent.putExtra(ConversationActivity.KEY_JABBER_ID, username);
+            intent.putExtra(Constants.EXTRA_ROOM, gson.toJson(contactBots));
+            intent.putExtra(Constants.EXTRA_TAB_MOVEMENT, gson.toJson(itemList));
+            intent.putExtra(ConversationActivity.KEY_TITLE, contactBotsShortcut.get(0).targetUrl);
+            intent.setAction(Intent.ACTION_MAIN);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
 
         return intent;
     }
 
     protected void showToastTab(String args) {
-        Toast toast = new Toast(this);
-        toast.setDuration(Toast.LENGTH_SHORT);
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.custom_toast, null);
-        TextView text = (TextView) view.findViewById(R.id.message);
-        text.setText(args);
-        toast.setView(view);
-        toast.setGravity(Gravity.TOP, 0, 100);
-        toast.show();
+        try {
+            Toast toast = new Toast(this);
+            toast.setDuration(Toast.LENGTH_SHORT);
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.custom_toast, null);
+            TextView text = (TextView) view.findViewById(R.id.message);
+            text.setText(args);
+            toast.setView(view);
+            toast.setGravity(Gravity.TOP, 0, 100);
+            toast.show();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void changeGridSize() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = prefs.edit();
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = prefs.edit();
 
-        new AlertDialog.Builder(this)
-                .setItems(R.array.dialog_grid_size, (dialog, which) -> {
-                    switch (which) {
-                        case 0:
-                            editor.putString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_THREE);
-                            editor.apply();
-                            break;
-                        case 1:
-                            editor.putString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_FOUR);
-                            editor.apply();
-                            break;
-                    }
+            new AlertDialog.Builder(this)
+                    .setItems(R.array.dialog_grid_size, (dialog, which) -> {
+                        switch (which) {
+                            case 0:
+                                editor.putString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_THREE);
+                                editor.apply();
+                                break;
+                            case 1:
+                                editor.putString(Constants.EXTRA_GRID_SIZE, Constants.EXTRA_GRID_SIZE_FOUR);
+                                editor.apply();
+                                break;
+                        }
 
-                    resolveRecyclerView();
-                    onHomeRefresh();
-                })
-                .show();
+                        resolveRecyclerView();
+                        onHomeRefresh();
+                    })
+                    .show();
 
-        drawerLayout.closeDrawer(GravityCompat.START);
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void onHomeRefresh() {
@@ -2269,335 +2274,425 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
     }
 
     protected void resolveOneGrid(List<ItemMain> itemList) {
-        ItemMain im = itemList.get(0);
+        try {
+            ItemMain im = itemList.get(0);
 
-        vTitleItemGridOne.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridOne.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridOne);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridOne);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridOne, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridOne, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabOne.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(0));
-            startActivity(intent);
-        });
+            vFrameClickTabOne.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(0));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveTwoGridOne(List<ItemMain> itemList, int position) {
-        ItemMain im = itemList.get(position);
+        try {
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridTwoOne.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridTwoOne.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridTwoOne);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridTwoOne);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridTwoOne, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridTwoOne, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabTwoOne.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabTwoOne.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveTwoGridTwo(List<ItemMain> itemList, int position) {
-        ItemMain im = itemList.get(position);
+        try {
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridTwoTwo.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridTwoTwo.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridTwoTwo);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridTwoTwo);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridTwoTwo, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridTwoTwo, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabTwoTwo.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabTwoTwo.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveFourGridOne(List<ItemMain> itemList, int position) {
-        ItemMain im = itemList.get(position);
+        try {
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridFourOne.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridFourOne.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridFourOne);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridFourOne);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourOne, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourOne, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabFourOne.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabFourOne.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveFourGridTwo(List<ItemMain> itemList, int position) {
-        ItemMain im = itemList.get(position);
+        try {
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridFourTwo.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridFourTwo.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridFourTwo);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridFourTwo);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourTwo, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourTwo, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabFourTwo.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabFourTwo.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveFourGridThree(List<ItemMain> itemList, int position) {
-        ItemMain im = itemList.get(position);
+        try {
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridFourThree.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridFourThree.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridFourThree);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridFourThree);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourThree, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourThree, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabFourThree.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabFourThree.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveFourGridFour(List<ItemMain> itemList, int position) {
-        ItemMain im = itemList.get(position);
+        try {
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridFourFour.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridFourFour.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridFourFour);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridFourFour);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourFour, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridFourFour, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabFourFour.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabFourFour.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNineGridOne(List<ItemMain> itemList, int position) {
-        vFrameGridNineNineOne.setVisibility(View.VISIBLE);
+        try {
+            vFrameGridNineNineOne.setVisibility(View.VISIBLE);
 
-        ItemMain im = itemList.get(position);
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridNineOne.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridNineOne.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridNineOne);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridNineOne);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineOne, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineOne, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabNineOne.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabNineOne.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNineGridTwo(List<ItemMain> itemList, int position) {
-        vFrameGridNineNineTwo.setVisibility(View.VISIBLE);
+        try {
+            vFrameGridNineNineTwo.setVisibility(View.VISIBLE);
 
-        ItemMain im = itemList.get(position);
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridNineTwo.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridNineTwo.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridNineTwo);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridNineTwo);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineTwo, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineTwo, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabNineTwo.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabNineTwo.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNineGridThree(List<ItemMain> itemList, int position) {
-        vFrameGridNineNineThree.setVisibility(View.VISIBLE);
+        try {
+            vFrameGridNineNineThree.setVisibility(View.VISIBLE);
 
-        ItemMain im = itemList.get(position);
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridNineThree.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridNineThree.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridNineThree);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridNineThree);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineThree, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineThree, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabNineThree.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabNineThree.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNineGridFour(List<ItemMain> itemList, int position) {
-        vFrameGridNineNineFour.setVisibility(View.VISIBLE);
+        try {
+            vFrameGridNineNineFour.setVisibility(View.VISIBLE);
 
-        ItemMain im = itemList.get(position);
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridNineFour.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridNineFour.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridNineFour);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridNineFour);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineFour, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineFour, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabNineFour.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabNineFour.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNineGridFive(List<ItemMain> itemList, int position) {
-        vFrameGridNineNineFive.setVisibility(View.VISIBLE);
+        try {
+            vFrameGridNineNineFive.setVisibility(View.VISIBLE);
 
-        ItemMain im = itemList.get(position);
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridNineFive.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridNineFive.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridNineFive);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridNineFive);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineFive, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineFive, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabNineFive.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabNineFive.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNineGridSix(List<ItemMain> itemList, int position) {
-        vFrameGridNineNineSix.setVisibility(View.VISIBLE);
+        try {
+            vFrameGridNineNineSix.setVisibility(View.VISIBLE);
 
-        ItemMain im = itemList.get(position);
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridNineSix.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridNineSix.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridNineSix);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridNineSix);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineSix, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineSix, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabNineSix.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabNineSix.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNineGridSeven(List<ItemMain> itemList, int position) {
-        vFrameGridNineNineSeven.setVisibility(View.VISIBLE);
+        try {
+            vFrameGridNineNineSeven.setVisibility(View.VISIBLE);
 
-        ItemMain im = itemList.get(position);
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridNineSeven.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridNineSeven.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridNineSeven);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridNineSeven);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineSeven, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineSeven, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabNineSeven.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabNineSeven.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNineGridEight(List<ItemMain> itemList, int position) {
-        vFrameGridNineNineEight.setVisibility(View.VISIBLE);
+        try {
+            vFrameGridNineNineEight.setVisibility(View.VISIBLE);
 
-        ItemMain im = itemList.get(position);
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridNineEight.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridNineEight.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridNineEight);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridNineEight);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineEight, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineEight, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabNineEight.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabNineEight.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveNineGridNine(List<ItemMain> itemList, int position) {
-        vFrameGridNineNineNine.setVisibility(View.VISIBLE);
+        try {
+            vFrameGridNineNineNine.setVisibility(View.VISIBLE);
 
-        ItemMain im = itemList.get(position);
+            ItemMain im = itemList.get(position);
 
-        vTitleItemGridNineNine.setText(Utility.capitalizer(im.getTitle()));
+            vTitleItemGridNineNine.setText(Utility.capitalizer(im.getTitle()));
 
-        Manhera.getInstance().get()
-                .load(im.icon_name.equalsIgnoreCase(null)
-                        || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
-                .placeholder(R.drawable.logo_byon)
-                .into(vLogoItemGridNineNine);
+            Manhera.getInstance().get()
+                    .load(im.icon_name.equalsIgnoreCase(null)
+                            || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
+                    .placeholder(R.drawable.logo_byon)
+                    .into(vLogoItemGridNineNine);
 
-        fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineNine, Fonts.FONT_ROBOTO_BOLD);
+            fonts.FontFamily(getApplicationContext().getAssets(), vTitleItemGridNineNine, Fonts.FONT_ROBOTO_BOLD);
 
-        vFrameClickTabNineNine.setOnClickListener(v -> {
-            Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
-            startActivity(intent);
-        });
+            vFrameClickTabNineNine.setOnClickListener(v -> {
+                Intent intent = ByonChatMainRoomActivity.generateIntent(getApplicationContext(), (ItemMain) adapter.getData().get(position));
+                startActivity(intent);
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveServices() {
-        BCServiceSyncAdapter.initializeSyncAdapter(getApplicationContext());
+        try {
+            BCServiceSyncAdapter.initializeSyncAdapter(getApplicationContext());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (prefs != null) {
-                if (prefs.getString(Constants.EXTRA_SERVICE_PERMISSION, "false").equalsIgnoreCase("true")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                if (prefs != null) {
+                    if (prefs.getString(Constants.EXTRA_SERVICE_PERMISSION, "false").equalsIgnoreCase("true")) {
 
+                    } else {
+                        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                        ComponentName componentName = new ComponentName(MainBaseActivityNew.this, WhatsAppJobService.class);
+                        JobInfo jobInfo = new JobInfo.Builder(1, componentName)
+                                .setPeriodic(TimeUnit.MINUTES.toMillis(1))
+                                .build();
+
+                        PermanentLoggerUtil.logMessage(MainBaseActivityNew.this, "Scheduling recurring job");
+                        jobScheduler.schedule(jobInfo);
+
+                        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                        if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                            Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                            intent.setData(Uri.parse("package:" + getPackageName()));
+                            startActivity(intent);
+                        }
+
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                        editor.apply();
+                    }
                 } else {
                     JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
                     ComponentName componentName = new ComponentName(MainBaseActivityNew.this, WhatsAppJobService.class);
@@ -2623,58 +2718,36 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements L
                     editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
                     editor.apply();
                 }
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Utility.scheduleJob(this);
             } else {
-                JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                ComponentName componentName = new ComponentName(MainBaseActivityNew.this, WhatsAppJobService.class);
-                JobInfo jobInfo = new JobInfo.Builder(1, componentName)
-                        .setPeriodic(TimeUnit.MINUTES.toMillis(1))
-                        .build();
-
-                PermanentLoggerUtil.logMessage(MainBaseActivityNew.this, "Scheduling recurring job");
-                jobScheduler.schedule(jobInfo);
-
-                PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-                if (pm.isIgnoringBatteryOptimizations(getPackageName())) {
-                    Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                    startActivity(intent);
-                } else {
-                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                    intent.setData(Uri.parse("package:" + getPackageName()));
-                    startActivity(intent);
+                mUploadService = new UploadService();
+                mServiceIntent = new Intent(this, mUploadService.getClass());
+                mServiceIntent.putExtra(UploadService.ACTION, "startService");
+                if (!isMyServiceRunning(mUploadService.getClass())) {
+                    startService(mServiceIntent);
                 }
 
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
-                editor.apply();
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 898989,
+                        mServiceIntent, 0);
+                int alarmType = AlarmManager.ELAPSED_REALTIME;
+                final int FIFTEEN_SEC_MILLIS = 8000;
+                AlarmManager alarmManager = (AlarmManager)
+                        getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+                alarmManager.setInexactRepeating(alarmType, SystemClock.elapsedRealtime() + FIFTEEN_SEC_MILLIS,
+                        FIFTEEN_SEC_MILLIS, pendingIntent);
+
+                ComponentName receiver = new ComponentName(getApplicationContext(), MyBroadcastReceiver.class);
+                PackageManager pm = getApplicationContext().getPackageManager();
+
+                pm.setComponentEnabledSetting(receiver,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
             }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Utility.scheduleJob(this);
-        } else {
-            mUploadService = new UploadService();
-            mServiceIntent = new Intent(this, mUploadService.getClass());
-            mServiceIntent.putExtra(UploadService.ACTION, "startService");
-            if (!isMyServiceRunning(mUploadService.getClass())) {
-                startService(mServiceIntent);
-            }
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 898989,
-                    mServiceIntent, 0);
-            int alarmType = AlarmManager.ELAPSED_REALTIME;
-            final int FIFTEEN_SEC_MILLIS = 8000;
-            AlarmManager alarmManager = (AlarmManager)
-                    getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-            alarmManager.setInexactRepeating(alarmType, SystemClock.elapsedRealtime() + FIFTEEN_SEC_MILLIS,
-                    FIFTEEN_SEC_MILLIS, pendingIntent);
-
-            ComponentName receiver = new ComponentName(getApplicationContext(), MyBroadcastReceiver.class);
-            PackageManager pm = getApplicationContext().getPackageManager();
-
-            pm.setComponentEnabledSetting(receiver,
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 

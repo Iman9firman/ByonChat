@@ -65,6 +65,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 
 public class LoadContactScreen extends AppCompatActivity implements ServiceConnection {
     public static Uri CONTACT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
@@ -102,58 +104,62 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        if (!isNetworkConnectionAvailable()) {
-            setContentView(R.layout.custom_information);
-            ((TextView) findViewById(R.id.customInformationText))
-                    .setText(R.string.registration_no_internet);
-        } else {
-            setContentView(R.layout.activity_load_contact_screen);
-            FilteringImage.headerColor(getWindow(), LoadContactScreen.this, getResources().getColor(R.color.colorPrimary));
-            progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            textHeader = (TextView) findViewById(R.id.textHeader);
-            if (messengerHelper == null) {
-                messengerHelper = MessengerDatabaseHelper.getInstance(this);
-            }
-
-            if (!MessengerConnectionService.started) {
-                MessengerConnectionService.startService(this);
-            }
-
-            context = this;
-            new ContactRefreshHandler(true).start();
-            iv = (ImageView) findViewById(R.id.image_view);
-
-            final Animation animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
-
-            final Handler handler = new Handler();
-            Runnable runnable = new Runnable() {
-                int i = 0;
-
-                public void run() {
-                    iv.startAnimation(animationFadeIn);
-                    iv.setImageResource(images[i]);
-                    i++;
-                    if (i > images.length - 1) {
-                        i = 0;
-                    }
-                    handler.postDelayed(this, 3000);
+        try {
+            if (!isNetworkConnectionAvailable()) {
+                setContentView(R.layout.custom_information);
+                ((TextView) findViewById(R.id.customInformationText))
+                        .setText(R.string.registration_no_internet);
+            } else {
+                setContentView(R.layout.activity_load_contact_screen);
+                FilteringImage.headerColor(getWindow(), LoadContactScreen.this, getResources().getColor(R.color.colorPrimary));
+                progressBar = (ProgressBar) findViewById(R.id.progressBar);
+                textHeader = (TextView) findViewById(R.id.textHeader);
+                if (messengerHelper == null) {
+                    messengerHelper = MessengerDatabaseHelper.getInstance(this);
                 }
-            };
-            handler.postDelayed(runnable, 3000);
 
-            final Handler handlerProgresbar = new Handler();
-            Runnable runnableProgressbar = new Runnable() {
-                int i = 0;
-
-                public void run() {
-                    progressBar.setProgress(progressBar.getProgress() + 1);
-                    handlerProgresbar.postDelayed(this, 1000);
-                    if (progressBar.getProgress() == 100) {
-
-                    }
+                if (!MessengerConnectionService.started) {
+                    MessengerConnectionService.startService(this);
                 }
-            };
-            handlerProgresbar.postDelayed(runnableProgressbar, 1000);
+
+                context = this;
+                new ContactRefreshHandler(true).start();
+                iv = (ImageView) findViewById(R.id.image_view);
+
+                final Animation animationFadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+
+                final Handler handler = new Handler();
+                Runnable runnable = new Runnable() {
+                    int i = 0;
+
+                    public void run() {
+                        iv.startAnimation(animationFadeIn);
+                        iv.setImageResource(images[i]);
+                        i++;
+                        if (i > images.length - 1) {
+                            i = 0;
+                        }
+                        handler.postDelayed(this, 3000);
+                    }
+                };
+                handler.postDelayed(runnable, 3000);
+
+                final Handler handlerProgresbar = new Handler();
+                Runnable runnableProgressbar = new Runnable() {
+                    int i = 0;
+
+                    public void run() {
+                        progressBar.setProgress(progressBar.getProgress() + 1);
+                        handlerProgresbar.postDelayed(this, 1000);
+                        if (progressBar.getProgress() == 100) {
+
+                        }
+                    }
+                };
+                handlerProgresbar.postDelayed(runnableProgressbar, 1000);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -168,8 +174,11 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
 
     @Override
     public void onServiceConnected(ComponentName compName, IBinder iBinder) {
-        binder = (MessengerConnectionService.MessengerConnectionBinder) iBinder;
-
+        try {
+            binder = (MessengerConnectionService.MessengerConnectionBinder) iBinder;
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -180,9 +189,13 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
     @Override
     protected void onResume() {
         super.onResume();
-        getApplicationContext().bindService(
-                new Intent(this, MessengerConnectionService.class), this,
-                Context.BIND_AUTO_CREATE);
+        try {
+            getApplicationContext().bindService(
+                    new Intent(this, MessengerConnectionService.class), this,
+                    Context.BIND_AUTO_CREATE);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class ContactRefreshHandler extends Thread {
@@ -198,274 +211,258 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
 
         @Override
         public void run() {
-            if (checkLastRefresh) {
-                long lastUpdate = 0;
-                try {
-                    lastUpdate = Long.parseLong(Configuration.getValue(
-                            messengerHelper,
-                            Configuration.LAST_CONTACT_REFRESHED));
-                } catch (NumberFormatException nfe) {
-                }
-                if ((System.currentTimeMillis() - lastUpdate) < REFRESH_TIME) {
-                    sendContactRefreshedBroadcast(false);
-                    return;
-                }
-            }
-
-            HashMap<Long, Contact> osMap = loadContactFromOs();
-            if (osMap.size() == 0) {
-                messengerHelper.execSql(
-                        getString(R.string.delete_all_contacts), null);
-                sendContactRefreshedBroadcast(true);
-                return;
-            }
-
-            StringBuilder sbuffer = new StringBuilder();
-            sbuffer.append(messengerHelper.getMyContact().getJabberId())
-                    .append(",")
-                    .append(messengerHelper.getMyContact().getName())
-                    .append(",");
-            for (Long number : osMap.keySet()) {
-                sbuffer.append(number.toString()).append(",");
-            }
-            sbuffer.setLength(sbuffer.length() - 1);
-
-            InputStreamReader reader = null;
-            String[] arrTemp;
             try {
-                HttpPost post = new HttpPost(REQUEST_CONTACT_URL);
-                post.setEntity(new StringEntity(sbuffer.toString()));
-
-                HttpClient httpClient = HttpHelper
-                        .createHttpClient(context);
-                HttpResponse response = httpClient.execute(post);
-                reader = new InputStreamReader(response.getEntity()
-                        .getContent(), "UTF-8");
-                int r;
-                StringBuilder buf = new StringBuilder();
-                while ((r = reader.read()) != -1) {
-                    buf.append((char) r);
-                }
-
-                if (response.getStatusLine().getStatusCode() != 200) {
-                    Log.e(getLocalClassName(),
-                            "Failed getting contact from server: "
-                                    + buf.toString()
-                    );
-                    sendContactRefreshedBroadcast(false);
-                    return;
-                }
-                arrTemp = buf.toString().split(",");
-            } catch (Exception e) {
-                Log.e(getLocalClassName(),
-                        "Failed getting contact from server: " + e.getMessage(),
-                        e);
-                sendContactRefreshedBroadcast(false);
-                return;
-            } finally {
-                if (reader != null) {
+                if (checkLastRefresh) {
+                    long lastUpdate = 0;
                     try {
-                        reader.close();
-                    } catch (IOException e) {
-                    }
-                }
-            }
-            long[] sortedAppFriends = new long[arrTemp.length];
-            int i = 0;
-            for (String s : arrTemp) {
-                String curNumber = s.trim();
-                if (!curNumber.equals("")) {
-                    try {
-                        sortedAppFriends[i] = Long.parseLong(curNumber);
-                        i++;
+                        lastUpdate = Long.parseLong(Configuration.getValue(
+                                messengerHelper,
+                                Configuration.LAST_CONTACT_REFRESHED));
                     } catch (NumberFormatException nfe) {
                     }
-                }
-            }
-            Arrays.sort(sortedAppFriends);
-
-            HashMap<Long, Contact> dbMap = loadContactFromDb();
-            long[] arrDb = new long[dbMap.size()];
-            i = 0;
-            for (Long l : dbMap.keySet()) {
-                arrDb[i] = l;
-                i++;
-            }
-            Arrays.sort(arrDb);
-
-            while (true) {
-                if (binder != null && binder.isConnected()) {
-                    break;
-                } else {
-                    try {
-                        sleep(200);
-                    } catch (InterruptedException ie) {
+                    if ((System.currentTimeMillis() - lastUpdate) < REFRESH_TIME) {
+                        sendContactRefreshedBroadcast(false);
+                        return;
                     }
                 }
-            }
 
-            // Uncomment the following line for SMS bridge feature:
-            // ArrayList<Long> deleteOrKeepBucket = new ArrayList<Long>();
-            // Comment the following line for SMS bridge feature:
-            ArrayList<String> deleteBucket = new ArrayList<String>();
-            int indexDb = 0;
-            int indexAppFriends = 0;
-            // Loop through the whole app-using-friends numbers
-            while (indexAppFriends < sortedAppFriends.length) {
-                long curAppFriendNumber = sortedAppFriends[indexAppFriends];
-                if (curAppFriendNumber == 0) {
-                    indexAppFriends++;
-                    continue;
+                HashMap<Long, Contact> osMap = loadContactFromOs();
+                if (osMap.size() == 0) {
+                    messengerHelper.execSql(
+                            getString(R.string.delete_all_contacts), null);
+                    sendContactRefreshedBroadcast(true);
+                    return;
                 }
-                boolean processed = false;
-                Contact cOS = osMap.get(curAppFriendNumber);
-                if (indexDb < arrDb.length) {
-                    // There were contacts in local table
-                    long curDbNumber = arrDb[indexDb];
-                    if (curAppFriendNumber < curDbNumber) {
-                        // The app-using-friend number is smaller than current
-                        // row in local table
-                        // This means this number is added after the last
-                        // contact refresh
-                        if (binder.isConnected()) {
-                            try {
-                                binder.addNewContact(cOS);
-                            } catch (Exception e) {
-                                Log.e(getClass().getSimpleName(),
-                                        "Fail adding contact with jabberID: "
-                                                + curAppFriendNumber, e
-                                );
-                            }
-                        }
-                        processed = true;
-                    } else {
-                        Contact contact = dbMap.get(curDbNumber);
 
-                        if (curAppFriendNumber == curDbNumber) {
-                            // The comment below is for SMS bridge feature:
-                            // This means previous non-app-using-friend started
-                            // using app
-                            if (!osMap.get(curAppFriendNumber).equals(
-                                    contact.getName())
-                                    ) {
-                                contact.setName(cOS.getName());
-                                // Comment the following line for SMS bridge
-                                // feature:
-                                messengerHelper.updateData(contact);
-                            }
-                            // Uncomment the following 2 lines for SMS bridge
-                            // feature:
-                            // contact.setType(0);
-                            // messengerHelper.updateData(contact);
+                StringBuilder sbuffer = new StringBuilder();
+                sbuffer.append(messengerHelper.getMyContact().getJabberId())
+                        .append(",")
+                        .append(messengerHelper.getMyContact().getName())
+                        .append(",");
+                for (Long number : osMap.keySet()) {
+                    sbuffer.append(number.toString()).append(",");
+                }
+                sbuffer.setLength(sbuffer.length() - 1);
+
+                InputStreamReader reader = null;
+                String[] arrTemp;
+                try {
+                    HttpPost post = new HttpPost(REQUEST_CONTACT_URL);
+                    post.setEntity(new StringEntity(sbuffer.toString()));
+
+                    HttpClient httpClient = HttpHelper
+                            .createHttpClient(context);
+                    HttpResponse response = httpClient.execute(post);
+                    reader = new InputStreamReader(response.getEntity()
+                            .getContent(), "UTF-8");
+                    int r;
+                    StringBuilder buf = new StringBuilder();
+                    while ((r = reader.read()) != -1) {
+                        buf.append((char) r);
+                    }
+
+                    if (response.getStatusLine().getStatusCode() != 200) {
+                        Log.e(getLocalClassName(),
+                                "Failed getting contact from server: "
+                                        + buf.toString()
+                        );
+                        sendContactRefreshedBroadcast(false);
+                        return;
+                    }
+                    arrTemp = buf.toString().split(",");
+                } catch (Exception e) {
+                    Log.e(getLocalClassName(),
+                            "Failed getting contact from server: " + e.getMessage(),
+                            e);
+                    sendContactRefreshedBroadcast(false);
+                    return;
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                }
+                long[] sortedAppFriends = new long[arrTemp.length];
+                int i = 0;
+                for (String s : arrTemp) {
+                    String curNumber = s.trim();
+                    if (!curNumber.equals("")) {
+                        try {
+                            sortedAppFriends[i] = Long.parseLong(curNumber);
+                            i++;
+                        } catch (NumberFormatException nfe) {
+                        }
+                    }
+                }
+                Arrays.sort(sortedAppFriends);
+
+                HashMap<Long, Contact> dbMap = loadContactFromDb();
+                long[] arrDb = new long[dbMap.size()];
+                i = 0;
+                for (Long l : dbMap.keySet()) {
+                    arrDb[i] = l;
+                    i++;
+                }
+                Arrays.sort(arrDb);
+
+                while (true) {
+                    if (binder != null && binder.isConnected()) {
+                        break;
+                    } else {
+                        try {
+                            sleep(200);
+                        } catch (InterruptedException ie) {
+                        }
+                    }
+                }
+
+                // Uncomment the following line for SMS bridge feature:
+                // ArrayList<Long> deleteOrKeepBucket = new ArrayList<Long>();
+                // Comment the following line for SMS bridge feature:
+                ArrayList<String> deleteBucket = new ArrayList<String>();
+                int indexDb = 0;
+                int indexAppFriends = 0;
+                // Loop through the whole app-using-friends numbers
+                while (indexAppFriends < sortedAppFriends.length) {
+                    long curAppFriendNumber = sortedAppFriends[indexAppFriends];
+                    if (curAppFriendNumber == 0) {
+                        indexAppFriends++;
+                        continue;
+                    }
+                    boolean processed = false;
+                    Contact cOS = osMap.get(curAppFriendNumber);
+                    if (indexDb < arrDb.length) {
+                        // There were contacts in local table
+                        long curDbNumber = arrDb[indexDb];
+                        if (curAppFriendNumber < curDbNumber) {
+                            // The app-using-friend number is smaller than current
+                            // row in local table
+                            // This means this number is added after the last
+                            // contact refresh
                             if (binder.isConnected()) {
                                 try {
-                                    binder.loadAvatar(contact);
+                                    binder.addNewContact(cOS);
                                 } catch (Exception e) {
                                     Log.e(getClass().getSimpleName(),
-                                            "Failed loading avatar for jabberID: "
+                                            "Fail adding contact with jabberID: "
                                                     + curAppFriendNumber, e
                                     );
                                 }
                             }
                             processed = true;
                         } else {
-                            // The comment below is for SMS bridge feature:
-                            // Collect for review. They are either no longer in
-                            // OS or somehow the server says it's no longer
-                            // using app
-                            // deleteOrKeepBucket.add(Long.valueOf(contact
-                            // .getJabberId()));
-                            deleteBucket.add(contact.getJabberId());
+                            Contact contact = dbMap.get(curDbNumber);
+
+                            if (curAppFriendNumber == curDbNumber) {
+                                // The comment below is for SMS bridge feature:
+                                // This means previous non-app-using-friend started
+                                // using app
+                                if (!osMap.get(curAppFriendNumber).equals(
+                                        contact.getName())
+                                ) {
+                                    contact.setName(cOS.getName());
+                                    // Comment the following line for SMS bridge
+                                    // feature:
+                                    messengerHelper.updateData(contact);
+                                }
+                                // Uncomment the following 2 lines for SMS bridge
+                                // feature:
+                                // contact.setType(0);
+                                // messengerHelper.updateData(contact);
+                                if (binder.isConnected()) {
+                                    try {
+                                        binder.loadAvatar(contact);
+                                    } catch (Exception e) {
+                                        Log.e(getClass().getSimpleName(),
+                                                "Failed loading avatar for jabberID: "
+                                                        + curAppFriendNumber, e
+                                        );
+                                    }
+                                }
+                                processed = true;
+                            } else {
+                                // The comment below is for SMS bridge feature:
+                                // Collect for review. They are either no longer in
+                                // OS or somehow the server says it's no longer
+                                // using app
+                                // deleteOrKeepBucket.add(Long.valueOf(contact
+                                // .getJabberId()));
+                                deleteBucket.add(contact.getJabberId());
+                            }
+                            indexDb++;
                         }
-                        indexDb++;
-                    }
-                } else {
-                    // Local contacts table was empty or the new app-using
-                    // numbers are bigger than the last number in DB
-                    if (binder.isConnected()) {
-                        try {
-                            binder.addNewContact(cOS);
-                        } catch (Exception e) {
-                            Log.e(getClass().getSimpleName(),
-                                    "Fail adding contact for jabberID: "
-                                            + curAppFriendNumber, e
-                            );
+                    } else {
+                        // Local contacts table was empty or the new app-using
+                        // numbers are bigger than the last number in DB
+                        if (binder.isConnected()) {
+                            try {
+                                binder.addNewContact(cOS);
+                            } catch (Exception e) {
+                                Log.e(getClass().getSimpleName(),
+                                        "Fail adding contact for jabberID: "
+                                                + curAppFriendNumber, e
+                                );
+                            }
                         }
+                        processed = true;
                     }
-                    processed = true;
-                }
-                if (processed) {
-                    // Uncomment the following line for SMS bridge feature
-                    // osMap.remove(curAppFriendNumber);
-                    indexAppFriends++;
-                }
-            }
-            String sql = "DELETE FROM contacts WHERE jid IN";
-            sbuffer = new StringBuilder("");
-            for (int j = indexDb; j < arrDb.length; j++) {
-                Contact contact = dbMap.get(Long.valueOf(arrDb[j]));
-                deleteBucket.add(contact.getJabberId());
-            }
-            if (deleteBucket.size() > 0) {
-                i = 0;
-                String[] jids = new String[deleteBucket.size()];
-                while (i < deleteBucket.size()) {
-                    String jabberId = deleteBucket.get(i);
-                    File f = getFileStreamPath(MediaProcessingUtil
-                            .getProfilePicName(new Contact(jabberId, jabberId,
-                                    "")));
-                    if (f.exists()) {
-                        f.delete();
+                    if (processed) {
+                        // Uncomment the following line for SMS bridge feature
+                        // osMap.remove(curAppFriendNumber);
+                        indexAppFriends++;
                     }
-                    sbuffer.append("?");
-                    jids[i] = jabberId;
-                    i++;
-                    if (i != deleteBucket.size())
-                        sbuffer.append(",");
                 }
-                sql += "(" + sbuffer.toString() + ");";
-                messengerHelper.execSql(sql, jids);
+                String sql = "DELETE FROM contacts WHERE jid IN";
+                sbuffer = new StringBuilder("");
+                for (int j = indexDb; j < arrDb.length; j++) {
+                    Contact contact = dbMap.get(Long.valueOf(arrDb[j]));
+                    deleteBucket.add(contact.getJabberId());
+                }
+                if (deleteBucket.size() > 0) {
+                    i = 0;
+                    String[] jids = new String[deleteBucket.size()];
+                    while (i < deleteBucket.size()) {
+                        String jabberId = deleteBucket.get(i);
+                        File f = getFileStreamPath(MediaProcessingUtil
+                                .getProfilePicName(new Contact(jabberId, jabberId,
+                                        "")));
+                        if (f.exists()) {
+                            f.delete();
+                        }
+                        sbuffer.append("?");
+                        jids[i] = jabberId;
+                        i++;
+                        if (i != deleteBucket.size())
+                            sbuffer.append(",");
+                    }
+                    sql += "(" + sbuffer.toString() + ");";
+                    messengerHelper.execSql(sql, jids);
+                }
+                sendContactRefreshedBroadcast(true);
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-            sendContactRefreshedBroadcast(true);
         }
 
         private void sendContactRefreshedBroadcast(boolean updateLastRefresh) {
-            progressBar.setProgress(30);
-            if (updateLastRefresh) {
-                Configuration.setValue(messengerHelper,
-                        Configuration.LAST_CONTACT_REFRESHED,
-                        String.valueOf(System.currentTimeMillis()));
-            }
-            if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
-                if (key.equalsIgnoreCase("null")) {
-                    finish();
-                    //       Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                } else {
-                    HashMap<Long, Contact> osMap = loadContactFromOs();
-                    if (osMap.size() == 0) {
-
-                        IntervalDB db = new IntervalDB(getApplicationContext());
-                        db.open();
-                        Cursor cursor = db.getSingleContact(12);
-                        if (cursor.getCount() > 0) {
-                            db.deleteContact(12);
-                        }
-                        cursor.close();
-                        Interval interval = new Interval();
-                        interval.setId(12);
-                        interval.setTime("Finalizing");
-                        db.createContact(interval);
-                        db.close();
-
-                        progressBar.setProgress(90);
+            try {
+                progressBar.setProgress(30);
+                if (updateLastRefresh) {
+                    Configuration.setValue(messengerHelper,
+                            Configuration.LAST_CONTACT_REFRESHED,
+                            String.valueOf(System.currentTimeMillis()));
+                }
+                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                    String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
+                    if (key.equalsIgnoreCase("null")) {
                         finish();
-                        Intent i = new Intent();
-                        i.setClass(getApplicationContext(), MainActivityNew.class);
-                        startActivity(i);
+                        //       Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                     } else {
-                        HashMap<Long, Contact> dbMap = loadContactFromDb();
-                        if (dbMap.size() == 0) {
+                        HashMap<Long, Contact> osMap = loadContactFromOs();
+                        if (osMap.size() == 0) {
+
                             IntervalDB db = new IntervalDB(getApplicationContext());
                             db.open();
                             Cursor cursor = db.getSingleContact(12);
@@ -478,19 +475,43 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
                             interval.setTime("Finalizing");
                             db.createContact(interval);
                             db.close();
+
                             progressBar.setProgress(90);
                             finish();
                             Intent i = new Intent();
                             i.setClass(getApplicationContext(), MainActivityNew.class);
                             startActivity(i);
                         } else {
-                            new searchThemeRequest(getApplicationContext()).execute(key);
+                            HashMap<Long, Contact> dbMap = loadContactFromDb();
+                            if (dbMap.size() == 0) {
+                                IntervalDB db = new IntervalDB(getApplicationContext());
+                                db.open();
+                                Cursor cursor = db.getSingleContact(12);
+                                if (cursor.getCount() > 0) {
+                                    db.deleteContact(12);
+                                }
+                                cursor.close();
+                                Interval interval = new Interval();
+                                interval.setId(12);
+                                interval.setTime("Finalizing");
+                                db.createContact(interval);
+                                db.close();
+                                progressBar.setProgress(90);
+                                finish();
+                                Intent i = new Intent();
+                                i.setClass(getApplicationContext(), MainActivityNew.class);
+                                startActivity(i);
+                            } else {
+                                new searchThemeRequest(getApplicationContext()).execute(key);
+                            }
                         }
                     }
+                } else {
+                    finish();
+                    //      Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                finish();
-                //      Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
@@ -656,50 +677,58 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
         }
 
         protected void onPostExecute(String content) {
-            if (error) {
-                if (content != null && content.contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            finish();
+            try {
+                if (error) {
+                    if (content != null && content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                finish();
+                            } else {
+                                new searchThemeRequest(mContext).execute(key);
+                            }
                         } else {
-                            new searchThemeRequest(mContext).execute(key);
+                            finish();
                         }
                     } else {
-                        finish();
+                        registerGroup();
                     }
                 } else {
                     registerGroup();
-                }
-            } else {
-                registerGroup();
 
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
     }
 
     public void registerGroup() {
-        progressBar.setProgress(90);
-        IntervalDB db = new IntervalDB(getApplicationContext());
-        db.open();
-        Cursor cursor = db.getSingleContact(12);
-        if (cursor.getCount() > 0) {
-            db.deleteContact(12);
+        try {
+            progressBar.setProgress(90);
+            IntervalDB db = new IntervalDB(getApplicationContext());
+            db.open();
+            Cursor cursor = db.getSingleContact(12);
+            if (cursor.getCount() > 0) {
+                db.deleteContact(12);
+            }
+            cursor.close();
+            Interval interval = new Interval();
+            interval.setId(12);
+            interval.setTime("Finalizing");
+            db.createContact(interval);
+            db.close();
+            finish();
+            Intent i = new Intent();
+            i.setClass(getApplicationContext(), MainActivityNew.class);
+            startActivity(i);
+
+            cursor.close();
+            db.close();
+
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        cursor.close();
-        Interval interval = new Interval();
-        interval.setId(12);
-        interval.setTime("Finalizing");
-        db.createContact(interval);
-        db.close();
-        finish();
-        Intent i = new Intent();
-        i.setClass(getApplicationContext(), MainActivityNew.class);
-        startActivity(i);
-
-        cursor.close();
-        db.close();
-
     }
 }

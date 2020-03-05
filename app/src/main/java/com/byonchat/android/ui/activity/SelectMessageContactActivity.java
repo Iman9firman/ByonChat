@@ -17,6 +17,8 @@ import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.list.IconItem;
 import com.byonchat.android.utils.RefreshContactService;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class SelectMessageContactActivity extends SelectBaseMessageContactActivity {
 
     public static Intent generateIntent(Context context, String color, String colorText) {
@@ -53,11 +55,15 @@ public class SelectMessageContactActivity extends SelectBaseMessageContactActivi
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter f = new IntentFilter(
-                MessengerConnectionService.ACTION_STATUS_CHANGED);
-        f.addAction(RefreshContactService.ACTION_CONTACT_REFRESHED);
-        f.setPriority(1);
-        registerReceiver(broadcastHandler, f);
+        try {
+            IntentFilter f = new IntentFilter(
+                    MessengerConnectionService.ACTION_STATUS_CHANGED);
+            f.addAction(RefreshContactService.ACTION_CONTACT_REFRESHED);
+            f.setPriority(1);
+            registerReceiver(broadcastHandler, f);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -65,8 +71,6 @@ public class SelectMessageContactActivity extends SelectBaseMessageContactActivi
         IconItem chat = new IconItem(jabberID, "pershop", "", "08.00", null);
         openConversation(view, chat);
     }
-
-
 
     @Override
     protected void onPause() {

@@ -16,6 +16,8 @@ import com.squareup.picasso.Target;
 
 import me.gujun.android.taggroup.TagGroup;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ByonchatApprovalDocViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
         View.OnLongClickListener {
 
@@ -62,29 +64,41 @@ public class ByonchatApprovalDocViewHolder extends RecyclerView.ViewHolder imple
     }
 
     protected void loadConfig() {
-        selectionBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_divider_light));
-        selectionBackground.setAlpha(51);
-        selectionChecked = ContextCompat.getColor(itemView.getContext(), android.R.color.black);
-        downloadedBackground = ContextCompat.getColor(itemView.getContext(), android.R.color.holo_blue_dark);
-        downloadingBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_downloading_transparent));
+        try {
+            selectionBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_divider_light));
+            selectionBackground.setAlpha(51);
+            selectionChecked = ContextCompat.getColor(itemView.getContext(), android.R.color.black);
+            downloadedBackground = ContextCompat.getColor(itemView.getContext(), android.R.color.holo_blue_dark);
+            downloadingBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_downloading_transparent));
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onClick(View v) {
-        int position = getAdapterPosition();
-        if (position >= 0) {
-            itemClickListener.onItemClick(v, position);
+        try {
+            int position = getAdapterPosition();
+            if (position >= 0) {
+                itemClickListener.onItemClick(v, position);
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public boolean onLongClick(View v) {
-        if (longItemClickListener != null) {
-            int position = getAdapterPosition();
-            if (position >= 0) {
-                longItemClickListener.onLongItemClick(v, position);
+        try {
+            if (longItemClickListener != null) {
+                int position = getAdapterPosition();
+                if (position >= 0) {
+                    longItemClickListener.onLongItemClick(v, position);
+                }
+                return true;
             }
-            return true;
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
         return false;
     }

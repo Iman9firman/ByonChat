@@ -17,6 +17,8 @@ import com.squareup.picasso.Target;
 
 import me.gujun.android.taggroup.TagGroup;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
         View.OnLongClickListener {
 
@@ -70,11 +72,15 @@ public class ByonchatPDFViewHolder extends RecyclerView.ViewHolder implements Vi
     }
 
     protected void loadConfig() {
-        selectionBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_divider_light));
-        selectionBackground.setAlpha(51);
-        selectionChecked = ContextCompat.getColor(itemView.getContext(), android.R.color.black);
-        downloadedBackground = ContextCompat.getColor(itemView.getContext(), android.R.color.holo_blue_dark);
-        downloadingBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_downloading_transparent));
+        try {
+            selectionBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_divider_light));
+            selectionBackground.setAlpha(51);
+            selectionChecked = ContextCompat.getColor(itemView.getContext(), android.R.color.black);
+            downloadedBackground = ContextCompat.getColor(itemView.getContext(), android.R.color.holo_blue_dark);
+            downloadingBackground = new ColorDrawable(ContextCompat.getColor(itemView.getContext(), R.color.byonchat_downloading_transparent));
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override

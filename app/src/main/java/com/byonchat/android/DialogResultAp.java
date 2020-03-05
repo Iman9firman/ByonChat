@@ -26,6 +26,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
@@ -49,48 +51,48 @@ public class DialogResultAp extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_frame, container, false);
-        listView = (ListView) dialog.findViewById(R.id.listview);
-        mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
-        emptyList = (TextView) dialog.findViewById(R.id.emptyList);
-        mProceed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    getDialog().dismiss();
+        try {
+            listView = (ListView) dialog.findViewById(R.id.listview);
+            mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
+            emptyList = (TextView) dialog.findViewById(R.id.emptyList);
+            mProceed.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
                 }
-            }
-        });
-        ArrayList<User> arrayOfUsers = new ArrayList<User>();
-        UsersAdapter adapter = new UsersAdapter(getActivity(), arrayOfUsers);
-        if(!result.contains("[")){
-            listView.setVisibility(View.INVISIBLE);
+            });
+            ArrayList<User> arrayOfUsers = new ArrayList<User>();
+            UsersAdapter adapter = new UsersAdapter(getActivity(), arrayOfUsers);
+            if (!result.contains("[")) {
+                listView.setVisibility(View.INVISIBLE);
 
-            emptyList.setVisibility(View.VISIBLE);
-            emptyList.setText(result);
-        }else {
-            listView.setVisibility(View.VISIBLE);
-            emptyList.setVisibility(View.GONE);
-            try {
-                JSONArray jsonArray = new JSONArray(result);
-                for(int i = 0; i < jsonArray.length(); i++){
-                    JSONObject c = jsonArray.getJSONObject(i);
-                    String title = c.getString("nama_maskapai")+ " ( "+c.getString("kode_penerbangan") +" )";
-                    String desc = c.getString("tujuan_penerbangan")+"\n"+c.getString("terminal_pintu")+"\n"+c.getString("waktu");
-                    String logo = c.getString("logo_maskapai");
-                    User user2 = new User(title,desc,logo);
-                    adapter.add(user2);
+                emptyList.setVisibility(View.VISIBLE);
+                emptyList.setText(result);
+            } else {
+                listView.setVisibility(View.VISIBLE);
+                emptyList.setVisibility(View.GONE);
+                try {
+                    JSONArray jsonArray = new JSONArray(result);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject c = jsonArray.getJSONObject(i);
+                        String title = c.getString("nama_maskapai") + " ( " + c.getString("kode_penerbangan") + " )";
+                        String desc = c.getString("tujuan_penerbangan") + "\n" + c.getString("terminal_pintu") + "\n" + c.getString("waktu");
+                        String logo = c.getString("logo_maskapai");
+                        User user2 = new User(title, desc, logo);
+                        adapter.add(user2);
 
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+
+                listView.setAdapter(adapter);
             }
-
-            listView.setAdapter(adapter);
-
-
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-
         return dialog;
     }
 
@@ -104,11 +106,14 @@ public class DialogResultAp extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        Dialog dialog = getDialog();
-        if (dialog != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+        try {
+            Dialog dialog = getDialog();
+            if (dialog != null) {
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -116,7 +121,6 @@ public class DialogResultAp extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         result = getArguments().getString("result");
-
     }
 
     public class User {

@@ -310,13 +310,18 @@ public class AddBottomCatalogue extends Activity {
     }
 
     public Bitmap createBitmapFromView(View v) {
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-        v.setLayoutParams(params);
-        v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+        try {
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            v.setLayoutParams(params);
+            v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
+
         Bitmap bitmap = Bitmap.createBitmap(v.getMeasuredWidth(),
                 v.getMeasuredHeight(),
                 Bitmap.Config.ARGB_8888);
@@ -328,12 +333,16 @@ public class AddBottomCatalogue extends Activity {
     }
 
     private void nextToDownload(String path_card){
-        rdialog.dismiss();
-        Intent intent = new Intent(this, DownloadFileByonchat.class);
-        intent.putExtra("add_merge",path_card);
-        intent.putExtra("path", getIntent().getStringExtra("path"));
-        intent.putExtra("nama_file", getIntent().getStringExtra("nama_file"));
-        startActivity(intent);
-        finish();
+        try {
+            rdialog.dismiss();
+            Intent intent = new Intent(this, DownloadFileByonchat.class);
+            intent.putExtra("add_merge", path_card);
+            intent.putExtra("path", getIntent().getStringExtra("path"));
+            intent.putExtra("nama_file", getIntent().getStringExtra("nama_file"));
+            startActivity(intent);
+            finish();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 }

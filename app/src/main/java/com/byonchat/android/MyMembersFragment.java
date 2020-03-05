@@ -58,6 +58,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Iman Firmansyah on 1/5/2015.
  */
@@ -91,40 +93,41 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.my_members_main, container, false);
-        lv = (ListView) rootView.findViewById(R.id.list);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(this);
+        try {
+            lv = (ListView) rootView.findViewById(R.id.list);
+            progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+            swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+            swipeRefreshLayout.setOnRefreshListener(this);
 
-        requestMemberCard = new RequestMemberCard(mContext);
+            requestMemberCard = new RequestMemberCard(mContext);
 
-        if (dbhelper == null) {
-            dbhelper = MessengerDatabaseHelper.getInstance(mContext);
-        }
-        if (membersDB == null) {
-            membersDB = new MembersDB(mContext);
-        }
-        contact = dbhelper.getMyContact();
-
-        membersDB.open();
-        listItem = membersDB.retriveallMembers();
-        membersDB.close();
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
-                String idList = listItem.get(position).getId_card();
-                if (!idList.equalsIgnoreCase("")) {
-                    Intent intent = new Intent(mContext, MemberDetailActivity.class);
-                    intent.putExtra(MemberDetailActivity.KEY_MEMBERS_ID, idList);
-                    intent.putExtra(MemberDetailActivity.KEY_MEMBERS_NAME, listItem.get(position).getName());
-                    intent.putExtra(MemberDetailActivity.KEY_MEMBERS_COLOR, "#" + listItem.get(position).getColor_code());
-                    startActivity(intent);
-                }
+            if (dbhelper == null) {
+                dbhelper = MessengerDatabaseHelper.getInstance(mContext);
             }
-        });
+            if (membersDB == null) {
+                membersDB = new MembersDB(mContext);
+            }
+            contact = dbhelper.getMyContact();
+
+            membersDB.open();
+            listItem = membersDB.retriveallMembers();
+            membersDB.close();
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
+                    String idList = listItem.get(position).getId_card();
+                    if (!idList.equalsIgnoreCase("")) {
+                        Intent intent = new Intent(mContext, MemberDetailActivity.class);
+                        intent.putExtra(MemberDetailActivity.KEY_MEMBERS_ID, idList);
+                        intent.putExtra(MemberDetailActivity.KEY_MEMBERS_NAME, listItem.get(position).getName());
+                        intent.putExtra(MemberDetailActivity.KEY_MEMBERS_COLOR, "#" + listItem.get(position).getColor_code());
+                        startActivity(intent);
+                    }
+                }
+            });
 
 
-        if (listItem.size()==0){
+            if (listItem.size() == 0) {
             /*Thread splashTread = new Thread() {
                 @Override
                 public void run() {
@@ -148,28 +151,40 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
                 requestMemberCard.execute(key);
             }*/
 
-        }else{
-            refreshList();
+            } else {
+                refreshList();
+            }
+            setHasOptionsMenu(true);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        setHasOptionsMenu(true);
+
         return rootView;
     }
 
     @Override
     public void onResume() {
-        refreshList();
-        IntentFilter f = new IntentFilter(MessengerConnectionService.ACTION_ADD_CARD);
-        f.setPriority(1);
-        mContext.registerReceiver(broadcastHandler, f);
-        ((NotificationManager) mContext.getSystemService(mContext.NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+        try {
+            refreshList();
+            IntentFilter f = new IntentFilter(MessengerConnectionService.ACTION_ADD_CARD);
+            f.setPriority(1);
+            mContext.registerReceiver(broadcastHandler, f);
+            ((NotificationManager) mContext.getSystemService(mContext.NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        mContext.unregisterReceiver(broadcastHandler);
-        requestMemberCard.cancel(true);
+        try {
+            mContext.unregisterReceiver(broadcastHandler);
+            requestMemberCard.cancel(true);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         super.onPause();
     }
 
@@ -177,8 +192,11 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // TODO Auto-generated method stub
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_members, menu);
-
+        try {
+            inflater.inflate(R.menu.menu_members, menu);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -194,45 +212,55 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void requestKey() {
-        RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-            @Override
-            public void onTaskDone(String key) {
-                if (key.equalsIgnoreCase("null")){
-                    swipeRefreshLayout.setRefreshing(false);
-                   // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                }else{
-                    requestMemberCard = new RequestMemberCard(mContext);
-                    requestMemberCard.execute(key);
+        try {
+            RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                @Override
+                public void onTaskDone(String key) {
+                    if (key.equalsIgnoreCase("null")) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                    } else {
+                        requestMemberCard = new RequestMemberCard(mContext);
+                        requestMemberCard.execute(key);
+                    }
+                }
+            }, mContext);
+
+            testAsyncTask.execute();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
+    }
+
+    public void refreshList() {
+        try {
+            adapter = new ListMemberCard(mContext);
+            membersDB.open();
+            listItem = membersDB.retriveallMembers();
+            membersDB.close();
+            int count = 5 - listItem.size();
+            if (listItem.size() <= 5) {
+                for (int i = 0; i < count; i++) {
+                    ItemListMemberCard itemListMemberCard = new ItemListMemberCard("", "", "");
+                    listItem.add(itemListMemberCard);
                 }
             }
-        },mContext);
-
-        testAsyncTask.execute();
-    }
-    public void refreshList(){
-        adapter = new ListMemberCard(mContext);
-        membersDB.open();
-        listItem = membersDB.retriveallMembers();
-        membersDB.close();
-        int count  = 5 - listItem.size();
-        if (listItem.size() <= 5){
-            for (int i = 0; i < count; i++) {
-                ItemListMemberCard itemListMemberCard = new ItemListMemberCard("","","");
-                listItem.add(itemListMemberCard);
-            }
+            adapter.add(listItem);
+            adapter.notifyDataSetChanged();
+            lv.setAdapter(adapter);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        adapter.add(listItem);
-        adapter.notifyDataSetChanged();
-        lv.setAdapter(adapter);
     }
 
     @Override
     public void onRefresh() {
-        swipeRefreshLayout.post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        requestKey();
+        try {
+            swipeRefreshLayout.post(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            requestKey();
                         /*String key = new ValidationsKey().getInstance(mContext).key(false);
                         if (key.equalsIgnoreCase("null")){
                             swipeRefreshLayout.setRefreshing(false);
@@ -241,9 +269,12 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
                             requestMemberCard = new RequestMemberCard(mContext);
                             requestMemberCard.execute(key);
                         }*/
+                        }
                     }
-                }
-        );
+            );
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class RequestMemberCard extends AsyncTask<String, Void, String> {
@@ -341,32 +372,36 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         protected void onPostExecute(String content) {
-           /* progressBar.setVisibility(View.GONE);*/
-            if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
+            /* progressBar.setVisibility(View.GONE);*/
+            try {
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                swipeRefreshLayout.setRefreshing(false);
+                                //   ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
+                                // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                requestMemberCard = new RequestMemberCard(mContext);
+                                requestMemberCard.execute(key);
+                            }
+                        } else {
                             swipeRefreshLayout.setRefreshing(false);
-                         //   ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
-                           // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        }else{
-                            requestMemberCard = new RequestMemberCard(mContext);
-                            requestMemberCard.execute(key);
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
-                    }else{
+                    } else {
                         swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        //  Toast.makeText(mContext, R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     swipeRefreshLayout.setRefreshing(false);
-                  //  Toast.makeText(mContext, R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                swipeRefreshLayout.setRefreshing(false);
-              //  ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
-                refreshList();
+                    //  ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
+                    refreshList();
 
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }

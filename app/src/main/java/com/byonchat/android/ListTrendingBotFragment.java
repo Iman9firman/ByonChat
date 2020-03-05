@@ -63,6 +63,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 @SuppressLint("ValidFragment")
 public class ListTrendingBotFragment extends Fragment {
 
@@ -110,109 +112,112 @@ public class ListTrendingBotFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.list_contact_bot, container, false);
 
+        try {
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(context);
+            }
 
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(context);
-        }
+            if (roomsDB == null) {
+                roomsDB = new RoomsDB(context);
+            }
 
-        if (roomsDB == null) {
-            roomsDB = new RoomsDB(context);
-        }
+            contact = messengerHelper.getMyContact();
 
-        contact = messengerHelper.getMyContact();
+            lv = (ListView) rootView.findViewById(R.id.list_view);
+            swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+            emptyList = (TextView) rootView.findViewById(R.id.emptyList);
+            emptyList.setText("No trending rooms available.");
 
-        lv = (ListView) rootView.findViewById(R.id.list_view);
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
-        emptyList = (TextView) rootView.findViewById(R.id.emptyList);
-        emptyList.setText("No trending rooms available.");
+            swipeRefreshLayout.setColorSchemeColors(
+                    Color.GRAY, //This method will rotate
+                    Color.GRAY, //colors given to it when
+                    Color.GRAY,//loader continues to
+                    Color.GRAY);//refresh.
+            //  swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
+            swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.gray);
 
-        swipeRefreshLayout.setColorSchemeColors(
-                Color.GRAY, //This method will rotate
-                Color.GRAY, //colors given to it when
-                Color.GRAY,//loader continues to
-                Color.GRAY);//refresh.
-        //  swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
-        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.gray);
+            if (pdialog == null) {
+                pdialog = new ProgressDialog(context);
+                pdialog.setIndeterminate(true);
+                pdialog.setMessage("Loading ");
+                pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            }
 
-        if (pdialog == null) {
-            pdialog = new ProgressDialog(context);
-            pdialog.setIndeterminate(true);
-            pdialog.setMessage("Loading ");
-            pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        }
+            roomsDB.open();
+            botArrayListist = roomsDB.retrieveRooms("1");
+            roomsDB.close();
 
-        roomsDB.open();
-        botArrayListist = roomsDB.retrieveRooms("1");
-        roomsDB.close();
+            if (botArrayListist.size() > 0) {
+                refreshList();
+            } else {
+                requestKey();
+            }
 
-        if (botArrayListist.size() > 0) {
-            refreshList();
-        } else {
-            requestKey();
-        }
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.post(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                requestKey();
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    swipeRefreshLayout.post(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    requestKey();
+                                }
                             }
-                        }
-                );
-            }
-        });
-
-        lv.setClickable(true);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
-                if (Message.isJSONValid(botArrayListist.get(position).getDesc())) {
-                    JSONObject jObject = null;
-                    try {
-                        jObject = new JSONObject(botArrayListist.get(position).getDesc());
-                        String desc = jObject.getString("desc");
-                        String classs = jObject.getString("apps");
-                        final String url = jObject.getString("url");
-
-                        boolean isAppInstalled = appInstalledOrNot(classs);
-
-                        if (isAppInstalled) {
-                            Intent LaunchIntent = context.getPackageManager()
-                                    .getLaunchIntentForPackage(classs);
-                            startActivity(LaunchIntent);
-                        } else {
-                            AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
-                            alertbox.setMessage("Please Install the Plug-in first ");
-                            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    openWebPage(url);
-                                }
-
-                            });
-                            alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                }
-                            });
-                            alertbox.show();
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Intent intent = new Intent(context, ByonChatMainRoomActivity.class);
-                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    );
                 }
-            }
-        });
+            });
 
-        registerForContextMenu(lv);
-        setHasOptionsMenu(true);
+            lv.setClickable(true);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
+                    if (Message.isJSONValid(botArrayListist.get(position).getDesc())) {
+                        JSONObject jObject = null;
+                        try {
+                            jObject = new JSONObject(botArrayListist.get(position).getDesc());
+                            String desc = jObject.getString("desc");
+                            String classs = jObject.getString("apps");
+                            final String url = jObject.getString("url");
+
+                            boolean isAppInstalled = appInstalledOrNot(classs);
+
+                            if (isAppInstalled) {
+                                Intent LaunchIntent = context.getPackageManager()
+                                        .getLaunchIntentForPackage(classs);
+                                startActivity(LaunchIntent);
+                            } else {
+                                AlertDialog.Builder alertbox = new AlertDialog.Builder(context);
+                                alertbox.setMessage("Please Install the Plug-in first ");
+                                alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        openWebPage(url);
+                                    }
+
+                                });
+                                alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                    }
+                                });
+                                alertbox.show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Intent intent = new Intent(context, ByonChatMainRoomActivity.class);
+                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                }
+            });
+
+            registerForContextMenu(lv);
+            setHasOptionsMenu(true);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return rootView;
     }
 
@@ -239,45 +244,53 @@ public class ListTrendingBotFragment extends Fragment {
     }
 
     public void refreshList() {
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-                roomsDB.open();
-                botArrayListist = roomsDB.retrieveRooms("1");
-                if (botArrayListist.size() > 0) {
-                    lv.setVisibility(View.VISIBLE);
-                    emptyList.setVisibility(View.GONE);
-                } else {
-                    lv.setVisibility(View.GONE);
-                    emptyList.setVisibility(View.VISIBLE);
+        try {
+            new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
+                @Override
+                public void run() {
+                    roomsDB.open();
+                    botArrayListist = roomsDB.retrieveRooms("1");
+                    if (botArrayListist.size() > 0) {
+                        lv.setVisibility(View.VISIBLE);
+                        emptyList.setVisibility(View.GONE);
+                    } else {
+                        lv.setVisibility(View.GONE);
+                        emptyList.setVisibility(View.VISIBLE);
+                    }
+                    roomsDB.close();
+                    adapter = new BotTrendingAdapter(context, botArrayListist, show);
+                    lv.setAdapter(adapter);
+                    swipeRefreshLayout.setRefreshing(false);
                 }
-                roomsDB.close();
-                adapter = new BotTrendingAdapter(context, botArrayListist, show);
-                lv.setAdapter(adapter);
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void requestKey() {
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-                RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-                    @Override
-                    public void onTaskDone(String key) {
-                        if (key.equalsIgnoreCase("null")) {
-                            // Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        } else {
-                            requestSearchResult = new RequestSearchResult(context);
-                            requestSearchResult.execute(key);
+        try {
+            new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
+                @Override
+                public void run() {
+                    RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                        @Override
+                        public void onTaskDone(String key) {
+                            if (key.equalsIgnoreCase("null")) {
+                                // Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                requestSearchResult = new RequestSearchResult(context);
+                                requestSearchResult.execute(key);
+                            }
                         }
-                    }
-                }, context);
+                    }, context);
 
-                testAsyncTask.execute();
-            }
-        });
+                    testAsyncTask.execute();
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class RequestSearchResult extends AsyncTask<String, Void, String> {
@@ -376,30 +389,34 @@ public class ListTrendingBotFragment extends Fragment {
         }
 
         protected void onPostExecute(String content) {
-            if (error) {
-                if (content.contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            swipeRefreshLayout.setRefreshing(false);
-                            //Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+            try {
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                swipeRefreshLayout.setRefreshing(false);
+                                //Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                requestSearchResult = new RequestSearchResult(context);
+                                requestSearchResult.execute(key);
+                            }
                         } else {
-                            requestSearchResult = new RequestSearchResult(context);
-                            requestSearchResult.execute(key);
+                            swipeRefreshLayout.setRefreshing(false);
+                            // Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         swipeRefreshLayout.setRefreshing(false);
-                        // Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    swipeRefreshLayout.setRefreshing(false);
                     //Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    refreshList();
                 }
-            } else {
-                //Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
-                refreshList();
+                swipeRefreshLayout.setRefreshing(false);
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-            swipeRefreshLayout.setRefreshing(false);
         }
     }
 }

@@ -36,6 +36,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     protected static final int VIEWTYPE_ITEM_TEXT = 1;
@@ -78,77 +80,86 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int i) {
-        File item = itemsFiltered.get(i);
+        try {
+            File item = itemsFiltered.get(i);
 
-        if(item.type.equalsIgnoreCase("folder")){
-            ((ByonchatPDFViewHolder) viewHolder).vName.setText(item.title);
-            ((ByonchatPDFViewHolder) viewHolder).vTimestamp.setText(parseDateToddMMyyyy(item.timestamp));
-            ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setVisibility(View.GONE);
-            ((ByonchatPDFViewHolder) viewHolder).vBtComment.setVisibility(View.GONE);
-            ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setVisibility(View.GONE);
-            Picasso.with(context).load("https://iss.byonchat.com/adminLTE/dist/img/dir.png")
-                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatPDFViewHolder) viewHolder).vIconView);
-            ((ByonchatPDFViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
-                if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
-                }
-            });
-            ((ByonchatPDFViewHolder) viewHolder).vFramePhoto.setOnClickListener(view ->{
-                if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
-                }
-            });
-        }else {
-
-            if (viewHolder instanceof ByonchatPDFViewHolder) {
-                String title = item.title;
-
-                if (mSearchText != null && !mSearchText.isEmpty()) {
-                    int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
-                    int endPos = startPos + mSearchText.length();
-
-                    if (startPos != -1) {
-                        Spannable spannable = new SpannableString(title);
-                        ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
-                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        ((ByonchatPDFViewHolder) viewHolder).vName.setText(spannable);
-                    } else {
-                        ((ByonchatPDFViewHolder) viewHolder).vName.setText(title);
-                    }
-                } else {
-                    ((ByonchatPDFViewHolder) viewHolder).vName.setText(title);
-                }
-
-                showFileImage(viewHolder, item.url);
-                showTagView(viewHolder, item.description);
-
-
+            if (item.type.equalsIgnoreCase("folder")) {
+                ((ByonchatPDFViewHolder) viewHolder).vName.setText(item.title);
                 ((ByonchatPDFViewHolder) viewHolder).vTimestamp.setText(parseDateToddMMyyyy(item.timestamp));
-
-                ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setVisibility(View.VISIBLE);
-                ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.subtitle));
-
+                ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setVisibility(View.GONE);
+                ((ByonchatPDFViewHolder) viewHolder).vBtComment.setVisibility(View.GONE);
+                ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setVisibility(View.GONE);
+                Picasso.with(context).load("https://iss.byonchat.com/adminLTE/dist/img/dir.png")
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatPDFViewHolder) viewHolder).vIconView);
+                ((ByonchatPDFViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
+                    if (onPreviewItemClickListener != null) {
+                        onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
+                    }
+                });
                 ((ByonchatPDFViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
                     if (onPreviewItemClickListener != null) {
                         onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
                     }
                 });
+            } else {
 
-                ((ByonchatPDFViewHolder) viewHolder).vMainContent.setOnClickListener(view ->{});
+                if (viewHolder instanceof ByonchatPDFViewHolder) {
+                    String title = item.title;
 
-                ((ByonchatPDFViewHolder) viewHolder).vBtComment.setVisibility(View.VISIBLE);
-                ((ByonchatPDFViewHolder) viewHolder).vBtComment.setOnClickListener(view -> {
-                    if (onRequestItemClickListener != null) {
-                        onRequestItemClickListener.onItemClick(view, i, (File) getData().get(i));
+                    if (mSearchText != null && !mSearchText.isEmpty()) {
+                        int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
+                        int endPos = startPos + mSearchText.length();
+
+                        if (startPos != -1) {
+                            Spannable spannable = new SpannableString(title);
+                            ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                            TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                            spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            ((ByonchatPDFViewHolder) viewHolder).vName.setText(spannable);
+                        } else {
+                            ((ByonchatPDFViewHolder) viewHolder).vName.setText(title);
+                        }
+                    } else {
+                        ((ByonchatPDFViewHolder) viewHolder).vName.setText(title);
                     }
-                });
+
+                    showFileImage(viewHolder, item.url);
+                    showTagView(viewHolder, item.description);
+
+
+                    ((ByonchatPDFViewHolder) viewHolder).vTimestamp.setText(parseDateToddMMyyyy(item.timestamp));
+
+                    ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setVisibility(View.VISIBLE);
+                    ((ByonchatPDFViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.subtitle));
+
+                    ((ByonchatPDFViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
+                        if (onPreviewItemClickListener != null) {
+                            onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
+                        }
+                    });
+
+                    ((ByonchatPDFViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
+                    });
+
+                    ((ByonchatPDFViewHolder) viewHolder).vBtComment.setVisibility(View.VISIBLE);
+                    ((ByonchatPDFViewHolder) viewHolder).vBtComment.setOnClickListener(view -> {
+                        if (onRequestItemClickListener != null) {
+                            onRequestItemClickListener.onItemClick(view, i, (File) getData().get(i));
+                        }
+                    });
+                }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void showFileImage(RecyclerView.ViewHolder viewHolder, String thumbnail) {
-        Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/public/list_attachment/icon-pdf.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatPDFViewHolder) viewHolder).vIconView);
+        try {
+            Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/public/list_attachment/icon-pdf.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatPDFViewHolder) viewHolder).vIconView);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -165,22 +176,27 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            reportCatch(e.getLocalizedMessage());
         }
         return tagList.toArray(new String[]{});
     }
 
     private void showTagView(RecyclerView.ViewHolder viewHolder, String item) {
-        String[] tags = getTagView(item) /*null*/;
+        try {
+            String[] tags = getTagView(item) /*null*/;
 
-        if (tags != null && tags.length > 0) {
-            ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setVisibility(View.VISIBLE);
-            ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setTags(tags);
+            if (tags != null && tags.length > 0) {
+                ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setVisibility(View.VISIBLE);
+                ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setTags(tags);
+            }
+
+            ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setOnTagClickListener(s -> {
+                /*Toast.makeText(context, s, Toast.LENGTH_SHORT).show();*/
+                getFilter2().filter(s);
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        ((ByonchatPDFViewHolder) viewHolder).vTagGroup.setOnTagClickListener(s -> {
-            /*Toast.makeText(context, s, Toast.LENGTH_SHORT).show();*/
-            getFilter2().filter(s);
-        });
     }
 
     public List<File> getData() {
@@ -387,7 +403,6 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public String parseDateToddMMyyyy(String time) {
         String inputPattern = "yyyy-MM-dd HH:mm:ss";
-//        String outputPattern = "dd-MMM-yyyy h:mm a";
         String outputPattern = "hh:mm:ss dd-MMM-yyyy";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);

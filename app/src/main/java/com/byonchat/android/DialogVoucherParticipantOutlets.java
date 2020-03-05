@@ -51,6 +51,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
@@ -86,50 +88,54 @@ public class DialogVoucherParticipantOutlets extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_voucher_participant_outlets, container, false);
-        mlinear_name = (FrameLayout) dialog.findViewById(R.id.linear_name);
-        mTitle = (TextView) dialog.findViewById(R.id.name);
-        mClose = (Button) dialog.findViewById(R.id.btn_cancel);
-        mListHtmlParticipant = (TextView) dialog.findViewById(R.id.list_html_participant);
-        linlaHeaderProgress = (LinearLayout) dialog.findViewById(R.id.linlaHeaderProgress);
+        try {
+            mlinear_name = (FrameLayout) dialog.findViewById(R.id.linear_name);
+            mTitle = (TextView) dialog.findViewById(R.id.name);
+            mClose = (Button) dialog.findViewById(R.id.btn_cancel);
+            mListHtmlParticipant = (TextView) dialog.findViewById(R.id.list_html_participant);
+            linlaHeaderProgress = (LinearLayout) dialog.findViewById(R.id.linlaHeaderProgress);
 
-        String color = "";
-        if(bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")){
-            color = "1e8cc4";
-        }else{
-            color = bgcolor;
-        }
-
-        GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
-        drawable.setColor(Color.parseColor("#"+color));
-
-        String txtcolor = "";
-        if(textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")){
-            txtcolor = "ffffff";
-        }else{
-            txtcolor = textcolor;
-        }
-
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(context);
-        }
-        if (context == null) {
-            context = getActivity().getApplicationContext();
-        }
-        contact = messengerHelper.getMyContact();
-
-        mTitle.setText("Participant Outlets");
-        mTitle.setTextColor(Color.parseColor("#"+txtcolor));
-        mClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    getDialog().dismiss();
-                }
+            String color = "";
+            if (bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")) {
+                color = "1e8cc4";
+            } else {
+                color = bgcolor;
             }
-        });
 
-        requestParticipantOutlets = new RequestParticipantOutlets(context);
-        requestKey();
+            GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
+            drawable.setColor(Color.parseColor("#" + color));
+
+            String txtcolor = "";
+            if (textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")) {
+                txtcolor = "ffffff";
+            } else {
+                txtcolor = textcolor;
+            }
+
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(context);
+            }
+            if (context == null) {
+                context = getActivity().getApplicationContext();
+            }
+            contact = messengerHelper.getMyContact();
+
+            mTitle.setText("Participant Outlets");
+            mTitle.setTextColor(Color.parseColor("#" + txtcolor));
+            mClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
+                }
+            });
+
+            requestParticipantOutlets = new RequestParticipantOutlets(context);
+            requestKey();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return dialog;
     }
 
@@ -164,18 +170,22 @@ public class DialogVoucherParticipantOutlets extends DialogFragment {
     }
 
     private void requestKey() {
-        RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-            @Override
-            public void onTaskDone(String key) {
-                if (key.equalsIgnoreCase("null")) {
-                } else {
-                    requestParticipantOutlets = new RequestParticipantOutlets(context);
-                    requestParticipantOutlets.execute(key);
+        try {
+            RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                @Override
+                public void onTaskDone(String key) {
+                    if (key.equalsIgnoreCase("null")) {
+                    } else {
+                        requestParticipantOutlets = new RequestParticipantOutlets(context);
+                        requestParticipantOutlets.execute(key);
+                    }
                 }
-            }
-        }, getActivity());
+            }, getActivity());
 
-        testAsyncTask.execute();
+            testAsyncTask.execute();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class BroadcastHandler extends BroadcastReceiver {
@@ -271,34 +281,38 @@ public class DialogVoucherParticipantOutlets extends DialogFragment {
         }
 
         protected void onPostExecute(String content) {
-            linlaHeaderProgress.setVisibility(View.GONE);
-            if (error) {
-                if (content.toString().contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+            try {
+                linlaHeaderProgress.setVisibility(View.GONE);
+                if (error) {
+                    if (content.toString().contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                requestParticipantOutlets = new RequestParticipantOutlets(getContext());
+                                requestParticipantOutlets.execute(key);
+                            }
                         } else {
-                            requestParticipantOutlets = new RequestParticipantOutlets(getContext());
-                            requestParticipantOutlets.execute(key);
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, content.toString(), Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(mContext, content.toString(), Toast.LENGTH_LONG).show();
-                }
-            } else {
-                mListHtmlParticipant.setVisibility(View.VISIBLE);
-                try {
-                    JSONObject result = new JSONObject(content);
-                    String tnc = result.optString("tnc");
-                    String extra = result.optString("extra");
+                    mListHtmlParticipant.setVisibility(View.VISIBLE);
+                    try {
+                        JSONObject result = new JSONObject(content);
+                        String tnc = result.optString("tnc");
+                        String extra = result.optString("extra");
 
-                    mListHtmlParticipant.setText(Html.fromHtml(extra));
-                } catch (JSONException E) {
-                    E.printStackTrace();
+                        mListHtmlParticipant.setText(Html.fromHtml(extra));
+                    } catch (JSONException E) {
+                        E.printStackTrace();
+                    }
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }

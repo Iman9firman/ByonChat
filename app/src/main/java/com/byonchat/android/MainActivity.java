@@ -55,6 +55,8 @@ import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener/*,ServiceConnection */ {
 
@@ -218,8 +220,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             initBackground(getResources().getString(R.string.tabtitle_rooms), color);
             setupTabIconsOnly();
             tabLayout.setOnTabSelectedListener(onTabSelectedListener(viewPager));
-        } catch (Exception e) {
-            Log.w("lij", e.toString());
+        }  catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -234,16 +236,20 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     @Override
     protected void onResume() {
         super.onResume();
-        IntentFilter f = new IntentFilter(
-                MainActivity.ACTION_REFRESH_BADGER);
-        f.addAction(MainActivity.ACTION_REFRESH_NOTIF);
-        f.setPriority(1);
-        registerReceiver(broadcastHandler, f);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID_CARD);
-        addShortcutBadger(getApplicationContext());
+        try {
+            IntentFilter f = new IntentFilter(
+                    MainActivity.ACTION_REFRESH_BADGER);
+            f.addAction(MainActivity.ACTION_REFRESH_NOTIF);
+            f.setPriority(1);
+            registerReceiver(broadcastHandler, f);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+            addShortcutBadger(getApplicationContext());
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void onDestroy() {
@@ -251,12 +257,16 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     }
 
     private void setupTabIconsOnly() {
-        tabLayout.getTabAt(0).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_rooms, 0)).setTag(TABTAG_ROOMS).select();
-        tabLayout.getTabAt(1).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_contact, 0)).setTag(TABTAG_CONTACT);
-        tabLayout.getTabAt(2).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_chats, 0)).setTag(TABTAG_CHAT);
-        tabLayout.getTabAt(3).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_members, 0)).setTag(TABTAG_MYMEMBERS);
-        tabLayout.getTabAt(4).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_offers, 0)).setTag(TABTAG_OFFERS);
-        updateColorTab(0, color);
+        try {
+            tabLayout.getTabAt(0).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_rooms, 0)).setTag(TABTAG_ROOMS).select();
+            tabLayout.getTabAt(1).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_contact, 0)).setTag(TABTAG_CONTACT);
+            tabLayout.getTabAt(2).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_chats, 0)).setTag(TABTAG_CHAT);
+            tabLayout.getTabAt(3).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_members, 0)).setTag(TABTAG_MYMEMBERS);
+            tabLayout.getTabAt(4).setCustomView(TabsUtils.renderTabView(MainActivity.this, R.drawable.tab_offers, 0)).setTag(TABTAG_OFFERS);
+            updateColorTab(0, color);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private TabLayout.OnTabSelectedListener onTabSelectedListener(final ViewPager pager) {
@@ -318,13 +328,17 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     }
 
     private void initBackground(String title, int color) {
-        toolbar.setTitle(title);
-        Bitmap back_default = FilteringImage.headerColor(getWindow(), MainActivity.this, color);
-        Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            toolbar.setBackground(back_draw_default);
-        } else {
-            toolbar.setBackgroundDrawable(back_draw_default);
+        try {
+            toolbar.setTitle(title);
+            Bitmap back_default = FilteringImage.headerColor(getWindow(), MainActivity.this, color);
+            Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                toolbar.setBackground(back_draw_default);
+            } else {
+                toolbar.setBackgroundDrawable(back_draw_default);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -335,35 +349,39 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     }
 
     private void setupViewPager(final ViewPager viewPager) {
-        adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new MainFragmentRoom(context), "rooms");
-        adapter.addFrag(new MainFragmentContact(context), "contact");
-        adapter.addFrag(new ListHistoryChatFragment(MainActivity.this), "chats");
-        adapter.addFrag(new MyMembersFragment(context), "members");
-        adapter.addFrag(new MainFragmentOffers(context), "offers");
+        try {
+            adapter = new ViewPagerAdapter(getSupportFragmentManager());
+            adapter.addFrag(new MainFragmentRoom(context), "rooms");
+            adapter.addFrag(new MainFragmentContact(context), "contact");
+            adapter.addFrag(new ListHistoryChatFragment(MainActivity.this), "chats");
+            adapter.addFrag(new MyMembersFragment(context), "members");
+            adapter.addFrag(new MainFragmentOffers(context), "offers");
 
 
-        viewPager.setAdapter(adapter);
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                //hanya yang
-                ListHistoryChatFragment frag1 = (ListHistoryChatFragment) adapter.mFragmentList.get(2);
-                frag1.finishActionMode();
-            }
+            viewPager.setAdapter(adapter);
+            viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    //hanya yang
+                    ListHistoryChatFragment frag1 = (ListHistoryChatFragment) adapter.mFragmentList.get(2);
+                    frag1.finishActionMode();
+                }
 
-            @Override
-            public void onPageSelected(int position) {
+                @Override
+                public void onPageSelected(int position) {
 
-            }
+                }
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
+                @Override
+                public void onPageScrollStateChanged(int state) {
 
-            }
-        });
+                }
+            });
 
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -414,36 +432,43 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     }
 
     public void updateColorTab(int position, int color) {
-        for (int i = 0; i < tabLayout.getTabCount(); i++) {
-            if (i == position) {
-                TabsUtils.updateColor(tabLayout.getTabAt(i), selectorBackgroundColor(context, color));
-            } else {
-                TabsUtils.updateColor(tabLayout.getTabAt(i), selectorBackgroundColor(context, getApplicationContext().getResources().getColor(R.color.gray)));
+        try {
+            for (int i = 0; i < tabLayout.getTabCount(); i++) {
+                if (i == position) {
+                    TabsUtils.updateColor(tabLayout.getTabAt(i), selectorBackgroundColor(context, color));
+                } else {
+                    TabsUtils.updateColor(tabLayout.getTabAt(i), selectorBackgroundColor(context, getApplicationContext().getResources().getColor(R.color.gray)));
+                }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     public void addShortcutBadger(Context context) {
-
-        int badgeCount = 0;
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(this);
-        }
-        Cursor cursor = messengerHelper.query(
-                SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
-                new String[]{String.valueOf(Message.STATUS_UNREAD)});
-        int indexTotal = cursor.getColumnIndex("total");
-        while (cursor.moveToNext()) {
-            badgeCount = cursor.getInt(indexTotal);
-        }
-        cursor.close();
-
-        ShortcutBadger.applyCount(context, badgeCount);
-        //blm material
-        if (tabLayout != null) {
-            if (tabLayout.getTabAt(2) != null) {
-                TabsUtils.updateTabBadge(tabLayout.getTabAt(2), badgeCount);
+        try {
+            int badgeCount = 0;
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(this);
             }
+            Cursor cursor = messengerHelper.query(
+                    SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
+                    new String[]{String.valueOf(Message.STATUS_UNREAD)});
+            int indexTotal = cursor.getColumnIndex("total");
+            while (cursor.moveToNext()) {
+                badgeCount = cursor.getInt(indexTotal);
+            }
+            cursor.close();
+
+            ShortcutBadger.applyCount(context, badgeCount);
+            //blm material
+            if (tabLayout != null) {
+                if (tabLayout.getTabAt(2) != null) {
+                    TabsUtils.updateTabBadge(tabLayout.getTabAt(2), badgeCount);
+                }
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -469,13 +494,17 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     }
 
     public void kelar() {
-        if (((FragmentDrawer) drawerFragment).mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            ((FragmentDrawer) drawerFragment).mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            ListHistoryChatFragment frag1 = (ListHistoryChatFragment) adapter.mFragmentList.get(2);
-            if (!frag1.finishActionModeBoolean()) {
-                finish();
+        try {
+            if (((FragmentDrawer) drawerFragment).mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                ((FragmentDrawer) drawerFragment).mDrawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                ListHistoryChatFragment frag1 = (ListHistoryChatFragment) adapter.mFragmentList.get(2);
+                if (!frag1.finishActionModeBoolean()) {
+                    finish();
+                }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 }

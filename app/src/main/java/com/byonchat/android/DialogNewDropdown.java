@@ -62,6 +62,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
@@ -100,57 +102,62 @@ public class DialogNewDropdown extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_form_child_layout, container, false);
+        try {
+            mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
+            mCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+            lParent = (LinearLayout) dialog.findViewById(R.id.linear);
+            loading = (ProgressBar) dialog.findViewById(R.id.loading);
 
-        mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
-        mCancel = (Button) dialog.findViewById(R.id.btn_cancel);
-        lParent = (LinearLayout) dialog.findViewById(R.id.linear);
-        loading = (ProgressBar) dialog.findViewById(R.id.loading);
+            loading.setVisibility(View.VISIBLE);
 
-        loading.setVisibility(View.VISIBLE);
+            mProceed.setText("Save ");
 
-        mProceed.setText("Save ");
-
-        mProceed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!setjson().contains("--Please Select--")) {
-                    listener.submitted(setjson());
-                    dismiss();
-                } else {
-                    Toast.makeText(getContext(), "Harap isi semua field", Toast.LENGTH_SHORT).show();
+            mProceed.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!setjson().contains("--Please Select--")) {
+                        listener.submitted(setjson());
+                        dismiss();
+                    } else {
+                        Toast.makeText(getContext(), "Harap isi semua field", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-        });
+            });
 
-        mCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
-
+            mCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return dialog;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        if (new Validations().getInstance(getActivity()).getCars() != null) {
-            try {
-                JSONArray jsonArray = new JSONArray(new Validations().getInstance(getActivity()).getCars());
-                if (jsonArray.length() > 0) {
-                    buildDropdown(jsonArray.toString());
-                } else {
-                    Toast.makeText(getContext(), "Tidak Ada data Mobil", Toast.LENGTH_SHORT).show();
+        try {
+            if (new Validations().getInstance(getActivity()).getCars() != null) {
+                try {
+                    JSONArray jsonArray = new JSONArray(new Validations().getInstance(getActivity()).getCars());
+                    if (jsonArray.length() > 0) {
+                        buildDropdown(jsonArray.toString());
+                    } else {
+                        Toast.makeText(getContext(), "Tidak Ada data Mobil", Toast.LENGTH_SHORT).show();
+                    }
+                    return;
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                return;
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-        }
 
-        new getCars(getActivity()).execute("https://hondaikb.byonchat.com/bc_voucher_client/webservice/list_api/honda/convert_json_api_gzip.php", kodeDealer);
+            new getCars(getActivity()).execute("https://hondaikb.byonchat.com/bc_voucher_client/webservice/list_api/honda/convert_json_api_gzip.php", kodeDealer);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -272,11 +279,14 @@ public class DialogNewDropdown extends DialogFragment {
             } catch (ConnectTimeoutException e) {
                 e.printStackTrace();
                 error = "Tolong periksa koneksi internet3.";
+                reportCatch(e.getLocalizedMessage());
             } catch (ClientProtocolException e) {
                 // TODO Auto-generated catch block
                 error = "Tolong periksa koneksi internet4.";
+                reportCatch(e.getLocalizedMessage());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+                reportCatch(e.getLocalizedMessage());
                 error = "Tolong periksa koneksi internet5.";
             }
         }
@@ -300,279 +310,286 @@ public class DialogNewDropdown extends DialogFragment {
     }
 
     private void buildDropdown(String json) throws JSONException {
-        Model modelz = new Model("--Please Select--", "0", "0");
-        v1.clear();
-        v2.clear();
-        v3.clear();
-        v4.clear();
-        v5.clear();
-        v1.add(modelz);
-        v2.add(modelz);
-        v3.add(modelz);
-        v4.add(modelz);
-        v5.add(modelz);
+        try {
+            Model modelz = new Model("--Please Select--", "0", "0");
+            v1.clear();
+            v2.clear();
+            v3.clear();
+            v4.clear();
+            v5.clear();
+            v1.add(modelz);
+            v2.add(modelz);
+            v3.add(modelz);
+            v4.add(modelz);
+            v5.add(modelz);
 
-        JSONArray jsonArray = new JSONArray(json);
-        for (int i = 0; i < jsonArray.length(); i++) {
-            String model = jsonArray.getJSONObject(i).getString("model").toString();
-            JSONArray jsonArrayModel = new JSONArray(jsonArray.getJSONObject(i).getString("value"));
-            Model model1 = new Model(model, i + "", i + ""); //Model
-            v1.add(model1);
+            JSONArray jsonArray = new JSONArray(json);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String model = jsonArray.getJSONObject(i).getString("model").toString();
+                JSONArray jsonArrayModel = new JSONArray(jsonArray.getJSONObject(i).getString("value"));
+                Model model1 = new Model(model, i + "", i + ""); //Model
+                v1.add(model1);
 
-            for (int ii = 0; ii < jsonArrayModel.length(); ii++) {
-                String type = jsonArrayModel.getJSONObject(ii).getString("tipe").toString();
-                JSONArray jsonArrayType = new JSONArray(jsonArrayModel.getJSONObject(ii).getString("value"));
-                Model type1 = new Model(type, ii + "", model); //Type
-                v2.add(type1);
+                for (int ii = 0; ii < jsonArrayModel.length(); ii++) {
+                    String type = jsonArrayModel.getJSONObject(ii).getString("tipe").toString();
+                    JSONArray jsonArrayType = new JSONArray(jsonArrayModel.getJSONObject(ii).getString("value"));
+                    Model type1 = new Model(type, ii + "", model); //Type
+                    v2.add(type1);
 
-                for (int iii = 0; iii < jsonArrayType.length(); iii++) {
-                    String warna = jsonArrayType.getJSONObject(iii).getString("warna").toString();
-                    JSONArray jsonArrayWarna = new JSONArray(jsonArrayType.getJSONObject(iii).getString("value"));
-                    Model warna1 = new Model(warna, iii + "", type); //Warna
-                    v3.add(warna1);
+                    for (int iii = 0; iii < jsonArrayType.length(); iii++) {
+                        String warna = jsonArrayType.getJSONObject(iii).getString("warna").toString();
+                        JSONArray jsonArrayWarna = new JSONArray(jsonArrayType.getJSONObject(iii).getString("value"));
+                        Model warna1 = new Model(warna, iii + "", type); //Warna
+                        v3.add(warna1);
 
-                    for (int iv = 0; iv < jsonArrayWarna.length(); iv++) {
-                        String tipe_harga = jsonArrayWarna.getJSONObject(iv).getString("tipe_harga").toString();
-                        JSONArray jsonArrayTiHarga = new JSONArray(jsonArrayWarna.getJSONObject(iv).getString("value"));
-                        Model tipe_harga1 = new Model(tipe_harga, iv + "", type + warna); //tipe Harga
-                        v4.add(tipe_harga1);
+                        for (int iv = 0; iv < jsonArrayWarna.length(); iv++) {
+                            String tipe_harga = jsonArrayWarna.getJSONObject(iv).getString("tipe_harga").toString();
+                            JSONArray jsonArrayTiHarga = new JSONArray(jsonArrayWarna.getJSONObject(iv).getString("value"));
+                            Model tipe_harga1 = new Model(tipe_harga, iv + "", type + warna); //tipe Harga
+                            v4.add(tipe_harga1);
 
-                        for (int v = 0; v < jsonArrayTiHarga.length(); v++) {
-                            String harga = jsonArrayTiHarga.getJSONObject(v).getString("harga").toString();
-                            String wilayah = jsonArrayTiHarga.getJSONObject(v).getString("wilayah").toString();
-                            String kode = jsonArrayTiHarga.getJSONObject(v).getString("kode").toString();
-                            Model harga1 = new Model(wilayah + "//" + harga + "//" + kode, v + "", type + warna + tipe_harga); //Harga
-                            v5.add(harga1);
+                            for (int v = 0; v < jsonArrayTiHarga.length(); v++) {
+                                String harga = jsonArrayTiHarga.getJSONObject(v).getString("harga").toString();
+                                String wilayah = jsonArrayTiHarga.getJSONObject(v).getString("wilayah").toString();
+                                String kode = jsonArrayTiHarga.getJSONObject(v).getString("kode").toString();
+                                Model harga1 = new Model(wilayah + "//" + harga + "//" + kode, v + "", type + warna + tipe_harga); //Harga
+                                v5.add(harga1);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                loading.setVisibility(View.GONE);
-                addNewDropdown(v1, "Model", 0);
-            }
-        });
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loading.setVisibility(View.GONE);
+                    addNewDropdown(v1, "Model", 0);
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void addNewDropdown(ArrayList<Model> spinn, String title, int index) {
-
-        ArrayList<String> spinnerArray = new ArrayList<>();
-
-        for (int i = 0; i < spinn.size(); i++) {
-            if (title.equalsIgnoreCase("wilayah")) {
-                String[] separated = spinn.get(i).getName().split("//");
-                spinnerArray.add(separated[0]);
-            } else {
-                spinnerArray.add(spinn.get(i).getName());
-            }
-        }
-
-        final LinearLayout spinerTitle = (LinearLayout) getLayoutInflater().inflate(R.layout.item_spiner_textview, null);
-        TextView textViewFirst = (TextView) spinerTitle.findViewById(R.id.title);
-
-        textViewFirst.setText(Html.fromHtml(title));
-        textViewFirst.setTextSize(15);
-
-        final SearchableSpinner spinnner = (SearchableSpinner) spinerTitle.findViewById(R.id.spinner);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            spinnner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
-        }
-
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnner.setAdapter(spinnerArrayAdapter);
-
-        lParent.addView(spinerTitle, index);
-
         try {
-            JSONObject jsonObjectDefaultValue = new JSONObject(defaultValue);
-            if (jsonObjectDefaultValue.has(title)) {
-                spinnner.setSelection(spinnerArrayAdapter.getPosition(jsonObjectDefaultValue.getString(title)));
+            ArrayList<String> spinnerArray = new ArrayList<>();
+
+            for (int i = 0; i < spinn.size(); i++) {
+                if (title.equalsIgnoreCase("wilayah")) {
+                    String[] separated = spinn.get(i).getName().split("//");
+                    spinnerArray.add(separated[0]);
+                } else {
+                    spinnerArray.add(spinn.get(i).getName());
+                }
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            final LinearLayout spinerTitle = (LinearLayout) getLayoutInflater().inflate(R.layout.item_spiner_textview, null);
+            TextView textViewFirst = (TextView) spinerTitle.findViewById(R.id.title);
 
-        spinnner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            textViewFirst.setText(Html.fromHtml(title));
+            textViewFirst.setTextSize(15);
 
-                if (!type.equalsIgnoreCase("1")) {
-                    if (title.equalsIgnoreCase("model")) {
-                        ArrayList<Model> vx1 = new ArrayList<>();
-                        vx1.clear();
-                        Model modelz = new Model("--Please Select--", "0", "0");
-                        vx1.add(modelz);
+            final SearchableSpinner spinnner = (SearchableSpinner) spinerTitle.findViewById(R.id.spinner);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                spinnner.setBackground(getResources().getDrawable(R.drawable.spinner_background));
+            }
 
-                        cModel = (String) spinnner.getSelectedItem();
+            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_spinner_item_black, spinnerArray); //selected item will look like a spinner set from XML
+            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnner.setAdapter(spinnerArrayAdapter);
 
-                        deleteFromParent(1);
-                        deleteFromParent(2);
-                        deleteFromParent(3);
-                        deleteFromParent(4);
-                        deleteFromParent(5);
+            lParent.addView(spinerTitle, index);
 
-                        if (!cModel.equalsIgnoreCase("--Please Select--")) {
-                            for (int i = 0; i < v2.size(); i++) {
-                                if (cModel.equals(v2.get(i).getId_parent())) {
-                                    Model xxs = new Model(v2.get(i).getName(), v2.get(i).getId_self(), v2.get(i).getId_parent());
-                                    vx1.add(xxs);
-                                }
-                            }
-                            addNewDropdown(vx1, "Type", 1);
-                        } else {
+            try {
+                JSONObject jsonObjectDefaultValue = new JSONObject(defaultValue);
+                if (jsonObjectDefaultValue.has(title)) {
+                    spinnner.setSelection(spinnerArrayAdapter.getPosition(jsonObjectDefaultValue.getString(title)));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            spinnner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                    if (!type.equalsIgnoreCase("1")) {
+                        if (title.equalsIgnoreCase("model")) {
+                            ArrayList<Model> vx1 = new ArrayList<>();
+                            vx1.clear();
+                            Model modelz = new Model("--Please Select--", "0", "0");
+                            vx1.add(modelz);
+
+                            cModel = (String) spinnner.getSelectedItem();
+
                             deleteFromParent(1);
                             deleteFromParent(2);
                             deleteFromParent(3);
                             deleteFromParent(4);
                             deleteFromParent(5);
-                        }
-                    }
 
-                    if (title.equalsIgnoreCase("type")) {
-                        ArrayList<Model> vx1 = new ArrayList<>();
-                        vx1.clear();
-                        Model modelz = new Model("--Please Select--", "0", "0");
-                        vx1.add(modelz);
-
-                        cType = (String) spinnner.getSelectedItem();
-
-                        deleteFromParent(2);
-                        deleteFromParent(3);
-                        deleteFromParent(4);
-                        deleteFromParent(5);
-
-                        if (!cType.equalsIgnoreCase("--Please Select--")) {
-                            for (int i = 0; i < v3.size(); i++) {
-                                if (cType.equals(v3.get(i).getId_parent())) {
-                                    Model xxs = new Model(v3.get(i).getName(), v3.get(i).getId_self(), v3.get(i).getId_parent());
-                                    vx1.add(xxs);
+                            if (!cModel.equalsIgnoreCase("--Please Select--")) {
+                                for (int i = 0; i < v2.size(); i++) {
+                                    if (cModel.equals(v2.get(i).getId_parent())) {
+                                        Model xxs = new Model(v2.get(i).getName(), v2.get(i).getId_self(), v2.get(i).getId_parent());
+                                        vx1.add(xxs);
+                                    }
                                 }
+                                addNewDropdown(vx1, "Type", 1);
+                            } else {
+                                deleteFromParent(1);
+                                deleteFromParent(2);
+                                deleteFromParent(3);
+                                deleteFromParent(4);
+                                deleteFromParent(5);
                             }
-                            addNewDropdown(vx1, "Warna", 2);
-                        } else {
+                        }
+
+                        if (title.equalsIgnoreCase("type")) {
+                            ArrayList<Model> vx1 = new ArrayList<>();
+                            vx1.clear();
+                            Model modelz = new Model("--Please Select--", "0", "0");
+                            vx1.add(modelz);
+
+                            cType = (String) spinnner.getSelectedItem();
+
                             deleteFromParent(2);
                             deleteFromParent(3);
                             deleteFromParent(4);
                             deleteFromParent(5);
-                        }
-                    }
 
-                    if (title.equalsIgnoreCase("warna")) {
-                        ArrayList<Model> vx1 = new ArrayList<>();
-                        vx1.clear();
-                        Model modelz = new Model("--Please Select--", "0", "0");
-                        vx1.add(modelz);
-
-                        cWarna = (String) spinnner.getSelectedItem();
-
-                        deleteFromParent(3);
-                        deleteFromParent(4);
-                        deleteFromParent(5);
-
-                        if (!cWarna.equalsIgnoreCase("--Please Select--")) {
-
-                            for (int i = 0; i < v4.size(); i++) {
-                                String kode = cType + cWarna;
-                                if (kode.equals(v4.get(i).getId_parent())) {
-                                    Model xxs = new Model(v4.get(i).getName(), v4.get(i).getId_self(), v4.get(i).getId_parent());
-                                    vx1.add(xxs);
+                            if (!cType.equalsIgnoreCase("--Please Select--")) {
+                                for (int i = 0; i < v3.size(); i++) {
+                                    if (cType.equals(v3.get(i).getId_parent())) {
+                                        Model xxs = new Model(v3.get(i).getName(), v3.get(i).getId_self(), v3.get(i).getId_parent());
+                                        vx1.add(xxs);
+                                    }
                                 }
+                                addNewDropdown(vx1, "Warna", 2);
+                            } else {
+                                deleteFromParent(2);
+                                deleteFromParent(3);
+                                deleteFromParent(4);
+                                deleteFromParent(5);
                             }
-                            addNewDropdown(vx1, "Price Type", 3);
-                        } else {
+                        }
+
+                        if (title.equalsIgnoreCase("warna")) {
+                            ArrayList<Model> vx1 = new ArrayList<>();
+                            vx1.clear();
+                            Model modelz = new Model("--Please Select--", "0", "0");
+                            vx1.add(modelz);
+
+                            cWarna = (String) spinnner.getSelectedItem();
+
                             deleteFromParent(3);
                             deleteFromParent(4);
                             deleteFromParent(5);
-                        }
-                    }
 
-                    if (title.equalsIgnoreCase("price type")) {
-                        ArrayList<Model> vx1 = new ArrayList<>();
-                        vx1.clear();
-                        Model modelz = new Model("--Please Select--", "0", "0");
-                        vx1.add(modelz);
+                            if (!cWarna.equalsIgnoreCase("--Please Select--")) {
 
-                        cTipe_harga = (String) spinnner.getSelectedItem();
-
-                        deleteFromParent(4);
-                        deleteFromParent(5);
-
-                        if (!cTipe_harga.equalsIgnoreCase("--Please Select--")) {
-
-                            for (int i = 0; i < v5.size(); i++) {
-                                String kode = cType + cWarna + cTipe_harga;
-                                if (kode.equals(v5.get(i).getId_parent())) {
-                                    Model xxs = new Model(v5.get(i).getName(), v5.get(i).getId_self(), v5.get(i).getId_parent());
-                                    vx1.add(xxs);
+                                for (int i = 0; i < v4.size(); i++) {
+                                    String kode = cType + cWarna;
+                                    if (kode.equals(v4.get(i).getId_parent())) {
+                                        Model xxs = new Model(v4.get(i).getName(), v4.get(i).getId_self(), v4.get(i).getId_parent());
+                                        vx1.add(xxs);
+                                    }
                                 }
+                                addNewDropdown(vx1, "Price Type", 3);
+                            } else {
+                                deleteFromParent(3);
+                                deleteFromParent(4);
+                                deleteFromParent(5);
                             }
-                            addNewDropdown(vx1, "Wilayah", 4);
-                        } else {
+                        }
+
+                        if (title.equalsIgnoreCase("price type")) {
+                            ArrayList<Model> vx1 = new ArrayList<>();
+                            vx1.clear();
+                            Model modelz = new Model("--Please Select--", "0", "0");
+                            vx1.add(modelz);
+
+                            cTipe_harga = (String) spinnner.getSelectedItem();
+
                             deleteFromParent(4);
                             deleteFromParent(5);
-                        }
-                    }
 
-                    if (title.equalsIgnoreCase("wilayah")) {
-                        cWilayah = (String) spinnner.getSelectedItem();
-                        LinearLayout linearText = new LinearLayout(getContext());
-                        linearText.setOrientation(LinearLayout.VERTICAL);
+                            if (!cTipe_harga.equalsIgnoreCase("--Please Select--")) {
 
-                        TextView textView = new TextView(getContext());
-                        textView.setText("Price");
-                        textView.setTextSize(15);
-                        textView.setTextColor(getResources().getColor(R.color.navigationBarColor));
-
-                        TextView tvHarga = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
-                        tvHarga.setMinLines(1);
-
-                        TextView textViewKode = new TextView(getContext());
-                        textViewKode.setText("Kode");
-                        textViewKode.setTextSize(15);
-                        textViewKode.setTextColor(getResources().getColor(R.color.navigationBarColor));
-
-                        TextView kode = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
-                        kode.setMinLines(1);
-
-                        deleteFromParent(5);
-
-                        if (!cWilayah.equalsIgnoreCase("--Please Select--")) {
-                            for (int i = 0; i < spinn.size(); i++) {
-                                String[] separated = spinn.get(i).getName().split("//");
-                                if (cWilayah.equalsIgnoreCase(separated[0])) {
-                                    tvHarga.setText("Rp. " + formatCurrency(separated[1]));
-                                    cHarga = tvHarga.getText().toString();
-                                    cKode = separated[2];
-                                    kode.setText(cKode);
+                                for (int i = 0; i < v5.size(); i++) {
+                                    String kode = cType + cWarna + cTipe_harga;
+                                    if (kode.equals(v5.get(i).getId_parent())) {
+                                        Model xxs = new Model(v5.get(i).getName(), v5.get(i).getId_self(), v5.get(i).getId_parent());
+                                        vx1.add(xxs);
+                                    }
                                 }
+                                addNewDropdown(vx1, "Wilayah", 4);
+                            } else {
+                                deleteFromParent(4);
+                                deleteFromParent(5);
                             }
-                            linearText.addView(textView);
-                            linearText.addView(tvHarga);
-                            linearText.addView(textViewKode);
-                            linearText.addView(kode);
-
-                            lParent.addView(linearText, 5);
                         }
-                        defaultValue = "{}";
+
+                        if (title.equalsIgnoreCase("wilayah")) {
+                            cWilayah = (String) spinnner.getSelectedItem();
+                            LinearLayout linearText = new LinearLayout(getContext());
+                            linearText.setOrientation(LinearLayout.VERTICAL);
+
+                            TextView textView = new TextView(getContext());
+                            textView.setText("Price");
+                            textView.setTextSize(15);
+                            textView.setTextColor(getResources().getColor(R.color.navigationBarColor));
+
+                            TextView tvHarga = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
+                            tvHarga.setMinLines(1);
+
+                            TextView textViewKode = new TextView(getContext());
+                            textViewKode.setText("Kode");
+                            textViewKode.setTextSize(15);
+                            textViewKode.setTextColor(getResources().getColor(R.color.navigationBarColor));
+
+                            TextView kode = (TextView) getLayoutInflater().inflate(R.layout.text_input_layout, null);
+                            kode.setMinLines(1);
+
+                            deleteFromParent(5);
+
+                            if (!cWilayah.equalsIgnoreCase("--Please Select--")) {
+                                for (int i = 0; i < spinn.size(); i++) {
+                                    String[] separated = spinn.get(i).getName().split("//");
+                                    if (cWilayah.equalsIgnoreCase(separated[0])) {
+                                        tvHarga.setText("Rp. " + formatCurrency(separated[1]));
+                                        cHarga = tvHarga.getText().toString();
+                                        cKode = separated[2];
+                                        kode.setText(cKode);
+                                    }
+                                }
+                                linearText.addView(textView);
+                                linearText.addView(tvHarga);
+                                linearText.addView(textViewKode);
+                                linearText.addView(kode);
+
+                                lParent.addView(linearText, 5);
+                            }
+                            defaultValue = "{}";
+                        }
+                    } else {
+                        cModel = (String) spinnner.getSelectedItem();
                     }
-                } else {
-                    cModel = (String) spinnner.getSelectedItem();
+
                 }
 
-            }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
 
-            }
-        });
-
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void deleteFromParent(int index) {

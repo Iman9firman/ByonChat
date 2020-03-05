@@ -98,6 +98,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class NewSearchRoomActivity extends AppCompatActivity {
 
     Context context;
@@ -135,64 +137,64 @@ public class NewSearchRoomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_search_room);
+        try {
+            if (context == null) {
+                context = NewSearchRoomActivity.this;
+            }
 
-        if (context == null) {
-            context = NewSearchRoomActivity.this;
-        }
-
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(context);
-        }
-
-
-        if (roomsDB == null) {
-            roomsDB = new RoomsDB(this);
-        }
-
-        contact = messengerHelper.getMyContact();
-
-        tipe = getIntent().getStringExtra("search");
-        if (tipe.equalsIgnoreCase("all")) {
-            tipe = "Search All";
-            ttipe = "0";
-        } else if (tipe.equalsIgnoreCase("brand")) {
-            tipe = "Search Brands";
-            ttipe = "3";
-        } else if (tipe.equalsIgnoreCase("celeb")) {
-            tipe = "Search Celebs";
-            ttipe = "2";
-        } else if (tipe.equalsIgnoreCase("person")) {
-            tipe = "Search Persons";
-            ttipe = "1";
-        }
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(context);
+            }
 
 
-        if(getIntent().getStringExtra("addHonda") != null){
-            String id = "1";
-            String name = "1_248162126admin";
-            String desc = "Honda IKB PRADANA";
-            String realname = "HONDA S-TEAM";
-            String link = "https://bb.byonchat.com/mediafiles/profile_photo_special_rooms/icon_honda.png";
-            String type = "2";
+            if (roomsDB == null) {
+                roomsDB = new RoomsDB(this);
+            }
 
-            roomsDB.open();
-            boolean isActived = true;
-            ContactBot contactBot = new ContactBot("1", name, desc, realname, link, type, isActived, "{\"type\":\"2\",\"tipe_room\":\"3\",\"path\":\"https:\\/\\/hondaikb.byonchat.com\"}");
-            roomsDB.insertRooms(contactBot);
-            roomsDB.close();
-            finish();
-        }
+            contact = messengerHelper.getMyContact();
+
+            tipe = getIntent().getStringExtra("search");
+            if (tipe.equalsIgnoreCase("all")) {
+                tipe = "Search All";
+                ttipe = "0";
+            } else if (tipe.equalsIgnoreCase("brand")) {
+                tipe = "Search Brands";
+                ttipe = "3";
+            } else if (tipe.equalsIgnoreCase("celeb")) {
+                tipe = "Search Celebs";
+                ttipe = "2";
+            } else if (tipe.equalsIgnoreCase("person")) {
+                tipe = "Search Persons";
+                ttipe = "1";
+            }
 
 
-        mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
-        mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
+            if (getIntent().getStringExtra("addHonda") != null) {
+                String id = "1";
+                String name = "1_248162126admin";
+                String desc = "Honda IKB PRADANA";
+                String realname = "HONDA S-TEAM";
+                String link = "https://bb.byonchat.com/mediafiles/profile_photo_special_rooms/icon_honda.png";
+                String type = "2";
 
-        vToolbarContainer = (FrameLayout) findViewById(R.id.toolbar_container);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+                roomsDB.open();
+                boolean isActived = true;
+                ContactBot contactBot = new ContactBot("1", name, desc, realname, link, type, isActived, "{\"type\":\"2\",\"tipe_room\":\"3\",\"path\":\"https:\\/\\/hondaikb.byonchat.com\"}");
+                roomsDB.insertRooms(contactBot);
+                roomsDB.close();
+                finish();
+            }
 
-        resolveToolbar();
 
-        IntervalDB db = new IntervalDB(this);
+            mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
+            mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
+
+            vToolbarContainer = (FrameLayout) findViewById(R.id.toolbar_container);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+            resolveToolbar();
+
+            IntervalDB db = new IntervalDB(this);
         /*db.open();
         Cursor cursorSelect = db.getSingleContact(4);
         if (cursorSelect.getCount() > 0) {
@@ -209,35 +211,35 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         cursorSelect.close();
         db.close();*/
 
-        GPSTracker gps = new GPSTracker(context);
-        if (gps.canGetLocation()) {
-            if (((gps.getLongitude() == 0.0) && (gps.getLatitude() == 0.0))) {
-                db.open();
-                Cursor cursorSelect1 = db.getSingleContact(20);
-                if (cursorSelect1.getCount() > 0) {
-                    skin = cursorSelect1.getString(cursorSelect1.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+            GPSTracker gps = new GPSTracker(context);
+            if (gps.canGetLocation()) {
+                if (((gps.getLongitude() == 0.0) && (gps.getLatitude() == 0.0))) {
+                    db.open();
+                    Cursor cursorSelect1 = db.getSingleContact(20);
+                    if (cursorSelect1.getCount() > 0) {
+                        skin = cursorSelect1.getString(cursorSelect1.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+                    }
+                    cursorSelect1.close();
+                    db.close();
+                } else {
+                    latitude = gps.getLatitude() + "";
+                    longitude = gps.getLongitude() + "";
+                    db.open();
+                    db.updateContact(20, gps.getLatitude() + "|" + gps.getLongitude());
+                    db.close();
                 }
-                cursorSelect1.close();
-                db.close();
-            } else {
-                latitude = gps.getLatitude() + "";
-                longitude = gps.getLongitude() + "";
-                db.open();
-                db.updateContact(20, gps.getLatitude() + "|" + gps.getLongitude());
-                db.close();
             }
-        }
 
-        lv = (ListView) findViewById(R.id.gonelist);
-        linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);
-        linearTrending = (LinearLayout) findViewById(R.id.linearTrending);
-        emptyList = (TextView) findViewById(R.id.emptyList);
-        btnRefresh = (ImageView) findViewById(R.id.btn_refresh);
+            lv = (ListView) findViewById(R.id.gonelist);
+            linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);
+            linearTrending = (LinearLayout) findViewById(R.id.linearTrending);
+            emptyList = (TextView) findViewById(R.id.emptyList);
+            btnRefresh = (ImageView) findViewById(R.id.btn_refresh);
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showPopup(view, position);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    showPopup(view, position);
 //                ContactBot item = adapter.newList().get(position);
                 /*try {
                     JSONObject jObj = new JSONObject(botArrayListist.get(position).getType());
@@ -301,77 +303,84 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                 }*/
-            }
-        });
+                }
+            });
 
-        btnRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            btnRefresh.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new getTrending().execute(trendingURL);
+                    refreshList();
+                }
+            });
+
+            tagGroup = (TagView) findViewById(R.id.tag_group);
+
+
+            roomsDB.open();
+            itemListTrending = roomsDB.retrieveTrending(ttipe);
+            roomsDB.close();
+
+            trendingURL = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/trending.php?type=" + ttipe;
+
+            if (itemListTrending.size() > 0) {
+                refreshList();
+            } else {
                 new getTrending().execute(trendingURL);
                 refreshList();
             }
-        });
 
-        tagGroup = (TagView) findViewById(R.id.tag_group);
+            tagGroup.setOnTagClickListener(new TagView.OnTagClickListener() {
+                @Override
+                public void onTagClick(Tag tag, int position) {
+                    searchText = tag.text;
+                    searchEditText.setText(tag.text);
+                    requestKey();
+                    mSearchView.clearFocus();
+                }
+            });
 
+            tagGroup.setOnTagDeleteListener(new TagView.OnTagDeleteListener() {
 
-        roomsDB.open();
-        itemListTrending = roomsDB.retrieveTrending(ttipe);
-        roomsDB.close();
-
-        trendingURL = "https://" + MessengerConnectionService.HTTP_SERVER + "/room/trending.php?type=" + ttipe;
-
-        if (itemListTrending.size() > 0) {
-            refreshList();
-        } else {
-            new getTrending().execute(trendingURL);
-            refreshList();
+                @Override
+                public void onTagDeleted(final TagView view, final Tag tag, final int position) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(NewSearchRoomActivity.this);
+                    builder.setMessage("\"" + tag.text + "\" will be delete. Are you sure?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            view.remove(position);
+                            Toast.makeText(NewSearchRoomActivity.this, "\"" + tag.text + "\" deleted", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    builder.setNegativeButton("No", null);
+                    builder.show();
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        tagGroup.setOnTagClickListener(new TagView.OnTagClickListener() {
-            @Override
-            public void onTagClick(Tag tag, int position) {
-                searchText = tag.text;
-                searchEditText.setText(tag.text);
-                requestKey();
-                mSearchView.clearFocus();
-            }
-        });
-
-        tagGroup.setOnTagDeleteListener(new TagView.OnTagDeleteListener() {
-
-            @Override
-            public void onTagDeleted(final TagView view, final Tag tag, final int position) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(NewSearchRoomActivity.this);
-                builder.setMessage("\"" + tag.text + "\" will be delete. Are you sure?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        view.remove(position);
-                        Toast.makeText(NewSearchRoomActivity.this, "\"" + tag.text + "\" deleted", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                builder.setNegativeButton("No", null);
-                builder.show();
-            }
-        });
     }
 
     protected void resolveToolbar() {
-        if (mColor.equalsIgnoreCase("FFFFFF") && mColorText.equalsIgnoreCase("000000")) {
-            View lytToolbarDark = getLayoutInflater().inflate(R.layout.toolbar_dark, vToolbarContainer);
-            Toolbar toolbarDark = lytToolbarDark.findViewById(R.id.toolbar_dark);
-            vToolbarContainer.removeView(toolbar);
-            setSupportActionBar(toolbarDark);
-        } else {
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle("");
+        try {
+            if (mColor.equalsIgnoreCase("FFFFFF") && mColorText.equalsIgnoreCase("000000")) {
+                View lytToolbarDark = getLayoutInflater().inflate(R.layout.toolbar_dark, vToolbarContainer);
+                Toolbar toolbarDark = lytToolbarDark.findViewById(R.id.toolbar_dark);
+                vToolbarContainer.removeView(toolbar);
+                setSupportActionBar(toolbarDark);
+            } else {
+                setSupportActionBar(toolbar);
+                getSupportActionBar().setTitle("");
 
-            FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
-            toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
-            toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+                FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+                toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
+                toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
+            }
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_keyboard_arrow_left_black_35dp);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_keyboard_arrow_left_black_35dp);
     }
 
     public void openWebPage(String url) {
@@ -397,22 +406,26 @@ public class NewSearchRoomActivity extends AppCompatActivity {
     }
 
     private void setTags(CharSequence cs) {
-        if (cs.toString().equals("")) {
-            tagGroup.addTags(new ArrayList<Tag>());
-            return;
-        }
-        String text = cs.toString();
-        ArrayList<Tag> tags = new ArrayList<>();
-        Tag tag;
-        for (int i = 0; i < itemListTrending.size(); i++) {
-            if (itemListTrending.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
-                tag = new Tag(itemListTrending.get(i).getName().substring(1));
-                tag.radius = 10f;
-                tag.layoutColor = Color.parseColor(itemListTrending.get(i).getColor());
-                tags.add(tag);
+        try {
+            if (cs.toString().equals("")) {
+                tagGroup.addTags(new ArrayList<Tag>());
+                return;
             }
+            String text = cs.toString();
+            ArrayList<Tag> tags = new ArrayList<>();
+            Tag tag;
+            for (int i = 0; i < itemListTrending.size(); i++) {
+                if (itemListTrending.get(i).getName().toLowerCase().startsWith(text.toLowerCase())) {
+                    tag = new Tag(itemListTrending.get(i).getName().substring(1));
+                    tag.radius = 10f;
+                    tag.layoutColor = Color.parseColor(itemListTrending.get(i).getColor());
+                    tags.add(tag);
+                }
+            }
+            tagGroup.addTags(tags);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        tagGroup.addTags(tags);
     }
 
     public void refreshList() {
@@ -438,128 +451,135 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         inflater.inflate(R.menu.menu_search_rooms, menu);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         searchItem.setTitle(tipe);
+        try {
+            MenuItemCompat.setOnActionExpandListener(searchItem,
+                    new MenuItemCompat.OnActionExpandListener() {
+                        @Override
+                        public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                            return true;
+                        }
 
-        MenuItemCompat.setOnActionExpandListener(searchItem,
-                new MenuItemCompat.OnActionExpandListener() {
-                    @Override
-                    public boolean onMenuItemActionExpand(MenuItem menuItem) {
-                        return true;
-                    }
+                        @Override
+                        public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                            finish();
+                            return true;
+                        }
+                    });
 
-                    @Override
-                    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                        finish();
-                        return true;
-                    }
-                });
+            final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            searchItem.expandActionView();
+            mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+            searchEditText = (EditText) mSearchView.findViewById(androidx.appcompat.R.id.search_src_text);
+            searchEditText.setTextColor(Color.parseColor("#" + mColorText));
+            searchEditText.setHintTextColor(Color.parseColor("#" + mColorText));
+            searchEditText.setHint(tipe);
+            searchEditText.setFocusable(true);
 
-        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchItem.expandActionView();
-        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchEditText = (EditText) mSearchView.findViewById(androidx.appcompat.R.id.search_src_text);
-        searchEditText.setTextColor(Color.parseColor("#" + mColorText));
-        searchEditText.setHintTextColor(Color.parseColor("#" + mColorText));
-        searchEditText.setHint(tipe);
-        searchEditText.setFocusable(true);
-
-        ImageView searchImageView = (ImageView) mSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
-        Drawable mDrawable = context.getResources().getDrawable(R.drawable.ic_byonchat_close);
-        mDrawable.setColorFilter(new
-                PorterDuffColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_ATOP));
-        searchImageView.setImageDrawable(mDrawable);
+            ImageView searchImageView = (ImageView) mSearchView.findViewById(androidx.appcompat.R.id.search_close_btn);
+            Drawable mDrawable = context.getResources().getDrawable(R.drawable.ic_byonchat_close);
+            mDrawable.setColorFilter(new
+                    PorterDuffColorFilter(Color.parseColor("#" + mColorText), PorterDuff.Mode.SRC_ATOP));
+            searchImageView.setImageDrawable(mDrawable);
 
 //        ColorStateList colorStateList = ColorStateList.valueOf(Color.parseColor("#" + mColorText));
 //        searchEditText.setBackgroundTintList(colorStateList);
-        final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(androidx.appcompat.R.id.search_src_text);
-        searchAutoComplete.setThreshold(0);
-        searchAutoComplete.setAdapter(new SuggestionAdapterHashTag(aa));
-        searchAutoComplete.setDropDownBackgroundDrawable(getResources().getDrawable(R.drawable.abc_popup_background_mtrl_mult));
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        final int textViewID = mSearchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        final AutoCompleteTextView searchTextView = (AutoCompleteTextView) mSearchView.findViewById(textViewID);
-        try {
-            Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
-            f.setAccessible(true);
-            f.set(searchTextView, getResources().getDrawable(R.drawable.custom_cursor));
-        } catch (Exception e) {
+            final SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(androidx.appcompat.R.id.search_src_text);
+            searchAutoComplete.setThreshold(0);
+            searchAutoComplete.setAdapter(new SuggestionAdapterHashTag(aa));
+            searchAutoComplete.setDropDownBackgroundDrawable(getResources().getDrawable(R.drawable.abc_popup_background_mtrl_mult));
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            final int textViewID = mSearchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+            final AutoCompleteTextView searchTextView = (AutoCompleteTextView) mSearchView.findViewById(textViewID);
+            try {
+                Field f = TextView.class.getDeclaredField("mCursorDrawableRes");
+                f.setAccessible(true);
+                f.set(searchTextView, getResources().getDrawable(R.drawable.custom_cursor));
+            } catch (Exception e) {
 
-        }
-
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String queryText) {
-                try {
-                    if (queryText.startsWith("#")) {
-                        encodedSearch = URLEncoder.encode(queryText.substring(1), "UTF-8");
-                        searchText = queryText.substring(1);
-                    } else {
-                        encodedSearch = URLEncoder.encode(queryText, "UTF-8");
-                        searchText = queryText;
-                    }
-
-                    requestKey();
-                    mSearchView.clearFocus();
-                } catch (Exception e) {
-                    Toast.makeText(aa, "Fail to fetch data", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-                return true;
             }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (newText.equalsIgnoreCase("")) {
-                    searchText = newText;
-                    searchAutoComplete.setAdapter(new SuggestionAdapterTag(aa, newText));
+            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String queryText) {
+                    try {
+                        if (queryText.startsWith("#")) {
+                            encodedSearch = URLEncoder.encode(queryText.substring(1), "UTF-8");
+                            searchText = queryText.substring(1);
+                        } else {
+                            encodedSearch = URLEncoder.encode(queryText, "UTF-8");
+                            searchText = queryText;
+                        }
 
-                    if (linlaHeaderProgress.getVisibility() == View.GONE) {
-                        linearTrending.setVisibility(View.VISIBLE);
-                        emptyList.setVisibility(View.GONE);
-                        lv.setVisibility(View.GONE);
+                        requestKey();
+                        mSearchView.clearFocus();
+                    } catch (Exception e) {
+                        Toast.makeText(aa, "Fail to fetch data", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
                     }
-                } else {
-                    if (mSearchView.getQuery().length() >= 3) {
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    if (newText.equalsIgnoreCase("")) {
                         searchText = newText;
-                        searchAutoComplete.setAdapter(new SuggestionAdapter(aa, newText));
-                    }
-                }
-                return true;
-            }
+                        searchAutoComplete.setAdapter(new SuggestionAdapterTag(aa, newText));
 
-        });
-
-        searchAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                // TODO Auto-generated method stub;
-                String searchString = (String) parent.getItemAtPosition(position);
-                searchAutoComplete.setText("" + searchString);
-                try {
-                    if (searchString.startsWith("#")) {
-                        encodedSearch = URLEncoder.encode(searchString.substring(1), "UTF-8");
+                        if (linlaHeaderProgress.getVisibility() == View.GONE) {
+                            linearTrending.setVisibility(View.VISIBLE);
+                            emptyList.setVisibility(View.GONE);
+                            lv.setVisibility(View.GONE);
+                        }
                     } else {
-                        encodedSearch = URLEncoder.encode(searchString, "UTF-8");
+                        if (mSearchView.getQuery().length() >= 3) {
+                            searchText = newText;
+                            searchAutoComplete.setAdapter(new SuggestionAdapter(aa, newText));
+                        }
                     }
-
-                    requestKey();
-                    mSearchView.clearFocus();
-                } catch (Exception e) {
-                    Toast.makeText(aa, "Fail to fetch data", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                    return true;
                 }
-            }
-        });
+
+            });
+
+            searchAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,
+                                        long id) {
+                    // TODO Auto-generated method stub;
+                    String searchString = (String) parent.getItemAtPosition(position);
+                    searchAutoComplete.setText("" + searchString);
+                    try {
+                        if (searchString.startsWith("#")) {
+                            encodedSearch = URLEncoder.encode(searchString.substring(1), "UTF-8");
+                        } else {
+                            encodedSearch = URLEncoder.encode(searchString, "UTF-8");
+                        }
+
+                        requestKey();
+                        mSearchView.clearFocus();
+                    } catch (Exception e) {
+                        Toast.makeText(aa, "Fail to fetch data", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return true;
     }
 
     private void initBackground(int color) {
-        Bitmap back_default = FilteringImage.headerColor(getWindow(), this, color);
-        Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            toolbar.setBackground(back_draw_default);
-        } else {
-            toolbar.setBackgroundDrawable(back_draw_default);
+        try {
+            Bitmap back_default = FilteringImage.headerColor(getWindow(), this, color);
+            Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                toolbar.setBackground(back_draw_default);
+            } else {
+                toolbar.setBackgroundDrawable(back_draw_default);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -616,67 +636,74 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
-
-            linlaHeaderProgress.setVisibility(View.GONE);
-            StringBuilder dataResultBuilder = new StringBuilder();
             try {
-                lv.setVisibility(View.VISIBLE);
-                botArrayListist = new ArrayList<ContactBot>();
+                linlaHeaderProgress.setVisibility(View.GONE);
+                StringBuilder dataResultBuilder = new StringBuilder();
+                try {
+                    lv.setVisibility(View.VISIBLE);
+                    botArrayListist = new ArrayList<ContactBot>();
 
-                JSONObject resultObject = new JSONObject(result);
-                JSONArray feedArray = resultObject.getJSONArray("Data");
-                for (int i = 0; i < feedArray.length(); i++) {
-                    JSONObject feedObj = (JSONObject) feedArray.get(i);
-                    ContactBot aa5 = new ContactBot(String.valueOf(i), "", feedObj.getString("deskripsi"), feedObj.getString("room_name"), feedObj.getString("image_location"));
-                    botArrayListist.add(aa5);
-                }
-                adapter = new SearchroomAdapter(getApplication(), botArrayListist, show, searchh, contact, messengerHelper, new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        showPopup(view, position);
+                    JSONObject resultObject = new JSONObject(result);
+                    JSONArray feedArray = resultObject.getJSONArray("Data");
+                    for (int i = 0; i < feedArray.length(); i++) {
+                        JSONObject feedObj = (JSONObject) feedArray.get(i);
+                        ContactBot aa5 = new ContactBot(String.valueOf(i), "", feedObj.getString("deskripsi"), feedObj.getString("room_name"), feedObj.getString("image_location"));
+                        botArrayListist.add(aa5);
                     }
-                });
-                lv.setAdapter(adapter);
+                    adapter = new SearchroomAdapter(getApplication(), botArrayListist, show, searchh, contact, messengerHelper, new OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            showPopup(view, position);
+                        }
+                    });
+                    lv.setAdapter(adapter);
+                } catch (Exception e) {
+                    lv.setVisibility(View.GONE);
+                    emptyList.setVisibility(View.VISIBLE);
+                    emptyList.setText("No results found for \"" + searchh + "\"");
+                }
             } catch (Exception e) {
-                lv.setVisibility(View.GONE);
-                emptyList.setVisibility(View.VISIBLE);
-                emptyList.setText("No results found for \"" + searchh + "\"");
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
 
     private void requestKey() {
-        linlaHeaderProgress.setVisibility(View.VISIBLE);
-        linearTrending.setVisibility(View.GONE);
-        emptyList.setVisibility(View.GONE);
-        lv.setVisibility(View.GONE);
+        try {
+            linlaHeaderProgress.setVisibility(View.VISIBLE);
+            linearTrending.setVisibility(View.GONE);
+            emptyList.setVisibility(View.GONE);
+            lv.setVisibility(View.GONE);
 
-        RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-            @Override
-            public void onTaskDone(String key) {
-                if (key.equalsIgnoreCase("null")) {
-                    linlaHeaderProgress.setVisibility(View.GONE);
-                    linearTrending.setVisibility(View.GONE);
-                    emptyList.setVisibility(View.GONE);
-                    lv.setVisibility(View.GONE);
-
-                    Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                } else {
-                    if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-                        requestSearchResult = new RequestSearchResult(context);
-                        requestSearchResult.execute(key);
-                    } else {
+            RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                @Override
+                public void onTaskDone(String key) {
+                    if (key.equalsIgnoreCase("null")) {
                         linlaHeaderProgress.setVisibility(View.GONE);
-                        lv.setVisibility(View.GONE);
                         linearTrending.setVisibility(View.GONE);
-                        emptyList.setVisibility(View.VISIBLE);
-                        emptyList.setText("No internet connection.");
+                        emptyList.setVisibility(View.GONE);
+                        lv.setVisibility(View.GONE);
+
+                        Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                            requestSearchResult = new RequestSearchResult(context);
+                            requestSearchResult.execute(key);
+                        } else {
+                            linlaHeaderProgress.setVisibility(View.GONE);
+                            lv.setVisibility(View.GONE);
+                            linearTrending.setVisibility(View.GONE);
+                            emptyList.setVisibility(View.VISIBLE);
+                            emptyList.setText("No internet connection.");
+                        }
                     }
                 }
-            }
-        }, aa);
+            }, aa);
 
-        testAsyncTask.execute();
+            testAsyncTask.execute();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 
@@ -760,83 +787,87 @@ public class NewSearchRoomActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String content) {
-            if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-                linlaHeaderProgress.setVisibility(View.GONE);
-                linearTrending.setVisibility(View.GONE);
-                if (error) {
-                    if (content.contains("invalid_key")) {
-                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                            String key = new ValidationsKey().getInstance(mContext).key(true);
-                            if (key.equalsIgnoreCase("null")) {
-                                Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+            try {
+                if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                    linlaHeaderProgress.setVisibility(View.GONE);
+                    linearTrending.setVisibility(View.GONE);
+                    if (error) {
+                        if (content.contains("invalid_key")) {
+                            if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                                String key = new ValidationsKey().getInstance(mContext).key(true);
+                                if (key.equalsIgnoreCase("null")) {
+                                    Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    requestSearchResult = new RequestSearchResult(context);
+                                    requestSearchResult.execute(key);
+                                }
                             } else {
-                                requestSearchResult = new RequestSearchResult(context);
-                                requestSearchResult.execute(key);
+                                Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                    }
-                } else {
-                    try {
-                        lv.setVisibility(View.VISIBLE);
-                        botArrayListist = new ArrayList<ContactBot>();
+                        try {
+                            lv.setVisibility(View.VISIBLE);
+                            botArrayListist = new ArrayList<ContactBot>();
 
-                        if (content.startsWith("[")) {
-                            JSONArray result = new JSONArray(content);
-                            Log.w("juru", content);
-                            for (int i = 0; i < result.length(); i++) {
-                                JSONObject obj = result.getJSONObject(i);
-                                String username = obj.getString("username");
-                                String description = obj.getString("description");
-                                String nama_display = obj.getString("nama_display");
-                                String classs = obj.getString("class");
-                                String url = obj.getString("url");
-                                String foto = obj.getString("foto");
-                                String tipe_room = obj.getString("tipe_room");
-                                String targetUrl = "https://" + MessengerConnectionService.HTTP_SERVER;
+                            if (content.startsWith("[")) {
+                                JSONArray result = new JSONArray(content);
+                                Log.w("juru", content);
+                                for (int i = 0; i < result.length(); i++) {
+                                    JSONObject obj = result.getJSONObject(i);
+                                    String username = obj.getString("username");
+                                    String description = obj.getString("description");
+                                    String nama_display = obj.getString("nama_display");
+                                    String classs = obj.getString("class");
+                                    String url = obj.getString("url");
+                                    String foto = obj.getString("foto");
+                                    String tipe_room = obj.getString("tipe_room");
+                                    String targetUrl = "https://" + MessengerConnectionService.HTTP_SERVER;
 
-                                if (obj.has("target_url")) {
-                                    targetUrl = obj.getString("target_url");
+                                    if (obj.has("target_url")) {
+                                        targetUrl = obj.getString("target_url");
+                                    }
+
+                                    Log.w("targetUrl", targetUrl);
+
+                                    ContactBot aa = null;
+                                    if (classs.equalsIgnoreCase("")) {
+                                        aa = new ContactBot(String.valueOf(i + 1), username, description, nama_display, foto, JsonUtil.toJsonRoom("2", tipe_room, targetUrl));
+                                    } else {
+                                        aa = new ContactBot(String.valueOf(i + 1), username, JsonUtil.toJsonDescription(description, classs, url), nama_display, foto, JsonUtil.toJsonRoom("2", tipe_room, targetUrl));
+                                    }
+
+                                    botArrayListist.add(aa);
+                                    if (isCancelled()) break;
                                 }
-
-                                Log.w("targetUrl", targetUrl);
-
-                                ContactBot aa = null;
-                                if (classs.equalsIgnoreCase("")) {
-                                    aa = new ContactBot(String.valueOf(i + 1), username, description, nama_display, foto, JsonUtil.toJsonRoom("2", tipe_room, targetUrl));
-                                } else {
-                                    aa = new ContactBot(String.valueOf(i + 1), username, JsonUtil.toJsonDescription(description, classs, url), nama_display, foto, JsonUtil.toJsonRoom("2", tipe_room, targetUrl));
-                                }
-
-                                botArrayListist.add(aa);
-                                if (isCancelled()) break;
+                                adapter = new SearchroomAdapter(NewSearchRoomActivity.this, botArrayListist, show, searchText, contact, messengerHelper, new OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(View view, int position) {
+                                        showPopup(view, position);
+                                    }
+                                });
+                                adapter.notifyDataSetChanged();
+                                lv.setAdapter(adapter);
+                            } else {
+                                lv.setVisibility(View.GONE);
+                                emptyList.setVisibility(View.VISIBLE);
+                                emptyList.setText("No results found for \"" + searchText + "\"");
                             }
-                            adapter = new SearchroomAdapter(NewSearchRoomActivity.this, botArrayListist, show, searchText, contact, messengerHelper, new OnItemClickListener() {
-                                @Override
-                                public void onItemClick(View view, int position) {
-                                    showPopup(view, position);
-                                }
-                            });
-                            adapter.notifyDataSetChanged();
-                            lv.setAdapter(adapter);
-                        } else {
+                        } catch (Exception e) {
                             lv.setVisibility(View.GONE);
                             emptyList.setVisibility(View.VISIBLE);
                             emptyList.setText("No results found for \"" + searchText + "\"");
                         }
-                    } catch (Exception e) {
-                        lv.setVisibility(View.GONE);
-                        emptyList.setVisibility(View.VISIBLE);
-                        emptyList.setText("No results found for \"" + searchText + "\"");
                     }
+                } else {
+                    lv.setVisibility(View.GONE);
+                    linearTrending.setVisibility(View.GONE);
+                    emptyList.setVisibility(View.VISIBLE);
+                    emptyList.setText("No internet connection.");
                 }
-            } else {
-                lv.setVisibility(View.GONE);
-                linearTrending.setVisibility(View.GONE);
-                emptyList.setVisibility(View.VISIBLE);
-                emptyList.setText("No internet connection.");
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
@@ -1027,7 +1058,8 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                     return false;
                 });
             }
-        } catch (Exception e) {
+        }  catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
 
 
@@ -1035,48 +1067,60 @@ public class NewSearchRoomActivity extends AppCompatActivity {
     }
 
     public void insertToDB(String id, String name, String desc, String realname, String link, String json, String type, String path) {
-        if (roomsDB == null) {
-            roomsDB = new RoomsDB(NewSearchRoomActivity.this);
-        }
+        try {
+            if (roomsDB == null) {
+                roomsDB = new RoomsDB(NewSearchRoomActivity.this);
+            }
 
-        roomsDB.open();
-        catArray = roomsDB.retrieveRoomsByName(name, "2");
-        roomsDB.close();
-        if (catArray.size() > 0) {
-            Toast.makeText(NewSearchRoomActivity.this, realname + " is already added to selected rooms", Toast.LENGTH_SHORT).show();
-        } else {
-            requestKey(path, json);
+            roomsDB.open();
+            catArray = roomsDB.retrieveRoomsByName(name, "2");
+            roomsDB.close();
+            if (catArray.size() > 0) {
+                Toast.makeText(NewSearchRoomActivity.this, realname + " is already added to selected rooms", Toast.LENGTH_SHORT).show();
+            } else {
+                requestKey(path, json);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     public void insertToDBbyRequest(String id, String name, String desc, String realname, String link, String json, String type, String path) {
-        if (roomsDB == null) {
-            roomsDB = new RoomsDB(NewSearchRoomActivity.this);
-        }
+        try {
+            if (roomsDB == null) {
+                roomsDB = new RoomsDB(NewSearchRoomActivity.this);
+            }
 
-        roomsDB.open();
-        catArray = roomsDB.retrieveRoomsByName(name, "2");
-        roomsDB.close();
-        if (catArray.size() > 0) {
-            Toast.makeText(NewSearchRoomActivity.this, realname + " is already added to selected rooms", Toast.LENGTH_SHORT).show();
-        }
+            roomsDB.open();
+            catArray = roomsDB.retrieveRoomsByName(name, "2");
+            roomsDB.close();
+            if (catArray.size() > 0) {
+                Toast.makeText(NewSearchRoomActivity.this, realname + " is already added to selected rooms", Toast.LENGTH_SHORT).show();
+            }
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void requestKey(final String path, final String json) {
-        RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-            @Override
-            public void onTaskDone(String key) {
-                if (key.equalsIgnoreCase("null")) {
-                    Toast.makeText(NewSearchRoomActivity.this, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                } else {
-                    laporSelectedRoom = new LaporSelectedRoom(NewSearchRoomActivity.this, json);
-                    laporSelectedRoom.execute(key, path);
+        try {
+            RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                @Override
+                public void onTaskDone(String key) {
+                    if (key.equalsIgnoreCase("null")) {
+                        Toast.makeText(NewSearchRoomActivity.this, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                    } else {
+                        laporSelectedRoom = new LaporSelectedRoom(NewSearchRoomActivity.this, json);
+                        laporSelectedRoom.execute(key, path);
+                    }
                 }
-            }
-        }, NewSearchRoomActivity.this);
+            }, NewSearchRoomActivity.this);
 
-        testAsyncTask.execute();
+            testAsyncTask.execute();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class LaporSelectedRoom extends AsyncTask<String, Void, String> {
@@ -1167,49 +1211,53 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
         protected void onPostExecute(String content) {
             progressDialog.dismiss();
-            if (error) {
-                if (content.contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+            try {
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                laporSelectedRoom = new LaporSelectedRoom(NewSearchRoomActivity.this, json);
+                                laporSelectedRoom.execute(key, path);
+                            }
                         } else {
-                            laporSelectedRoom = new LaporSelectedRoom(NewSearchRoomActivity.this, json);
-                            laporSelectedRoom.execute(key, path);
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, content, Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(mContext, content, Toast.LENGTH_LONG).show();
+                    resolveValidation();
+
+                    roomsDB.open();
+                    boolean isActived = true;
+                    ContactBot contactBot = new ContactBot("", name, desc, realname, link, type, isActived, json);
+                    roomsDB.insertRooms(contactBot);
+                    roomsDB.close();
+
+                    if (MainActivityNew.mActivity != null) {
+                        MainActivityNew.mActivity.finish();
+                    }
+
+                    Toast.makeText(NewSearchRoomActivity.this, realname + " has been added to selected rooms", Toast.LENGTH_SHORT).show();
+                    finish();
+
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.clear();
+                    editor.commit();
+
+                    editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
+                    editor.apply();
+
+                    Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), name, path);
+                    startActivity(ii);
+
                 }
-            } else {
-                resolveValidation();
-
-                roomsDB.open();
-                boolean isActived = true;
-                ContactBot contactBot = new ContactBot("", name, desc, realname, link, type, isActived, json);
-                roomsDB.insertRooms(contactBot);
-                roomsDB.close();
-
-                if (MainActivityNew.mActivity != null) {
-                    MainActivityNew.mActivity.finish();
-                }
-
-                Toast.makeText(NewSearchRoomActivity.this, realname + " has been added to selected rooms", Toast.LENGTH_SHORT).show();
-                finish();
-
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.clear();
-                editor.commit();
-
-                editor.putString(Constants.EXTRA_SERVICE_PERMISSION, "true");
-                editor.apply();
-
-                Intent ii = LoadingGetTabRoomActivity.generateIntent(getApplicationContext(), name, path);
-                startActivity(ii);
-
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }

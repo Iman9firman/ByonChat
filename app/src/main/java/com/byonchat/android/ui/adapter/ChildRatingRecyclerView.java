@@ -20,6 +20,8 @@ import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 @Layout(R.layout.mkg_child_rating_layout)
 public class ChildRatingRecyclerView {
 
@@ -58,47 +60,50 @@ public class ChildRatingRecyclerView {
     @RequiresApi(21)
     @Resolve
     private void onResolve() {
-        child_rating.setRating(Float.parseFloat(data.child_rating));
-        child_rating.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.orange_300)));
-        child_text_name.setText(data.child_name);
-        child_text_distance.setText(data.child_distance);
-        if (data.total_kerja.equalsIgnoreCase("0") || data.total_kerja.equalsIgnoreCase("")) {
-            child_text_total.setText("pekerja baru");
-        } else {
-            child_text_total.setText(data.total_kerja + " x bekerja");
-        }
+        try {
+            child_rating.setRating(Float.parseFloat(data.child_rating));
+            child_rating.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.orange_300)));
+            child_text_name.setText(data.child_name);
+            child_text_distance.setText(data.child_distance);
+            if (data.total_kerja.equalsIgnoreCase("0") || data.total_kerja.equalsIgnoreCase("")) {
+                child_text_total.setText("pekerja baru");
+            } else {
+                child_text_total.setText(data.total_kerja + " x bekerja");
+            }
 
-        if (data.isChecked) {
-            child_checkbox.setChecked(true);
-        } else {
-            child_checkbox.setChecked(false);
-        }
+            if (data.isChecked) {
+                child_checkbox.setChecked(true);
+            } else {
+                child_checkbox.setChecked(false);
+            }
 
-        child_checkbox.setOnClickListener(new android.view.View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View v) {
-                int jjsss = ((RequesterBaseRatingActivity) mContext).getCountCheck(data.header_id);
-                if (jjsss > 0 && child_checkbox.isChecked()) {
-                    Toast.makeText(mContext, "Hanya dapat memilih " + jjsss + " reliever.", Toast.LENGTH_SHORT).show();
-                    child_checkbox.setChecked(false);
-                } else {
-                    if (itemClickListener != null) {
-                        itemClickListener.onItemClick(position, data, child_checkbox.isChecked());
+            child_checkbox.setOnClickListener(new android.view.View.OnClickListener() {
+                @Override
+                public void onClick(android.view.View v) {
+                    int jjsss = ((RequesterBaseRatingActivity) mContext).getCountCheck(data.header_id);
+                    if (jjsss > 0 && child_checkbox.isChecked()) {
+                        Toast.makeText(mContext, "Hanya dapat memilih " + jjsss + " reliever.", Toast.LENGTH_SHORT).show();
+                        child_checkbox.setChecked(false);
+                    } else {
+                        if (itemClickListener != null) {
+                            itemClickListener.onItemClick(position, data, child_checkbox.isChecked());
+                        }
                     }
                 }
-            }
-        });
+            });
 
 
-        frame_content.setOnClickListener(new android.view.View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View v) {
-                Intent goToDetail = new Intent(mContext, RelieverDetailActivity.class);
-                goToDetail.putExtra("IDRELIEVER", data.id_reliever);
-                mContext.startActivity(goToDetail);
-            }
-        });
-
+            frame_content.setOnClickListener(new android.view.View.OnClickListener() {
+                @Override
+                public void onClick(android.view.View v) {
+                    Intent goToDetail = new Intent(mContext, RelieverDetailActivity.class);
+                    goToDetail.putExtra("IDRELIEVER", data.id_reliever);
+                    mContext.startActivity(goToDetail);
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public interface OnCheckedChangeListener {

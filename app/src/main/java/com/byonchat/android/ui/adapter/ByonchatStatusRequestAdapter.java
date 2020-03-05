@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     protected static final int VIEWTYPE_ITEM_TEXT = 1;
@@ -80,71 +82,81 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int i) {
-        Status item = itemsFiltered.get(i);
-        dbHelper = new UserDB(context);
-        if (viewHolder instanceof ByonchatStatusViewHolder) {
-            String title = item.title;
+        try {
+            Status item = itemsFiltered.get(i);
+            dbHelper = new UserDB(context);
+            if (viewHolder instanceof ByonchatStatusViewHolder) {
+                String title = item.title;
 
-            if (mSearchText != null && !mSearchText.isEmpty()) {
-                int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
-                int endPos = startPos + mSearchText.length();
+                if (mSearchText != null && !mSearchText.isEmpty()) {
+                    int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
+                    int endPos = startPos + mSearchText.length();
 
-                if (startPos != -1) {
-                    Spannable spannable = new SpannableString(title);
-                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
-                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ((ByonchatStatusViewHolder) viewHolder).vName.setText(spannable);
+                    if (startPos != -1) {
+                        Spannable spannable = new SpannableString(title);
+                        ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ((ByonchatStatusViewHolder) viewHolder).vName.setText(spannable);
+                    } else {
+                        ((ByonchatStatusViewHolder) viewHolder).vName.setText(title);
+                    }
                 } else {
                     ((ByonchatStatusViewHolder) viewHolder).vName.setText(title);
                 }
-            } else {
-                ((ByonchatStatusViewHolder) viewHolder).vName.setText(title);
-            }
 
-            showFileImage(viewHolder);
-            showTagView(viewHolder);
+                showFileImage(viewHolder);
+                showTagView(viewHolder);
 
 
-            ((ByonchatStatusViewHolder) viewHolder).vTimestamp.setText(item.timestamp);
+                ((ByonchatStatusViewHolder) viewHolder).vTimestamp.setText(item.timestamp);
 
-            //SET MARQUEE WAITING
-            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setSingleLine(true);
-            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setMarqueeRepeatLimit(-1);
-            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setSelected(true);
-            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.canScrollHorizontally(View.SCROLL_AXIS_HORIZONTAL);
+                //SET MARQUEE WAITING
+                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setSingleLine(true);
+                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setMarqueeRepeatLimit(-1);
+                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setSelected(true);
+                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.canScrollHorizontally(View.SCROLL_AXIS_HORIZONTAL);
 
-            try {
-                ValidateHistory(viewHolder, i);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                try {
+                    ValidateHistory(viewHolder, i);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-            String downol = "Dokumen Tidak Terkendali Jika Diunduh dan/atau Dicetak - Uncontrolled When Downloaded And/or Printed"+"\n"+
-                            "Downloaded at "+ item.timestamp +" By : "+ dbHelper.getColValue(UserDB.EMPLOYEE_NAME) +" --- "+dbHelper.getColValue(UserDB.EMPLOYEE_NIK)+ " --- 1st Approved By : "+dbHelper.getColValue(UserDB.ATASAN_1_NAMA)+", and  2nd Approved By : "+dbHelper.getColValue(UserDB.ATASAN_2_NAMA)+"\n"+
-                            "Controlled Copy";
-            if(dbHelper.getColValue(UserDB.ATASAN_2_NIK).equalsIgnoreCase("")){
-                downol = "Dokumen Tidak Terkendali Jika Diunduh dan/atau Dicetak - Uncontrolled When Downloaded And/or Printed"+"\n"+
-                        "Downloaded at "+ item.timestamp +" By : "+ dbHelper.getColValue(UserDB.EMPLOYEE_NAME) +" --- "+dbHelper.getColValue(UserDB.EMPLOYEE_NIK)+ " --- Approved By : "+dbHelper.getColValue(UserDB.ATASAN_1_NAMA)+"\n"+
+                String downol = "Dokumen Tidak Terkendali Jika Diunduh dan/atau Dicetak - Uncontrolled When Downloaded And/or Printed" + "\n" +
+                        "Downloaded at " + item.timestamp + " By : " + dbHelper.getColValue(UserDB.EMPLOYEE_NAME) + " --- " + dbHelper.getColValue(UserDB.EMPLOYEE_NIK) + " --- 1st Approved By : " + dbHelper.getColValue(UserDB.ATASAN_1_NAMA) + ", and  2nd Approved By : " + dbHelper.getColValue(UserDB.ATASAN_2_NAMA) + "\n" +
                         "Controlled Copy";
-            }
+                if (dbHelper.getColValue(UserDB.ATASAN_2_NIK).equalsIgnoreCase("")) {
+                    downol = "Dokumen Tidak Terkendali Jika Diunduh dan/atau Dicetak - Uncontrolled When Downloaded And/or Printed" + "\n" +
+                            "Downloaded at " + item.timestamp + " By : " + dbHelper.getColValue(UserDB.EMPLOYEE_NAME) + " --- " + dbHelper.getColValue(UserDB.EMPLOYEE_NIK) + " --- Approved By : " + dbHelper.getColValue(UserDB.ATASAN_1_NAMA) + "\n" +
+                            "Controlled Copy";
+                }
 
-            Log.w("Tinggi banget hretut" , downol);
+                Log.w("Tinggi banget hretut", downol);
 
-            String finalDownol = downol;
-            ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.w("Parking lt prestice 1st",item.id_history);
-                    if(downloaded){
-                        File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "S-TeamDoc");
-                        File oldFile = new File(oldFolder, "ISS_request_"+item.id_request+".pdf");
+                String finalDownol = downol;
+                ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.w("Parking lt prestice 1st", item.id_history);
+                        if (downloaded) {
+                            File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "S-TeamDoc");
+                            File oldFile = new File(oldFolder, "ISS_request_" + item.id_request + ".pdf");
 
-                        if(!oldFile.exists()){
-                            Log.w("Apaan ini prestice",oldFile+"");
-                            Toast.makeText(context,"Can't found your file",Toast.LENGTH_SHORT).show();
-                        }else{
+                            if (!oldFile.exists()) {
+                                Log.w("Apaan ini prestice", oldFile + "");
+                                Toast.makeText(context, "Can't found your file", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Intent intent = new Intent(context, DownloadFileByonchat.class);
+                                intent.putExtra("path", item.url);
+                                intent.putExtra("nama_file", "request_" + item.id_request);
+                                intent.putExtra("download", finalDownol);
+                                intent.putExtra("approving", item.id_history);
+                                context.startActivity(intent);
+                            }
+
+                        } else {
                             Intent intent = new Intent(context, DownloadFileByonchat.class);
                             intent.putExtra("path", item.url);
                             intent.putExtra("nama_file", "request_" + item.id_request);
@@ -152,111 +164,113 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
                             intent.putExtra("approving", item.id_history);
                             context.startActivity(intent);
                         }
-
-                    }else {
-                        Intent intent = new Intent(context, DownloadFileByonchat.class);
-                        intent.putExtra("path", item.url);
-                        intent.putExtra("nama_file", "request_" + item.id_request);
-                        intent.putExtra("download", finalDownol);
-                        intent.putExtra("approving", item.id_history);
-                        context.startActivity(intent);
                     }
-                }
-            });
+                });
 
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @SuppressLint("ResourceType")
     @TargetApi(Build.VERSION_CODES.M)
     private void ValidateHistory(final RecyclerView.ViewHolder viewHolder, final int i) throws JSONException {
-        Status item = itemsFiltered.get(i);
+        try {
+            Status item = itemsFiltered.get(i);
 
-        JSONArray history = new JSONArray(item.history);
-        for (int ii = 0; ii < history.length(); ii++){
-            JSONObject jsonObject = history.getJSONObject(ii);
-            String id = jsonObject.getString("id");
-            String id_request = jsonObject.getString("id_request");
-            String bc_user_approval = jsonObject.getString("bc_user_approval");
-            String nama = jsonObject.getString("nama");
-            String nik = jsonObject.getString("nik");
-            String status = jsonObject.getString("status");
-            String ord = jsonObject.getString("ord");
-            String create_at = jsonObject.getString("create_at");
+            JSONArray history = new JSONArray(item.history);
+            for (int ii = 0; ii < history.length(); ii++) {
+                JSONObject jsonObject = history.getJSONObject(ii);
+                String id = jsonObject.getString("id");
+                String id_request = jsonObject.getString("id_request");
+                String bc_user_approval = jsonObject.getString("bc_user_approval");
+                String nama = jsonObject.getString("nama");
+                String nik = jsonObject.getString("nik");
+                String status = jsonObject.getString("status");
+                String ord = jsonObject.getString("ord");
+                String create_at = jsonObject.getString("create_at");
 
-            if(status.equalsIgnoreCase("2")){
-                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Rejected");
-            }
-
-            if(nik.equalsIgnoreCase("download")){
-                if(status.equalsIgnoreCase("1")){
-                    ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setText("VIEW");
-                    ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setBackgroundResource(R.drawable.new_btn_room_lv_s);
-                    downloaded = true;
-                }else{
-                    ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setText("DOWNLOAD");
-                    ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setBackgroundResource(R.drawable.new_btn_room_lv_g);
-                    downloaded = false;
+                if (status.equalsIgnoreCase("2")) {
+                    ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Rejected");
                 }
-            }
 
-            if(history.length() == 1){
-                ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
-                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Tidak Ada Atasan");
-            }
-
-            if(history.length() == 2){
-                if(ord.equalsIgnoreCase("1")){
-                    if(status.equalsIgnoreCase("1")){
-                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.VISIBLE);
-                        ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Approved");
-                    }else if(status.equalsIgnoreCase("0")){
-                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
-                        ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting "+nama);
-                    }else {
-                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
-                        ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Rejected");
-                    }
-                }
-            }else if(history.length() == 3){
-                if(ord.equalsIgnoreCase("2")){
-                    if(status.equalsIgnoreCase("1")){
-                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.VISIBLE);
-                        ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Approved");
-                    }else {
-                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
-                    }
-                }
-                if(ord.equalsIgnoreCase("1")){
-                    if(status.equalsIgnoreCase("0")){
-                        num_loc = 1;
-                    }else if(status.equalsIgnoreCase("1")){
-                        num_loc = 2;
-                    }else{
-                        num_loc = 0;
+                if (nik.equalsIgnoreCase("download")) {
+                    if (status.equalsIgnoreCase("1")) {
+                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setText("VIEW");
+                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setBackgroundResource(R.drawable.new_btn_room_lv_s);
+                        downloaded = true;
+                    } else {
+                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setText("DOWNLOAD");
+                        ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setBackgroundResource(R.drawable.new_btn_room_lv_g);
+                        downloaded = false;
                     }
                 }
 
+                if (history.length() == 1) {
+                    ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
+                    ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Tidak Ada Atasan");
+                }
 
-                if(num_loc == 1){
-                    if(ord.equalsIgnoreCase("1")){
-                        if(status.equalsIgnoreCase("0")){
-                            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting "+nama);
+                if (history.length() == 2) {
+                    if (ord.equalsIgnoreCase("1")) {
+                        if (status.equalsIgnoreCase("1")) {
+                            ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.VISIBLE);
+                            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Approved");
+                        } else if (status.equalsIgnoreCase("0")) {
+                            ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
+                            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting " + nama);
+                        } else {
+                            ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
+                            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Rejected");
                         }
                     }
-                } else if (num_loc == 2){
-                    if(ord.equalsIgnoreCase("2")){
-                        if(status.equalsIgnoreCase("0")){
-                            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting "+nama);
+                } else if (history.length() == 3) {
+                    if (ord.equalsIgnoreCase("2")) {
+                        if (status.equalsIgnoreCase("1")) {
+                            ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.VISIBLE);
+                            ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Approved");
+                        } else {
+                            ((ByonchatStatusViewHolder) viewHolder).vTextDownload.setVisibility(View.GONE);
+                        }
+                    }
+                    if (ord.equalsIgnoreCase("1")) {
+                        if (status.equalsIgnoreCase("0")) {
+                            num_loc = 1;
+                        } else if (status.equalsIgnoreCase("1")) {
+                            num_loc = 2;
+                        } else {
+                            num_loc = 0;
+                        }
+                    }
+
+
+                    if (num_loc == 1) {
+                        if (ord.equalsIgnoreCase("1")) {
+                            if (status.equalsIgnoreCase("0")) {
+                                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting " + nama);
+                            }
+                        }
+                    } else if (num_loc == 2) {
+                        if (ord.equalsIgnoreCase("2")) {
+                            if (status.equalsIgnoreCase("0")) {
+                                ((ByonchatStatusViewHolder) viewHolder).vTextStatus.setText("Waiting " + nama);
+                            }
                         }
                     }
                 }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void showFileImage(RecyclerView.ViewHolder viewHolder) {
-        Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/public/list_attachment/icon-pdf.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatStatusViewHolder) viewHolder).vIconView);
+        try {
+            Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/public/list_attachment/icon-pdf.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatStatusViewHolder) viewHolder).vIconView);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private String[] getTagView() {
@@ -271,15 +285,19 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
     }
 
     private void showTagView(RecyclerView.ViewHolder viewHolder) {
-        String[] tags = /*getTagView()*/ null;
+        try {
+            String[] tags = /*getTagView()*/ null;
 
-        if (tags != null && tags.length > 0) {
-            ((ByonchatStatusViewHolder) viewHolder).vTagGroup.setTags(tags);
+            if (tags != null && tags.length > 0) {
+                ((ByonchatStatusViewHolder) viewHolder).vTagGroup.setTags(tags);
+            }
+
+            ((ByonchatStatusViewHolder) viewHolder).vTagGroup.setOnTagClickListener(s -> {
+                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        ((ByonchatStatusViewHolder) viewHolder).vTagGroup.setOnTagClickListener(s -> {
-            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-        });
     }
 
     public List<Status> getData() {
@@ -386,24 +404,29 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
             String charString = charSequence.toString();
-            if (charString.isEmpty()) {
-                mSearchText = "";
-                itemsFiltered = items;
-            } else {
-                mSearchText = charString;
-                List<Status> filteredList = new ArrayList<>();
-                for (Status row : items) {
-                    if (row.title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
-                        filteredList.add(row);
+            try {
+                if (charString.isEmpty()) {
+                    mSearchText = "";
+                    itemsFiltered = items;
+                } else {
+                    mSearchText = charString;
+                    List<Status> filteredList = new ArrayList<>();
+                    for (Status row : items) {
+                        if (row.title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
+                            filteredList.add(row);
+                        }
                     }
+
+                    itemsFiltered = filteredList;
                 }
 
-                itemsFiltered = filteredList;
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = itemsFiltered;
+                return filterResults;
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
+                return null;
             }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = itemsFiltered;
-            return filterResults;
         }
 
         @Override
@@ -411,25 +434,8 @@ public class ByonchatStatusRequestAdapter extends RecyclerView.Adapter<RecyclerV
             itemsFiltered = (ArrayList<Status>) filterResults.values;
             notifyDataSetChanged();
 
-            /*setOnItemClickListener((view, position) -> {
-                if (onPreviewItemClickListener != null) {
-                    Status c = (Status) getData().get(position);
-                    onPreviewItemClickListener.onItemPreviewClick((Status) getData().get(position));
-                }
-            });
-
-            setOnLongItemClickListener((view, position) -> {
-                if (onPreviewItemClickListener != null) {
-                    Status c = (Status) getData().get(position);
-                    onPreviewItemClickListener.onItemPreviewClick((Status) getData().get(position));
-                }
-            });*/
         }
     }
-
-    /*public void setOnItemClickListener(OnItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
-    }*/
 
     public void setOnLongItemClickListener(OnLongItemClickListener longItemClickListener) {
         this.longItemClickListener = longItemClickListener;

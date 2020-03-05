@@ -65,6 +65,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 6/30/2016.
  */
@@ -89,185 +91,172 @@ public class ActivityVouchersDetail extends AppCompatActivity {
     String id, judul, bgcolor, textcolor, icon, background;
     String idd, judull, seriall, tgll, nominall, colorr, txtcolorr;
 
-    //Lukman+
-//    public static String TITLE[] = {
-//            "Byonchat Voucher",
-//            "MKG Vouchers",
-//            "Alfamart Voucher",
-//            "Planet Ban Service...",
-//            "Nawilis Parts",
-//            "Kids Meal Voucher",
-//            "XXI Saturday..."
-//    };
-//
-//    public static String COLOR[] = {
-//            "#fbf7c3",
-//            "#3bc93d",
-//            "#3ba6c9",
-//            "#c9543b",
-//            "#3325ff",
-//            "#fbf7c3",
-//            "#3bc93d"
-//    };
-//
-//    public static String VALUE[] = {
-//            "15000",
-//            "25000",
-//            "10000",
-//            "15000",
-//            "25000",
-//            "10000",
-//            "15000"
-//    };
-    //Lukman-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vouchers_detail_activity);
 
+        try {
 //        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        titleToolbar = (TextView) findViewById(R.id.title_toolbar);
-        View view = findViewById(R.id.layout_back_button);
+            titleToolbar = (TextView) findViewById(R.id.title_toolbar);
+            View view = findViewById(R.id.layout_back_button);
 
-        if (getIntent().getExtras().containsKey("id")) {
-            id = getIntent().getStringExtra("id");
-            judul = getIntent().getStringExtra("judul");
-            bgcolor = getIntent().getStringExtra("bgcolor");
-            textcolor = getIntent().getStringExtra("textcolor");
-            icon = getIntent().getStringExtra("icon");
+            if (getIntent().getExtras().containsKey("id")) {
+                id = getIntent().getStringExtra("id");
+                judul = getIntent().getStringExtra("judul");
+                bgcolor = getIntent().getStringExtra("bgcolor");
+                textcolor = getIntent().getStringExtra("textcolor");
+                icon = getIntent().getStringExtra("icon");
 //            Toast.makeText(ActivityVouchersDetail.this, id, Toast.LENGTH_SHORT).show();
-        }
+            }
 
-        color = getResources().getColor(R.color.colorPrimary);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        initBackground(judul, color);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+            color = getResources().getColor(R.color.colorPrimary);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            initBackground(judul, color);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        if (activity == null) {
-            activity = ActivityVouchersDetail.this;
-        }
+            if (activity == null) {
+                activity = ActivityVouchersDetail.this;
+            }
 
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(activity);
-        }
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(activity);
+            }
 
-        if (vouchersDB == null) {
-            vouchersDB = new VouchersDB(activity);
-        }
+            if (vouchersDB == null) {
+                vouchersDB = new VouchersDB(activity);
+            }
 
-        lv = (ListView) findViewById(R.id.list);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+            lv = (ListView) findViewById(R.id.list);
+            swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 
-        swipeRefreshLayout.setColorSchemeColors(
-                Color.GRAY, //This method will rotate
-                Color.GRAY, //colors given to it when
-                Color.GRAY,//loader continues to
-                Color.GRAY);//refresh.
-        //  swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
-        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.gray);
+            swipeRefreshLayout.setColorSchemeColors(
+                    Color.GRAY, //This method will rotate
+                    Color.GRAY, //colors given to it when
+                    Color.GRAY,//loader continues to
+                    Color.GRAY);//refresh.
+            //  swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
+            swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.gray);
 
-        requestVouchersDetail = new RequestVouchersDetail(context);
+            requestVouchersDetail = new RequestVouchersDetail(context);
 
-        if (pdialog == null) {
-            pdialog = new ProgressDialog(activity);
-            pdialog.setIndeterminate(true);
-            pdialog.setMessage("Please wait a moment");
-            pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        }
+            if (pdialog == null) {
+                pdialog = new ProgressDialog(activity);
+                pdialog.setIndeterminate(true);
+                pdialog.setMessage("Please wait a moment");
+                pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            }
 
-        adapter = new ListVoucherDetailAdapter(activity, listItem);
-        contact = messengerHelper.getMyContact();
+            adapter = new ListVoucherDetailAdapter(activity, listItem);
+            contact = messengerHelper.getMyContact();
 
-        vouchersDB.open();
-        listItem = vouchersDB.retriveVouchersDetail();
-        vouchersDB.close();
+            vouchersDB.open();
+            listItem = vouchersDB.retriveVouchersDetail();
+            vouchersDB.close();
 
-        if (listItem.size() > 0) {
-            refreshList();
-        }else{
-            requestKey();
-        }
+            if (listItem.size() > 0) {
+                refreshList();
+            } else {
+                requestKey();
+            }
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.post(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                requestKey();
-                                swipeRefreshLayout.setRefreshing(true);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    swipeRefreshLayout.post(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    requestKey();
+                                    swipeRefreshLayout.setRefreshing(true);
+                                }
                             }
-                        }
-                );
-            }
-        });
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                idd = String.valueOf(position);
-                judull = listItem.get(position).getJudul();
-                background = listItem.get(position).getBackground();
-                seriall = listItem.get(position).getSerial_number();
-                tgll = listItem.get(position).getTgl_valid();
-                nominall = listItem.get(position).getValue();
-                colorr = listItem.get(position).getColor();
-                txtcolorr = listItem.get(position).getTextcolor();
-
-                if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                    LoadImageFromURL loadImage = new LoadImageFromURL();
-                    loadImage.execute();
-                }else{
-                    Toast.makeText(ActivityVouchersDetail.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    );
                 }
-            }
-        });
+            });
+
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                    idd = String.valueOf(position);
+                    judull = listItem.get(position).getJudul();
+                    background = listItem.get(position).getBackground();
+                    seriall = listItem.get(position).getSerial_number();
+                    tgll = listItem.get(position).getTgl_valid();
+                    nominall = listItem.get(position).getValue();
+                    colorr = listItem.get(position).getColor();
+                    txtcolorr = listItem.get(position).getTextcolor();
+
+                    if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                        LoadImageFromURL loadImage = new LoadImageFromURL();
+                        loadImage.execute();
+                    } else {
+                        Toast.makeText(ActivityVouchersDetail.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public void onResume() {
-        IntentFilter f = new IntentFilter(MessengerConnectionService.ACTION_REFRESH_VOUCHERS);
-        f.setPriority(1);
-        activity.registerReceiver(broadcastHandler, f);
-        refreshList();
+        try {
+            IntentFilter f = new IntentFilter(MessengerConnectionService.ACTION_REFRESH_VOUCHERS);
+            f.setPriority(1);
+            activity.registerReceiver(broadcastHandler, f);
+            refreshList();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        requestVouchersDetail.cancel(true);
-        activity.unregisterReceiver(broadcastHandler);
+        try {
+            requestVouchersDetail.cancel(true);
+            activity.unregisterReceiver(broadcastHandler);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
         super.onPause();
     }
 
     private void requestKey() {
-        RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-            @Override
-            public void onTaskDone(String key) {
-                if (key.equalsIgnoreCase("null")) {
-                    swipeRefreshLayout.setRefreshing(false);
-                    Toast.makeText(activity, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                } else {
-                    requestVouchersDetail = new RequestVouchersDetail(activity);
-                    requestVouchersDetail.execute(key);
+        try {
+            RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                @Override
+                public void onTaskDone(String key) {
+                    if (key.equalsIgnoreCase("null")) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(activity, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                    } else {
+                        requestVouchersDetail = new RequestVouchersDetail(activity);
+                        requestVouchersDetail.execute(key);
+                    }
                 }
-            }
-        }, activity);
+            }, activity);
 
-        testAsyncTask.execute();
+            testAsyncTask.execute();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void refreshList() {
-
-        vouchersDB.open();
-        listItem = vouchersDB.retriveVouchersDetail();
-        vouchersDB.close();
-        adapter = new ListVoucherDetailAdapter(activity, listItem);
-        lv.setAdapter(adapter);
+        try {
+            vouchersDB.open();
+            listItem = vouchersDB.retriveVouchersDetail();
+            vouchersDB.close();
+            adapter = new ListVoucherDetailAdapter(activity, listItem);
+            lv.setAdapter(adapter);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class BroadcastHandler extends BroadcastReceiver {
@@ -373,28 +362,32 @@ public class ActivityVouchersDetail extends AppCompatActivity {
         }
 
         protected void onPostExecute(String content) {
-            if (error) {
-                if (content.contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            swipeRefreshLayout.setRefreshing(false);
-                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+            try {
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                swipeRefreshLayout.setRefreshing(false);
+                                Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                requestVouchersDetail = new RequestVouchersDetail(context);
+                                requestVouchersDetail.execute(key);
+                            }
                         } else {
-                            requestVouchersDetail = new RequestVouchersDetail(context);
-                            requestVouchersDetail.execute(key);
+                            swipeRefreshLayout.setRefreshing(false);
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         swipeRefreshLayout.setRefreshing(false);
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
-                    Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                    refreshList();
                 }
-            } else {
-                swipeRefreshLayout.setRefreshing(false);
-                refreshList();
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }
@@ -418,13 +411,17 @@ public class ActivityVouchersDetail extends AppCompatActivity {
     }
 
     private void initBackground(String title, int color) {
-        toolbar.setTitle(title);
-        Bitmap back_default = FilteringImage.headerColor(getWindow(), ActivityVouchersDetail.this, color);
-        Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            toolbar.setBackground(back_draw_default);
-        } else {
-            toolbar.setBackgroundDrawable(back_draw_default);
+        try {
+            toolbar.setTitle(title);
+            Bitmap back_default = FilteringImage.headerColor(getWindow(), ActivityVouchersDetail.this, color);
+            Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                toolbar.setBackground(back_draw_default);
+            } else {
+                toolbar.setBackgroundDrawable(back_draw_default);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -490,11 +487,15 @@ public class ActivityVouchersDetail extends AppCompatActivity {
         protected void onPostExecute(Bitmap result) {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
-            FragmentManager fm = getSupportFragmentManager();
-            DialogFragment testDialog = DialogVouchersPic.newInstance(idd, judull, seriall, tgll, nominall, colorr, txtcolorr, background, result);
-            testDialog.setRetainInstance(true);
-            testDialog.show(fm, "DialogVouchersPic");
-            progressDialog.dismiss();
+            try {
+                FragmentManager fm = getSupportFragmentManager();
+                DialogFragment testDialog = DialogVouchersPic.newInstance(idd, judull, seriall, tgll, nominall, colorr, txtcolorr, background, result);
+                testDialog.setRetainInstance(true);
+                testDialog.show(fm, "DialogVouchersPic");
+                progressDialog.dismiss();
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
+            }
         }
 
     }

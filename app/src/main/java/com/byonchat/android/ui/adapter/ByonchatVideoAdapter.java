@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ByonchatVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     protected static final int VIEWTYPE_ITEM_TEXT = 1;
@@ -66,49 +68,57 @@ public class ByonchatVideoAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int i) {
-        Video item = itemsFiltered.get(i);
-        if (viewHolder instanceof ByonchatVideoTubeViewHolder) {
-            String title = item.title;
+        try {
+            Video item = itemsFiltered.get(i);
+            if (viewHolder instanceof ByonchatVideoTubeViewHolder) {
+                String title = item.title;
 
-            if (mSearchText != null && !mSearchText.isEmpty()) {
-                int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
-                int endPos = startPos + mSearchText.length();
+                if (mSearchText != null && !mSearchText.isEmpty()) {
+                    int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
+                    int endPos = startPos + mSearchText.length();
 
-                if (startPos != -1) {
-                    Spannable spannable = new SpannableString(title);
-                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
-                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ((ByonchatVideoTubeViewHolder) viewHolder).vContents.setText(spannable);
+                    if (startPos != -1) {
+                        Spannable spannable = new SpannableString(title);
+                        ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ((ByonchatVideoTubeViewHolder) viewHolder).vContents.setText(spannable);
+                    } else {
+                        ((ByonchatVideoTubeViewHolder) viewHolder).vContents.setText(title);
+                    }
                 } else {
                     ((ByonchatVideoTubeViewHolder) viewHolder).vContents.setText(title);
                 }
-            } else {
-                ((ByonchatVideoTubeViewHolder) viewHolder).vContents.setText(title);
+
+                showFileImage(viewHolder, item.thumbnail);
+
+                ((ByonchatVideoTubeViewHolder) viewHolder).vInfo.setText(item.size + " \u2022 " + item.length);
+
+                ((ByonchatVideoTubeViewHolder) viewHolder).vDescription.setText(Html.fromHtml(item.description));
+
+                ((ByonchatVideoTubeViewHolder) viewHolder).onCommentSelected(item);
+
+                ((ByonchatVideoTubeViewHolder) viewHolder).vMore.setOnClickListener(view -> {
+                    if (popupItemClickListener != null) {
+                        popupItemClickListener.onItemClick(view, i, (Video) getData().get(i));
+                    }
+                });
             }
-
-            showFileImage(viewHolder, item.thumbnail);
-
-            ((ByonchatVideoTubeViewHolder) viewHolder).vInfo.setText(item.size + " \u2022 " + item.length);
-
-            ((ByonchatVideoTubeViewHolder) viewHolder).vDescription.setText(Html.fromHtml(item.description));
-
-            ((ByonchatVideoTubeViewHolder) viewHolder).onCommentSelected(item);
-
-            ((ByonchatVideoTubeViewHolder) viewHolder).vMore.setOnClickListener(view -> {
-                if (popupItemClickListener != null) {
-                    popupItemClickListener.onItemClick(view, i, (Video) getData().get(i));
-                }
-            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void showFileImage(RecyclerView.ViewHolder viewHolder, String thumbnail) {
-        Glide.with(context).load(thumbnail)
-                .asBitmap()
-                .dontAnimate()
-                .error(R.drawable.no_image)
-                .into(((ByonchatVideoTubeViewHolder) viewHolder).vAvatar);
+        try {
+            Glide.with(context).load(thumbnail)
+                    .asBitmap()
+                    .dontAnimate()
+                    .error(R.drawable.no_image)
+                    .into(((ByonchatVideoTubeViewHolder) viewHolder).vAvatar);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public List<Video> getData() {
@@ -216,20 +226,25 @@ public class ByonchatVideoAdapter extends RecyclerView.Adapter<RecyclerView.View
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
             String charString = charSequence.toString();
-            if (charString.isEmpty()) {
-                mSearchText = "";
-                itemsFiltered = items;
-            } else {
-                mSearchText = charString;
-                List<Video> filteredList = new ArrayList<>();
-                for (Video row : items) {
-                    if (row.title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))
-                            || row.description.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
-                        filteredList.add(row);
-                    }
-                }
 
-                itemsFiltered = filteredList;
+            try {
+                if (charString.isEmpty()) {
+                    mSearchText = "";
+                    itemsFiltered = items;
+                } else {
+                    mSearchText = charString;
+                    List<Video> filteredList = new ArrayList<>();
+                    for (Video row : items) {
+                        if (row.title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))
+                                || row.description.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
+                            filteredList.add(row);
+                        }
+                    }
+
+                    itemsFiltered = filteredList;
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
 
             FilterResults filterResults = new FilterResults();
@@ -239,22 +254,26 @@ public class ByonchatVideoAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            itemsFiltered = (ArrayList<Video>) filterResults.values;
-            notifyDataSetChanged();
+            try {
+                itemsFiltered = (ArrayList<Video>) filterResults.values;
+                notifyDataSetChanged();
 
-            setOnItemClickListener((view, position) -> {
-                if (onVideoTubeClickListener != null) {
-                    Video c = (Video) getData().get(position);
-                    onVideoTubeClickListener.onItemVideoClick((Video) getData().get(position));
-                }
-            });
+                setOnItemClickListener((view, position) -> {
+                    if (onVideoTubeClickListener != null) {
+                        Video c = (Video) getData().get(position);
+                        onVideoTubeClickListener.onItemVideoClick((Video) getData().get(position));
+                    }
+                });
 
-            setOnLongItemClickListener((view, position) -> {
-                if (onVideoTubeClickListener != null) {
-                    Video c = (Video) getData().get(position);
-                    onVideoTubeClickListener.onItemVideoLongClick((Video) getData().get(position));
-                }
-            });
+                setOnLongItemClickListener((view, position) -> {
+                    if (onVideoTubeClickListener != null) {
+                        Video c = (Video) getData().get(position);
+                        onVideoTubeClickListener.onItemVideoLongClick((Video) getData().get(position));
+                    }
+                });
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
+            }
         }
     }
 

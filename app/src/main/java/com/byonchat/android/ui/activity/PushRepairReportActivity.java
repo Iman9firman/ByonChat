@@ -81,6 +81,8 @@ import java.util.Map;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class PushRepairReportActivity extends AppCompatActivity {
     String task_id, id_task, id_task_list, id_rooms_tab;
     String name_title;
@@ -92,8 +94,6 @@ public class PushRepairReportActivity extends AppCompatActivity {
     private static final int REQ_CAMERA = 1201;
     Button btnSubmit, btnCancel;
     ProgressDialog rdialog;
-    //    private OnTaskCompleted taskCompleted;
-//    ArrayList<String> prosesUpload = new ArrayList<>();
     Integer totalUpload = 0;
     BotListDB db;
 
@@ -101,16 +101,19 @@ public class PushRepairReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
-//layout_push_reportrepair_activity
 
-        db = BotListDB.getInstance(getApplicationContext());
-        vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
-        btnSubmit = (Button) findViewById(R.id.btn_submit);
-        btnCancel = (Button) findViewById(R.id.btn_cancel);
+        try {
+            db = BotListDB.getInstance(getApplicationContext());
+            vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
+            btnSubmit = (Button) findViewById(R.id.btn_submit);
+            btnCancel = (Button) findViewById(R.id.btn_cancel);
 
-        resolveData();
-        resolveListFile();
-        resolveSend();
+            resolveData();
+            resolveListFile();
+            resolveSend();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveData() {
@@ -137,48 +140,51 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 }
                 foto.add(fotonya);
             }
-        } catch (JSONException e) {
-
+        }  catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQ_CAMERA) {
-            if (resultCode == RESULT_OK) {
-                String returnString = data.getStringExtra("PICTURE");
-                if (decodeFile(returnString)) {
-                    final java.io.File f = new java.io.File(returnString);
-                    if (f.exists()) {
-                        FileInputStream inputStream = null;
-                        try {
-                            inputStream = new FileInputStream(f);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-
-                        Bitmap result = MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800,
-                                800);
-
-                        RoomsDetail orderModel = new RoomsDetail(id_task, getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
-                        db.insertRoomsDetail(orderModel);
-
-                        for(int i = 0; i < foto.size();i++){
-                            if(foto.get(i).getId().equalsIgnoreCase(task_id)){
-                                foto.get(i).setAfter(f);
+        try {
+            if (requestCode == REQ_CAMERA) {
+                if (resultCode == RESULT_OK) {
+                    String returnString = data.getStringExtra("PICTURE");
+                    if (decodeFile(returnString)) {
+                        final java.io.File f = new java.io.File(returnString);
+                        if (f.exists()) {
+                            FileInputStream inputStream = null;
+                            try {
+                                inputStream = new FileInputStream(f);
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
                             }
+
+                            Bitmap result = MediaProcessingUtil.decodeSampledBitmapFromResourceMemOpt(inputStream, 800,
+                                    800);
+
+                            RoomsDetail orderModel = new RoomsDetail(id_task, getIntent().getStringExtra("id_rooms_tab"), getIntent().getStringExtra("username_room"), f.toString(), task_id, null, "reportrepair");
+                            db.insertRoomsDetail(orderModel);
+
+                            for (int i = 0; i < foto.size(); i++) {
+                                if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
+                                    foto.get(i).setAfter(f);
+                                }
+                            }
+
+                            mAdapter.notifyDataSetChanged();
                         }
 
-                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
                     }
 
-                } else {
-                    Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
                 }
-
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -264,108 +270,118 @@ public class PushRepairReportActivity extends AppCompatActivity {
             }
             return true;
 
-        } catch (Exception e) {
+        }  catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
             return false;
         }
-
     }
 
     protected void resolveListFile() {
-
-
-        mAdapter = new PustReportRepairAdapter(getApplication(),id_task,
-                getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
-                foto, new OnPreviewItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, File item, String type) {
-                if(type.equalsIgnoreCase("before")){
-                    task_id = position + "";
-                    Intent intent = new Intent(PushRepairReportActivity.this, ZoomImageViewActivity.class);
-                    for(int i = 0; i< foto.size();i++){
-                        if(foto.get(i).getId().equalsIgnoreCase(task_id)){
-                            intent.putExtra(ZoomImageViewActivity.KEY_FILE, foto.get(i).getBefore());
+        try {
+            mAdapter = new PustReportRepairAdapter(getApplication(), id_task,
+                    getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
+                    foto, new OnPreviewItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position, File item, String type) {
+                    if (type.equalsIgnoreCase("before")) {
+                        task_id = position + "";
+                        Intent intent = new Intent(PushRepairReportActivity.this, ZoomImageViewActivity.class);
+                        for (int i = 0; i < foto.size(); i++) {
+                            if (foto.get(i).getId().equalsIgnoreCase(task_id)) {
+                                intent.putExtra(ZoomImageViewActivity.KEY_FILE, foto.get(i).getBefore());
+                            }
                         }
+                        startActivity(intent);
+                    } else {
+                        task_id = position + "";
+                        CameraActivity.Builder start = new CameraActivity.Builder(PushRepairReportActivity.this, REQ_CAMERA);
+                        start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
+                        start.setCameraFace(CameraActivity.CAMERA_FRONT);
+                        start.setFlashMode(CameraActivity.FLASH_OFF);
+                        start.setQuality(CameraActivity.MEDIUM);
+                        start.setRatio(CameraActivity.RATIO_4_3);
+                        start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
+                        if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        new Camera(start.build()).lauchCamera();
                     }
-                    startActivity(intent);
-                }else {
-                    task_id = position + "";
-                    CameraActivity.Builder start = new CameraActivity.Builder(PushRepairReportActivity.this, REQ_CAMERA);
-                    start.setLockSwitch(CameraActivity.UNLOCK_SWITCH_CAMERA);
-                    start.setCameraFace(CameraActivity.CAMERA_FRONT);
-                    start.setFlashMode(CameraActivity.FLASH_OFF);
-                    start.setQuality(CameraActivity.MEDIUM);
-                    start.setRatio(CameraActivity.RATIO_4_3);
-                    start.setFileName(new MediaProcessingUtil().createFileName("jpeg", "ROOM"));
-                    if (ActivityCompat.checkSelfPermission(getApplication(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
-                    }
-                    new Camera(start.build()).lauchCamera();
                 }
-            }
-        });
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        vListData.setLayoutManager(mLayoutManager);
-        vListData.setItemAnimator(new DefaultItemAnimator());
-        vListData.setAdapter(mAdapter);
+            });
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+            vListData.setLayoutManager(mLayoutManager);
+            vListData.setItemAnimator(new DefaultItemAnimator());
+            vListData.setAdapter(mAdapter);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void resolveSend(){
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rdialog = new ProgressDialog(PushRepairReportActivity.this);
-                rdialog.setMessage("Loading...");
-                rdialog.show();
-
-                for (int i = 0; i < foto.size();i++) {
-                    new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
-                            getIntent().getStringExtra("username_room"),
-                            id_rooms_tab, id_task_list,
-                            foto.get(i).getAfter().toString(),
-                            foto.get(i).getId());
+        try {
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
                 }
-            }
-        });
+            });
+            btnSubmit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    rdialog = new ProgressDialog(PushRepairReportActivity.this);
+                    rdialog.setMessage("Loading...");
+                    rdialog.show();
+
+                    for (int i = 0; i < foto.size(); i++) {
+                        new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                getIntent().getStringExtra("username_room"),
+                                id_rooms_tab, id_task_list,
+                                foto.get(i).getAfter().toString(),
+                                foto.get(i).getId());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        RequestQueue queue = Volley.newRequestQueue(this);
+        try {
+            RequestQueue queue = Volley.newRequestQueue(this);
 
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    rdialog.dismiss();
-                    finish();
-                    Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
-                    Log.w("Return push errorrr", response);
+            StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                    response -> {
+                        rdialog.dismiss();
+                        finish();
+                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                        Log.w("Return push errorrr", response);
 
-                },
-                error -> {
-                    Toast.makeText(getApplicationContext(),"Error found! Try Again",Toast.LENGTH_SHORT).show();
-                    rdialog.dismiss();
-                    Log.w("Return push errorrrrr2", error);
+                    },
+                    error -> {
+                        Toast.makeText(getApplicationContext(), "Error found! Try Again", Toast.LENGTH_SHORT).show();
+                        rdialog.dismiss();
+                        Log.w("Return push errorrrrr2", error);
+                    }
+            ) {
+
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    return params2;
                 }
-        ) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        queue.add(sr);
+            };
+            queue.add(sr);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private String fileJson(){
@@ -403,7 +419,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
             stringdong = jsonObject.toString();
         } catch (JSONException e){
-
+            reportCatch(e.getLocalizedMessage());
         }
 
         return stringdong;
@@ -477,8 +493,10 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
             } catch (ClientProtocolException e) {
                 responseString = e.toString();
+                reportCatch(e.getLocalizedMessage());
             } catch (IOException e) {
                 responseString = e.toString();
+                reportCatch(e.getLocalizedMessage());
             }
 
             return responseString;
@@ -524,7 +542,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-
+                reportCatch(e.getLocalizedMessage());
             }
             super.onPostExecute(result);
         }
@@ -617,9 +635,14 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(),"Success Uploading Report",Toast.LENGTH_LONG).show();
-            rdialog.dismiss();
-            finish();
+            try {
+                Toast.makeText(getApplicationContext(), "Success Uploading Report", Toast.LENGTH_LONG).show();
+                rdialog.dismiss();
+                finish();
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
+                finish();
+            }
             super.onPostExecute(result);
         }
     }
@@ -653,6 +676,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
             bmpFile.flush();
             bmpFile.close();
         } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
         //return the path of resized and compressed file
         return context.getCacheDir() + fileName;
@@ -666,17 +690,22 @@ public class PushRepairReportActivity extends AppCompatActivity {
         final int width = options.outWidth;
         int inSampleSize = 1;
 
-        if (height > reqHeight || width > reqWidth) {
+        try {
+            if (height > reqHeight || width > reqWidth) {
 
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
+                final int halfHeight = height / 2;
+                final int halfWidth = width / 2;
 
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
+                // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+                // height and width larger than the requested height and width.
+                while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
+                    inSampleSize *= 2;
+                }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
+
         return inSampleSize;
     }
 }

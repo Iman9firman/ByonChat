@@ -20,6 +20,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepairAdapter.MyViewHolder> {
 
     private List<Photo> allList;
@@ -59,44 +61,47 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Photo foto = allList.get(position);
+        try {
+            Photo foto = allList.get(position);
 
-        Picasso.with(context).load(foto.getBefore())
-                .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.before);
+            Picasso.with(context).load(foto.getBefore())
+                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.before);
 
-        if(foto.getAfter() != null) {
-            Picasso.with(context).load(foto.getAfter())
-                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                    .into(holder.after);
-        }else {
-            BotListDB db = BotListDB.getInstance(context);
-            Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "reportrepair", foto.getId());
-
-            if (cursorCild.getCount() > 0) {
-                File f = new File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
-                Picasso.with(context).load(f)
+            if (foto.getAfter() != null) {
+                Picasso.with(context).load(foto.getAfter())
                         .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                         .into(holder.after);
-            }
-        }
-        holder.keterangan.setText(foto.getTitle());
-        holder.after.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null , "after");
-                }
-            }
-        });
-        holder.before.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null , "before");
-                }
-            }
-        });
+            } else {
+                BotListDB db = BotListDB.getInstance(context);
+                Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "reportrepair", foto.getId());
 
+                if (cursorCild.getCount() > 0) {
+                    File f = new File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                    Picasso.with(context).load(f)
+                            .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                            .into(holder.after);
+                }
+            }
+            holder.keterangan.setText(foto.getTitle());
+            holder.after.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onPreviewItemClickListener != null) {
+                        onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "after");
+                    }
+                }
+            });
+            holder.before.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onPreviewItemClickListener != null) {
+                        onPreviewItemClickListener.onItemClick(v, Integer.parseInt(foto.getId()), null, "before");
+                    }
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override

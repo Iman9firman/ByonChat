@@ -22,6 +22,8 @@ import com.bumptech.glide.Glide;
 import com.byonchat.android.R;
 import com.byonchat.android.createMeme.FilteringImage;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public abstract class ImsBaseProfileActivity extends AppCompatActivity {
 
     protected static final String ARGS = "args";
@@ -97,34 +99,42 @@ public abstract class ImsBaseProfileActivity extends AppCompatActivity {
     }
 
     protected void resolveToolbar() {
-        setSupportActionBar(vToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        try {
+            setSupportActionBar(vToolbar);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        FilteringImage.SystemBarBackground(getWindow(), getResources().getColor(android.R.color.transparent));
+            FilteringImage.SystemBarBackground(getWindow(), getResources().getColor(android.R.color.transparent));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            colorForeground = color.replace("#", "#" + percent);
-            vBgImage.setForeground(new ColorDrawable(Color.parseColor(colorForeground)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                colorForeground = color.replace("#", "#" + percent);
+                vBgImage.setForeground(new ColorDrawable(Color.parseColor(colorForeground)));
+            }
+            vToolbar.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+            vToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+
+            AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) vCollapsingToolbar.getLayoutParams();
+            p.setScrollFlags(0);
+            vCollapsingToolbar.setLayoutParams(p);
+
+            vToolbarBack.setOnClickListener(v -> onBackPressed());
+            vToolbarTitle.setText("Profile");
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
-        vToolbar.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        vToolbar.setTitleTextColor(getResources().getColor(R.color.white));
-
-        AppBarLayout.LayoutParams p = (AppBarLayout.LayoutParams) vCollapsingToolbar.getLayoutParams();
-        p.setScrollFlags(0);
-        vCollapsingToolbar.setLayoutParams(p);
-
-        vToolbarBack.setOnClickListener(v -> onBackPressed());
-        vToolbarTitle.setText("Profile");
     }
 
     protected void resolveBackgroundImage() {
-        Glide.with(getApplicationContext())
-                .load(R.drawable.wallpaper)
-                .centerCrop()
-                .skipMemoryCache(true)
-                .into(vBgImage);
+        try {
+            Glide.with(getApplicationContext())
+                    .load(R.drawable.wallpaper)
+                    .centerCrop()
+                    .skipMemoryCache(true)
+                    .into(vBgImage);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveEdit() {

@@ -46,6 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 @SuppressLint("ValidFragment")
 public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -105,13 +107,17 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
-        title = getArguments().getString("aa");
-        urlTembak = "https://bb.byonchat.com/ApiDocumentControl/index.php/Request/list";
-        username = getArguments().getString("cc");
-        idRoomTab = getArguments().getString("dd");
-        myContact = getArguments().getString("ee");
-        color = getArguments().getString("col");
+        try {
+            databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
+            title = getArguments().getString("aa");
+            urlTembak = "https://bb.byonchat.com/ApiDocumentControl/index.php/Request/list";
+            username = getArguments().getString("cc");
+            idRoomTab = getArguments().getString("dd");
+            myContact = getArguments().getString("ee");
+            color = getArguments().getString("col");
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @NonNull
@@ -119,13 +125,17 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.b_video_fragment, container, false);
 
-        vFrameError = getFrameError(view);
-        vFrameEmpty = getFrameEmpty(view);
-        vListVideoTube = getListFrequently(view);
-        vRefreshList = getRefreshList(view);
-        vFab = getFabView(view);
-        vTextError = getTextError(view);
-        vTextContentError = getTextContentError(view);
+        try {
+            vFrameError = getFrameError(view);
+            vFrameEmpty = getFrameEmpty(view);
+            vListVideoTube = getListFrequently(view);
+            vRefreshList = getRefreshList(view);
+            vFab = getFabView(view);
+            vTextError = getTextError(view);
+            vTextContentError = getTextContentError(view);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
 
         return view;
     }
@@ -133,11 +143,15 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
     @SuppressLint("RestrictedApi")
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        resolveConnectionProblem();
-        resolveListFile();
-        resolveRefreshList();
+        try {
+            resolveConnectionProblem();
+            resolveListFile();
+            resolveRefreshList();
 
-        vFab.setVisibility(View.GONE);
+            vFab.setVisibility(View.GONE);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -147,53 +161,66 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
 
     @Override
     public void onResume() {
-        vRefreshList.setRefreshing(true);
-        if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
-            Map<String, String> params = new HashMap<>();
-            params.put("bc_user",  databaseHelper.getMyContact().getJabberId());
-            getDetail(urlTembak,params,true);
-        } else {
-            vRefreshList.setRefreshing(false);
-            Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+        try {
+            vRefreshList.setRefreshing(true);
+            if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
+                Map<String, String> params = new HashMap<>();
+                params.put("bc_user", databaseHelper.getMyContact().getJabberId());
+                getDetail(urlTembak, params, true);
+            } else {
+                vRefreshList.setRefreshing(false);
+                Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
+
         super.onResume();
     }
 
     protected void resolveConnectionProblem() {
-        vTextError.setText("Home isn't responding");
-        vTextContentError.setText("Thats why we can't show videos right now\nPlease check back later.");
+        try {
+            vTextError.setText("Home isn't responding");
+            vTextContentError.setText("Thats why we can't show videos right now\nPlease check back later.");
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveListFile() {
-        files = new ArrayList<>();
-        vListVideoTube.setUpAsList();
-        vListVideoTube.setNestedScrollingEnabled(false);
-        chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
-        mAdapter = new ByonchatStatusRequestAdapter(getContext(), files);
+        try {
+            files = new ArrayList<>();
+            vListVideoTube.setUpAsList();
+            vListVideoTube.setNestedScrollingEnabled(false);
+            chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
+            mAdapter = new ByonchatStatusRequestAdapter(getContext(), files);
 
-        mAdapter.setOnLongItemClickListener((view, position) -> {
-            Status item = files.get(position);
+            mAdapter.setOnLongItemClickListener((view, position) -> {
+                Status item = files.get(position);
 
-            if(ValidateHistory(position, files)) {
-                FragmentManager fm = activity.getSupportFragmentManager();
-                DialogRejectRequest testDialog = DialogRejectRequest.newInstance(item.id_request);
-                testDialog.setRetainInstance(true);
-                testDialog.setListener(new DialogRejectRequest.DialogRejectListener() {
-                    @Override
-                    public void onReject() {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                onRefresh();
-                            }
-                        }, 300);
-                    }
-                });
-                testDialog.show(fm, "Dialog");
-            }
-        });
+                if (ValidateHistory(position, files)) {
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    DialogRejectRequest testDialog = DialogRejectRequest.newInstance(item.id_request);
+                    testDialog.setRetainInstance(true);
+                    testDialog.setListener(new DialogRejectRequest.DialogRejectListener() {
+                        @Override
+                        public void onReject() {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    onRefresh();
+                                }
+                            }, 300);
+                        }
+                    });
+                    testDialog.show(fm, "Dialog");
+                }
+            });
 
-        vListVideoTube.setAdapter(mAdapter);
+            vListVideoTube.setAdapter(mAdapter);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 
@@ -220,6 +247,7 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            reportCatch(e.getLocalizedMessage());
         }
 
         return valid;
@@ -233,12 +261,16 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
     }
 
     public void onContactSelected(List<Status> selectedContacts) {
-        int total = selectedContacts.size();
-        boolean hasCheckedItems = total > 0;
-        if (hasCheckedItems) {
-            isChanged = false;
-        } else {
-            isChanged = true;
+        try {
+            int total = selectedContacts.size();
+            boolean hasCheckedItems = total > 0;
+            if (hasCheckedItems) {
+                isChanged = false;
+            } else {
+                isChanged = true;
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -299,80 +331,84 @@ public class ByonchatStatusRequestFragment extends Fragment implements SwipeRefr
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
-        rdialog.setMessage("Loading...");
-        rdialog.show();
+        try {
+            ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
+            rdialog.setMessage("Loading...");
+            rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
+            RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
 
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    rdialog.dismiss();
-                    if (hide) {
-                        try {
-                            JSONArray jsonArray0 = new JSONArray(response);
-                            JSONObject jsonObject = jsonArray0.getJSONObject(0);
-                            String status = jsonObject.getString("status");
-                            String message = jsonObject.getString("message");
+            StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                    response -> {
+                        rdialog.dismiss();
+                        if (hide) {
+                            try {
+                                JSONArray jsonArray0 = new JSONArray(response);
+                                JSONObject jsonObject = jsonArray0.getJSONObject(0);
+                                String status = jsonObject.getString("status");
+                                String message = jsonObject.getString("message");
 
-                            files.clear();
-                            if (message.equalsIgnoreCase("succes")) {
-                                JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
+                                files.clear();
+                                if (message.equalsIgnoreCase("succes")) {
+                                    JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
 
 
-                            if (jsonArray.length() > 0) {
-                                for (int i = jsonArray.length() -1 ; i >= 0; i--) {
-                                    JSONObject jObj = jsonArray.getJSONObject(i);
-                                    String id = jObj.getString("id");
-                                    String id_file = jObj.getString("id_file");
-                                    String link_file = jObj.getString("link_file");
-                                    String timestamp = jObj.getString("create_at");
-                                    String bc_user_requester = jObj.getString("bc_user_requester");
-                                    String nama_file = jObj.getString("nama_file");
-                                    String history = jObj.getString("history");
+                                    if (jsonArray.length() > 0) {
+                                        for (int i = jsonArray.length() - 1; i >= 0; i--) {
+                                            JSONObject jObj = jsonArray.getJSONObject(i);
+                                            String id = jObj.getString("id");
+                                            String id_file = jObj.getString("id_file");
+                                            String link_file = jObj.getString("link_file");
+                                            String timestamp = jObj.getString("create_at");
+                                            String bc_user_requester = jObj.getString("bc_user_requester");
+                                            String nama_file = jObj.getString("nama_file");
+                                            String history = jObj.getString("history");
 
-                                    String id_request = new JSONArray(history).getJSONObject(0).getString("id_request");
-                                    String id_history = new JSONArray(history).getJSONObject(new JSONArray(history).length()-1).getString("id");
+                                            String id_request = new JSONArray(history).getJSONObject(0).getString("id_request");
+                                            String id_history = new JSONArray(history).getJSONObject(new JSONArray(history).length() - 1).getString("id");
 
-                                    Status file = new Status();
-                                    file.id = Long.valueOf(id_file);
-                                    file.title = nama_file;
-                                    file.url = link_file;
-                                    file.timestamp = timestamp;
-                                    file.no_requester = bc_user_requester;
-                                    file.type = "text";
-                                    file.history = history;
-                                    file.id_request = id_request;
-                                    file.id_history = id_history;
+                                            Status file = new Status();
+                                            file.id = Long.valueOf(id_file);
+                                            file.title = nama_file;
+                                            file.url = link_file;
+                                            file.timestamp = timestamp;
+                                            file.no_requester = bc_user_requester;
+                                            file.type = "text";
+                                            file.history = history;
+                                            file.id_request = id_request;
+                                            file.id_history = id_history;
 
-                                    files.add(file);
+                                            files.add(file);
+                                        }
+
+                                        mAdapter.setItems(files);
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                } else {
+                                    Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
                                 }
-
-                                mAdapter.setItems(files);
-                                mAdapter.notifyDataSetChanged();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } else {
-                            Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+                            vRefreshList.setRefreshing(false);
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    vRefreshList.setRefreshing(false);
-                    }
 
-                },
-                error -> {
-                    rdialog.dismiss();
+                    },
+                    error -> {
+                        rdialog.dismiss();
+                    }
+            ) {
+
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    return params2;
                 }
-        ) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        queue.add(sr);
+            };
+            queue.add(sr);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 }
 

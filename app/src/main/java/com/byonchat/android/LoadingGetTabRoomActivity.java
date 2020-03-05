@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class LoadingGetTabRoomActivity extends AppCompatActivity {
 
     public static Intent generateIntent(Context context, String username, String targetUrl) {
@@ -72,29 +74,33 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading_screen);
-        if (botListDB == null) {
-            botListDB = BotListDB.getInstance(this);
-        }
-
-        String iss = getIntent().getStringExtra("iss");
-        if (iss == null) {
-            String room_name = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
-            targetUrl = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
-
-            if (targetUrl != null) {
-                GETTAB = targetUrl + finalPath;
-                Log.w("papa1", targetUrl);
-            } else {
-                targetUrl = linkPath;
-                Log.w("papa2", targetUrl);
+        try {
+            if (botListDB == null) {
+                botListDB = BotListDB.getInstance(this);
             }
 
-            new Refresh().execute(GETTAB, room_name);
-        } else {
-            targetUrl = "https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php";
-            String newday = getIntent().getStringExtra("newday");
-            extractResult(newday);
-            bc_user = getIntent().getStringExtra("bcUser");
+            String iss = getIntent().getStringExtra("iss");
+            if (iss == null) {
+                String room_name = getIntent().getStringExtra(ConversationActivity.KEY_JABBER_ID);
+                targetUrl = getIntent().getStringExtra(ConversationActivity.KEY_TITLE);
+
+                if (targetUrl != null) {
+                    GETTAB = targetUrl + finalPath;
+                    Log.w("papa1", targetUrl);
+                } else {
+                    targetUrl = linkPath;
+                    Log.w("papa2", targetUrl);
+                }
+
+                new Refresh().execute(GETTAB, room_name);
+            } else {
+                targetUrl = "https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php";
+                String newday = getIntent().getStringExtra("newday");
+                extractResult(newday);
+                bc_user = getIntent().getStringExtra("bcUser");
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 

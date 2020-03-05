@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public abstract class ABNextActivity extends AppCompatActivity implements
         OnClickListener {
     private static final String BUTTON_TITLE = "NEXT";
@@ -32,23 +34,24 @@ public abstract class ABNextActivity extends AppCompatActivity implements
     }
 
     private void configureActionItem(Menu menu) {
-        MenuItem item = menu.findItem(R.id.menu_action_next);
-        Button btn = (Button) MenuItemCompat.getActionView(item).findViewById(
-                R.id.buttonAbNext);
-        btn.setBackgroundColor(Color.TRANSPARENT);
-        btn.setTypeface(null, Typeface.BOLD);
-        btn.setText(getButtonTitle());
-        btn.setTextColor(Color.WHITE);
-        btn.setOnClickListener(this);
+        try {
+            MenuItem item = menu.findItem(R.id.menu_action_next);
+            Button btn = (Button) MenuItemCompat.getActionView(item).findViewById(
+                    R.id.buttonAbNext);
+            btn.setBackgroundColor(Color.TRANSPARENT);
+            btn.setTypeface(null, Typeface.BOLD);
+            btn.setText(getButtonTitle());
+            btn.setTextColor(Color.WHITE);
+            btn.setOnClickListener(this);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-             /*   Intent intent = new Intent(this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);*/
                 finish();
                 return true;
 

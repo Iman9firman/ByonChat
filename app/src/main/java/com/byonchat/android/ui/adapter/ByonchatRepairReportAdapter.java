@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ByonchatRepairReportAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     protected static final int VIEWTYPE_ITEM_TEXT = 1;
@@ -72,40 +74,44 @@ public class ByonchatRepairReportAdapter extends RecyclerView.Adapter<RecyclerVi
         if (viewHolder instanceof ByonchatApprovalDocViewHolder) {
             String title = item.title;
 
-            if (mSearchText != null && !mSearchText.isEmpty()) {
-                int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
-                int endPos = startPos + mSearchText.length();
+            try {
+                if (mSearchText != null && !mSearchText.isEmpty()) {
+                    int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
+                    int endPos = startPos + mSearchText.length();
 
-                if (startPos != -1) {
-                    Spannable spannable = new SpannableString(title);
-                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
-                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(spannable);
+                    if (startPos != -1) {
+                        Spannable spannable = new SpannableString(title);
+                        ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(spannable);
+                    } else {
+                        ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(title);
+                    }
                 } else {
                     ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(title);
                 }
-            } else {
-                ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(title);
+
+                showFileImage(viewHolder, item.url);
+                showTagView(viewHolder);
+
+
+                ((ByonchatApprovalDocViewHolder) viewHolder).vTimestamp.setText(item.timestamp);
+                ((ByonchatApprovalDocViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.nama_requester));
+
+                ((ByonchatApprovalDocViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
+                    if (onPreviewItemClickListener != null) {
+                        onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
+                    }
+                });
+                ((ByonchatApprovalDocViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
+                    if (onRequestItemClickListener != null) {
+                        onRequestItemClickListener.onItemClick(view, i, (File) getData().get(i));
+                    }
+                });
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-
-            showFileImage(viewHolder, item.url);
-            showTagView(viewHolder);
-
-
-            ((ByonchatApprovalDocViewHolder) viewHolder).vTimestamp.setText(item.timestamp);
-            ((ByonchatApprovalDocViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.nama_requester));
-
-            ((ByonchatApprovalDocViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
-                if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
-                }
-            });
-            ((ByonchatApprovalDocViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
-                if (onRequestItemClickListener != null) {
-                    onRequestItemClickListener.onItemClick(view, i, (File) getData().get(i));
-                }
-            });
         }
     }
 
@@ -264,20 +270,6 @@ public class ByonchatRepairReportAdapter extends RecyclerView.Adapter<RecyclerVi
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             itemsFiltered = (ArrayList<File>) filterResults.values;
             notifyDataSetChanged();
-
-            /*setOnItemClickListener((view, position) -> {
-                if (onPreviewItemClickListener != null) {
-                    File c = (File) getData().get(position);
-                    onPreviewItemClickListener.onItemPreviewClick((File) getData().get(position));
-                }
-            });
-
-            setOnLongItemClickListener((view, position) -> {
-                if (onPreviewItemClickListener != null) {
-                    File c = (File) getData().get(position);
-                    onPreviewItemClickListener.onItemPreviewClick((File) getData().get(position));
-                }
-            });*/
         }
     }
 

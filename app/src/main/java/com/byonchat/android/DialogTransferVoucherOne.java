@@ -24,6 +24,8 @@ import com.bumptech.glide.Glide;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
@@ -55,97 +57,101 @@ public class DialogTransferVoucherOne extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_voucher_transfer_1, container, false);
-        mlinear_name = (FrameLayout) dialog.findViewById(R.id.linear_name);
-        mJudul = (TextView) dialog.findViewById(R.id.name) ;
-        mBackground = (ImageView) dialog.findViewById(R.id.background);
-        mSerialNumber = (TextView) dialog.findViewById(R.id.serial_number);
-        mSerialNumber2 = (TextView) dialog.findViewById(R.id.serial_number2);
-        mTanggalValid = (TextView) dialog.findViewById(R.id.tanggal_valid);
-        mTanggalValid2 = (TextView) dialog.findViewById(R.id.tanggal_valid2);
-        mAmount = (TextView) dialog.findViewById(R.id.amount);
-        mAmount2 = (TextView) dialog.findViewById(R.id.amount2);
-        mSelectContact = (Button) dialog.findViewById(R.id.btn_select_contact);
-        mInputByonchatId = (EditText) dialog.findViewById(R.id.input_byonchat_id);
-        mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
-        mCancel = (Button) dialog.findViewById(R.id.btn_cancel);
+        try {
+            mlinear_name = (FrameLayout) dialog.findViewById(R.id.linear_name);
+            mJudul = (TextView) dialog.findViewById(R.id.name);
+            mBackground = (ImageView) dialog.findViewById(R.id.background);
+            mSerialNumber = (TextView) dialog.findViewById(R.id.serial_number);
+            mSerialNumber2 = (TextView) dialog.findViewById(R.id.serial_number2);
+            mTanggalValid = (TextView) dialog.findViewById(R.id.tanggal_valid);
+            mTanggalValid2 = (TextView) dialog.findViewById(R.id.tanggal_valid2);
+            mAmount = (TextView) dialog.findViewById(R.id.amount);
+            mAmount2 = (TextView) dialog.findViewById(R.id.amount2);
+            mSelectContact = (Button) dialog.findViewById(R.id.btn_select_contact);
+            mInputByonchatId = (EditText) dialog.findViewById(R.id.input_byonchat_id);
+            mProceed = (Button) dialog.findViewById(R.id.btn_proceed);
+            mCancel = (Button) dialog.findViewById(R.id.btn_cancel);
 
-        Glide.with(getContext()).load(background).into(mBackground);
-        String color = "";
-        if(bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")){
-            color = "1e8cc4";
-        }else{
-            color = bgcolor;
-        }
-
-        GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
-        drawable.setColor(Color.parseColor("#"+color));
-
-        String txtcolor = "";
-        if(textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")){
-            txtcolor = "ffffff";
-        }else{
-            txtcolor = textcolor;
-        }
-
-        mJudul.setText(judul);
-        mJudul.setTextColor(Color.parseColor("#"+txtcolor));
-        mSerialNumber.setText(serial);
-        mSerialNumber2.setText(serial);
-        mTanggalValid.setText("Valid until "+tglvalid);
-        mTanggalValid2.setText(tglvalid);
-        NumberFormat nf = NumberFormat.getNumberInstance(new Locale("in", "ID"));
-        mAmount2.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
-        mAmount.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
-        mSelectContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    Fragment prev = getFragmentManager().findFragmentByTag("DialogTransferVoucher1");
-                    if (prev != null) {
-                        ft.remove(prev);
-                    }
-                    ft.addToBackStack(null);
-
-                    DialogFragment newFragment = DialogVoucherSelectContacts.newInstance(id,judul,serial,tglvalid,nominal,bgcolor,textcolor,background);
-                    newFragment.show(ft, "DialogVoucherSelectContact");
-                }
+            Glide.with(getContext()).load(background).into(mBackground);
+            String color = "";
+            if (bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")) {
+                color = "1e8cc4";
+            } else {
+                color = bgcolor;
             }
-        });
 
-        mProceed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bcid = mInputByonchatId.getText().toString();
-                if(bcid.equalsIgnoreCase("")){
-                    Toast.makeText(getContext(), "Byonchat ID is required", Toast.LENGTH_SHORT).show();
-                }else{
+            GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
+            drawable.setColor(Color.parseColor("#" + color));
+
+            String txtcolor = "";
+            if (textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")) {
+                txtcolor = "ffffff";
+            } else {
+                txtcolor = textcolor;
+            }
+
+            mJudul.setText(judul);
+            mJudul.setTextColor(Color.parseColor("#" + txtcolor));
+            mSerialNumber.setText(serial);
+            mSerialNumber2.setText(serial);
+            mTanggalValid.setText("Valid until " + tglvalid);
+            mTanggalValid2.setText(tglvalid);
+            NumberFormat nf = NumberFormat.getNumberInstance(new Locale("in", "ID"));
+            mAmount2.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
+            mAmount.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
+            mSelectContact.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     if (getDialog() != null) {
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
                         Fragment prev = getFragmentManager().findFragmentByTag("DialogTransferVoucher1");
                         if (prev != null) {
-//                        ft.remove(prev);
-                            DialogFragment df = (DialogFragment) prev;
-                            df.dismiss();
+                            ft.remove(prev);
                         }
                         ft.addToBackStack(null);
 
-                        DialogFragment newFragment = DialogTransferVoucherTwo.newInstance(id,judul,serial,tglvalid,nominal,bcid,"", bgcolor,textcolor,background);
-                        newFragment.show(ft, "DialogTransferVoucher2");
+                        DialogFragment newFragment = DialogVoucherSelectContacts.newInstance(id, judul, serial, tglvalid, nominal, bgcolor, textcolor, background);
+                        newFragment.show(ft, "DialogVoucherSelectContact");
                     }
                 }
+            });
 
-            }
-        });
-        mCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    getDialog().dismiss();
+            mProceed.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bcid = mInputByonchatId.getText().toString();
+                    if (bcid.equalsIgnoreCase("")) {
+                        Toast.makeText(getContext(), "Byonchat ID is required", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (getDialog() != null) {
+                            FragmentTransaction ft = getFragmentManager().beginTransaction();
+                            Fragment prev = getFragmentManager().findFragmentByTag("DialogTransferVoucher1");
+                            if (prev != null) {
+//                        ft.remove(prev);
+                                DialogFragment df = (DialogFragment) prev;
+                                df.dismiss();
+                            }
+                            ft.addToBackStack(null);
+
+                            DialogFragment newFragment = DialogTransferVoucherTwo.newInstance(id, judul, serial, tglvalid, nominal, bcid, "", bgcolor, textcolor, background);
+                            newFragment.show(ft, "DialogTransferVoucher2");
+                        }
+                    }
+
                 }
-            }
-        });
+            });
+            mCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
+                }
+            });
 //        mlinear_name.setBackground(new ColorDrawable(getResources().getColor(R.color.color_primary_red_dark)));
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
 
         return dialog;
     }
@@ -160,27 +166,34 @@ public class DialogTransferVoucherOne extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        Dialog dialog = getDialog();
-        if (dialog != null) {
+        try {
+            Dialog dialog = getDialog();
+            if (dialog != null) {
 //            dialog.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 //            dialog.getWindow().setLayout(500, 750);
 //            setStyle(DialogFragment.STYLE_NO_TITLE, R.style.MyDialog);
-            setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+                setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        id = getArguments().getString("pid");
-        judul = getArguments().getString("pjudul");
-        serial = getArguments().getString("pserial");
-        tglvalid = getArguments().getString("ptglvalid");
-        nominal = getArguments().getString("pnominal");
-        bgcolor = getArguments().getString("pbgcolor");
-        textcolor = getArguments().getString("ptextcolor");
-        background = getArguments().getString("pbackground");
+        try {
+            id = getArguments().getString("pid");
+            judul = getArguments().getString("pjudul");
+            serial = getArguments().getString("pserial");
+            tglvalid = getArguments().getString("ptglvalid");
+            nominal = getArguments().getString("pnominal");
+            bgcolor = getArguments().getString("pbgcolor");
+            textcolor = getArguments().getString("ptextcolor");
+            background = getArguments().getString("pbackground");
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 }

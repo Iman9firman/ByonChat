@@ -38,6 +38,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class LoginISS extends AppCompatActivity {
     private String username;
     private ProgressDialog pd;
@@ -50,48 +52,51 @@ public class LoginISS extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_for_iss_room);
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.iss_default));
-            getWindow().setStatusBarColor(getResources().getColor(R.color.iss_default));
-        }
-
-        final Intent inti = getIntent();
-
-        username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
-        dbHelper = new UserDB(this);
-        dbhelper = MessengerDatabaseHelper.getInstance(this);
-        db = dbHelper.getWritableDatabase();
-        db.delete("user", null, null);
-        Button erwgv = (Button) findViewById(R.id.loginBtn);
-        EditText userID = (EditText) findViewById(R.id.login_userid);
-        EditText passID = (EditText) findViewById(R.id.login_password);
-        EditText accID = (EditText) findViewById(R.id.login_acc);
-
-        accID.setText("issid");
-        accID.setVisibility(View.INVISIBLE);
-        erwgv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(userID.getText().toString().equalsIgnoreCase("")){
-                    Toast.makeText(getApplicationContext(), "Please enter your username!",Toast.LENGTH_SHORT).show();
-                    userID.setError("Can't Empty");
-                }else if(passID.getText().toString().equalsIgnoreCase("")){
-                    Toast.makeText(getApplicationContext(), "Please enter your password!",Toast.LENGTH_SHORT).show();
-                    passID.setError("Can't Empty");
-                }else {
-                    pd = new ProgressDialog(LoginISS.this);
-                    pd.setMessage("Please Wait");
-                    pd.show();
-                    Map<String, String> params = new HashMap<>();
-                    params.put("username", userID.getText().toString());
-                    params.put("password", passID.getText().toString());
-                    params.put("bc_user", dbhelper.getMyContact().getJabberId());
-
-                    LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
-                }
+        try {
+            if (Build.VERSION.SDK_INT >= 21) {
+                getWindow().setNavigationBarColor(getResources().getColor(R.color.iss_default));
+                getWindow().setStatusBarColor(getResources().getColor(R.color.iss_default));
             }
-        });
+
+            final Intent inti = getIntent();
+
+            username = inti.getStringExtra(ConversationActivity.KEY_JABBER_ID);
+            dbHelper = new UserDB(this);
+            dbhelper = MessengerDatabaseHelper.getInstance(this);
+            db = dbHelper.getWritableDatabase();
+            db.delete("user", null, null);
+            Button erwgv = (Button) findViewById(R.id.loginBtn);
+            EditText userID = (EditText) findViewById(R.id.login_userid);
+            EditText passID = (EditText) findViewById(R.id.login_password);
+            EditText accID = (EditText) findViewById(R.id.login_acc);
+
+            accID.setText("issid");
+            accID.setVisibility(View.INVISIBLE);
+            erwgv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (userID.getText().toString().equalsIgnoreCase("")) {
+                        Toast.makeText(getApplicationContext(), "Please enter your username!", Toast.LENGTH_SHORT).show();
+                        userID.setError("Can't Empty");
+                    } else if (passID.getText().toString().equalsIgnoreCase("")) {
+                        Toast.makeText(getApplicationContext(), "Please enter your password!", Toast.LENGTH_SHORT).show();
+                        passID.setError("Can't Empty");
+                    } else {
+                        pd = new ProgressDialog(LoginISS.this);
+                        pd.setMessage("Please Wait");
+                        pd.show();
+                        Map<String, String> params = new HashMap<>();
+                        params.put("username", userID.getText().toString());
+                        params.put("password", passID.getText().toString());
+                        params.put("bc_user", dbhelper.getMyContact().getJabberId());
+
+                        LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void LoginThis(String Url, Map<String, String> params2, Boolean hide) {

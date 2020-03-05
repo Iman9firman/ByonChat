@@ -52,6 +52,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Lukmanpryg on 7/19/2016.
  */
@@ -87,51 +89,54 @@ public class DialogVoucherTermsAndConditions extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View dialog = inflater.inflate(R.layout.dialog_voucher_terms_and_conditions, container, false);
-        mlinear_name = (FrameLayout) dialog.findViewById(R.id.linear_name);
-        mTitle = (TextView) dialog.findViewById(R.id.name);
-        mClose = (Button) dialog.findViewById(R.id.btn_cancel);
-        mListTerms = (TextView) dialog.findViewById(R.id.list_html_terms);
-        linlaHeaderProgress = (LinearLayout) dialog.findViewById(R.id.linlaHeaderProgress);
+        try {
+            mlinear_name = (FrameLayout) dialog.findViewById(R.id.linear_name);
+            mTitle = (TextView) dialog.findViewById(R.id.name);
+            mClose = (Button) dialog.findViewById(R.id.btn_cancel);
+            mListTerms = (TextView) dialog.findViewById(R.id.list_html_terms);
+            linlaHeaderProgress = (LinearLayout) dialog.findViewById(R.id.linlaHeaderProgress);
 
-        String color = "";
-        if(bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")){
-            color = "1e8cc4";
-        }else{
-            color = bgcolor;
-        }
-
-        String txtcolor = "";
-        if(textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")){
-            txtcolor = "ffffff";
-        }else{
-            txtcolor = textcolor;
-        }
-
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(context);
-        }
-        if (context == null) {
-            context = getActivity().getApplicationContext();
-        }
-        contact = messengerHelper.getMyContact();
-
-        GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
-        drawable.setColor(Color.parseColor("#"+color));
-        mTitle.setText("Terms and Conditions");
-        mTitle.setTextColor(Color.parseColor("#"+txtcolor));
-        mClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDialog() != null) {
-                    getDialog().dismiss();
-                }
+            String color = "";
+            if (bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")) {
+                color = "1e8cc4";
+            } else {
+                color = bgcolor;
             }
-        });
 
-        requestParticipantOutlets = new RequestParticipantOutlets(context);
-//        mlinear_name.setBackground(new ColorDrawable(getResources().getColor(R.color.color_primary_red_dark)));
+            String txtcolor = "";
+            if (textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")) {
+                txtcolor = "ffffff";
+            } else {
+                txtcolor = textcolor;
+            }
 
-        requestKey();
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(context);
+            }
+            if (context == null) {
+                context = getActivity().getApplicationContext();
+            }
+            contact = messengerHelper.getMyContact();
+
+            GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
+            drawable.setColor(Color.parseColor("#" + color));
+            mTitle.setText("Terms and Conditions");
+            mTitle.setTextColor(Color.parseColor("#" + txtcolor));
+            mClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getDialog() != null) {
+                        getDialog().dismiss();
+                    }
+                }
+            });
+
+            requestParticipantOutlets = new RequestParticipantOutlets(context);
+
+            requestKey();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
 
         return dialog;
     }
@@ -146,14 +151,14 @@ public class DialogVoucherTermsAndConditions extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        Dialog dialog = getDialog();
-        if (dialog != null) {
-//            dialog.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//            dialog.getWindow().setLayout(500, 750);
-//            setStyle(DialogFragment.STYLE_NO_TITLE, R.style.MyDialog);
-            setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+        try {
+            Dialog dialog = getDialog();
+            if (dialog != null) {
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Dialog);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -170,20 +175,24 @@ public class DialogVoucherTermsAndConditions extends DialogFragment {
     }
 
     private void requestKey() {
-        RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
-            @Override
-            public void onTaskDone(String key) {
-                if (key.equalsIgnoreCase("null")) {
+        try {
+            RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
+                @Override
+                public void onTaskDone(String key) {
+                    if (key.equalsIgnoreCase("null")) {
 //                    swipeRrefreshLayout.setRefreshing(false);
 //                    Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                } else {
-                    requestParticipantOutlets = new RequestParticipantOutlets(context);
-                    requestParticipantOutlets.execute(key);
+                    } else {
+                        requestParticipantOutlets = new RequestParticipantOutlets(context);
+                        requestParticipantOutlets.execute(key);
+                    }
                 }
-            }
-        }, getActivity());
+            }, getActivity());
 
-        testAsyncTask.execute();
+            testAsyncTask.execute();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     class BroadcastHandler extends BroadcastReceiver {
@@ -281,34 +290,38 @@ public class DialogVoucherTermsAndConditions extends DialogFragment {
         }
 
         protected void onPostExecute(String content) {
-            linlaHeaderProgress.setVisibility(View.GONE);
-            if (error) {
-                if (content.toString().contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+            try {
+                linlaHeaderProgress.setVisibility(View.GONE);
+                if (error) {
+                    if (content.toString().contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                requestParticipantOutlets = new RequestParticipantOutlets(getContext());
+                                requestParticipantOutlets.execute(key);
+                            }
                         } else {
-                            requestParticipantOutlets = new RequestParticipantOutlets(getContext());
-                            requestParticipantOutlets.execute(key);
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, content.toString(), Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(mContext, content.toString(), Toast.LENGTH_LONG).show();
-                }
-            } else {
-                try {
-                    mListTerms.setVisibility(View.VISIBLE);
-                    JSONObject result = new JSONObject(content);
-                    String tnc = result.optString("tnc");
-                    String extra = result.optString("extra");
+                    try {
+                        mListTerms.setVisibility(View.VISIBLE);
+                        JSONObject result = new JSONObject(content);
+                        String tnc = result.optString("tnc");
+                        String extra = result.optString("extra");
 
-                    mListTerms.setText(Html.fromHtml(tnc));
-                } catch (JSONException E) {
-                    E.printStackTrace();
+                        mListTerms.setText(Html.fromHtml(tnc));
+                    } catch (JSONException E) {
+                        E.printStackTrace();
+                    }
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
     }

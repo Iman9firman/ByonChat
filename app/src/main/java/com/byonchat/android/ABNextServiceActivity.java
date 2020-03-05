@@ -11,6 +11,8 @@ import android.os.IBinder;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.communication.MessengerConnectionService.MessengerConnectionBinder;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public abstract class ABNextServiceActivity extends ABNextActivity implements
         ServiceConnection {
     protected MessengerConnectionBinder binder;
@@ -35,9 +37,13 @@ public abstract class ABNextServiceActivity extends ABNextActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        getApplicationContext().bindService(
-                new Intent(this, MessengerConnectionService.class), this,
-                Context.BIND_AUTO_CREATE);
+        try {
+            getApplicationContext().bindService(
+                    new Intent(this, MessengerConnectionService.class), this,
+                    Context.BIND_AUTO_CREATE);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override

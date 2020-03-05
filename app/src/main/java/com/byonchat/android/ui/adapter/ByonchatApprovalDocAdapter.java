@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ByonchatApprovalDocAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     protected static final int VIEWTYPE_ITEM_TEXT = 1;
@@ -68,44 +70,48 @@ public class ByonchatApprovalDocAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final int i) {
-        File item = itemsFiltered.get(i);
-        if (viewHolder instanceof ByonchatApprovalDocViewHolder) {
-            String title = item.title;
+        try {
+            File item = itemsFiltered.get(i);
+            if (viewHolder instanceof ByonchatApprovalDocViewHolder) {
+                String title = item.title;
 
-            if (mSearchText != null && !mSearchText.isEmpty()) {
-                int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
-                int endPos = startPos + mSearchText.length();
+                if (mSearchText != null && !mSearchText.isEmpty()) {
+                    int startPos = title.toLowerCase(Locale.getDefault()).indexOf(mSearchText.toLowerCase(Locale.getDefault()));
+                    int endPos = startPos + mSearchText.length();
 
-                if (startPos != -1) {
-                    Spannable spannable = new SpannableString(title);
-                    ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
-                    TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
-                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(spannable);
+                    if (startPos != -1) {
+                        Spannable spannable = new SpannableString(title);
+                        ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.BLUE});
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null);
+                        spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(spannable);
+                    } else {
+                        ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(title);
+                    }
                 } else {
                     ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(title);
                 }
-            } else {
-                ((ByonchatApprovalDocViewHolder) viewHolder).vName.setText(title);
+
+                showFileImage(viewHolder, item.url);
+                showTagView(viewHolder);
+
+
+                ((ByonchatApprovalDocViewHolder) viewHolder).vTimestamp.setText(item.timestamp);
+                ((ByonchatApprovalDocViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.nama_requester));
+
+                ((ByonchatApprovalDocViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
+                    if (onPreviewItemClickListener != null) {
+                        onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
+                    }
+                });
+                ((ByonchatApprovalDocViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
+                    if (onRequestItemClickListener != null) {
+                        onRequestItemClickListener.onItemClick(view, i, (File) getData().get(i));
+                    }
+                });
             }
-
-            showFileImage(viewHolder, item.url);
-            showTagView(viewHolder);
-
-
-            ((ByonchatApprovalDocViewHolder) viewHolder).vTimestamp.setText(item.timestamp);
-            ((ByonchatApprovalDocViewHolder) viewHolder).vTxtStatusMsg.setText(Html.fromHtml(item.nama_requester));
-
-            ((ByonchatApprovalDocViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
-                if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(view, i, (File) getData().get(i), item.type);
-                }
-            });
-            ((ByonchatApprovalDocViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
-                if (onRequestItemClickListener != null) {
-                    onRequestItemClickListener.onItemClick(view, i, (File) getData().get(i));
-                }
-            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -125,15 +131,19 @@ public class ByonchatApprovalDocAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void showTagView(RecyclerView.ViewHolder viewHolder) {
-        String[] tags = /*getTagView()*/ null;
+        try {
+            String[] tags = /*getTagView()*/ null;
 
-        if (tags != null && tags.length > 0) {
-            ((ByonchatApprovalDocViewHolder) viewHolder).vTagGroup.setTags(tags);
+            if (tags != null && tags.length > 0) {
+                ((ByonchatApprovalDocViewHolder) viewHolder).vTagGroup.setTags(tags);
+            }
+
+            ((ByonchatApprovalDocViewHolder) viewHolder).vTagGroup.setOnTagClickListener(s -> {
+                Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        ((ByonchatApprovalDocViewHolder) viewHolder).vTagGroup.setOnTagClickListener(s -> {
-            Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
-        });
     }
 
     public List<File> getData() {
@@ -239,45 +249,36 @@ public class ByonchatApprovalDocAdapter extends RecyclerView.Adapter<RecyclerVie
     private class ArrayFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
-            String charString = charSequence.toString();
-            if (charString.isEmpty()) {
-                mSearchText = "";
-                itemsFiltered = items;
-            } else {
-                mSearchText = charString;
-                List<File> filteredList = new ArrayList<>();
-                for (File row : items) {
-                    if (row.title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
-                        filteredList.add(row);
+            try {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    mSearchText = "";
+                    itemsFiltered = items;
+                } else {
+                    mSearchText = charString;
+                    List<File> filteredList = new ArrayList<>();
+                    for (File row : items) {
+                        if (row.title.toLowerCase(Locale.getDefault()).contains(charString.toLowerCase(Locale.getDefault()))) {
+                            filteredList.add(row);
+                        }
                     }
+
+                    itemsFiltered = filteredList;
                 }
 
-                itemsFiltered = filteredList;
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = itemsFiltered;
+                return filterResults;
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
+                return null;
             }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = itemsFiltered;
-            return filterResults;
         }
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             itemsFiltered = (ArrayList<File>) filterResults.values;
             notifyDataSetChanged();
-
-            /*setOnItemClickListener((view, position) -> {
-                if (onPreviewItemClickListener != null) {
-                    File c = (File) getData().get(position);
-                    onPreviewItemClickListener.onItemPreviewClick((File) getData().get(position));
-                }
-            });
-
-            setOnLongItemClickListener((view, position) -> {
-                if (onPreviewItemClickListener != null) {
-                    File c = (File) getData().get(position);
-                    onPreviewItemClickListener.onItemPreviewClick((File) getData().get(position));
-                }
-            });*/
         }
     }
 

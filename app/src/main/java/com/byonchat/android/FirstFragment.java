@@ -16,6 +16,8 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 
 import java.util.ArrayList;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class FirstFragment extends Fragment {
 
         RecyclerViewAdapter adapter;
@@ -41,25 +43,27 @@ public class FirstFragment extends Fragment {
         @Override
         public void onActivityCreated(@Nullable Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
-            recyclerView = (RecyclerView) getView().findViewById(R.id.list);
-            recyclerView.setHasFixedSize(true);
+            try {
+                recyclerView = (RecyclerView) getView().findViewById(R.id.list);
+                recyclerView.setHasFixedSize(true);
 
-            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-            llm.setOrientation(LinearLayoutManager.VERTICAL);
-            recyclerView.setLayoutManager(llm);
+                LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+                llm.setOrientation(LinearLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(llm);
 
-            demoData = new ArrayList<IconItem>();
-            char c = 'A';
-            for (byte i = 0; i < 100; i++) {
-                IconItem item = new IconItem(String.valueOf(i),
-                        "name", "I love byonchat", null, null);
-                demoData.add(item);
+                demoData = new ArrayList<IconItem>();
+                char c = 'A';
+                for (byte i = 0; i < 100; i++) {
+                    IconItem item = new IconItem(String.valueOf(i),
+                            "name", "I love byonchat", null, null);
+                    demoData.add(item);
+                }
+
+                adapter = new RecyclerViewAdapter(getContext(), demoData);
+                recyclerView.setAdapter(adapter);
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-
-            adapter = new RecyclerViewAdapter(getContext(),demoData);
-            recyclerView.setAdapter(adapter);
         }
-
-
 }
 

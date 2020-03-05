@@ -13,6 +13,8 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by byonc on 4/25/2017.
  */
@@ -85,14 +87,17 @@ public class FollowupFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_follow_picture_multiple, container, false);
+        try {
+            mImageView = (ImageView) view.findViewById(R.id.detail_image);
+            mtextMessage = (EditText) view.findViewById(R.id.textMessage);
+            mPlay = (ImageView) view.findViewById(R.id.btn_play);
 
-        mImageView = (ImageView) view.findViewById(R.id.detail_image);
-        mtextMessage = (EditText) view.findViewById(R.id.textMessage);
-        mPlay = (ImageView) view.findViewById(R.id.btn_play);
+            Glide.with(getActivity()).load(purl).thumbnail(0.1f).into(mImageView);
+            mtextMessage.setVisibility(View.GONE);
 
-        Glide.with(getActivity()).load(purl).thumbnail(0.1f).into(mImageView);
-        mtextMessage.setVisibility(View.GONE);
-
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return view;
     }
 
@@ -101,6 +106,7 @@ public class FollowupFragment extends Fragment {
         try {
             listener = (OnFragmentInteractionListener) getActivity();
         } catch (ClassCastException e) {
+            reportCatch(e.getLocalizedMessage());
             throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
         }
         super.onAttach(activity);
@@ -109,11 +115,14 @@ public class FollowupFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            if (getView() != null) {
-                listener.onFragmentCreated(purl, purlthumb, ptitle, ptimestamp, pdesc, pmyuserid, puserid, pid, pflag, pColor);
+        try {
+            if (isVisibleToUser) {
+                if (getView() != null) {
+                    listener.onFragmentCreated(purl, purlthumb, ptitle, ptimestamp, pdesc, pmyuserid, puserid, pid, pflag, pColor);
+                }
             }
-
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 }

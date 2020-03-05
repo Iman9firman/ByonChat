@@ -26,6 +26,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class DownloadSqliteDinamicActivity extends AppCompatActivity {
     private static final String SD_CARD_FOLDER = "DB";
     private String DB_DOWNLOAD_PATH;
@@ -99,32 +101,40 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
         }
 
         protected void onProgressUpdate(Integer... values) {
-            if (mProgressDialog != null) {
-                if (mProgressDialog.isShowing()) {
-                    mProgressDialog.setProgress(values[0]);
+            try {
+                if (mProgressDialog != null) {
+                    if (mProgressDialog.isShowing()) {
+                        mProgressDialog.setProgress(values[0]);
+                    }
                 }
+            }catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-            }
-            if (result != null) {
-                if (result.equals(Boolean.TRUE)) {
-                    Toast.makeText(DownloadSqliteDinamicActivity.this, "Success", Toast.LENGTH_LONG).show();
-                    mDatabaseOpenTask = new DatabaseOpenTask();
-                    mDatabaseOpenTask.execute(new Context[]{DownloadSqliteDinamicActivity.this});
+            try {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                    mProgressDialog = null;
+                }
+                if (result != null) {
+                    if (result.equals(Boolean.TRUE)) {
+                        Toast.makeText(DownloadSqliteDinamicActivity.this, "Success", Toast.LENGTH_LONG).show();
+                        mDatabaseOpenTask = new DatabaseOpenTask();
+                        mDatabaseOpenTask.execute(new Context[]{DownloadSqliteDinamicActivity.this});
+                    } else {
+                        Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
                 } else {
-                    Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
                     finish();
                 }
-            } else {
-                finish();
-            }
 
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
+            }
         }
 
     }
@@ -179,23 +189,27 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mDatabaseDownloadTask != null) {
-            if (mDatabaseDownloadTask.getStatus() != AsyncTask.Status.FINISHED) {
-                mDatabaseDownloadTask.cancel(true);
+        try {
+            if (mDatabaseDownloadTask != null) {
+                if (mDatabaseDownloadTask.getStatus() != AsyncTask.Status.FINISHED) {
+                    mDatabaseDownloadTask.cancel(true);
+                }
             }
-        }
-        if (mDatabaseOpenTask != null) {
-            if (mDatabaseOpenTask.getStatus() != AsyncTask.Status.FINISHED) {
-                mDatabaseOpenTask.cancel(true);
+            if (mDatabaseOpenTask != null) {
+                if (mDatabaseOpenTask.getStatus() != AsyncTask.Status.FINISHED) {
+                    mDatabaseOpenTask.cancel(true);
+                }
             }
-        }
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-            mProgressDialog = null;
-        }
-        if (mDB != null) {
-            mDB.close();
-            mDB = null;
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+                mProgressDialog = null;
+            }
+            if (mDB != null) {
+                mDB.close();
+                mDB = null;
+            }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -203,23 +217,27 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_pnumber);
-        LinearLayout linearLayoutContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
-        linearLayoutContent.setVisibility(View.GONE);
+        try {
+            LinearLayout linearLayoutContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
+            linearLayoutContent.setVisibility(View.GONE);
 
-        NAME_DB = getIntent().getStringExtra("name_db");
-        DB_DOWNLOAD_PATH = getIntent().getStringExtra("path_db");
+            NAME_DB = getIntent().getStringExtra("name_db");
+            DB_DOWNLOAD_PATH = getIntent().getStringExtra("path_db");
 
-        mDB = new DataBaseDropDown(getApplicationContext(), NAME_DB);
-        if (mDB.getWritableDatabase() != null) {
-            finish();
-        } else {
-            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                Toast.makeText(getApplicationContext(), "Please insert memmory card", Toast.LENGTH_LONG).show();
+            mDB = new DataBaseDropDown(getApplicationContext(), NAME_DB);
+            if (mDB.getWritableDatabase() != null) {
                 finish();
+            } else {
+                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    Toast.makeText(getApplicationContext(), "Please insert memmory card", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+                mDatabaseOpenTask = new DatabaseOpenTask();
+                mDatabaseOpenTask.execute(new Context[]{this});
             }
-            mDatabaseOpenTask = new DatabaseOpenTask();
-            mDatabaseOpenTask.execute(new Context[]{this});
-        }
 
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 }

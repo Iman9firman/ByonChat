@@ -25,6 +25,8 @@ import com.byonchat.android.provider.Country;
 
 import java.util.ArrayList;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class CountryListSelectorActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
@@ -37,55 +39,57 @@ public class CountryListSelectorActivity extends AppCompatActivity {
     ArrayList<Country> arraylist = new ArrayList<Country>();
     ImageButton btn_search;
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.county_list);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        color = getResources().getColor(R.color.colorPrimary);
-        Bitmap back_default = FilteringImage.headerColor(getWindow(),CountryListSelectorActivity.this, color);
-        Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            toolbar.setBackground(back_draw_default);
-        }else{
-            toolbar.setBackgroundDrawable(back_draw_default);
-        }
 
-        lv  =   (ListView) findViewById(R.id.list);
-        name = Country.title;
-        code = Country.code;
-        setSupportActionBar(toolbar);
-
-        for (int i = 0; i < name.length; i++)
-        {
-            Country country = new Country(name[i], code[i]);
-            // Binds all strings into an array
-            arraylist.add(country);
-        }
-
-        // Pass results to ListViewAdapter Class
-        adapter = new ListViewCountryAdapter(this, arraylist);
-
-        // Binds the Adapter to the ListView
-        lv.setAdapter(adapter);
-
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> arg0,
-                                    View arg1, int position, long arg3)
-            {
-
-                Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
-                intent.putExtra(RegistrationActivity.BUNDLE_KEY_CODE,
-                        ( adapter.newList().get(position).getCodeContry().replaceFirst("\\+","")));
-                intent.putExtra(RegistrationActivity.BUNDLE_KEY_NAME,
-                        ( adapter.newList().get(position).getNameContry()));
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                finish();
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            color = getResources().getColor(R.color.colorPrimary);
+            Bitmap back_default = FilteringImage.headerColor(getWindow(), CountryListSelectorActivity.this, color);
+            Drawable back_draw_default = new BitmapDrawable(getResources(), back_default);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                toolbar.setBackground(back_draw_default);
+            } else {
+                toolbar.setBackgroundDrawable(back_draw_default);
             }
-        });
 
+            lv = (ListView) findViewById(R.id.list);
+            name = Country.title;
+            code = Country.code;
+            setSupportActionBar(toolbar);
+
+            for (int i = 0; i < name.length; i++) {
+                Country country = new Country(name[i], code[i]);
+                // Binds all strings into an array
+                arraylist.add(country);
+            }
+
+            // Pass results to ListViewAdapter Class
+            adapter = new ListViewCountryAdapter(this, arraylist);
+
+            // Binds the Adapter to the ListView
+            lv.setAdapter(adapter);
+
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                public void onItemClick(AdapterView<?> arg0,
+                                        View arg1, int position, long arg3) {
+
+                    Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
+                    intent.putExtra(RegistrationActivity.BUNDLE_KEY_CODE,
+                            (adapter.newList().get(position).getCodeContry().replaceFirst("\\+", "")));
+                    intent.putExtra(RegistrationActivity.BUNDLE_KEY_NAME,
+                            (adapter.newList().get(position).getNameContry()));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override

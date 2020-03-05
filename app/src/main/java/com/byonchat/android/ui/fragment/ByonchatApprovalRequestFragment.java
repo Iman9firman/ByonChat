@@ -51,6 +51,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 @SuppressLint("ValidFragment")
 public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -171,71 +173,87 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
     }
 
     protected void resolveConnectionProblem() {
-        vTextError.setText("Home isn't responding");
-        vTextContentError.setText("Thats why we can't show videos right now\nPlease check back later.");
+        try {
+            vTextError.setText("Home isn't responding");
+            vTextContentError.setText("Thats why we can't show videos right now\nPlease check back later.");
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveListFile() {
-        files = new ArrayList<>();
-        vListVideoTube.setUpAsList();
-        vListVideoTube.setNestedScrollingEnabled(false);
-        chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
-        mAdapter = new ByonchatApprovalDocAdapter(getContext(), files, new OnPreviewItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, File item, String type) {
-                FragmentManager fm = activity.getSupportFragmentManager();
-                DialogApproveRequestDocument testDialog = DialogApproveRequestDocument.newInstance(username, idRoomTab, item.id, item.title, "nulll", item.nama_requester, item.timestamp, item.description, item.id_history);
-                testDialog.setRetainInstance(true);
-                testDialog.show(fm, "Dialog");
-                testDialog.setListener(new DialogApproveRequestDocument.DialogRefreshListener(){
-                    @Override
-                    public void onRefreshUp() {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                onRefresh();
-                            }
-                        }, 300);
-                    }
-                });
-            }
-        }, new OnRequestItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, File item) {
-                Intent intent = new Intent(getContext(), ByonchatPDFPreviewActivity.class);
-                intent.putExtra(Constants.EXTRA_URL, item.url);
-                startActivity(intent);
-            }
-        });
+        try {
+            files = new ArrayList<>();
+            vListVideoTube.setUpAsList();
+            vListVideoTube.setNestedScrollingEnabled(false);
+            chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
+            mAdapter = new ByonchatApprovalDocAdapter(getContext(), files, new OnPreviewItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position, File item, String type) {
+                    FragmentManager fm = activity.getSupportFragmentManager();
+                    DialogApproveRequestDocument testDialog = DialogApproveRequestDocument.newInstance(username, idRoomTab, item.id, item.title, "nulll", item.nama_requester, item.timestamp, item.description, item.id_history);
+                    testDialog.setRetainInstance(true);
+                    testDialog.show(fm, "Dialog");
+                    testDialog.setListener(new DialogApproveRequestDocument.DialogRefreshListener() {
+                        @Override
+                        public void onRefreshUp() {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    onRefresh();
+                                }
+                            }, 300);
+                        }
+                    });
+                }
+            }, new OnRequestItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position, File item) {
+                    Intent intent = new Intent(getContext(), ByonchatPDFPreviewActivity.class);
+                    intent.putExtra(Constants.EXTRA_URL, item.url);
+                    startActivity(intent);
+                }
+            });
 
-        mAdapter.setOnItemClickListener((view, position) -> {
-            if (isChanged) {
+            mAdapter.setOnItemClickListener((view, position) -> {
+                if (isChanged) {
 //                Intent intent = ByonchatDetailVideoTubeActivity.generateIntent(getContext(), mAdapter.getData().get(position));
 //                startActivity(intent);
-            } else
-                adapterSelected((File) mAdapter.getData().get(position));
-        });
+                } else
+                    adapterSelected((File) mAdapter.getData().get(position));
+            });
 
-        mAdapter.setOnLongItemClickListener((view, position) -> {
-            /*adapterSelected((Video) mAdapter.getData().get(position));*/
-        });
+            mAdapter.setOnLongItemClickListener((view, position) -> {
+                /*adapterSelected((Video) mAdapter.getData().get(position));*/
+            });
 
-        vListVideoTube.setAdapter(mAdapter);
+            vListVideoTube.setAdapter(mAdapter);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void adapterSelected(File file) {
-        file.isSelected = !file.isSelected();
-        mAdapter.notifyDataSetChanged();
-        onContactSelected(mAdapter.getSelectedComments());
+        try {
+            file.isSelected = !file.isSelected();
+            mAdapter.notifyDataSetChanged();
+            onContactSelected(mAdapter.getSelectedComments());
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void onContactSelected(List<File> selectedContacts) {
-        int total = selectedContacts.size();
-        boolean hasCheckedItems = total > 0;
-        if (hasCheckedItems) {
-            isChanged = false;
-        } else {
-            isChanged = true;
+        try {
+            int total = selectedContacts.size();
+            boolean hasCheckedItems = total > 0;
+            if (hasCheckedItems) {
+                isChanged = false;
+            } else {
+                isChanged = true;
+            }
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -244,23 +262,27 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
     }
 
     protected void showPopup(View view, final Video video) {
-        View menuItemView = view.findViewById(R.id.more);
-        final PopupMenu popup = new PopupMenu(view.getContext(), menuItemView);
-        MenuInflater inflate = popup.getMenuInflater();
+        try {
+            View menuItemView = view.findViewById(R.id.more);
+            final PopupMenu popup = new PopupMenu(view.getContext(), menuItemView);
+            MenuInflater inflate = popup.getMenuInflater();
 
-        inflate.inflate(R.menu.byonchat_menu_delete_file, popup.getMenu());
-        popup.setOnMenuItemClickListener(menuItem -> {
-            switch (menuItem.getItemId()) {
-                case R.id.action_delete:
-                    Byonchat.getVideoTubeDataStore().delete(video);
-                    onResume();
-                    break;
-                default:
-                    return false;
-            }
-            return false;
-        });
-        popup.show();
+            inflate.inflate(R.menu.byonchat_menu_delete_file, popup.getMenu());
+            popup.setOnMenuItemClickListener(menuItem -> {
+                switch (menuItem.getItemId()) {
+                    case R.id.action_delete:
+                        Byonchat.getVideoTubeDataStore().delete(video);
+                        onResume();
+                        break;
+                    default:
+                        return false;
+                }
+                return false;
+            });
+            popup.show();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected RelativeLayout getFrameError(View view) {
@@ -296,78 +318,82 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
-        rdialog.setMessage("Loading...");
-        rdialog.show();
+        try {
+            ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
+            rdialog.setMessage("Loading...");
+            rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
+            RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
 
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    rdialog.dismiss();
-                    if (hide) {
-                        Log.w("INI approvere harusee",response);
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String status = jsonObject.getString("status");
-                            String message = jsonObject.getString("message");
+            StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                    response -> {
+                        rdialog.dismiss();
+                        if (hide) {
+                            Log.w("INI approvere harusee", response);
+                            try {
+                                JSONObject jsonObject = new JSONObject(response);
+                                String status = jsonObject.getString("status");
+                                String message = jsonObject.getString("message");
 
-                            files.clear();
-                            if (message.equalsIgnoreCase("succes")) {
-                                JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
+                                files.clear();
+                                if (message.equalsIgnoreCase("succes")) {
+                                    JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
 
-                                if (jsonArray.length() > 0) {
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        JSONObject jObj = jsonArray.getJSONObject(i);
-                                        String _id = jObj.getString("id_request");
-                                        String id = jObj.getString("id_file");
-                                        String id_history = jObj.getString("id_request_history");
-                                        String timestamp = jObj.getString("create_at");
-                                        String bc_user_requester = jObj.getString("bc_user_requester");
-                                        String keterangan = jObj.getString("keterangan");
-                                        String url = jObj.getString("link_file");
-                                        String nik = jObj.getString("nik");
-                                        String nama_requester = jObj.getString("nama_user_requester");
-                                        String nama_file = jObj.getString("nama_file");
+                                    if (jsonArray.length() > 0) {
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            JSONObject jObj = jsonArray.getJSONObject(i);
+                                            String _id = jObj.getString("id_request");
+                                            String id = jObj.getString("id_file");
+                                            String id_history = jObj.getString("id_request_history");
+                                            String timestamp = jObj.getString("create_at");
+                                            String bc_user_requester = jObj.getString("bc_user_requester");
+                                            String keterangan = jObj.getString("keterangan");
+                                            String url = jObj.getString("link_file");
+                                            String nik = jObj.getString("nik");
+                                            String nama_requester = jObj.getString("nama_user_requester");
+                                            String nama_file = jObj.getString("nama_file");
 
-                                        File file = new File();
-                                        file.id = Long.valueOf(id);
-                                        file.title = nama_file;
-                                        file.timestamp = timestamp;
-                                        file.url = url;
-                                        file.type = "text";
-                                        file.description = keterangan;
-                                        file.nama_requester = nama_requester;
-                                        file.id_history = id_history;
+                                            File file = new File();
+                                            file.id = Long.valueOf(id);
+                                            file.title = nama_file;
+                                            file.timestamp = timestamp;
+                                            file.url = url;
+                                            file.type = "text";
+                                            file.description = keterangan;
+                                            file.nama_requester = nama_requester;
+                                            file.id_history = id_history;
 
-                                        files.add(file);
+                                            files.add(file);
+                                        }
+
+                                        mAdapter.setItems(files);
+                                        mAdapter.notifyDataSetChanged();
                                     }
-
-                                    mAdapter.setItems(files);
-                                    mAdapter.notifyDataSetChanged();
+                                } else {
+                                    Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
                                 }
-                            } else {
-                                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            vRefreshList.setRefreshing(false);
                         }
-                        vRefreshList.setRefreshing(false);
+
+                    },
+                    error -> {
+                        rdialog.dismiss();
                     }
+            ) {
 
-                },
-                error -> {
-                    rdialog.dismiss();
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    return params2;
                 }
-        ) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        queue.add(sr);
+            };
+            queue.add(sr);
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 }
 

@@ -66,6 +66,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static com.byonchat.android.helpers.Constants.MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE;
+import static com.byonchat.android.utils.Utility.reportCatch;
 
 public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -133,93 +134,118 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.b_video_before_download_activity);
 
-        resolveVideos(savedInstanceState);
+        try {
+            resolveVideos(savedInstanceState);
 
-        checkPermissionREAD_EXTERNAL_STORAGE(ByonchatVideoBeforeDownloadActivity.this);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            checkPermissionREAD_EXTERNAL_STORAGE(ByonchatVideoBeforeDownloadActivity.this);
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        resolveActivity();
-        resolveToolbar();
-        onActivityCreated();
+            resolveActivity();
+            resolveToolbar();
+            onActivityCreated();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveActivity() {
-        vFrameError = getFrameError();
-        vFrameInternetError = getFrameInternetError();
-        vAppBar = getAppbar();
-        vToolbar = getToolbar();
-        vWarningTitle = getWarningTitle();
-        vWarningContent = getWarningContent();
-        vInternetTitle = getInternetTitle();
-        vInternetContent = getInternetContent();
-        vListVideoTube = getListFrequently();
-        vSearchText = getSearchbar();
-        vRefreshList = getRefreshList();
-        vFab = getFabView();
+        try {
+            vFrameError = getFrameError();
+            vFrameInternetError = getFrameInternetError();
+            vAppBar = getAppbar();
+            vToolbar = getToolbar();
+            vWarningTitle = getWarningTitle();
+            vWarningContent = getWarningContent();
+            vInternetTitle = getInternetTitle();
+            vInternetContent = getInternetContent();
+            vListVideoTube = getListFrequently();
+            vSearchText = getSearchbar();
+            vRefreshList = getRefreshList();
+            vFab = getFabView();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public boolean checkPermissionREAD_EXTERNAL_STORAGE(
             final Context context) {
-        int currentAPIVersion = Build.VERSION.SDK_INT;
-        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(context,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    showDialog("Write External storage", context,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        try {
+            int currentAPIVersion = Build.VERSION.SDK_INT;
+            if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+                if (ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                        showDialog("Write External storage", context,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
+                    } else {
+                        ActivityCompat
+                                .requestPermissions(
+                                        this,
+                                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                    }
+                    return false;
                 } else {
-                    ActivityCompat
-                            .requestPermissions(
-                                    this,
-                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                    return true;
                 }
-                return false;
+
             } else {
                 return true;
             }
-
-        } else {
-            return true;
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+            return false;
         }
     }
 
     public void showDialog(final String msg, final Context context,
                            final String permission) {
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
-        alertBuilder.setCancelable(true);
-        alertBuilder.setTitle("Permission necessary");
-        alertBuilder.setMessage(msg + " permission is necessary");
-        alertBuilder.setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
-            ActivityCompat.requestPermissions((Activity) context,
-                    new String[]{permission},
-                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-        });
-        AlertDialog alert = alertBuilder.create();
-        alert.show();
+        try {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+            alertBuilder.setCancelable(true);
+            alertBuilder.setTitle("Permission necessary");
+            alertBuilder.setMessage(msg + " permission is necessary");
+            alertBuilder.setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                ActivityCompat.requestPermissions((Activity) context,
+                        new String[]{permission},
+                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+            });
+            AlertDialog alert = alertBuilder.create();
+            alert.show();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveToolbar() {
-        setSupportActionBar(vToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        try {
+            setSupportActionBar(vToolbar);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + color));
+            FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + color));
 
-        vToolbar.setBackgroundColor(Color.parseColor("#" + color));
-        vToolbar.setTitleTextColor(Color.parseColor("#" + colorText));
+            vToolbar.setBackgroundColor(Color.parseColor("#" + color));
+            vToolbar.setTitleTextColor(Color.parseColor("#" + colorText));
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void onActivityCreated() {
-        resolveListVideoTube();
-        resolveRefreshList();
-        resolveSearchButton();
+        try {
+            resolveListVideoTube();
+            resolveRefreshList();
+            resolveSearchButton();
 
-        onViewReady();
+            onViewReady();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -233,44 +259,48 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
     }
 
     protected void resolveListVideoTube() {
-        videos = new ArrayList<>();
-        vListVideoTube.setUpAsList();
-        vListVideoTube.setNestedScrollingEnabled(false);
-        chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
-        mAdapter = new ByonchatVideoAdapter(getApplicationContext(), videos, new ForwardItemClickListener() {
-            @Override
-            public void onItemVideoClick(Video contact) {
-                if (mAdapter.getSelectedComments().isEmpty()) {
-                    adapterSelected(contact);
-                } else {
-                    adapterSelected(contact);
+        try {
+            videos = new ArrayList<>();
+            vListVideoTube.setUpAsList();
+            vListVideoTube.setNestedScrollingEnabled(false);
+            chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
+            mAdapter = new ByonchatVideoAdapter(getApplicationContext(), videos, new ForwardItemClickListener() {
+                @Override
+                public void onItemVideoClick(Video contact) {
+                    if (mAdapter.getSelectedComments().isEmpty()) {
+                        adapterSelected(contact);
+                    } else {
+                        adapterSelected(contact);
+                    }
                 }
-            }
 
-            @Override
-            public void onItemVideoLongClick(Video contact) {
+                @Override
+                public void onItemVideoLongClick(Video contact) {
 
-            }
-        }, (view, position, video) -> {
-            showPopup(view, video);
-        });
+                }
+            }, (view, position, video) -> {
+                showPopup(view, video);
+            });
 
-        mAdapter.setOnItemClickListener((view, position) -> {
-            if (isChanged) {
-                List<Video> videoList = new ArrayList<>();
-                Video video = videos.get(position);
-                videoList.add(video);
-                Intent intent = ByonchatStreamingVideoTubeActivity.generateIntent(getApplicationContext(), video, color, colorText);
-                startActivity(intent);
-            } else
-                adapterSelected((Video) mAdapter.getData().get(position));
-        });
+            mAdapter.setOnItemClickListener((view, position) -> {
+                if (isChanged) {
+                    List<Video> videoList = new ArrayList<>();
+                    Video video = videos.get(position);
+                    videoList.add(video);
+                    Intent intent = ByonchatStreamingVideoTubeActivity.generateIntent(getApplicationContext(), video, color, colorText);
+                    startActivity(intent);
+                } else
+                    adapterSelected((Video) mAdapter.getData().get(position));
+            });
 
-        mAdapter.setOnLongItemClickListener((view, position) -> {
-            /*adapterSelected((Video) mAdapter.getData().get(position));*/
-        });
+            mAdapter.setOnLongItemClickListener((view, position) -> {
+                /*adapterSelected((Video) mAdapter.getData().get(position));*/
+            });
 
-        vListVideoTube.setAdapter(mAdapter);
+            vListVideoTube.setAdapter(mAdapter);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void adapterSelected(Video contact) {
@@ -298,38 +328,46 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
     }
 
     protected void onViewReady() {
-        if (NetworkInternetConnectionStatus.
-                getInstance(getApplicationContext()).
-                isOnline(getApplicationContext())) {
-            vFrameInternetError.setVisibility(View.GONE);
-            vListVideoTube.setVisibility(View.VISIBLE);
+        try {
+            if (NetworkInternetConnectionStatus.
+                    getInstance(getApplicationContext()).
+                    isOnline(getApplicationContext())) {
+                vFrameInternetError.setVisibility(View.GONE);
+                vListVideoTube.setVisibility(View.VISIBLE);
 
-            new getVideoList(false).execute(username, id_rooms_tab, url_tembak);
-        } else {
-            resolveConnectionProblem();
+                new getVideoList(false).execute(username, id_rooms_tab, url_tembak);
+            } else {
+                resolveConnectionProblem();
+            }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     protected void performSearch() {
-        vSearchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                if (NetworkInternetConnectionStatus.
-                        getInstance(getApplicationContext()).
-                        isOnline(getApplicationContext())) {
-                    new getVideoList(true).execute(username, id_rooms_tab, s, url_tembak);
-                } else {
-                    vFrameInternetError.setVisibility(View.VISIBLE);
-                    vListVideoTube.setVisibility(View.GONE);
+        try {
+            vSearchText.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    if (NetworkInternetConnectionStatus.
+                            getInstance(getApplicationContext()).
+                            isOnline(getApplicationContext())) {
+                        new getVideoList(true).execute(username, id_rooms_tab, s, url_tembak);
+                    } else {
+                        vFrameInternetError.setVisibility(View.VISIBLE);
+                        vListVideoTube.setVisibility(View.GONE);
+                    }
+                    return true;
                 }
-                return true;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
+                }
+            });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void showRefresh() {
@@ -341,51 +379,59 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
     }
 
     protected void showPopup(View view, final Video video) {
-        View menuItemView = view.findViewById(R.id.more);
-        final PopupMenu popup = new PopupMenu(this, menuItemView);
-        MenuInflater inflate = popup.getMenuInflater();
+        try {
+            View menuItemView = view.findViewById(R.id.more);
+            final PopupMenu popup = new PopupMenu(this, menuItemView);
+            MenuInflater inflate = popup.getMenuInflater();
 
-        inflate.inflate(R.menu.byonchat_menu_download, popup.getMenu());
-        popup.setOnMenuItemClickListener(menuItem -> {
-            switch (menuItem.getItemId()) {
-                case R.id.action_download:
-                    if (checkPermissionREAD_EXTERNAL_STORAGE(ByonchatVideoBeforeDownloadActivity.this)) {
-                        FileDownload(video);
-                    }
-                    break;
-                default:
-                    return false;
-            }
-            return false;
-        });
-        popup.show();
+            inflate.inflate(R.menu.byonchat_menu_download, popup.getMenu());
+            popup.setOnMenuItemClickListener(menuItem -> {
+                switch (menuItem.getItemId()) {
+                    case R.id.action_download:
+                        if (checkPermissionREAD_EXTERNAL_STORAGE(ByonchatVideoBeforeDownloadActivity.this)) {
+                            FileDownload(video);
+                        }
+                        break;
+                    default:
+                        return false;
+                }
+                return false;
+            });
+            popup.show();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void FileDownload(Video video) {
-        video.setDownloading(true);
-        SoloApi.getInstance()
-                .downloadFile(video.url, "VID-" + video.add_date + "-" + video.title + ".mp4",
-                        percentage -> video.setProgress((int) percentage))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(bindToLifecycle())
-                .doOnNext(file1 -> {
-                    ByonchatFileUtil.notifySystem(file1);
-                    video.setDownloading(false);
-                    Byonchat.getVideoTubeDataStore().addOrUpdate(video,
-                            file1.getAbsolutePath());
-                })
-                .subscribe(file1 -> {
-                    video.url = file1.getAbsolutePath();
-                    Byonchat.getVideoTubeDataStore().update(video);
+        try {
+            video.setDownloading(true);
+            SoloApi.getInstance()
+                    .downloadFile(video.url, "VID-" + video.add_date + "-" + video.title + ".mp4",
+                            percentage -> video.setProgress((int) percentage))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .compose(bindToLifecycle())
+                    .doOnNext(file1 -> {
+                        ByonchatFileUtil.notifySystem(file1);
+                        video.setDownloading(false);
+                        Byonchat.getVideoTubeDataStore().addOrUpdate(video,
+                                file1.getAbsolutePath());
+                    })
+                    .subscribe(file1 -> {
+                        video.url = file1.getAbsolutePath();
+                        Byonchat.getVideoTubeDataStore().update(video);
 
-                    video.isSelected = true;
-                    notifyDataChanged(video);
-                }, throwable -> {
-                    throwable.printStackTrace();
-                    video.setDownloading(false);
-                    showError(getApplicationContext().getString(R.string.byonchat_failed_download_file));
-                });
+                        video.isSelected = true;
+                        notifyDataChanged(video);
+                    }, throwable -> {
+                        throwable.printStackTrace();
+                        video.setDownloading(false);
+                        showError(getApplicationContext().getString(R.string.byonchat_failed_download_file));
+                    });
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void notifyDataChanged(Video video) {
@@ -473,10 +519,15 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
 
         @Override
         protected String doInBackground(String... params) {
-            if (isSearchInput)
-                return getVideoListInput(params);
-            else
+            try {
+                if (isSearchInput)
+                    return getVideoListInput(params);
+                else
+                    return getVideoList(params);
+            }catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
                 return getVideoList(params);
+            }
         }
 
         @Override
@@ -486,77 +537,88 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
     }
 
     protected void setList(String result) {
+        try {
+            if (videos.size() > 0)
+                videos.clear();
 
-        if (videos.size() > 0)
-            videos.clear();
+            if (Utility.isJSONValid(result)) {
+                try {
+                    JSONObject jObject = new JSONObject(result);
+                    String id_rooms_tab = jObject.getString("id_rooms_tab");
+                    String username_room = jObject.getString("username_room");
+                    JSONArray jArray = new JSONArray(jObject.getString("data"));
+                    if (jArray.length() > 0) {
+                        vFrameError.setVisibility(View.GONE);
+                        vFrameInternetError.setVisibility(View.GONE);
+                        vListVideoTube.setVisibility(View.VISIBLE);
 
-        if (Utility.isJSONValid(result)) {
-            try {
-                JSONObject jObject = new JSONObject(result);
-                String id_rooms_tab = jObject.getString("id_rooms_tab");
-                String username_room = jObject.getString("username_room");
-                JSONArray jArray = new JSONArray(jObject.getString("data"));
-                if (jArray.length() > 0) {
-                    vFrameError.setVisibility(View.GONE);
-                    vFrameInternetError.setVisibility(View.GONE);
-                    vListVideoTube.setVisibility(View.VISIBLE);
+                        for (int i = 0; i < jArray.length(); i++) {
+                            JSONObject object = jArray.getJSONObject(i);
+                            String id = object.getString("id");
+                            String title = object.getString("title");
+                            String description = object.getString("description");
+                            String file_gallery = object.getString("file_gallery");
+                            String thumbnail = object.getString("thumbnail");
+                            String type = object.getString("type");
+                            String durasi_video = object.getString("durasi_video");
+                            String file_size = object.getString("file_size");
+                            String add_date = object.getString("add_date");
 
-                    for (int i = 0; i < jArray.length(); i++) {
-                        JSONObject object = jArray.getJSONObject(i);
-                        String id = object.getString("id");
-                        String title = object.getString("title");
-                        String description = object.getString("description");
-                        String file_gallery = object.getString("file_gallery");
-                        String thumbnail = object.getString("thumbnail");
-                        String type = object.getString("type");
-                        String durasi_video = object.getString("durasi_video");
-                        String file_size = object.getString("file_size");
-                        String add_date = object.getString("add_date");
+                            Video video = new Video();
+                            video.id = Long.valueOf(id);
+                            video.title = title;
+                            video.description = description;
+                            video.length = durasi_video;
+                            video.size = file_size;
+                            video.url = file_gallery;
+                            video.thumbnail = thumbnail;
+                            video.type = Video.TYPE_TEXT;
+                            video.video_type = type;
+                            video.add_date = add_date;
 
-                        Video video = new Video();
-                        video.id = Long.valueOf(id);
-                        video.title = title;
-                        video.description = description;
-                        video.length = durasi_video;
-                        video.size = file_size;
-                        video.url = file_gallery;
-                        video.thumbnail = thumbnail;
-                        video.type = Video.TYPE_TEXT;
-                        video.video_type = type;
-                        video.add_date = add_date;
-
-                        videos.add(video);
+                            videos.add(video);
+                        }
+                    } else {
+                        resolveEmptyVideo();
                     }
-                } else {
+                } catch (JSONException e) {
+                    e.printStackTrace();
                     resolveEmptyVideo();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else if (result.equalsIgnoreCase("error")) {
                 resolveEmptyVideo();
             }
-        } else if (result.equalsIgnoreCase("error")) {
-            resolveEmptyVideo();
+
+            mAdapter.setItems(videos);
+
+            hideRefresh();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        mAdapter.setItems(videos);
-
-        hideRefresh();
     }
 
     protected void resolveEmptyVideo() {
-        String warning_text = "There are no S-Team video search results for\n &quot;<b>" + vSearchText.getQuery() + "</b>&quot; at this time";
-        vFrameError.setVisibility(View.VISIBLE);
-        vWarningTitle.setText("No videos found");
-        vWarningContent.setText(Html.fromHtml(warning_text));
+        try {
+            String warning_text = "There are no S-Team video search results for\n &quot;<b>" + vSearchText.getQuery() + "</b>&quot; at this time";
+            vFrameError.setVisibility(View.VISIBLE);
+            vWarningTitle.setText("No videos found");
+            vWarningContent.setText(Html.fromHtml(warning_text));
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveConnectionProblem() {
-        String title = "Home isn't responding";
-        String content = "That's why we can't show videos right now\nPlease check back later";
-        vFrameInternetError.setVisibility(View.VISIBLE);
-        vListVideoTube.setVisibility(View.GONE);
-        vInternetTitle.setText(title);
-        vInternetContent.setText(content);
+        try {
+            String title = "Home isn't responding";
+            String content = "That's why we can't show videos right now\nPlease check back later";
+            vFrameInternetError.setVisibility(View.VISIBLE);
+            vListVideoTube.setVisibility(View.GONE);
+            vInternetTitle.setText(title);
+            vInternetContent.setText(content);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public static String getVideoList(String... args) {
@@ -631,30 +693,34 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
     }
 
     protected void resolveVideos(Bundle savedInstanceState) {
-        id_rooms_tab = getIntent().getStringExtra(EXTRA_ID_ROOMS_TAB);
-        url_tembak = getIntent().getStringExtra(EXTRA_URL_TEMBAK);
-        username = getIntent().getStringExtra(EXTRA_USERNAME);
-        color = getIntent().getStringExtra(EXTRA_COLOR);
-        colorText = getIntent().getStringExtra(EXTRA_COLOR_TEXT);
-        if (id_rooms_tab == null && savedInstanceState != null) {
-            id_rooms_tab = savedInstanceState.getString(EXTRA_ID_ROOMS_TAB);
-        }
-        if (url_tembak == null && savedInstanceState != null) {
-            url_tembak = savedInstanceState.getString(EXTRA_URL_TEMBAK);
-        }
-        if (username == null && savedInstanceState != null) {
-            username = savedInstanceState.getString(EXTRA_USERNAME);
-        }
-        if (color == null && savedInstanceState != null) {
-            color = savedInstanceState.getString(EXTRA_COLOR);
-        }
-        if (colorText == null && savedInstanceState != null) {
-            colorText = savedInstanceState.getString(EXTRA_COLOR_TEXT);
-        }
+        try {
+            id_rooms_tab = getIntent().getStringExtra(EXTRA_ID_ROOMS_TAB);
+            url_tembak = getIntent().getStringExtra(EXTRA_URL_TEMBAK);
+            username = getIntent().getStringExtra(EXTRA_USERNAME);
+            color = getIntent().getStringExtra(EXTRA_COLOR);
+            colorText = getIntent().getStringExtra(EXTRA_COLOR_TEXT);
+            if (id_rooms_tab == null && savedInstanceState != null) {
+                id_rooms_tab = savedInstanceState.getString(EXTRA_ID_ROOMS_TAB);
+            }
+            if (url_tembak == null && savedInstanceState != null) {
+                url_tembak = savedInstanceState.getString(EXTRA_URL_TEMBAK);
+            }
+            if (username == null && savedInstanceState != null) {
+                username = savedInstanceState.getString(EXTRA_USERNAME);
+            }
+            if (color == null && savedInstanceState != null) {
+                color = savedInstanceState.getString(EXTRA_COLOR);
+            }
+            if (colorText == null && savedInstanceState != null) {
+                colorText = savedInstanceState.getString(EXTRA_COLOR_TEXT);
+            }
 
-        if (id_rooms_tab == null || url_tembak == null || username == null || color == null || colorText == null) {
-            finish();
-            return;
+            if (id_rooms_tab == null || url_tembak == null || username == null || color == null || colorText == null) {
+                finish();
+                return;
+            }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 }

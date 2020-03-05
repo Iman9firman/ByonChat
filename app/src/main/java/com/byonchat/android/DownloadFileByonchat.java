@@ -49,6 +49,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class DownloadFileByonchat extends AppCompatActivity {
     private static final String SD_CARD_FOLDER = "S-TeamDoc";
     private ProgressDialog mProgressDialog;
@@ -116,88 +118,97 @@ public class DownloadFileByonchat extends AppCompatActivity {
                     return false;
                 }
             } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
                 return false;
             }
         }
 
         protected void onProgressUpdate(Integer... values) {
-            if (mProgressDialog != null) {
-                if (mProgressDialog.isShowing()) {
-                    mProgressDialog.setProgress(values[0]);
+            try {
+                if (mProgressDialog != null) {
+                    if (mProgressDialog.isShowing()) {
+                        mProgressDialog.setProgress(values[0]);
+                    }
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-            }
-
-            if (result.equals(Boolean.TRUE)) {
-                finish();
-                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
-                File oldFile = new File(oldFolder, NEW_NAME_FILE);
-
-                if (getIntent().getStringExtra("download") != null) {
-                    try {
-                        createPdfFooter(oldFile + "", oldFolder + "/ISS_" + NEW_NAME_FILE, getIntent().getStringExtra("download"));
-
-                        Toast.makeText(getApplicationContext(), "Successfully Downloaded", Toast.LENGTH_SHORT).show();
-
-                        if (oldFile.exists()) {
-                            try {
-                                oldFile.delete();
-
-                                if (getIntent().getStringExtra("approving") != null) {
-                                    String apa = getIntent().getStringExtra("approving");
-                                    Log.w("Parking lot prestice", apa);
-                                    Map<String, String> params = new HashMap<>();
-                                    params.put("id_history", apa);
-                                    params.put("status", 1 + "");
-
-                                    getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Approval/update", params, true);
-                                }
-                            } catch (Exception e) {
-                                Log.e("Error hereee", "get " + e.getMessage());
-                            }
-                        }
-
-                    } catch (Exception e) {
-                        Log.e("Error hereee", "get " + e.getMessage());
-                    }
-                } else {
-                    if(getIntent().getStringExtra("add_merge") != null){
-                        prepareMerging(oldFile.getPath(), getIntent().getStringExtra("add_merge"));
-                    }else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
-                            intent.setData(uri);
-                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                            startActivity(intent);
-
-                        } else {
-                            String exten = oldFile.getAbsolutePath().substring(oldFile.getAbsolutePath().lastIndexOf(".")).replace(".","");
-
-                            MimeTypeMap map = MimeTypeMap.getSingleton();
-                            String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-                            String type = map.getMimeTypeFromExtension(exten);
-                            if (type == null)
-                                type = "*/*";
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            Uri data = Uri.fromFile(oldFile);
-                            intent.setDataAndType(data, type);
-                            startActivity(intent);
-                        }
-                    }
+            try {
+                if (mProgressDialog != null) {
+                    mProgressDialog.dismiss();
+                    mProgressDialog = null;
                 }
 
-            } else {
-                Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
-                finish();
+                if (result.equals(Boolean.TRUE)) {
+                    finish();
+                    File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
+                    File oldFile = new File(oldFolder, NEW_NAME_FILE);
+
+                    if (getIntent().getStringExtra("download") != null) {
+                        try {
+                            createPdfFooter(oldFile + "", oldFolder + "/ISS_" + NEW_NAME_FILE, getIntent().getStringExtra("download"));
+
+                            Toast.makeText(getApplicationContext(), "Successfully Downloaded", Toast.LENGTH_SHORT).show();
+
+                            if (oldFile.exists()) {
+                                try {
+                                    oldFile.delete();
+
+                                    if (getIntent().getStringExtra("approving") != null) {
+                                        String apa = getIntent().getStringExtra("approving");
+                                        Log.w("Parking lot prestice", apa);
+                                        Map<String, String> params = new HashMap<>();
+                                        params.put("id_history", apa);
+                                        params.put("status", 1 + "");
+
+                                        getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Approval/update", params, true);
+                                    }
+                                } catch (Exception e) {
+                                    Log.e("Error hereee", "get " + e.getMessage());
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            Log.e("Error hereee", "get " + e.getMessage());
+                        }
+                    } else {
+                        if (getIntent().getStringExtra("add_merge") != null) {
+                            prepareMerging(oldFile.getPath(), getIntent().getStringExtra("add_merge"));
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
+                                intent.setData(uri);
+                                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                startActivity(intent);
+
+                            } else {
+                                String exten = oldFile.getAbsolutePath().substring(oldFile.getAbsolutePath().lastIndexOf(".")).replace(".", "");
+
+                                MimeTypeMap map = MimeTypeMap.getSingleton();
+                                String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
+                                String type = map.getMimeTypeFromExtension(exten);
+                                if (type == null)
+                                    type = "*/*";
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                Uri data = Uri.fromFile(oldFile);
+                                intent.setDataAndType(data, type);
+                                startActivity(intent);
+                            }
+                        }
+                    }
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "failed download, plese try again...", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
@@ -235,85 +246,54 @@ public class DownloadFileByonchat extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_pnumber);
-        LinearLayout linearLayoutContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
-        linearLayoutContent.setVisibility(View.GONE);
 
-        DOWNLOAD_PATH = getIntent().getStringExtra("path");
+        try {
+            LinearLayout linearLayoutContent = (LinearLayout) findViewById(R.id.linearLayoutContent);
+            linearLayoutContent.setVisibility(View.GONE);
 
-        File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
+            DOWNLOAD_PATH = getIntent().getStringExtra("path");
 
-        NAME_FILE = DOWNLOAD_PATH.substring(DOWNLOAD_PATH.lastIndexOf('/'), DOWNLOAD_PATH.length());
+            File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
 
-        String extension = NAME_FILE.substring(NAME_FILE.lastIndexOf("."));
+            NAME_FILE = DOWNLOAD_PATH.substring(DOWNLOAD_PATH.lastIndexOf('/'), DOWNLOAD_PATH.length());
 
-        if (getIntent().getStringExtra("nama_file") != null) {
-            NEW_NAME_FILE = getIntent().getStringExtra("nama_file") + extension;
-        } else {
-            NEW_NAME_FILE = NAME_FILE;
-        }
+            String extension = NAME_FILE.substring(NAME_FILE.lastIndexOf("."));
 
-        File oldFile = new File(oldFolder, NEW_NAME_FILE);
-        if (oldFile.exists()) {
-            if (getIntent().getStringExtra("remove") == null) {
-                finish();
-                if(getIntent().getStringExtra("add_merge") != null){
-                    prepareMerging(oldFile.getPath(), getIntent().getStringExtra("add_merge"));
-                }else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                        Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
-                        intent.setData(uri);
-                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivity(intent);
-
-                    } else {
-                        String exten = oldFile.getAbsolutePath().substring(oldFile.getAbsolutePath().lastIndexOf(".")).replace(".","");
-
-                        MimeTypeMap map = MimeTypeMap.getSingleton();
-                        String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
-                        String type = map.getMimeTypeFromExtension(exten);
-                        if (type == null)
-                            type = "*/*";
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        Uri data = Uri.fromFile(oldFile);
-                        intent.setDataAndType(data, type);
-                        startActivity(intent);
-                    }
-                }
+            if (getIntent().getStringExtra("nama_file") != null) {
+                NEW_NAME_FILE = getIntent().getStringExtra("nama_file") + extension;
             } else {
-                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
-                    finish();
-                }
-                DownloadFile mDatabaseOpenTask = new DownloadFile();
-                mDatabaseOpenTask.execute(new Context[]{this});
+                NEW_NAME_FILE = NAME_FILE;
             }
-        } else {
-            if (getIntent().getStringExtra("download") != null) {
 
-                File baru = new File(oldFolder, "ISS_" + NEW_NAME_FILE);
-
-                if (baru.exists()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", baru);
-                        intent.setData(uri);
-                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        startActivity(intent);
-
+            File oldFile = new File(oldFolder, NEW_NAME_FILE);
+            if (oldFile.exists()) {
+                if (getIntent().getStringExtra("remove") == null) {
+                    finish();
+                    if (getIntent().getStringExtra("add_merge") != null) {
+                        prepareMerging(oldFile.getPath(), getIntent().getStringExtra("add_merge"));
                     } else {
-                        MimeTypeMap map = MimeTypeMap.getSingleton();
-                        String ext = MimeTypeMap.getFileExtensionFromUrl(baru.getName());
-                        String type = map.getMimeTypeFromExtension(ext);
-                        if (type == null)
-                            type = "*/*";
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        Uri data = Uri.fromFile(baru);
-                        intent.setDataAndType(data, type);
-                        startActivity(intent);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                            Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", oldFile);
+                            intent.setData(uri);
+                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            startActivity(intent);
+
+                        } else {
+                            String exten = oldFile.getAbsolutePath().substring(oldFile.getAbsolutePath().lastIndexOf(".")).replace(".", "");
+
+                            MimeTypeMap map = MimeTypeMap.getSingleton();
+                            String ext = MimeTypeMap.getFileExtensionFromUrl(oldFile.getName());
+                            String type = map.getMimeTypeFromExtension(exten);
+                            if (type == null)
+                                type = "*/*";
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            Uri data = Uri.fromFile(oldFile);
+                            intent.setDataAndType(data, type);
+                            startActivity(intent);
+                        }
                     }
                 } else {
                     if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -324,117 +304,168 @@ public class DownloadFileByonchat extends AppCompatActivity {
                     mDatabaseOpenTask.execute(new Context[]{this});
                 }
             } else {
-                if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
-                    finish();
+                if (getIntent().getStringExtra("download") != null) {
+
+                    File baru = new File(oldFolder, "ISS_" + NEW_NAME_FILE);
+
+                    if (baru.exists()) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", baru);
+                            intent.setData(uri);
+                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            startActivity(intent);
+
+                        } else {
+                            MimeTypeMap map = MimeTypeMap.getSingleton();
+                            String ext = MimeTypeMap.getFileExtensionFromUrl(baru.getName());
+                            String type = map.getMimeTypeFromExtension(ext);
+                            if (type == null)
+                                type = "*/*";
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            Uri data = Uri.fromFile(baru);
+                            intent.setDataAndType(data, type);
+                            startActivity(intent);
+                        }
+                    } else {
+                        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                            Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
+                            finish();
+                        }
+                        DownloadFile mDatabaseOpenTask = new DownloadFile();
+                        mDatabaseOpenTask.execute(new Context[]{this});
+                    }
+                } else {
+                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        Toast.makeText(getApplicationContext(), "Please insert memory card", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                    DownloadFile mDatabaseOpenTask = new DownloadFile();
+                    mDatabaseOpenTask.execute(new Context[]{this});
                 }
-                DownloadFile mDatabaseOpenTask = new DownloadFile();
-                mDatabaseOpenTask.execute(new Context[]{this});
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     public void createPdfFooter(String originPath, String destPath, String text) throws IOException, DocumentException {
-
-        PdfReader reader = new PdfReader(originPath);
-        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(destPath));
-        Phrase footer = new Phrase(text, new Font(Font.FontFamily.UNDEFINED, 10, 0, BaseColor.RED));
-        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            float x1 = 10;
-            float x2 = reader.getPageSize(i).getWidth() - 10;
-            float y1 = reader.getPageSize(i).getBottom(10);
-            float y2 = reader.getPageSize(i).getBottom(60);
-            ColumnText ct = new ColumnText(stamper.getOverContent(i));
-            ct.setSimpleColumn(footer, x1, y1, x2, y2, 15, Element.ALIGN_RIGHT);
-            ct.go();
+        try {
+            PdfReader reader = new PdfReader(originPath);
+            PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(destPath));
+            Phrase footer = new Phrase(text, new Font(Font.FontFamily.UNDEFINED, 10, 0, BaseColor.RED));
+            for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+                float x1 = 10;
+                float x2 = reader.getPageSize(i).getWidth() - 10;
+                float y1 = reader.getPageSize(i).getBottom(10);
+                float y2 = reader.getPageSize(i).getBottom(60);
+                ColumnText ct = new ColumnText(stamper.getOverContent(i));
+                ct.setSimpleColumn(footer, x1, y1, x2, y2, 15, Element.ALIGN_RIGHT);
+                ct.go();
+            }
+            stamper.close();
+            reader.close();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        stamper.close();
-        reader.close();
     }
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        try {
+            RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    Log.w("sukses prestice", response);
-                    if (hide) {
+            StringRequest sr = new StringRequest(Request.Method.POST, Url,
+                    response -> {
+                        Log.w("sukses prestice", response);
+                        if (hide) {
+                        }
+
+                    },
+                    error -> {
+                        Log.w("error prestice", error);
                     }
+            ) {
 
-                },
-                error -> {
-                    Log.w("error prestice", error);
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+
+                    return params2;
                 }
-        ) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        queue.add(sr);
+            };
+            queue.add(sr);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void prepareMerging(String path1, String path2) {
-        String fileOne = path1;
-        String Nama_Merge = path1.replace("/storage/emulated/0/S-TeamDoc/","");
-        String fileTwo = path2;
-        File hasil = new File(Environment.getExternalStorageDirectory(), Nama_Merge);
-        hasil.getParentFile().mkdirs();
-        String fileHasil = hasil.getAbsolutePath();
-
         try {
-            FileInputStream fisOne = new FileInputStream(fileOne);
-            FileInputStream fisTwo = new FileInputStream(fileTwo);
-            FileOutputStream fosHasil = new FileOutputStream(fileHasil);
+            String fileOne = path1;
+            String Nama_Merge = path1.replace("/storage/emulated/0/S-TeamDoc/", "");
+            String fileTwo = path2;
+            File hasil = new File(Environment.getExternalStorageDirectory(), Nama_Merge);
+            hasil.getParentFile().mkdirs();
+            String fileHasil = hasil.getAbsolutePath();
 
-            mergePdfFiles(fisOne, fisTwo, fosHasil);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            try {
+                FileInputStream fisOne = new FileInputStream(fileOne);
+                FileInputStream fisTwo = new FileInputStream(fileTwo);
+                FileOutputStream fosHasil = new FileOutputStream(fileHasil);
 
-        File outputFile = hasil;
+                mergePdfFiles(fisOne, fisTwo, fosHasil);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Log.e("Krieve", "5");
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            File outputFile = hasil;
 
-            Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", outputFile);
-            intent.setData(uri);
-            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            startActivity(intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Log.e("Krieve", "5");
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        } else {
-            String exten = outputFile.getAbsolutePath().substring(outputFile.getAbsolutePath().lastIndexOf(".")).replace(".","");
+                Uri uri = FileProvider.getUriForFile(DownloadFileByonchat.this, getPackageName() + ".provider", outputFile);
+                intent.setData(uri);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivity(intent);
+
+            } else {
+                String exten = outputFile.getAbsolutePath().substring(outputFile.getAbsolutePath().lastIndexOf(".")).replace(".", "");
+
+                MimeTypeMap map = MimeTypeMap.getSingleton();
+                String type = map.getMimeTypeFromExtension(exten);
+                if (type == null)
+                    type = "application/pdf";
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Uri data = Uri.fromFile(outputFile);
+                intent.setDataAndType(data, type);
+                startActivity(intent);
+            }
 
             MimeTypeMap map = MimeTypeMap.getSingleton();
-            String type = map.getMimeTypeFromExtension(exten);
-            if (type == null)
-                type = "application/pdf";
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            Uri data = Uri.fromFile(outputFile);
-            intent.setDataAndType(data, type);
-            startActivity(intent);
+            String ext = MimeTypeMap.getFileExtensionFromUrl(outputFile.getName());
+            String type = map.getMimeTypeFromExtension(ext);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        MimeTypeMap map = MimeTypeMap.getSingleton();
-        String ext = MimeTypeMap.getFileExtensionFromUrl(outputFile.getName());
-        String type = map.getMimeTypeFromExtension(ext);
     }
 
     private void mergePdfFiles(FileInputStream isOne, FileInputStream isTwo, FileOutputStream hasil) throws Exception {
-        PdfReader one = new PdfReader(isOne);
-        PdfReader two = new PdfReader(isTwo);
-        Document document = new Document();
-        PdfCopy copy = new PdfCopy(document, hasil);
-        document.open();
-        copy.addDocument(one);
-        copy.addDocument(two);
-        document.close();
-        one.close();
-        two.close();
+        try {
+            PdfReader one = new PdfReader(isOne);
+            PdfReader two = new PdfReader(isTwo);
+            Document document = new Document();
+            PdfCopy copy = new PdfCopy(document, hasil);
+            document.open();
+            copy.addDocument(one);
+            copy.addDocument(two);
+            document.close();
+            one.close();
+            two.close();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
 }

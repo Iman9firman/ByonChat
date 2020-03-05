@@ -24,6 +24,8 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class DetailGroupVoting extends AppCompatActivity implements OnChartValueSelectedListener {
 
     protected BarChart mChart;
@@ -36,58 +38,61 @@ public class DetailGroupVoting extends AppCompatActivity implements OnChartValue
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.detail_group_voting_activity);
-        mChart = (BarChart) findViewById(R.id.chart1);
-        mChart.setOnChartValueSelectedListener(this);
-        mChart.setDrawBarShadow(true);
-        mChart.setDrawValueAboveBar(false);
-        mChart.setDescription("");
-        mChart.setMaxVisibleValueCount(60);
-        mChart.setPinchZoom(false);
-        mChart.getAxisRight().setDrawLabels(false);
 
-        tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
+        try {
+            mChart = (BarChart) findViewById(R.id.chart1);
+            mChart.setOnChartValueSelectedListener(this);
+            mChart.setDrawBarShadow(true);
+            mChart.setDrawValueAboveBar(false);
+            mChart.setDescription("");
+            mChart.setMaxVisibleValueCount(60);
+            mChart.setPinchZoom(false);
+            mChart.getAxisRight().setDrawLabels(false);
 
-        XAxis xl = mChart.getXAxis();
-        xl.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xl.setTypeface(tf);
-        xl.setTextColor(Color.BLUE);
-        xl.setDrawAxisLine(true);
-        xl.setDrawGridLines(false);
-        xl.setGridLineWidth(0.3f);
+            tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
 
-        YAxis yl = mChart.getAxisLeft();
-        yl.setTypeface(tf);
-        yl.setTextColor(Color.BLUE);
-        yl.setDrawAxisLine(true);
-        yl.setDrawGridLines(true);
-        yl.setGridLineWidth(0.3f);
-        yl.setAxisMinValue(0f);
+            XAxis xl = mChart.getXAxis();
+            xl.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xl.setTypeface(tf);
+            xl.setTextColor(Color.BLUE);
+            xl.setDrawAxisLine(true);
+            xl.setDrawGridLines(false);
+            xl.setGridLineWidth(0.3f);
 
-        YAxis yr = mChart.getAxisRight();
-        yr.setTypeface(tf);
-        yr.setDrawAxisLine(false);
-        yr.setTextColor(Color.BLUE);
-        yr.setDrawGridLines(true);
-        yr.setGridLineWidth(0.3f);
-        yr.setAxisMinValue(0f);
+            YAxis yl = mChart.getAxisLeft();
+            yl.setTypeface(tf);
+            yl.setTextColor(Color.BLUE);
+            yl.setDrawAxisLine(true);
+            yl.setDrawGridLines(true);
+            yl.setGridLineWidth(0.3f);
+            yl.setAxisMinValue(0f);
 
-        BarData data = new BarData(getXAxisValues(), getDataSet());
-        mChart.setData(data);
+            YAxis yr = mChart.getAxisRight();
+            yr.setTypeface(tf);
+            yr.setDrawAxisLine(false);
+            yr.setTextColor(Color.BLUE);
+            yr.setDrawGridLines(true);
+            yr.setGridLineWidth(0.3f);
+            yr.setAxisMinValue(0f);
 
-        mChart.animateY(2500);
+            BarData data = new BarData(getXAxisValues(), getDataSet());
+            mChart.setData(data);
 
-        Legend l = mChart.getLegend();
-        l.setPosition(Legend.LegendPosition.BELOW_CHART_LEFT);
-        l.setFormSize(8f);
-        l.setXEntrySpace(4f);
-        mChart.setDrawValueAboveBar(true);
-        mChart.setDrawGridBackground(false);
-        mChart.setPinchZoom(false);
-        mChart.setDrawBarShadow(false);
-        mChart.animateXY(2000, 2000);
-        mChart.invalidate();
+            mChart.animateY(2500);
 
-
+            Legend l = mChart.getLegend();
+            l.setPosition(Legend.LegendPosition.BELOW_CHART_LEFT);
+            l.setFormSize(8f);
+            l.setXEntrySpace(4f);
+            mChart.setDrawValueAboveBar(true);
+            mChart.setDrawGridBackground(false);
+            mChart.setPinchZoom(false);
+            mChart.setDrawBarShadow(false);
+            mChart.animateXY(2000, 2000);
+            mChart.invalidate();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public class MyValueFormatter implements ValueFormatter {
@@ -99,27 +104,30 @@ public class DetailGroupVoting extends AppCompatActivity implements OnChartValue
 
     private ArrayList<IBarDataSet> getDataSet() {
         ArrayList<IBarDataSet> dataSets = null;
+        try {
+            ArrayList<BarEntry> valueSet1 = new ArrayList<>();
+            BarEntry v1e1 = new BarEntry(60.000f, 0);
+            valueSet1.add(v1e1);
+            BarEntry v1e2 = new BarEntry(20.000f, 1);
+            valueSet1.add(v1e2);
+            BarEntry v1e3 = new BarEntry(15.000f, 2);
+            valueSet1.add(v1e3);
+            BarEntry v1e4 = new BarEntry(5.000f, 3);
+            valueSet1.add(v1e4);
+            BarEntry v1e5 = new BarEntry(10.000f, 4);
+            valueSet1.add(v1e5);
 
-        ArrayList<BarEntry> valueSet1 = new ArrayList<>();
-        BarEntry v1e1 = new BarEntry(60.000f, 0);
-        valueSet1.add(v1e1);
-        BarEntry v1e2 = new BarEntry(20.000f, 1);
-        valueSet1.add(v1e2);
-        BarEntry v1e3 = new BarEntry(15.000f, 2);
-        valueSet1.add(v1e3);
-        BarEntry v1e4 = new BarEntry(5.000f, 3);
-        valueSet1.add(v1e4);
-        BarEntry v1e5 = new BarEntry(10.000f, 4);
-        valueSet1.add(v1e5);
+            BarDataSet barDataSet1 = new BarDataSet(valueSet1, "Activities");
+            barDataSet1.setDrawValues(false);
+            barDataSet1.setValueTextColor(Color.BLUE);
+            barDataSet1.setColors(ColorTemplate.COLORFUL_COLORS);
+            barDataSet1.setValueFormatter(new MyValueFormatter());
 
-        BarDataSet barDataSet1 = new BarDataSet(valueSet1, "Activities");
-        barDataSet1.setDrawValues(false);
-        barDataSet1.setValueTextColor(Color.BLUE);
-        barDataSet1.setColors(ColorTemplate.COLORFUL_COLORS);
-        barDataSet1.setValueFormatter(new MyValueFormatter());
-
-        dataSets = new ArrayList<IBarDataSet>();
-        dataSets.add(barDataSet1);
+            dataSets = new ArrayList<IBarDataSet>();
+            dataSets.add(barDataSet1);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return dataSets;
     }
 

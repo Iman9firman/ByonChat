@@ -26,6 +26,8 @@ import com.byonchat.android.provider.ContactBot;
 
 import java.util.ArrayList;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 /**
  * Created by Iman Firmansyah on 11/23/2015.
  */
@@ -51,48 +53,52 @@ public class MainFragmentRoom extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View x = inflater.inflate(R.layout.main_fragment_room, null);
-        backgroundButton =  (LinearLayout) x.findViewById(R.id.backgroundButton);
-        tabLayout = (TabLayout) x.findViewById(R.id.tabs);
-        viewPager = (ViewPager) x.findViewById(R.id.viewpager);
-        mBtnbBrand = (Button) x.findViewById(R.id.btnBrand);
-        mBtnCelebs = (Button) x.findViewById(R.id.btnCeleb);
-        mBtnPersons = (Button) x.findViewById(R.id.btnPerson);
+        try {
+            backgroundButton = (LinearLayout) x.findViewById(R.id.backgroundButton);
+            tabLayout = (TabLayout) x.findViewById(R.id.tabs);
+            viewPager = (ViewPager) x.findViewById(R.id.viewpager);
+            mBtnbBrand = (Button) x.findViewById(R.id.btnBrand);
+            mBtnCelebs = (Button) x.findViewById(R.id.btnCeleb);
+            mBtnPersons = (Button) x.findViewById(R.id.btnPerson);
 
-        viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
-        tabLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                tabLayout.setupWithViewPager(viewPager);
-            }
-        });
-        setHasOptionsMenu(true);
+            viewPager.setAdapter(new MyAdapter(getChildFragmentManager()));
+            tabLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    tabLayout.setupWithViewPager(viewPager);
+                }
+            });
+            setHasOptionsMenu(true);
 
-        mBtnbBrand.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), NewSearchRoomActivity.class);
-                intent.putExtra("search", "brand");
-                startActivity(intent);
-            }
-        });
+            mBtnbBrand.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), NewSearchRoomActivity.class);
+                    intent.putExtra("search", "brand");
+                    startActivity(intent);
+                }
+            });
 
-        mBtnCelebs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), NewSearchRoomActivity.class);
-                intent.putExtra("search", "celeb");
-                startActivity(intent);
-            }
-        });
+            mBtnCelebs.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), NewSearchRoomActivity.class);
+                    intent.putExtra("search", "celeb");
+                    startActivity(intent);
+                }
+            });
 
-        mBtnPersons.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), NewSearchRoomActivity.class);
-                intent.putExtra("search", "person");
-                startActivity(intent);
-            }
-        });
+            mBtnPersons.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), NewSearchRoomActivity.class);
+                    intent.putExtra("search", "person");
+                    startActivity(intent);
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         return x;
 
     }

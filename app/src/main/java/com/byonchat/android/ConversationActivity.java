@@ -179,6 +179,7 @@ import io.codetail.animation.ViewAnimationUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static com.byonchat.android.communication.NotificationReceiver.NOTIFY_ID_CONV;
+import static com.byonchat.android.utils.Utility.reportCatch;
 
 public class ConversationActivity extends AppCompatActivity implements
         ServiceConnection, EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener, LVDOAdListener {
@@ -335,100 +336,119 @@ public class ConversationActivity extends AppCompatActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(BUNDLE_KEY_FILE_TO_SEND, fileToSend);
-        outState.putInt(BUNDLE_KEY_CURREQ, attCurReq);
-        outState.putString(BUNDLE_KEY_CAMERA_FILEOUTPUT, cameraFileOutput);
-        outState.putString(Constants.EXTRA_COLOR, mColor);
-        outState.putString(Constants.EXTRA_COLORTEXT, mColorText);
-
+        try {
+            outState.putString(BUNDLE_KEY_FILE_TO_SEND, fileToSend);
+            outState.putInt(BUNDLE_KEY_CURREQ, attCurReq);
+            outState.putString(BUNDLE_KEY_CAMERA_FILEOUTPUT, cameraFileOutput);
+            outState.putString(Constants.EXTRA_COLOR, mColor);
+            outState.putString(Constants.EXTRA_COLORTEXT, mColorText);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        fileToSend = savedInstanceState.getString(BUNDLE_KEY_FILE_TO_SEND);
-        attCurReq = savedInstanceState.getInt(BUNDLE_KEY_CURREQ);
-        cameraFileOutput = savedInstanceState
-                .getString(BUNDLE_KEY_CAMERA_FILEOUTPUT);
+        try {
+            fileToSend = savedInstanceState.getString(BUNDLE_KEY_FILE_TO_SEND);
+            attCurReq = savedInstanceState.getInt(BUNDLE_KEY_CURREQ);
+            cameraFileOutput = savedInstanceState
+                    .getString(BUNDLE_KEY_CAMERA_FILEOUTPUT);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void resolveChatRoom(Bundle savedInstanceState) {
-        mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
-        mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
-        if (mColor == null && mColorText == null && savedInstanceState != null) {
-            mColor = savedInstanceState.getString(Constants.EXTRA_COLOR);
-            mColorText = savedInstanceState.getString(Constants.EXTRA_COLORTEXT);
-        }
+        try {
+            mColor = getIntent().getStringExtra(Constants.EXTRA_COLOR);
+            mColorText = getIntent().getStringExtra(Constants.EXTRA_COLORTEXT);
+            if (mColor == null && mColorText == null && savedInstanceState != null) {
+                mColor = savedInstanceState.getString(Constants.EXTRA_COLOR);
+                mColorText = savedInstanceState.getString(Constants.EXTRA_COLORTEXT);
+            }
 
-        if (mColor == null && mColorText == null) {
-            /*finish();*/
-            return;
+            if (mColor == null && mColorText == null) {
+                /*finish();*/
+                return;
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void setBarTitle(String title, boolean show) {
-        if (title.length() > 0) {
-            JSONObject jObject = null;
-            try {
-                jObject = new JSONObject(title);
-                String aa = jObject.getString("a");
-                String bb = jObject.getString("b");
-                judul = aa;
-                titleToolbar.setText(aa);
-                textLoader.DisplayImage(bb, titleToolbar);
-                frameLayoutPicasso.setVisibility(View.GONE);
-                logoToolbar.setVisibility(View.VISIBLE);
-                imageLoaderFromSD.DeleteImage(MediaProcessingUtil.getProfilePic(bb), logoToolbar);
+        try {
+            if (title.length() > 0) {
+                JSONObject jObject = null;
+                try {
+                    jObject = new JSONObject(title);
+                    String aa = jObject.getString("a");
+                    String bb = jObject.getString("b");
+                    judul = aa;
+                    titleToolbar.setText(aa);
+                    textLoader.DisplayImage(bb, titleToolbar);
+                    frameLayoutPicasso.setVisibility(View.GONE);
+                    logoToolbar.setVisibility(View.VISIBLE);
+                    imageLoaderFromSD.DeleteImage(MediaProcessingUtil.getProfilePic(bb), logoToolbar);
 
-                Animation fadeOut = new AlphaAnimation(0, 1);
-                fadeOut.setInterpolator(new AccelerateInterpolator());
-                fadeOut.setDuration(500);
-                logoToolbar.startAnimation(fadeOut);
+                    Animation fadeOut = new AlphaAnimation(0, 1);
+                    fadeOut.setInterpolator(new AccelerateInterpolator());
+                    fadeOut.setDuration(500);
+                    logoToolbar.startAnimation(fadeOut);
 
-                imageLoaderFromSD.DisplayImage(MediaProcessingUtil.getProfilePic(bb), logoToolbar, false);
+                    imageLoaderFromSD.DisplayImage(MediaProcessingUtil.getProfilePic(bb), logoToolbar, false);
                 /*Picasso.with(this)
                         .load("https://"+MessengerConnectionService.F_SERVER+"/toboldlygowherenoonehasgonebefore/"+bb+".jpg")
                         .placeholder(R.drawable.ic_no_photo)
                         .into(logoToolbar);*/
-            } catch (JSONException e) {
-                titleToolbar.setText(title);
-                judul = title;
-            }
-        }
-
-        if (show) {
-            titleToolbar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Contact c = (Contact) destination;
-                    Intent intent = new Intent(getApplicationContext(), ViewProfileActivity.class);
-                    intent.putExtra(ViewProfileActivity.KEY_JABBER_ID,
-                            c.getJabberId());
-                    intent.putExtra(ViewProfileActivity.KEY_REFERENCE,
-                            ViewProfileActivity.REFERENCE_CONVERSATION);
-                    startActivity(intent);
+                } catch (JSONException e) {
+                    titleToolbar.setText(title);
+                    judul = title;
                 }
-            });
+            }
+
+            if (show) {
+                titleToolbar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Contact c = (Contact) destination;
+                        Intent intent = new Intent(getApplicationContext(), ViewProfileActivity.class);
+                        intent.putExtra(ViewProfileActivity.KEY_JABBER_ID,
+                                c.getJabberId());
+                        intent.putExtra(ViewProfileActivity.KEY_REFERENCE,
+                                ViewProfileActivity.REFERENCE_CONVERSATION);
+                        startActivity(intent);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void setBarTitleAndImage(Contact c) {
-        setBarTitle(c.getName(), true);
-        judul = c.getName();
+        try {
+            setBarTitle(c.getName(), true);
+            judul = c.getName();
         /*Picasso.with(this)
                 .load("https://"+MessengerConnectionService.F_SERVER+"/toboldlygowherenoonehasgonebefore/"+c.getJabberId()+".jpg")
                 .placeholder(R.drawable.ic_no_photo)
                 .into(logoToolbar);*/
-        frameLayoutPicasso.setVisibility(View.GONE);
-        logoToolbar.setVisibility(View.VISIBLE);
-        imageLoaderFromSD.DeleteImage(MediaProcessingUtil.getProfilePic(c.getJabberId()), logoToolbar);
+            frameLayoutPicasso.setVisibility(View.GONE);
+            logoToolbar.setVisibility(View.VISIBLE);
+            imageLoaderFromSD.DeleteImage(MediaProcessingUtil.getProfilePic(c.getJabberId()), logoToolbar);
 
-        Animation fadeOut = new AlphaAnimation(0, 1);
-        fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(500);
-        logoToolbar.startAnimation(fadeOut);
+            Animation fadeOut = new AlphaAnimation(0, 1);
+            fadeOut.setInterpolator(new AccelerateInterpolator());
+            fadeOut.setDuration(500);
+            logoToolbar.startAnimation(fadeOut);
 
-        imageLoaderFromSD.DisplayImage(MediaProcessingUtil.getProfilePic(c.getJabberId()), logoToolbar, false);
+            imageLoaderFromSD.DisplayImage(MediaProcessingUtil.getProfilePic(c.getJabberId()), logoToolbar, false);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -451,505 +471,503 @@ public class ConversationActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
-        resolveChatRoom(state);
-        instance = this;
+        try {
+            overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+            resolveChatRoom(state);
+            instance = this;
 
-        if (SelectBaseMessageContactActivity.activity != null) {
-            SelectBaseMessageContactActivity.activity.finish();
-        }
-       /*material desgin ga ada cek version
-       if (!new Validations().getInstance(getApplicationContext()).getContentValidation(16).equalsIgnoreCase(getResources().getString(R.string.version))) {
-            finish();
-            Intent i = new Intent();
-            i.setClass(getApplicationContext(), SplashScreen.class);
-            startActivity(i);
-        }*/
-        if (timeLineDB == null) {
-            timeLineDB = TimeLineDB.getInstance(getApplicationContext());
-        }
-        if (botListDB == null) {
-            botListDB = BotListDB.getInstance(getApplicationContext());
-        }
-
-        imageLoaderFromSD = new ImageLoaderFromSD(getApplicationContext());
-        conversationType = getIntent().getIntExtra(KEY_CONVERSATION_TYPE, 0);
-        title = getIntent().getStringExtra(KEY_TITLE);
-        if (getIntent().hasExtra(Constants.EXTRA_ITEM)) {
-            itemFind = getIntent().getParcelableExtra(Constants.EXTRA_ITEM);
-        }
-        final String destinationAddr = getIntent().getStringExtra(KEY_JABBER_ID);
-        final String messageForward = getIntent().getStringExtra(KEY_MESSAGE_FORWARD);
-        textLoader = new TextLoader(getApplicationContext());
-
-        if (pdialog == null) {
-            pdialog = new ProgressDialog(this);
-            pdialog.setIndeterminate(true);
-            pdialog.setMessage("Please wait a moment ..");
-            pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        }
-
-        setContentView(R.layout.conversation);
-
-        toolbar = (Toolbar) findViewById(R.id.abMain);
-        setSupportActionBar(toolbar);
-        frameLayoutPicasso = (FrameLayout) findViewById(R.id.frameLayoutPicasso);
-        logoToolbarPicasso = (Target) findViewById(R.id.logo_toolbarPicasso);
-        logoToolbar = (ImageView) findViewById(R.id.logo_toolbar);
-        View view = findViewById(R.id.layout_back_button);
-        titleToolbar = (TextView) findViewById(R.id.title_toolbar);
-        mRevealView = (LinearLayout) findViewById(R.id.reveal_items);
-        mRevealView.setVisibility(View.INVISIBLE);
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-
-        LayoutInflater inflater = getLayoutInflater();
-        header = (ViewGroup) inflater.inflate(R.layout.conversation_view_addblock, listConversation,
-                false);
-
-        listConversation = (ListView) findViewById(R.id.listConversation);
-        headerBtnLock = (Button) header.findViewById(R.id.headerBtnLock);
-        headerBtnAdd = (Button) header.findViewById(R.id.headerBtnAdd);
-        blockListDB = new BlockListDB(this);
-
-        convLayout = (LinearLayout) findViewById(R.id.conversation_layout);
-        mainconLayout = (LinearLayout) findViewById(R.id.conversation_layout_main);
-        mainRadioStreaming = (LinearLayout) findViewById(R.id.mainRadioStreaming);
-        mainVideoStreaming = (LinearLayout) findViewById(R.id.mainVideoStreaming);
-        converVdovia = (LinearLayout) findViewById(R.id.converVdovia);
-        converStreaming = (LinearLayout) findViewById(R.id.converStreaming);
-        linearBanner = (LinearLayout) findViewById(R.id.linearBanner);
-        mainVdovia = (RelativeLayout) findViewById(R.id.mainVdovia);
-        mainStreaming = (RelativeLayout) findViewById(R.id.mainStreaming);
-        nameRadio = (TextView) findViewById(R.id.nameRadio);
-        infoRadio = (TextView) findViewById(R.id.infoRadio);
-        buttonPlay = (Button) findViewById(R.id.buttonPlay);
-        progressRadio = (ProgressBar) findViewById(R.id.progressRadio);
-        buttonNext = (Button) findViewById(R.id.buttonNext);
-        progresVdopia = (ProgressBar) findViewById(R.id.progresVdopia);
-
-        resolveToolbar();
-
-        IntervalDB db = new IntervalDB(this);
-        db.open();
-        Cursor cursorSelect = db.getSingleContact(4);
-        if (cursorSelect.getCount() > 0) {
-            String skin = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
-            Skin skins = null;
-            Cursor c = db.getCountSkin();
-            if (c.getCount() > 0) {
-                skins = db.retriveSkinDetails(skin);
-                colorAttachment = skins.getColor();
-                BitmapDrawable bitmapDrawable = new BitmapDrawable(skins.getBackground());
-                bitmapDrawable.setTileModeXY(android.graphics.Shader.TileMode.REPEAT, android.graphics.Shader.TileMode.REPEAT);
-                convLayout.setBackground(bitmapDrawable);
-                titleTheme = skins.getTitle();
-                Bitmap back_bitmap = FilteringImage.headerColor(getWindow(), ConversationActivity.this, Color.parseColor(colorAttachment));
-                BitmapDrawable back_draw = new BitmapDrawable(getResources(), back_bitmap);
-//                logoToolbar.setImageDrawable(back_draw);
-                logoToolbar.setVisibility(View.GONE);
-                frameLayoutPicasso.setVisibility(View.VISIBLE);
-                Picasso.with(this).load(Color.parseColor(colorAttachment))
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(logoToolbar);
-                toolbar.setBackground(back_draw);
-
-                if (getIntent().hasExtra(Constants.EXTRA_COLOR) && getIntent().hasExtra(Constants.EXTRA_COLORTEXT)) {
-                    FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
-                    toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
-                    toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
-                }
-
-            }
-            c.close();
-        }
-        cursorSelect.close();
-        db.close();
-
-        if (conversationType == CONVERSATION_TYPE_PRIVATE) {
-            fileToSend = getIntent().getStringExtra(KEY_FILE_TO_SEND);
-        }
-        if (state != null) {
-            fileToSend = state.getString(BUNDLE_KEY_FILE_TO_SEND);
-            attCurReq = state.getInt(BUNDLE_KEY_CURREQ);
-            cameraFileOutput = state.getString(BUNDLE_KEY_CAMERA_FILEOUTPUT);
-        }
-
-        /*Picasso.with(this).load(R.drawable.ic_no_photo).into(logoToolbar);*/
-        /*frameLayoutPicasso.setVisibility(View.GONE);
-        logoToolbar.setVisibility(View.VISIBLE);*/
-        /*Picasso.with(this).load(R.drawable.ic_no_photo).into(logoToolbarPicasso);*/
-
-        if (messengerHelper == null) {
-            messengerHelper = MessengerDatabaseHelper.getInstance(this);
-        }
-        sourceAddr = messengerHelper.getMyContact().getJabberId();
-        if (conversationType == CONVERSATION_TYPE_PRIVATE) {
-            destination = messengerHelper.getContact(destinationAddr);
-            title = createAKA("fetching room... ", destinationAddr);
-
-
-            String regex = "[0-9]+";
-
-            if (new Validations().getInstance(getApplicationContext()).getShow(8) && destinationAddr.matches(regex)) {
-                linearBanner.setVisibility(View.VISIBLE);
-                adViewBannerSmall = new LVDOAdView(this, LVDOAdSize.BANNER, "3b471f77e0ad2dc65c375ab8f2f9eaec");
-                LVDOAdRequest adRequest = new LVDOAdRequest();
-                adViewBannerSmall.loadAd(adRequest);
-                linearBanner.addView(adViewBannerSmall);
+            if (SelectBaseMessageContactActivity.activity != null) {
+                SelectBaseMessageContactActivity.activity.finish();
             }
 
-            if (destination != null) {
-                title = "";
-                setBarTitleAndImage((Contact) destination);
-
-            } else {
-                if (!destinationAddr.matches(regex)) {
-                    if (!destinationAddr.contains(titleTheme)) convLayout.setBackground(null);
-
-                    title = Utility.roomName(getApplicationContext(), destinationAddr, true);
-                    headerBtnLock.setVisibility(View.GONE);
-
-                    Cursor cursor2 = botListDB.getSingle(destinationAddr.toLowerCase());
-                    Bitmap iconBot = BitmapFactory.decodeResource(getApplicationContext().getResources(),
-                            R.drawable.ic_broadcasts);
-                    if (cursor2.getCount() < 1) {
-                        //disini
-                        // listConversation.addHeaderView(header, null, false);
-                        //    listConversation.removeHeaderView(header);
-                    }
-
-                    Picasso.with(this)
-                            .load("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/" + destinationAddr + "_thumb.png") // image url goes here
-                            .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                            .placeholder(R.drawable.ic_broadcasts)
-                            .into(logoToolbarPicasso);
-                    cursor2.close();
-                } else {
-                    listConversation.addHeaderView(header, null, false);
-                }
-                destination = new Contact("", destinationAddr, "");
-
+            if (timeLineDB == null) {
+                timeLineDB = TimeLineDB.getInstance(getApplicationContext());
+            }
+            if (botListDB == null) {
+                botListDB = BotListDB.getInstance(getApplicationContext());
             }
 
-        } else {
-            destination = messengerHelper.getGroup(destinationAddr);
-            if (destination == null) {
-                destination = new Group(title, destinationAddr,
-                        Group.STATUS_OWNER);
-            } else {
-                setBarTitle(destination.getName(), false);
+            imageLoaderFromSD = new ImageLoaderFromSD(getApplicationContext());
+            conversationType = getIntent().getIntExtra(KEY_CONVERSATION_TYPE, 0);
+            title = getIntent().getStringExtra(KEY_TITLE);
+            if (getIntent().hasExtra(Constants.EXTRA_ITEM)) {
+                itemFind = getIntent().getParcelableExtra(Constants.EXTRA_ITEM);
             }
-            Bitmap iconGroup = BitmapFactory.decodeResource(getApplicationContext().getResources(),
-                    R.drawable.ic_group);
-            Drawable iconGroup2 = new BitmapDrawable(getResources(), MediaProcessingUtil.getRoundedCornerBitmap(iconGroup, 10));
-            Picasso.with(this).load(R.drawable.ic_group).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE);
-        }
+            final String destinationAddr = getIntent().getStringExtra(KEY_JABBER_ID);
+            final String messageForward = getIntent().getStringExtra(KEY_MESSAGE_FORWARD);
+            textLoader = new TextLoader(getApplicationContext());
 
-        setBarTitle(title, false);
-
-        btnMic = (ImageButton) findViewById(R.id.btnMic);
-        btnMic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                promptSpeechInput();
+            if (pdialog == null) {
+                pdialog = new ProgressDialog(this);
+                pdialog.setIndeterminate(true);
+                pdialog.setMessage("Please wait a moment ..");
+                pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             }
-        });
 
-        if (conversations == null) {
-            conversations = new ArrayList();
+            setContentView(R.layout.conversation);
 
-            adapter = new ConversationAdapter(this, this.getApplicationContext(), sourceAddr,
-                    destinationAddr, conversations);
-            adapter.setBtnClickListener(new View.OnClickListener() {
+            toolbar = (Toolbar) findViewById(R.id.abMain);
+            setSupportActionBar(toolbar);
+            frameLayoutPicasso = (FrameLayout) findViewById(R.id.frameLayoutPicasso);
+            logoToolbarPicasso = (Target) findViewById(R.id.logo_toolbarPicasso);
+            logoToolbar = (ImageView) findViewById(R.id.logo_toolbar);
+            View view = findViewById(R.id.layout_back_button);
+            titleToolbar = (TextView) findViewById(R.id.title_toolbar);
+            mRevealView = (LinearLayout) findViewById(R.id.reveal_items);
+            mRevealView.setVisibility(View.INVISIBLE);
 
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //  loadLimit += LIMIT_MESSAGE_LOAD;
-                    // loadOffset += LIMIT_MESSAGE_LOAD;
-                    //   refreshConversation();
-                    //   scrollListConversationToTop();
-                    // if(conversations.get(conversations.size()-1))
-                    //  new ConversationLoadEarlier().execute();
-
-                    if (listConversation.getHeaderViewsCount() == 1) {
-                        Object obj = listConversation.getAdapter().getItem(2);
-                        String value = obj.toString();
-                        if (isValidDate(value)) {
-                            conversations.remove(0);
-                        }
-                    } else {
-                        Object obj = listConversation.getAdapter().getItem(1);
-                        String value = obj.toString();
-                        if (isValidDate(value)) {
-                            conversations.remove(0);
-                        }
-                    }
-
-                    loadOffset += LIMIT_MESSAGE_LOAD;
-                    new ConversationLoadEarlier().execute();
+                    onBackPressed();
                 }
             });
-        }
-
-        ButtonClickListener btnClickListener = new ButtonClickListener();
-        btnAttachmentCamera = (Button) findViewById(R.id.btn_addatt_camera);
-        btnAttachmentCamera.setOnClickListener(btnClickListener);
-
-        btnAttachmentMapMarker = (Button) findViewById(R.id.btn_addatt_location);
-        btnAttachmentMapMarker.setOnClickListener(btnClickListener);
-
-        btnAttachmentVideo = (Button) findViewById(R.id.btn_addatt_video);
-        btnAttachmentVideo.setOnClickListener(btnClickListener);
-
-        btnAttachmentMeme = (Button) findViewById(R.id.btn_addatt_meme);
-        btnAttachmentMeme.setOnClickListener(btnClickListener);
-
-        emojicons = (LinearLayout) findViewById(R.id.emojiconsLayout);
-        btn_add_emoticon = (ImageButton) findViewById(R.id.btn_add_emoticon);
-        btn_add_emoticon.setOnClickListener(btnClickListener);
-
-        ArrayList<String> listblock = new ArrayList<String>();
-        boolean block = false;
-
-        blockListDB = new BlockListDB(this);
-        blockListDB.open();
-        listblock = blockListDB.getBlockList();
-        blockListDB.close();
-
-        for (String a : listblock) {
-            if (destination.getJabberId().equalsIgnoreCase(a)) {
-                block = true;
-            }
-        }
-
-        if (block) {
-            headerBtnLock.setText("Unblock");
-        }
-
-        headerBtnLock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAttc(false);
-                blockContact();
-            }
-        });
 
 
-        headerBtnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAttc(false);
-                // My Click Stuff
-                String regex = "[0-9]+";
-                if (destination.getJabberId().matches(regex)) {
+            LayoutInflater inflater = getLayoutInflater();
+            header = (ViewGroup) inflater.inflate(R.layout.conversation_view_addblock, listConversation,
+                    false);
 
-                    Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT);
-                    intent.setType(Contacts.CONTENT_ITEM_TYPE);
-                    intent.putExtra(Insert.PHONE, "+" + destination.getJabberId());
-                    startActivityForResult(intent, REQ_CREATE_CONTACT);
+            listConversation = (ListView) findViewById(R.id.listConversation);
+            headerBtnLock = (Button) header.findViewById(R.id.headerBtnLock);
+            headerBtnAdd = (Button) header.findViewById(R.id.headerBtnAdd);
+            blockListDB = new BlockListDB(this);
 
-                } else {
-                    if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-                        saveBot();
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+            convLayout = (LinearLayout) findViewById(R.id.conversation_layout);
+            mainconLayout = (LinearLayout) findViewById(R.id.conversation_layout_main);
+            mainRadioStreaming = (LinearLayout) findViewById(R.id.mainRadioStreaming);
+            mainVideoStreaming = (LinearLayout) findViewById(R.id.mainVideoStreaming);
+            converVdovia = (LinearLayout) findViewById(R.id.converVdovia);
+            converStreaming = (LinearLayout) findViewById(R.id.converStreaming);
+            linearBanner = (LinearLayout) findViewById(R.id.linearBanner);
+            mainVdovia = (RelativeLayout) findViewById(R.id.mainVdovia);
+            mainStreaming = (RelativeLayout) findViewById(R.id.mainStreaming);
+            nameRadio = (TextView) findViewById(R.id.nameRadio);
+            infoRadio = (TextView) findViewById(R.id.infoRadio);
+            buttonPlay = (Button) findViewById(R.id.buttonPlay);
+            progressRadio = (ProgressBar) findViewById(R.id.progressRadio);
+            buttonNext = (Button) findViewById(R.id.buttonNext);
+            progresVdopia = (ProgressBar) findViewById(R.id.progresVdopia);
+
+            resolveToolbar();
+
+            IntervalDB db = new IntervalDB(this);
+            db.open();
+            Cursor cursorSelect = db.getSingleContact(4);
+            if (cursorSelect.getCount() > 0) {
+                String skin = cursorSelect.getString(cursorSelect.getColumnIndexOrThrow(IntervalDB.COL_TIME));
+                Skin skins = null;
+                Cursor c = db.getCountSkin();
+                if (c.getCount() > 0) {
+                    skins = db.retriveSkinDetails(skin);
+                    colorAttachment = skins.getColor();
+                    BitmapDrawable bitmapDrawable = new BitmapDrawable(skins.getBackground());
+                    bitmapDrawable.setTileModeXY(android.graphics.Shader.TileMode.REPEAT, android.graphics.Shader.TileMode.REPEAT);
+                    convLayout.setBackground(bitmapDrawable);
+                    titleTheme = skins.getTitle();
+                    Bitmap back_bitmap = FilteringImage.headerColor(getWindow(), ConversationActivity.this, Color.parseColor(colorAttachment));
+                    BitmapDrawable back_draw = new BitmapDrawable(getResources(), back_bitmap);
+//                logoToolbar.setImageDrawable(back_draw);
+                    logoToolbar.setVisibility(View.GONE);
+                    frameLayoutPicasso.setVisibility(View.VISIBLE);
+                    Picasso.with(this).load(Color.parseColor(colorAttachment))
+                            .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(logoToolbar);
+                    toolbar.setBackground(back_draw);
+
+                    if (getIntent().hasExtra(Constants.EXTRA_COLOR) && getIntent().hasExtra(Constants.EXTRA_COLORTEXT)) {
+                        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+                        toolbar.setBackgroundColor(Color.parseColor("#" + mColor));
+                        toolbar.setTitleTextColor(Color.parseColor("#" + mColorText));
                     }
+
+                }
+                c.close();
+            }
+            cursorSelect.close();
+            db.close();
+
+            if (conversationType == CONVERSATION_TYPE_PRIVATE) {
+                fileToSend = getIntent().getStringExtra(KEY_FILE_TO_SEND);
+            }
+            if (state != null) {
+                fileToSend = state.getString(BUNDLE_KEY_FILE_TO_SEND);
+                attCurReq = state.getInt(BUNDLE_KEY_CURREQ);
+                cameraFileOutput = state.getString(BUNDLE_KEY_CAMERA_FILEOUTPUT);
+            }
+
+            /*Picasso.with(this).load(R.drawable.ic_no_photo).into(logoToolbar);*/
+        /*frameLayoutPicasso.setVisibility(View.GONE);
+        logoToolbar.setVisibility(View.VISIBLE);*/
+            /*Picasso.with(this).load(R.drawable.ic_no_photo).into(logoToolbarPicasso);*/
+
+            if (messengerHelper == null) {
+                messengerHelper = MessengerDatabaseHelper.getInstance(this);
+            }
+            sourceAddr = messengerHelper.getMyContact().getJabberId();
+            if (conversationType == CONVERSATION_TYPE_PRIVATE) {
+                destination = messengerHelper.getContact(destinationAddr);
+                title = createAKA("fetching room... ", destinationAddr);
+
+
+                String regex = "[0-9]+";
+
+                if (new Validations().getInstance(getApplicationContext()).getShow(8) && destinationAddr.matches(regex)) {
+                    linearBanner.setVisibility(View.VISIBLE);
+                    adViewBannerSmall = new LVDOAdView(this, LVDOAdSize.BANNER, "3b471f77e0ad2dc65c375ab8f2f9eaec");
+                    LVDOAdRequest adRequest = new LVDOAdRequest();
+                    adViewBannerSmall.loadAd(adRequest);
+                    linearBanner.addView(adViewBannerSmall);
                 }
 
+                if (destination != null) {
+                    title = "";
+                    setBarTitleAndImage((Contact) destination);
+
+                } else {
+                    if (!destinationAddr.matches(regex)) {
+                        if (!destinationAddr.contains(titleTheme)) convLayout.setBackground(null);
+
+                        title = Utility.roomName(getApplicationContext(), destinationAddr, true);
+                        headerBtnLock.setVisibility(View.GONE);
+
+                        Cursor cursor2 = botListDB.getSingle(destinationAddr.toLowerCase());
+                        Bitmap iconBot = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                                R.drawable.ic_broadcasts);
+                        if (cursor2.getCount() < 1) {
+                            //disini
+                            // listConversation.addHeaderView(header, null, false);
+                            //    listConversation.removeHeaderView(header);
+                        }
+
+                        Picasso.with(this)
+                                .load("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/" + destinationAddr + "_thumb.png") // image url goes here
+                                .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                                .placeholder(R.drawable.ic_broadcasts)
+                                .into(logoToolbarPicasso);
+                        cursor2.close();
+                    } else {
+                        listConversation.addHeaderView(header, null, false);
+                    }
+                    destination = new Contact("", destinationAddr, "");
+
+                }
+
+            } else {
+                destination = messengerHelper.getGroup(destinationAddr);
+                if (destination == null) {
+                    destination = new Group(title, destinationAddr,
+                            Group.STATUS_OWNER);
+                } else {
+                    setBarTitle(destination.getName(), false);
+                }
+                Bitmap iconGroup = BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.drawable.ic_group);
+                Drawable iconGroup2 = new BitmapDrawable(getResources(), MediaProcessingUtil.getRoundedCornerBitmap(iconGroup, 10));
+                Picasso.with(this).load(R.drawable.ic_group).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE);
             }
-        });
-        listConversation.setAdapter(adapter);
-        listConversation.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                showAttc(false);
-                return false;
-            }
-        });
-        toolbar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                showAttc(false);
-                return false;
-            }
-        });
 
-        registerForContextMenu(listConversation);
+            setBarTitle(title, false);
 
-        btnSend = (ImageButton) findViewById(R.id.btnSend);
-        btnSend.setOnClickListener(btnClickListener);
-        if (attCurReq > 0) {
-            showAttachmentDialog(attCurReq);
-        }
+            btnMic = (ImageButton) findViewById(R.id.btnMic);
+            btnMic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    promptSpeechInput();
+                }
+            });
 
-        initText();
-        //setMessageFormEnabled(false);
+            if (conversations == null) {
+                conversations = new ArrayList();
 
-        if (messageForward != null) {
-            textMessage.setText(messageForward);
-        }
+                adapter = new ConversationAdapter(this, this.getApplicationContext(), sourceAddr,
+                        destinationAddr, conversations);
+                adapter.setBtnClickListener(new View.OnClickListener() {
 
-        String typeRooms = Utility.roomType(destinationAddr);
-        if (typeRooms.length() > 0) {
-            if (typeRooms.equalsIgnoreCase("U")) {
-
-                splashTread = new Thread() {
                     @Override
-                    public void run() {
-                        try {
-                            synchronized (this) {
-                                wait(200);
-                            }
+                    public void onClick(View v) {
+                        //  loadLimit += LIMIT_MESSAGE_LOAD;
+                        // loadOffset += LIMIT_MESSAGE_LOAD;
+                        //   refreshConversation();
+                        //   scrollListConversationToTop();
+                        // if(conversations.get(conversations.size()-1))
+                        //  new ConversationLoadEarlier().execute();
 
-                        } catch (InterruptedException e) {
-                        } finally {
-                            long total = 0;
-                            Cursor cursor = messengerHelper.query(
-                                    SQL_SELECT_TOTAL_MESSAGES,
-                                    new String[]{destination.getJabberId(),
-                                            destination.getJabberId()});
-                            int indexTotal = cursor.getColumnIndex("total");
-                            while (cursor.moveToNext()) {
-                                total = cursor.getLong(indexTotal);
+                        if (listConversation.getHeaderViewsCount() == 1) {
+                            Object obj = listConversation.getAdapter().getItem(2);
+                            String value = obj.toString();
+                            if (isValidDate(value)) {
+                                conversations.remove(0);
                             }
-                            cursor.close();
+                        } else {
+                            Object obj = listConversation.getAdapter().getItem(1);
+                            String value = obj.toString();
+                            if (isValidDate(value)) {
+                                conversations.remove(0);
+                            }
+                        }
 
-                            if (total == 0) {
-                                if (isNetworkConnectionAvailable()) {
-                                    if (btnSend.isEnabled()) {
-                                        sendMessageMenu("99");
+                        loadOffset += LIMIT_MESSAGE_LOAD;
+                        new ConversationLoadEarlier().execute();
+                    }
+                });
+            }
+
+            ButtonClickListener btnClickListener = new ButtonClickListener();
+            btnAttachmentCamera = (Button) findViewById(R.id.btn_addatt_camera);
+            btnAttachmentCamera.setOnClickListener(btnClickListener);
+
+            btnAttachmentMapMarker = (Button) findViewById(R.id.btn_addatt_location);
+            btnAttachmentMapMarker.setOnClickListener(btnClickListener);
+
+            btnAttachmentVideo = (Button) findViewById(R.id.btn_addatt_video);
+            btnAttachmentVideo.setOnClickListener(btnClickListener);
+
+            btnAttachmentMeme = (Button) findViewById(R.id.btn_addatt_meme);
+            btnAttachmentMeme.setOnClickListener(btnClickListener);
+
+            emojicons = (LinearLayout) findViewById(R.id.emojiconsLayout);
+            btn_add_emoticon = (ImageButton) findViewById(R.id.btn_add_emoticon);
+            btn_add_emoticon.setOnClickListener(btnClickListener);
+
+            ArrayList<String> listblock = new ArrayList<String>();
+            boolean block = false;
+
+            blockListDB = new BlockListDB(this);
+            blockListDB.open();
+            listblock = blockListDB.getBlockList();
+            blockListDB.close();
+
+            for (String a : listblock) {
+                if (destination.getJabberId().equalsIgnoreCase(a)) {
+                    block = true;
+                }
+            }
+
+            if (block) {
+                headerBtnLock.setText("Unblock");
+            }
+
+            headerBtnLock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showAttc(false);
+                    blockContact();
+                }
+            });
+
+
+            headerBtnAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showAttc(false);
+                    // My Click Stuff
+                    String regex = "[0-9]+";
+                    if (destination.getJabberId().matches(regex)) {
+
+                        Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+                        intent.setType(Contacts.CONTENT_ITEM_TYPE);
+                        intent.putExtra(Insert.PHONE, "+" + destination.getJabberId());
+                        startActivityForResult(intent, REQ_CREATE_CONTACT);
+
+                    } else {
+                        if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
+                            saveBot();
+                        } else {
+                            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                }
+            });
+            listConversation.setAdapter(adapter);
+            listConversation.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    showAttc(false);
+                    return false;
+                }
+            });
+            toolbar.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    showAttc(false);
+                    return false;
+                }
+            });
+
+            registerForContextMenu(listConversation);
+
+            btnSend = (ImageButton) findViewById(R.id.btnSend);
+            btnSend.setOnClickListener(btnClickListener);
+            if (attCurReq > 0) {
+                showAttachmentDialog(attCurReq);
+            }
+
+            initText();
+            //setMessageFormEnabled(false);
+
+            if (messageForward != null) {
+                textMessage.setText(messageForward);
+            }
+
+            String typeRooms = Utility.roomType(destinationAddr);
+            if (typeRooms.length() > 0) {
+                if (typeRooms.equalsIgnoreCase("U")) {
+
+                    splashTread = new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                synchronized (this) {
+                                    wait(200);
+                                }
+
+                            } catch (InterruptedException e) {
+                            } finally {
+                                long total = 0;
+                                Cursor cursor = messengerHelper.query(
+                                        SQL_SELECT_TOTAL_MESSAGES,
+                                        new String[]{destination.getJabberId(),
+                                                destination.getJabberId()});
+                                int indexTotal = cursor.getColumnIndex("total");
+                                while (cursor.moveToNext()) {
+                                    total = cursor.getLong(indexTotal);
+                                }
+                                cursor.close();
+
+                                if (total == 0) {
+                                    if (isNetworkConnectionAvailable()) {
+                                        if (btnSend.isEnabled()) {
+                                            sendMessageMenu("99");
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                };
+                    };
 
-                splashTread.start();
-            } else if (typeRooms.equalsIgnoreCase("V")) {
-                mainVdovia.setVisibility(View.VISIBLE);
-                mainconLayout.setVisibility(View.GONE);
-                buttonNext = (Button) findViewById(R.id.buttonNext);
-                progresVdopia = (ProgressBar) findViewById(R.id.progresVdopia);
-                adView = new LVDOAdView(this, LVDOAdSize.IAB_MRECT, "f3e11705262aa8bba69cb58571772cf3");
-                LVDOAdRequest adRequest = new LVDOAdRequest();
-                adView.loadAd(adRequest);
+                    splashTread.start();
+                } else if (typeRooms.equalsIgnoreCase("V")) {
+                    mainVdovia.setVisibility(View.VISIBLE);
+                    mainconLayout.setVisibility(View.GONE);
+                    buttonNext = (Button) findViewById(R.id.buttonNext);
+                    progresVdopia = (ProgressBar) findViewById(R.id.progresVdopia);
+                    adView = new LVDOAdView(this, LVDOAdSize.IAB_MRECT, "f3e11705262aa8bba69cb58571772cf3");
+                    LVDOAdRequest adRequest = new LVDOAdRequest();
+                    adView.loadAd(adRequest);
 
-                buttonNext.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // My Click Stuff
-                        converVdovia.removeAllViews();
-                        LVDOAdRequest adRequest = new LVDOAdRequest();
-                        adView.loadAd(adRequest);
-                        converVdovia.addView(adView);
-                    }
-                });
-                converVdovia.addView(adView);
-            } else if (typeRooms.equalsIgnoreCase("R")) {
+                    buttonNext.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // My Click Stuff
+                            converVdovia.removeAllViews();
+                            LVDOAdRequest adRequest = new LVDOAdRequest();
+                            adView.loadAd(adRequest);
+                            converVdovia.addView(adView);
+                        }
+                    });
+                    converVdovia.addView(adView);
+                } else if (typeRooms.equalsIgnoreCase("R")) {
 
-                linearBanner.setVisibility(View.VISIBLE);
-                adViewBannerSmall = new LVDOAdView(this, LVDOAdSize.BANNER, "3b471f77e0ad2dc65c375ab8f2f9eaec");
-                LVDOAdRequest adRequest = new LVDOAdRequest();
-                adViewBannerSmall.loadAd(adRequest);
-                linearBanner.addView(adViewBannerSmall);
+                    linearBanner.setVisibility(View.VISIBLE);
+                    adViewBannerSmall = new LVDOAdView(this, LVDOAdSize.BANNER, "3b471f77e0ad2dc65c375ab8f2f9eaec");
+                    LVDOAdRequest adRequest = new LVDOAdRequest();
+                    adViewBannerSmall.loadAd(adRequest);
+                    linearBanner.addView(adViewBannerSmall);
 
-                Cursor cursorBot = botListDB.getSingle(destinationAddr);
-                String link = "";
-                String name = "";
-                String desc = "";
-                if (cursorBot.getCount() > 0) {
-                    link = cursorBot.getString(cursorBot.getColumnIndexOrThrow(BotListDB.BOT_LINK));
-                    name = cursorBot.getString(cursorBot.getColumnIndexOrThrow(BotListDB.BOT_NAME));
-                    desc = cursorBot.getString(cursorBot.getColumnIndexOrThrow(BotListDB.BOT_DESC));
-                } else {
-                    finish();
+                    Cursor cursorBot = botListDB.getSingle(destinationAddr);
+                    String link = "";
+                    String name = "";
+                    String desc = "";
+                    if (cursorBot.getCount() > 0) {
+                        link = cursorBot.getString(cursorBot.getColumnIndexOrThrow(BotListDB.BOT_LINK));
+                        name = cursorBot.getString(cursorBot.getColumnIndexOrThrow(BotListDB.BOT_NAME));
+                        desc = cursorBot.getString(cursorBot.getColumnIndexOrThrow(BotListDB.BOT_DESC));
+                    } else {
+                        finish();
                    /* showToast((String) getResources().getText(R.string.add_room_first));
                     Intent intent = new Intent(getApplicationContext(), SearchBotActivity.class);
                     intent.putExtra("search", title );
                     startActivity(intent);*/
-                }
-                cursorBot.close();
-
-                serviceIntent = new Intent(this, StreamService.class);
-                serviceIntent.putExtra("streaminglink", link);
-                serviceIntent.putExtra("streamingName", name);
-                serviceIntent.putExtra("streamingDesc", desc);
-                isStreaming = UtilsRadio.getDataBooleanFromSP(this, UtilsRadio.IS_STREAM);
-                if (isStreaming) {
-                    buttonPlay.setBackgroundResource(R.drawable.ic_radio_stop);
-                    if (new Validations().getInstance(getApplicationContext()).getPlayStreaming(destinationAddr) == false) {
-                        buttonPlay.setBackgroundResource(R.drawable.ic_radio_play);
-                        //  Toast.makeText(getApplicationContext(), "Stop Streaming..", Toast.LENGTH_SHORT).show();
-                        stopStreaming();
-                        isStreaming = false;
-                        progressRadio.setVisibility(View.GONE);
-                        UtilsRadio.setDataBooleanToSP(getApplicationContext(), UtilsRadio.IS_STREAM, false);
                     }
-                }
-                mainRadioStreaming.setVisibility(View.VISIBLE);
-                progressRadio.setIndeterminate(true);
-                progressRadio.setVisibility(View.GONE);
-                nameRadio.setText(Utility.roomName(getApplicationContext(), name, true));
-                infoRadio.setText(desc);
-                buttonPlay.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!isStreaming) {
-                            isStreaming = true;
-                            startStreaming();
-                            UtilsRadio.setDataBooleanToSP(getApplicationContext(), UtilsRadio.IS_STREAM, true);
-                            buttonPlay.setBackgroundResource(R.drawable.ic_radio_stop);
-                        } else {
-                            if (isStreaming) {
-                                buttonPlay.setBackgroundResource(R.drawable.ic_radio_play);
-                                // Toast.makeText(getApplicationContext(), "Stop Streaming..", Toast.LENGTH_SHORT).show();
-                                stopStreaming();
-                                isStreaming = false;
-                                progressRadio.setVisibility(View.GONE);
-                                UtilsRadio.setDataBooleanToSP(getApplicationContext(), UtilsRadio.IS_STREAM, false);
-                            }
+                    cursorBot.close();
+
+                    serviceIntent = new Intent(this, StreamService.class);
+                    serviceIntent.putExtra("streaminglink", link);
+                    serviceIntent.putExtra("streamingName", name);
+                    serviceIntent.putExtra("streamingDesc", desc);
+                    isStreaming = UtilsRadio.getDataBooleanFromSP(this, UtilsRadio.IS_STREAM);
+                    if (isStreaming) {
+                        buttonPlay.setBackgroundResource(R.drawable.ic_radio_stop);
+                        if (new Validations().getInstance(getApplicationContext()).getPlayStreaming(destinationAddr) == false) {
+                            buttonPlay.setBackgroundResource(R.drawable.ic_radio_play);
+                            //  Toast.makeText(getApplicationContext(), "Stop Streaming..", Toast.LENGTH_SHORT).show();
+                            stopStreaming();
+                            isStreaming = false;
+                            progressRadio.setVisibility(View.GONE);
+                            UtilsRadio.setDataBooleanToSP(getApplicationContext(), UtilsRadio.IS_STREAM, false);
                         }
                     }
-                });
-            } else if (typeRooms.equalsIgnoreCase("B")) {
-                mainStreaming.setVisibility(View.VISIBLE);
-                adView = new LVDOAdView(this, LVDOAdSize.IAB_MRECT, "f3e11705262aa8bba69cb58571772cf3");
-                LVDOAdRequest adRequest = new LVDOAdRequest();
-                adView.loadAd(adRequest);
-                converStreaming.addView(adView);
-            } else if (typeRooms.equalsIgnoreCase("S")) {
-                mainVideoStreaming.setVisibility(View.VISIBLE);
-                Cursor cursorBot = botListDB.getSingle(destinationAddr);
-                String link = "";
-                if (cursorBot.getCount() > 0) {
-                    link = cursorBot.getString(cursorBot.getColumnIndexOrThrow(BotListDB.BOT_LINK));
-                } else {
+                    mainRadioStreaming.setVisibility(View.VISIBLE);
+                    progressRadio.setIndeterminate(true);
+                    progressRadio.setVisibility(View.GONE);
+                    nameRadio.setText(Utility.roomName(getApplicationContext(), name, true));
+                    infoRadio.setText(desc);
+                    buttonPlay.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!isStreaming) {
+                                isStreaming = true;
+                                startStreaming();
+                                UtilsRadio.setDataBooleanToSP(getApplicationContext(), UtilsRadio.IS_STREAM, true);
+                                buttonPlay.setBackgroundResource(R.drawable.ic_radio_stop);
+                            } else {
+                                if (isStreaming) {
+                                    buttonPlay.setBackgroundResource(R.drawable.ic_radio_play);
+                                    // Toast.makeText(getApplicationContext(), "Stop Streaming..", Toast.LENGTH_SHORT).show();
+                                    stopStreaming();
+                                    isStreaming = false;
+                                    progressRadio.setVisibility(View.GONE);
+                                    UtilsRadio.setDataBooleanToSP(getApplicationContext(), UtilsRadio.IS_STREAM, false);
+                                }
+                            }
+                        }
+                    });
+                } else if (typeRooms.equalsIgnoreCase("B")) {
+                    mainStreaming.setVisibility(View.VISIBLE);
+                    adView = new LVDOAdView(this, LVDOAdSize.IAB_MRECT, "f3e11705262aa8bba69cb58571772cf3");
+                    LVDOAdRequest adRequest = new LVDOAdRequest();
+                    adView.loadAd(adRequest);
+                    converStreaming.addView(adView);
+                } else if (typeRooms.equalsIgnoreCase("S")) {
+                    mainVideoStreaming.setVisibility(View.VISIBLE);
+                    Cursor cursorBot = botListDB.getSingle(destinationAddr);
+                    String link = "";
+                    if (cursorBot.getCount() > 0) {
+                        link = cursorBot.getString(cursorBot.getColumnIndexOrThrow(BotListDB.BOT_LINK));
+                    } else {
                    /*masih belum material design
                     finish();
                     showToast((String) getResources().getText(R.string.add_room_first));
                     Intent intent = new Intent(getApplicationContext(), SearchBotActivity.class);
                     intent.putExtra("search", title );
                     startActivity(intent);*/
+                    }
+                    cursorBot.close();
+                    VideoFragment videoFragment = VideoFragment.newInstance(link);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.mainVideoStreaming, videoFragment).commit();
+                } else if (typeRooms.equalsIgnoreCase("1")) {
+
+                } else {
+                    showToast("byonchat version not support this rooms, please update");
+                    finish();
                 }
-                cursorBot.close();
-                VideoFragment videoFragment = VideoFragment.newInstance(link);
-                getSupportFragmentManager().beginTransaction().replace(R.id.mainVideoStreaming, videoFragment).commit();
-            } else if (typeRooms.equalsIgnoreCase("1")) {
-
-            } else {
-                showToast("byonchat version not support this rooms, please update");
-                finish();
             }
-        }
 
-        if (itemFind != null) {
+            if (itemFind != null) {
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -981,53 +999,60 @@ public class ConversationActivity extends AppCompatActivity implements
     }
 
     public void saveBot() {
-        AlertDialog.Builder alertbox = new AlertDialog.Builder(ConversationActivity.this);
-        alertbox.setMessage("Are you sure you want to add this room ?");
-        alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-                String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
-                if (key.equalsIgnoreCase("null")) {
-                    Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                    pdialog.dismiss();
-                } else {
-                    new addBotRequest(getApplicationContext()).execute(key);
+        try {
+            AlertDialog.Builder alertbox = new AlertDialog.Builder(ConversationActivity.this);
+            alertbox.setMessage("Are you sure you want to add this room ?");
+            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                    String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
+                    if (key.equalsIgnoreCase("null")) {
+                        Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                        pdialog.dismiss();
+                    } else {
+                        new addBotRequest(getApplicationContext()).execute(key);
+                    }
                 }
-            }
 
-        });
-        alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-            }
-        });
-        alertbox.show();
+            });
+            alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                }
+            });
+            alertbox.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void updateMessageUnread() {
+        try {
+            Cursor countMessageUnread = messengerHelper.query(
+                    SQL_SELECT_TOTAL_MESSAGES_UNREAD,
+                    new String[]{String.valueOf(Message.STATUS_UNREAD), destination.getJabberId()});
 
-        Cursor countMessageUnread = messengerHelper.query(
-                SQL_SELECT_TOTAL_MESSAGES_UNREAD,
-                new String[]{String.valueOf(Message.STATUS_UNREAD), destination.getJabberId()});
-
-        while (countMessageUnread.moveToNext()) {
-            messengerHelper.execSql(SQL_UPDATE_MESSAGES, new String[]{countMessageUnread.getString(countMessageUnread.getColumnIndex("_id"))});
-            if (!countMessageUnread.getString(countMessageUnread.getColumnIndex(Message.TYPE)).equalsIgnoreCase(Message.TYPE_READSTATUS)) {
-                readFunction(countMessageUnread.getString(countMessageUnread.getColumnIndex("packet_id")));
-                Log.w("dinin", countMessageUnread.getString(countMessageUnread.getColumnIndex("message")));
+            while (countMessageUnread.moveToNext()) {
+                messengerHelper.execSql(SQL_UPDATE_MESSAGES, new String[]{countMessageUnread.getString(countMessageUnread.getColumnIndex("_id"))});
+                if (!countMessageUnread.getString(countMessageUnread.getColumnIndex(Message.TYPE)).equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                    readFunction(countMessageUnread.getString(countMessageUnread.getColumnIndex("packet_id")));
+                    Log.w("dinin", countMessageUnread.getString(countMessageUnread.getColumnIndex("message")));
+                }
             }
-        }
-        countMessageUnread.close();
+            countMessageUnread.close();
 
-        int badgeCount = 0;
-        Cursor cursor = messengerHelper.query(
-                SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
-                new String[]{String.valueOf(Message.STATUS_UNREAD)});
-        int indexTotal = cursor.getColumnIndex("total");
-        while (cursor.moveToNext()) {
-            badgeCount = cursor.getInt(indexTotal);
-        }
-        cursor.close();
+            int badgeCount = 0;
+            Cursor cursor = messengerHelper.query(
+                    SQL_SELECT_TOTAL_MESSAGES_UNREAD_ALL,
+                    new String[]{String.valueOf(Message.STATUS_UNREAD)});
+            int indexTotal = cursor.getColumnIndex("total");
+            while (cursor.moveToNext()) {
+                badgeCount = cursor.getInt(indexTotal);
+            }
+            cursor.close();
 
-        ShortcutBadger.applyCount(getApplicationContext(), badgeCount);
+            ShortcutBadger.applyCount(getApplicationContext(), badgeCount);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private boolean isNetworkConnectionAvailable() {
@@ -1041,98 +1066,103 @@ public class ConversationActivity extends AppCompatActivity implements
 
 
     public void blockContact() {
-        AlertDialog.Builder alertbox = new AlertDialog.Builder(ConversationActivity.this);
-        alertbox.setMessage("Are you sure you want to " + headerBtnLock.getText().toString() + " this contact?");
-        alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-                String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
-                if (key.equalsIgnoreCase("null")) {
-                    Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                    pdialog.dismiss();
-                } else {
-                    new blockRequest(getApplicationContext()).execute(key);
+        try {
+            AlertDialog.Builder alertbox = new AlertDialog.Builder(ConversationActivity.this);
+            alertbox.setMessage("Are you sure you want to " + headerBtnLock.getText().toString() + " this contact?");
+            alertbox.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                    String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
+                    if (key.equalsIgnoreCase("null")) {
+                        Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                        pdialog.dismiss();
+                    } else {
+                        new blockRequest(getApplicationContext()).execute(key);
+                    }
                 }
-            }
 
-        });
-        alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-            }
-        });
-        alertbox.show();
+            });
+            alertbox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                }
+            });
+            alertbox.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.conversation_menu, menu);
+            try {
+                if (conversationType == CONVERSATION_TYPE_PRIVATE) {
+                    MenuItem item = menu.getItem(1);
+                    Contact c = (Contact) destination;
+                    if (c.getId() == 0) {
+                        item.setTitle("Add To Contact");
+                    } else {
+                        item.setTitle("View Profile");
+                    }
 
-        if (conversationType == CONVERSATION_TYPE_PRIVATE) {
-            MenuItem item = menu.getItem(1);
-            Contact c = (Contact) destination;
-            if (c.getId() == 0) {
-                item.setTitle("Add To Contact");
-            } else {
-                item.setTitle("View Profile");
-            }
 
+                    // Uncomment the following if for SMS bridge feature
+                    // if (c.getType() == 0) {
+                    // menu.getItem(0).setVisible(true);
+                    // } else {
+                    // menu.getItem(0).setVisible(false);
+                    // }
 
-            // Uncomment the following if for SMS bridge feature
-            // if (c.getType() == 0) {
-            // menu.getItem(0).setVisible(true);
-            // } else {
-            // menu.getItem(0).setVisible(false);
-            // }
+                    // Comment the following 1 line for SMS bridge feature:
+                    IntervalDB db = new IntervalDB(getApplicationContext());
+                    db.open();
 
-            // Comment the following 1 line for SMS bridge feature:
-            IntervalDB db = new IntervalDB(getApplicationContext());
-            db.open();
+                    Cursor cursorSelect = db.getSingleContact(24);
+                    if (cursorSelect.getCount() > 0) {
+                        menu.getItem(0).setVisible(false);
+                    } else {
+                        menu.getItem(0).setVisible(true);
+                    }
 
-            Cursor cursorSelect = db.getSingleContact(24);
-            if (cursorSelect.getCount() > 0) {
-                menu.getItem(0).setVisible(false);
-            } else {
-                menu.getItem(0).setVisible(true);
-            }
+                    db.close();
 
-            db.close();
+                    String regex = "[0-9]+";
+                    if (!c.getJabberId().matches(regex)) {
+                        if (Utility.roomType(c.getJabberId()).equalsIgnoreCase("V")) {
+                            menu.getItem(0).setVisible(false);
+                        }
+                        menu.getItem(1).setVisible(false);
+                        menu.getItem(2).setVisible(false);
+                        menu.getItem(3).setVisible(false);
+                        menu.getItem(4).setVisible(false);
+                        menu.getItem(5).setVisible(false);
+                    } else {
+                        menu.getItem(1).setVisible(false);
+                        menu.getItem(2).setVisible(false);
+                        menu.getItem(3).setVisible(false);
+                        menu.getItem(4).setVisible(false);
+                        menu.getItem(5).setVisible(false);
+                    }
+                } else {
+                    IntervalDB db = new IntervalDB(getApplicationContext());
+                    db.open();
 
-            String regex = "[0-9]+";
-            if (!c.getJabberId().matches(regex)) {
-                if (Utility.roomType(c.getJabberId()).equalsIgnoreCase("V")) {
-                    menu.getItem(0).setVisible(false);
+                    Cursor cursorSelect = db.getSingleContact(24);
+                    if (cursorSelect.getCount() > 0) {
+                        menu.getItem(0).setVisible(false);
+                    } else {
+                        menu.getItem(0).setVisible(true);
+                    }
+
+                    db.close();
+                    menu.getItem(1).setVisible(false);
+                    menu.getItem(2).setVisible(false);
+                    menu.getItem(3).setVisible(false);
+                    menu.getItem(4).setVisible(false);
+                    menu.getItem(5).setVisible(false);
                 }
-                menu.getItem(1).setVisible(false);
-                menu.getItem(2).setVisible(false);
-                menu.getItem(3).setVisible(false);
-                menu.getItem(4).setVisible(false);
-                menu.getItem(5).setVisible(false);
-            } else {
-                menu.getItem(1).setVisible(false);
-                menu.getItem(2).setVisible(false);
-                menu.getItem(3).setVisible(false);
-                menu.getItem(4).setVisible(false);
-                menu.getItem(5).setVisible(false);
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-        } else {
-            IntervalDB db = new IntervalDB(getApplicationContext());
-            db.open();
-
-            Cursor cursorSelect = db.getSingleContact(24);
-            if (cursorSelect.getCount() > 0) {
-                menu.getItem(0).setVisible(false);
-            } else {
-                menu.getItem(0).setVisible(true);
-            }
-
-            db.close();
-            menu.getItem(1).setVisible(false);
-            menu.getItem(2).setVisible(false);
-            menu.getItem(3).setVisible(false);
-            menu.getItem(4).setVisible(false);
-            menu.getItem(5).setVisible(false);
-        }
-
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -1183,72 +1213,11 @@ public class ConversationActivity extends AppCompatActivity implements
     }
 
     public void showAttc(boolean att) {
-        int cx = (mRevealView.getLeft() + mRevealView.getRight());
-        int cy = mRevealView.getTop();
-        int radius = Math.max(mRevealView.getWidth(), mRevealView.getHeight());
-        if (att) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                SupportAnimator animator =
-                        ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, 0, radius);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.setDuration(300);
-
-                SupportAnimator animator_reverse = animator.reverse();
-
-                if (hidden) {
-                    mRevealView.setVisibility(View.VISIBLE);
-                    animator.start();
-                    hidden = false;
-                } else {
-                    animator_reverse.addListener(new SupportAnimator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart() {
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd() {
-                            mRevealView.setVisibility(View.INVISIBLE);
-                            hidden = true;
-
-                        }
-
-                        @Override
-                        public void onAnimationCancel() {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat() {
-
-                        }
-                    });
-                    animator_reverse.start();
-
-                }
-            } else {
-                if (hidden) {
-                    Animator anim = android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, 0, radius);
-                    mRevealView.setVisibility(View.VISIBLE);
-                    anim.start();
-                    hidden = false;
-
-                } else {
-                    Animator anim = android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, radius, 0);
-                    anim.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            mRevealView.setVisibility(View.INVISIBLE);
-                            hidden = true;
-                        }
-                    });
-                    anim.start();
-
-                }
-            }
-        } else {
-            if (!hidden) {
+        try {
+            int cx = (mRevealView.getLeft() + mRevealView.getRight());
+            int cy = mRevealView.getTop();
+            int radius = Math.max(mRevealView.getWidth(), mRevealView.getHeight());
+            if (att) {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     SupportAnimator animator =
                             ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, 0, radius);
@@ -1256,119 +1225,188 @@ public class ConversationActivity extends AppCompatActivity implements
                     animator.setDuration(300);
 
                     SupportAnimator animator_reverse = animator.reverse();
-                    animator_reverse.addListener(new SupportAnimator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart() {
 
-                        }
+                    if (hidden) {
+                        mRevealView.setVisibility(View.VISIBLE);
+                        animator.start();
+                        hidden = false;
+                    } else {
+                        animator_reverse.addListener(new SupportAnimator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart() {
 
-                        @Override
-                        public void onAnimationEnd() {
-                            mRevealView.setVisibility(View.INVISIBLE);
-                            hidden = true;
+                            }
 
-                        }
+                            @Override
+                            public void onAnimationEnd() {
+                                mRevealView.setVisibility(View.INVISIBLE);
+                                hidden = true;
 
-                        @Override
-                        public void onAnimationCancel() {
+                            }
 
-                        }
+                            @Override
+                            public void onAnimationCancel() {
 
-                        @Override
-                        public void onAnimationRepeat() {
+                            }
 
-                        }
-                    });
-                    animator_reverse.start();
+                            @Override
+                            public void onAnimationRepeat() {
 
+                            }
+                        });
+                        animator_reverse.start();
+
+                    }
                 } else {
-                    Animator anim = android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, radius, 0);
-                    anim.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            mRevealView.setVisibility(View.INVISIBLE);
-                            hidden = true;
-                        }
-                    });
-                    anim.start();
+                    if (hidden) {
+                        Animator anim = android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, 0, radius);
+                        mRevealView.setVisibility(View.VISIBLE);
+                        anim.start();
+                        hidden = false;
+
+                    } else {
+                        Animator anim = android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, radius, 0);
+                        anim.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                mRevealView.setVisibility(View.INVISIBLE);
+                                hidden = true;
+                            }
+                        });
+                        anim.start();
+
+                    }
+                }
+            } else {
+                if (!hidden) {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        SupportAnimator animator =
+                                ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, 0, radius);
+                        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                        animator.setDuration(300);
+
+                        SupportAnimator animator_reverse = animator.reverse();
+                        animator_reverse.addListener(new SupportAnimator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart() {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd() {
+                                mRevealView.setVisibility(View.INVISIBLE);
+                                hidden = true;
+
+                            }
+
+                            @Override
+                            public void onAnimationCancel() {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat() {
+
+                            }
+                        });
+                        animator_reverse.start();
+
+                    } else {
+                        Animator anim = android.view.ViewAnimationUtils.createCircularReveal(mRevealView, cx, cy, radius, 0);
+                        anim.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                mRevealView.setVisibility(View.INVISIBLE);
+                                hidden = true;
+                            }
+                        });
+                        anim.start();
+                    }
                 }
             }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private void initText() {
-        textMessage = (EditText) findViewById(R.id.textMessage);
-        textMessage.setOnEditorActionListener(new OnEditorActionListener() {
+        try {
+            textMessage = (EditText) findViewById(R.id.textMessage);
+            textMessage.setOnEditorActionListener(new OnEditorActionListener() {
 
-            @Override
-            public boolean onEditorAction(TextView v, int actionId,
-                                          KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    /*sendMessage(textMessage.getText().toString());*/
-                    Editable msg = textMessage.getText();
-                    String emsg = Html.toHtml(msg);
-                    if (textMessage.getText().toString().contains("\n") == true) {
-                        sendMessage(emsg);
-                    } else {
-                        sendMessage(textMessage.getText().toString());
+                @Override
+                public boolean onEditorAction(TextView v, int actionId,
+                                              KeyEvent event) {
+                    boolean handled = false;
+                    if (actionId == EditorInfo.IME_ACTION_SEND) {
+                        /*sendMessage(textMessage.getText().toString());*/
+                        Editable msg = textMessage.getText();
+                        String emsg = Html.toHtml(msg);
+                        if (textMessage.getText().toString().contains("\n") == true) {
+                            sendMessage(emsg);
+                        } else {
+                            sendMessage(textMessage.getText().toString());
+                        }
+                        textMessage.setText("");
+                        handled = true;
                     }
-                    textMessage.setText("");
-                    handled = true;
+                    return handled;
                 }
-                return handled;
-            }
-        });
+            });
 
-        textMessage.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-                showAttc(false);
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                textMessage.setFocusableInTouchMode(true);
-                textMessage.requestFocus();
-                scrollListConversationToBottom(true);
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(textMessage, InputMethodManager.SHOW_IMPLICIT);
-                if (emojicons.getVisibility() == View.VISIBLE) {
-                    emojicons.setVisibility(View.GONE);
-                }
-
-                return false;
-            }
-        });
-
-        textMessage.setOnFocusChangeListener(new OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                showAttc(false);
-                if (hasFocus) {
+            textMessage.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View arg0, MotionEvent arg1) {
+                    showAttc(false);
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                    textMessage.setFocusableInTouchMode(true);
+                    textMessage.requestFocus();
                     scrollListConversationToBottom(true);
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(textMessage, InputMethodManager.SHOW_IMPLICIT);
+                    if (emojicons.getVisibility() == View.VISIBLE) {
+                        emojicons.setVisibility(View.GONE);
+                    }
+
+                    return false;
                 }
-            }
-        });
+            });
 
-        textMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                if (textMessage.getText().toString().trim().length() > 0) {
-                    btnMic.setVisibility(View.GONE);
-                    btnSend.setVisibility(View.VISIBLE);
-                } else {
-                    btnMic.setVisibility(View.VISIBLE);
-                    btnSend.setVisibility(View.GONE);
+            textMessage.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    showAttc(false);
+                    if (hasFocus) {
+                        scrollListConversationToBottom(true);
+                    }
                 }
-            }
+            });
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            textMessage.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void afterTextChanged(Editable arg0) {
+                    if (textMessage.getText().toString().trim().length() > 0) {
+                        btnMic.setVisibility(View.GONE);
+                        btnSend.setVisibility(View.VISIBLE);
+                    } else {
+                        btnMic.setVisibility(View.VISIBLE);
+                        btnSend.setVisibility(View.GONE);
+                    }
+                }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private Message createNewMessage(String message, String type) {
@@ -1385,58 +1423,77 @@ public class ConversationActivity extends AppCompatActivity implements
     }
 
     private void sendMessage(String message) {
-        Message vo = createNewMessage(message, Message.TYPE_TEXT);
-        addConversation(vo);
-        messengerHelper.insertData(vo);
-        Intent intent = new Intent(this, UploadService.class);
-        intent.putExtra(UploadService.ACTION, "sendText");
-        intent.putExtra(UploadService.KEY_MESSAGE, vo);
-        startService(intent);
+        try {
+            Message vo = createNewMessage(message, Message.TYPE_TEXT);
+            addConversation(vo);
+            messengerHelper.insertData(vo);
+            Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, "sendText");
+            intent.putExtra(UploadService.KEY_MESSAGE, vo);
+            startService(intent);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void sendLocation(String message) {
-        Message vo = createNewMessage(message, Message.TYPE_LOC);
-        addConversation(vo);
+        try {
+            Message vo = createNewMessage(message, Message.TYPE_LOC);
+            addConversation(vo);
 
-        messengerHelper.insertData(vo);
-        Intent intent = new Intent(this, UploadService.class);
-        intent.putExtra(UploadService.ACTION, "sendText");
-        intent.putExtra(UploadService.KEY_MESSAGE, vo);
-        startService(intent);
-
+            messengerHelper.insertData(vo);
+            Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, "sendText");
+            intent.putExtra(UploadService.KEY_MESSAGE, vo);
+            startService(intent);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void readFunction(String message) {
-        Message vo = createNewMessage(message, Message.TYPE_READSTATUS);
-        messengerHelper.insertData(vo);
-        Intent intent = new Intent(this, UploadService.class);
-        intent.putExtra(UploadService.ACTION, "sendText");
-        intent.putExtra(UploadService.KEY_MESSAGE, vo);
-        startService(intent);
+        try {
+            Message vo = createNewMessage(message, Message.TYPE_READSTATUS);
+            messengerHelper.insertData(vo);
+            Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, "sendText");
+            intent.putExtra(UploadService.KEY_MESSAGE, vo);
+            startService(intent);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     public void tarikPesan(Message msg) {
-        Message voReport = msg;
-        voReport.setType(Message.TYPE_REPORT_TARIK);
-        voReport.setMessage("Your message is being recalled");
-        messengerHelper.updateData(voReport);
-        updateConversation(voReport);
+        try {
+            Message voReport = msg;
+            voReport.setType(Message.TYPE_REPORT_TARIK);
+            voReport.setMessage("Your message is being recalled");
+            messengerHelper.updateData(voReport);
+            updateConversation(voReport);
 
-        Message vo = createNewMessage(msg.getPacketId(), Message.TYPE_TARIK);
-        messengerHelper.insertData(vo);
-        Intent intent = new Intent(this, UploadService.class);
-        intent.putExtra(UploadService.ACTION, "sendText");
-        intent.putExtra(UploadService.KEY_MESSAGE, vo);
-        startService(intent);
+            Message vo = createNewMessage(msg.getPacketId(), Message.TYPE_TARIK);
+            messengerHelper.insertData(vo);
+            Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, "sendText");
+            intent.putExtra(UploadService.KEY_MESSAGE, vo);
+            startService(intent);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void sendMessageMenu(String message) {
-        Message vo = createNewMessage(message, Message.TYPE_TEXT);
-        /* new MessageSender().execute(vo);*/
-        Intent intent = new Intent(this, UploadService.class);
-        intent.putExtra(UploadService.ACTION, "sendText");
-        intent.putExtra(UploadService.KEY_MESSAGE, vo);
-        startService(intent);
+        try {
+            Message vo = createNewMessage(message, Message.TYPE_TEXT);
+            /* new MessageSender().execute(vo);*/
+            Intent intent = new Intent(this, UploadService.class);
+            intent.putExtra(UploadService.ACTION, "sendText");
+            intent.putExtra(UploadService.KEY_MESSAGE, vo);
+            startService(intent);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void sendMessageFile(String message) {
@@ -1445,9 +1502,13 @@ public class ConversationActivity extends AppCompatActivity implements
     }
 
     private void retryMessage(Message msg) {
-        msg.setStatus(Message.STATUS_INPROGRESS);
-        updateConversation(msg);
-        new MessageSender().execute(msg);
+        try {
+            msg.setStatus(Message.STATUS_INPROGRESS);
+            updateConversation(msg);
+            new MessageSender().execute(msg);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private synchronized void clearConversations() {
@@ -1455,29 +1516,175 @@ public class ConversationActivity extends AppCompatActivity implements
     }
 
     private synchronized void updateConversation(Message vo) {
-        updateMessageUnread();
-        int index = conversations.indexOf(vo);
-        if (index != -1) {
-            conversations.set(index, vo);
-            adapter.refreshList();
-        } else {
-            addConversation(vo, true, true);
+        try {
+            updateMessageUnread();
+            int index = conversations.indexOf(vo);
+            if (index != -1) {
+                conversations.set(index, vo);
+                adapter.refreshList();
+            } else {
+                addConversation(vo, true, true);
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
     private synchronized void addConversation(Message vo, boolean notify, boolean receive) {
-        Date d = vo.getDeliveredDate();
-        if (d == null) {
-            d = vo.getSendDate();
-        }
-        Date cdate = new Date(System.currentTimeMillis());
-        if (d != null) {
-            cdate = d;
-        }
+        try {
+            Date d = vo.getDeliveredDate();
+            if (d == null) {
+                d = vo.getSendDate();
+            }
+            Date cdate = new Date(System.currentTimeMillis());
+            if (d != null) {
+                cdate = d;
+            }
 
 
-        String theDate = dateFormat.format(cdate);
-        if (!lastDate.equals(theDate)) {
+            String theDate = dateFormat.format(cdate);
+            if (!lastDate.equals(theDate)) {
+                lastDate = theDate;
+                Contact c = (Contact) destination;
+                if (!new Validations().getInstance(getApplicationContext()).cekRoom(c.getJabberId())) {
+                    String iklan = new Validations().getInstance(getApplicationContext()).getContentValidation(14);
+                    if (iklan.length() > 0) {
+                        theDate += "\n" + iklan;
+                    }
+                }
+                conversations.add(theDate);
+            }
+
+            if (vo.isGroupChat()) {
+                if (Message.TYPE_INFO.equals(vo.getType())) {
+                    conversations.add(vo.getMessage());
+                } else if (sourceAddr.equals(vo.getSource())) {
+                    conversations.add(vo);
+                    groupMessages = null;
+                } else {
+                    boolean added = false;
+                    String sinfo = "+" + vo.getSourceInfo();
+                    Contact c = messengerHelper.getContact(vo.getSourceInfo());
+                    if (c != null)
+                        sinfo = c.getName();
+
+                    Object lastMessage = conversations
+                            .get((conversations.size() - 1));
+                    boolean createnew = true;
+                    if (lastMessage instanceof ArrayList) {
+                        ArrayList listTmp = ((ArrayList) lastMessage);
+                        Object objTmp = ((ArrayList) lastMessage).get((listTmp
+                                .size() - 1));
+                        Message m = (Message) objTmp;
+                        if (m.getSourceInfo().equals(vo.getSourceInfo())) {
+                            if ((!(Message.TYPE_IMAGE.equals(vo.getType()) || Message.TYPE_LOC.equals(vo.getType())
+                                    || Message.TYPE_VIDEO.equals(vo.getType()))) && (!(Message.TYPE_IMAGE.equals(m.getType())
+                                    || Message.TYPE_LOC.equals(m.getType()) || Message.TYPE_VIDEO.equals(m.getType())))) {
+                                createnew = false;
+                            }
+                        }
+                    }
+
+
+                    if ((groupMessages != null && !createnew)) {
+                        if (sinfo.equals(groupMessages.get(0))) {
+                            groupMessages.add(vo);
+                            added = true;
+                        }
+                    }
+
+                    if (!added) {
+                        groupMessages = new ArrayList<Object>();
+                        groupMessages.add(sinfo);
+                        groupMessages.add(vo);
+                        conversations.add(groupMessages);
+                    }
+                }
+            } else {
+                conversations.add(vo);
+            }
+
+            if (notify) {
+                adapter.refreshList();
+                scrollListConversationToBottom(true);
+            }
+            if (receive) {
+                adapter.refreshList();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
+    }
+
+    private synchronized void addConversationEarlier(Message vo, boolean notify) {
+        //  updateMessageUnread();
+        try {
+            Date d = vo.getDeliveredDate();
+            if (d == null) {
+                d = vo.getSendDate();
+            }
+            Date cdate = new Date(System.currentTimeMillis());
+            if (d != null) {
+                cdate = d;
+            }
+
+
+            String theDate = dateFormat.format(cdate);
+            if (lastDate.equals(theDate)) {
+                conversations.remove(0);
+            }
+
+
+            if (vo.isGroupChat()) {
+                if (Message.TYPE_INFO.equals(vo.getType())) {
+                    conversations.add(vo.getMessage());
+                } else if (sourceAddr.equals(vo.getSource())) {
+                    conversations.add(vo);
+                    groupMessages = null;
+                } else {
+                    boolean added = false;
+                    String sinfo = "+" + vo.getSourceInfo();
+                    Contact c = messengerHelper.getContact(vo.getSourceInfo());
+                    if (c != null)
+                        sinfo = c.getName();
+
+                    Object lastMessage = conversations
+                            .get((conversations.size() - 1));
+                    boolean createnew = true;
+                    if (lastMessage instanceof ArrayList) {
+                        ArrayList listTmp = ((ArrayList) lastMessage);
+                        Object objTmp = ((ArrayList) lastMessage).get((listTmp
+                                .size() - 1));
+                        Message m = (Message) objTmp;
+                        if (m.getSourceInfo().equals(vo.getSourceInfo())) {
+                            if ((!(Message.TYPE_IMAGE.equals(vo.getType()) || Message.TYPE_LOC.equals(vo.getType())
+                                    || Message.TYPE_VIDEO.equals(vo.getType()))) && (!(Message.TYPE_IMAGE.equals(m.getType())
+                                    || Message.TYPE_LOC.equals(m.getType()) || Message.TYPE_VIDEO.equals(m.getType())))) {
+                                createnew = false;
+                            }
+                        }
+                    }
+
+
+                    if ((groupMessages != null && !createnew)) {
+                        if (sinfo.equals(groupMessages.get(0))) {
+                            groupMessages.add(vo);
+                            added = true;
+                        }
+                    }
+
+                    if (!added) {
+                        groupMessages = new ArrayList<Object>();
+                        groupMessages.add(sinfo);
+                        groupMessages.add(vo);
+                        conversations.add(0, groupMessages);
+                    }
+                }
+            } else {
+                conversations.add(0, vo);
+            }
+
+
             lastDate = theDate;
             Contact c = (Contact) destination;
             if (!new Validations().getInstance(getApplicationContext()).cekRoom(c.getJabberId())) {
@@ -1486,162 +1693,31 @@ public class ConversationActivity extends AppCompatActivity implements
                     theDate += "\n" + iklan;
                 }
             }
-            conversations.add(theDate);
-        }
-
-        if (vo.isGroupChat()) {
-            if (Message.TYPE_INFO.equals(vo.getType())) {
-                conversations.add(vo.getMessage());
-            } else if (sourceAddr.equals(vo.getSource())) {
-                conversations.add(vo);
-                groupMessages = null;
-            } else {
-                boolean added = false;
-                String sinfo = "+" + vo.getSourceInfo();
-                Contact c = messengerHelper.getContact(vo.getSourceInfo());
-                if (c != null)
-                    sinfo = c.getName();
-
-                Object lastMessage = conversations
-                        .get((conversations.size() - 1));
-                boolean createnew = true;
-                if (lastMessage instanceof ArrayList) {
-                    ArrayList listTmp = ((ArrayList) lastMessage);
-                    Object objTmp = ((ArrayList) lastMessage).get((listTmp
-                            .size() - 1));
-                    Message m = (Message) objTmp;
-                    if (m.getSourceInfo().equals(vo.getSourceInfo())) {
-                        if ((!(Message.TYPE_IMAGE.equals(vo.getType()) || Message.TYPE_LOC.equals(vo.getType())
-                                || Message.TYPE_VIDEO.equals(vo.getType()))) && (!(Message.TYPE_IMAGE.equals(m.getType())
-                                || Message.TYPE_LOC.equals(m.getType()) || Message.TYPE_VIDEO.equals(m.getType())))) {
-                            createnew = false;
-                        }
-                    }
-                }
-
-
-                if ((groupMessages != null && !createnew)) {
-                    if (sinfo.equals(groupMessages.get(0))) {
-                        groupMessages.add(vo);
-                        added = true;
-                    }
-                }
-
-                if (!added) {
-                    groupMessages = new ArrayList<Object>();
-                    groupMessages.add(sinfo);
-                    groupMessages.add(vo);
-                    conversations.add(groupMessages);
-                }
-            }
-        } else {
-            conversations.add(vo);
-        }
-
-        if (notify) {
-            adapter.refreshList();
-            scrollListConversationToBottom(true);
-        }
-        if (receive) {
-            adapter.refreshList();
+            conversations.add(0, theDate);
+            //((ConversationAdapter) listConversation.getAdapter()).notifyDataSetChanged();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
-
-    private synchronized void addConversationEarlier(Message vo, boolean notify) {
-        //  updateMessageUnread();
-        Date d = vo.getDeliveredDate();
-        if (d == null) {
-            d = vo.getSendDate();
-        }
-        Date cdate = new Date(System.currentTimeMillis());
-        if (d != null) {
-            cdate = d;
-        }
-
-
-        String theDate = dateFormat.format(cdate);
-        if (lastDate.equals(theDate)) {
-            conversations.remove(0);
-        }
-
-
-        if (vo.isGroupChat()) {
-            if (Message.TYPE_INFO.equals(vo.getType())) {
-                conversations.add(vo.getMessage());
-            } else if (sourceAddr.equals(vo.getSource())) {
-                conversations.add(vo);
-                groupMessages = null;
-            } else {
-                boolean added = false;
-                String sinfo = "+" + vo.getSourceInfo();
-                Contact c = messengerHelper.getContact(vo.getSourceInfo());
-                if (c != null)
-                    sinfo = c.getName();
-
-                Object lastMessage = conversations
-                        .get((conversations.size() - 1));
-                boolean createnew = true;
-                if (lastMessage instanceof ArrayList) {
-                    ArrayList listTmp = ((ArrayList) lastMessage);
-                    Object objTmp = ((ArrayList) lastMessage).get((listTmp
-                            .size() - 1));
-                    Message m = (Message) objTmp;
-                    if (m.getSourceInfo().equals(vo.getSourceInfo())) {
-                        if ((!(Message.TYPE_IMAGE.equals(vo.getType()) || Message.TYPE_LOC.equals(vo.getType())
-                                || Message.TYPE_VIDEO.equals(vo.getType()))) && (!(Message.TYPE_IMAGE.equals(m.getType())
-                                || Message.TYPE_LOC.equals(m.getType()) || Message.TYPE_VIDEO.equals(m.getType())))) {
-                            createnew = false;
-                        }
-                    }
-                }
-
-
-                if ((groupMessages != null && !createnew)) {
-                    if (sinfo.equals(groupMessages.get(0))) {
-                        groupMessages.add(vo);
-                        added = true;
-                    }
-                }
-
-                if (!added) {
-                    groupMessages = new ArrayList<Object>();
-                    groupMessages.add(sinfo);
-                    groupMessages.add(vo);
-                    conversations.add(0, groupMessages);
-                }
-            }
-        } else {
-            conversations.add(0, vo);
-        }
-
-
-        lastDate = theDate;
-        Contact c = (Contact) destination;
-        if (!new Validations().getInstance(getApplicationContext()).cekRoom(c.getJabberId())) {
-            String iklan = new Validations().getInstance(getApplicationContext()).getContentValidation(14);
-            if (iklan.length() > 0) {
-                theDate += "\n" + iklan;
-            }
-        }
-        conversations.add(0, theDate);
-        //((ConversationAdapter) listConversation.getAdapter()).notifyDataSetChanged();
-    }
-
 
     private synchronized void addConversation(Message vo) {
         addConversation(vo, true, false);
     }
 
     private void scrollListConversationToBottom(boolean scroll) {
-        if (scroll) {
-            listConversation.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    listConversation.setSelection(adapter.getCount() - 1);
-                }
-            }, 300);
-        } else {
-            listConversation.setSelection(adapter.getCount());
+        try {
+            if (scroll) {
+                listConversation.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        listConversation.setSelection(adapter.getCount() - 1);
+                    }
+                }, 300);
+            } else {
+                listConversation.setSelection(adapter.getCount());
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -1689,32 +1765,36 @@ public class ConversationActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
 
-        getApplicationContext().bindService(
-                new Intent(this, MessengerConnectionService.class), this,
-                Context.BIND_AUTO_CREATE);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID);
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NOTIFY_ID_CONV);
-        IntentFilter filter = new IntentFilter(
-                MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
-        filter.addAction(MessengerConnectionService.ACTION_MESSAGE_DELIVERED);
-        filter.addAction(MessengerConnectionService.ACTION_MESSAGE_SENT);
-        filter.addAction(MessengerConnectionService.ACTION_MESSAGE_FAILED);
-        filter.addAction(MessengerConnectionService.ACTION_CONNECTED);
-        filter.addAction(MessengerConnectionService.ACTION_DISCONNECTED);
-        filter.addAction(MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY);
-        filter.addAction(MessengerConnectionService.ACTION_CHAT_OFF);
-        filter.addAction(UploadService.KEY_UPDATE_BAR);
-        filter.addAction(UploadService.KEY_UPDATE_UPLOAD_BAR);
-        filter.setPriority(1);
-        registerReceiver(broadcastHandler, filter);
-        updateMessageUnread();
-        refreshConversation();
-        if (!mBufferBroadcastIsRegistered) {
-            registerReceiver(broadcastBufferReceiver, new IntentFilter(
-                    StreamService.BROADCAST_BUFFER));
-            mBufferBroadcastIsRegistered = true;
+        try {
+            getApplicationContext().bindService(
+                    new Intent(this, MessengerConnectionService.class), this,
+                    Context.BIND_AUTO_CREATE);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID);
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NOTIFY_ID_CONV);
+            IntentFilter filter = new IntentFilter(
+                    MessengerConnectionService.ACTION_MESSAGE_RECEIVED);
+            filter.addAction(MessengerConnectionService.ACTION_MESSAGE_DELIVERED);
+            filter.addAction(MessengerConnectionService.ACTION_MESSAGE_SENT);
+            filter.addAction(MessengerConnectionService.ACTION_MESSAGE_FAILED);
+            filter.addAction(MessengerConnectionService.ACTION_CONNECTED);
+            filter.addAction(MessengerConnectionService.ACTION_DISCONNECTED);
+            filter.addAction(MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY);
+            filter.addAction(MessengerConnectionService.ACTION_CHAT_OFF);
+            filter.addAction(UploadService.KEY_UPDATE_BAR);
+            filter.addAction(UploadService.KEY_UPDATE_UPLOAD_BAR);
+            filter.setPriority(1);
+            registerReceiver(broadcastHandler, filter);
+            updateMessageUnread();
+            refreshConversation();
+            if (!mBufferBroadcastIsRegistered) {
+                registerReceiver(broadcastBufferReceiver, new IntentFilter(
+                        StreamService.BROADCAST_BUFFER));
+                mBufferBroadcastIsRegistered = true;
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -1723,163 +1803,322 @@ public class ConversationActivity extends AppCompatActivity implements
         super.onDestroy();
     }
 
-   /* protected void setMessageFormEnabled(boolean enable) {
-        btnSend.setEnabled(enable);
-    }
-*/
-
-
     /**
      * Showing google speech input dialog
      */
     private void promptSpeechInput() {
-        showAttc(false);
-
-        Contact contact = messengerHelper.getMyContact();
-        String language = String.valueOf(Locale.getDefault());
-        if (contact.getJabberId().substring(0, 2).equalsIgnoreCase("62")) language = "id";
-
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, language);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language);
-        intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language);
         try {
-            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-        } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(), getString(R.string.speech_not_supported),
-                    Toast.LENGTH_SHORT).show();
+            showAttc(false);
+
+            Contact contact = messengerHelper.getMyContact();
+            String language = String.valueOf(Locale.getDefault());
+            if (contact.getJabberId().substring(0, 2).equalsIgnoreCase("62")) language = "id";
+
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, language);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, language);
+            intent.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language);
+            try {
+                startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+            } catch (ActivityNotFoundException a) {
+                Toast.makeText(getApplicationContext(), getString(R.string.speech_not_supported),
+                        Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
-
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         final AdapterContextMenuInfo ctxSelected = (AdapterContextMenuInfo) menuInfo;
-        Object o;
-        if (listConversation.getHeaderViewsCount() > 0) {
-            o = conversations.get(ctxSelected.position - 1);
-        } else {
-            o = conversations.get(ctxSelected.position);
-        }
 
-        if (o instanceof Message) {
-            Log.w("masuk", "kesiniGa");
-            final Dialog dialog;
-            dialog = DialogUtil.customDialogConversation(this);
-            dialog.show();
-            final Activity aa = this;
-
-            FrameLayout btnDelete = (FrameLayout) dialog.findViewById(R.id.btnDelete);
-            FrameLayout btnCopy = (FrameLayout) dialog.findViewById(R.id.btnCopy);
-            FrameLayout btnResend = (FrameLayout) dialog.findViewById(R.id.btnResend);
-            FrameLayout btnForward = (FrameLayout) dialog.findViewById(R.id.btnForward);
-            FrameLayout btnForwardRounded = (FrameLayout) dialog.findViewById(R.id.btnForwardRounded);
-            FrameLayout btnShare = (FrameLayout) dialog.findViewById(R.id.btnShare);
-            FrameLayout btnEditMeme = (FrameLayout) dialog.findViewById(R.id.btnEditMeme);
-            FrameLayout btnRecall = (FrameLayout) dialog.findViewById(R.id.btnRecall);
-            View garis1 = (View) dialog.findViewById(R.id.garis1);
-            View garis2 = (View) dialog.findViewById(R.id.garis2);
-            View garis3 = (View) dialog.findViewById(R.id.garis3);
-            View garis4 = (View) dialog.findViewById(R.id.garis4);
-            View garis5 = (View) dialog.findViewById(R.id.garis5);
-            View garis6 = (View) dialog.findViewById(R.id.garis6);
-
-            final Message msg = (Message) o;
-            final int position;
+        try {
+            Object o;
             if (listConversation.getHeaderViewsCount() > 0) {
-                position = ctxSelected.position - 1;
+                o = conversations.get(ctxSelected.position - 1);
             } else {
-                position = ctxSelected.position;
+                o = conversations.get(ctxSelected.position);
             }
 
-            btnDelete.setVisibility(View.VISIBLE);
+            if (o instanceof Message) {
+                Log.w("masuk", "kesiniGa");
+                final Dialog dialog;
+                dialog = DialogUtil.customDialogConversation(this);
+                dialog.show();
+                final Activity aa = this;
 
-            if (msg.getStatus() == Message.STATUS_FAILED) {
-                btnResend.setVisibility(View.VISIBLE);
-            }
+                FrameLayout btnDelete = (FrameLayout) dialog.findViewById(R.id.btnDelete);
+                FrameLayout btnCopy = (FrameLayout) dialog.findViewById(R.id.btnCopy);
+                FrameLayout btnResend = (FrameLayout) dialog.findViewById(R.id.btnResend);
+                FrameLayout btnForward = (FrameLayout) dialog.findViewById(R.id.btnForward);
+                FrameLayout btnForwardRounded = (FrameLayout) dialog.findViewById(R.id.btnForwardRounded);
+                FrameLayout btnShare = (FrameLayout) dialog.findViewById(R.id.btnShare);
+                FrameLayout btnEditMeme = (FrameLayout) dialog.findViewById(R.id.btnEditMeme);
+                FrameLayout btnRecall = (FrameLayout) dialog.findViewById(R.id.btnRecall);
+                View garis1 = (View) dialog.findViewById(R.id.garis1);
+                View garis2 = (View) dialog.findViewById(R.id.garis2);
+                View garis3 = (View) dialog.findViewById(R.id.garis3);
+                View garis4 = (View) dialog.findViewById(R.id.garis4);
+                View garis5 = (View) dialog.findViewById(R.id.garis5);
+                View garis6 = (View) dialog.findViewById(R.id.garis6);
 
-            if (Message.TYPE_TEXT.equals(msg.getType()) || Message.TYPE_BROADCAST.equals(msg.getType())) {
-                Contact c = (Contact) destination;
-                if (new Validations().getInstance(getApplicationContext()).cekRoom(c.getJabberId())) {
-                    JSONObject jObject = null;
-                    try {
-                        jObject = new JSONObject(msg.getMessage());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                final Message msg = (Message) o;
+                final int position;
+                if (listConversation.getHeaderViewsCount() > 0) {
+                    position = ctxSelected.position - 1;
+                } else {
+                    position = ctxSelected.position;
+                }
 
-                    if (jObject == null) {
+                btnDelete.setVisibility(View.VISIBLE);
+
+                if (msg.getStatus() == Message.STATUS_FAILED) {
+                    btnResend.setVisibility(View.VISIBLE);
+                }
+
+                if (Message.TYPE_TEXT.equals(msg.getType()) || Message.TYPE_BROADCAST.equals(msg.getType())) {
+                    Contact c = (Contact) destination;
+                    if (new Validations().getInstance(getApplicationContext()).cekRoom(c.getJabberId())) {
+                        JSONObject jObject = null;
+                        try {
+                            jObject = new JSONObject(msg.getMessage());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (jObject == null) {
+                            garis1.setVisibility(View.VISIBLE);
+                            btnCopy.setVisibility(View.VISIBLE);
+                            garis2.setVisibility(View.VISIBLE);
+                            btnResend.setVisibility(View.VISIBLE);
+                            garis3.setVisibility(View.VISIBLE);
+                            btnForward.setVisibility(View.GONE);
+                            btnForwardRounded.setVisibility(View.VISIBLE);
+                        }
+
+                    } else {
                         garis1.setVisibility(View.VISIBLE);
                         btnCopy.setVisibility(View.VISIBLE);
-                        garis2.setVisibility(View.VISIBLE);
-                        btnResend.setVisibility(View.VISIBLE);
+                        garis2.setVisibility(View.GONE);
+                        btnResend.setVisibility(View.GONE);
                         garis3.setVisibility(View.VISIBLE);
                         btnForward.setVisibility(View.GONE);
                         btnForwardRounded.setVisibility(View.VISIBLE);
                     }
-
-                } else {
-                    garis1.setVisibility(View.VISIBLE);
-                    btnCopy.setVisibility(View.VISIBLE);
-                    garis2.setVisibility(View.GONE);
-                    btnResend.setVisibility(View.GONE);
-                    garis3.setVisibility(View.VISIBLE);
-                    btnForward.setVisibility(View.GONE);
-                    btnForwardRounded.setVisibility(View.VISIBLE);
                 }
+                if (msg.getSource().equalsIgnoreCase(messengerHelper.getMyContact().getJabberId()) && !msg.getType().equalsIgnoreCase(Message.TYPE_REPORT_TARIK)) {
+                    btnForwardRounded.setVisibility(View.GONE);
+                    btnForward.setVisibility(View.VISIBLE);
+                    garis6.setVisibility(View.VISIBLE);
+                    btnRecall.setVisibility(View.VISIBLE);
+                }
+
+                btnDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+
+                        String delMessage = "Delete message '"
+                                + Message.parsedMessageBody(msg, 10, getApplicationContext()) + "'?";
+
+                        final Dialog dialogConfirmation;
+                        dialogConfirmation = DialogUtil.customDialogConversationConfirmation(aa);
+                        dialogConfirmation.show();
+
+                        TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
+                        TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
+                        txtConfirmation.setText("Confirmation");
+                        descConfirmation.setVisibility(View.VISIBLE);
+                        descConfirmation.setText(delMessage);
+
+                        Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
+                        Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+
+                        btnNo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogConfirmation.dismiss();
+                            }
+                        });
+
+                        btnYes.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                deleteMessage(msg, position);
+                                dialogConfirmation.dismiss();
+                            }
+                        });
+                    }
+                });
+
+                btnCopy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        if (Build.VERSION.SDK_INT >= 11) {
+                            ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                            cm.setPrimaryClip(ClipData.newPlainText("ochat-message",
+                                    msg.getMessage()));
+                        } else {
+                            android.text.ClipboardManager cm = (android.text.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                            cm.setText(msg.getMessage());
+                        }
+                        showToast("Copied");
+                    }
+                });
+
+                btnResend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        retryMessage((Message) adapter
+                                .getItem(ctxSelected.position));
+                    }
+                });
+
+                btnForward.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(getApplicationContext(), NewSelectContactActivity.class);
+                        intent.putExtra("messageText", msg.getMessage());
+                        intent.putExtra("type", "text/plain");
+                        startActivity(intent);
+                    }
+                });
+
+                btnForwardRounded.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(getApplicationContext(), NewSelectContactActivity.class);
+                        intent.putExtra("messageText", msg.getMessage());
+                        intent.putExtra("type", "text/plain");
+                        startActivity(intent);
+                    }
+                });
+
+                btnRecall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+
+                        String recallMessage = "Are you sure you want to " + getResources().getString(R.string.menu_conversation_tarik) + " '" +
+                                Message.parsedMessageBody(msg, 10, getApplicationContext()) + "'?";
+
+                        final Dialog dialogConfirmation;
+                        dialogConfirmation = DialogUtil.customDialogConversationConfirmation(aa);
+                        dialogConfirmation.show();
+
+                        TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
+                        TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
+                        txtConfirmation.setText("Confirmation");
+                        descConfirmation.setVisibility(View.VISIBLE);
+                        descConfirmation.setText(recallMessage);
+
+                        Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
+                        Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
+
+                        btnNo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogConfirmation.dismiss();
+                            }
+                        });
+
+                        btnYes.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogConfirmation.dismiss();
+                                tarikPesan(msg);
+                            }
+                        });
+                    }
+                });
             }
-            if (msg.getSource().equalsIgnoreCase(messengerHelper.getMyContact().getJabberId()) && !msg.getType().equalsIgnoreCase(Message.TYPE_REPORT_TARIK)) {
-                btnForwardRounded.setVisibility(View.GONE);
-                btnForward.setVisibility(View.VISIBLE);
-                garis6.setVisibility(View.VISIBLE);
-                btnRecall.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
+    }
+
+    private void showToast(String message) {
+        try {
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
+    }
+
+    public void deleteMessage(Message msg, int position) {
+        try {
+            messengerHelper.deleteData(msg);
+            conversations.remove(msg);
+            adapter.add(conversations);
+            adapter.notifyDataSetChanged();
+            scrollListConversationTo(position);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        try {
+            itemContextSelected = (AdapterContextMenuInfo) item.getMenuInfo();
+            Message msg;
+            final int position;
+            if (listConversation.getHeaderViewsCount() > 0) {
+                position = itemContextSelected.position - 1;
+                msg = (Message) conversations.get(itemContextSelected.position - 1);
+            } else {
+                position = itemContextSelected.position;
+                msg = (Message) adapter.getItem(itemContextSelected.position);
             }
 
-            btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
+            switch (item.getItemId()) {
+                case R.id.menu_conversation_share:
+                    File f = new File(msg.getMessage());
+                    if (f.exists()) {
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+
+                        String title = "Share";
+                        if (Message.TYPE_IMAGE.equals(msg.getType())) {
+                            sendIntent.setType("image/*");
+                            title += " Image";
+                        } else if (Message.TYPE_VIDEO.equals(msg.getType())) {
+                            sendIntent.setType("video/*");
+                            title += " Video";
+                        }
+                        startActivity(Intent.createChooser(sendIntent, title));
+                    }
+                    return true;
+
+                case R.id.menu_conversation_delete:
 
                     String delMessage = "Delete message '"
                             + Message.parsedMessageBody(msg, 10, getApplicationContext()) + "'?";
+                    AlertDialog.Builder builder = DialogUtil.generateAlertDialog(this,
+                            "Confirm Delete", delMessage);
+                    final Message finalMsg = msg;
+                    builder.setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    deleteMessage(finalMsg, position);
+                                }
+                            });
+                    builder.setNegativeButton("No", null);
+                    builder.show();
+                    return true;
+                case R.id.menu_conversation_copy:
 
-                    final Dialog dialogConfirmation;
-                    dialogConfirmation = DialogUtil.customDialogConversationConfirmation(aa);
-                    dialogConfirmation.show();
-
-                    TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
-                    TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
-                    txtConfirmation.setText("Confirmation");
-                    descConfirmation.setVisibility(View.VISIBLE);
-                    descConfirmation.setText(delMessage);
-
-                    Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
-                    Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
-
-                    btnNo.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialogConfirmation.dismiss();
-                        }
-                    });
-
-                    btnYes.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            deleteMessage(msg, position);
-                            dialogConfirmation.dismiss();
-                        }
-                    });
-                }
-            });
-
-            btnCopy.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
                     if (Build.VERSION.SDK_INT >= 11) {
                         ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                         cm.setPrimaryClip(ClipData.newPlainText("ochat-message",
@@ -1889,193 +2128,47 @@ public class ConversationActivity extends AppCompatActivity implements
                         cm.setText(msg.getMessage());
                     }
                     showToast("Copied");
-                }
-            });
+                    return true;
 
-            btnResend.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
+                case R.id.menu_failed_retry:
                     retryMessage((Message) adapter
-                            .getItem(ctxSelected.position));
-                }
-            });
-
-            btnForward.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    Intent intent = new Intent(getApplicationContext(), NewSelectContactActivity.class);
-                    intent.putExtra("messageText", msg.getMessage());
-                    intent.putExtra("type", "text/plain");
-                    startActivity(intent);
-                }
-            });
-
-            btnForwardRounded.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    Intent intent = new Intent(getApplicationContext(), NewSelectContactActivity.class);
-                    intent.putExtra("messageText", msg.getMessage());
-                    intent.putExtra("type", "text/plain");
-                    startActivity(intent);
-                }
-            });
-
-            btnRecall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-
-                    String recallMessage = "Are you sure you want to " + getResources().getString(R.string.menu_conversation_tarik) + " '" +
-                            Message.parsedMessageBody(msg, 10, getApplicationContext()) + "'?";
-
-                    final Dialog dialogConfirmation;
-                    dialogConfirmation = DialogUtil.customDialogConversationConfirmation(aa);
-                    dialogConfirmation.show();
-
-                    TextView txtConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationTxt);
-                    TextView descConfirmation = (TextView) dialogConfirmation.findViewById(R.id.confirmationDesc);
-                    txtConfirmation.setText("Confirmation");
-                    descConfirmation.setVisibility(View.VISIBLE);
-                    descConfirmation.setText(recallMessage);
-
-                    Button btnNo = (Button) dialogConfirmation.findViewById(R.id.btnNo);
-                    Button btnYes = (Button) dialogConfirmation.findViewById(R.id.btnYes);
-
-                    btnNo.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialogConfirmation.dismiss();
-                        }
-                    });
-
-                    btnYes.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialogConfirmation.dismiss();
-                            tarikPesan(msg);
-                        }
-                    });
-                }
-            });
-        }
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public void deleteMessage(Message msg, int position) {
-        messengerHelper.deleteData(msg);
-        conversations.remove(msg);
-        adapter.add(conversations);
-        adapter.notifyDataSetChanged();
-        scrollListConversationTo(position);
-    }
-
-
-    @SuppressLint("NewApi")
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        itemContextSelected = (AdapterContextMenuInfo) item.getMenuInfo();
-        Message msg;
-        final int position;
-        if (listConversation.getHeaderViewsCount() > 0) {
-            position = itemContextSelected.position - 1;
-            msg = (Message) conversations.get(itemContextSelected.position - 1);
-        } else {
-            position = itemContextSelected.position;
-            msg = (Message) adapter.getItem(itemContextSelected.position);
-        }
-
-        switch (item.getItemId()) {
-            case R.id.menu_conversation_share:
-                File f = new File(msg.getMessage());
-                if (f.exists()) {
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
-
-                    String title = "Share";
-                    if (Message.TYPE_IMAGE.equals(msg.getType())) {
-                        sendIntent.setType("image/*");
-                        title += " Image";
-                    } else if (Message.TYPE_VIDEO.equals(msg.getType())) {
-                        sendIntent.setType("video/*");
-                        title += " Video";
-                    }
-                    startActivity(Intent.createChooser(sendIntent, title));
-                }
-                return true;
-
-            case R.id.menu_conversation_delete:
-
-                String delMessage = "Delete message '"
-                        + Message.parsedMessageBody(msg, 10, getApplicationContext()) + "'?";
-                AlertDialog.Builder builder = DialogUtil.generateAlertDialog(this,
-                        "Confirm Delete", delMessage);
-                final Message finalMsg = msg;
-                builder.setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                deleteMessage(finalMsg, position);
-                            }
-                        });
-                builder.setNegativeButton("No", null);
-                builder.show();
-                return true;
-            case R.id.menu_conversation_copy:
-
-                if (Build.VERSION.SDK_INT >= 11) {
-                    ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    cm.setPrimaryClip(ClipData.newPlainText("ochat-message",
-                            msg.getMessage()));
-                } else {
-                    android.text.ClipboardManager cm = (android.text.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    cm.setText(msg.getMessage());
-                }
-                showToast("Copied");
-                return true;
-
-            case R.id.menu_failed_retry:
-                retryMessage((Message) adapter
-                        .getItem(itemContextSelected.position));
-                return true;
-            case R.id.menu_conversation_resend:
+                            .getItem(itemContextSelected.position));
+                    return true;
+                case R.id.menu_conversation_resend:
               /*  retryMessage((Message) adapter
                         .getItem(itemContextSelected.position));*/
-                showToast("Resend");
-                sendMessage(msg.getMessage());
-                return true;
-            case R.id.menu_conversation_forwad:
-                Intent intent = new Intent(getApplicationContext(), NewSelectContactActivity.class);
-                intent.putExtra("messageText", msg.getMessage());
-                intent.putExtra("type", "text/plain");
-                startActivity(intent);
-                return true;
-            case R.id.menu_conversation_tarik:
+                    showToast("Resend");
+                    sendMessage(msg.getMessage());
+                    return true;
+                case R.id.menu_conversation_forwad:
+                    Intent intent = new Intent(getApplicationContext(), NewSelectContactActivity.class);
+                    intent.putExtra("messageText", msg.getMessage());
+                    intent.putExtra("type", "text/plain");
+                    startActivity(intent);
+                    return true;
+                case R.id.menu_conversation_tarik:
 
-                String recallMessage = "Are you sure you want to  " + getResources().getString(R.string.menu_conversation_tarik) + " '" +
-                        Message.parsedMessageBody(msg, 10, getApplicationContext()) + "'?";
-                AlertDialog.Builder builderRecall = DialogUtil.generateAlertDialog(this,
-                        "Confirm Recall Message", recallMessage);
-                final Message finalMsgRecall = msg;
-                builderRecall.setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                tarikPesan(finalMsgRecall);
-                            }
-                        });
-                builderRecall.setNegativeButton("No", null);
-                builderRecall.show();
-                return true;
+                    String recallMessage = "Are you sure you want to  " + getResources().getString(R.string.menu_conversation_tarik) + " '" +
+                            Message.parsedMessageBody(msg, 10, getApplicationContext()) + "'?";
+                    AlertDialog.Builder builderRecall = DialogUtil.generateAlertDialog(this,
+                            "Confirm Recall Message", recallMessage);
+                    final Message finalMsgRecall = msg;
+                    builderRecall.setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    tarikPesan(finalMsgRecall);
+                                }
+                            });
+                    builderRecall.setNegativeButton("No", null);
+                    builderRecall.show();
+                    return true;
+            }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        return super.onContextItemSelected(item);
 
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -2092,8 +2185,8 @@ public class ConversationActivity extends AppCompatActivity implements
                 }
             }
         } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
     }
 
     @Override
@@ -2103,217 +2196,222 @@ public class ConversationActivity extends AppCompatActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == REQ_CREATE_CONTACT) {
-                String[] projection = new String[]{
-                        Contacts.LOOKUP_KEY,
-                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.NUMBER};
-                String dt[] = data.getData().toString().split("/");
-                Cursor cursor = getContentResolver().query(
-                        MainActivity.CONTACT_URI, projection,
-                        Contacts.LOOKUP_KEY + "=?",
-                        new String[]{dt[(dt.length - 2)]}, null);
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            if (resultCode == RESULT_OK) {
+                if (requestCode == REQ_CREATE_CONTACT) {
+                    String[] projection = new String[]{
+                            Contacts.LOOKUP_KEY,
+                            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                            ContactsContract.CommonDataKinds.Phone.NUMBER};
+                    String dt[] = data.getData().toString().split("/");
+                    Cursor cursor = getContentResolver().query(
+                            MainActivity.CONTACT_URI, projection,
+                            Contacts.LOOKUP_KEY + "=?",
+                            new String[]{dt[(dt.length - 2)]}, null);
 
-                if (cursor.moveToNext()) {
-                    String id = cursor.getString(cursor
-                            .getColumnIndex(projection[0]));
-                    String name = cursor.getString(cursor
-                            .getColumnIndex(projection[1]));
-                    String mnumber = cursor
-                            .getString(cursor.getColumnIndex(projection[2]))
-                            .replace(" ", "").replace("-", "");
+                    if (cursor.moveToNext()) {
+                        String id = cursor.getString(cursor
+                                .getColumnIndex(projection[0]));
+                        String name = cursor.getString(cursor
+                                .getColumnIndex(projection[1]));
+                        String mnumber = cursor
+                                .getString(cursor.getColumnIndex(projection[2]))
+                                .replace(" ", "").replace("-", "");
 
-                    if (mnumber.startsWith("0")) {
-                        mnumber = mnumber.replaceFirst("0", "62");
-                    } else if (mnumber.startsWith("+")) {
-                        mnumber = mnumber.replaceFirst("\\+", "");
-                    }
+                        if (mnumber.startsWith("0")) {
+                            mnumber = mnumber.replaceFirst("0", "62");
+                        } else if (mnumber.startsWith("+")) {
+                            mnumber = mnumber.replaceFirst("\\+", "");
+                        }
 
-                    if (destination.getJabberId().equals(mnumber)
-                            && !"".equals(name)) {
-                        destination = new Contact(name, mnumber, "");
-                        Contact c = (Contact) destination;
-                        c.setAddrbookId(id);
-                        if (binder.isConnected()) {
-                            try {
-                                binder.addNewContact(c);
-                                setBarTitleAndImage(c);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        listConversation.removeHeaderView(header);
+                        if (destination.getJabberId().equals(mnumber)
+                                && !"".equals(name)) {
+                            destination = new Contact(name, mnumber, "");
+                            Contact c = (Contact) destination;
+                            c.setAddrbookId(id);
+                            if (binder.isConnected()) {
+                                try {
+                                    binder.addNewContact(c);
+                                    setBarTitleAndImage(c);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            listConversation.removeHeaderView(header);
 
-                                    }
-                                });
+                                        }
+                                    });
 
-                            } catch (Exception e) {
+                                } catch (Exception e) {
                               /*  Log.e(getClass().getSimpleName(),
                                         "Failed adding contact for jabberID: "
                                                 + destination.getJabberId(), e);*/
+                                }
                             }
                         }
+
                     }
+                } else if (requestCode == REQ_CODE_SPEECH_INPUT) {
+                    if (resultCode == RESULT_OK && null != data) {
 
-                }
-            } else if (requestCode == REQ_CODE_SPEECH_INPUT) {
-                if (resultCode == RESULT_OK && null != data) {
-
-                    ArrayList<String> result = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    String text = result.get(0);
-                    if (textMessage.getText().length() > 0)
-                        text = textMessage.getText().toString() + " " + result.get(0);
-                    textMessage.setText(text);
-                    textMessage.setSelection(textMessage.getText().length());
-                }
-            } else if (requestCode == REQ_CAMERA) {
-                if (decodeFile(cameraFileOutput)) {
-                    Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
-                    String jabberId = destination.getJabberId();
-                    intent.putExtra("file", cameraFileOutput);
-                    if (destination != null) {
-                        jabberId = destination.getJabberId();
-                        if (destination instanceof Group) {
-                            Group g = (Group) destination;
-                            intent.putExtra(ConversationActivity.KEY_TITLE, g.getName());
-                            intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
-                                    ConversationActivity.CONVERSATION_TYPE_GROUP);
+                        ArrayList<String> result = data
+                                .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                        String text = result.get(0);
+                        if (textMessage.getText().length() > 0)
+                            text = textMessage.getText().toString() + " " + result.get(0);
+                        textMessage.setText(text);
+                        textMessage.setSelection(textMessage.getText().length());
+                    }
+                } else if (requestCode == REQ_CAMERA) {
+                    if (decodeFile(cameraFileOutput)) {
+                        Intent intent = new Intent(getApplicationContext(), ConfirmationSendFile.class);
+                        String jabberId = destination.getJabberId();
+                        intent.putExtra("file", cameraFileOutput);
+                        if (destination != null) {
+                            jabberId = destination.getJabberId();
+                            if (destination instanceof Group) {
+                                Group g = (Group) destination;
+                                intent.putExtra(ConversationActivity.KEY_TITLE, g.getName());
+                                intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
+                                        ConversationActivity.CONVERSATION_TYPE_GROUP);
+                            }
                         }
+                        intent.putExtra("name", jabberId);
+                        intent.putExtra("type", Message.TYPE_IMAGE);
+                        startActivity(intent);
+
                     }
-                    intent.putExtra("name", jabberId);
-                    intent.putExtra("type", Message.TYPE_IMAGE);
-                    startActivity(intent);
 
-                }
-
-            } else if
-            (requestCode == REQ_MEME) {
-                if (decodeFile(cameraFileOutput)) {
-                    Intent intent = new Intent(getApplicationContext(), PhotoSortrActivity.class);
-                    String jabberId = destination.getJabberId();
-                    intent.putExtra("file", cameraFileOutput);
-                    if (destination != null) {
-                        jabberId = destination.getJabberId();
-                        if (destination instanceof Group) {
-                            Group g = (Group) destination;
-                            intent.putExtra(ConversationActivity.KEY_TITLE, g.getName());
-                            intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
-                                    ConversationActivity.CONVERSATION_TYPE_GROUP);
+                } else if
+                (requestCode == REQ_MEME) {
+                    if (decodeFile(cameraFileOutput)) {
+                        Intent intent = new Intent(getApplicationContext(), PhotoSortrActivity.class);
+                        String jabberId = destination.getJabberId();
+                        intent.putExtra("file", cameraFileOutput);
+                        if (destination != null) {
+                            jabberId = destination.getJabberId();
+                            if (destination instanceof Group) {
+                                Group g = (Group) destination;
+                                intent.putExtra(ConversationActivity.KEY_TITLE, g.getName());
+                                intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
+                                        ConversationActivity.CONVERSATION_TYPE_GROUP);
+                            }
                         }
-                    }
-                    intent.putExtra("name", jabberId);
-                    intent.putExtra("type", Message.TYPE_IMAGE);
-                    startActivity(intent);
-                }
-
-            } else if (requestCode == PLACE_PICKER_REQUEST
-                    && resultCode == Activity.RESULT_OK) {
-                final Place place = PlacePicker.getPlace(data, this);
-                final String name = place.getName() != null ? (String) place.getName() : " ";
-                final String address = place.getAddress() != null ? (String) place.getAddress() : " ";
-                final String web = String.valueOf(place.getWebsiteUri() != null ? place.getWebsiteUri() : " ");
-                new CountDownTimer(300, 1000) {
-
-                    public void onTick(long millisUntilFinished) {
+                        intent.putExtra("name", jabberId);
+                        intent.putExtra("type", Message.TYPE_IMAGE);
+                        startActivity(intent);
                     }
 
-                    public void onFinish() {
-                        sendLocation(place.getLatLng().latitude + ";" + place.getLatLng().longitude + ";" + name + ";" + address + ";" + web);
+                } else if (requestCode == PLACE_PICKER_REQUEST
+                        && resultCode == Activity.RESULT_OK) {
+                    final Place place = PlacePicker.getPlace(data, this);
+                    final String name = place.getName() != null ? (String) place.getName() : " ";
+                    final String address = place.getAddress() != null ? (String) place.getAddress() : " ";
+                    final String web = String.valueOf(place.getWebsiteUri() != null ? place.getWebsiteUri() : " ");
+                    new CountDownTimer(300, 1000) {
 
+                        public void onTick(long millisUntilFinished) {
+                        }
+
+                        public void onFinish() {
+                            sendLocation(place.getLatLng().latitude + ";" + place.getLatLng().longitude + ";" + name + ";" + address + ";" + web);
+
+                        }
+                    }.start();
+
+                } else if (requestCode == REQUEST_CODE_PICKER && resultCode == RESULT_OK && data != null) {
+                    images = data.getParcelableArrayListExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES);
+                    StringBuilder sb = new StringBuilder();
+                    JSONArray jsonArray = new JSONArray();
+                    for (int i = 0, l = images.size(); i < l; i++) {
+                        sb.append(images.get(i).getPath() + "\n");
+                        jsonArray.put(images.get(i).getPath());
                     }
-                }.start();
 
-            } else if (requestCode == REQUEST_CODE_PICKER && resultCode == RESULT_OK && data != null) {
-                images = data.getParcelableArrayListExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES);
-                StringBuilder sb = new StringBuilder();
-                JSONArray jsonArray = new JSONArray();
-                for (int i = 0, l = images.size(); i < l; i++) {
-                    sb.append(images.get(i).getPath() + "\n");
-                    jsonArray.put(images.get(i).getPath());
-                }
+                    Intent i = new Intent(getApplicationContext(), ConfirmationSendFileMultiple.class);
+                    i.putParcelableArrayListExtra("selected", images);
+                    i.putExtra("file", jsonArray.toString());
 
-                Intent i = new Intent(getApplicationContext(), ConfirmationSendFileMultiple.class);
-                i.putParcelableArrayListExtra("selected", images);
-                i.putExtra("file", jsonArray.toString());
-
-                String jabberId = destination.getJabberId();
-                if (destination != null) {
-                    jabberId = destination.getJabberId();
-                    if (destination instanceof Group) {
-                        Group g = (Group) destination;
-                        i.putExtra(ConversationActivity.KEY_TITLE, g.getName());
-                        i.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
-                                ConversationActivity.CONVERSATION_TYPE_GROUP);
-                    }
-                }
-                i.putExtra("name", jabberId);
-                i.putExtra("type", Message.TYPE_IMAGE);
-                startActivity(i);
-            } else {
-                Uri selectedUri = data.getData();
-                String selectedImagePath = ImageFilePath.getPath(getApplicationContext(), selectedUri);
-                File fileOutput = new File(selectedImagePath);
-                if (requestCode == REQ_VIDEO) {
-                    Intent intent = new Intent(getApplicationContext(), ConfirmationSendFileVideo.class);
-                    intent.putExtra("file", fileOutput.getAbsolutePath());
                     String jabberId = destination.getJabberId();
                     if (destination != null) {
                         jabberId = destination.getJabberId();
                         if (destination instanceof Group) {
                             Group g = (Group) destination;
-                            intent.putExtra(ConversationActivity.KEY_TITLE, g.getName());
-                            intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
+                            i.putExtra(ConversationActivity.KEY_TITLE, g.getName());
+                            i.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
                                     ConversationActivity.CONVERSATION_TYPE_GROUP);
                         }
                     }
-                    intent.putExtra("name", jabberId);
-                    intent.putExtra("type", Message.TYPE_VIDEO);
-                    startActivity(intent);
+                    i.putExtra("name", jabberId);
+                    i.putExtra("type", Message.TYPE_IMAGE);
+                    startActivity(i);
+                } else {
+                    Uri selectedUri = data.getData();
+                    String selectedImagePath = ImageFilePath.getPath(getApplicationContext(), selectedUri);
+                    File fileOutput = new File(selectedImagePath);
+                    if (requestCode == REQ_VIDEO) {
+                        Intent intent = new Intent(getApplicationContext(), ConfirmationSendFileVideo.class);
+                        intent.putExtra("file", fileOutput.getAbsolutePath());
+                        String jabberId = destination.getJabberId();
+                        if (destination != null) {
+                            jabberId = destination.getJabberId();
+                            if (destination instanceof Group) {
+                                Group g = (Group) destination;
+                                intent.putExtra(ConversationActivity.KEY_TITLE, g.getName());
+                                intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
+                                        ConversationActivity.CONVERSATION_TYPE_GROUP);
+                            }
+                        }
+                        intent.putExtra("name", jabberId);
+                        intent.putExtra("type", Message.TYPE_VIDEO);
+                        startActivity(intent);
 
-                } else if (requestCode == REQ_GALLERY
-                        || requestCode == REQ_GALLERY_VIDEO || requestCode == REQ_GALLERY_MEME) {
-                    Intent intent = new Intent(getApplicationContext(), ConfirmationSendFileVideo.class);
+                    } else if (requestCode == REQ_GALLERY
+                            || requestCode == REQ_GALLERY_VIDEO || requestCode == REQ_GALLERY_MEME) {
+                        Intent intent = new Intent(getApplicationContext(), ConfirmationSendFileVideo.class);
 
-                    String type = Message.TYPE_VIDEO;
-                    if (requestCode == REQ_GALLERY) {
-                        type = Message.TYPE_IMAGE;
-                        if (fileOutput.length() > 1000000L) {
+                        String type = Message.TYPE_VIDEO;
+                        if (requestCode == REQ_GALLERY) {
+                            type = Message.TYPE_IMAGE;
+                            if (fileOutput.length() > 1000000L) {
                           /*  File f = resizeImage(fileOutput, true);
                             fileOutput = f;*/
+                            }
+                        } else if (requestCode == REQ_GALLERY_MEME) {
+                            intent = new Intent(getApplicationContext(), PhotoSortrActivity.class);
+                            type = Message.TYPE_IMAGE;
                         }
-                    } else if (requestCode == REQ_GALLERY_MEME) {
-                        intent = new Intent(getApplicationContext(), PhotoSortrActivity.class);
-                        type = Message.TYPE_IMAGE;
-                    }
 
 
-                    intent.putExtra("file", fileOutput.getAbsolutePath());
-                    String jabberId = destination.getJabberId();
-                    if (destination != null) {
-                        jabberId = destination.getJabberId();
-                        if (destination instanceof Group) {
-                            Group g = (Group) destination;
-                            intent.putExtra(ConversationActivity.KEY_TITLE, g.getName());
-                            intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
-                                    ConversationActivity.CONVERSATION_TYPE_GROUP);
+                        intent.putExtra("file", fileOutput.getAbsolutePath());
+                        String jabberId = destination.getJabberId();
+                        if (destination != null) {
+                            jabberId = destination.getJabberId();
+                            if (destination instanceof Group) {
+                                Group g = (Group) destination;
+                                intent.putExtra(ConversationActivity.KEY_TITLE, g.getName());
+                                intent.putExtra(ConversationActivity.KEY_CONVERSATION_TYPE,
+                                        ConversationActivity.CONVERSATION_TYPE_GROUP);
+                            }
                         }
+                        intent.putExtra("name", jabberId);
+                        intent.putExtra("type", type);
+                        startActivity(intent);
                     }
-                    intent.putExtra("name", jabberId);
-                    intent.putExtra("type", type);
+                }
+
+            } else if (resultCode == RESULT_CANCELED) {
+                if (requestCode == REQ_CREATE_CONTACT) {
+                    Intent intent;
+                    intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("from", "0");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
+                    finish();
                 }
             }
-
-        } else if (resultCode == RESULT_CANCELED) {
-            if (requestCode == REQ_CREATE_CONTACT) {
-                Intent intent;
-                intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("from", "0");
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                finish();
-            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -2400,156 +2498,162 @@ public class ConversationActivity extends AppCompatActivity implements
 
 
     private void showAttachmentDialog(int req) {
-        if (req == REQ_CAMERA) {
-            curAttItems = attCameraItems;
-        } else if (req == REQ_VIDEO) {
-            curAttItems = attVideoItems;
-        } else {
-            curAttItems = attMemeItems;
-        }
-        attCurReq = req;
-
-        AttachmentAdapter adapter = new AttachmentAdapter(this,
-                R.layout.menu_item, R.id.textMenu, curAttItems);
-
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.attachment_gridview);
-        GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
-        gridview.setAdapter(adapter);
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                String iTitle = curAttItems.get(pos).getTitle();
-                String action = Intent.ACTION_GET_CONTENT;
-                int req;
-                Intent i;
-                if (R.drawable.ic_att_video == curAttItems.get(0)
-                        .getResourceIcon()) {
-                    i = new Intent();
-                    if (MENU_GALLERY_TITLE.equals(iTitle)) {
-                        req = REQ_GALLERY_VIDEO;
-                        i.setType("video/*");
-                        i.setAction(action);
-                        startActivityForResult(i, req);
-                        dialog.dismiss();
-                        attCurReq = 0;
-                    } else {
-                        action = MediaStore.ACTION_VIDEO_CAPTURE;
-                        req = REQ_VIDEO;
-                        i.setAction(action);
-                        startActivityForResult(i, req);
-                        dialog.dismiss();
-                        attCurReq = 0;
-                    }
-                } else if (curAttItems.get(0).getTitle() == "Camera Meme") {
-                    i = new Intent();
-                    if (MENU_GALLERY_TITLE.equals(iTitle)) {
-                        req = REQ_GALLERY_MEME;
-                        i.setType("image/*");
-                        i.setAction(action);
-                        startActivityForResult(i, req);
-                        dialog.dismiss();
-                        attCurReq = 0;
-                    } else {
-                        action = MediaStore.ACTION_IMAGE_CAPTURE;
-                        File f = MediaProcessingUtil
-                                .getOutputFile("jpeg");
-                        cameraFileOutput = f.getAbsolutePath();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            i.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", f));
-                            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        } else {
-                            i.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    Uri.fromFile(f));
-                        }
-                        req = REQ_MEME;
-                        i.setAction(action);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                            StrictMode.setVmPolicy(builder.build());
-                        }
-                        startActivityForResult(i, req);
-                        dialog.dismiss();
-                        attCurReq = 0;
-                    }
-
-                } else {
-                    i = new Intent();
-                    if (MENU_GALLERY_TITLE.equals(iTitle)) {
-                        if (Build.VERSION.SDK_INT < 19) {
-                            i = new Intent();
-                            i.setAction(Intent.ACTION_GET_CONTENT);
-                            i.setType("image/*");
-                        } else {
-                            i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                            i.addCategory(Intent.CATEGORY_OPENABLE);
-                            i.setType("image/*");
-                        }
-                        req = REQ_GALLERY;
-
-                        Contact c = (Contact) destination;
-                        start(c.getJabberId());
-                    } else {
-                        action = MediaStore.ACTION_IMAGE_CAPTURE;
-                        File f = MediaProcessingUtil
-                                .getOutputFile("jpeg");
-                        cameraFileOutput = f.getAbsolutePath();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            i.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", f));
-                            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        } else {
-                            i.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    Uri.fromFile(f));
-                        }
-                        req = REQ_CAMERA;
-                        i.setAction(action);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-                            StrictMode.setVmPolicy(builder.build());
-                        }
-                        startActivityForResult(i, req);
-                        dialog.dismiss();
-                        attCurReq = 0;
-                    }
-                }
-
+        try {
+            if (req == REQ_CAMERA) {
+                curAttItems = attCameraItems;
+            } else if (req == REQ_VIDEO) {
+                curAttItems = attVideoItems;
+            } else {
+                curAttItems = attMemeItems;
             }
-        });
-        dialog.show();
+            attCurReq = req;
+
+            AttachmentAdapter adapter = new AttachmentAdapter(this,
+                    R.layout.menu_item, R.id.textMenu, curAttItems);
+
+            final Dialog dialog = new Dialog(this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.attachment_gridview);
+            GridView gridview = (GridView) dialog.findViewById(R.id.gridview);
+            gridview.setAdapter(adapter);
+            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                    String iTitle = curAttItems.get(pos).getTitle();
+                    String action = Intent.ACTION_GET_CONTENT;
+                    int req;
+                    Intent i;
+                    if (R.drawable.ic_att_video == curAttItems.get(0)
+                            .getResourceIcon()) {
+                        i = new Intent();
+                        if (MENU_GALLERY_TITLE.equals(iTitle)) {
+                            req = REQ_GALLERY_VIDEO;
+                            i.setType("video/*");
+                            i.setAction(action);
+                            startActivityForResult(i, req);
+                            dialog.dismiss();
+                            attCurReq = 0;
+                        } else {
+                            action = MediaStore.ACTION_VIDEO_CAPTURE;
+                            req = REQ_VIDEO;
+                            i.setAction(action);
+                            startActivityForResult(i, req);
+                            dialog.dismiss();
+                            attCurReq = 0;
+                        }
+                    } else if (curAttItems.get(0).getTitle() == "Camera Meme") {
+                        i = new Intent();
+                        if (MENU_GALLERY_TITLE.equals(iTitle)) {
+                            req = REQ_GALLERY_MEME;
+                            i.setType("image/*");
+                            i.setAction(action);
+                            startActivityForResult(i, req);
+                            dialog.dismiss();
+                            attCurReq = 0;
+                        } else {
+                            action = MediaStore.ACTION_IMAGE_CAPTURE;
+                            File f = MediaProcessingUtil
+                                    .getOutputFile("jpeg");
+                            cameraFileOutput = f.getAbsolutePath();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                i.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", f));
+                                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            } else {
+                                i.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        Uri.fromFile(f));
+                            }
+                            req = REQ_MEME;
+                            i.setAction(action);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                                StrictMode.setVmPolicy(builder.build());
+                            }
+                            startActivityForResult(i, req);
+                            dialog.dismiss();
+                            attCurReq = 0;
+                        }
+
+                    } else {
+                        i = new Intent();
+                        if (MENU_GALLERY_TITLE.equals(iTitle)) {
+                            if (Build.VERSION.SDK_INT < 19) {
+                                i = new Intent();
+                                i.setAction(Intent.ACTION_GET_CONTENT);
+                                i.setType("image/*");
+                            } else {
+                                i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                                i.addCategory(Intent.CATEGORY_OPENABLE);
+                                i.setType("image/*");
+                            }
+                            req = REQ_GALLERY;
+
+                            Contact c = (Contact) destination;
+                            start(c.getJabberId());
+                        } else {
+                            action = MediaStore.ACTION_IMAGE_CAPTURE;
+                            File f = MediaProcessingUtil
+                                    .getOutputFile("jpeg");
+                            cameraFileOutput = f.getAbsolutePath();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                i.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        FileProvider.getUriForFile(getApplicationContext(), getPackageName() + ".provider", f));
+                                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            } else {
+                                i.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        Uri.fromFile(f));
+                            }
+                            req = REQ_CAMERA;
+                            i.setAction(action);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                                StrictMode.setVmPolicy(builder.build());
+                            }
+                            startActivityForResult(i, req);
+                            dialog.dismiss();
+                            attCurReq = 0;
+                        }
+                    }
+
+                }
+            });
+            dialog.show();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     private void requestLocationInfo() {
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{
-                                Manifest.permission.ACCESS_FINE_LOCATION},
-                        100);
-            }
-        } else {
-            gps = new GPSTracker(ConversationActivity.this);
-            LocationManager locManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-            if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                try {
-                    PlacePicker.IntentBuilder intentBuilder =
-                            new PlacePicker.IntentBuilder();
-                    Intent intent = intentBuilder.build(this);
-                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
-
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
+        try {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{
+                                    Manifest.permission.ACCESS_FINE_LOCATION},
+                            100);
                 }
             } else {
-                gps.showSettingsAlert();
+                gps = new GPSTracker(ConversationActivity.this);
+                LocationManager locManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+                if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    try {
+                        PlacePicker.IntentBuilder intentBuilder =
+                                new PlacePicker.IntentBuilder();
+                        Intent intent = intentBuilder.build(this);
+                        startActivityForResult(intent, PLACE_PICKER_REQUEST);
+
+                    } catch (GooglePlayServicesRepairableException e) {
+                        e.printStackTrace();
+                    } catch (GooglePlayServicesNotAvailableException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    gps.showSettingsAlert();
+                }
             }
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-
     }
 
     @Override
@@ -2579,51 +2683,55 @@ public class ConversationActivity extends AppCompatActivity implements
         @Override
         public void onClick(View v) {
             showAttc(false);
-            if (v.equals(btnAttachmentMapMarker)) {
-                requestLocationInfo();
-            } else if (v.equals(btnAttachmentCamera)
-                    || v.equals(btnAttachmentVideo)) {
-                if (v.equals(btnAttachmentCamera)) {
-                    showAttachmentDialog(REQ_CAMERA);
-                } else {
-                    showAttachmentDialog(REQ_VIDEO);
-                }
-            } else if (v.equals(btnAttachmentMeme)) {
-                showAttachmentDialog(REQ_MEME);
-            } else if (v.equals(btn_add_emoticon)) {
-                if (emojicons.getVisibility() == View.GONE) {
-                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            try {
+                if (v.equals(btnAttachmentMapMarker)) {
+                    requestLocationInfo();
+                } else if (v.equals(btnAttachmentCamera)
+                        || v.equals(btnAttachmentVideo)) {
+                    if (v.equals(btnAttachmentCamera)) {
+                        showAttachmentDialog(REQ_CAMERA);
+                    } else {
+                        showAttachmentDialog(REQ_VIDEO);
+                    }
+                } else if (v.equals(btnAttachmentMeme)) {
+                    showAttachmentDialog(REQ_MEME);
+                } else if (v.equals(btn_add_emoticon)) {
+                    if (emojicons.getVisibility() == View.GONE) {
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
-                    Animation animFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_bottom);
-                    emojicons.setVisibility(View.VISIBLE);
-                    emojicons.startAnimation(animFade);
+                        Animation animFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_bottom);
+                        emojicons.setVisibility(View.VISIBLE);
+                        emojicons.startAnimation(animFade);
 
-                    textMessage.setFocusable(false);
-                } else {
-                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                    textMessage.setFocusableInTouchMode(true);
-                    textMessage.requestFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(textMessage, InputMethodManager.SHOW_IMPLICIT);
-                    emojicons.setVisibility(View.GONE);
-                }
-            } else if (v.equals(btnSend)) {
-                Editable msg = textMessage.getText();
-                if (msg.length() > 0) {
-                    if (!msg.equals("")) {
-                        if (msg.toString().trim().length() > 0) {
-                            if (textMessage.getText().toString().contains("\n") == true) {
-                                String emsg = Html.toHtml(msg);
-                                sendMessage(emsg);
-                            } else {
-                                sendMessage(textMessage.getText().toString());
+                        textMessage.setFocusable(false);
+                    } else {
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                        textMessage.setFocusableInTouchMode(true);
+                        textMessage.requestFocus();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(textMessage, InputMethodManager.SHOW_IMPLICIT);
+                        emojicons.setVisibility(View.GONE);
+                    }
+                } else if (v.equals(btnSend)) {
+                    Editable msg = textMessage.getText();
+                    if (msg.length() > 0) {
+                        if (!msg.equals("")) {
+                            if (msg.toString().trim().length() > 0) {
+                                if (textMessage.getText().toString().contains("\n") == true) {
+                                    String emsg = Html.toHtml(msg);
+                                    sendMessage(emsg);
+                                } else {
+                                    sendMessage(textMessage.getText().toString());
+                                }
+                                textMessage.setText("");
                             }
-                            textMessage.setText("");
                         }
                     }
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
@@ -2633,57 +2741,58 @@ public class ConversationActivity extends AppCompatActivity implements
     class BroadcastHandler extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (MessengerConnectionService.ACTION_MESSAGE_RECEIVED
-                    .equals(intent.getAction())) {
+            try {
+                if (MessengerConnectionService.ACTION_MESSAGE_RECEIVED
+                        .equals(intent.getAction())) {
 
-                Message vo = intent
-                        .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if (destination.getJabberId().equals(vo.getSource())) {
-                    updateConversation(vo);
+                    Message vo = intent
+                            .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+                    if (destination.getJabberId().equals(vo.getSource())) {
+                        updateConversation(vo);
 
-                    AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-                    int volume_levelq = am.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+                        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                        int volume_levelq = am.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
 
-                    MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.song1);
-                    mediaPlayer.setVolume(volume_levelq, volume_levelq);
-                    mediaPlayer.start();
+                        MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.song1);
+                        mediaPlayer.setVolume(volume_levelq, volume_levelq);
+                        mediaPlayer.start();
 
-                    if (Message.TYPE_INFO.equals(vo.getType())) {
-                        destination = messengerHelper.getGroup(destination
-                                .getJabberId());
-                        setBarTitle(destination.getName(), true);
-                        Group g = messengerHelper.getGroup(vo.getSource());
-                        if (Group.STATUS_INACTIVE.equals(g.getStatus())) {
-                            btnSend.setEnabled(false);
-                        } else {
-                            btnSend.setEnabled(true);
+                        if (Message.TYPE_INFO.equals(vo.getType())) {
+                            destination = messengerHelper.getGroup(destination
+                                    .getJabberId());
+                            setBarTitle(destination.getName(), true);
+                            Group g = messengerHelper.getGroup(vo.getSource());
+                            if (Group.STATUS_INACTIVE.equals(g.getStatus())) {
+                                btnSend.setEnabled(false);
+                            } else {
+                                btnSend.setEnabled(true);
+                            }
+                        }
+
+                        if (vo.getMessage().equalsIgnoreCase("bc://1_340113808admin;Work Schedule") || vo.getMessage().equalsIgnoreCase("bc://u_341114250arlandi;Work Schedule")) {
+                            finish();
+                            intent = new Intent(getApplicationContext(), ConversationActivity.class);
+                            intent.putExtra(ConversationActivity.KEY_JABBER_ID, destination.getJabberId().toLowerCase());
+                            startActivity(intent);
+                        }
+                        abortBroadcast();
+                    }
+                } else if (MessengerConnectionService.ACTION_MESSAGE_DELIVERED
+                        .equals(intent.getAction())) {
+                    Message vo = intent
+                            .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+
+                    if (destination.getJabberId().equals(vo.getDestination())) {
+                        boolean change = true;
+                        if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                            change = false;
+                        } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
+                            change = false;
+                        }
+                        if (change) {
+                            updateConversation(vo);
                         }
                     }
-
-                    if (vo.getMessage().equalsIgnoreCase("bc://1_340113808admin;Work Schedule") || vo.getMessage().equalsIgnoreCase("bc://u_341114250arlandi;Work Schedule")) {
-                        finish();
-                        intent = new Intent(getApplicationContext(), ConversationActivity.class);
-                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, destination.getJabberId().toLowerCase());
-                        startActivity(intent);
-                    }
-                    abortBroadcast();
-                }
-            } else if (MessengerConnectionService.ACTION_MESSAGE_DELIVERED
-                    .equals(intent.getAction())) {
-                Message vo = intent
-                        .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-
-                if (destination.getJabberId().equals(vo.getDestination())) {
-                    boolean change = true;
-                    if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
-                        change = false;
-                    } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
-                        change = false;
-                    }
-                    if (change) {
-                        updateConversation(vo);
-                    }
-                }
 /*
                   //  atas dikirim jika bawah sudah dikim
                     String SQL_SELECT_MESSAGES =  "SELECT *  FROM "
@@ -2714,115 +2823,120 @@ public class ConversationActivity extends AppCompatActivity implements
                         }
                     }
                 */
-            } else if (MessengerConnectionService.ACTION_MESSAGE_FAILED
-                    .equals(intent.getAction())) {
-                Message vo = intent
-                        .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if (destination.getJabberId().equals(vo.getDestination())) {
-                    boolean change = true;
-                    if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
-                        change = false;
-                    } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
-                        change = false;
+                } else if (MessengerConnectionService.ACTION_MESSAGE_FAILED
+                        .equals(intent.getAction())) {
+                    Message vo = intent
+                            .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+                    if (destination.getJabberId().equals(vo.getDestination())) {
+                        boolean change = true;
+                        if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                            change = false;
+                        } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
+                            change = false;
+                        }
+
+                        if (change) {
+                            updateConversation(vo);
+                        }
                     }
 
-                    if (change) {
-                        updateConversation(vo);
+                } else if (MessengerConnectionService.ACTION_CHAT_OFF
+                        .equals(intent.getAction())) {
+                    Log.w("berjalan", "siap");
+
+                    startActivity(getIntent());
+                    finish();
+                } else if (MessengerConnectionService.ACTION_MESSAGE_SENT
+                        .equals(intent.getAction())) {
+                    Message vo = intent
+                            .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+                    if (destination.getJabberId().equals(vo.getDestination())) {
+                        boolean change = true;
+                        if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                            change = false;
+                        } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
+                            change = false;
+                        }
+
+                        if (change) {
+                            updateConversation(vo);
+                        }
                     }
+                } else if (MessengerConnectionService.ACTION_DISCONNECTED
+                        .equals(intent.getAction())) {
+                } else if (MessengerConnectionService.ACTION_CONNECTED
+                        .equals(intent.getAction())) {
+                } else if (UploadService.KEY_UPDATE_BAR.equals(intent.getAction())) {
+                    Message vo = intent
+                            .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+                    if (destination.getJabberId().equalsIgnoreCase(vo.getSource())) {
+                        boolean change = true;
+                        if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                            change = false;
+                        } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
+                            change = false;
+                        }
+
+                        if (change) {
+                            updateConversation(vo);
+                        }
+                    }
+
+                } else if (UploadService.KEY_UPDATE_UPLOAD_BAR.equals(intent.getAction())) {
+                    Message vo = intent
+                            .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+                    if (destination.getJabberId().equals(vo.getDestination())) {
+                        boolean change = true;
+                        if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
+                            change = false;
+                        } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
+                            change = false;
+                        }
+
+                        if (change) {
+                            updateConversation(vo);
+                        }
+                    }
+                } else if (MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY
+                        .equals(intent.getAction())) {
+                    Message vo = intent
+                            .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+                    if (vo != null) {
+                        if (destination.getJabberId().equals(vo.getSource())) {
+                            conversations.remove(vo);
+                            adapter.add(conversations);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                } else if (MessengerConnectionService.ACTION_STATUS_CHANGED.equals(intent.getAction())) {
+                    refreshProfileContact();
                 }
 
-            } else if (MessengerConnectionService.ACTION_CHAT_OFF
-                    .equals(intent.getAction())) {
-                Log.w("berjalan", "siap");
-
-                startActivity(getIntent());
-                finish();
-            } else if (MessengerConnectionService.ACTION_MESSAGE_SENT
-                    .equals(intent.getAction())) {
-                Message vo = intent
-                        .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if (destination.getJabberId().equals(vo.getDestination())) {
-                    boolean change = true;
-                    if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
-                        change = false;
-                    } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
-                        change = false;
-                    }
-
-                    if (change) {
-                        updateConversation(vo);
-                    }
-                }
-            } else if (MessengerConnectionService.ACTION_DISCONNECTED
-                    .equals(intent.getAction())) {
-            } else if (MessengerConnectionService.ACTION_CONNECTED
-                    .equals(intent.getAction())) {
-            } else if (UploadService.KEY_UPDATE_BAR.equals(intent.getAction())) {
-                Message vo = intent
-                        .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if (destination.getJabberId().equalsIgnoreCase(vo.getSource())) {
-                    boolean change = true;
-                    if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
-                        change = false;
-                    } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
-                        change = false;
-                    }
-
-                    if (change) {
-                        updateConversation(vo);
-                    }
-                }
-
-            } else if (UploadService.KEY_UPDATE_UPLOAD_BAR.equals(intent.getAction())) {
-                Message vo = intent
-                        .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if (destination.getJabberId().equals(vo.getDestination())) {
-                    boolean change = true;
-                    if (vo.getType().equalsIgnoreCase(Message.TYPE_READSTATUS)) {
-                        change = false;
-                    } else if (vo.getType().equalsIgnoreCase(Message.TYPE_TARIK)) {
-                        change = false;
-                    }
-
-                    if (change) {
-                        updateConversation(vo);
-                    }
-                }
-            } else if (MessengerConnectionService.ACTION_REFRESH_CHAT_HISTORY
-                    .equals(intent.getAction())) {
-                Message vo = intent
-                        .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-                if (vo != null) {
-                    if (destination.getJabberId().equals(vo.getSource())) {
-                        conversations.remove(vo);
-                        adapter.add(conversations);
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-            } else if (MessengerConnectionService.ACTION_STATUS_CHANGED.equals(intent.getAction())) {
-                refreshProfileContact();
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-
         }
-
     }
 
     class MessageSender extends AsyncTask<Message, Message, Void> {
         @Override
         protected Void doInBackground(Message... params) {
-
-            Message vo = params[0];
-            if (vo.getType().equals(Message.TYPE_TEXT)) {
-                binder.sendMessage(vo);
-            } else if (vo.getType().equals(Message.TYPE_LOC)) {
-                String[] loc = vo.getMessage()
-                        .split(Message.LOCATION_DELIMITER);
-                vo.setMessage(loc[0] + Message.LOCATION_DELIMITER + loc[1]);
-                binder.sendLocation(vo);
-            } else {
-                binder.sendFile(vo);
+            try {
+                Message vo = params[0];
+                if (vo.getType().equals(Message.TYPE_TEXT)) {
+                    binder.sendMessage(vo);
+                } else if (vo.getType().equals(Message.TYPE_LOC)) {
+                    String[] loc = vo.getMessage()
+                            .split(Message.LOCATION_DELIMITER);
+                    vo.setMessage(loc[0] + Message.LOCATION_DELIMITER + loc[1]);
+                    binder.sendLocation(vo);
+                } else {
+                    binder.sendFile(vo);
+                }
+                publishProgress(vo);
+            }catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-            publishProgress(vo);
             return null;
         }
 
@@ -2837,32 +2951,6 @@ public class ConversationActivity extends AppCompatActivity implements
         }
 
     }
-
-    // Uncomment for SMS bridge feature
-    // class SMSSender extends AsyncTask<Message, Message, Void> {
-    //
-    // @Override
-    // protected Void doInBackground(Message... params) {
-    // Message vo = params[0];
-    // InputStreamReader reader = null;
-    // try {
-    // HttpClient httpClient = HttpHelper
-    // .createHttpClient(getApplicationContext());
-    // } catch (Exception e) {
-    // Log.e(getLocalClassName(),
-    // "Error sending SMS: " + e.getMessage(), e);
-    // } finally {
-    // if (reader != null) {
-    // try {
-    // reader.close();
-    // } catch (IOException e) {
-    // }
-    // }
-    // }
-    // return null;
-    // }
-    //
-    // }
 
     class MessageRetryAllHelper extends AsyncTask<Void, Message, Void> {
 
@@ -2885,42 +2973,45 @@ public class ConversationActivity extends AppCompatActivity implements
 
         @Override
         protected Void doInBackground(Void... params) {
-            lastDate = "";
-            long lastTotalMessage = totalMessages;
-            cursor = messengerHelper.query(
-                    SQL_SELECT_TOTAL_MESSAGES,
-                    new String[]{destination.getJabberId(),
-                            destination.getJabberId()});
-            int indexTotal = cursor.getColumnIndex("total");
-            while (cursor.moveToNext()) {
-                totalMessages = cursor.getLong(indexTotal);
-            }
-            cursor.close();
-
-            if (lastTotalMessage < totalMessages) {
-                clearConversations();
-                cursor = messengerHelper.query(SQL_SELECT_MESSAGES, new String[]{
-                        destination.getJabberId(), destination.getJabberId(),
-                        String.valueOf(loadLimit), String.valueOf(0)});
-
-                ArrayList<Message> messages = new ArrayList<Message>();
-
+            try {
+                lastDate = "";
+                long lastTotalMessage = totalMessages;
+                cursor = messengerHelper.query(
+                        SQL_SELECT_TOTAL_MESSAGES,
+                        new String[]{destination.getJabberId(),
+                                destination.getJabberId()});
+                int indexTotal = cursor.getColumnIndex("total");
                 while (cursor.moveToNext()) {
-                    Message vo = new Message(cursor);
-                    messages.add(0, vo);
+                    totalMessages = cursor.getLong(indexTotal);
                 }
-                for (Iterator<Message> iterator = messages.iterator(); iterator
-                        .hasNext(); ) {
-                    Message vo = iterator.next();
-                    // Log.w("gufang",vo.getMessage());
-                    publishProgress(vo);
-                }
+                cursor.close();
 
-                if (loadLimit < totalMessages) {
-                    conversations.add(0, Integer.valueOf((int) totalMessages));
+                if (lastTotalMessage < totalMessages) {
+                    clearConversations();
+                    cursor = messengerHelper.query(SQL_SELECT_MESSAGES, new String[]{
+                            destination.getJabberId(), destination.getJabberId(),
+                            String.valueOf(loadLimit), String.valueOf(0)});
+
+                    ArrayList<Message> messages = new ArrayList<Message>();
+
+                    while (cursor.moveToNext()) {
+                        Message vo = new Message(cursor);
+                        messages.add(0, vo);
+                    }
+                    for (Iterator<Message> iterator = messages.iterator(); iterator
+                            .hasNext(); ) {
+                        Message vo = iterator.next();
+                        // Log.w("gufang",vo.getMessage());
+                        publishProgress(vo);
+                    }
+
+                    if (loadLimit < totalMessages) {
+                        conversations.add(0, Integer.valueOf((int) totalMessages));
+                    }
                 }
+            }catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-
             return null;
         }
 
@@ -2947,22 +3038,25 @@ public class ConversationActivity extends AppCompatActivity implements
 
         @Override
         protected Void doInBackground(Void... params) {
-            cursor = messengerHelper.query(SQL_SELECT_MESSAGES, new String[]{
-                    destination.getJabberId(), destination.getJabberId(),
-                    String.valueOf(loadLimit), String.valueOf(loadOffset)});
+            try {
+                cursor = messengerHelper.query(SQL_SELECT_MESSAGES, new String[]{
+                        destination.getJabberId(), destination.getJabberId(),
+                        String.valueOf(loadLimit), String.valueOf(loadOffset)});
 
-            ArrayList<Message> messages = new ArrayList<Message>();
+                ArrayList<Message> messages = new ArrayList<Message>();
 
-            while (cursor.moveToNext()) {
-                Message vo = new Message(cursor);
-                messages.add(vo);
+                while (cursor.moveToNext()) {
+                    Message vo = new Message(cursor);
+                    messages.add(vo);
+                }
+                for (Iterator<Message> iterator = messages.iterator(); iterator
+                        .hasNext(); ) {
+                    Message vo = iterator.next();
+                    publishProgress(vo);
+                }
+            }catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
-            for (Iterator<Message> iterator = messages.iterator(); iterator
-                    .hasNext(); ) {
-                Message vo = iterator.next();
-                publishProgress(vo);
-            }
-
 
             return null;
         }
@@ -3088,43 +3182,46 @@ public class ConversationActivity extends AppCompatActivity implements
 
         protected void onPostExecute(String content) {
             pdialog.dismiss();
-            if (error) {
-                if (content.contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        pdialog.show();
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                            pdialog.dismiss();
+            try {
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            pdialog.show();
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                                pdialog.dismiss();
+                            } else {
+                                new blockRequest(mContext).execute(key);
+                            }
                         } else {
-                            new blockRequest(mContext).execute(key);
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                if (status.equalsIgnoreCase("done")) {
-                    if (action.equalsIgnoreCase("add")) {
-                        blockListDB.open();
-                        blockListDB.insertListBlock(destination.getJabberId());
-                        blockListDB.close();
-                        headerBtnLock.setText("Unblock");
+                    if (status.equalsIgnoreCase("done")) {
+                        if (action.equalsIgnoreCase("add")) {
+                            blockListDB.open();
+                            blockListDB.insertListBlock(destination.getJabberId());
+                            blockListDB.close();
+                            headerBtnLock.setText("Unblock");
+                        } else {
+                            blockListDB.open();
+                            blockListDB.deleteListBlock(destination.getJabberId());
+                            blockListDB.close();
+                            headerBtnLock.setText("Block");
+                        }
+                        showToast("Success");
                     } else {
-                        blockListDB.open();
-                        blockListDB.deleteListBlock(destination.getJabberId());
-                        blockListDB.close();
-                        headerBtnLock.setText("Block");
+                        showToast("Server Error " + status);
                     }
-                    showToast("Success");
-                } else {
-                    showToast("Server Error " + status);
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
-
     }
 
 
@@ -3231,62 +3328,70 @@ public class ConversationActivity extends AppCompatActivity implements
 
         protected void onPostExecute(String content) {
             pdialog.dismiss();
-            if (error) {
-                if (content.contains("invalid_key")) {
-                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-                        pdialog.show();
-                        String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")) {
-                            Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                            pdialog.dismiss();
+            try {
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            pdialog.show();
+                            String key = new ValidationsKey().getInstance(mContext).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                                pdialog.dismiss();
+                            } else {
+                                new addBotRequest(mContext).execute(key);
+                            }
                         } else {
-                            new addBotRequest(mContext).execute(key);
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                if (code.equalsIgnoreCase("200")) {
-                    String bot[] = desc.split(";");
-                    ContactBot a = null;
-                    if (bot.length == 2) {
-                        a = new ContactBot(destination.getJabberId().toLowerCase(), bot[0], bot[1], "", "");
-                    } else if (bot.length == 3) {
-                        a = new ContactBot(destination.getJabberId().toLowerCase(), bot[0], bot[1], bot[2], "");
+                    if (code.equalsIgnoreCase("200")) {
+                        String bot[] = desc.split(";");
+                        ContactBot a = null;
+                        if (bot.length == 2) {
+                            a = new ContactBot(destination.getJabberId().toLowerCase(), bot[0], bot[1], "", "");
+                        } else if (bot.length == 3) {
+                            a = new ContactBot(destination.getJabberId().toLowerCase(), bot[0], bot[1], bot[2], "");
+                        }
+
+                        botListDB.insertScrDetails(a);
+                        finish();
+                        Intent intent;
+                        intent = new Intent(mContext, ConversationActivity.class);
+                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, destination.getJabberId().toLowerCase());
+                        startActivity(intent);
+
+                        Toast.makeText(mContext, "Success", Toast.LENGTH_LONG);
+                    } else {
+                        showToast(desc);
                     }
-
-                    botListDB.insertScrDetails(a);
-                    finish();
-                    Intent intent;
-                    intent = new Intent(mContext, ConversationActivity.class);
-                    intent.putExtra(ConversationActivity.KEY_JABBER_ID, destination.getJabberId().toLowerCase());
-                    startActivity(intent);
-
-                    Toast.makeText(mContext, "Success", Toast.LENGTH_LONG);
-                } else {
-                    showToast(desc);
                 }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if (emojicons.getVisibility() == View.GONE) {
-                finish();
-            } else {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                textMessage.setFocusableInTouchMode(true);
-                textMessage.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(textMessage, InputMethodManager.SHOW_IMPLICIT);
-                emojicons.setVisibility(View.GONE);
+        try {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+                if (emojicons.getVisibility() == View.GONE) {
+                    finish();
+                } else {
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                    textMessage.setFocusableInTouchMode(true);
+                    textMessage.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(textMessage, InputMethodManager.SHOW_IMPLICIT);
+                    emojicons.setVisibility(View.GONE);
+                }
+                return true;
             }
-            return true;
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -3316,19 +3421,23 @@ public class ConversationActivity extends AppCompatActivity implements
     };
 
     private void showProgressDialog(Intent bufferIntent) {
-        String bufferValue = bufferIntent.getStringExtra("buffering");
-        int bufferIntValue = Integer.parseInt(bufferValue);
-        switch (bufferIntValue) {
-            case 0:
-                if (progressRadio.getVisibility() == View.VISIBLE) {
-                    progressRadio.setVisibility(View.GONE);
-                    buttonPlay.setBackgroundResource(R.drawable.ic_radio_stop);
-                }
-                break;
-            case 1:
-                progressRadio.setVisibility(View.VISIBLE);
-                buttonPlay.setBackgroundResource(R.drawable.ic_radio_play);
-                break;
+        try {
+            String bufferValue = bufferIntent.getStringExtra("buffering");
+            int bufferIntValue = Integer.parseInt(bufferValue);
+            switch (bufferIntValue) {
+                case 0:
+                    if (progressRadio.getVisibility() == View.VISIBLE) {
+                        progressRadio.setVisibility(View.GONE);
+                        buttonPlay.setBackgroundResource(R.drawable.ic_radio_stop);
+                    }
+                    break;
+                case 1:
+                    progressRadio.setVisibility(View.VISIBLE);
+                    buttonPlay.setBackgroundResource(R.drawable.ic_radio_play);
+                    break;
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -3369,37 +3478,44 @@ public class ConversationActivity extends AppCompatActivity implements
     }
 
     private void refreshProfileContact() {
-        String jid = "";
-        Cursor c = timeLineDB.getDataByFlag();
-        if (c.getCount() > 0) {
-            jid = c.getString(c.getColumnIndexOrThrow(TimeLineDB.TIMELINE_JID));
+        try {
+            String jid = "";
+            Cursor c = timeLineDB.getDataByFlag();
+            if (c.getCount() > 0) {
+                jid = c.getString(c.getColumnIndexOrThrow(TimeLineDB.TIMELINE_JID));
+            }
+
+            frameLayoutPicasso.setVisibility(View.GONE);
+            logoToolbar.setVisibility(View.VISIBLE);
+            imageLoaderFromSD.DeleteImage(MediaProcessingUtil.getProfilePic(jid), logoToolbar);
+
+            Animation fadeOut = new AlphaAnimation(0, 1);
+            fadeOut.setInterpolator(new AccelerateInterpolator());
+            fadeOut.setDuration(500);
+            logoToolbar.startAnimation(fadeOut);
+
+            imageLoaderFromSD.DisplayImage(MediaProcessingUtil.getProfilePic(jid), logoToolbar, false);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-
-        frameLayoutPicasso.setVisibility(View.GONE);
-        logoToolbar.setVisibility(View.VISIBLE);
-        imageLoaderFromSD.DeleteImage(MediaProcessingUtil.getProfilePic(jid), logoToolbar);
-
-        Animation fadeOut = new AlphaAnimation(0, 1);
-        fadeOut.setInterpolator(new AccelerateInterpolator());
-        fadeOut.setDuration(500);
-        logoToolbar.startAnimation(fadeOut);
-
-        imageLoaderFromSD.DisplayImage(MediaProcessingUtil.getProfilePic(jid), logoToolbar, false);
-
     }
 
     public void start(String destination_id) {
-        ImagePicker.create(this)
-                .folderMode(true)
-                .reset(true)
-                .destination(judul)
-                .imageTitle("Tap to select")
-                .single()
-                .multi()
-                .limit(10)
-                .showCamera(true)
-                .imageDirectory("Camera")
-                .origin(images)
-                .start(REQUEST_CODE_PICKER);
+        try {
+            ImagePicker.create(this)
+                    .folderMode(true)
+                    .reset(true)
+                    .destination(judul)
+                    .imageTitle("Tap to select")
+                    .single()
+                    .multi()
+                    .limit(10)
+                    .showCamera(true)
+                    .imageDirectory("Camera")
+                    .origin(images)
+                    .start(REQUEST_CODE_PICKER);
+        }catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 }

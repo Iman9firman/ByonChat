@@ -19,6 +19,8 @@ import com.mindorks.placeholderview.annotations.expand.Expand;
 import com.mindorks.placeholderview.annotations.expand.Parent;
 import com.mindorks.placeholderview.annotations.expand.SingleTop;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 @Parent
 @SingleTop
 @Layout(R.layout.mkg_header_rating_layout)
@@ -67,11 +69,14 @@ public class HeaderRatingRecyclerView {
         child_button_cancel_approve.setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
-                Log.w("kaka", "sisp");
                 Intent maps = new Intent(mContext, MapsViewActivity.class);
-                maps.putExtra(XTRA_RELIEVER_JSON, relieverDetail);
-                maps.putExtra(XTRA_LATITUDE, lat.split(":")[0]);
-                maps.putExtra(XTRA_LONGITUDE, lat.split(":")[1]);
+                try {
+                    maps.putExtra(XTRA_RELIEVER_JSON, relieverDetail);
+                    maps.putExtra(XTRA_LATITUDE, lat.split(":")[0]);
+                    maps.putExtra(XTRA_LONGITUDE, lat.split(":")[1]);
+                }catch (Exception e){
+                    reportCatch(e.getLocalizedMessage());
+                }
                 mContext.startActivity(maps);
             }
         });

@@ -95,6 +95,8 @@ import java.util.Map;
 import io.github.memfis19.annca.Annca;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class GalleryBeforeAfterActivity extends Constants implements EmojiconGridFragment.OnEmojiconClickedListener,
         EmojiconsFragment.OnEmojiconBackspaceClickedListener {
     Toolbar toolbar;
@@ -115,184 +117,204 @@ public class GalleryBeforeAfterActivity extends Constants implements EmojiconGri
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_before_after);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.BLACK);
-        }
-
-        toolbar = (Toolbar) findViewById(R.id.abMain);
-        vTitle = (TextView) findViewById(R.id.title_toolbar);
-        vImageBefore = (ImageView) findViewById(R.id.image_before);
-        vImageAfter = (ImageView) findViewById(R.id.image_after);
-        vWriteComment = (EmojiconEditText) findViewById(R.id.writeComment);
-        emojicons = (LinearLayout) findViewById(R.id.emojiconsLayout);
-        btn_add_emoticon = (ImageButton) findViewById(R.id.btn_add_emoticon);
-        vButtonSend = (Button) findViewById(R.id.btnSend);
-        toolbar.setTitleTextColor(Color.WHITE);
-        vTitle.setText("Follow Up");
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-        color = getIntent().getStringExtra("color");
-        if (color != null) {
-            toolbar.setBackgroundColor(Color.parseColor("#" + color));
-        }
-
-        refreshItem();
-
-        vImageBefore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (!getIntent().getStringExtra("url_before").equalsIgnoreCase("")) {
-                    Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
-                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, getIntent().getStringExtra("url_before"));
-                    startActivity(intent);
-                }
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                getWindow().setStatusBarColor(Color.BLACK);
             }
-        });
 
-        vImageAfter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takeImage();
+            toolbar = (Toolbar) findViewById(R.id.abMain);
+            vTitle = (TextView) findViewById(R.id.title_toolbar);
+            vImageBefore = (ImageView) findViewById(R.id.image_before);
+            vImageAfter = (ImageView) findViewById(R.id.image_after);
+            vWriteComment = (EmojiconEditText) findViewById(R.id.writeComment);
+            emojicons = (LinearLayout) findViewById(R.id.emojiconsLayout);
+            btn_add_emoticon = (ImageButton) findViewById(R.id.btn_add_emoticon);
+            vButtonSend = (Button) findViewById(R.id.btnSend);
+            toolbar.setTitleTextColor(Color.WHITE);
+            vTitle.setText("Follow Up");
+
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+            color = getIntent().getStringExtra("color");
+            if (color != null) {
+                toolbar.setBackgroundColor(Color.parseColor("#" + color));
             }
-        });
 
-        vButtonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateComment()) {
-                    progressDialog = UtilsPD.createProgressDialog(GalleryBeforeAfterActivity.this);
-                    progressDialog.show();
-                    View view = getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            refreshItem();
+
+            vImageBefore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (!getIntent().getStringExtra("url_before").equalsIgnoreCase("")) {
+                        Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
+                        intent.putExtra(ZoomImageViewActivity.KEY_FILE, getIntent().getStringExtra("url_before"));
+                        startActivity(intent);
                     }
-
-                    postParam();
                 }
-            }
-        });
+            });
 
-        btn_add_emoticon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (emojicons.getVisibility() == View.GONE) {
-                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            vImageAfter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    takeImage();
+                }
+            });
 
-                    Animation animFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_bottom);
-                    emojicons.setVisibility(View.VISIBLE);
-                    emojicons.startAnimation(animFade);
+            vButtonSend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (validateComment()) {
+                        progressDialog = UtilsPD.createProgressDialog(GalleryBeforeAfterActivity.this);
+                        progressDialog.show();
+                        View view = getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
 
-                    vWriteComment.setFocusable(false);
-                } else {
+                        postParam();
+                    }
+                }
+            });
+
+            btn_add_emoticon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (emojicons.getVisibility() == View.GONE) {
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                        Animation animFade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.abc_slide_in_bottom);
+                        emojicons.setVisibility(View.VISIBLE);
+                        emojicons.startAnimation(animFade);
+
+                        vWriteComment.setFocusable(false);
+                    } else {
+                        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+                        vWriteComment.setFocusableInTouchMode(true);
+                        vWriteComment.requestFocus();
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.showSoftInput(vWriteComment, InputMethodManager.SHOW_IMPLICIT);
+                        emojicons.setVisibility(View.GONE);
+                    }
+                }
+            });
+
+
+            vWriteComment.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View arg0, MotionEvent arg1) {
                     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
                     vWriteComment.setFocusableInTouchMode(true);
                     vWriteComment.requestFocus();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(vWriteComment, InputMethodManager.SHOW_IMPLICIT);
-                    emojicons.setVisibility(View.GONE);
+                    if (emojicons.getVisibility() == View.VISIBLE) {
+                        emojicons.setVisibility(View.GONE);
+                    }
+
+                    return false;
                 }
-            }
-        });
-
-
-        vWriteComment.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-                vWriteComment.setFocusableInTouchMode(true);
-                vWriteComment.requestFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(vWriteComment, InputMethodManager.SHOW_IMPLICIT);
-                if (emojicons.getVisibility() == View.VISIBLE) {
-                    emojicons.setVisibility(View.GONE);
-                }
-
-                return false;
-            }
-        });
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     protected void takeImage() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(this, REQ_CAMERA);
+            photo.setMediaAction(AnncaConfiguration.MEDIA_ACTION_PHOTO);
+            photo.setMediaQuality(AnncaConfiguration.MEDIA_QUALITY_MEDIUM);
+            photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_REAR);
+            photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
+            new Annca(photo.build()).launchCamera();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        AnncaConfiguration.Builder photo = new AnncaConfiguration.Builder(this, REQ_CAMERA);
-        photo.setMediaAction(AnncaConfiguration.MEDIA_ACTION_PHOTO);
-        photo.setMediaQuality(AnncaConfiguration.MEDIA_QUALITY_MEDIUM);
-        photo.setCameraFace(AnncaConfiguration.CAMERA_FACE_REAR);
-        photo.setMediaResultBehaviour(AnncaConfiguration.PREVIEW);
-        new Annca(photo.build()).launchCamera();
     }
 
     private boolean validateComment() {
-        if (TextUtils.isEmpty(vWriteComment.getText()) || TextUtils.isEmpty(cameraFileOutput)) {
-            vButtonSend.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake_error));
-            return false;
+        try {
+            if (TextUtils.isEmpty(vWriteComment.getText()) || TextUtils.isEmpty(cameraFileOutput)) {
+                vButtonSend.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake_error));
+                return false;
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
         return true;
     }
 
     void refreshItem() {
-        if (getIntent().getExtras().containsKey("id_comment")) {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String id_comment = getIntent().getStringExtra("id_comment");
-            String id_task = getIntent().getStringExtra("id_task");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
+        try {
+            if (getIntent().getExtras().containsKey("id_comment")) {
+                String userid = getIntent().getStringExtra("userid");
+                String id_note = getIntent().getStringExtra("id_note");
+                String id_comment = getIntent().getStringExtra("id_comment");
+                String id_task = getIntent().getStringExtra("id_task");
+                String bc_user = getIntent().getStringExtra("bc_user");
+                String idRoomTab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    idRoomTab = getIntent().getStringExtra("id_room_tab");
+                }
+            } else {
+                String userid = getIntent().getStringExtra("userid");
+                String id_note = getIntent().getStringExtra("id_note");
+                String bc_user = getIntent().getStringExtra("bc_user");
+                String id_task = getIntent().getStringExtra("id_task");
+                String idRoomTab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    idRoomTab = getIntent().getStringExtra("id_room_tab");
+                }
             }
-        } else {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String id_task = getIntent().getStringExtra("id_task");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
-            }
-        }
 
-        Manhera.getInstance().get().load(getIntent().getStringExtra("url_before"))
-                .error(R.drawable.no_image)
-                .placeholder(R.drawable.no_image)
-                .dontAnimate()
-                .into(vImageBefore);
+            Manhera.getInstance().get().load(getIntent().getStringExtra("url_before"))
+                    .error(R.drawable.no_image)
+                    .placeholder(R.drawable.no_image)
+                    .dontAnimate()
+                    .into(vImageBefore);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     void postParam() {
-        if (getIntent().getExtras().containsKey("id_comment")) {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String id_comment = getIntent().getStringExtra("id_comment");
-            String id_task = getIntent().getStringExtra("id_task");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
-            }
-            new UploadFile(userid, vWriteComment.getText().toString(), id_note, bc_user, idRoomTab, id_comment, getIntent().getStringExtra("url_before"), photos).execute();
+        try {
+            if (getIntent().getExtras().containsKey("id_comment")) {
+                String userid = getIntent().getStringExtra("userid");
+                String id_note = getIntent().getStringExtra("id_note");
+                String id_comment = getIntent().getStringExtra("id_comment");
+                String id_task = getIntent().getStringExtra("id_task");
+                String bc_user = getIntent().getStringExtra("bc_user");
+                String idRoomTab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    idRoomTab = getIntent().getStringExtra("id_room_tab");
+                }
+                new UploadFile(userid, vWriteComment.getText().toString(), id_note, bc_user, idRoomTab, id_comment, getIntent().getStringExtra("url_before"), photos).execute();
 
-        } else {
-            String userid = getIntent().getStringExtra("userid");
-            String id_note = getIntent().getStringExtra("id_note");
-            String bc_user = getIntent().getStringExtra("bc_user");
-            String id_task = getIntent().getStringExtra("id_task");
-            String idRoomTab = "";
-            if (getIntent().getExtras().containsKey("id_room_tab")) {
-                idRoomTab = getIntent().getStringExtra("id_room_tab");
-            }
+            } else {
+                String userid = getIntent().getStringExtra("userid");
+                String id_note = getIntent().getStringExtra("id_note");
+                String bc_user = getIntent().getStringExtra("bc_user");
+                String id_task = getIntent().getStringExtra("id_task");
+                String idRoomTab = "";
+                if (getIntent().getExtras().containsKey("id_room_tab")) {
+                    idRoomTab = getIntent().getStringExtra("id_room_tab");
+                }
 
-            new UploadFile(userid, vWriteComment.getText().toString(), id_note, bc_user, idRoomTab, "", getIntent().getStringExtra("url_before"), photos).execute();
+                new UploadFile(userid, vWriteComment.getText().toString(), id_note, bc_user, idRoomTab, "", getIntent().getStringExtra("url_before"), photos).execute();
+            }
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -457,35 +479,39 @@ public class GalleryBeforeAfterActivity extends Constants implements EmojiconGri
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             progressDialog.dismiss();
-            if (result.equalsIgnoreCase("1")) {
-                Intent data = new Intent();
-                if (getIntent().getExtras().containsKey("id_comment")) {
-                    data.putExtra("userid", getIntent().getStringExtra("userid"));
-                    data.putExtra("id_note", getIntent().getStringExtra("id_note"));
-                    data.putExtra("id_comment", getIntent().getStringExtra("id_comment"));
-                    data.putExtra("id_task", getIntent().getStringExtra("id_task"));
-                    data.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
-                    String idRoomTab = "";
-                    if (getIntent().getExtras().containsKey("id_room_tab")) {
-                        idRoomTab = getIntent().getStringExtra("id_room_tab");
-                        data.putExtra("id_room_tab", getIntent().getExtras().containsKey("id_room_tab"));
+            try {
+                if (result.equalsIgnoreCase("1")) {
+                    Intent data = new Intent();
+                    if (getIntent().getExtras().containsKey("id_comment")) {
+                        data.putExtra("userid", getIntent().getStringExtra("userid"));
+                        data.putExtra("id_note", getIntent().getStringExtra("id_note"));
+                        data.putExtra("id_comment", getIntent().getStringExtra("id_comment"));
+                        data.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                        data.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                        String idRoomTab = "";
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            idRoomTab = getIntent().getStringExtra("id_room_tab");
+                            data.putExtra("id_room_tab", getIntent().getExtras().containsKey("id_room_tab"));
+                        }
+                        data.putExtra("api_url", getIntent().getStringExtra("api_url"));
+                    } else {
+                        data.putExtra("userid", getIntent().getStringExtra("userid"));
+                        data.putExtra("id_note", getIntent().getStringExtra("id_note"));
+                        data.putExtra("id_task", getIntent().getStringExtra("id_task"));
+                        data.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                        String idRoomTab = "";
+                        if (getIntent().getExtras().containsKey("id_room_tab")) {
+                            idRoomTab = getIntent().getStringExtra("id_room_tab");
+                            data.putExtra("id_room_tab", getIntent().getExtras().containsKey("id_room_tab"));
+                        }
+                        data.putExtra("api_url", getIntent().getStringExtra("api_url"));
                     }
-                    data.putExtra("api_url", getIntent().getStringExtra("api_url"));
-                } else {
-                    data.putExtra("userid", getIntent().getStringExtra("userid"));
-                    data.putExtra("id_note", getIntent().getStringExtra("id_note"));
-                    data.putExtra("id_task", getIntent().getStringExtra("id_task"));
-                    data.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
-                    String idRoomTab = "";
-                    if (getIntent().getExtras().containsKey("id_room_tab")) {
-                        idRoomTab = getIntent().getStringExtra("id_room_tab");
-                        data.putExtra("id_room_tab", getIntent().getExtras().containsKey("id_room_tab"));
-                    }
-                    data.putExtra("api_url", getIntent().getStringExtra("api_url"));
-                }
 
-                setResult(RESULT_OK, data);
-                finish();
+                    setResult(RESULT_OK, data);
+                    finish();
+                }
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
@@ -578,6 +604,7 @@ public class GalleryBeforeAfterActivity extends Constants implements EmojiconGri
             return true;
 
         } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
             return false;
         }
 

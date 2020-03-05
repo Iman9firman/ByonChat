@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyViewHolder> implements Filterable {
     private List<Contact> defaultList;
     private List<Contact> chatListAll;
@@ -93,88 +95,95 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        if (chatListAll.size() != 0 && chatListAll != null) {
-            final Contact item = chatListAll.get(position);
+        try {
+            if (chatListAll.size() != 0 && chatListAll != null) {
+                final Contact item = chatListAll.get(position);
 //            holder.imView.setImageResource(R.drawable.pic);
 
-            String uriImage = "https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + item.getJabberId() + ".jpg";
-            String iconsStoragePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                    + "/S-Team/Photo Profile/";
-            final File sdIconStorageDir = new File(iconsStoragePath);
-            if (!sdIconStorageDir.exists()) {
-                sdIconStorageDir.mkdirs();
-            }
-
-            iconsStoragePath += item.getJabberId() + ".jpg";
-            final File yourFile = new File(sdIconStorageDir, item.getJabberId() + ".jpg");
-
-            if (uriImage != null) {
-                Drawable y = Drawable.createFromPath(iconsStoragePath);
-                if (y == null) {
-                    y = context.getResources().getDrawable(R.drawable.ic_no_photo);
+                String uriImage = "https://" + MessengerConnectionService.F_SERVER + "/toboldlygowherenoonehasgonebefore/" + item.getJabberId() + ".jpg";
+                String iconsStoragePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                        + "/S-Team/Photo Profile/";
+                final File sdIconStorageDir = new File(iconsStoragePath);
+                if (!sdIconStorageDir.exists()) {
+                    sdIconStorageDir.mkdirs();
                 }
-                Glide.with(holder.imView.getContext())
-                        .load(uriImage).asBitmap()
-                        .dontAnimate()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .placeholder(y)
-                        .into(new BitmapImageViewTarget(holder.imView) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                holder.imView.setImageBitmap(resource);
-                                try {
-                                    FileOutputStream fos = new FileOutputStream(yourFile);
-                                    resource.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                                    fos.close();
-                                } catch (FileNotFoundException e) {
-                                } catch (IOException e) {
-                                }
-                            }
-                        });
-            }
 
-            holder.tvName.setText(item.getName());
-            holder.tvChat.setText("+" + Utility.formatPhoneNumber(item.getJabberId()));
-            if (charString != null) {
+                iconsStoragePath += item.getJabberId() + ".jpg";
+                final File yourFile = new File(sdIconStorageDir, item.getJabberId() + ".jpg");
+
+                if (uriImage != null) {
+                    Drawable y = Drawable.createFromPath(iconsStoragePath);
+                    if (y == null) {
+                        y = context.getResources().getDrawable(R.drawable.ic_no_photo);
+                    }
+                    Glide.with(holder.imView.getContext())
+                            .load(uriImage).asBitmap()
+                            .dontAnimate()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .placeholder(y)
+                            .into(new BitmapImageViewTarget(holder.imView) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    holder.imView.setImageBitmap(resource);
+                                    try {
+                                        FileOutputStream fos = new FileOutputStream(yourFile);
+                                        resource.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                                        fos.close();
+                                    } catch (FileNotFoundException e) {
+                                    } catch (IOException e) {
+                                    }
+                                }
+                            });
+                }
+
+                holder.tvName.setText(item.getName());
+                holder.tvChat.setText("+" + Utility.formatPhoneNumber(item.getJabberId()));
+                if (charString != null) {
 //                textHighlighter = new TextHighlighter();
 //                if (item.getName().toLowerCase().contains(charString.toLowerCase())) {
 //                    textHighlighter.setForegroundColor(context.getResources().getColor(R.color.colorBack))
 //                            .addTarget(holder.tvName)
 //                            .highlight(charString, TextHighlighter.BASE_MATCHER);
 //                }
-            }
-            holder.global.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onRowClickContact(v, item.getJabberId());
                 }
-            });
+                holder.global.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onRowClickContact(v, item.getJabberId());
+                    }
+                });
+            }
+            holder.tvTime.setVisibility(View.GONE);
+            holder.tvUnread.setVisibility(View.GONE);
+            holder.centang.setVisibility(View.GONE);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        holder.tvTime.setVisibility(View.GONE);
-        holder.tvUnread.setVisibility(View.GONE);
-        holder.centang.setVisibility(View.GONE);
     }
 
     public Filter getFilter() {
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
-                charString = charSequence.toString();
-                if (charString.isEmpty()) {
-                    chatListAll.clear();
-                    resultList.clear();
-                } else {
-                    List<Contact> filteredList = new ArrayList<>();
-                    for (Contact row : searchList) {
-                        if (row.getName().toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(row);
+                try {
+                    charString = charSequence.toString();
+                    if (charString.isEmpty()) {
+                        chatListAll.clear();
+                        resultList.clear();
+                    } else {
+                        List<Contact> filteredList = new ArrayList<>();
+                        for (Contact row : searchList) {
+                            if (row.getName().toLowerCase().contains(charString.toLowerCase())) {
+                                filteredList.add(row);
+                            }
                         }
+
+                        resultList = filteredList;
                     }
-
-                    resultList = filteredList;
+                } catch (Exception e) {
+                    reportCatch(e.getLocalizedMessage());
                 }
-
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = resultList;
 

@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.byonchat.android.R;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class ImsProfileActivity extends ImsBaseProfileActivity {
 
     public static Intent generateIntent(Context context, String args) {
@@ -45,9 +47,13 @@ public class ImsProfileActivity extends ImsBaseProfileActivity {
     protected void onViewReady(Bundle savedInstanceState) {
         super.onViewReady(savedInstanceState);
 
-        resolveToolbar();
-        resolveBackgroundImage();
-        resolveEdit();
+        try {
+            resolveToolbar();
+            resolveBackgroundImage();
+            resolveEdit();
+        }catch (Exception e){
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override

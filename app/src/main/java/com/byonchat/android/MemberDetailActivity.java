@@ -69,6 +69,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.byonchat.android.utils.Utility.reportCatch;
+
 public class MemberDetailActivity extends AppCompatActivity implements  Animation.AnimationListener {
     public final static String KEY_MEMBERS_ID = "MEMBERS_ID";
     public final static String KEY_MEMBERS_NAME = "MEMBERS_NAME";
@@ -128,170 +130,173 @@ public class MemberDetailActivity extends AppCompatActivity implements  Animatio
             i.setClass(getApplicationContext(), SplashScreen.class);
             startActivity(i);
         }*/
+        try {
+            if (dbhelper == null) {
+                dbhelper = MessengerDatabaseHelper.getInstance(context);
+            }
 
-        if (dbhelper == null) {
-            dbhelper = MessengerDatabaseHelper.getInstance(context);
-        }
+            if (membersDB == null) {
+                membersDB = new MembersDB(mContext);
+            }
 
-        if(membersDB == null){
-            membersDB  = new MembersDB(mContext);
-        }
+            contact = dbhelper.getMyContact();
+            mainLayout = (LinearLayout) findViewById(R.id.main_layout);
+            layoutVoucher = (RelativeLayout) findViewById(R.id.layoutVoucher);
+            title = (TextView) findViewById(R.id.title);
+            desc = (TextView) findViewById(R.id.desc);
+            txtPromo = (TextView) findViewById(R.id.txtPromo);
+            voucher = (TextView) findViewById(R.id.voucher);
+            sync = (TextView) findViewById(R.id.sync);
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            imgViewPhoto = (Target) findViewById(R.id.photo);
+            imgViewBarcode = (ImageView) findViewById(R.id.barcode);
+            imgViewCard = (TouchImageView) findViewById(R.id.imageViewCard);
+            btn_refresh = (ImageButton) findViewById(R.id.btn_refresh);
 
-        contact = dbhelper.getMyContact();
-        mainLayout = (LinearLayout) findViewById(R.id.main_layout);
-        layoutVoucher = (RelativeLayout) findViewById(R.id.layoutVoucher);
-        title = (TextView) findViewById(R.id.title);
-        desc = (TextView) findViewById(R.id.desc);
-        txtPromo = (TextView) findViewById(R.id.txtPromo);
-        voucher = (TextView) findViewById(R.id.voucher);
-        sync = (TextView) findViewById(R.id.sync);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        imgViewPhoto = (Target) findViewById(R.id.photo);
-        imgViewBarcode = (ImageView) findViewById(R.id.barcode);
-        imgViewCard = (TouchImageView) findViewById(R.id.imageViewCard);
-        btn_refresh = (ImageButton) findViewById(R.id.btn_refresh);
+            id_card = getIntent().getStringExtra(KEY_MEMBERS_ID);
+            card_name = getIntent().getStringExtra(KEY_MEMBERS_NAME);
+            card_color = getIntent().getStringExtra(KEY_MEMBERS_COLOR);
+            title.setText(card_name);
+            title.setTextColor(Color.parseColor(card_color));
+            getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).headerCostume(getWindow(), card_color));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.setStatusBarColor(Color.parseColor(card_color));
+            }
 
-        id_card = getIntent().getStringExtra(KEY_MEMBERS_ID);
-        card_name = getIntent().getStringExtra(KEY_MEMBERS_NAME);
-        card_color = getIntent().getStringExtra(KEY_MEMBERS_COLOR);
-        title.setText(card_name);
-        title.setTextColor(Color.parseColor(card_color));
-        getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).headerCostume(getWindow(),card_color));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.parseColor(card_color));
-        }
-
-        imgProfile = new ImageLoaderRefresh(context);
-        imgBarcode = new ImageLoader(context);
-        imgCard = new ImageLoaderLarge(context,true);
-        membersDB.open();
-        mainLayout.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-        Cursor cursor = membersDB.getDetailMembers(id_card);
-        if(cursor.getCount()>0){
-            String time = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_TIME));
-            if(new Validations().getInstance(context).getShowOneDay(time)==0){
-                mainLayout.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-                fillContent();
-            }else {
-                if(NetworkInternetConnectionStatus.getInstance(context).isOnline(context)){
-                    Thread splashTread = new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                synchronized (this) {
-                                    wait(200);
-                                }
-
-                            } catch (InterruptedException e) {
-                            } finally {
-                                String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
-                                if (key.equalsIgnoreCase("null")){
-                                    mainLayout.setVisibility(View.VISIBLE);
-                                    progressBar.setVisibility(View.GONE);
-                                    fillContent();
-                                    progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                                }else{
-                                    new requestDetailMembers(context).execute(key, id_card);
-                                }
-                            }
-                        }
-                    };
-
-                    splashTread.start();
-                }else{
-                    Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+            imgProfile = new ImageLoaderRefresh(context);
+            imgBarcode = new ImageLoader(context);
+            imgCard = new ImageLoaderLarge(context, true);
+            membersDB.open();
+            mainLayout.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            Cursor cursor = membersDB.getDetailMembers(id_card);
+            if (cursor.getCount() > 0) {
+                String time = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_TIME));
+                if (new Validations().getInstance(context).getShowOneDay(time) == 0) {
                     mainLayout.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
                     fillContent();
-                }
-            }
-        }else{
-            request();
-        }
-        cursor.close();
-        membersDB.close();
-
-        animation1 = AnimationUtils.loadAnimation(context, R.anim.to_middle);
-        animation1.setAnimationListener(MemberDetailActivity.this);
-        animation2 = AnimationUtils.loadAnimation(context, R.anim.from_middle);
-        animation2.setAnimationListener(MemberDetailActivity.this);
-        imgCard.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_belakang.png", imgViewCard);
-        imgCard.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_depan.png", imgViewCard);
-        findViewById(R.id.btnRotate).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                imgViewCard.clearAnimation();
-                imgViewCard.setAnimation(animation1);
-                imgViewCard.startAnimation(animation1);
-            }
-        });
-
-        imgViewCard.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String card = "https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_depan.png";
-                if (!isBackOfCardShowing) {
-                    card = "https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_belakang.png";
-                }
-
-                Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
-                intent.putExtra(ZoomImageViewActivity.KEY_FILE, card);
-                startActivity(intent);
-            }
-        });
-
-        imgViewBarcode.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
-                intent.putExtra(ZoomImageViewActivity.KEY_FILE, barcode);
-                startActivity(intent);
-            }
-        });
-
-        btn_refresh.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-                    mainLayout.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.VISIBLE);
-                    request();
                 } else {
-                    Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                        Thread splashTread = new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    synchronized (this) {
+                                        wait(200);
+                                    }
+
+                                } catch (InterruptedException e) {
+                                } finally {
+                                    String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
+                                    if (key.equalsIgnoreCase("null")) {
+                                        mainLayout.setVisibility(View.VISIBLE);
+                                        progressBar.setVisibility(View.GONE);
+                                        fillContent();
+                                        progressBar.setVisibility(View.GONE);
+                                        Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        new requestDetailMembers(context).execute(key, id_card);
+                                    }
+                                }
+                            }
+                        };
+
+                        splashTread.start();
+                    } else {
+                        Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        mainLayout.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                        fillContent();
+                    }
                 }
+            } else {
+                request();
             }
-        });
+            cursor.close();
+            membersDB.close();
 
+            animation1 = AnimationUtils.loadAnimation(context, R.anim.to_middle);
+            animation1.setAnimationListener(MemberDetailActivity.this);
+            animation2 = AnimationUtils.loadAnimation(context, R.anim.from_middle);
+            animation2.setAnimationListener(MemberDetailActivity.this);
+            imgCard.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_belakang.png", imgViewCard);
+            imgCard.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_depan.png", imgViewCard);
+            findViewById(R.id.btnRotate).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    imgViewCard.clearAnimation();
+                    imgViewCard.setAnimation(animation1);
+                    imgViewCard.startAnimation(animation1);
+                }
+            });
 
-       findViewById(R.id.promo).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                 if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-                    Intent intent = new Intent(context, WebViewByonActivity.class);
-                    intent.putExtra(WebViewByonActivity.KEY_LINK_LOAD, linkPromo);
-                    intent.putExtra(WebViewByonActivity.KEY_COLOR, card_color);
+            imgViewCard.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    String card = "https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_depan.png";
+                    if (!isBackOfCardShowing) {
+                        card = "https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_belakang.png";
+                    }
+
+                    Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, card);
                     startActivity(intent);
-                } else {
-                    Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-        findViewById(R.id.contactUs).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(!linkContactUs.equalsIgnoreCase("")){
-                    if(NetworkInternetConnectionStatus.getInstance(context).isOnline(context)){
-                        Intent intent = new Intent(context, ConversationActivity.class);
-                        intent.putExtra(ConversationActivity.KEY_JABBER_ID, linkContactUs);
-                        startActivity(intent);
-                    }else{
+            });
+
+            imgViewBarcode.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Intent intent = new Intent(getApplicationContext(), ZoomImageViewActivity.class);
+                    intent.putExtra(ZoomImageViewActivity.KEY_FILE, barcode);
+                    startActivity(intent);
+                }
+            });
+
+            btn_refresh.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                        mainLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.VISIBLE);
+                        request();
+                    } else {
                         Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(activity, R.string.no_internet, Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
+            });
 
+
+            findViewById(R.id.promo).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                        Intent intent = new Intent(context, WebViewByonActivity.class);
+                        intent.putExtra(WebViewByonActivity.KEY_LINK_LOAD, linkPromo);
+                        intent.putExtra(WebViewByonActivity.KEY_COLOR, card_color);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+            findViewById(R.id.contactUs).setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    if (!linkContactUs.equalsIgnoreCase("")) {
+                        if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                            Intent intent = new Intent(context, ConversationActivity.class);
+                            intent.putExtra(ConversationActivity.KEY_JABBER_ID, linkContactUs);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(activity, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     /*@Override
@@ -326,52 +331,63 @@ public class MemberDetailActivity extends AppCompatActivity implements  Animatio
     }*/
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
-        overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+        try {
+            overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
+
     @Override
-    protected void onResume()
-    {
-        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-                .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+    protected void onResume() {
+        try {
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(NotificationReceiver.NOTIFY_ID_CARD);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
         super.onResume();
     }
 
-    public void request(){
-        new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
-            @Override
-            public void run() {
-                if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-                    Thread splashTread = new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                synchronized (this) {
-                                    wait(200);
-                                }
+    public void request() {
+        try {
+            new Handler(Looper.getMainLooper()).post(new Runnable() { // Tried new Handler(Looper.myLopper()) also
+                @Override
+                public void run() {
+                    if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
+                        Thread splashTread = new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    synchronized (this) {
+                                        wait(200);
+                                    }
 
-                            } catch (InterruptedException e) {
-                            } finally {
-                                String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
-                                if (key.equalsIgnoreCase("null")) {
-                                    progressBar.setVisibility(View.GONE);
-                                    Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    new requestDetailMembers(context).execute(key, id_card);
+                                } catch (InterruptedException e) {
+                                } finally {
+                                    String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
+                                    if (key.equalsIgnoreCase("null")) {
+                                        progressBar.setVisibility(View.GONE);
+                                        Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        new requestDetailMembers(context).execute(key, id_card);
+                                    }
                                 }
                             }
-                        }
-                    };
+                        };
 
-                    splashTread.start();
-                } else {
-                    Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
+                        splashTread.start();
+                    } else {
+                        Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
+        }
     }
 
     @Override
@@ -391,18 +407,22 @@ public class MemberDetailActivity extends AppCompatActivity implements  Animatio
 
     @Override
     public void onAnimationEnd(Animation animation) {
-        if (animation==animation1) {
-            if (isBackOfCardShowing) {
-                imgCard.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_belakang.png", imgViewCard);
+        try {
+            if (animation == animation1) {
+                if (isBackOfCardShowing) {
+                    imgCard.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_belakang.png", imgViewCard);
+                } else {
+                    imgCard.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_depan.png", imgViewCard);
+                }
+                imgViewCard.clearAnimation();
+                imgViewCard.setAnimation(animation2);
+                imgViewCard.startAnimation(animation2);
             } else {
-                imgCard.DisplayImage("https://" + MessengerConnectionService.HTTP_SERVER + "/mediafiles/kartu/" + card_name.toLowerCase().replace(" ", "_") + "_depan.png", imgViewCard);
+                isBackOfCardShowing = !isBackOfCardShowing;
+                findViewById(R.id.btnRotate).setEnabled(true);
             }
-            imgViewCard.clearAnimation();
-            imgViewCard.setAnimation(animation2);
-            imgViewCard.startAnimation(animation2);
-        } else {
-            isBackOfCardShowing=!isBackOfCardShowing;
-            findViewById(R.id.btnRotate).setEnabled(true);
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
     }
 
@@ -506,72 +526,80 @@ public class MemberDetailActivity extends AppCompatActivity implements  Animatio
         }
 
         protected void onPostExecute(String content) {
-            if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
-                        String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
-                        if (key.equalsIgnoreCase("null")){
+            try {
+                if (error) {
+                    if (content.contains("invalid_key")) {
+                        if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
+                            String key = new ValidationsKey().getInstance(getApplicationContext()).key(true);
+                            if (key.equalsIgnoreCase("null")) {
+                                progressBar.setVisibility(View.GONE);
+                                Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            } else {
+                                new requestDetailMembers(mContext).execute(key, id_card);
+                            }
+                        } else {
                             progressBar.setVisibility(View.GONE);
-                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        }else{
-                            new requestDetailMembers(mContext).execute(key,id_card);
+                            Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                         }
-                    }else{
+                    } else {
                         progressBar.setVisibility(View.GONE);
-                        Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(mContext, R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                    fillContent();
                 }
-            } else {
-                progressBar.setVisibility(View.GONE);
-                fillContent();
+            } catch (Exception e) {
+                reportCatch(e.getLocalizedMessage());
             }
         }
 
     }
 
-    public void fillContent(){
-        membersDB.open();
-        Cursor cursor = membersDB.getDetailMembers(id_card);
-        if(cursor.getCount()>0){
-            judulPromo = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_J_PROMO));
-            encodedDesc = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_DESC));
-            judulBonus = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_J_BONUS));
-            bonus = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_BONUS));
-            time = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_TIME));
-            promo = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_PROMO));
-            room = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_ROOM));
-            foto = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_FOTO));
-            barcode = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_BARCODE));
-            mainLayout.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
-            String[] sDB = time.split(" ");
-            sync.setText("(last sync : "+time);
-            desc.setText(Html.fromHtml(encodedDesc));
-            txtPromo.setText(judulPromo);
-            voucher.setText(judulBonus + " " + bonus);
-            linkPromo = promo+"bc_id="+contact.getJabberId();
-            linkContactUs = room;
-            if (judulBonus.equalsIgnoreCase("")||judulBonus==null){
-                layoutVoucher.setVisibility(View.GONE);
-            }
-            mainLayout.setVisibility(View.VISIBLE);
-            Picasso.with(this).load(foto)
-                    .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(imgViewPhoto);
+    public void fillContent() {
+        try {
+            membersDB.open();
+            Cursor cursor = membersDB.getDetailMembers(id_card);
+            if (cursor.getCount() > 0) {
+                judulPromo = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_J_PROMO));
+                encodedDesc = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_DESC));
+                judulBonus = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_J_BONUS));
+                bonus = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_BONUS));
+                time = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_TIME));
+                promo = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_PROMO));
+                room = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_ROOM));
+                foto = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_FOTO));
+                barcode = cursor.getString(cursor.getColumnIndexOrThrow(MembersDB.MEMBERS_DETAIL_BARCODE));
+                mainLayout.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+                String[] sDB = time.split(" ");
+                sync.setText("(last sync : " + time);
+                desc.setText(Html.fromHtml(encodedDesc));
+                txtPromo.setText(judulPromo);
+                voucher.setText(judulBonus + " " + bonus);
+                linkPromo = promo + "bc_id=" + contact.getJabberId();
+                linkContactUs = room;
+                if (judulBonus.equalsIgnoreCase("") || judulBonus == null) {
+                    layoutVoucher.setVisibility(View.GONE);
+                }
+                mainLayout.setVisibility(View.VISIBLE);
+                Picasso.with(this).load(foto)
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(imgViewPhoto);
            /* if(clear){
                 imgProfile.clearCache();
                 imgBarcode.clearCache();
                 imgCard.clearCache();
             }*/
-            imgBarcode.DisplayImage(barcode, imgViewBarcode);
+                imgBarcode.DisplayImage(barcode, imgViewBarcode);
 
-        }else{
-            request();
+            } else {
+                request();
+            }
+            cursor.close();
+            membersDB.close();
+        } catch (Exception e) {
+            reportCatch(e.getLocalizedMessage());
         }
-        cursor.close();
-        membersDB.close();
     }
 
 }

@@ -543,11 +543,6 @@
             android:label="Video Player"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".DialogPopUpActivity"
-            android:label="AleartMeassage"
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog"
-            tools:ignore="NewApi" />
-        <activity
             android:name=".MainSettingActivity"
             android:label="@string/action_settings"
             android:theme="@style/AppTheme.NoActionBar" />

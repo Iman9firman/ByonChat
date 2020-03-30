@@ -1,5 +1,6 @@
 package com.byonchat.android.communication;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
@@ -43,6 +44,8 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.text.Html;
 import android.util.Log;
 import android.widget.Toast;
@@ -2156,7 +2159,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             if (!name.matches(regex)) {
                 Log.w("supaya2", "satu");
                 name = Utility.roomName(getApplicationContext(), name, true);
-                if (Utility.roomType(vo.getSource()).equalsIgnoreCase("X") && Utility.roomName(getApplicationContext(), vo.getSource(), false).equalsIgnoreCase("BYONCHATBACKGROUND")) {
+                if (Utility.roomType(vo.getSource()).equalsIgnoreCase("X")) {
                     Log.w("supaya3", "satu");
                     send = false;
                     if (isJSONValid(vo.getMessage())) {
@@ -2301,13 +2304,14 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                             } else if (pesan[0].equalsIgnoreCase("give_me_location")) {
                                 Log.w("supayaBisa", "on");
                                 Intent intent = new Intent(ACTION_REQGPS);
-                                intent.putExtra(KEY_LOC_REQ, vo.getMessage());
+                                intent.putExtra(KEY_LOC_REQ, vo);
                                 sendOrderedBroadcast(intent, null);
+
                             } else if (pesan[0].equalsIgnoreCase("give_me_req")) {
                                 SharedPreferences pref = getApplicationContext().getSharedPreferences(Config.SHARED_PREF, 0);
                                 String regId = pref.getString("regId", null);
 
-                                Message report = new Message(databaseHelper.getMyContact().getJabberId(), "x_byonchatbackground", "firebase_id : " + regId);
+                                Message report = new Message(databaseHelper.getMyContact().getJabberId(), vo.getSource(), "firebase_id : " + regId);
                                 report.setType("text");
                                 report.setSendDate(new Date());
                                 report.setStatus(Message.STATUS_INPROGRESS);
@@ -2333,7 +2337,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                                     e.printStackTrace();
                                 }
                             } else if (pesan[0].trim().equalsIgnoreCase("hide_att")) {
-                                Message report = new Message(databaseHelper.getMyContact().getJabberId(), "x_byonchatbackground", "hide");
+                                Message report = new Message(databaseHelper.getMyContact().getJabberId(), vo.getSource(), "hide");
                                 report.setType("text");
                                 report.setSendDate(new Date());
                                 report.setStatus(Message.STATUS_INPROGRESS);

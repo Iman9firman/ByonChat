@@ -74,12 +74,10 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         ctx = context;
-        Message vo = intent
-                .getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
-        String name = intent
-                .getStringExtra(MessengerConnectionService.KEY_CONTACT_NAME);
-        String loc = intent
-                .getStringExtra(MessengerConnectionService.KEY_LOC_REQ);
+        Message vo = intent.getParcelableExtra(MessengerConnectionService.KEY_MESSAGE_OBJECT);
+        String name = intent.getStringExtra(MessengerConnectionService.KEY_CONTACT_NAME);
+        Message loc = intent.getParcelableExtra(MessengerConnectionService.KEY_LOC_REQ);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 context);
         Uri url = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.whistle);
@@ -489,17 +487,15 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         }
         if (loc != null) {
-            Log.w("sudah", "9");
-            String pesan[] = loc.split(";");
+            String pesan[] = loc.getMessage().split(";");
             GPSTracker gps = new GPSTracker(context);
             if (gps.canGetLocation()) {
                 double latitude = gps.getLatitude();
                 double longitude = gps.getLongitude();
-                //  if (latitude == 0.0 && longitude == 0.0) {
                 String planText = null;
                 planText = "location;" + pesan[1] + ";" + latitude + "," + longitude + ";" + pesan[2] + ";" + simInfo();
                 if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-                    Message report = new Message(messengerHelper.getMyContact().getJabberId(), "x_byonchatbackground", planText);
+                    Message report = new Message(messengerHelper.getMyContact().getJabberId(), loc.getSource(), planText);
                     report.setType("text");
                     report.setSendDate(new Date());
                     report.setStatus(Message.STATUS_INPROGRESS);
@@ -513,17 +509,10 @@ public class NotificationReceiver extends BroadcastReceiver {
                     sendSMSMessage(planText);
                 }
             } else {
-                Log.w("ate", "sss1");
-             /*   Intent i = new Intent();
-                i.setClassName("com.byonchat.android", "com.byonchat.android.DialogPopUpActivity");
-                intent.putExtra("pesan", loc);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);*/
                 String planText = null;
-
-                planText = "location;" + pesan[1] + ";" + "" + "," + "" + ";" + pesan[2] + ";" + simInfo();
+                planText = "location;" + pesan[1] + ";" + "-" + "," + "-" + ";" + pesan[2] + ";" + simInfo();
                 if (NetworkInternetConnectionStatus.getInstance(context).isOnline(context)) {
-                    Message report = new Message(messengerHelper.getMyContact().getJabberId(), "x_byonchatbackground", planText);
+                    Message report = new Message(messengerHelper.getMyContact().getJabberId(), loc.getSource(), planText);
                     report.setType("text");
                     report.setSendDate(new Date());
                     report.setStatus(Message.STATUS_INPROGRESS);
@@ -563,9 +552,10 @@ public class NotificationReceiver extends BroadcastReceiver {
         // String phoneNo = "+628158888248";
         String message = content;
 
+       /*pulsa di tutup
         try {
-         /*   SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNo, null, message, null, null);*/
+         *//*   SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNo, null, message, null, null);*//*
             SmsManager sms = SmsManager.getDefault();
             String sent = "android.telephony.SmsManager.STATUS_ON_ICC_SENT";
             PendingIntent piSent = PendingIntent.getBroadcast(ctx, Utility.generateRandomInt(), new Intent(sent), 0);
@@ -574,7 +564,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 

@@ -1984,7 +1984,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         finish();
                                         Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                         intent.putExtra("name_db", "sqlite_iss");
-                                        intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                                        intent.putExtra("path_db", "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
                                         startActivity(intent);
                                         return;
                                     }
@@ -2216,7 +2216,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                     finish();
                                     Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                     intent.putExtra("name_db", "sqlite_iss");
-                                    intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                                    intent.putExtra("path_db", "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
                                     startActivity(intent);
                                     return;
                                 }
@@ -2233,7 +2233,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 finish();
                                 Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                 intent.putExtra("name_db", "sqlite_iss");
-                                intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                                intent.putExtra("path_db", "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
                                 startActivity(intent);
                                 return;
                             }
@@ -2478,7 +2478,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                         btnOption.setText("Open");
                         final TextView valueFile = (TextView) linearEstimasi[count].findViewById(R.id.value);
                         valueFile.setText(valueP);
-                        if (urlP.equalsIgnoreCase("https://bb.byonchat.com/bc_voucher_client/public/list_task/document_preview/Document_27122018_164006_dyhW8uilXa.pdf")) {
+                        if (urlP.equalsIgnoreCase("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/document_preview/Document_27122018_164006_dyhW8uilXa.pdf")) {
                             valueFile.setText(getOficer("lokasi").replace(" ", "_") + ".pdf");
                         }
 
@@ -2488,8 +2488,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(context, DownloadFileByonchat.class);
-                                if (urlP.equalsIgnoreCase("https://bb.byonchat.com/bc_voucher_client/public/list_task/document_preview/Document_27122018_164006_dyhW8uilXa.pdf")) {
-                                    String urlPaa = "https://bb.byonchat.com/bc_voucher_client/public/list_task/document_preview/";
+                                if (urlP.equalsIgnoreCase("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/document_preview/Document_27122018_164006_dyhW8uilXa.pdf")) {
+                                    String urlPaa = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/document_preview/";
 
                                     intent.putExtra("path", urlPaa + getOficer("lokasi").replace(" ", "_") + ".pdf");
                                     intent.putExtra("nama_file", getOficer("lokasi").replace(" ", "_") + ".pdf");
@@ -5859,7 +5859,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
                                 JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                 if (values.has("value")) {
-                                    Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
+                                    Picasso.with(context).load("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
                                 }
                             }
                         }

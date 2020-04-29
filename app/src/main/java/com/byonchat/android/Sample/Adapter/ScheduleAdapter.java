@@ -2,16 +2,26 @@ package com.byonchat.android.Sample.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.byonchat.android.FragmentDinamicRoom.DinamicListTaskAdapter;
 import com.byonchat.android.R;
+import com.byonchat.android.Sample.Database.ScheduleSLADB;
 import com.byonchat.android.Sample.DateScheduleSLA;
 import com.byonchat.android.Sample.DetailAreaScheduleSLA;
 import com.byonchat.android.data.model.File;
@@ -59,97 +69,70 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
         holder.date.setText(fileee.timestamp);
         holder.jjt.setText(fileee.kode_jjt);
         holder.period.setText(fileee.description);
+        Log.w("kapak", fileee.type);
+
+
+        Drawable mDrawableLetf = context.getResources().getDrawable(R.drawable.status_work);
+
+        if (fileee.type.equalsIgnoreCase("1")) {
+            mDrawableLetf.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_ATOP);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                holder.status.setBackground(mDrawableLetf);
+                holder.status.setText(" Done ");
+
+            }
+        } else if (fileee.type.equalsIgnoreCase("9")) {
+            mDrawableLetf.setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                holder.status.setBackground(mDrawableLetf);
+                holder.status.setText("  On Process  ");
+            }
+
+        } else {
+            holder.status.setVisibility(View.GONE);
+        }
+
 
         holder.click_field.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.w("JamboRe", fileee.kode_jjt + "<1>" + fileee.description + "<2>" + fileee.title + "<3>" + fileee.timestamp + "<4>" + fileee.id_detail_area);
                 intentTo(fileee.kode_jjt, fileee.description, fileee.title, fileee.timestamp, fileee.id_detail_area);
             }
         });
 
-        /*try {
-
-            JSONObject jsonObject = new JSONObject(jjt);
-            String jjt_loc = jsonObject.getString("jjt_location");
-            holder.title_jjt.setText(jjt_loc);
-            holder.title_jjt.setTextColor(colorText);
-            JSONArray jsonArray = jsonObject.getJSONArray("periode");
-            for(int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                String id = jsonObject1.getString("id");
-                String jt = jsonObject1.getString("kode_jjt");
-                String period = jsonObject1.getString("periode");
-                String ketrgn = "";
-                if(jsonObject1.has("keterangan")) {
-                    ketrgn = jsonObject1.getString("keterangan");
-                }
-                String floor = jsonObject1.getString("floor");
-                String sd = jsonObject1.getString("start_date");
-                String ed = jsonObject1.getString("end_date");
-                String jjt_loc2 = jsonObject1.getString("jjt_location");
-
-                int idd = Integer.parseInt(id);
-
-                LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(50));
-                LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dpToPx(1));
-                edt = new TextView(context);
-                edt.setText(period);
-                edt.setTextColor(colorText);
-                edt.setBackgroundColor(backgroundText);
-                edt.setTextSize(20);
-                edt.setGravity(Gravity.CENTER|Gravity.LEFT);
-                holder.lineR_period.addView(edt,params1);
-
-                View view = new View(context);
-                view.setBackgroundColor(context.getResources().getColor(R.color.grey));
-                holder.lineR_period.addView(view, params2);
-
-                String finalFreq = ketrgn;
-                edt.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        intentTo(jt, finalFreq, period, jjt_loc2);
-                    }
-                });
-            }
-        } catch (JSONException e){
-            e.printStackTrace();
-        }*/
     }
 
-    public void intentTo(String jt, String ketrgn, String period, String date, String id_da){
+    public void intentTo(String jt, String ketrgn, String period, String date, String id_da) {
         Intent dw = new Intent(context, DetailAreaScheduleSLA.class);
-        dw.putExtra("jt",jt);
-        dw.putExtra("fq",ketrgn);
-        dw.putExtra("pr",period);
-        dw.putExtra("dt",date);
-        dw.putExtra("id",id_da);
+        dw.putExtra("jt", jt);
+        dw.putExtra("fq", ketrgn);
+        dw.putExtra("pr", period);
+        dw.putExtra("dt", date);
+        dw.putExtra("id", id_da);
         dw.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(dw);
     }
+
     // total number of rows
     @Override
     public int getItemCount() {
         return mData.size();
     }
 
-    // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-//        LinearLayout lineR_period, lineR_jjt;
-//        TextView title_jjt;
-            RelativeLayout click_field;
-            TextView jjt, date, period, job;
+        RelativeLayout click_field;
+        TextView jjt, date, period, job;
+        TextView status;
 
         ViewHolder(View itemView) {
             super(itemView);
-//            lineR_jjt = (LinearLayout) itemView.findViewById(R.id.nonRecycler);
-//            title_jjt = (TextView) itemView.findViewById(R.id.title);
-//            lineR_period = (LinearLayout) itemView.findViewById(R.id.linearData);
-            click_field = (RelativeLayout)  itemView.findViewById(R.id.clickField);
-            jjt = (TextView)  itemView.findViewById(R.id.sch_jjt);
-            date = (TextView)  itemView.findViewById(R.id.sch_date);
-            period = (TextView)  itemView.findViewById(R.id.sch_perio);
-            job = (TextView)  itemView.findViewById(R.id.sch_job);
+            click_field = (RelativeLayout) itemView.findViewById(R.id.clickField);
+            jjt = (TextView) itemView.findViewById(R.id.sch_jjt);
+            date = (TextView) itemView.findViewById(R.id.sch_date);
+            period = (TextView) itemView.findViewById(R.id.sch_perio);
+            job = (TextView) itemView.findViewById(R.id.sch_job);
+            status = (TextView) itemView.findViewById(R.id.status);
         }
 
         @Override

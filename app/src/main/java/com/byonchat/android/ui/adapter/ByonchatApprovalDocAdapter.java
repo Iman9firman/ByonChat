@@ -113,7 +113,7 @@ public class ByonchatApprovalDocAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     private void showFileImage(RecyclerView.ViewHolder viewHolder, String thumbnail) {
-        Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/public/list_attachment/icon-pdf.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatApprovalDocViewHolder) viewHolder).vIconView);
+        Picasso.with(context).load("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_attachment/icon-pdf.png").networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatApprovalDocViewHolder) viewHolder).vIconView);
     }
 
     private String[] getTagView() {

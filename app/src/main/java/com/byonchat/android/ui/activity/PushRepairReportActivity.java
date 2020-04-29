@@ -376,7 +376,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
 
                 for (int i = 0; i < foto.size(); i++) {
                     if (foto.get(i).getAfter() != null) {
-                        new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                        new UploadFileToServerCild().execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/proses/file_processing.php",
                                 getIntent().getStringExtra("username_room"),
                                 id_rooms_tab, id_task_list,
                                 foto.get(i).getAfter().toString(),
@@ -556,7 +556,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
                     String fileNameServer = jsonObject.getString("filename");
-                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
+                    String filePhott = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fileNameServer;
 
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getId().equalsIgnoreCase(id)) {
@@ -571,7 +571,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 }
 
                 if (foto.size() == uploadfoto.size()) {
-                    new UploadJSONSOn().execute("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/insert_tobe_repair.php",
+                    new UploadJSONSOn().execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/category_tab/insert_tobe_repair.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             getIntent().getStringExtra("id_rooms_tab"));
                 }

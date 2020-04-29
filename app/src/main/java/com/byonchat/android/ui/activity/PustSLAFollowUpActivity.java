@@ -219,7 +219,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         idItem = id_task + "-" + v;
 
                         if (!fotony.contains("http://")) {
-                            fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
+                            fotony = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fifth.getString("f");
                         }
 
                         String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
@@ -472,7 +472,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getAfter() != null) {
-                            new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                            new UploadFileToServerCild().execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/proses/file_processing.php",
                                     getIntent().getStringExtra("username_room"),
                                     id_rooms_tab, id_task_list,
                                     foto.get(i).getAfter().toString(),
@@ -716,7 +716,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
                     String fileNameServer = jsonObject.getString("filename");
-                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
+                    String filePhott = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fileNameServer;
 
                     for (int i = 0; i < foto.size(); i++) {
                         if (removePosFromId(foto.get(i).getId()).equalsIgnoreCase(id)) {
@@ -894,7 +894,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             finish();
             Intent intent = new Intent(PustSLAFollowUpActivity.this, DownloadSqliteDinamicActivity.class);
             intent.putExtra("name_db", "sqlite_iss");
-            intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+            intent.putExtra("path_db", "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
             startActivity(intent);
             return header;
         }

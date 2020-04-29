@@ -72,7 +72,7 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
         progressDialog.setMessage("Please wait a second");
         progressDialog.show();
 
-        String url = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
+        String url = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
 
         if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
             try {

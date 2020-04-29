@@ -174,7 +174,7 @@ public class ZhFourFragment extends Fragment {
                                 if (imgList.get(0).split(";;").length ==2){
                                     File checkFile = new File(imgList.get(0).split(";;")[0]);
                                     if (checkFile.exists()){
-                                        new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                                        new UploadFileToServerCild().execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/proses/file_processing.php",
                                                 ((DinamicSLATaskActivity) getActivity()).getUsername(),
                                                 "2613",
                                                 "66989",
@@ -546,7 +546,7 @@ public class ZhFourFragment extends Fragment {
                     if (imgList.get(0).split(";;").length ==2) {
                         File checkFile = new File(imgList.get(0).split(";;")[0]);
                         if (checkFile.exists()) {
-                            new UploadFileToServerCild().execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                            new UploadFileToServerCild().execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/proses/file_processing.php",
                                     ((DinamicSLATaskActivity) getActivity()).getUsername(),
                                     "2613",
                                     "66989",

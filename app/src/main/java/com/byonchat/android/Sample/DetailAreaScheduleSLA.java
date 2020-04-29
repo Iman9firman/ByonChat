@@ -65,10 +65,10 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     RecyclerView recyclerView;
     DetailAreaScheduleAdapter adapter;
     ArrayList<DetailArea> detarea_list = new ArrayList();
-//    String jt,fq,fl,pr,sd,fd, dt;
+    //    String jt,fq,fl,pr,sd,fd, dt;
     String id, jt, ktrgn, pr, dt;
     private static final int REQ_CAMERA = 1201;
-    public static String link_pic = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/files/";
+    public static String link_pic = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/files/";
 
     Bitmap result = null;
     Button submit;
@@ -89,7 +89,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         submitButton();
     }
 
-    public void getAllIntent(){
+    public void getAllIntent() {
         id = getIntent().getStringExtra("id");
         jt = getIntent().getStringExtra("jt");
         ktrgn = getIntent().getStringExtra("fq");
@@ -111,7 +111,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_keyboard_arrow_left_black_35dp);
     }
 
-    public void adapterRecyclerView(){
+    public void adapterRecyclerView() {
 
         adapter = new DetailAreaScheduleAdapter(DetailAreaScheduleSLA.this, detarea_list);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -122,13 +122,13 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         prepareDataRecycle();
     }
 
-    public void prepareDataRecycle(){
+    public void prepareDataRecycle() {
         submit.setVisibility(View.GONE);
 
         detarea_list.clear();
         ScheduleSLADB dbA = ScheduleSLADB.getInstance(DetailAreaScheduleSLA.this);
 
-        url = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
+        url = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
 
         if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
             String version = null;
@@ -139,12 +139,12 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Log.e("Reamure DetailArea",version);
+            Log.e("Reamure DetailArea", version);
             try {
 
                 JSONObject jsonObject = new JSONObject(version);
                 JSONArray jsonArray = jsonObject.getJSONArray("item");
-                for(int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                     String id = jsonObject1.getString("id_jjt");
                     String jjt = jsonObject1.getString("kode_jjt");
@@ -159,25 +159,26 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                     String on_proses = jsonObject1.getString("on_proses");
                     String done = jsonObject1.getString("done");
 
-                    if(done.equalsIgnoreCase("null")){
+                    if (done.equalsIgnoreCase("null")) {
                         submit.setVisibility(View.VISIBLE);
                     }
+                    Log.w("JamboRe22", id_detail_proses);
 
                     ScheduleSLA sch = new ScheduleSLA(id_detail_proses, id, Byonchat.getMessengerHelper().getMyContact().getJabberId(), start, on_proses, done);
 
                     Cursor cursorBot = dbA.getDataPicByID(id_detail_proses);
-                    if(cursorBot.getCount() > 0){
+                    if (cursorBot.getCount() > 0) {
                         dbA.updateImgAll(sch);
-                    }else {
+                    } else {
                         dbA.insertDataSchedule(sch);
                     }
 
                     DetailArea dtArea = new DetailArea(id_detail_proses, id, detail_area, period, ketrgn, start, on_proses, done);
                     detarea_list.add(dtArea);
                 }
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e("version","error!!!   "+e.getMessage());
+                Log.e("version", "error!!!   " + e.getMessage());
             }
         } else {
             Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -191,9 +192,9 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < detarea_list.size(); i++) {
-                    if(!detarea_list.get(i).getImg_start().equalsIgnoreCase("null")){
-                        if(!detarea_list.get(i).getImg_proses().equalsIgnoreCase("null")){
-                            if(!detarea_list.get(i).getImg_done().equalsIgnoreCase("null")) {
+                    if (!detarea_list.get(i).getImg_start().equalsIgnoreCase("null")) {
+                        if (!detarea_list.get(i).getImg_proses().equalsIgnoreCase("null")) {
+                            if (!detarea_list.get(i).getImg_done().equalsIgnoreCase("null")) {
                                 if (detarea_list.get(i).getImg_start().startsWith("/storage")) {
                                     new PostSchedule(DetailAreaScheduleSLA.this).execute(url, detarea_list.get(i).getId(), detarea_list.get(i).getImg_start(), detarea_list.get(i).getImg_proses(), detarea_list.get(i).getImg_done());
                                 }
@@ -205,8 +206,8 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         });
     }
 
-    protected String postParameters(String url){
-        if(!url.endsWith("?"))
+    protected String postParameters(String url) {
+        if (!url.endsWith("?"))
             url += "?";
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
@@ -229,19 +230,20 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         protected String doInBackground(String... urls) {
             return GET(urls[0]);
         }
+
         @Override
         protected void onPostExecute(String result) {
         }
     }
 
-    public static String GET(String url){
+    public static String GET(String url) {
         InputStream inputStream = null;
         String result = "";
         try {
             HttpClient httpclient = new DefaultHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
-            if(inputStream != null)
+            if (inputStream != null)
                 result = convertInputStreamToString(inputStream);
             else
                 result = "";
@@ -253,10 +255,10 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = "";
         String result = "";
-        while((line = bufferedReader.readLine()) != null)
+        while ((line = bufferedReader.readLine()) != null)
             result += line;
 
         inputStream.close();
@@ -331,11 +333,11 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);
 
-                    Log.e("freegg uploada",id_area);
+                    Log.e("freegg uploada", id_area);
 
                     DetailAreaScheduleSLA.this.runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(DetailAreaScheduleSLA.this,"Submit Successfully!",Toast.LENGTH_LONG).show();
+                            Toast.makeText(DetailAreaScheduleSLA.this, "Submit Successfully!", Toast.LENGTH_LONG).show();
                             prepareDataRecycle();
                         }
                     });
@@ -343,10 +345,10 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                 } else {
                     progressDialog.dismiss();
                     error = "Tolong periksa koneksi internet.";
-                    Log.e("freegg uploada",id_area);
+                    Log.e("freegg uploada", id_area);
                     DetailAreaScheduleSLA.this.runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(DetailAreaScheduleSLA.this,"Error upload",Toast.LENGTH_LONG).show();
+                            Toast.makeText(DetailAreaScheduleSLA.this, "Error upload", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -354,18 +356,18 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
             } catch (ConnectTimeoutException e) {
                 e.printStackTrace();
                 progressDialog.dismiss();
-                Log.e("freegg uploada",e.getMessage());
-                Toast.makeText(DetailAreaScheduleSLA.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                Log.e("freegg uploada", e.getMessage());
+                Toast.makeText(DetailAreaScheduleSLA.this, e.getMessage(), Toast.LENGTH_LONG).show();
             } catch (ClientProtocolException e) {
                 // TODO Auto-generated catch block
                 progressDialog.dismiss();
-                Log.e("freegg uploada",e.getMessage());
-                Toast.makeText(DetailAreaScheduleSLA.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                Log.e("freegg uploada", e.getMessage());
+                Toast.makeText(DetailAreaScheduleSLA.this, e.getMessage(), Toast.LENGTH_LONG).show();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 progressDialog.dismiss();
-                Log.e("freegg uploada",e.getMessage());
-                Toast.makeText(DetailAreaScheduleSLA.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                Log.e("freegg uploada", e.getMessage());
+                Toast.makeText(DetailAreaScheduleSLA.this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -378,8 +380,8 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
 
         ScheduleSLADB dbA = ScheduleSLADB.getInstance(DetailAreaScheduleSLA.this);
         Cursor all = dbA.getAllImgSaved();
-        if(all.getCount() > 0){
-            if(all.moveToFirst()){
+        if (all.getCount() > 0) {
+            if (all.moveToFirst()) {
                 do {
                     String id_da = all.getString(all.getColumnIndex(ScheduleSLADB.SCH_DATA_ID_AREA));
                     String id_jjt = all.getString(all.getColumnIndex(ScheduleSLADB.SCH_DATA_JJT));
@@ -397,12 +399,12 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                         }
                     }
                     adapter.notifyDataSetChanged();
-                }while (all.moveToNext());
+                } while (all.moveToNext());
             }
         }
     }
 
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {

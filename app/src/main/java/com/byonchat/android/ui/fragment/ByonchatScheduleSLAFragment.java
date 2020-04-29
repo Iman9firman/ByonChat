@@ -669,7 +669,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
                         String data_da = pilih.substring(0, pilih.length() - 1);
 
-                        String linnk = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_insert.php";
+                        String linnk = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_insert.php";
                         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
 
                             int jjt_pos = spinjjt.getSelectedItemPosition()-1;

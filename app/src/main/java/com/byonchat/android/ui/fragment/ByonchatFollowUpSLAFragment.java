@@ -218,7 +218,7 @@ public class ByonchatFollowUpSLAFragment extends Fragment implements SwipeRefres
                 params.put("kode_jjt[" + i + "]", kodeJJt.get(i));
             }
 
-            getDetail(/*"https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_tobe_repair.php"*/urlTembak, params, true);
+            getDetail(/*"https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/category_tab/report_tobe_repair.php"*/urlTembak, params, true);
         } else {
             vRefreshList.setRefreshing(false);
             Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();

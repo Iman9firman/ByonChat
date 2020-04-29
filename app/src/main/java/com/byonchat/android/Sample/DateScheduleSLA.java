@@ -82,7 +82,7 @@ public class DateScheduleSLA extends AppCompatActivity {
         progressDialog.show();
         if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
 
-            String url = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
+            String url = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
             try {
                 String version = new HttpAsyncTask().execute(addLocationToUrl(url)).get();
                 Log.e("Reamure DateSchedlue",version);

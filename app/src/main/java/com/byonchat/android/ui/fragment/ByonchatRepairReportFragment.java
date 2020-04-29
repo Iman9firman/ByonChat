@@ -183,7 +183,7 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
             params.put("username_room", username);
             params.put("bc_user", databaseHelper.getMyContact().getJabberId());
             params.put("id_rooms_tab", idRoomTab);
-            getDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_tobe_repair.php", params, true);
+            getDetail("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/category_tab/report_tobe_repair.php", params, true);
         } else {
             vRefreshList.setRefreshing(false);
             Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
@@ -209,7 +209,7 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
                 params.put("bc_user", databaseHelper.getMyContact().getJabberId());
                 params.put("id_rooms_tab", idRoomTab);
                 params.put("task_id", item.id + "");
-                getMoreDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/push_tobe_repair.php", params, true, item.title, item.timestamp);
+                getMoreDetail("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/category_tab/push_tobe_repair.php", params, true, item.title, item.timestamp);
 
             }
         }, new OnRequestItemClickListener() {

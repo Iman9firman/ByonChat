@@ -2,6 +2,7 @@ package com.byonchat.android.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,6 +24,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
 import com.byonchat.android.Sample.Adapter.ScheduleAdapter;
+import com.byonchat.android.Sample.Database.ScheduleSLADB;
+import com.byonchat.android.Sample.DetailAreaScheduleSLA;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.local.Byonchat;
@@ -55,7 +58,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @SuppressLint("ValidFragment")
-public class ByonchatListScheduleFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener  {
+public class ByonchatListScheduleFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     RecyclerView mRecyclerView;
     ScheduleAdapter myadapter;
@@ -106,6 +109,7 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
                              Bundle savedInstanceState) {
         View sss = inflater.inflate(R.layout.room_fragment_task_pull, container, false);
 
+
         mRecyclerView = (RecyclerView) sss.findViewById(R.id.list);
         swipeRefreshLayout = (SwipeRefreshLayout) sss.findViewById(R.id.activity_main_swipe_refresh_layout);
 
@@ -149,7 +153,7 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
 
     @Override
     public void onResume() {
-        Log.w("Ini keresume","iya");
+        Log.w("Ini keresume", "iya");
         refreshList();
         super.onResume();
     }
@@ -163,7 +167,7 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
         dataJson.clear();
         swipeRefreshLayout.setRefreshing(true);
         if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
-            String url = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
+            String url = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data_new.php";
             new startGetData(addParamsToUrl(url)).execute();
 
         } else {
@@ -172,13 +176,12 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
         }
     }
 
-    protected String addParamsToUrl(String url){
-        if(!url.endsWith("?"))
+    protected String addParamsToUrl(String url) {
+        if (!url.endsWith("?"))
             url += "?";
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
 
-        Log.e("Reamure",username);
         params.add(new BasicNameValuePair("action", "getPeriodeByBcUser"));
         params.add(new BasicNameValuePair("bc_user", username));
 
@@ -188,14 +191,14 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
         return url;
     }
 
-    public static String GET(String url){
+    public static String GET(String url) {
         InputStream inputStream = null;
         String result = "";
         try {
             HttpClient httpclient = new DefaultHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
-            if(inputStream != null)
+            if (inputStream != null)
                 result = convertInputStreamToString(inputStream);
             else
                 result = "";
@@ -207,10 +210,10 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = "";
         String result = "";
-        while((line = bufferedReader.readLine()) != null)
+        while ((line = bufferedReader.readLine()) != null)
             result += line;
 
         inputStream.close();
@@ -222,6 +225,7 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
         private String vug;
 
         private startGetData(String text) {
+            Log.w("JamboRe", text);
             this.vug = text;
         }
 
@@ -239,43 +243,53 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
 
     public void setData(String response) {
         try {
-            if(response.startsWith("<pre>")){
-                response = response.replace("<pre>","");
+            if (response.startsWith("<pre>")) {
+                response = response.replace("<pre>", "");
             }
 
             JSONObject jsonObject = new JSONObject(response);
-
-            Log.w("ressssD",response);
+            ScheduleSLADB dbA = ScheduleSLADB.getInstance(getContext());
+            Log.w("ressssD", response);
             JSONArray jsonArray = jsonObject.getJSONArray("item");
-            for(int i = 0; i < jsonArray.length(); i++) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject1 = jsonArray.getJSONObject(i);
 
-//                JSONArray jsonArray1 = jsonObject1.getJSONArray("item");
-//                for(int ii = 0; ii < jsonArray1.length(); ii++) {
-//                    JSONObject jsonObject2 = jsonArray1.getJSONObject(ii);
+                JSONArray jsonArray2 = jsonObject1.getJSONArray("periode");
+                for (int iii = 0; iii < jsonArray2.length(); iii++) {
+                    JSONObject jsonObject3 = jsonArray2.getJSONObject(iii);
 
-                    JSONArray jsonArray2 = jsonObject1.getJSONArray("periode");
-                    for(int iii = 0; iii < jsonArray2.length(); iii++){
-                        JSONObject jsonObject3 = jsonArray2.getJSONObject(iii);
-
-                        String kode_jjt = jsonObject3.getString("kode_jjt");
-                        String jjt_loc = jsonObject3.getString("jjt_location");
-                        String periode = jsonObject3.getString("periode");
-                        String keterangan = jsonObject3.getString("keterangan");
-                        String detail_area = jsonObject3.getString("detail_area");
-                        String id_detail_area = jsonObject3.getString("id_detail_area");
-                        String date = jsonObject3.getString("date");
-
-                        File filemodel = new File();
-                        filemodel.kode_jjt = kode_jjt;
-                        filemodel.title = periode;
-                        filemodel.description = keterangan;
-                        filemodel.timestamp = date;
-                        filemodel.id_detail_area = id_detail_area;
-                        filemodel.subtitle = detail_area;
-
-                        dataJson.add(filemodel);
+                    String kode_jjt = jsonObject3.getString("kode_jjt");
+                    String jjt_loc = jsonObject3.getString("jjt_location");
+                    String periode = jsonObject3.getString("periode");
+                    String keterangan = jsonObject3.getString("keterangan");
+                    String detail_area = jsonObject3.getString("detail_area");
+                    String id_detail_area = jsonObject3.getString("id_detail_area");
+                    String date = jsonObject3.getString("date");
+                    String status = jsonObject3.getString("status");
+                    String id_detail_proses = "";
+                    if (jsonObject3.has("id_detail_proses")) {
+                        id_detail_proses = jsonObject3.getString("id_detail_proses");
                     }
+
+                    File filemodel = new File();
+                    filemodel.kode_jjt = kode_jjt;
+                    filemodel.title = periode;
+                    filemodel.description = keterangan;
+                    filemodel.timestamp = date;
+                    filemodel.id_detail_area = id_detail_area;
+                    filemodel.subtitle = detail_area;
+
+
+                    Cursor cursorBot = dbA.getDataPicByID(id_detail_proses);
+                    if (cursorBot.getCount() > 0) {
+                        filemodel.type = "9";
+                    } else {
+                        filemodel.type = status;
+                    }
+
+
+                    dataJson.add(filemodel);
+                }
                     /*String id = jsonObject1i.getString("id");
                     String jt = jsonObject1i.getString("kode_jjt");
                     String period = jsonObject1i.getString("periode");
@@ -292,9 +306,9 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
                     dataJson.add(period);*/
 //                }
             }
-        } catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
-            Log.w("ressssD error",e.getMessage());
+            Log.w("ressssD error", e.getMessage());
         }
         myadapter.notifyDataSetChanged();
     }

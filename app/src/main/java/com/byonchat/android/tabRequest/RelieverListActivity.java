@@ -184,7 +184,7 @@ public class RelieverListActivity extends AppCompatActivity {
     private void getVolley() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        StringRequest sr = new StringRequest(Request.Method.POST, "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/api_submit_relever.php",
+        StringRequest sr = new StringRequest(Request.Method.POST, "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/api_submit_relever.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -358,7 +358,7 @@ public class RelieverListActivity extends AppCompatActivity {
         public String postData() {
             // Create a new HttpClient and Post Header
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/api_submit_realiver_iss.php");
+            HttpPost httppost = new HttpPost("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/api_submit_realiver_iss.php");
 
             try {
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(

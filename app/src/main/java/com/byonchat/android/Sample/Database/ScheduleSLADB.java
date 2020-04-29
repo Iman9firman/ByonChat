@@ -67,7 +67,7 @@ public class ScheduleSLADB extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if(oldVersion < newVersion) {
+        if (oldVersion < newVersion) {
             db.execSQL("DROP TABLE IF EXISTS " + SCH_TABLE);
             db.execSQL("DROP TABLE IF EXISTS " + SCH_DATA_TABLE);
             onCreate(db);
@@ -109,7 +109,7 @@ public class ScheduleSLADB extends SQLiteOpenHelper {
 
     public void insertDataSchedule(ScheduleSLA scheduleSLA) {
         ContentValues cv = new ContentValues();
-        cv.put(SCH_DATA_ID_AREA,scheduleSLA.getIddata());
+        cv.put(SCH_DATA_ID_AREA, scheduleSLA.getIddata());
         cv.put(SCH_DATA_JJT, scheduleSLA.getJjt());
         cv.put(SCH_DATA_USER, scheduleSLA.getUser());
         cv.put(SCH_DATA_START_PIC, scheduleSLA.getStartpic());
@@ -138,7 +138,7 @@ public class ScheduleSLADB extends SQLiteOpenHelper {
 
     public boolean updateImgNow(ScheduleSLA scheduleSLA, String pos) {
         ContentValues cv = new ContentValues();
-        cv.put(SCH_DATA_ID_AREA,scheduleSLA.getIddata());
+        cv.put(SCH_DATA_ID_AREA, scheduleSLA.getIddata());
         cv.put(SCH_DATA_JJT, scheduleSLA.getJjt());
         cv.put(SCH_DATA_USER, scheduleSLA.getUser());
         if (pos.equalsIgnoreCase("start")) {
@@ -159,12 +159,21 @@ public class ScheduleSLADB extends SQLiteOpenHelper {
 
     public boolean updateImgAll(ScheduleSLA scheduleSLA) {
         ContentValues cv = new ContentValues();
-        cv.put(SCH_DATA_ID_AREA,scheduleSLA.getIddata());
+        cv.put(SCH_DATA_ID_AREA, scheduleSLA.getIddata());
         cv.put(SCH_DATA_JJT, scheduleSLA.getJjt());
         cv.put(SCH_DATA_USER, scheduleSLA.getUser());
-        cv.put(SCH_DATA_START_PIC, scheduleSLA.getStartpic());
-        cv.put(SCH_DATA_PROSES_PIC, scheduleSLA.getProgresspic());
-        cv.put(SCH_DATA_DONE_PIC, scheduleSLA.getFinishpic());
+        if (!scheduleSLA.startpic.equalsIgnoreCase("null")) {
+            cv.put(SCH_DATA_START_PIC, scheduleSLA.getStartpic());
+        }
+        if (!scheduleSLA.progresspic.equalsIgnoreCase("null")) {
+            cv.put(SCH_DATA_PROSES_PIC, scheduleSLA.getProgresspic());
+        }
+
+        if (!scheduleSLA.finishpic.equalsIgnoreCase("null")) {
+            cv.put(SCH_DATA_DONE_PIC, scheduleSLA.getFinishpic());
+        }
+
+
         String where = SCH_DATA_ID_AREA + " = ? ";
 
         String[] whereArgs = {scheduleSLA.getIddata()};
@@ -176,7 +185,7 @@ public class ScheduleSLADB extends SQLiteOpenHelper {
 
 
     public boolean deleteByIdDAandJJT(String id_da, String id_jjt) {
-        String where = SCH_DATA_ID_AREA + " = ? AND " + SCH_DATA_JJT +  " = ? ";
+        String where = SCH_DATA_ID_AREA + " = ? AND " + SCH_DATA_JJT + " = ? ";
         String[] whereArgs = {id_da, id_jjt};
 
         boolean updateSuccessful = getDatabase().delete(SCH_DATA_TABLE, where, whereArgs) > 0;

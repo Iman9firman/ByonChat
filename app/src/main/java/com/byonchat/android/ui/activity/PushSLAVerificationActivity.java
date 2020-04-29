@@ -321,11 +321,11 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                         String aftera = fifth.getString("a");
                         if (!fotony.contains("http://")) {
-                            fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
+                            fotony = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fifth.getString("f");
                         }
 
                         if (!aftera.contains("http://")) {
-                            aftera = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("a");
+                            aftera = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fifth.getString("a");
                         }
 
                         String header = noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + headerTwo + " - " + headerFour;
@@ -390,7 +390,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 dialog.show();
                 AsyncTask uploadPict = new UploadPhoto();
                 ((UploadPhoto) uploadPict).setType("sign");
-                ((UploadPhoto) uploadPict).execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                ((UploadPhoto) uploadPict).execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/proses/file_processing.php",
                         username,
                         "2613",
                         "66989",
@@ -436,7 +436,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                         dialog.show();
                         AsyncTask uploadPict = new UploadPhoto();
                         ((UploadPhoto) uploadPict).setType("image");
-                        ((UploadPhoto) uploadPict).execute("https://bb.byonchat.com/bc_voucher_client/webservice/proses/file_processing.php",
+                        ((UploadPhoto) uploadPict).execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/proses/file_processing.php",
                                 username,
                                 "2613",
                                 "66989",

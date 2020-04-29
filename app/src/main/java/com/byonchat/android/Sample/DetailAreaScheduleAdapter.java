@@ -126,7 +126,7 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
     public void setImagePicasso(MyViewHolder holder, int position, DetailArea detailArea){
         Log.w("Ezaa",detailArea.getImg_start());
         Log.w("Ezaa",detailArea.getImg_proses());
-        Log.w("Ezaa",detailArea.getImg_done());
+        Log.w("Ezaa",detailArea.getImg_done());///storage/emulated/0/Pictures/application.mobile.iss2/bc-ROOM-20200429-153826.jpeg.jpeg
         if(!detailArea.getImg_start().equalsIgnoreCase("null")) {
             if(detailArea.getImg_start().startsWith("/storage")) {
                 Picasso.with(mActivity).load(new File(detailArea.getImg_start()))
@@ -138,7 +138,9 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
                         .into(holder.start);
                 holder.cekstart.setVisibility(View.VISIBLE);
             }
-        } if(!detailArea.getImg_proses().equalsIgnoreCase("null")) {
+        }
+
+        if(!detailArea.getImg_proses().equalsIgnoreCase("null")) {
             if(detailArea.getImg_proses().startsWith("/storage")) {
                 Picasso.with(mActivity).load(new File(detailArea.getImg_proses()))
                         .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
@@ -149,7 +151,9 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
                         .into(holder.proses);
                 holder.cekproses.setVisibility(View.VISIBLE);
             }
-        } if(!detailArea.getImg_done().equalsIgnoreCase("null")) {
+        }
+
+        if(!detailArea.getImg_done().equalsIgnoreCase("null")) {
             if(detailArea.getImg_done().startsWith("/storage")) {
                 Picasso.with(mActivity).load(new File(detailArea.getImg_done()))
                         .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
@@ -161,6 +165,8 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
                 holder.cekdone.setVisibility(View.VISIBLE);
             }
         }
+
+
     }
 
     @Override

@@ -41,6 +41,7 @@ import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
 import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.Utility;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -162,6 +163,12 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        try {
+            getToolbar().startScan("forward.byonchat.com", ByonChatMainRoomActivity.this);
+        } catch (Exception e) {
+
+        }
+
 
         vSearchView.closeSearch();
 
@@ -170,6 +177,16 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
                 hideSearchBar(positionFromRight);
         }
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            getToolbar().stopScan();
+        } catch (Exception e) {
+
+        }
     }
 
     public static String jsonResultType(String json, String type) {
@@ -241,7 +258,7 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 
                     Intent intent = new Intent(getApplicationContext(), DinamicRoomTaskActivity.class);
 
-                    if (value.get(2).toString().equalsIgnoreCase("2613")||value.get(2).toString().equalsIgnoreCase("3336")) {
+                    if (value.get(2).toString().equalsIgnoreCase("2613") || value.get(2).toString().equalsIgnoreCase("3336")) {
                         intent = new Intent(getApplicationContext(), DinamicSLATaskActivity.class);
                     }
 
@@ -621,8 +638,8 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 
     @NonNull
     @Override
-    protected Toolbar getToolbar() {
-        return (Toolbar) findViewById(R.id.toolbar);
+    protected ToolbarWithIndicator getToolbar() {
+        return (ToolbarWithIndicator) findViewById(R.id.toolbar);
     }
 
     @NonNull

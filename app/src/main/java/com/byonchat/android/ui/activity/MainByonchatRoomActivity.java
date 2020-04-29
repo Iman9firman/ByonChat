@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.byonchat.android.AdvRecy.ItemMain;
 import com.byonchat.android.R;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 public class MainByonchatRoomActivity extends MainByonchatRoomBaseActivity {
@@ -83,8 +84,8 @@ public class MainByonchatRoomActivity extends MainByonchatRoomBaseActivity {
 
     @NonNull
     @Override
-    protected Toolbar getToolbar() {
-        return (Toolbar) findViewById(R.id.toolbar);
+    protected ToolbarWithIndicator getToolbar() {
+        return (ToolbarWithIndicator) findViewById(R.id.toolbar);
     }
 
     @NonNull

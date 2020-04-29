@@ -85,6 +85,7 @@ import com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment;
 import com.byonchat.android.ui.fragment.ByonchatStatusRequestFragment;
 import com.byonchat.android.ui.fragment.ByonchatVerifikasiSLAFragment;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.nineoldandroids.animation.AnimatorSet;
 
@@ -168,7 +169,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected AppBarLayout vAppbar;
 
     @NonNull
-    protected Toolbar vToolbar;
+    protected ToolbarWithIndicator vToolbar;
 
     @NonNull
     protected RelativeLayout vToolbarBack;

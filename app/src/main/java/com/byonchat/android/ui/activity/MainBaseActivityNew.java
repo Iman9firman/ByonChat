@@ -2062,7 +2062,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
                     params.put("password", new Validations().getInstance(getApplicationContext()).getString(29));
                     params.put("bc_user", Byonchat.getMessengerHelper().getMyContact().getJabberId());
 
-                    LoginThis("https://bb.byonchat.com/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
+                    LoginThis("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/get_tab_rooms_iss.php", params, true);
 
                 } else {
                     Toast.makeText(getApplicationContext(), "No Internet Akses", Toast.LENGTH_SHORT).show();

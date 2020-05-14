@@ -152,6 +152,7 @@ import com.byonchat.android.utils.ValidationsKey;
 import com.byonchat.android.widget.ContactsCompletionView;
 import com.byonchat.android.widget.SpinnerCustomAdapter;
 import com.byonchat.android.widget.TimeDialog;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -335,7 +336,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
     String labelApprove = "Approve";
     String labelReject = "Reject";
     String labelDone = "Done";
-
+    ToolbarWithIndicator toolbar;
 
     String officer = "";
     boolean deleteContent = false;
@@ -416,12 +417,13 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         unregisterReceiver(broadcastHandler);
         assistant.stop();
         super.onPause();
+        toolbar.stopScan();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        toolbar.startScan("forward.byonchat.com", DinamicSLATaskActivity.this);
         if (idTab.equalsIgnoreCase("2644")) {
             //tab mandiri testing
             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -484,10 +486,15 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         registerReceiver(broadcastHandler, filter);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dinamic_slatask);
+
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
 
         activity = this;
         assistant = new LocationAssistant(this, this, LocationAssistant.Accuracy.HIGH, 5000, false);
@@ -532,8 +539,11 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         if (cursor.getCount() > 0) {
             /*getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(context).headerCostume(getWindow(), "#" + color));*/
 
+            Log.w("WarnaI", color);
+
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + color)));
             FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + color));
+
             final String conBefore = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
             final String contentBawaan = cursor.getString(cursor.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_CONTENT));
             String content = conBefore;
@@ -1984,7 +1994,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                         finish();
                                         Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                         intent.putExtra("name_db", "sqlite_iss");
-                                        intent.putExtra("path_db", "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                                        intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
                                         startActivity(intent);
                                         return;
                                     }
@@ -2216,7 +2226,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                     finish();
                                     Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                     intent.putExtra("name_db", "sqlite_iss");
-                                    intent.putExtra("path_db", "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                                    intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
                                     startActivity(intent);
                                     return;
                                 }
@@ -2233,7 +2243,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                                 finish();
                                 Intent intent = new Intent(context, DownloadSqliteDinamicActivity.class);
                                 intent.putExtra("name_db", "sqlite_iss");
-                                intent.putExtra("path_db", "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+                                intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
                                 startActivity(intent);
                                 return;
                             }
@@ -5859,7 +5869,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                             if (!JcontentBawaan.getString(name).equalsIgnoreCase("null")) {
                                 JSONObject values = new JSONObject(JcontentBawaan.getString(name));
                                 if (values.has("value")) {
-                                    Picasso.with(context).load("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
+                                    Picasso.with(context).load("https://bb.byonchat.com/bc_voucher_client/images/list_task/signature/" + values.getString("value")).into(imageView[count]);
                                 }
                             }
                         }

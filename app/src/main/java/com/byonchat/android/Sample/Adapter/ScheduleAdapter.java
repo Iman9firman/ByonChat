@@ -69,8 +69,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
         holder.date.setText(fileee.timestamp);
         holder.jjt.setText(fileee.kode_jjt);
         holder.period.setText(fileee.description);
-        Log.w("kapak", fileee.type);
-
 
         Drawable mDrawableLetf = context.getResources().getDrawable(R.drawable.status_work);
 
@@ -79,6 +77,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 holder.status.setBackground(mDrawableLetf);
                 holder.status.setText(" Done ");
+                holder.status.setVisibility(View.VISIBLE);
 
             }
         } else if (fileee.type.equalsIgnoreCase("9")) {
@@ -86,6 +85,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 holder.status.setBackground(mDrawableLetf);
                 holder.status.setText("  On Process  ");
+                holder.status.setVisibility(View.VISIBLE);
             }
 
         } else {
@@ -96,7 +96,6 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
         holder.click_field.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.w("JamboRe", fileee.kode_jjt + "<1>" + fileee.description + "<2>" + fileee.title + "<3>" + fileee.timestamp + "<4>" + fileee.id_detail_area);
                 intentTo(fileee.kode_jjt, fileee.description, fileee.title, fileee.timestamp, fileee.id_detail_area);
             }
         });

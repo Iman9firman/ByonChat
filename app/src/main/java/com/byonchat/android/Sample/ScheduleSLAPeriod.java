@@ -2,6 +2,8 @@ package com.byonchat.android.Sample;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,8 @@ import android.widget.Toast;
 
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
+import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -38,21 +42,30 @@ import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.dpToP
 import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.getPerioRes;
 
 
-public class ScheduleSLAPeriod  extends AppCompatActivity {
+public class ScheduleSLAPeriod extends AppCompatActivity {
     TextView title;
     LinearLayout llData;
     String jt;
     String ketrgn, period;
     String jjt_loc;
     private ProgressDialog progressDialog;
+    ToolbarWithIndicator toolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jjt_period);
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + "022B96")));
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + "022B96"));
+
+
         getSupportActionBar().setTitle("Schedule SLA");
 
-        llData = (LinearLayout) findViewById(R.id.linearData) ;
+        llData = (LinearLayout) findViewById(R.id.linearData);
         title = (TextView) findViewById(R.id.title);
 
         getAllIntent();
@@ -61,11 +74,11 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
         title.setText(jjt_loc);
     }
 
-    public void getAllIntent(){
+    public void getAllIntent() {
         jt = getIntent().getStringExtra("jt");
     }
 
-    public void getAllDataListPeriode(){
+    public void getAllDataListPeriode() {
 
         progressDialog = new ProgressDialog(ScheduleSLAPeriod.this);
         progressDialog.setTitle("Get Data!");
@@ -77,11 +90,11 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
         if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
             try {
                 String version = new HttpAsyncTask().execute(addLocationToUrl(url)).get();
-                Log.e("Reamure SLAPeriod",version);
+                Log.e("Reamure SLAPeriod", version);
 
                 JSONObject jsonObject = new JSONObject(version);
                 JSONArray jsonArray = jsonObject.getJSONArray("item");
-                for(int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                     String id = jsonObject1.getString("id");
                     String jjt = jsonObject1.getString("kode_jjt");
@@ -98,8 +111,8 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
                     TextView edt = new TextView(getApplicationContext());
                     edt.setText(getPerioRes(period));
                     edt.setTextSize(20);
-                    edt.setGravity(Gravity.CENTER|Gravity.LEFT);
-                    llData.addView(edt,params1);
+                    edt.setGravity(Gravity.CENTER | Gravity.LEFT);
+                    llData.addView(edt, params1);
 
                     View view = new View(getApplicationContext());
                     view.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.grey));
@@ -116,7 +129,7 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else {
@@ -124,17 +137,17 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
         }
     }
 
-    public void intentTo(){
+    public void intentTo() {
         Intent dw = new Intent(this, DateScheduleSLA.class);
-        dw.putExtra("jt",jt);
-        dw.putExtra("fq",ketrgn);
-        dw.putExtra("pr",period);
-        dw.putExtra("tt",jjt_loc);
+        dw.putExtra("jt", jt);
+        dw.putExtra("fq", ketrgn);
+        dw.putExtra("pr", period);
+        dw.putExtra("tt", jjt_loc);
         startActivity(dw);
     }
 
-    protected String addLocationToUrl(String url){
-        if(!url.endsWith("?"))
+    protected String addLocationToUrl(String url) {
+        if (!url.endsWith("?"))
             url += "?";
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
@@ -154,20 +167,21 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
         protected String doInBackground(String... urls) {
             return GET(urls[0]);
         }
+
         @Override
         protected void onPostExecute(String result) {
             progressDialog.dismiss();
         }
     }
 
-    public static String GET(String url){
+    public static String GET(String url) {
         InputStream inputStream = null;
         String result = "";
         try {
             HttpClient httpclient = new DefaultHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
-            if(inputStream != null)
+            if (inputStream != null)
                 result = convertInputStreamToString(inputStream);
             else
                 result = "";
@@ -179,14 +193,26 @@ public class ScheduleSLAPeriod  extends AppCompatActivity {
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = "";
         String result = "";
-        while((line = bufferedReader.readLine()) != null)
+        while ((line = bufferedReader.readLine()) != null)
             result += line;
 
         inputStream.close();
         return result;
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        toolbar.stopScan();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toolbar.startScan("forward.byonchat.com", ScheduleSLAPeriod.this);
     }
 }

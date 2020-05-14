@@ -9,7 +9,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,6 +43,7 @@ import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
+import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
@@ -54,6 +57,7 @@ import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.MediaProcessingUtil;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -103,11 +107,21 @@ public class PushRepairReportActivity extends AppCompatActivity {
     ProgressDialog rdialog;
     BotListDB db;
     SLANoteDB NoteDB;
+    ToolbarWithIndicator toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
+
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + "022B96")));
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + "022B96"));
+
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -556,7 +570,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
                     String fileNameServer = jsonObject.getString("filename");
-                    String filePhott = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fileNameServer;
+                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
 
                     for (int i = 0; i < foto.size(); i++) {
                         if (foto.get(i).getId().equalsIgnoreCase(id)) {
@@ -791,4 +805,15 @@ public class PushRepairReportActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        toolbar.stopScan();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toolbar.startScan("forward.byonchat.com", PushRepairReportActivity.this);
+    }
 }

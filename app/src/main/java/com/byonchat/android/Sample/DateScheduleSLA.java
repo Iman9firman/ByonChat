@@ -2,6 +2,8 @@ package com.byonchat.android.Sample;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,9 @@ import android.widget.Toast;
 
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
+import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.ui.activity.PustSLAFollowUpActivity;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -42,19 +47,29 @@ public class DateScheduleSLA extends AppCompatActivity {
     TextView title;
     LinearLayout llData;
     //    String jt,fq,fl,pr,sd,fd,tt;
-    String jt,ktrgn,pr,tt;
+    String jt, ktrgn, pr, tt;
     //    ArrayList<String> da = new ArrayList<>();
     private ProgressDialog progressDialog;
 
     int colorText, backgroundText;
 
+    ToolbarWithIndicator toolbar;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jjt_period);
+
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + "022B96")));
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + "022B96"));
+
         getSupportActionBar().setTitle("Schedule SLA");
 
-        llData = (LinearLayout) findViewById(R.id.linearData) ;
+        llData = (LinearLayout) findViewById(R.id.linearData);
         title = (TextView) findViewById(R.id.title);
 
         getAllIntent();
@@ -64,7 +79,7 @@ public class DateScheduleSLA extends AppCompatActivity {
         title.setTextColor(colorText);
     }
 
-    public void getAllIntent(){
+    public void getAllIntent() {
         jt = getIntent().getStringExtra("jt");
         ktrgn = getIntent().getStringExtra("fq");
         pr = getIntent().getStringExtra("pr");
@@ -74,7 +89,7 @@ public class DateScheduleSLA extends AppCompatActivity {
         backgroundText = getResources().getColor(R.color.tab_text_selected);
     }
 
-    public void getAllDataListPeriode(){
+    public void getAllDataListPeriode() {
 
         progressDialog = new ProgressDialog(DateScheduleSLA.this);
         progressDialog.setTitle("Get Data!");
@@ -85,10 +100,10 @@ public class DateScheduleSLA extends AppCompatActivity {
             String url = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
             try {
                 String version = new HttpAsyncTask().execute(addLocationToUrl(url)).get();
-                Log.e("Reamure DateSchedlue",version);
+                Log.e("Reamure DateSchedlue", version);
                 JSONObject jsonObject = new JSONObject(version);
                 JSONArray jsonArray = jsonObject.getJSONArray("item");
-                for(int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                     String jjt = jsonObject1.getString("kode_jjt");
                     String floor = jsonObject1.getString("floor");
@@ -103,8 +118,8 @@ public class DateScheduleSLA extends AppCompatActivity {
                     edt.setTextColor(colorText);
                     edt.setBackgroundColor(backgroundText);
                     edt.setTextSize(20);
-                    edt.setGravity(Gravity.CENTER|Gravity.LEFT);
-                    llData.addView(edt,params1);
+                    edt.setGravity(Gravity.CENTER | Gravity.LEFT);
+                    llData.addView(edt, params1);
 
                     View view = new View(getApplicationContext());
                     view.setBackgroundColor(getApplicationContext().getResources().getColor(R.color.grey));
@@ -121,7 +136,7 @@ public class DateScheduleSLA extends AppCompatActivity {
                 e.printStackTrace();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else {
@@ -129,21 +144,21 @@ public class DateScheduleSLA extends AppCompatActivity {
         }
     }
 
-    public void intentTo(String aa){
+    public void intentTo(String aa) {
         Intent dw = new Intent(this, DetailAreaScheduleSLA.class);
-        dw.putExtra("jt",jt);
-        dw.putExtra("fq",ktrgn);
+        dw.putExtra("jt", jt);
+        dw.putExtra("fq", ktrgn);
 //        dw.putExtra("fl",fl);
-        dw.putExtra("pr",pr);
+        dw.putExtra("pr", pr);
 //        dw.putExtra("sd",sd);
 //        dw.putExtra("fd",fd);
 //        dw.putExtra("da",da);
-        dw.putExtra("dt",aa);
+        dw.putExtra("dt", aa);
         startActivity(dw);
     }
 
-    protected String addLocationToUrl(String url){
-        if(!url.endsWith("?"))
+    protected String addLocationToUrl(String url) {
+        if (!url.endsWith("?"))
             url += "?";
 
         List<NameValuePair> params = new LinkedList<NameValuePair>();
@@ -164,20 +179,21 @@ public class DateScheduleSLA extends AppCompatActivity {
         protected String doInBackground(String... urls) {
             return GET(urls[0]);
         }
+
         @Override
         protected void onPostExecute(String result) {
             progressDialog.dismiss();
         }
     }
 
-    public static String GET(String url){
+    public static String GET(String url) {
         InputStream inputStream = null;
         String result = "";
         try {
             HttpClient httpclient = new DefaultHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
-            if(inputStream != null)
+            if (inputStream != null)
                 result = convertInputStreamToString(inputStream);
             else
                 result = "";
@@ -189,14 +205,26 @@ public class DateScheduleSLA extends AppCompatActivity {
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = "";
         String result = "";
-        while((line = bufferedReader.readLine()) != null)
+        while ((line = bufferedReader.readLine()) != null)
             result += line;
 
         inputStream.close();
         return result;
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        toolbar.stopScan();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toolbar.startScan("forward.byonchat.com", DateScheduleSLA.this);
     }
 }

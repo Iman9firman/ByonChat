@@ -25,6 +25,7 @@ import com.byonchat.android.Sample.Database.ScheduleSLADB;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.local.Byonchat;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -68,26 +69,47 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     //    String jt,fq,fl,pr,sd,fd, dt;
     String id, jt, ktrgn, pr, dt;
     private static final int REQ_CAMERA = 1201;
-    public static String link_pic = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/files/";
+    public static String link_pic = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/files/";
 
     Bitmap result = null;
     Button submit;
     boolean hideSubmit;
     private String url;
 
+    ToolbarWithIndicator toolbar;
+    protected ProgressDialog pdialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detail_area_sla_layout);
+        getAllIntent();
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         resolveToolbar("022b95", "ffffff");
 
         recyclerView = (RecyclerView) findViewById(R.id.blinded);
         submit = (Button) findViewById(R.id.button_submit);
 
-        getAllIntent();
+        if (pdialog == null) {
+            pdialog = new ProgressDialog(this);
+            pdialog.setIndeterminate(true);
+            pdialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        }
+
+
         adapterRecyclerView();
         submitButton();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        toolbar.stopScan();
+    }
+
 
     public void getAllIntent() {
         id = getIntent().getStringExtra("id");
@@ -97,17 +119,14 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         dt = getIntent().getStringExtra("dt");
     }
 
-    protected void resolveToolbar(String mColor, String mColorText) {
+    protected void resolveToolbar(String mColor, String title) {
         getSupportActionBar().setTitle("Schedule SLA");
+        getSupportActionBar().setSubtitle(jt);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if (mColor.equalsIgnoreCase("FFFFFF") && mColorText.equalsIgnoreCase("000000")) {
-            View lytToolbarDark = getLayoutInflater().inflate(R.layout.toolbar_dark, null);
-            Toolbar toolbarDark = lytToolbarDark.findViewById(R.id.toolbar_dark);
-        } else {
-            FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + mColor)));
-        }
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + mColor));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + mColor)));
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_keyboard_arrow_left_black_35dp);
     }
 
@@ -118,72 +137,20 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
         prepareDataRecycle();
+
     }
 
     public void prepareDataRecycle() {
         submit.setVisibility(View.GONE);
 
         detarea_list.clear();
-        ScheduleSLADB dbA = ScheduleSLADB.getInstance(DetailAreaScheduleSLA.this);
-
         url = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
-
         if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
-            String version = null;
-            try {
-                version = new HttpAsyncTask().execute(postParameters(url)).get();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Log.e("Reamure DetailArea", version);
-            try {
-
-                JSONObject jsonObject = new JSONObject(version);
-                JSONArray jsonArray = jsonObject.getJSONArray("item");
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                    String id = jsonObject1.getString("id_jjt");
-                    String jjt = jsonObject1.getString("kode_jjt");
-                    String floor = jsonObject1.getString("floor");
-                    String date = jsonObject1.getString("date");
-                    String period = jsonObject1.getString("periode");
-                    String ketrgn = jsonObject1.getString("keterangan");
-                    String id_detail_area = jsonObject1.getString("id_detail_area");
-                    String detail_area = jsonObject1.getString("detail_area");
-                    String id_detail_proses = jsonObject1.getString("id_detail_proses");
-                    String start = jsonObject1.getString("start");
-                    String on_proses = jsonObject1.getString("on_proses");
-                    String done = jsonObject1.getString("done");
-
-                    if (done.equalsIgnoreCase("null")) {
-                        submit.setVisibility(View.VISIBLE);
-                    }
-                    Log.w("JamboRe22", id_detail_proses);
-
-                    ScheduleSLA sch = new ScheduleSLA(id_detail_proses, id, Byonchat.getMessengerHelper().getMyContact().getJabberId(), start, on_proses, done);
-
-                    Cursor cursorBot = dbA.getDataPicByID(id_detail_proses);
-                    if (cursorBot.getCount() > 0) {
-                        dbA.updateImgAll(sch);
-                    } else {
-                        dbA.insertDataSchedule(sch);
-                    }
-
-                    DetailArea dtArea = new DetailArea(id_detail_proses, id, detail_area, period, ketrgn, start, on_proses, done);
-                    detarea_list.add(dtArea);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e("version", "error!!!   " + e.getMessage());
-            }
+            new HttpAsyncTask().execute(postParameters(url));
         } else {
             Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
-
         adapter.notifyDataSetChanged();
     }
 
@@ -228,11 +195,51 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
+            showAuthProgressDialog();
             return GET(urls[0]);
         }
 
         @Override
         protected void onPostExecute(String result) {
+            dismissAuthProgressDialog();
+            try {
+
+                JSONObject jsonObject = new JSONObject(result);
+                JSONArray jsonArray = jsonObject.getJSONArray("item");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                    String id = jsonObject1.getString("id_jjt");
+                    String jjt = jsonObject1.getString("kode_jjt");
+                    String floor = jsonObject1.getString("floor");
+                    String date = jsonObject1.getString("date");
+                    String period = jsonObject1.getString("periode");
+                    String ketrgn = jsonObject1.getString("keterangan");
+                    String id_detail_area = jsonObject1.getString("id_detail_area");
+                    String detail_area = jsonObject1.getString("detail_area");
+                    String id_detail_proses = jsonObject1.getString("id_detail_proses");
+                    String start = jsonObject1.getString("start");
+                    String on_proses = jsonObject1.getString("on_proses");
+                    String done = jsonObject1.getString("done");
+
+                    if (done.equalsIgnoreCase("null")) {
+                        submit.setVisibility(View.VISIBLE);
+                    }
+                    ScheduleSLA sch = new ScheduleSLA(id_detail_proses, id, Byonchat.getMessengerHelper().getMyContact().getJabberId(), start, on_proses, done);
+                    ScheduleSLADB dbA = ScheduleSLADB.getInstance(DetailAreaScheduleSLA.this);
+                    Cursor cursorBot = dbA.getDataPicByID(id_detail_proses);
+                    if (cursorBot.getCount() > 0) {
+                        dbA.updateImgAll(sch);
+                    } else {
+                        dbA.insertDataSchedule(sch);
+                    }
+
+                    DetailArea dtArea = new DetailArea(id_detail_proses, id, detail_area + "  (" + dt + ")", period, ketrgn, start, on_proses, done);
+                    detarea_list.add(dtArea);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e("version", "error!!!   " + e.getMessage());
+            }
         }
     }
 
@@ -253,6 +260,28 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
 
         return result;
     }
+
+    public void showAuthProgressDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                pdialog.show();
+            }
+        });
+    }
+
+    public void dismissAuthProgressDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (pdialog == null || !pdialog.isShowing()) {
+                    return;
+                }
+                pdialog.dismiss();
+            }
+        });
+    }
+
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -338,7 +367,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                     DetailAreaScheduleSLA.this.runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(DetailAreaScheduleSLA.this, "Submit Successfully!", Toast.LENGTH_LONG).show();
-                            prepareDataRecycle();
+                            finish();
                         }
                     });
                     progressDialog.dismiss();
@@ -375,7 +404,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        toolbar.startScan("forward.byonchat.com", DetailAreaScheduleSLA.this);
 //        prepareDataRecycle();
 
         ScheduleSLADB dbA = ScheduleSLADB.getInstance(DetailAreaScheduleSLA.this);

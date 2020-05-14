@@ -208,6 +208,8 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
             ((FeedItemsHolderNews) holder).dotB.setVisibility(View.GONE);
             ((FeedItemsHolderNews) holder).text.setText("Open File");
 
+            ((FeedItemsHolderNews) holder).btComment.setVisibility(View.GONE);
+
             ((FeedItemsHolderNews) holder).vTextBtnComment.setText("Follow Up");
             ((FeedItemsHolderNews) holder).btComment.setOnClickListener(new View.OnClickListener() {
                 @Override

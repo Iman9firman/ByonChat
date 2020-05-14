@@ -13,7 +13,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,6 +51,7 @@ import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.local.Byonchat;
@@ -63,6 +66,7 @@ import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.MediaProcessingUtil;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -118,12 +122,21 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
     private String basejson;
     SLANoteDB NoteDB;
 
-    // TODO: 2019-05-18 Lg genereate json bener apa engga 
+    ToolbarWithIndicator toolbar;
+
+    // TODO: 2019-05-18 Lg genereate json bener apa engga
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
 
+
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + "022B96")));
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + "022B96"));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -219,7 +232,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         idItem = id_task + "-" + v;
 
                         if (!fotony.contains("http://")) {
-                            fotony = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fifth.getString("f");
+                            fotony = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("f");
                         }
 
                         String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
@@ -716,7 +729,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 String message = jsonObject.getString("message");
                 if (message.length() == 0) {
                     String fileNameServer = jsonObject.getString("filename");
-                    String filePhott = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fileNameServer;
+                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
 
                     for (int i = 0; i < foto.size(); i++) {
                         if (removePosFromId(foto.get(i).getId()).equalsIgnoreCase(id)) {
@@ -894,7 +907,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             finish();
             Intent intent = new Intent(PustSLAFollowUpActivity.this, DownloadSqliteDinamicActivity.class);
             intent.putExtra("name_db", "sqlite_iss");
-            intent.putExtra("path_db", "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+            intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
             startActivity(intent);
             return header;
         }
@@ -909,6 +922,18 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         }
         return idWithPosition;
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        toolbar.stopScan();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toolbar.startScan("forward.byonchat.com", PustSLAFollowUpActivity.this);
     }
 }
 

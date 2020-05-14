@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.byonchat.android"> <!-- OCR Library -->
-    <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary,me.zharfan.osmplaces"/>
+    <uses-sdk tools:overrideLibrary="com.guna.ocrlibrary,me.zharfan.osmplaces" />
 
     <uses-feature
         android:name="android.hardware.bluetooth"
@@ -87,9 +87,9 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:persistent="true"
-        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
 
 
         <uses-library
@@ -287,32 +287,7 @@
             </intent-filter>
         </service>
 
-        <activity
-            android:name=".ui.activity.ByonchatVideoBeforeDownloadActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity
-            android:name=".ui.activity.ByonchatStreamingVideoTubeActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.activity.ByonchatPDFPreviewActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.activity.ByonchatDetailVideoTubeActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.activity.PushRepairReportActivity"
-            android:label="Report Repairment" />
-        <activity
-            android:name=".ui.activity.PustSLAFollowUpActivity"
-            android:label="Follow Up SLA" />
-        <activity
-            android:name=".ui.activity.PushSLAVerificationActivity"
-            android:label="Verifikasi SLA" />
+
         <!--
         <activity
             android:name=".SelectContactActivity"
@@ -578,10 +553,7 @@
             android:name=".FragmentDinamicRoom.LoginRoomActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".FragmentDinamicRoom.DinamicRoomTaskActivity" />
-        <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
-        <activity
-            android:name=".FragmentDinamicRoom.DinamicSLATaskActivity"
-            android:screenOrientation="portrait" />
+
 
         <activity android:name=".LoadingGetTabRoomActivity" /> <!-- lukman -->
         <activity
@@ -737,43 +709,102 @@
         <activity
             android:name=".LoginISS"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".FragmentDinamicRoom.DinamicRoomSearchTaskActivity" />
+
+        <activity
+            android:name=".FragmentDinamicRoom.DinamicSLATaskActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ISSActivity.Reliever.SubmitRequestActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ISSActivity.Reliever.CheckOutActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ISSActivity.Reliever.CheckInActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".tabRequest.RelieverListActivity" />
+
         <activity android:name=".tabRequest.MapsViewActivity" />
+
         <activity android:name=".tabRequest.RelieverDetailActivity" />
+
         <activity
             android:name=".ISSActivity.Requester.RequesterRatingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ISSActivity.Requester.ByonchatMallKelapaGadingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.view.DialogAct"
+
+        <activity
+            android:name=".ui.view.DialogAct"
+            android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"
+            android:theme="@style/AlertDialogCustom"
+            android:turnScreenOn="true" />
+
+
+
+        <activity
+            android:name=".ui.activity.ByonchatVideoBeforeDownloadActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.activity.ByonchatStreamingVideoTubeActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activity.ByonchatPDFPreviewActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.activity.ByonchatDetailVideoTubeActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
+        <activity
+            android:name=".ui.activity.PushRepairReportActivity"
+            android:label="Report Repairment"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activity.PustSLAFollowUpActivity"
+            android:label="Follow Up SLA"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activity.PushSLAVerificationActivity"
+            android:label="Verifikasi SLA"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".Sample.ScheduleSLAPeriod"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Sample.DateScheduleSLA"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Sample.DetailAreaScheduleSLA"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".Sample.DialogAddSchedulePicture"
             android:screenOrientation="portrait"
-            android:theme="@style/AlertDialogCustom"/>
-        <activity android:name=".Sample.ScheduleSLAPeriod"/>
-        <activity android:name=".Sample.DateScheduleSLA"/>
-        <activity android:name=".Sample.DetailAreaScheduleSLA"/>
-        <activity android:name=".Sample.DialogAddSchedulePicture"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"
-            android:turnScreenOn="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/AlertDialogCustom"/>
+            android:theme="@style/AlertDialogCustom"
+            android:turnScreenOn="true" />
+
     </application>
 
 </manifest>

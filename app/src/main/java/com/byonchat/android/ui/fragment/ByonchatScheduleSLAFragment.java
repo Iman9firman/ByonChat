@@ -32,6 +32,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.Sample.ScheduleSLAPeriod;
@@ -159,7 +160,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         super.onResume();
     }
 
-    public void setContent(){
+    public void setContent() {
         username = Byonchat.getMessengerHelper().getMyContact().getJabberId();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -254,7 +255,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                     public void userSelectedAValue(String value) {
                         editStart.setText(value);
 
-                        if(!editFinish.getText().toString().equalsIgnoreCase("")) {
+                        if (!editFinish.getText().toString().equalsIgnoreCase("")) {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             Date start = null, finish = null;
                             try {
@@ -301,7 +302,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                     public void userSelectedAValue(String value) {
                         editFinish.setText(value);
 
-                        if(!editStart.getText().toString().equalsIgnoreCase("")) {
+                        if (!editStart.getText().toString().equalsIgnoreCase("")) {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             Date start = null, finish = null;
                             try {
@@ -350,7 +351,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SimpleDateFormat targetFormat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss (EEEE)");
                 list_freq.clear();
-                if(spinperiod.getSelectedItem().toString().equalsIgnoreCase("one time")){
+                if (spinperiod.getSelectedItem().toString().equalsIgnoreCase("one time")) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date start = null, finish = null;
                     try {
@@ -364,12 +365,12 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
                     GregorianCalendar gc = new GregorianCalendar();
                     gc.setTime(start);
-                    Log.w("tdbretles",gc.getTime().toGMTString()+"");
+                    Log.w("tdbretles", gc.getTime().toGMTString() + "");
                     stChosen = targetFormat.format(gc.getTime());
-                    for(long i = 0; i < daysDiff; i++){
-                        gc.add(Calendar.DATE,1);
-                        Log.w("tdbretles",targetFormat.format(gc.getTime())+"");
-                        stChosen = stChosen + "\n"+targetFormat.format(gc.getTime());
+                    for (long i = 0; i < daysDiff; i++) {
+                        gc.add(Calendar.DATE, 1);
+                        Log.w("tdbretles", targetFormat.format(gc.getTime()) + "");
+                        stChosen = stChosen + "\n" + targetFormat.format(gc.getTime());
                     }
                     theChosen.setText(stChosen);
 
@@ -378,7 +379,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                     list_freq.add("3 Bulan");
                     list_freq.add("6 Bulan");
                     list_freq.add("Tahunan");
-                }else if(spinperiod.getSelectedItem().toString().equalsIgnoreCase("weekly")){
+                } else if (spinperiod.getSelectedItem().toString().equalsIgnoreCase("weekly")) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date start = null, finish = null;
                     try {
@@ -392,20 +393,20 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
                     GregorianCalendar gc = new GregorianCalendar();
                     gc.setTime(start);
-                    Log.w("tdbretles",gc.getTime()+"");
+                    Log.w("tdbretles", gc.getTime() + "");
                     stChosen = targetFormat.format(gc.getTime());
-                    for(long i = 0; i < daysDiff; i++){
-                        gc.add(Calendar.DATE,7);
-                        if(gc.getTime().before(finish)) {
+                    for (long i = 0; i < daysDiff; i++) {
+                        gc.add(Calendar.DATE, 7);
+                        if (gc.getTime().before(finish)) {
                             Log.w("tdbretles", gc.getTime() + "");
-                            stChosen = stChosen + "\n"+targetFormat.format(gc.getTime());
+                            stChosen = stChosen + "\n" + targetFormat.format(gc.getTime());
                         }
                     }
                     theChosen.setText(stChosen);
 
                     list_freq.add("-- Pilih Keterangan --");
                     list_freq.add("Weekly");
-                }else if(spinperiod.getSelectedItem().toString().equalsIgnoreCase("monthly")){
+                } else if (spinperiod.getSelectedItem().toString().equalsIgnoreCase("monthly")) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date start = null, finish = null;
                     try {
@@ -419,20 +420,20 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
                     GregorianCalendar gc = new GregorianCalendar();
                     gc.setTime(start);
-                    Log.w("tdbretles",gc.getTime()+"");
+                    Log.w("tdbretles", gc.getTime() + "");
                     stChosen = targetFormat.format(gc.getTime());
-                    for(long i = 0; i < daysDiff; i++){
-                        gc.add(Calendar.MONTH,1);
-                        if(gc.getTime().before(finish)) {
+                    for (long i = 0; i < daysDiff; i++) {
+                        gc.add(Calendar.MONTH, 1);
+                        if (gc.getTime().before(finish)) {
                             Log.w("tdbretles", gc.getTime() + "");
-                            stChosen = stChosen + "\n"+targetFormat.format(gc.getTime());
+                            stChosen = stChosen + "\n" + targetFormat.format(gc.getTime());
                         }
                     }
                     theChosen.setText(stChosen);
 
                     list_freq.add("-- Pilih Keterangan --");
                     list_freq.add("Monthly");
-                }else {
+                } else {
                     list_freq.add("-- Pilih Keterangan --");
                     theChosen.setText("");
                 }
@@ -452,7 +453,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                 list_bobot.clear();
                 spinpembobotan.setSelection(0);
                 list_bobot.add("-- Pilih Pembobotan --");
-                if(spinjjt.getSelectedItemPosition() != 0) {
+                if (spinjjt.getSelectedItemPosition() != 0) {
                     int jjt_pos = spinjjt.getSelectedItemPosition() - 1;
                     String kode_jjt = kodeJJt.get(jjt_pos);
 
@@ -465,7 +466,8 @@ public class ByonchatScheduleSLAFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         //Add List Section When Spinner Bobot Changes
@@ -475,17 +477,17 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                 list_secs.clear();
                 spinsection.setSelection(0);
                 list_secs.add("-- Pilih Section --");
-                if(spinpembobotan.getSelectedItemPosition() != 0) {
+                if (spinpembobotan.getSelectedItemPosition() != 0) {
                     String bobot = spinpembobotan.getSelectedItem().toString();
                     String idBobot = "";
                     for (int i = 0; i < pembobotan.size(); i++) {
-                        if(bobot.equalsIgnoreCase(pembobotan.get(i).getTitle())){
+                        if (bobot.equalsIgnoreCase(pembobotan.get(i).getTitle())) {
                             idBobot = pembobotan.get(i).getId();
                         }
                     }
 
                     for (int i = 0; i < section.size(); i++) {
-                        if(idBobot.equalsIgnoreCase(section.get(i).getId_parent())){
+                        if (idBobot.equalsIgnoreCase(section.get(i).getId_parent())) {
                             list_secs.add(section.get(i).getTitle());
                         }
                     }
@@ -493,7 +495,8 @@ public class ByonchatScheduleSLAFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         //Add List SubSection When Spinner Section Changes
@@ -503,17 +506,17 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                 list_subsecs.clear();
                 spinsubsec.setSelection(0);
                 list_subsecs.add("-- Pilih Subsection --");
-                if(spinsection.getSelectedItemPosition() != 0)  {
+                if (spinsection.getSelectedItemPosition() != 0) {
                     String section1 = spinsection.getSelectedItem().toString();
                     String idSecs = "";
                     for (int i = 0; i < section.size(); i++) {
-                        if(section1.equalsIgnoreCase(section.get(i).getTitle())){
+                        if (section1.equalsIgnoreCase(section.get(i).getTitle())) {
                             idSecs = section.get(i).getId();
                         }
                     }
 
                     for (int i = 0; i < subsection.size(); i++) {
-                        if(idSecs.equalsIgnoreCase(subsection.get(i).getId_parent())){
+                        if (idSecs.equalsIgnoreCase(subsection.get(i).getId_parent())) {
                             list_subsecs.add(subsection.get(i).getTitle());
                         }
                     }
@@ -521,16 +524,17 @@ public class ByonchatScheduleSLAFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
     }
 
-    public void addAndDeleteLayout(){
+    public void addAndDeleteLayout() {
         addLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!editParentTv.getText().toString().equalsIgnoreCase("")) {
+                if (!editParentTv.getText().toString().equalsIgnoreCase("")) {
 
                     detaiArea.add(editParentTv.getText().toString());
 
@@ -611,7 +615,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public void submitTaskSchedule(){
+    public void submitTaskSchedule() {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -668,11 +672,12 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                         }
 
                         String data_da = pilih.substring(0, pilih.length() - 1);
+                        String linnk = "https://bb.byonchat.com/bc_voucher_client/webservice/list_api/iss/schedule/schedule_insert.php";
 
-                        String linnk = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_insert.php";
+//                        String linnk = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_insert.php";
                         if (NetworkInternetConnectionStatus.getInstance(getContext()).isOnline(getContext())) {
 
-                            int jjt_pos = spinjjt.getSelectedItemPosition()-1;
+                            int jjt_pos = spinjjt.getSelectedItemPosition() - 1;
                             String kode_jjt = kodeJJt.get(jjt_pos);
 
                             new InsertSchedule(mActivity).execute(linnk, kode_jjt, spinjjt.getSelectedItem().toString(), perioRes(spinktr.getSelectedItem().toString()),
@@ -744,8 +749,8 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                 nameValuePairs.add(new BasicNameValuePair("end_date", ed));
 
                 for (int i = 0; i < detaiArea.size(); i++) {
-                    nameValuePairs.add(new BasicNameValuePair("detail_area["+i+"]", detaiArea.get(i)));
-                    Log.e("paramsend meterss","detail_area ["+i+"]"+"  --> "+ detaiArea.get(i));
+                    nameValuePairs.add(new BasicNameValuePair("detail_area[" + i + "]", detaiArea.get(i)));
+                    Log.e("paramsend meterss", "detail_area [" + i + "]" + "  --> " + detaiArea.get(i));
                 }
 
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -759,7 +764,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
 
                     mActivity.runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(mActivity,"Schedule has been created",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mActivity, "Schedule has been created", Toast.LENGTH_SHORT).show();
                             mActivity.onBackPressed();
                         }
                     });
@@ -791,56 +796,69 @@ public class ByonchatScheduleSLAFragment extends Fragment {
     }
 
     //Get List Pembobotan / Section / Subsection equals with Tab_SLA
-    private void getList_Like_SLA(String kodeJJT){
+    private void getList_Like_SLA(String kodeJJT) {
         pembobotan.clear();
         section.clear();
         subsection.clear();
 
         DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(mActivity, "sqlite_iss");
 
+        if (mDBDquerySLA.getWritableDatabase() != null) {
 
-        String asiop[] = {"jt.id AS id_jjt", "pb.id AS id_pembobotan", "pb.nama_pembobotan AS nama_pembobotan", "pb.grade AS grade"
-                , "s.id AS id_section", "s.title AS title_section", "ss.id AS id_subsection", "ss.title AS title_subsection", "p.id AS id_pertanyaan", "p.pertanyaan AS pertanyaan", "jt.pass_grade AS pass_gradeNya"};
+            String asiop[] = {"jt.id AS id_jjt", "pb.id AS id_pembobotan", "pb.nama_pembobotan AS nama_pembobotan", "pb.grade AS grade"
+                    , "s.id AS id_section", "s.title AS title_section", "ss.id AS id_subsection", "ss.title AS title_subsection", "p.id AS id_pertanyaan", "p.pertanyaan AS pertanyaan", "jt.pass_grade AS pass_gradeNya"};
 
-        String asiap = "jjt jt\n" +
-                "INNER JOIN jjt_checklists jtc ON jt.id=jtc.id_jjt\n" +
-                "INNER JOIN pembobotan pb ON pb.id=jtc.id_pembobotan\n" +
-                "INNER JOIN pembobotan_checklists pc ON pb.id=pc.id_pembobotan\n" +
-                "INNER JOIN section s ON s.id=pc.id_section\n" +
-                "INNER JOIN section_checklists sc ON s.id=sc.id_section\n" +
-                "INNER JOIN sub_section ss ON ss.id=sc.id_subsection\n" +
-                "INNER JOIN subsection_checklists sbc ON ss.id=sbc.id_subsection\n" +
-                "INNER JOIN pertanyaan p ON p.id=sbc.id_pertanyaan";
+            String asiap = "jjt jt\n" +
+                    "INNER JOIN jjt_checklists jtc ON jt.id=jtc.id_jjt\n" +
+                    "INNER JOIN pembobotan pb ON pb.id=jtc.id_pembobotan\n" +
+                    "INNER JOIN pembobotan_checklists pc ON pb.id=pc.id_pembobotan\n" +
+                    "INNER JOIN section s ON s.id=pc.id_section\n" +
+                    "INNER JOIN section_checklists sc ON s.id=sc.id_section\n" +
+                    "INNER JOIN sub_section ss ON ss.id=sc.id_subsection\n" +
+                    "INNER JOIN subsection_checklists sbc ON ss.id=sbc.id_subsection\n" +
+                    "INNER JOIN pertanyaan p ON p.id=sbc.id_pertanyaan";
 
-        final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + kodeJJT + "'", null, null, null, null, null);
+            final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + kodeJJT + "'", null, null, null, null, null);
 
-        if(css.moveToFirst()){
-            String bobotIdOld = "";
-            String sectionOld = "";
-            String subSectionOld = "";
+            if (css.moveToFirst()) {
+                String bobotIdOld = "";
+                String sectionOld = "";
+                String subSectionOld = "";
 
-            try {
+                try {
 
-                do {
-                    String idBobot = css.getString(1);
-                    String idSection = css.getString(4);
-                    String idSubSection = css.getString(6);
+                    do {
+                        String idBobot = css.getString(1);
+                        String idSection = css.getString(4);
+                        String idSubSection = css.getString(6);
 
-                    String namaBobot = css.getString(2);
-                    String namaSection = css.getString(5);
-                    String namaSubSection = css.getString(7);
+                        String namaBobot = css.getString(2);
+                        String namaSection = css.getString(5);
+                        String namaSubSection = css.getString(7);
 
-                    if (bobotIdOld.equalsIgnoreCase(idBobot)) {
-                        if (sectionOld.equalsIgnoreCase(idSection)) {
-                            if (!subSectionOld.equalsIgnoreCase(idSubSection)) {
+                        if (bobotIdOld.equalsIgnoreCase(idBobot)) {
+                            if (sectionOld.equalsIgnoreCase(idSection)) {
+                                if (!subSectionOld.equalsIgnoreCase(idSubSection)) {
+                                    subSectionOld = idSubSection;
+
+                                    ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
+                                    subsection.add(subsectioning);
+                                }
+                            } else {
                                 subSectionOld = idSubSection;
+                                sectionOld = idSection;
 
                                 ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
                                 subsection.add(subsectioning);
+
+                                ScheduleList sectioning = new ScheduleList(idSection, idBobot, namaSection);
+                                section.add(sectioning);
+
                             }
                         } else {
-                            subSectionOld = idSubSection;
+                            bobotIdOld = idBobot;
                             sectionOld = idSection;
+                            subSectionOld = idSubSection;
 
                             ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
                             subsection.add(subsectioning);
@@ -848,72 +866,73 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                             ScheduleList sectioning = new ScheduleList(idSection, idBobot, namaSection);
                             section.add(sectioning);
 
+                            ScheduleList bobot = new ScheduleList(idBobot, namaBobot);
+                            pembobotan.add(bobot);
                         }
-                    } else {
-                        bobotIdOld = idBobot;
-                        sectionOld = idSection;
-                        subSectionOld = idSubSection;
 
-                        ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
-                        subsection.add(subsectioning);
+                    } while (css.moveToNext());
 
-                        ScheduleList sectioning = new ScheduleList(idSection, idBobot, namaSection);
-                        section.add(sectioning);
+                } catch (Exception e) {
 
-                        ScheduleList bobot = new ScheduleList(idBobot, namaBobot);
-                        pembobotan.add(bobot);
-                    }
-
-                } while (css.moveToNext());
-
-            } catch (Exception e) {
-
+                }
             }
+        } else {
+            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                Toast.makeText(getContext(), "Please insert memmory card", Toast.LENGTH_LONG).show();
+                getActivity().finish();
+            }
+
+            getActivity().finish();
+            Intent intent = new Intent(getContext(), DownloadSqliteDinamicActivity.class);
+            intent.putExtra("name_db", "sqlite_iss");
+            intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
+            startActivity(intent);
+            return;
         }
     }
 
-    public static String perioRes(String value){
+    public static String perioRes(String value) {
         String result;
-        if(value.equalsIgnoreCase("One Time")){
+        if (value.equalsIgnoreCase("One Time")) {
             result = "one_time";
-        }else if(value.equalsIgnoreCase("Weekly")){
+        } else if (value.equalsIgnoreCase("Weekly")) {
             result = "mingguan";
-        }else if(value.equalsIgnoreCase("Monthly")){
+        } else if (value.equalsIgnoreCase("Monthly")) {
             result = "bulanan";
-        }else if(value.equalsIgnoreCase("Yearly")){
+        } else if (value.equalsIgnoreCase("Yearly")) {
             result = "tahunan";
-        }else if(value.equalsIgnoreCase("Tahunan")){
+        } else if (value.equalsIgnoreCase("Tahunan")) {
             result = "tahunan";
-        }else if(value.equalsIgnoreCase("3 Bulan")){
+        } else if (value.equalsIgnoreCase("3 Bulan")) {
             result = "3_bulanan";
-        }else if(value.equalsIgnoreCase("6 Bulan")){
+        } else if (value.equalsIgnoreCase("6 Bulan")) {
             result = "6_bulanan";
-        }else if(value.equalsIgnoreCase("3 Monthly")){
+        } else if (value.equalsIgnoreCase("3 Monthly")) {
             result = "3_bulanan";
-        }else if(value.equalsIgnoreCase("6 Monthly")){
+        } else if (value.equalsIgnoreCase("6 Monthly")) {
             result = "6_bulanan";
-        }else {
+        } else {
             result = value;
         }
 
         return result;
     }
 
-    public static String getPerioRes(String value){
+    public static String getPerioRes(String value) {
         String result;
-        if(value.equalsIgnoreCase("one_time")){
+        if (value.equalsIgnoreCase("one_time")) {
             result = "One Time";
-        }else if(value.equalsIgnoreCase("mingguan")){
+        } else if (value.equalsIgnoreCase("mingguan")) {
             result = "Weekly";
-        }else if(value.equalsIgnoreCase("bulanan")){
+        } else if (value.equalsIgnoreCase("bulanan")) {
             result = "Monthly";
-        }else if(value.equalsIgnoreCase("tahunan")){
+        } else if (value.equalsIgnoreCase("tahunan")) {
             result = "Yearly";
-        }else if(value.equalsIgnoreCase("3_bulanan")){
+        } else if (value.equalsIgnoreCase("3_bulanan")) {
             result = "3 Month";
-        }else if(value.equalsIgnoreCase("6_bulanan")){
+        } else if (value.equalsIgnoreCase("6_bulanan")) {
             result = "6 Month";
-        }else {
+        } else {
             result = value;
         }
 

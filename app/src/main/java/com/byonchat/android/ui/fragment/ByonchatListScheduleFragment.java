@@ -153,9 +153,8 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
 
     @Override
     public void onResume() {
-        Log.w("Ini keresume", "iya");
-        refreshList();
         super.onResume();
+        refreshList();
     }
 
     @Override
@@ -290,21 +289,6 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
 
                     dataJson.add(filemodel);
                 }
-                    /*String id = jsonObject1i.getString("id");
-                    String jt = jsonObject1i.getString("kode_jjt");
-                    String period = jsonObject1i.getString("periode");
-                    String ketrgn = "";
-                    if(jsonObject1i.has("keterangan")) {
-                        ketrgn = jsonObject1i.getString("keterangan");
-                    }
-                    String floor = jsonObject1i.getString("floor");
-                    String sd = jsonObject1i.getString("start_date");
-                    String ed = jsonObject1i.getString("end_date");
-                    String jjt_loc2 = jsonObject1i.getString("jjt_location");
-
-                    Log.w("ressssDw",period);
-                    dataJson.add(period);*/
-//                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

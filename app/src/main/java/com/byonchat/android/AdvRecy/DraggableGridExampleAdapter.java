@@ -122,13 +122,17 @@ public class DraggableGridExampleAdapter extends RecyclerView.Adapter<MyViewHold
 
         holder.mTextView.setSelected(true);
 
+        if (im.icon_name.equalsIgnoreCase("")) {
+            im.icon_name = "null";
+        }
+
         Manhera.getInstance().get()
                 .load(im.icon_name.equalsIgnoreCase(null)
                         || im.icon_name.equalsIgnoreCase("null") ? im.iconTest : im.icon_name)
                 .into(holder.mImageView);
 
 
-        fonts.FontFamily(context.getAssets(), holder.mTextView, Fonts.FONT_ROBOTO_BOLD);
+        // fonts.FontFamily(context.getAssets(), holder.mTextView, Fonts.FONT_ROBOTO_BOLD);
 
         addTabMenuBadger(im, holder.mItemBadge);
     }

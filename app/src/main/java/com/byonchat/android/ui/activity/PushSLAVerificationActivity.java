@@ -10,7 +10,9 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -58,6 +60,7 @@ import com.byonchat.android.ISSActivity.LoginDB.UserDB;
 import com.byonchat.android.R;
 import com.byonchat.android.ZoomImageViewActivity;
 import com.byonchat.android.communication.MessengerConnectionService;
+import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.data.model.File;
 import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.model.Photo;
@@ -72,6 +75,7 @@ import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.MediaProcessingUtil;
+import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.google.android.gms.vision.L;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -138,11 +142,19 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     Spinner spinner;
     Bitmap imgBm, sgnBm;
     ProgressDialog dialog = null;
+    ToolbarWithIndicator toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_repairment);
+
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + "022B96")));
+        FilteringImage.SystemBarBackground(getWindow(), Color.parseColor("#" + "022B96"));
 
         Intent ntent = getIntent();
         if (ntent != null) {
@@ -321,11 +333,11 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                         String aftera = fifth.getString("a");
                         if (!fotony.contains("http://")) {
-                            fotony = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fifth.getString("f");
+                            fotony = "https://bb.byonchat.com:/bc_voucher_client/images/list_task/" + fifth.getString("f");
                         }
 
                         if (!aftera.contains("http://")) {
-                            aftera = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/images/list_task/" + fifth.getString("a");
+                            aftera = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fifth.getString("a");
                         }
 
                         String header = noSatu + "." + noDua + "." + noTiga + "." + noEmpat + ". " + headerTwo + " - " + headerFour;
@@ -991,6 +1003,18 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return file;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        toolbar.stopScan();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toolbar.startScan("forward.byonchat.com", PushSLAVerificationActivity.this);
     }
 
 }

@@ -50,6 +50,22 @@
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/ic_iss" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin30"
+                android:layout_marginLeft="@dimen/margin10"
+                android:layout_marginRight="@dimen/margin10">
+
+                <Button
+                    android:id="@+id/changeNumber"
+                    android:layout_centerInParent="true"
+                    android:text="Change Number"
+                    style="@style/btn_submit_v1"
+                    />
+            </RelativeLayout>
+
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/etUsrIDLayout"
                 android:layout_width="match_parent"

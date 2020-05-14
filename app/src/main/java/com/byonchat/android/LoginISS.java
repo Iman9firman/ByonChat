@@ -79,6 +79,15 @@ public class LoginISS extends AppCompatActivity {
         db = dbHelper.getWritableDatabase();
         db.delete("user", null, null);
         Button erwgv = (Button) findViewById(R.id.loginBtn);
+        Button changeNumber = (Button) findViewById(R.id.changeNumber);
+        changeNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginISS.this, AccountSettingActivity.class);
+                startActivity(intent);
+            }
+        });
+
         EditText userID = (EditText) findViewById(R.id.login_userid);
         EditText passID = (EditText) findViewById(R.id.login_password);
         EditText accID = (EditText) findViewById(R.id.login_acc);

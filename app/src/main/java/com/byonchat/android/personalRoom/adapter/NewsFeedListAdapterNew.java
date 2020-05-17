@@ -230,9 +230,14 @@ public class NewsFeedListAdapterNew extends RecyclerView.Adapter<RecyclerView.Vi
             ((FeedItemsHolderNews) holder).btLoves.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, DownloadFileByonchat.class);
-                    intent.putExtra("path", item.getUrl());
-                    mContext.startActivity(intent);
+                    if (item.getUrl().contains("pdf")) {
+                        Intent intent = new Intent(mContext, DownloadFileByonchat.class);
+                        intent.putExtra("path", item.getUrl());
+                        mContext.startActivity(intent);
+                    } else {
+                        Toast.makeText(mContext, "File tidak tersedia di server", Toast.LENGTH_SHORT).show();
+                    }
+
 
                 }
             });

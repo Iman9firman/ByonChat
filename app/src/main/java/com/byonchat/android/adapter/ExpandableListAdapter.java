@@ -97,8 +97,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         final TextView txtCheckBox = (TextView) convertView.findViewById(R.id.txt_check_box);
 
         final RadioGroup pilihan = (RadioGroup) convertView.findViewById(R.id.pilihan);
-        final RadioButton okeP = (RadioButton) convertView.findViewById(R.id.radiOK);
-        final RadioButton notP = (RadioButton) convertView.findViewById(R.id.radiNOK);
+        final RadioButton lima = (RadioButton) convertView.findViewById(R.id.radioLima);
+        final RadioButton empat = (RadioButton) convertView.findViewById(R.id.radioEmpat);
+        final RadioButton tiga = (RadioButton) convertView.findViewById(R.id.radioTiga);
+        final RadioButton dua = (RadioButton) convertView.findViewById(R.id.radioDua);
+        final RadioButton satu = (RadioButton) convertView.findViewById(R.id.radioSatu);
 
         final TextView editText = (TextView) convertView.findViewById(R.id.editText);
         final TextView txtNumb = (TextView) convertView.findViewById(R.id.txt_numb);
@@ -120,13 +123,42 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 JSONObject lala = new JSONObject(text);
                 JSONArray jj = lala.getJSONArray(jsonObject.getString("iT"));
                 JSONObject oContent = jj.getJSONObject(expandedListPosition);
-                if (oContent.getString("v").equalsIgnoreCase("1")) {
-                    okeP.setChecked(true);
-                } else if (oContent.getString("v").equalsIgnoreCase("0")) {
-                    notP.setChecked(true);
+                if (oContent.getString("v").equalsIgnoreCase("5")) {
+                    lima.setChecked(true);
+                    empat.setChecked(false);
+                    tiga.setChecked(false);
+                    dua.setChecked(false);
+                    satu.setChecked(false);
+                } else if (oContent.getString("v").equalsIgnoreCase("4")) {
+                    lima.setChecked(false);
+                    empat.setChecked(true);
+                    tiga.setChecked(false);
+                    dua.setChecked(false);
+                    satu.setChecked(false);
+                } else if (oContent.getString("v").equalsIgnoreCase("3")) {
+                    lima.setChecked(false);
+                    empat.setChecked(false);
+                    tiga.setChecked(true);
+                    dua.setChecked(false);
+                    satu.setChecked(false);
+                } else if (oContent.getString("v").equalsIgnoreCase("2")) {
+                    lima.setChecked(false);
+                    empat.setChecked(false);
+                    tiga.setChecked(false);
+                    dua.setChecked(true);
+                    satu.setChecked(false);
+                } else if (oContent.getString("v").equalsIgnoreCase("1")) {
+                    lima.setChecked(false);
+                    empat.setChecked(false);
+                    tiga.setChecked(false);
+                    dua.setChecked(false);
+                    satu.setChecked(true);
                 } else {
-                    okeP.setChecked(false);
-                    notP.setChecked(false);
+                    lima.setChecked(false);
+                    empat.setChecked(false);
+                    tiga.setChecked(false);
+                    dua.setChecked(false);
+                    satu.setChecked(false);
                 }
 
                 editText.setText(oContent.getString("n"));
@@ -940,8 +972,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 }
 
             } else {
-                okeP.setChecked(false);
-                notP.setChecked(false);
+                lima.setChecked(false);
+                empat.setChecked(false);
+                tiga.setChecked(false);
+                dua.setChecked(false);
+                satu.setChecked(false);
                 editText.setText("");
                 Log.w("salamAN2", "dua");
                 // Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
@@ -964,8 +999,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            okeP.setChecked(false);
-            notP.setChecked(false);
+            lima.setChecked(false);
+            empat.setChecked(false);
+            tiga.setChecked(false);
+            dua.setChecked(false);
+            satu.setChecked(false);
             editText.setText("");
             Log.w("salamAN1", "dua");
             // Picasso.with(context).load(R.drawable.ic_att_photo).into(imageA);
@@ -1099,7 +1137,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     if (cEdit.getCount() > 0) {
                         Log.w("har2", checkedRadioButton.getText().toString());
                         String text = cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT));
-                        Log.w("banisd", text);
                         JSONObject lala = null;
                         try {
                             lala = new JSONObject(text);
@@ -1110,12 +1147,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
                             JSONObject oContent = jj.getJSONObject(expandedListPosition);
 
+
                             if (checkedRadioButton.getText().toString().equalsIgnoreCase("OK")) {
-                                Log.w("sadis", "satu");
+                                oContent.put("v", "5");
+                            } else if (checkedRadioButton.getText().toString().equalsIgnoreCase("NOK")) {
+                                oContent.put("v", "4");
+                            } else if (checkedRadioButton.getText().toString().equalsIgnoreCase("1")) {
+                                oContent.put("v", "3");
+                            } else if (checkedRadioButton.getText().toString().equalsIgnoreCase("2")) {
+                                oContent.put("v", "2");
+                            } else if (checkedRadioButton.getText().toString().equalsIgnoreCase("0")) {
                                 oContent.put("v", "1");
-                            } else {
-                                oContent.put("v", "0");
-                                Log.w("sadis", "kosong");
                             }
 
                             Log.w("sabanBi", lala.toString());

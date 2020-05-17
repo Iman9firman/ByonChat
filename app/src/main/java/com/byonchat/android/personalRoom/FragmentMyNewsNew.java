@@ -228,7 +228,7 @@ public class FragmentMyNewsNew extends Fragment {
         }
 
         protected void onPostExecute(String s) {
-            Log.w("disinikayanya", s.toString());
+            Log.w("disinikayanya1", s.toString());
             onItemsLoadComplete();
             if (s.equals(null)) {
                 Toast.makeText(mContext, "Internet Problem.", Toast.LENGTH_SHORT).show();
@@ -272,7 +272,7 @@ public class FragmentMyNewsNew extends Fragment {
             JSONArray commentNoteJsonArr = null;
 
             for (RoomsDetail ss : s) {
-                Log.w("disinikayanya", ss.getContent().toString());
+                Log.w("disinikayanya2", ss.getContent().toString());
 
                 JSONObject c = new JSONObject(ss.getContent());
                 String titlr = c.getString("title");
@@ -301,6 +301,7 @@ public class FragmentMyNewsNew extends Fragment {
                 item.setTimeStamp(tgl_post);
 
                 // url might be null sometimes
+
                 item.setUrl(attachment);
                 item.setJumlahLove("asdasd");
                 item.setJumlahNix("asdasd");

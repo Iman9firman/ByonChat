@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/margin5"
     android:paddingLeft="@dimen/margin10"
+    android:paddingTop="@dimen/margin5"
     android:paddingRight="@dimen/margin10"
-    android:paddingTop="@dimen/margin5">
+    android:paddingBottom="@dimen/margin5">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,8 +63,8 @@
                             android:id="@+id/editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/margin5"
                             android:layout_marginTop="@dimen/margin10"
+                            android:layout_marginBottom="@dimen/margin5"
                             android:background="@drawable/backgroud_conversation"
                             android:gravity="left"
                             android:hint="note"
@@ -79,8 +79,8 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/margin10"
                             android:layout_marginTop="@dimen/margin10"
+                            android:layout_marginBottom="@dimen/margin10"
                             android:orientation="horizontal">
 
                             <ImageView
@@ -129,7 +129,7 @@
                 android:layout_weight="2">
 
                 <RadioButton
-                    android:id="@+id/radiOK"
+                    android:id="@+id/radioLima"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scaleX="0.8"
@@ -138,13 +138,41 @@
                     android:textColor="@color/grayDark" />
 
                 <RadioButton
-                    android:id="@+id/radiNOK"
+                    android:id="@+id/radioEmpat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scaleX="0.8"
                     android:scaleY="0.8"
-                    android:text="Not OK"
+                    android:text="NOK"
                     android:textColor="@color/grayDark" />
+
+                <RadioButton
+                    android:id="@+id/radioTiga"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:text="1"
+                    android:textColor="@color/grayDark" />
+
+                <RadioButton
+                    android:id="@+id/radioDua"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:text="2"
+                    android:textColor="@color/grayDark" />
+
+                <RadioButton
+                    android:id="@+id/radioSatu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:text="0"
+                    android:textColor="@color/grayDark" />
+
 
             </RadioGroup>
 

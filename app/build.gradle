@@ -12,8 +12,8 @@ android {
         applicationId "com.byonchat.android"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 5
-        versionName "2.3"
+        versionCode 6
+        versionName "3.4"
         multiDexEnabled true
         renderscriptTargetApi 28
         renderscriptSupportModeEnabled true
@@ -241,7 +241,7 @@ dependencies {
     compile 'com.mindorks:placeholderview:0.7.1'
     compile 'com.stepstone.apprating:app-rating:2.3.0'
 
-    compile ('com.github.kenglxn.QRGen:android:2.5.0'){ exclude group: 'com.google.zxing' }
+    compile('com.github.kenglxn.QRGen:android:2.5.0') { exclude group: 'com.google.zxing' }
 
     compile 'com.github.HendrixString:Android-PdfMyXml:v1.0.1'
 }

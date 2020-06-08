@@ -237,10 +237,6 @@ public class DialogUseVoucherTwo extends DialogFragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -282,7 +278,8 @@ public class DialogUseVoucherTwo extends DialogFragment {
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response;
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {

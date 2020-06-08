@@ -56,6 +56,7 @@ import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.DatabaseKodePos;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.GPSTracker;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -201,7 +202,7 @@ public class FragmentRoomAPIAPura extends Fragment {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
@@ -234,6 +235,8 @@ public class FragmentRoomAPIAPura extends Fragment {
             } catch (IOException e) {
                 Toast.makeText(getActivity(), "Upload Gagal.", Toast.LENGTH_SHORT).show();
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

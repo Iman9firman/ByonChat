@@ -155,7 +155,11 @@ public class AccountSettingActivity extends AppCompatActivity {
                 if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
                     String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
                     if (!key.equalsIgnoreCase("null")) {
-                        new getProfile(getApplicationContext()).execute(key);
+                        try {
+                            new getProfile(getApplicationContext()).execute(key);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -414,7 +418,7 @@ public class AccountSettingActivity extends AppCompatActivity {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
+        private final HttpClient httpclient = HttpHelper.createHttpClient();
 
         final HttpParams params = httpclient.getParams();
         HttpResponse response;
@@ -431,7 +435,7 @@ public class AccountSettingActivity extends AppCompatActivity {
         String code2;
         String desc;
 
-        public updateProfile(Context context) {
+        public updateProfile(Context context) throws Exception {
             this.mContext = context;
 
         }
@@ -528,7 +532,11 @@ public class AccountSettingActivity extends AppCompatActivity {
                             // Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
                             pdialog.dismiss();
                         } else {
-                            new updateProfile(mContext).execute(key);
+                            try {
+                                new updateProfile(mContext).execute(key);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     } else {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -565,7 +573,7 @@ public class AccountSettingActivity extends AppCompatActivity {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
+        private final HttpClient httpclient = HttpHelper.createHttpClient();
 
         final HttpParams params = httpclient.getParams();
         HttpResponse response;
@@ -576,7 +584,7 @@ public class AccountSettingActivity extends AppCompatActivity {
         String code2 = "";
         String desc = "";
 
-        public getProfile(Context context) {
+        public getProfile(Context context) throws Exception {
             this.mContext = context;
 
         }
@@ -683,7 +691,11 @@ public class AccountSettingActivity extends AppCompatActivity {
                     if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                         String key = new ValidationsKey().getInstance(mContext).key(true);
                         if (!key.equalsIgnoreCase("null")) {
-                            new getProfile(mContext).execute(key);
+                            try {
+                                new getProfile(mContext).execute(key);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } else {

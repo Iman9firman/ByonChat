@@ -784,7 +784,12 @@ public class UploadService extends IntentService {
         public void run() {
             String responseString = null;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(mUrl);
             InputStreamReader reader = null;
             try {
@@ -1275,7 +1280,12 @@ public class UploadService extends IntentService {
             isReject = is_Reject;
             idNotif = id_notif;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL);
 
             try {
@@ -1395,7 +1405,7 @@ public class UploadService extends IntentService {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
                 InputStreamReader reader = null;
 
@@ -1731,6 +1741,8 @@ public class UploadService extends IntentService {
 
 
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -2093,10 +2105,6 @@ public class UploadService extends IntentService {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 3 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -2141,7 +2149,8 @@ public class UploadService extends IntentService {
 
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response;
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success
@@ -2299,10 +2308,6 @@ public class UploadService extends IntentService {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 3 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private JSONObject jObject;
         private Context mContext;
         private String content = null;
@@ -2348,9 +2353,9 @@ public class UploadService extends IntentService {
                 HttpPost post = new HttpPost(URL_CEK_APPLY);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-
+                HttpResponse response;
+                response = httpClient.execute(post);
                 //Response from the Http Request
-                response = httpclient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success
@@ -2468,7 +2473,12 @@ public class UploadService extends IntentService {
                     messengerHelper = MessengerDatabaseHelper.getInstance(mContext);
                 }
 
-                DefaultHttpClient client = new DefaultHttpClient();
+                HttpClient client = null;
+                try {
+                    client = HttpHelper.createHttpClient();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 HttpGet httpGet = new HttpGet(url + messengerHelper.getMyContact().getJabberId());
                 try {
                     HttpResponse execute = client.execute(httpGet);
@@ -2560,10 +2570,6 @@ public class UploadService extends IntentService {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 3 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private JSONObject jObject;
         private Context mContext;
         private String content = null;
@@ -2608,7 +2614,7 @@ public class UploadService extends IntentService {
                 HttpPost post = new HttpPost(URL_LAPOR_OFFERS);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-                response = httpclient.execute(post);
+                HttpResponse response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
@@ -2696,7 +2702,12 @@ public class UploadService extends IntentService {
             username = user;
             idNotif = id_notif;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL);
 
             try {
@@ -2816,7 +2827,12 @@ public class UploadService extends IntentService {
             username = user;
             idNotif = id_notif;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL);
 
             try {

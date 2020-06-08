@@ -76,7 +76,7 @@ public class VoucherFragment extends Fragment implements OnRefreshListener {
     RequestVouchers requestVouchers;
 
     public VoucherFragment(Context ctx) {
-        context=ctx;
+        context = ctx;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class VoucherFragment extends Fragment implements OnRefreshListener {
 
         if (listItem.size() > 0) {
             refreshList();
-        }else{
+        } else {
             requestKey();
         }
 
@@ -177,7 +177,7 @@ public class VoucherFragment extends Fragment implements OnRefreshListener {
                     public void onTaskDone(String key) {
                         if (key.equalsIgnoreCase("null")) {
                             swipeRefreshLayout.setRefreshing(false);
-                          //  Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            //  Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                         } else {
                             requestVouchers = new RequestVouchers(context);
                             requestVouchers.execute(key);
@@ -217,10 +217,6 @@ public class VoucherFragment extends Fragment implements OnRefreshListener {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -254,7 +250,7 @@ public class VoucherFragment extends Fragment implements OnRefreshListener {
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
@@ -308,7 +304,7 @@ public class VoucherFragment extends Fragment implements OnRefreshListener {
                         String key = new ValidationsKey().getInstance(mContext).key(true);
                         if (key.equalsIgnoreCase("null")) {
                             swipeRefreshLayout.setRefreshing(false);
-                         //   Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            //   Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                         } else {
                             requestVouchers = new RequestVouchers(context);
                             requestVouchers.execute(key);
@@ -319,7 +315,7 @@ public class VoucherFragment extends Fragment implements OnRefreshListener {
                     }
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
-                   // Toast.makeText(mContext,  R.string.pleaseTryAgain, Toast.LENGTH_LONG).show();
+                    // Toast.makeText(mContext,  R.string.pleaseTryAgain, Toast.LENGTH_LONG).show();
                 }
             } else {
                 swipeRefreshLayout.setRefreshing(false);

@@ -29,6 +29,7 @@ import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.Validations;
 import com.google.android.gms.vision.L;
 
@@ -289,7 +290,7 @@ public class LoginISS extends AppCompatActivity {
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpGet request = new HttpGet(url);
             request.setHeader("X-SFAPI-UserName", user);
             request.setHeader("X-SFAPI-UserPass", pass);

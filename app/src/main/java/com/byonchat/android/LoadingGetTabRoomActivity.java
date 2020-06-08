@@ -27,6 +27,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.Validations;
 import com.googlecode.mp4parser.srt.SrtParser;
 
@@ -213,10 +214,8 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
             // Create a new HttpClient and Post Header
 
             try {
-                HttpParams httpParameters = new BasicHttpParams();
-                HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
-                HttpConnectionParams.setSoTimeout(httpParameters, 20000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
@@ -347,6 +346,8 @@ public class LoadingGetTabRoomActivity extends AppCompatActivity {
                 });
                 finish();
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

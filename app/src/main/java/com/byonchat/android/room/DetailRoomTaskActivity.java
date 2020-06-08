@@ -38,6 +38,7 @@ import com.byonchat.android.provider.ContentRoomDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
 import com.byonchat.android.utils.GPSTracker;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.TouchImageView;
 
@@ -447,14 +448,19 @@ public class DetailRoomTaskActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... params) {
-            return uploadFile();
+            try {
+                return uploadFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         @SuppressWarnings("deprecation")
-        private String uploadFile() {
+        private String uploadFile() throws Exception {
             String responseString = null;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpPost httppost = new HttpPost("https://"+ MessengerConnectionService.HTTP_SERVER+"/demo_pamjaya/terima_upload.php");
 
             try {

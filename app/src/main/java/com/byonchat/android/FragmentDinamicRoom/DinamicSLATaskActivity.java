@@ -11123,7 +11123,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
 
@@ -11268,6 +11268,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 });
                 finish();
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -11815,7 +11817,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
             if (inputStream != null)
@@ -12609,7 +12611,7 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
@@ -12666,6 +12668,8 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
                 });
                 finish();
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -12979,7 +12983,12 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
         }
 
         public void postData(String valueIWantToSend, final String kodeJJt, final String content) {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(valueIWantToSend);
 
             try {
@@ -13125,7 +13134,12 @@ public class DinamicSLATaskActivity extends AppCompatActivity implements Locatio
 
         public String postData(String valueIWantToSend, final String kodeJJt) {
             String hasil = "";
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(valueIWantToSend);
 
             try {

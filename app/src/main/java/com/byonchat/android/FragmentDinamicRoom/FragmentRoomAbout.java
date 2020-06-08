@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.byonchat.android.R;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -170,7 +171,7 @@ public class FragmentRoomAbout extends Fragment implements SwipeRefreshLayout.On
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
                 // Add your data
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -221,6 +222,8 @@ public class FragmentRoomAbout extends Fragment implements SwipeRefreshLayout.On
                 // TODO Auto-generated catch block
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

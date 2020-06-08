@@ -47,6 +47,7 @@ import com.byonchat.android.ui.adapter.ForwardItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.ui.view.RxActivity;
 import com.byonchat.android.utils.ByonchatFileUtil;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.Utility;
 
 import org.apache.http.HttpResponse;
@@ -569,7 +570,7 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
         InputStream inputStream;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpPost httpPost = new HttpPost(args[2]);
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
@@ -599,7 +600,7 @@ public class ByonchatVideoBeforeDownloadActivity extends RxActivity implements S
         InputStream inputStream;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpPost httpPost = new HttpPost(args[3] + "?keywords=" + args[2]);
 
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(

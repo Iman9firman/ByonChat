@@ -19,6 +19,7 @@ import android.widget.VideoView;
 
 import com.byonchat.android.R;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -48,6 +49,7 @@ public class PictureUploadActivity extends Activity {
     long totalSize = 0;
     // File upload url (replace the ip with your server address)
     public static final String FILE_UPLOAD_URL = "http://192.168.0.104/AndroidFileUpload/fileUpload.php";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +113,7 @@ public class PictureUploadActivity extends Activity {
 
     /**
      * Uploading the file to server
-     * */
+     */
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         @Override
         protected void onPreExecute() {
@@ -134,14 +136,19 @@ public class PictureUploadActivity extends Activity {
 
         @Override
         protected String doInBackground(Void... params) {
-            return uploadFile();
+            try {
+                return uploadFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         @SuppressWarnings("deprecation")
-        private String uploadFile() {
+        private String uploadFile() throws Exception {
             String responseString = null;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
 
             try {
@@ -204,7 +211,7 @@ public class PictureUploadActivity extends Activity {
 
     /**
      * Method to show alert dialog
-     * */
+     */
     private void showAlert(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message).setTitle("Response from Servers")

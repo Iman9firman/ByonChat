@@ -64,7 +64,7 @@ import java.util.List;
 
 public class SearchThemesActivity extends AppCompatActivity {
     public final static String REFERENCE_MAIN = "main";
-    public static final String URL_SEARCH_ROOMS = "https://"+ MessengerConnectionService.HTTP_SERVER+"/themes/cari.php";
+    public static final String URL_SEARCH_ROOMS = "https://" + MessengerConnectionService.HTTP_SERVER + "/themes/cari.php";
     public final static String KEY_JABBER_ID = "com.byonchat.android.ProfileInfoActivity.JABBER_ID";
     public final static String KEY_REFERENCE = "com.byonchat.android.ProfileInfoActivity.REFERENCE";
     private MessengerDatabaseHelper dbhelper;
@@ -82,22 +82,23 @@ public class SearchThemesActivity extends AppCompatActivity {
     ImageButton btn_search;
     ImageButton btn_all_search;
     String search = "";
-    String suggested  = "";
+    String suggested = "";
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_themes);
-        overridePendingTransition(R.anim.activity_open_translate,R.anim.activity_close_scale);
+        overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
         getSupportActionBar().setBackgroundDrawable(new Validations().getInstance(getApplicationContext()).header(getWindow()));
-    //    getSupportActionBar().setIcon(new Validations().getInstance(getApplicationContext()).logoCustome());
+        //    getSupportActionBar().setIcon(new Validations().getInstance(getApplicationContext()).logoCustome());
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         if (dbhelper == null) {
             dbhelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
         }
         contact = dbhelper.getMyContact();
-        search =  getIntent().getStringExtra("search");
-        suggested =  getIntent().getStringExtra("suggested");
+        search = getIntent().getStringExtra("search");
+        suggested = getIntent().getStringExtra("suggested");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // if(!search.equalsIgnoreCase("")) getSupportActionBar().setTitle(search);
@@ -111,7 +112,7 @@ public class SearchThemesActivity extends AppCompatActivity {
 
 
         txtEmpty = (TextView) findViewById(R.id.txtEmpty);
-        listView = (LoadMoreListView)findViewById(R.id.listCatalog);
+        listView = (LoadMoreListView) findViewById(R.id.listCatalog);
 
         listView.setAdapter(listSearchThemesAdapter);
 
@@ -120,7 +121,7 @@ public class SearchThemesActivity extends AppCompatActivity {
         skinArrayList = db.retriveallSkin();
         db.close();
 
-        listSearchThemesAdapter = new ListSearchThemesAdapter(SearchThemesActivity.this,skinArrayList);
+        listSearchThemesAdapter = new ListSearchThemesAdapter(SearchThemesActivity.this, skinArrayList);
         listView.setAdapter(listSearchThemesAdapter);
         listView.setTextFilterEnabled(true);
 
@@ -128,7 +129,7 @@ public class SearchThemesActivity extends AppCompatActivity {
         btn_all_search = (ImageButton) findViewById(R.id.btn_all_search);
         inputSearch = (EditText) findViewById(R.id.inputSearch);
         inputSearch.setText(search);
-        btn_search.setBackground(new BitmapDrawable(getResources(), FilteringImage.viewAll(getApplicationContext(), Color.parseColor(new Validations().getInstance(getApplicationContext()).colorTheme(false)),R.drawable.ic_search)));
+        btn_search.setBackground(new BitmapDrawable(getResources(), FilteringImage.viewAll(getApplicationContext(), Color.parseColor(new Validations().getInstance(getApplicationContext()).colorTheme(false)), R.drawable.ic_search)));
         btn_search.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -143,38 +144,38 @@ public class SearchThemesActivity extends AppCompatActivity {
 
             }
         });
-        btn_all_search.setBackground(new BitmapDrawable(getResources(), FilteringImage.viewAll(getApplicationContext(), Color.parseColor(new Validations().getInstance(getApplicationContext()).colorTheme(false)),R.drawable.view_all)));
+        btn_all_search.setBackground(new BitmapDrawable(getResources(), FilteringImage.viewAll(getApplicationContext(), Color.parseColor(new Validations().getInstance(getApplicationContext()).colorTheme(false)), R.drawable.view_all)));
         btn_all_search.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
-                    finish();
-                    Intent intent = new Intent(getApplicationContext(), SearchThemesActivity.class);
-                    intent.putExtra("search","");
-                    intent.putExtra("suggested", "0");
-                    startActivity(intent);
+                finish();
+                Intent intent = new Intent(getApplicationContext(), SearchThemesActivity.class);
+                intent.putExtra("search", "");
+                intent.putExtra("suggested", "0");
+                startActivity(intent);
 
             }
         });
 
-        if(NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())){
+        if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
             String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
-            if (key.equalsIgnoreCase("null")){
+            if (key.equalsIgnoreCase("null")) {
                 Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 new searchThemeRequest(getApplicationContext()).execute(key);
             }
 
-        }else{
+        } else {
             Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
 
         listView.setOnLoadMoreListener(new LoadMoreListView.OnLoadMoreListener() {
             public void onLoadMore() {
                 String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
-                if (key.equalsIgnoreCase("null")){
-                    Toast.makeText(getApplicationContext(),R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
-                }else{
+                if (key.equalsIgnoreCase("null")) {
+                    Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                } else {
                     new searchThemeRequest(getApplicationContext()).execute(key);
                 }
             }
@@ -185,11 +186,10 @@ public class SearchThemesActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
         //closing transition animations
-        overridePendingTransition(R.anim.activity_open_scale,R.anim.activity_close_translate);
+        overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
 
@@ -237,12 +237,8 @@ public class SearchThemesActivity extends AppCompatActivity {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private JSONObject jObject;
-        private String jsonResult ="";
+        private String jsonResult = "";
         JSONArray menuitemArray;
         int position1 = listView.getCount() - 1;
         Boolean max = false;
@@ -257,7 +253,7 @@ public class SearchThemesActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            if(position1==0){
+            if (position1 == 0) {
                 pdialog.show();
             }
         }
@@ -275,28 +271,27 @@ public class SearchThemesActivity extends AppCompatActivity {
 
                 nameValuePairs.add(new BasicNameValuePair("username", contact.getJabberId()));
                 nameValuePairs.add(new BasicNameValuePair("key", key[0]));
-                if(!search.equalsIgnoreCase("")){
+                if (!search.equalsIgnoreCase("")) {
                     nameValuePairs.add(new BasicNameValuePair("nama_theme", search));
                 }
 
-                if (suggested.equals("1")){
+                if (suggested.equals("1")) {
                     nameValuePairs.add(new BasicNameValuePair("suggested", "1"));
                 }
 
-                if(position1>0){
-                    nameValuePairs.add(new BasicNameValuePair("mulai",String.valueOf(position1)));
+                if (position1 > 0) {
+                    nameValuePairs.add(new BasicNameValuePair("mulai", String.valueOf(position1)));
                 }
 
-                HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
-                HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
-                ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
 
                 HttpPost post = new HttpPost(URL_SEARCH_ROOMS);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 
+                HttpResponse response;
+
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success
@@ -309,9 +304,8 @@ public class SearchThemesActivity extends AppCompatActivity {
                     jObject = new JSONObject(content);
                     JSONArray menuitemArray = jObject.getJSONArray("themes_list");
                     catArr = new ArrayList<ItemListSearchTheme>();
-                    if(menuitemArray.length()==0) max=true;
-                    for (int i = 0; i < menuitemArray.length(); i++)
-                    {
+                    if (menuitemArray.length() == 0) max = true;
+                    for (int i = 0; i < menuitemArray.length(); i++) {
                         String name = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("nama").toString()));
                         String desc = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("deskripsi").toString()));
                         String logo = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("logo").toString()));
@@ -320,7 +314,7 @@ public class SearchThemesActivity extends AppCompatActivity {
                         String color = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("color_code").toString()));
                         String reward = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("reward").toString()));
                         String background = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("background").toString()));
-                        itemListSearchTheme = new ItemListSearchTheme(name,desc,logo,logo2,logoHeader,color,background,reward);
+                        itemListSearchTheme = new ItemListSearchTheme(name, desc, logo, logo2, logoHeader, color, background, reward);
                         catArr.add(itemListSearchTheme);
                     }
 
@@ -332,7 +326,7 @@ public class SearchThemesActivity extends AppCompatActivity {
                 }
 
             } catch (ClientProtocolException e) {
-                content =  e.getMessage();
+                content = e.getMessage();
                 error = true;
             } catch (IOException e) {
                 content = e.getMessage();
@@ -351,20 +345,20 @@ public class SearchThemesActivity extends AppCompatActivity {
         protected void onPostExecute(String content) {
             pdialog.dismiss();
             if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
+                if (content.contains("invalid_key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                         pdialog.show();
                         String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
-                            Toast.makeText(mContext,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                        if (key.equalsIgnoreCase("null")) {
+                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                             pdialog.dismiss();
-                        }else{
+                        } else {
                             new searchThemeRequest(mContext).execute(key);
                         }
-                    }else{
+                    } else {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     txtEmpty.setVisibility(View.VISIBLE);
                 }
             } else {
@@ -372,7 +366,7 @@ public class SearchThemesActivity extends AppCompatActivity {
                 listSearchThemesAdapter.add(catArr);
                 listSearchThemesAdapter.notifyDataSetChanged();
                 pdialog.dismiss();
-                if (listSearchThemesAdapter.getCount()==0){
+                if (listSearchThemesAdapter.getCount() == 0) {
                     txtEmpty.setVisibility(View.VISIBLE);
                 }
             }

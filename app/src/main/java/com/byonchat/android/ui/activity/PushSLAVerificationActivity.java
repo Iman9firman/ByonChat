@@ -74,6 +74,7 @@ import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.google.android.gms.vision.L;
@@ -704,7 +705,12 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         private String uploadFile(String URL, String username, String bc_user, String id_room, String kode_jjt) {
             String responseString = null;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL);
 
             try {
@@ -894,7 +900,12 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
             String responseString = null;
             ii = value;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL);
 
             try {

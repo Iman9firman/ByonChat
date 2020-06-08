@@ -2,6 +2,8 @@ package com.byonchat.android.videotrimmer.utils;
 
 import android.content.Context;
 import android.os.AsyncTask;
+
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.videotrimmer.interfaces.ConvertTaskCompleted;
 import com.byonchat.android.videotrimmer.videocompressor.MediaController;
 import org.apache.http.HttpResponse;
@@ -16,15 +18,12 @@ public class RequestConvertTask extends AsyncTask<String, String, Boolean> {
     private ConvertTaskCompleted mFragmentCallback;
     private static final int REGISTRATION_TIMEOUT = 3 * 1000;
     private static final int WAIT_TIMEOUT = 30 * 1000;
-    private final HttpClient httpclient = new DefaultHttpClient();
-    final HttpParams params = httpclient.getParams();
-    HttpResponse response;
     private String content = null;
     private Context mContext;
     String path, outpath, startpos, endpos, fileSizeInMB;
     private static final String TAG = RequestConvertTask.class.getSimpleName();
 
-    public RequestConvertTask(ConvertTaskCompleted fragmentCallback, Context ctx, String path, String outpath, String startpos, String endpos, String fileSizeInMB) {
+    public RequestConvertTask(ConvertTaskCompleted fragmentCallback, Context ctx, String path, String outpath, String startpos, String endpos, String fileSizeInMB)  {
         mFragmentCallback = fragmentCallback;
         mContext = ctx;
         this.path = path;

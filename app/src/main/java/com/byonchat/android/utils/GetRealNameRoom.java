@@ -101,7 +101,7 @@ public class GetRealNameRoom {
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
             if(inputStream != null)

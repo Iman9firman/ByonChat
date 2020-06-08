@@ -30,6 +30,7 @@ import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.personalRoom.asynctask.ProfileSaveDescription;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -232,7 +233,7 @@ public class RoomPOSdetail extends AppCompatActivity  implements SwipeRefreshLay
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
@@ -295,6 +296,8 @@ public class RoomPOSdetail extends AppCompatActivity  implements SwipeRefreshLay
                     }
                 });
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

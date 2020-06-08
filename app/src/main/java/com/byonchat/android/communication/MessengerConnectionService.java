@@ -800,7 +800,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     HttpParams httpParameters = new BasicHttpParams();
                     HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                     HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                    HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                    HttpClient httpclient = HttpHelper.createHttpClient();
                     HttpPost httppost = new HttpPost(valueIWantToSend);
 
                     // Add your data
@@ -944,6 +944,8 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                     RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
                     botListDB.updateDetailRoomWithFlagContentParent(orderModel);
                     // TODO Auto-generated catch block
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -1176,7 +1178,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             HttpParams httpParameters = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
             HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-            HttpClient httpclient = new DefaultHttpClient(httpParameters);
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpPost httppost = new HttpPost(valueIWantToSend);
 
             // Add your data
@@ -1316,6 +1318,8 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
             RoomsDetail orderModel = new RoomsDetail(idDetail, idr, usr, dateString, "3", null, "parent");
             botListDB.updateDetailRoomWithFlagContentParent(orderModel);
             // TODO Auto-generated catch block
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -2998,10 +3002,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -3039,8 +3039,9 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                 HttpPost post = new HttpPost(URL_GET_MEMBERS);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
+
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success
@@ -3125,10 +3126,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     class requestRefreshRoom extends AsyncTask<String, Void, String> {
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -3155,7 +3152,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 20000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
 
                 String uri = new ValidationsKey().getInstance(getApplicationContext()).getTargetUrl(key[0]);
 
@@ -3299,7 +3296,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-                DefaultHttpClient client = new DefaultHttpClient(httpParameters);
+                HttpClient client = HttpHelper.createHttpClient();
                 HttpGet httpGet = new HttpGet(param[0] + param[1]);
                 username = param[2];
                 InputStream content = null;
@@ -3375,10 +3372,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     class requestRefreshOffers extends AsyncTask<String, Void, String> {
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -3419,7 +3412,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success
@@ -3582,10 +3575,6 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 3 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private JSONObject jObject;
         private Context mContext;
         private String content = null;
@@ -3633,7 +3622,7 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
 
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success
@@ -5824,7 +5813,7 @@ Log.w("every",co.getJabberId());
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 20000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
@@ -5923,6 +5912,8 @@ Log.w("every",co.getJabberId());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 Log.w("Hanyajika balik3", e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -5999,7 +5990,7 @@ Log.w("every",co.getJabberId());
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
@@ -6147,6 +6138,8 @@ Log.w("every",co.getJabberId());
                 // TODO Auto-generated catch block
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -6218,7 +6211,7 @@ Log.w("every",co.getJabberId());
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
@@ -6291,6 +6284,8 @@ Log.w("every",co.getJabberId());
                 // TODO Auto-generated catch block
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

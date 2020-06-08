@@ -58,8 +58,7 @@ import java.util.List;
  * Created by pratama on 4/22/14.
  */
 public class UploadProfileService extends IntentService implements
-        ServiceConnection
-{
+        ServiceConnection {
     public static final String USERNAME = "username";
     public static final String KEY = "key";
     public static final String STATUS = "status";
@@ -77,16 +76,16 @@ public class UploadProfileService extends IntentService implements
     protected MessengerConnectionService.MessengerConnectionBinder binder;
     private File imageOutput;
     //boolean imageDelete =  false;
-    String FILE_UPLOAD_URL =  "https://" + MessengerConnectionService.F_SERVER + "/byonchat_update.php";
+    String FILE_UPLOAD_URL = "https://" + MessengerConnectionService.F_SERVER + "/byonchat_update.php";
     private MessengerDatabaseHelper dbhelper;
 
-    private Intent      serviceIntent;
+    private Intent serviceIntent;
 
     public UploadProfileService(String name) {
         super(name);
     }
 
-    public UploadProfileService(){
+    public UploadProfileService() {
         super("UploadServiceProfile");
     }
 
@@ -95,8 +94,7 @@ public class UploadProfileService extends IntentService implements
     protected void onHandleIntent(Intent intent) {
         serviceIntent = new Intent(this, UploadService.class);
 
-        if(intent!=null)
-        {
+        if (intent != null) {
             getApplicationContext().bindService(
                     new Intent(this, MessengerConnectionService.class), this,
                     Context.BIND_AUTO_CREATE);
@@ -111,20 +109,20 @@ public class UploadProfileService extends IntentService implements
             IntervalDB db = new IntervalDB(getApplicationContext());
             db.open();
             Cursor c = db.getSingleContact(13);
-            if (c.getCount()>0) {
+            if (c.getCount() > 0) {
                 phot_loc = c.getString(c.getColumnIndexOrThrow(IntervalDB.COL_TIME));
             }
             db.close();
 
 
-            if (phot_loc.equalsIgnoreCase("null")){
+            if (phot_loc.equalsIgnoreCase("null")) {
                 action = "status";
-            }else{
+            } else {
                 action = "semua";
-                imageOutput = new File (phot_loc);
+                imageOutput = new File(phot_loc);
             }
 
-            Thread t = new Thread(new BackgroundThreadUpdate(this,action));
+            Thread t = new Thread(new BackgroundThreadUpdate(this, action));
             t.start();
 
         }
@@ -146,7 +144,7 @@ public class UploadProfileService extends IntentService implements
         Context context;
         String act;
 
-        public BackgroundThreadUpdate( Context ctx,String acts) {
+        public BackgroundThreadUpdate(Context ctx, String acts) {
             this.context = ctx;
             this.act = acts;
         }
@@ -157,9 +155,9 @@ public class UploadProfileService extends IntentService implements
                 if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
                     String key = new ValidationsKey().getInstance(getApplicationContext()).key(false);
                     if (!key.equalsIgnoreCase("null")) {
-                        if(act.equalsIgnoreCase("status")){
+                        if (act.equalsIgnoreCase("status")) {
                             new requestUpdateStatus(getApplicationContext()).execute(key);
-                        }else {
+                        } else {
                             new PhotoUploaderHttp(getApplicationContext()).execute(key);
                         }
 
@@ -186,6 +184,7 @@ public class UploadProfileService extends IntentService implements
             this.mContext = context;
 
         }
+
         @Override
         protected void onPreExecute() {
         }
@@ -193,7 +192,12 @@ public class UploadProfileService extends IntentService implements
         @Override
         protected String doInBackground(String... params) {
             try {
-                HttpClient httpclient = new DefaultHttpClient();
+                HttpClient httpclient = null;
+                try {
+                    httpclient = HttpHelper.createHttpClient();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
                 InputStreamReader reader = null;
                 ContentType contentType = ContentType.create("image/jpeg");
@@ -207,11 +211,11 @@ public class UploadProfileService extends IntentService implements
                             }
                         });
 
-                entity.addPart("foto", new FileBody( imageOutput, contentType, imageOutput.getName()));
+                entity.addPart("foto", new FileBody(imageOutput, contentType, imageOutput.getName()));
                 // Extra parameters if you want to pass to server
                 entity.addPart("key", new StringBody(params[0]));
                 entity.addPart("username", new StringBody(dbhelper.getMyContact().getJabberId()));
-                entity.addPart("status", new StringBody(URLEncoder.encode(status,"UTF-8")));
+                entity.addPart("status", new StringBody(URLEncoder.encode(status, "UTF-8")));
                 entity.addPart("action", new StringBody("semua"));
 
                 httppost.setEntity(entity);
@@ -234,9 +238,9 @@ public class UploadProfileService extends IntentService implements
                     code_text = result.getString("code_text");
                     desc = result.getString("description");
                     date = result.getString("date");
-                    if(!code.equalsIgnoreCase("200")) error=true;
+                    if (!code.equalsIgnoreCase("200")) error = true;
                 } else {
-                    error=true;
+                    error = true;
                 }
 
             } catch (ClientProtocolException e) {
@@ -269,30 +273,30 @@ public class UploadProfileService extends IntentService implements
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             if (error) {
-              //  pdialog.dismiss();
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
+                //  pdialog.dismiss();
+                if (content.contains("invalid_key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                         String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
-                            Toast.makeText(mContext,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
-                          //  pdialog.dismiss();
-                        }else{
+                        if (key.equalsIgnoreCase("null")) {
+                            Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            //  pdialog.dismiss();
+                        } else {
                             new PhotoUploaderHttp(mContext).execute(key);
                         }
-                    }else{
+                    } else {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                if(code.equalsIgnoreCase("200")){
+                if (code.equalsIgnoreCase("200")) {
                     if (!binder.isConnected()) {
-                       // showErrorDialog();
+                        // showErrorDialog();
                         return;
                     }
                     new PhotoUploader().execute();
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext(), desc, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -303,9 +307,6 @@ public class UploadProfileService extends IntentService implements
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
         HttpResponse response;
         private String content = null;
         private boolean error = false;
@@ -334,8 +335,8 @@ public class UploadProfileService extends IntentService implements
                         1);
 
                 nameValuePairs.add(new BasicNameValuePair("username", username));
-                nameValuePairs.add(new BasicNameValuePair("key",key[0]));
-                nameValuePairs.add(new BasicNameValuePair("status",URLEncoder.encode(status,"UTF-8")));
+                nameValuePairs.add(new BasicNameValuePair("key", key[0]));
+                nameValuePairs.add(new BasicNameValuePair("status", URLEncoder.encode(status, "UTF-8")));
                 nameValuePairs.add(new BasicNameValuePair("action", "status"));
 
                 HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
@@ -347,7 +348,7 @@ public class UploadProfileService extends IntentService implements
 
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success
@@ -362,7 +363,7 @@ public class UploadProfileService extends IntentService implements
                     code_text = result.getString("code_text");
                     desc = result.getString("description");
                     date = result.getString("date");
-                    if(!code.equalsIgnoreCase("200")) error=true;
+                    if (!code.equalsIgnoreCase("200")) error = true;
                 } else {
                     //Closes the connection.
                     error = true;
@@ -372,7 +373,7 @@ public class UploadProfileService extends IntentService implements
                 }
 
             } catch (ClientProtocolException e) {
-                content =  e.getMessage();
+                content = e.getMessage();
                 error = true;
             } catch (IOException e) {
                 content = e.getMessage();
@@ -389,29 +390,29 @@ public class UploadProfileService extends IntentService implements
 
         protected void onPostExecute(String content) {
             if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
+                if (content.contains("invalid_key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
 
                         String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
+                        if (key.equalsIgnoreCase("null")) {
                             Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             new requestUpdateStatus(mContext).execute(key);
                         }
-                    }else{
+                    } else {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     Toast.makeText(mContext, desc, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                if(code.equalsIgnoreCase("200")){
+                if (code.equalsIgnoreCase("200")) {
                     if (!binder.isConnected()) {
                         //showErrorDialog();
                         return;
                     }
                     new PhotoUploader().execute();
-                }else{
+                } else {
                     Toast.makeText(getApplicationContext(), desc, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -458,7 +459,7 @@ public class UploadProfileService extends IntentService implements
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-        //    startMainActivity();
+            //    startMainActivity();
         }
 
         @Override
@@ -466,12 +467,12 @@ public class UploadProfileService extends IntentService implements
             super.onPostExecute(result);
             if (imageOutput != null)
                 imageOutput.delete();
-          //  pdialog.dismiss();
+            //  pdialog.dismiss();
 
-            IntervalDB	db = new IntervalDB(getApplicationContext());
+            IntervalDB db = new IntervalDB(getApplicationContext());
             db.open();
             Cursor c = db.getSingleContact(13);
-            if (c.getCount()>0) {
+            if (c.getCount() > 0) {
                 db.deleteContact(13);
             }
             db.close();
@@ -479,7 +480,7 @@ public class UploadProfileService extends IntentService implements
         }
     }
 
-    public static String toJson(String action, String status, String date){
+    public static String toJson(String action, String status, String date) {
         try {
             JSONObject parent = new JSONObject();
             parent.put("action", action);
@@ -488,7 +489,7 @@ public class UploadProfileService extends IntentService implements
             parent.put("flag", "1");
 
             return parent.toString();
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;

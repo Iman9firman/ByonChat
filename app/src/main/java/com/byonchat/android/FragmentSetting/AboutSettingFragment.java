@@ -116,10 +116,6 @@ public class AboutSettingFragment extends Fragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private Context mContext;
         private String content = null;
 
@@ -159,7 +155,7 @@ public class AboutSettingFragment extends Fragment {
 
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success
@@ -225,7 +221,7 @@ public class AboutSettingFragment extends Fragment {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 15000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                DefaultHttpClient client = new DefaultHttpClient(httpParameters);
+                HttpClient client = HttpHelper.createHttpClient();
                 HttpGet httpGet = new HttpGet(fileUrl[0]);
                 InputStream content = null;
                 try {

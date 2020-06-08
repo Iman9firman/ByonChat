@@ -33,6 +33,7 @@ import com.byonchat.android.model.SLAmodelNew;
 import com.byonchat.android.provider.RadioButtonCheckDB;
 import com.byonchat.android.ui.activity.PustSLAFollowUpActivity;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -463,7 +464,12 @@ public class ZhFourFragment extends Fragment {
             ii = value;
             id = ids;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL);
 
             try {
@@ -478,9 +484,6 @@ public class ZhFourFragment extends Fragment {
 
                 java.io.File sourceFile = new java.io.File(resizeAndCompressImageBeforeSend(getContext(), ii, "fileUploadBC_" + new Date().getTime() + ".jpg"));
 
-                        Log.w("inidilog","1: "+ii);
-                        Log.w("inidilog","2: "+sourceFile);
-                        Log.w("inidilog","3: "+sourceFile.getAbsoluteFile());
                 if (!sourceFile.exists()) {
                     return "File not exists";
                 }

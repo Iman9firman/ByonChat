@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -132,6 +133,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ViewHo
             period = (TextView) itemView.findViewById(R.id.sch_perio);
             job = (TextView) itemView.findViewById(R.id.sch_job);
             status = (TextView) itemView.findViewById(R.id.status);
+
         }
 
         @Override

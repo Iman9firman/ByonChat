@@ -558,10 +558,6 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private JSONObject jObject;
         private String jsonResult = "";
         JSONArray menuitemArray;
@@ -606,9 +602,10 @@ public class LoadContactScreen extends AppCompatActivity implements ServiceConne
                 HttpPost post = new HttpPost(REQUEST_STATUS_URL);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
+                HttpResponse response;
+                response = httpClient.execute(post);
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success

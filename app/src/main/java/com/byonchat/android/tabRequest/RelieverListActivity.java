@@ -38,6 +38,7 @@ import com.byonchat.android.listeners.RecyclerItemClickListener;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ValidationsKey;
 
 import org.apache.http.HttpEntity;
@@ -357,7 +358,12 @@ public class RelieverListActivity extends AppCompatActivity {
 
         public String postData() {
             // Create a new HttpClient and Post Header
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/api_submit_realiver_iss.php");
 
             try {

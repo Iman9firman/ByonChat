@@ -26,6 +26,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.provider.DataBaseDropDown;
+import com.byonchat.android.utils.HttpHelper;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -36,6 +37,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -84,7 +86,7 @@ public class DownloadFileByonchat extends AppCompatActivity {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-                DefaultHttpClient client = new DefaultHttpClient(httpParameters);
+                HttpClient client = HttpHelper.createHttpClient();
                 HttpGet httpGet = new HttpGet(DOWNLOAD_PATH);
                 InputStream content = null;
                 try {

@@ -500,7 +500,12 @@ public class AllAboutUploadTask {
         public void postData(String valueIWantToSend, final String usr, final String idr, final String idDetail) {
             // Create a new HttpClient and Post Header
             prosesUpload.add("ada");
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(valueIWantToSend);
             Log.w("linkdinamic",valueIWantToSend);
 
@@ -1073,7 +1078,12 @@ public class AllAboutUploadTask {
             String responseString = null;
             uri = _uri;
             id_konten_sla = _id_konten_sla;
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL);
 
             try {
@@ -1198,7 +1208,12 @@ public class AllAboutUploadTask {
             getFlag_tab = getFlag_tab_;
             getFlag_room = getFlag_room_;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL);
 
             try {
@@ -1316,7 +1331,12 @@ public class AllAboutUploadTask {
             jsonDetail = c;
             jsonMaster = to;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL);
 
             try {

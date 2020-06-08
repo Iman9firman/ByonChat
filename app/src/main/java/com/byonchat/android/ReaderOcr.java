@@ -20,6 +20,7 @@ import android.util.Log;
 
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -332,7 +333,12 @@ public class ReaderOcr extends AppCompatActivity {
         private String uploadFile() {
             String responseString = null;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost("http://52.44.200.244/phpocr/webservice/generate_ocr.php");
 
             try {

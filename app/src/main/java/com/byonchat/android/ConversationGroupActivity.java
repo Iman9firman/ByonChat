@@ -79,6 +79,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.utils.DynamicAlertDialogVoting;
 import com.byonchat.android.utils.GPSTracker;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.UploadService;
@@ -2138,7 +2139,12 @@ public class ConversationGroupActivity extends AppCompatActivity implements Emoj
         protected String doInBackground(String... params) {
             String paramUrl = params[0];
             String paramjson = params[1];
-            HttpClient httpClient = new DefaultHttpClient();
+            HttpClient httpClient = null;
+            try {
+                httpClient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httpPost = new HttpPost(paramUrl);
             BasicNameValuePair invitesBasicNameValuePair = new BasicNameValuePair("name", paramjson);
             List nameValuePairList = new ArrayList();

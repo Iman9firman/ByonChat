@@ -41,11 +41,8 @@ public class RequestKeyTask extends AsyncTask<String, String, String> {
     private TaskCompleted mFragmentCallback;
     private static final int REGISTRATION_TIMEOUT = 3 * 1000;
     private static final int WAIT_TIMEOUT = 30 * 1000;
-    private final HttpClient httpclient = new DefaultHttpClient();
     private static String REQUEST_KEYS_URL = "https://"
             + MessengerConnectionService.UTIL_SERVER + "/v1/ckeys";
-    final HttpParams params = httpclient.getParams();
-    HttpResponse response;
     private String content = null;
     private Context mContext;
 
@@ -80,6 +77,10 @@ public class RequestKeyTask extends AsyncTask<String, String, String> {
             Contact contact = messengerHelper.getMyContact();
             try {
                 URL = REQUEST_KEYS_URL;
+                HttpClient httpclient = HttpHelper.createHttpClient();
+                HttpParams params = httpclient.getParams();
+                HttpResponse response;
+
                 HttpConnectionParams.setConnectionTimeout(params, REGISTRATION_TIMEOUT);
                 HttpConnectionParams.setSoTimeout(params, WAIT_TIMEOUT);
                 ConnManagerParams.setTimeout(params, WAIT_TIMEOUT);

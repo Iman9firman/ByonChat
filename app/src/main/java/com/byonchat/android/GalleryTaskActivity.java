@@ -349,13 +349,12 @@ public class GalleryTaskActivity extends AppCompatActivity {
     private class HATPost extends AsyncTask<String, Void, String> {
         final int REGISTRATION_TIMEOUT = 3 * 1000;
         final int WAIT_TIMEOUT = 30 * 1000;
-        final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse httpResponse;
         String result = null;
         boolean error = false;
         InputStream inputStream = null;
+
+        private HATPost() {
+        }
 
         @Override
         protected void onPreExecute() {
@@ -383,7 +382,7 @@ public class GalleryTaskActivity extends AppCompatActivity {
                 nameValuePairs.add(new BasicNameValuePair("task_id", params[1]));
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-                httpResponse = httpclient.execute(httpPost);
+                HttpResponse httpResponse = httpClient.execute(httpPost);
                 StatusLine statusLine = httpResponse.getStatusLine();
 
                 Log.w("hasil", statusLine.getStatusCode() + "");

@@ -42,6 +42,7 @@ import com.byonchat.android.model.ScheduleList;
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
 import com.byonchat.android.utils.ExceptionHandler;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.widget.CalendarDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
@@ -729,7 +730,7 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(link);
 
                 // Add your data
@@ -789,6 +790,8 @@ public class ByonchatScheduleSLAFragment extends Fragment {
                 // TODO Auto-generated catch block
             } catch (IOException e) {
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             progressDialog.dismiss();
         }

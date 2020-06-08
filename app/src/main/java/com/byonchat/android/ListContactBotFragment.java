@@ -252,7 +252,11 @@ public class ListContactBotFragment extends Fragment {
                                 //Toast.makeText(context,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
                                 pdialog.dismiss();
                             }else{
-                                new removeBotRequest(context).execute(key,jbId,String.valueOf(item.getItemId()));
+                                try {
+                                    new removeBotRequest(context).execute(key,jbId,String.valueOf(item.getItemId()));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }else{
                             Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -272,7 +276,11 @@ public class ListContactBotFragment extends Fragment {
                             if (key.equalsIgnoreCase("null")){
                                 //Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                             }else{
-                                new requestDetail(context).execute(key,jbId);
+                                try {
+                                    new requestDetail(context).execute(key,jbId);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
 
                         }else{
@@ -371,7 +379,7 @@ public class ListContactBotFragment extends Fragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
+        private final HttpClient httpclient = HttpHelper.createHttpClient();
 
         final HttpParams params = httpclient.getParams();
         HttpResponse response;
@@ -383,7 +391,7 @@ public class ListContactBotFragment extends Fragment {
         String desc = "";
 
 
-        public requestDetail(Context context) {
+        public requestDetail(Context context) throws Exception {
             this.mContext = context;
 
         }
@@ -465,7 +473,11 @@ public class ListContactBotFragment extends Fragment {
                           //  Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                             pdialog.dismiss();
                         }else{
-                            new requestDetail(mContext).execute(key,bot);
+                            try {
+                                new requestDetail(mContext).execute(key,bot);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }else{
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -484,7 +496,7 @@ public class ListContactBotFragment extends Fragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
+        private final HttpClient httpclient = HttpHelper.createHttpClient();
 
         final HttpParams params = httpclient.getParams();
         HttpResponse response;
@@ -498,7 +510,7 @@ public class ListContactBotFragment extends Fragment {
         String nameBot = "";
         String id = "";
 
-        public removeBotRequest(Context context) {
+        public removeBotRequest(Context context) throws Exception {
             this.mContext = context;
 
         }
@@ -593,7 +605,11 @@ public class ListContactBotFragment extends Fragment {
                            // Toast.makeText(context,R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
                             pdialog.dismiss();
                         }else{
-                            new removeBotRequest(mContext).execute(key,nameBot,id);
+                            try {
+                                new removeBotRequest(mContext).execute(key,nameBot,id);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }else{
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();

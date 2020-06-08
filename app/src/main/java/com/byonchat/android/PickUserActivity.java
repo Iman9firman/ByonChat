@@ -23,6 +23,7 @@ import com.byonchat.android.model.Group;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.Validations;
 
@@ -271,7 +272,12 @@ public class PickUserActivity extends ABNextActivity implements
             String paramUrl = params[0];
             String paramjson = params[1];
 
-            HttpClient httpClient = new DefaultHttpClient();
+            HttpClient httpClient = null;
+            try {
+                httpClient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httpPost = new HttpPost(paramUrl);
             BasicNameValuePair invitesBasicNameValuePair = new BasicNameValuePair("datagroup", paramjson);
             List nameValuePairList = new ArrayList();
@@ -349,7 +355,12 @@ public class PickUserActivity extends ABNextActivity implements
         protected String doInBackground(String... params) {
             String paramUrl = params[0];
             String paramjson = params[1];
-            HttpClient httpClient = new DefaultHttpClient();
+            HttpClient httpClient = null;
+            try {
+                httpClient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httpPost = new HttpPost(paramUrl);
             BasicNameValuePair invitesBasicNameValuePair = new BasicNameValuePair("datainvites", paramjson);
             List nameValuePairList = new ArrayList();

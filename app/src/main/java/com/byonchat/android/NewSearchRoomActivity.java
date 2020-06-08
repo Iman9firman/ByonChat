@@ -561,7 +561,12 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
             StringBuilder dataFeedBuilder = new StringBuilder();
             for (String searchURL : dataURL) {
-                HttpClient dataClient = new DefaultHttpClient();
+                HttpClient dataClient = null;
+                try {
+                    dataClient = HttpHelper.createHttpClient();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 try {
                     String fileSend[] = searchURL.split("keyword=");
                     searchh = fileSend[1];
@@ -668,9 +673,6 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
         HttpResponse response;
         private String content = null;
         private boolean error = false;
@@ -711,7 +713,7 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
@@ -837,7 +839,12 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
             StringBuilder dataFeedBuilder = new StringBuilder();
             for (String trendingURL : dataURL) {
-                HttpClient dataClient = new DefaultHttpClient();
+                HttpClient dataClient = null;
+                try {
+                    dataClient = HttpHelper.createHttpClient();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 try {
                     String fileSend[] = trendingURL.split("type=");
                     searchh = fileSend[1];
@@ -1053,10 +1060,6 @@ public class NewSearchRoomActivity extends AppCompatActivity {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -1101,7 +1104,8 @@ public class NewSearchRoomActivity extends AppCompatActivity {
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response;
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {

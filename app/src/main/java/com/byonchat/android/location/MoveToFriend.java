@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byonchat.android.R;
+import com.byonchat.android.utils.HttpHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
@@ -330,7 +331,7 @@ public class MoveToFriend extends AppCompatActivity implements OnMapReadyCallbac
 	                + "&sensor=false&units=metric&mode="+direction;
 
 	        try {
-	            HttpClient httpClient = new DefaultHttpClient();
+	            HttpClient httpClient = HttpHelper.createHttpClient();
 	            HttpContext localContext = new BasicHttpContext();
 	            HttpPost httpPost = new HttpPost(url);
 	            HttpResponse response = httpClient.execute(httpPost, localContext);

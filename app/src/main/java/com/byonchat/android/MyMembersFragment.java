@@ -64,22 +64,24 @@ import java.util.List;
  */
 @SuppressLint("ValidFragment")
 public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    public final static String URL_GET_MEMBERS = "https://"+ MessengerConnectionService.HTTP_SERVER+"/memberships/daftar_kartu.php";
+    public final static String URL_GET_MEMBERS = "https://" + MessengerConnectionService.HTTP_SERVER + "/memberships/daftar_kartu.php";
     View rootView;
     private LayoutInflater inflater;
     ListMemberCard adapter;
     private MessengerDatabaseHelper messengerHelper;
     private ListView lv;
-    ArrayList<ItemListMemberCard> listItem ;
+    ArrayList<ItemListMemberCard> listItem;
     ProgressBar progressBar;
     Contact contact;
     Context mContext;
     private MessengerDatabaseHelper dbhelper;
+
     @SuppressLint("ValidFragment")
-    public  MyMembersFragment(Context ctx){
+    public MyMembersFragment(Context ctx) {
         mContext = ctx;
 
     }
+
     ItemListMemberCard itemListMemberCard;
     MembersDB membersDB;
     private BroadcastHandler broadcastHandler = new BroadcastHandler();
@@ -125,7 +127,7 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
         });
 
 
-        if (listItem.size()==0){
+        if (listItem.size() == 0) {
             /*Thread splashTread = new Thread() {
                 @Override
                 public void run() {
@@ -149,7 +151,7 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
                 requestMemberCard.execute(key);
             }*/
 
-        }else{
+        } else {
             refreshList();
         }
         setHasOptionsMenu(true);
@@ -187,7 +189,7 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
         // handle item selection
         switch (item.getItemId()) {
             case R.id.action_refresh:
-             requestKey();
+                requestKey();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -198,27 +200,28 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
         RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
             @Override
             public void onTaskDone(String key) {
-                if (key.equalsIgnoreCase("null")){
+                if (key.equalsIgnoreCase("null")) {
                     swipeRefreshLayout.setRefreshing(false);
-                   // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                }else{
+                    // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                } else {
                     requestMemberCard = new RequestMemberCard(mContext);
                     requestMemberCard.execute(key);
                 }
             }
-        },mContext);
+        }, mContext);
 
         testAsyncTask.execute();
     }
-    public void refreshList(){
+
+    public void refreshList() {
         adapter = new ListMemberCard(mContext);
         membersDB.open();
         listItem = membersDB.retriveallMembers();
         membersDB.close();
-        int count  = 5 - listItem.size();
-        if (listItem.size() <= 5){
+        int count = 5 - listItem.size();
+        if (listItem.size() <= 5) {
             for (int i = 0; i < count; i++) {
-                ItemListMemberCard itemListMemberCard = new ItemListMemberCard("","","");
+                ItemListMemberCard itemListMemberCard = new ItemListMemberCard("", "", "");
                 listItem.add(itemListMemberCard);
             }
         }
@@ -251,10 +254,6 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -267,7 +266,7 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
 
         @Override
         protected void onPreExecute() {
-           // ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+            // ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
             swipeRefreshLayout.setRefreshing(true);
         }
 
@@ -280,7 +279,7 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
                         1);
 
                 nameValuePairs.add(new BasicNameValuePair("username", contact.getJabberId()));
-                nameValuePairs.add(new BasicNameValuePair("key",key[0]));
+                nameValuePairs.add(new BasicNameValuePair("key", key[0]));
 
                 HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), REGISTRATION_TIMEOUT);
                 HttpConnectionParams.setSoTimeout(httpClient.getParams(), WAIT_TIMEOUT);
@@ -289,8 +288,11 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
                 HttpPost post = new HttpPost(URL_GET_MEMBERS);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
+                HttpParams params = httpClient.getParams();
+                HttpResponse response;
+
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success
@@ -305,12 +307,11 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
 
                     membersDB.open();
                     membersDB.delete();
-                    for (int i = 0; i < menuitemArray.length(); i++)
-                    {
+                    for (int i = 0; i < menuitemArray.length(); i++) {
                         String id = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("id").toString()));
                         String name = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("nama").toString()));
                         String color = String.valueOf(Html.fromHtml(menuitemArray.getJSONObject(i).getString("warna").toString()));
-                        itemListMemberCard = new ItemListMemberCard(id,name,color);
+                        itemListMemberCard = new ItemListMemberCard(id, name, color);
                         membersDB.insertMembers(itemListMemberCard);
                         if (isCancelled()) break;
                     }
@@ -324,7 +325,7 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
                 }
 
             } catch (ClientProtocolException e) {
-                content =  e.getMessage();
+                content = e.getMessage();
                 error = true;
             } catch (IOException e) {
                 content = e.getMessage();
@@ -337,35 +338,35 @@ public class MyMembersFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         protected void onCancelled() {
-          //  ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
+            //  ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
             swipeRefreshLayout.setRefreshing(false);
         }
 
         protected void onPostExecute(String content) {
-           /* progressBar.setVisibility(View.GONE);*/
+            /* progressBar.setVisibility(View.GONE);*/
             if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
+                if (content.contains("invalid_key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                         String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
+                        if (key.equalsIgnoreCase("null")) {
                             swipeRefreshLayout.setRefreshing(false);
-                         //   ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
-                           // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        }else{
+                            //   ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
+                            // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                        } else {
                             requestMemberCard = new RequestMemberCard(mContext);
                             requestMemberCard.execute(key);
                         }
-                    }else{
+                    } else {
                         swipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     swipeRefreshLayout.setRefreshing(false);
-                  //  Toast.makeText(mContext, R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(mContext, R.string.pleaseTryAgain,Toast.LENGTH_SHORT).show();
                 }
             } else {
                 swipeRefreshLayout.setRefreshing(false);
-              //  ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
+                //  ((ProgressBar)rootView.findViewById(R.id.progressBar)).setVisibility(View.GONE);
                 refreshList();
 
             }

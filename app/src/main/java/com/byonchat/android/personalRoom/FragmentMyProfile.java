@@ -168,9 +168,6 @@ public class FragmentMyProfile extends Fragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
         HttpResponse response;
         private String content = null;
         private boolean error = false;
@@ -203,7 +200,7 @@ public class FragmentMyProfile extends Fragment {
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
@@ -326,7 +323,7 @@ public class FragmentMyProfile extends Fragment {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(mContext,  R.string.pleaseTryAgain, Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_LONG).show();
                 }
             } else {
                 refreshPersonal();

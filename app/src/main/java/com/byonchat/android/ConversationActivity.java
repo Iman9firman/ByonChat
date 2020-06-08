@@ -181,6 +181,7 @@ import io.codetail.animation.ViewAnimationUtils;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 import static com.byonchat.android.communication.NotificationReceiver.NOTIFY_ID_CONV;
+import static com.byonchat.android.utils.HttpHelper.createHttpClient;
 
 public class ConversationActivity extends AppCompatActivity implements
         ServiceConnection, EmojiconGridFragment.OnEmojiconClickedListener, EmojiconsFragment.OnEmojiconBackspaceClickedListener, LVDOAdListener {
@@ -2190,7 +2191,7 @@ public class ConversationActivity extends AppCompatActivity implements
                 }
 
             } else if
-            (requestCode == REQ_MEME) {
+                    (requestCode == REQ_MEME) {
                 if (decodeFile(cameraFileOutput)) {
                     Intent intent = new Intent(getApplicationContext(), PhotoSortrActivity.class);
                     String jabberId = destination.getJabberId();
@@ -2990,9 +2991,7 @@ public class ConversationActivity extends AppCompatActivity implements
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
 
-        final HttpParams params = httpclient.getParams();
         HttpResponse response;
         private String content = null;
         private boolean error = false;
@@ -3021,8 +3020,7 @@ public class ConversationActivity extends AppCompatActivity implements
                     messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
                 }
 
-                HttpClient httpClient = HttpHelper
-                        .createHttpClient(mContext);
+                HttpClient httpClient = createHttpClient(mContext);
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
                         1);
 
@@ -3043,6 +3041,8 @@ public class ConversationActivity extends AppCompatActivity implements
                 HttpPost post = new HttpPost(URL_ADD_BLOCK);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
+                HttpClient httpclient = HttpHelper.createHttpClient();
+                HttpParams params = httpclient.getParams();
 
                 //Response from the Http Request
                 response = httpclient.execute(post);
@@ -3134,10 +3134,7 @@ public class ConversationActivity extends AppCompatActivity implements
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
 
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -3165,8 +3162,7 @@ public class ConversationActivity extends AppCompatActivity implements
                     messengerHelper = MessengerDatabaseHelper.getInstance(getApplicationContext());
                 }
 
-                HttpClient httpClient = HttpHelper
-                        .createHttpClient(mContext);
+                HttpClient httpClient = createHttpClient(mContext);
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
                         1);
 
@@ -3184,6 +3180,9 @@ public class ConversationActivity extends AppCompatActivity implements
                 HttpPost post = new HttpPost(URL_ADD_ROOM);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
+                HttpClient httpclient = HttpHelper.createHttpClient();
+                HttpParams params = httpclient.getParams();
+                HttpResponse response;
 
                 //Response from the Http Request
                 response = httpclient.execute(post);

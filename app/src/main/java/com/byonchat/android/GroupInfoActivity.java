@@ -43,6 +43,7 @@ import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.utils.ColorUtils;
 import com.byonchat.android.utils.DialogUtil;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.MediaProcessingUtil;
 
 import org.apache.http.HttpResponse;
@@ -520,7 +521,12 @@ public class GroupInfoActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String paramUrl = params[0];
             String paramjson = params[1];
-            HttpClient httpClient = new DefaultHttpClient();
+            HttpClient httpClient = null;
+            try {
+                httpClient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httpPost = new HttpPost(paramUrl);
             BasicNameValuePair invitesBasicNameValuePair = new BasicNameValuePair("groupid", paramjson);
             List nameValuePairList = new ArrayList();
@@ -618,7 +624,12 @@ public class GroupInfoActivity extends AppCompatActivity {
             String paramName = params[2];
             String paramAdmin = params[3];
 
-            HttpClient httpClient = new DefaultHttpClient();
+            HttpClient httpClient = null;
+            try {
+                httpClient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httpPost = new HttpPost(paramUrl);
             BasicNameValuePair basicNameValuePair = new BasicNameValuePair("groupid", paramjson);
             BasicNameValuePair basicNameValuePair1 = new BasicNameValuePair("name", paramName);
@@ -676,7 +687,12 @@ public class GroupInfoActivity extends AppCompatActivity {
             String paramUrl = params[0];
             String paramName = params[1];
 
-            HttpClient httpClient = new DefaultHttpClient();
+            HttpClient httpClient = null;
+            try {
+                httpClient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httpPost = new HttpPost(paramUrl);
             BasicNameValuePair basicNameValuePair1 = new BasicNameValuePair("name", paramName);
             List nameValuePairList = new ArrayList();

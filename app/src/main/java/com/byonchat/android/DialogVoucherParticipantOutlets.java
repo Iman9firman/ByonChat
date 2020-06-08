@@ -101,19 +101,19 @@ public class DialogVoucherParticipantOutlets extends DialogFragment {
         linlaHeaderProgress = (LinearLayout) dialog.findViewById(R.id.linlaHeaderProgress);
 
         String color = "";
-        if(bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")){
+        if (bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")) {
             color = "1e8cc4";
-        }else{
+        } else {
             color = bgcolor;
         }
 
         GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
-        drawable.setColor(Color.parseColor("#"+color));
+        drawable.setColor(Color.parseColor("#" + color));
 
         String txtcolor = "";
-        if(textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")){
+        if (textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")) {
             txtcolor = "ffffff";
-        }else{
+        } else {
             txtcolor = textcolor;
         }
 
@@ -126,7 +126,7 @@ public class DialogVoucherParticipantOutlets extends DialogFragment {
         contact = messengerHelper.getMyContact();
 
         mTitle.setText("Participant Outlets");
-        mTitle.setTextColor(Color.parseColor("#"+txtcolor));
+        mTitle.setTextColor(Color.parseColor("#" + txtcolor));
         mClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,10 +200,7 @@ public class DialogVoucherParticipantOutlets extends DialogFragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
 
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -240,8 +237,8 @@ public class DialogVoucherParticipantOutlets extends DialogFragment {
                 HttpPost post = new HttpPost(URL_GET_VOUCHER);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-                //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response;
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {

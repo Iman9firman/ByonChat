@@ -63,7 +63,7 @@ public class DialogTransferVoucherTwo extends DialogFragment {
     private FrameLayout mlinear_name;
     private TextView mJudul, mSerialNumber, mSerialNumber2, mTanggalValid, mTanggalValid2, mAmount, mAmount2, mByonchatId;
     private Button mProceed, mCancel;
-    private String id, judul, serial, tglvalid, nominal, bcid, bcuser, bgcolor, textcolor, iduser,background;
+    private String id, judul, serial, tglvalid, nominal, bcid, bcuser, bgcolor, textcolor, iduser, background;
     private ImageView mBackground;
     private Contact contact;
     protected ProgressDialog pdialog;
@@ -108,36 +108,36 @@ public class DialogTransferVoucherTwo extends DialogFragment {
 
         Glide.with(getContext()).load(background).into(mBackground);
         String color = "";
-        if(bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")){
+        if (bgcolor.equalsIgnoreCase("") || bgcolor.equalsIgnoreCase("null")) {
             color = "1e8cc4";
-        }else{
+        } else {
             color = bgcolor;
         }
 
         GradientDrawable drawable = (GradientDrawable) mlinear_name.getBackground();
-        drawable.setColor(Color.parseColor("#"+color));
+        drawable.setColor(Color.parseColor("#" + color));
 
         String txtcolor = "";
-        if(textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")){
+        if (textcolor.equalsIgnoreCase("") || textcolor.equalsIgnoreCase("null")) {
             txtcolor = "ffffff";
-        }else{
+        } else {
             txtcolor = textcolor;
         }
 
         mJudul.setText(judul);
-        mJudul.setTextColor(Color.parseColor("#"+txtcolor));
+        mJudul.setTextColor(Color.parseColor("#" + txtcolor));
         mSerialNumber.setText(serial);
         mSerialNumber2.setText(serial);
-        mTanggalValid.setText("Valid until "+tglvalid);
+        mTanggalValid.setText("Valid until " + tglvalid);
         mTanggalValid2.setText(tglvalid);
         NumberFormat nf = NumberFormat.getNumberInstance(new Locale("in", "ID"));
         mAmount2.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
         mAmount.setText("Rp " + String.valueOf(nf.format(Double.parseDouble(nominal))));
 
-        if(bcuser.equalsIgnoreCase("")){
+        if (bcuser.equalsIgnoreCase("")) {
             mByonchatId.setText(bcid);
             iduser = bcid;
-        }else{
+        } else {
             mByonchatId.setText(bcuser);
             iduser = bcuser;
         }
@@ -233,10 +233,6 @@ public class DialogTransferVoucherTwo extends DialogFragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -278,7 +274,7 @@ public class DialogTransferVoucherTwo extends DialogFragment {
 
                 HttpPost post = new HttpPost(URL_TRANSFER_VOUCHER);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                response = httpclient.execute(post);
+                HttpResponse response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -312,20 +308,20 @@ public class DialogTransferVoucherTwo extends DialogFragment {
         protected void onPostExecute(String content) {
             progressDialog.dismiss();
             if (error) {
-                if(content.contains("invalid_key")){
-                    if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
+                if (content.contains("invalid_key")) {
+                    if (NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)) {
                         String key = new ValidationsKey().getInstance(mContext).key(true);
-                        if (key.equalsIgnoreCase("null")){
+                        if (key.equalsIgnoreCase("null")) {
                             Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             requestTransferVoucher = new RequestTransferVoucher(context);
                             requestTransferVoucher.execute(key);
                         }
-                    }else{
+                    } else {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(mContext,  R.string.pleaseTryAgain, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_LONG).show();
                 }
             } else {
                 if (getDialog() != null) {
@@ -337,7 +333,7 @@ public class DialogTransferVoucherTwo extends DialogFragment {
                     }
                     ft.addToBackStack(null);
 
-                    DialogFragment newFragment = DialogTransferVoucherThree.newInstance(id,judul,serial,tglvalid,nominal,iduser,bgcolor,textcolor,background);
+                    DialogFragment newFragment = DialogTransferVoucherThree.newInstance(id, judul, serial, tglvalid, nominal, iduser, bgcolor, textcolor, background);
                     newFragment.show(ft, "DialogTransferVoucher3");
                 }
             }

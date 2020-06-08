@@ -120,7 +120,11 @@ public class OffersFragment extends Fragment implements OnRefreshListener {
         //  swipeRefreshLayout.setSize(SwipeRefreshLayout.LARGE);
         swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.gray);
 
-        requestOffers = new RequestOffers(context);
+        try {
+            requestOffers = new RequestOffers(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if (pdialog == null) {
             pdialog = new ProgressDialog(context);
             pdialog.setIndeterminate(true);
@@ -179,7 +183,11 @@ public class OffersFragment extends Fragment implements OnRefreshListener {
                                 vouchersDB.close();
                                 String key = new ValidationsKey().getInstance(context).key(true);
                                 if (!key.equalsIgnoreCase("null")) {
-                                    new laporOffers(context).execute(key, idList);
+                                    try {
+                                        new laporOffers(context).execute(key, idList);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 } else {
                                   //  Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                                     pdialog.dismiss();
@@ -270,12 +278,16 @@ public class OffersFragment extends Fragment implements OnRefreshListener {
             public void run() {
                 RequestKeyTask testAsyncTask = new RequestKeyTask(new TaskCompleted() {
                     @Override
-                    public void onTaskDone(String key) {
+                    public void onTaskDone(String key)  {
                         if (key.equalsIgnoreCase("null")) {
                             swipeRefreshLayout.setRefreshing(false);
                             //Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                         } else {
-                            requestOffers = new RequestOffers(context);
+                            try {
+                                requestOffers = new RequestOffers(context);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             requestOffers.execute(key);
                         }
                     }
@@ -313,7 +325,7 @@ public class OffersFragment extends Fragment implements OnRefreshListener {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
+        private final HttpClient httpclient = HttpHelper.createHttpClient();
 
         final HttpParams params = httpclient.getParams();
         HttpResponse response;
@@ -321,7 +333,7 @@ public class OffersFragment extends Fragment implements OnRefreshListener {
         private boolean error = false;
         private Context mContext;
 
-        public RequestOffers(Context context) {
+        public RequestOffers(Context context) throws Exception {
             this.mContext = context;
 
         }
@@ -412,7 +424,11 @@ public class OffersFragment extends Fragment implements OnRefreshListener {
                             swipeRefreshLayout.setRefreshing(false);
                            // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                         } else {
-                            requestOffers = new RequestOffers(context);
+                            try {
+                                requestOffers = new RequestOffers(context);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             requestOffers.execute(key);
                         }
                     } else {
@@ -444,7 +460,7 @@ public class OffersFragment extends Fragment implements OnRefreshListener {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 3 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
+        private final HttpClient httpclient = HttpHelper.createHttpClient();
 
         final HttpParams params = httpclient.getParams();
         HttpResponse response;
@@ -456,7 +472,7 @@ public class OffersFragment extends Fragment implements OnRefreshListener {
         String themesName;
         private MessengerDatabaseHelper messengerHelper;
 
-        public laporOffers(Context context) {
+        public laporOffers(Context context) throws Exception {
             this.mContext = context;
             pdialog.show();
         }
@@ -552,7 +568,11 @@ public class OffersFragment extends Fragment implements OnRefreshListener {
                     if(NetworkInternetConnectionStatus.getInstance(mContext).isOnline(mContext)){
                         String key = new ValidationsKey().getInstance(mContext).key(true);
                         if (!key.equalsIgnoreCase("null")){
-                            new laporOffers(mContext).execute(key, themesName);
+                            try {
+                                new laporOffers(mContext).execute(key, themesName);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }else {
                             pdialog.dismiss();
                         }

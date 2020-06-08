@@ -18,6 +18,7 @@ import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.ui.activity.PustSLAFollowUpActivity;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.widget.ToolbarWithIndicator;
 
 import org.apache.http.HttpResponse;
@@ -190,7 +191,7 @@ public class DateScheduleSLA extends AppCompatActivity {
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
             if (inputStream != null)

@@ -27,7 +27,7 @@ public class RequestGet extends AsyncTask<String, String, String> {
     private final static String TAG = RequestGet.class.getSimpleName();
     final int REGISTRATION_TIMEOUT = 3 * 1000;
     final int WAIT_TIMEOUT = 30 * 1000;
-    final HttpClient httpclient = new DefaultHttpClient();
+    final HttpClient httpclient = HttpHelper.createHttpClient();
     private JobCompleted mFragmentCallback;
 
     final HttpParams params = httpclient.getParams();
@@ -37,7 +37,7 @@ public class RequestGet extends AsyncTask<String, String, String> {
     InputStream inputStream = null;
     private Context mContext;
 
-    public RequestGet(JobCompleted fragmentCallback, Context ctx) {
+    public RequestGet(JobCompleted fragmentCallback, Context ctx) throws Exception {
         mFragmentCallback = fragmentCallback;
         mContext = ctx;
     }

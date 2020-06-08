@@ -367,7 +367,11 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                 if (key.equalsIgnoreCase("null")) {
                     Toast.makeText(context, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                 } else {
-                    laporSelectedRoom = new LaporSelectedRoom(context, json);
+                    try {
+                        laporSelectedRoom = new LaporSelectedRoom(context, json);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     laporSelectedRoom.execute(key, path);
                 }
             }
@@ -380,7 +384,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
+        private final HttpClient httpclient = HttpHelper.createHttpClient();
 
         final HttpParams params = httpclient.getParams();
         HttpResponse response;
@@ -392,7 +396,7 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
         String path = "";
         String json = "";
 
-        public LaporSelectedRoom(Context context, String json) {
+        public LaporSelectedRoom(Context context, String json) throws Exception {
             this.mContext = context;
             this.json = json;
 
@@ -471,7 +475,11 @@ public class SearchroomAdapter extends BaseAdapter implements Filterable {
                         if (key.equalsIgnoreCase("null")) {
                             Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                         } else {
-                            laporSelectedRoom = new LaporSelectedRoom(context, json);
+                            try {
+                                laporSelectedRoom = new LaporSelectedRoom(context, json);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             laporSelectedRoom.execute(key, path);
                         }
                     } else {

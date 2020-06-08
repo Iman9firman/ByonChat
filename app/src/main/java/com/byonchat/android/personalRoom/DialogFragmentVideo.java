@@ -32,6 +32,7 @@ import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
 import com.byonchat.android.provider.Message;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.widget.VideoSlaceSeekBar;
 
 import org.apache.http.HttpEntity;
@@ -300,7 +301,12 @@ public class DialogFragmentVideo extends DialogFragment implements DialogInterfa
         private String uploadFile() {
             String responseString = null;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
 
             try {

@@ -52,6 +52,7 @@ import com.byonchat.android.ui.adapter.ByonchatPDFAdapter;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
@@ -504,7 +505,7 @@ public class ByonchatPDFFragment extends Fragment implements SwipeRefreshLayout.
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             StatusLine statusLine = httpResponse.getStatusLine();
             inputStream = httpResponse.getEntity().getContent();

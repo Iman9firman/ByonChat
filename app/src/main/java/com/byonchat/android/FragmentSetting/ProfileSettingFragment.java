@@ -203,10 +203,7 @@ public class ProfileSettingFragment extends Fragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
 
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private JSONObject jObject;
         private Context mContext;
         private String content = null;
@@ -244,6 +241,9 @@ public class ProfileSettingFragment extends Fragment {
                 HttpPost post = new HttpPost(URL_PROFILE);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
+                HttpClient httpclient = HttpHelper.createHttpClient();
+                HttpParams params = httpclient.getParams();
+                HttpResponse response;
 
                 //Response from the Http Request
                 response = httpclient.execute(post);

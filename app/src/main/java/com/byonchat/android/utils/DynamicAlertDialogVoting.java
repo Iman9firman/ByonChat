@@ -310,7 +310,12 @@ public class DynamicAlertDialogVoting extends DialogFragment {
 			String paramjson3 = params[3];
 			String paramjson4 = params[4];
 			String paramjson5 = params[5];
-			HttpClient httpClient = new DefaultHttpClient();
+			HttpClient httpClient = null;
+			try {
+				httpClient = HttpHelper.createHttpClient();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			HttpPost httpPost = new HttpPost(paramUrl);
 			BasicNameValuePair invitesBasicNameValuePair1 = new BasicNameValuePair("voting_id", paramjson1);
 			BasicNameValuePair invitesBasicNameValuePair2 = new BasicNameValuePair("answer_name", paramjson2);

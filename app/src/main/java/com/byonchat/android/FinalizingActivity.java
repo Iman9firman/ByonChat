@@ -13,6 +13,7 @@ import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -92,7 +93,7 @@ public class FinalizingActivity extends AppCompatActivity {
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
             if(inputStream != null)

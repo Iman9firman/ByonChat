@@ -31,6 +31,7 @@ import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.Interval;
 import com.byonchat.android.provider.IntervalDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.RequestKeyTask;
 import com.byonchat.android.utils.TaskCompleted;
 import com.innodroid.expandablerecycler.ExpandableRecyclerAdapter;
@@ -332,7 +333,7 @@ public class HistorySmsActivity extends AppCompatActivity {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 MessengerDatabaseHelper messengerHelper = null;
@@ -387,6 +388,8 @@ public class HistorySmsActivity extends AppCompatActivity {
                 });
                 finish();
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

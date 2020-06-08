@@ -33,6 +33,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDB;
 import com.byonchat.android.ui.activity.MainActivityNew;
 import com.byonchat.android.utils.FingerprintHandler;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.Validations;
 import com.byonchat.android.utils.ValidationsKey;
 import com.squareup.picasso.Picasso;
@@ -315,10 +316,7 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
             // Create a new HttpClient and Post Header
 
             try {
-                HttpParams httpParameters = new BasicHttpParams();
-                HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
-                HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -459,6 +457,8 @@ public class LoginDinamicFingerPrint extends AppCompatActivity {
                     }
                 });
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

@@ -2,10 +2,13 @@ package com.byonchat.android.location;
 
 import android.util.Log;
 
+import com.byonchat.android.utils.HttpHelper;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -38,7 +41,7 @@ public class JSONParser {
 			
 			if(method == "POST")
 			 {			
-				DefaultHttpClient httpClient = new DefaultHttpClient();
+				HttpClient httpClient = HttpHelper.createHttpClient();
 				HttpPost httpPost = new HttpPost(url);
 				httpPost.setEntity(new UrlEncodedFormEntity(params));
 
@@ -49,7 +52,7 @@ public class JSONParser {
 			}
 			else if(method == "GET")
 			{
-				DefaultHttpClient httpClient = new DefaultHttpClient();
+				HttpClient httpClient = HttpHelper.createHttpClient();
 				String paramString = URLEncodedUtils.format(params, "utf-8");
 				url += "?" + paramString;
 				HttpGet httpGet = new HttpGet(url);
@@ -65,6 +68,8 @@ public class JSONParser {
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 

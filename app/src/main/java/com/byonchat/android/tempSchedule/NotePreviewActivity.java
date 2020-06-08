@@ -381,10 +381,7 @@ public class NotePreviewActivity extends AppCompatActivity {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
 
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -418,6 +415,10 @@ public class NotePreviewActivity extends AppCompatActivity {
                 ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
                 HttpPost post = new HttpPost(linkTembak);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                HttpClient httpclient = HttpHelper.createHttpClient();
+                HttpParams params = httpclient.getParams();
+                HttpResponse response;
 
                 //Response from the Http Request
                 response = httpclient.execute(post);

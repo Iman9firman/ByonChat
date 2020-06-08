@@ -49,6 +49,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.GPSTracker;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.Validations;
@@ -273,7 +274,12 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
         @SuppressWarnings("deprecation")
         private String uploadFile(String photo, String lat, String longi) {
             String responseString = null;
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost("https://bb.byonchat.com/bc_voucher_client/webservice/list_api/api_generate_passcode.php");
 
             try {
@@ -465,10 +471,8 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
             // Create a new HttpClient and Post Header
 
             try {
-                HttpParams httpParameters = new BasicHttpParams();
-                HttpConnectionParams.setConnectionTimeout(httpParameters, 3000);
-                HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -536,6 +540,8 @@ public class RequestPasscodeRoomActivity extends AppCompatActivity {
                     }
                 });
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

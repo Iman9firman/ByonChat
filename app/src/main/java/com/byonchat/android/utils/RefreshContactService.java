@@ -104,9 +104,6 @@ public class RefreshContactService extends Service implements ServiceConnection 
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
         HttpResponse response;
         private JSONObject jObject;
         private String jsonResult = "";
@@ -152,7 +149,7 @@ public class RefreshContactService extends Service implements ServiceConnection 
 
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 //Check the Http Request for success

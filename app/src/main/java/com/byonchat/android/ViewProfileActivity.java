@@ -204,7 +204,11 @@ public class ViewProfileActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                                 pdialog.dismiss();
                             } else {
-                                new blockRequest(getApplicationContext()).execute(key);
+                                try {
+                                    new blockRequest(getApplicationContext()).execute(key);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         } else {
                             Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
@@ -369,7 +373,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
+        private final HttpClient httpclient = HttpHelper.createHttpClient();
 
         final HttpParams params = httpclient.getParams();
         HttpResponse response;
@@ -382,7 +386,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         String action;
 
 
-        public blockRequest(Context context) {
+        public blockRequest(Context context) throws Exception {
             this.mContext = context;
 
         }
@@ -479,7 +483,11 @@ public class ViewProfileActivity extends AppCompatActivity {
                             Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                             pdialog.dismiss();
                         } else {
-                            new blockRequest(mContext).execute(key);
+                            try {
+                                new blockRequest(mContext).execute(key);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     } else {
                         Toast.makeText(mContext, R.string.no_internet, Toast.LENGTH_SHORT).show();

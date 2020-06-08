@@ -39,6 +39,7 @@ import com.byonchat.android.list.IconItem;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.ui.adapter.ContactsAdapter;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.RefreshContactService;
 import com.byonchat.android.utils.ThrowProfileService;
 
@@ -292,7 +293,7 @@ public abstract class SelectBaseMessageContactActivity extends AppCompatActivity
                 HttpPost post = new HttpPost(REQUEST_CONTACT_URL);
                 Log.w("kepoah", sbuffer.toString());
                 post.setEntity(new StringEntity(sbuffer.toString()));
-                HttpClient httpClient = new DefaultHttpClient();
+                HttpClient httpClient = HttpHelper.createHttpClient();
                 HttpResponse response = httpClient.execute(post);
                 reader = new InputStreamReader(response.getEntity()
                         .getContent(), "UTF-8");

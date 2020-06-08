@@ -164,7 +164,7 @@ public class UpdateViewDialog extends Dialog {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 15000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                DefaultHttpClient client = new DefaultHttpClient(httpParameters);
+                HttpClient client = HttpHelper.createHttpClient();
                 HttpGet httpGet = new HttpGet(fileUrl[0]);
                 InputStream content = null;
                 try {

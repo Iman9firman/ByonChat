@@ -83,14 +83,14 @@ public class UpdateContactFragment extends Fragment implements SwipeRefreshLayou
     private Context context; //this is the Context you will use
 
     public UpdateContactFragment(Context ctx) {
-        context=ctx;
+        context = ctx;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v =  inflater.inflate(R.layout.fragment_update, container, false);
+        View v = inflater.inflate(R.layout.fragment_update, container, false);
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -105,18 +105,18 @@ public class UpdateContactFragment extends Fragment implements SwipeRefreshLayou
             dbHelper = MessengerDatabaseHelper.getInstance(context);
         }
 
-        if(timeLineDB == null) {
+        if (timeLineDB == null) {
             timeLineDB = TimeLineDB.getInstance(context);
         }
 
 
         contact = dbHelper.getContactCount();
         String[] test = dbHelper.getAllJabberId();
-        for (int i = 0; i < contact.size();i++){
-            if(i==0){
+        for (int i = 0; i < contact.size(); i++) {
+            if (i == 0) {
                 listJabberID = test[i];
-            }else{
-                listJabberID = listJabberID+":"+test[i];
+            } else {
+                listJabberID = listJabberID + ":" + test[i];
             }
         }
 
@@ -217,10 +217,7 @@ public class UpdateContactFragment extends Fragment implements SwipeRefreshLayou
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
 
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -250,8 +247,8 @@ public class UpdateContactFragment extends Fragment implements SwipeRefreshLayou
                 HttpPost post = new HttpPost(URL_UPDATES);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-                //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response;
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
@@ -267,34 +264,34 @@ public class UpdateContactFragment extends Fragment implements SwipeRefreshLayou
                         JSONObject obj = result.getJSONObject(i);
                         String username = obj.getString("username");
 
-                        String status =  Html.fromHtml(URLDecoder.decode(String.valueOf(Html.fromHtml(obj.getString("status").toString())))).toString();
+                        String status = Html.fromHtml(URLDecoder.decode(String.valueOf(Html.fromHtml(obj.getString("status").toString())))).toString();
                         String foto = obj.getString("foto");
                         String last_update = obj.getString("last_update");
                         String action = obj.getString("action");
 
                         Contact c = dbHelper.getContact(username);
-                        if(username.equalsIgnoreCase(dbHelper.getMyContact().getJabberId())){
-                            if(c.getRealname()==null || c.getRealname().equalsIgnoreCase("")){
+                        if (username.equalsIgnoreCase(dbHelper.getMyContact().getJabberId())) {
+                            if (c.getRealname() == null || c.getRealname().equalsIgnoreCase("")) {
                                 name = username;
-                            }else{
+                            } else {
                                 name = c.getRealname();
                             }
-                        }else{
-                            if(c.getName() == null || c.getName().equalsIgnoreCase("")){
+                        } else {
+                            if (c.getName() == null || c.getName().equalsIgnoreCase("")) {
                                 name = username;
-                            }else{
+                            } else {
                                 name = c.getName();
                             }
                         }
 
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                         Date convertedDate = new Date();
-                        try{
+                        try {
                             convertedDate = dateFormat.parse(last_update);
 
-                            TimeLine timeLine = new TimeLine(username, toJson(action,status), convertedDate, name, "0");
+                            TimeLine timeLine = new TimeLine(username, toJson(action, status), convertedDate, name, "0");
                             timeLineDB.insert(timeLine);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                         if (isCancelled()) break;
@@ -330,7 +327,7 @@ public class UpdateContactFragment extends Fragment implements SwipeRefreshLayou
                         String key = new ValidationsKey().getInstance(mContext).key(true);
                         if (key.equalsIgnoreCase("null")) {
                             swipeRefreshLayout.setRefreshing(false);
-                           // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(mContext, R.string.pleaseTryAgain, Toast.LENGTH_SHORT).show();
                         } else {
                             requestUpdates = new RequestUpdates(mContext);
                             requestUpdates.execute(key);
@@ -352,14 +349,14 @@ public class UpdateContactFragment extends Fragment implements SwipeRefreshLayou
         }
     }
 
-    public static String toJson(String action, String status){
+    public static String toJson(String action, String status) {
         try {
             JSONObject parent = new JSONObject();
             parent.put("action", action);
             parent.put("status", status);
 
             return parent.toString();
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;

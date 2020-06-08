@@ -9,6 +9,7 @@ import android.util.Log;
 import com.byonchat.android.FinalizingActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
+import com.byonchat.android.utils.HttpHelper;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -76,7 +77,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
             if(inputStream != null)

@@ -212,10 +212,8 @@ public class ValidationsKey {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
 
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
+
         private String content = null;
         private boolean error = false;
 
@@ -241,10 +239,6 @@ public class ValidationsKey {
 
                 //URL passed to the AsyncTask
                 URL = urls[0];
-                HttpConnectionParams.setConnectionTimeout(params, REGISTRATION_TIMEOUT);
-                HttpConnectionParams.setSoTimeout(params, WAIT_TIMEOUT);
-                ConnManagerParams.setTimeout(params, WAIT_TIMEOUT);
-
 
                 HttpPost httpPost = new HttpPost(URL);
 
@@ -254,7 +248,8 @@ public class ValidationsKey {
                 nameValuePairs.add(new BasicNameValuePair("password", contact.getName()));
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-                //Response from the Http Request
+                HttpClient httpclient = HttpHelper.createHttpClient();
+                HttpResponse response;
                 response = httpclient.execute(httpPost);
                 StatusLine statusLine = response.getStatusLine();
 

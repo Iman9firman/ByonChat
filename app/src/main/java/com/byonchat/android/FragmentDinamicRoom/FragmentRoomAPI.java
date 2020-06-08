@@ -89,6 +89,7 @@ import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.GPSTracker;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.widget.ContactsCompletionView;
@@ -3177,7 +3178,7 @@ public class FragmentRoomAPI extends Fragment {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
@@ -3242,6 +3243,8 @@ public class FragmentRoomAPI extends Fragment {
                     }
                 });
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -4102,7 +4105,7 @@ public class FragmentRoomAPI extends Fragment {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
@@ -4267,6 +4270,8 @@ public class FragmentRoomAPI extends Fragment {
                         // TODO Auto-generated catch block
                     }
                 });
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -4336,7 +4341,7 @@ public class FragmentRoomAPI extends Fragment {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
@@ -4390,6 +4395,8 @@ public class FragmentRoomAPI extends Fragment {
                     }
                 });
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

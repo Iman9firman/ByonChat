@@ -29,6 +29,7 @@ import com.byonchat.android.adapter.FormSpinnerAdapterVoting;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.utils.DataScreenSize;
 import com.byonchat.android.utils.DialogUtil;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -291,7 +292,12 @@ public class DynamicDialogSelfLayoutVoting extends DialogFragment {
 			String paramjson6 = params[6];
 			String paramjson7 = params[7];
 			String paramjson8 = params[8];
-			HttpClient httpClient = new DefaultHttpClient();
+			HttpClient httpClient = null;
+			try {
+				httpClient = HttpHelper.createHttpClient();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			HttpPost httpPost = new HttpPost(paramUrl);
 			BasicNameValuePair invitesBasicNameValuePair1 = new BasicNameValuePair("voting_id", paramjson1);
 			BasicNameValuePair invitesBasicNameValuePair2 = new BasicNameValuePair("creator_name", paramjson2);

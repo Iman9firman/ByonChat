@@ -367,10 +367,7 @@ public class FragmentRoomMultipleTask extends Fragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
 
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -402,6 +399,10 @@ public class FragmentRoomMultipleTask extends Fragment {
                 ConnManagerParams.setTimeout(httpClient.getParams(), WAIT_TIMEOUT);
                 HttpPost post = new HttpPost(linkTembak);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                HttpClient httpclient = HttpHelper.createHttpClient();
+                HttpParams params = httpclient.getParams();
+                HttpResponse response;
 
                 //Response from the Http Request
                 response = httpclient.execute(post);
@@ -855,10 +856,8 @@ public class FragmentRoomMultipleTask extends Fragment {
                 if (username != null) {
 
                     try {
-                        HttpParams httpParameters = new BasicHttpParams();
-                        HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
-                        HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                        HttpClient httpclient = new DefaultHttpClient(httpParameters);
+
+                        HttpClient httpclient = HttpHelper.createHttpClient();
                         HttpPost httppost = new HttpPost(new ValidationsKey().getInstance(getContext()).getTargetUrl(usr) + GETTABDETAILPULLMULTIPLE);
 
                         // Add your data
@@ -976,6 +975,8 @@ public class FragmentRoomMultipleTask extends Fragment {
                         // TODO Auto-generated catch block
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
                     // new Refresh(getActivity()).execute(new ValidationsKey().getInstance(getContext()).getTargetUrl(username) + GETTABDETAILPULLMULTIPLE, username, idTab, aa.getId());

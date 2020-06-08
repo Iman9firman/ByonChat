@@ -32,7 +32,6 @@ public class RequestUploadSite extends AsyncTask<String, String, String> {
         private TaskCompleted mFragmentCallback;
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
         private static String REQUEST_KEYS = "https://"+ MessengerConnectionService.FILE_SERVER+":"+MessengerConnectionService.SERVER_PORT_MN+"/v2/upload/file/";
         private static String REQUEST_KEYS_URL = "https://"+ MessengerConnectionService.FILE_SERVER+":"+MessengerConnectionService.SERVER_PORT_MN+"/v2/upload/file/";
         public static String REQUEST_KEYS_URL_Thum = "https://"+ MessengerConnectionService.FILE_SERVER+":"+MessengerConnectionService.SERVER_PORT_MN+"/v2/download/thb/";
@@ -77,7 +76,7 @@ public class RequestUploadSite extends AsyncTask<String, String, String> {
 
         Contact contact = messengerHelper.getMyContact();
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpGet httpGet = new HttpGet(REQUEST_KEYS_URL+mFileName);
             httpGet.addHeader("u",contact.getJabberId());
             httpGet.addHeader("k", mKey);

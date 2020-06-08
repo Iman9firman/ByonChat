@@ -253,7 +253,7 @@ public class DialogRejectRequest extends DialogFragment {
         }
 
         public void postData(String valueIWantToSend, final String usr, final String idr, final String idDetail) {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient()()();
             HttpPost httppost = new HttpPost(valueIWantToSend);
 
             try {

@@ -56,6 +56,7 @@ import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.utils.UtilsPD;
 import com.byonchat.android.utils.ValidationsKey;
@@ -380,7 +381,12 @@ public class GalleryBeforeAfterActivity extends Constants implements EmojiconGri
         private String uploadFile() {
             String responseString = null;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(URL_POST);
 
             try {

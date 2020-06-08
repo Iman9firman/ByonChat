@@ -39,6 +39,7 @@ import com.byonchat.android.list.IconItem;
 import com.byonchat.android.provider.ChatParty;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.RoomsDetail;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ValidationsKey;
 
 import org.apache.http.HttpEntity;
@@ -348,7 +349,7 @@ public class SubmitRequestActivity extends AppCompatActivity {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 Log.w("kasMUS", valueIWantToSend);
@@ -389,6 +390,8 @@ public class SubmitRequestActivity extends AppCompatActivity {
                 error = "Tolong periksa koneksi internet.";
             } catch (IOException e) {
                 error = "Tolong periksa koneksi internet.";
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -442,7 +445,7 @@ public class SubmitRequestActivity extends AppCompatActivity {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 Log.w("kasMUS", valueIWantToSend);
@@ -484,6 +487,8 @@ public class SubmitRequestActivity extends AppCompatActivity {
                 error = "Tolong periksa koneksi internet.";
             } catch (IOException e) {
                 error = "Tolong periksa koneksi internet.";
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

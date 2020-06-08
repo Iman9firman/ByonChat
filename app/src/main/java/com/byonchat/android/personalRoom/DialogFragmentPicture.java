@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.MessengerConnectionService;
 import com.byonchat.android.personalRoom.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ImageCompress;
 import com.byonchat.android.utils.ImageLoadingUtils;
 
@@ -193,7 +194,12 @@ public class DialogFragmentPicture extends DialogFragment implements DialogInter
         private String uploadFile() {
             String responseString = null;
 
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = null;
+            try {
+                httpclient = HttpHelper.createHttpClient();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             HttpPost httppost = new HttpPost(FILE_UPLOAD_URL);
 
             try {

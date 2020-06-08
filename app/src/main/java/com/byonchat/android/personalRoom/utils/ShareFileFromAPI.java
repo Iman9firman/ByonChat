@@ -23,6 +23,7 @@ import com.byonchat.android.R;
 import com.byonchat.android.provider.DataBaseDropDown;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -35,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.byonchat.android.utils.HttpHelper;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfCopy;
@@ -79,7 +81,7 @@ public class ShareFileFromAPI extends AppCompatActivity {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-                DefaultHttpClient client = new DefaultHttpClient(httpParameters);
+                HttpClient client = HttpHelper.createHttpClient();
                 HttpGet httpGet = new HttpGet(DOWNLOAD_PATH);
                 InputStream content = null;
                 try {

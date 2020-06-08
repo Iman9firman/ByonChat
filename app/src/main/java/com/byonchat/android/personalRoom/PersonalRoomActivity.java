@@ -196,7 +196,7 @@ public class PersonalRoomActivity extends AppCompatActivity {
 
         if (!userid.matches(messengerHelper.getMyContact().getJabberId())) {
             if (contact == null) {
-                title.setText(Html.fromHtml(username!=null?username:userid));
+                title.setText(Html.fromHtml(username != null ? username : userid));
             } else {
                 if (contact.getName().equalsIgnoreCase("") || contact.getName() == null) {
                     title.setText(userid);
@@ -409,9 +409,9 @@ public class PersonalRoomActivity extends AppCompatActivity {
         } else {
             adapter.addFragment(FragmentMyProfile.newInstance(userid, username, "", "", "", "", true), profiles.toString());
         }
-        adapter.addFragment(FragmentMyNote.newInstance(userid, username, "", "", "", "", true,PersonalRoomActivity.this), notes.toString());
-        adapter.addFragment(FragmentMyPicture.newInstance(userid, username, "", "", "", "004a6d", true,PersonalRoomActivity.this), pictures.toString());
-        adapter.addFragment(FragmentMyVideo.newInstance(userid, username, "", "", "", "004a6d", true,PersonalRoomActivity.this), videos.toString());
+        adapter.addFragment(FragmentMyNote.newInstance(userid, username, "", "", "", "", true, PersonalRoomActivity.this), notes.toString());
+        adapter.addFragment(FragmentMyPicture.newInstance(userid, username, "", "", "", "004a6d", true, PersonalRoomActivity.this), pictures.toString());
+        adapter.addFragment(FragmentMyVideo.newInstance(userid, username, "", "", "", "004a6d", true, PersonalRoomActivity.this), videos.toString());
         viewPager.setAdapter(adapter);
     }
 
@@ -625,9 +625,6 @@ public class PersonalRoomActivity extends AppCompatActivity {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
         HttpResponse response;
         private String content = null;
         private boolean error = false;
@@ -660,7 +657,7 @@ public class PersonalRoomActivity extends AppCompatActivity {
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 //Response from the Http Request
-                response = httpclient.execute(post);
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {

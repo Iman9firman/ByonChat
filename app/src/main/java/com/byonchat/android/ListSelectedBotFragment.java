@@ -183,7 +183,7 @@ public class ListSelectedBotFragment extends Fragment {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, final long id) {
-                if (Message.isJSONValid(botArrayListist.get(position).getDesc())){
+                if (Message.isJSONValid(botArrayListist.get(position).getDesc())) {
                     JSONObject jObject = null;
                     try {
                         jObject = new JSONObject(botArrayListist.get(position).getDesc());
@@ -193,7 +193,7 @@ public class ListSelectedBotFragment extends Fragment {
 
                         boolean isAppInstalled = appInstalledOrNot(classs);
 
-                        if(isAppInstalled) {
+                        if (isAppInstalled) {
                             Intent LaunchIntent = context.getPackageManager()
                                     .getLaunchIntentForPackage(classs);
                             startActivity(LaunchIntent);
@@ -216,7 +216,7 @@ public class ListSelectedBotFragment extends Fragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }else{
+                } else {
                     Intent intent = new Intent(context, ByonChatMainRoomActivity.class);
                     intent.putExtra(ConversationActivity.KEY_JABBER_ID, botArrayListist.get(position).getName());
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -273,7 +273,7 @@ public class ListSelectedBotFragment extends Fragment {
             Intent myIntent = new Intent(Intent.ACTION_VIEW, webpage);
             startActivity(myIntent);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, "No application can handle this request. Please install a web browser or check your URL.",  Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "No application can handle this request. Please install a web browser or check your URL.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
@@ -366,10 +366,6 @@ public class ListSelectedBotFragment extends Fragment {
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -403,8 +399,8 @@ public class ListSelectedBotFragment extends Fragment {
                 HttpPost post = new HttpPost(URLLAPORSELECTED);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-                //Response from the Http Request
-                response = httpclient.execute(post);
+                HttpResponse response;
+                response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
                 //Check the Http Request for success
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {

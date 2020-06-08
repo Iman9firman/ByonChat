@@ -416,10 +416,6 @@ public class MemberDetailActivity extends AppCompatActivity implements  Animatio
 
         private static final int REGISTRATION_TIMEOUT = 3 * 1000;
         private static final int WAIT_TIMEOUT = 30 * 1000;
-        private final HttpClient httpclient = new DefaultHttpClient();
-
-        final HttpParams params = httpclient.getParams();
-        HttpResponse response;
         private String content = null;
         private boolean error = false;
         private Context mContext;
@@ -457,7 +453,8 @@ public class MemberDetailActivity extends AppCompatActivity implements  Animatio
                 HttpPost post = new HttpPost(URL_GET_DETAIL_MEMBERS);
                 post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-                response = httpclient.execute(post);
+
+                HttpResponse response = httpClient.execute(post);
                 StatusLine statusLine = response.getStatusLine();
 
                 if (statusLine.getStatusCode() == HttpStatus.SC_OK) {

@@ -34,6 +34,7 @@ import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.room.DividerItemDecoration;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -194,7 +195,7 @@ public class ByonchatListScheduleFragment extends Fragment implements SwipeRefre
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
             if (inputStream != null)

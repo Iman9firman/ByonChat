@@ -13,8 +13,10 @@ import android.widget.Toast;
 
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.provider.DatabaseKodePos;
+import com.byonchat.android.utils.HttpHelper;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -60,7 +62,7 @@ public class DownloadSqliteDinamicActivity extends AppCompatActivity {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-                DefaultHttpClient client = new DefaultHttpClient(httpParameters);
+                HttpClient client = HttpHelper.createHttpClient();
                 HttpGet httpGet = new HttpGet(DB_DOWNLOAD_PATH);
                 InputStream content = null;
                 try {

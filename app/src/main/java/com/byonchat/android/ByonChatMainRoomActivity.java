@@ -2019,7 +2019,7 @@ public class ByonChatMainRoomActivity extends MainByonchatRoomBaseActivity {
 //
 //        private static final int REGISTRATION_TIMEOUT = 3 * 1000;
 //        private static final int WAIT_TIMEOUT = 30 * 1000;
-//        private final HttpClient httpclient = new DefaultHttpClient();
+//        private final HttpClient httpclient = HttpHelper.createHttpClient()()();
 //
 //        final HttpParams params = httpclient.getParams();
 //        HttpResponse response;

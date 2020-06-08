@@ -129,6 +129,7 @@ import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.GPSTracker;
 import com.byonchat.android.utils.GenerateQR;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ImageFilePath;
 import com.byonchat.android.utils.LocationAssistant;
 import com.byonchat.android.utils.MediaProcessingUtil;
@@ -11622,7 +11623,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
@@ -11789,6 +11790,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 });
                 finish();
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -12334,7 +12337,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
             if (inputStream != null)
@@ -13097,15 +13100,13 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(valueIWantToSend);
 
                 // Add your data
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("username_room", usr));
                 nameValuePairs.add(new BasicNameValuePair("id_tab", idTab));
-                Log.w("webToo1n", usr);
-                Log.w("webToo2n", idTab);
                 MessengerDatabaseHelper messengerHelper = null;
                 if (messengerHelper == null) {
                     messengerHelper = MessengerDatabaseHelper.getInstance(context);
@@ -13156,6 +13157,8 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 });
                 finish();
                 // TODO Auto-generated catch block
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

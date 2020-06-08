@@ -77,6 +77,15 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
+                            <ProgressBar
+                                android:id="@+id/progressBarStart"
+                                style="?android:attr/progressBarStyleLarge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:visibility="gone" />
+
                             <ImageView
                                 android:id="@+id/logo_item_grid"
                                 android:layout_width="match_parent"
@@ -133,6 +142,15 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
+                            <ProgressBar
+                                android:id="@+id/progressBarProgres"
+                                style="?android:attr/progressBarStyleLarge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:visibility="gone" />
+
                             <ImageView
                                 android:id="@+id/logo_item_grid2"
                                 android:layout_width="match_parent"
@@ -188,6 +206,15 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
+
+                            <ProgressBar
+                                android:id="@+id/progressBarDone"
+                                style="?android:attr/progressBarStyleLarge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:visibility="gone" />
 
                             <ImageView
                                 android:id="@+id/logo_item_grid3"

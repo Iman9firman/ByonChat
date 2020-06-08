@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import com.byonchat.android.Sample.Database.ScheduleSLADB;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.createMeme.FilteringImage;
 import com.byonchat.android.local.Byonchat;
+import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.widget.ToolbarWithIndicator;
 
 import org.apache.http.HttpEntity;
@@ -62,7 +64,7 @@ import java.util.concurrent.ExecutionException;
 
 import static com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment.perioRes;
 
-public class DetailAreaScheduleSLA extends AppCompatActivity {
+public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     RecyclerView recyclerView;
     DetailAreaScheduleAdapter adapter;
     ArrayList<DetailArea> detarea_list = new ArrayList();
@@ -75,7 +77,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
     Button submit;
     boolean hideSubmit;
     private String url;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
     ToolbarWithIndicator toolbar;
     protected ProgressDialog pdialog;
 
@@ -86,6 +88,9 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         getAllIntent();
 
         toolbar = findViewById(R.id.toolbar);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setRefreshing(true);
         setSupportActionBar(toolbar);
 
         resolveToolbar("022b95", "ffffff");
@@ -151,6 +156,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
+        Log.w("Showow TERIMA", detarea_list.size() + "");
         adapter.notifyDataSetChanged();
     }
 
@@ -192,6 +198,11 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         return url;
     }
 
+    @Override
+    public void onRefresh() {
+        prepareDataRecycle();
+    }
+
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -201,12 +212,14 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            Log.w("Showow", result);
             dismissAuthProgressDialog();
             try {
-
+                Log.w("Showow", "error!!!   1");
                 JSONObject jsonObject = new JSONObject(result);
                 JSONArray jsonArray = jsonObject.getJSONArray("item");
                 for (int i = 0; i < jsonArray.length(); i++) {
+                    Log.w("Showow", "error!!!   2");
                     JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                     String id = jsonObject1.getString("id_jjt");
                     String jjt = jsonObject1.getString("kode_jjt");
@@ -223,22 +236,28 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
 
                     if (done.equalsIgnoreCase("null")) {
                         submit.setVisibility(View.VISIBLE);
+                        Log.w("Showow", "error!!!   2");
                     }
                     ScheduleSLA sch = new ScheduleSLA(id_detail_proses, id, Byonchat.getMessengerHelper().getMyContact().getJabberId(), start, on_proses, done);
                     ScheduleSLADB dbA = ScheduleSLADB.getInstance(DetailAreaScheduleSLA.this);
                     Cursor cursorBot = dbA.getDataPicByID(id_detail_proses);
                     if (cursorBot.getCount() > 0) {
                         dbA.updateImgAll(sch);
+                        Log.w("Showow", "error!!!   3");
                     } else {
                         dbA.insertDataSchedule(sch);
+                        Log.w("Showow", "error!!!   4");
+
                     }
 
                     DetailArea dtArea = new DetailArea(id_detail_proses, id, detail_area + "  (" + dt + ")", period, ketrgn, start, on_proses, done);
                     detarea_list.add(dtArea);
+                    Log.w("Showow", "error!!!   " + "BOKU" + detarea_list.size());
                 }
+                adapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e("version", "error!!!   " + e.getMessage());
+                Log.w("Showow", "error!!!   " + e.getMessage());
             }
         }
     }
@@ -247,16 +266,22 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         InputStream inputStream = null;
         String result = "";
         try {
-            HttpClient httpclient = new DefaultHttpClient();
+            Log.w("Showow1", "11");
+            HttpClient httpclient = HttpHelper.createHttpClient();
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             inputStream = httpResponse.getEntity().getContent();
-            if (inputStream != null)
+            if (inputStream != null) {
+                Log.w("Showow2", "2");
                 result = convertInputStreamToString(inputStream);
-            else
+            } else {
+                Log.w("Showow3", "3");
                 result = "";
+            }
         } catch (Exception e) {
             Log.d("InputStream", e.getLocalizedMessage());
         }
+
+        Log.w("Showow", result);
 
         return result;
     }
@@ -265,7 +290,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                pdialog.show();
+                swipeRefreshLayout.setRefreshing(true);
             }
         });
     }
@@ -274,10 +299,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (pdialog == null || !pdialog.isShowing()) {
-                    return;
-                }
-                pdialog.dismiss();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -332,7 +354,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
                 HttpConnectionParams.setSoTimeout(httpParameters, 15000);
-                HttpClient httpclient = new DefaultHttpClient(httpParameters);
+                HttpClient httpclient = HttpHelper.createHttpClient();
                 HttpPost httppost = new HttpPost(link);
 
                 MultipartEntity entities = new MultipartEntity();
@@ -397,6 +419,8 @@ public class DetailAreaScheduleSLA extends AppCompatActivity {
                 progressDialog.dismiss();
                 Log.e("freegg uploada", e.getMessage());
                 Toast.makeText(DetailAreaScheduleSLA.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

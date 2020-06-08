@@ -2,16 +2,19 @@ package com.byonchat.android.Sample;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.byonchat.android.R;
+import com.byonchat.android.Sample.Database.ScheduleSLADB;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -31,6 +34,7 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
         public TextView title;
         public ImageView start, proses, done;
         public ImageView cekstart, cekproses, cekdone;
+        ProgressBar progressBarStart, progressBarProgress, progressBarDone;
 
         public MyViewHolder(View view) {
             super(view);
@@ -43,6 +47,11 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
             cekstart = (ImageView) view.findViewById(R.id.start_check);
             cekproses = (ImageView) view.findViewById(R.id.proses_check);
             cekdone = (ImageView) view.findViewById(R.id.done_check);
+
+            progressBarStart = (ProgressBar) itemView.findViewById(R.id.progressBarStart);
+            progressBarProgress = (ProgressBar) itemView.findViewById(R.id.progressBarProgres);
+            progressBarDone = (ProgressBar) itemView.findViewById(R.id.progressBarDone);
+
         }
     }
 
@@ -67,21 +76,103 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
         holder.title.setText(detailArea.getTitle());
         holder.title.setTextColor(colorText);
 
+
         holder.cekdone.setVisibility(View.GONE);
         holder.cekstart.setVisibility(View.GONE);
         holder.cekproses.setVisibility(View.GONE);
-        setImagePicasso(holder, position, detailArea);
+
+        holder.progressBarStart.setVisibility(View.GONE);
+        holder.progressBarProgress.setVisibility(View.GONE);
+        holder.progressBarDone.setVisibility(View.GONE);
+
+
+        String img_start = "null";
+        String img_proses = "null";
+        String img_done = "null";
+
+        Cursor cursorBot = ScheduleSLADB.getInstance(mActivity).getDataPicByID(detailArea.getId());
+        if (cursorBot.getCount() > 0) {
+            img_start = cursorBot.getString(cursorBot.getColumnIndex(ScheduleSLADB.SCH_DATA_START_PIC));
+            img_proses = cursorBot.getString(cursorBot.getColumnIndex(ScheduleSLADB.SCH_DATA_PROSES_PIC));
+            img_done = cursorBot.getString(cursorBot.getColumnIndex(ScheduleSLADB.SCH_DATA_DONE_PIC));
+
+        }
+        cursorBot.close();
+
+        if (detailArea.getImg_start() == "null") {
+            detailArea.setImg_start(img_start);
+        }
+
+        if (detailArea.getImg_proses() == "null") {
+            detailArea.setImg_proses(img_proses);
+        }
+
+        if (detailArea.getImg_done() == "null") {
+            detailArea.setImg_done(img_done);
+        }
+
+
+        if (!detailArea.getImg_start().equalsIgnoreCase("null")) {
+            Log.w("Dinda", detailArea.getImg_start());
+            if (detailArea.getImg_start().startsWith("/storage")) {
+                Picasso.with(mActivity).load(new File(detailArea.getImg_start()))
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                        .into(holder.start);
+
+            } else {
+                holder.progressBarStart.setVisibility(View.VISIBLE);
+
+                Picasso.with(mActivity).load(link_pic + detailArea.getImg_start())
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                        .into(holder.start);
+                holder.cekstart.setVisibility(View.VISIBLE);
+
+            }
+
+        }
+
+        if (!detailArea.getImg_proses().equalsIgnoreCase("null")) {
+            if (detailArea.getImg_proses().startsWith("/storage")) {
+                Picasso.with(mActivity).load(new File(detailArea.getImg_proses()))
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                        .into(holder.proses);
+            } else {
+                holder.progressBarProgress.setVisibility(View.VISIBLE);
+                Picasso.with(mActivity).load(link_pic + detailArea.getImg_proses())
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                        .into(holder.proses);
+                holder.cekproses.setVisibility(View.VISIBLE);
+
+            }
+
+        }
+
+        if (!detailArea.getImg_done().equalsIgnoreCase("null")) {
+            if (detailArea.getImg_done().startsWith("/storage")) {
+                Picasso.with(mActivity).load(new File(detailArea.getImg_done()))
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                        .into(holder.done);
+            } else {
+                holder.progressBarDone.setVisibility(View.VISIBLE);
+                Picasso.with(mActivity).load(link_pic + detailArea.getImg_done())
+                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
+                        .into(holder.done);
+                holder.cekdone.setVisibility(View.VISIBLE);
+
+            }
+
+        }
 
         holder.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent dsc = new Intent(mActivity, DialogAddSchedulePicture.class);
-                dsc.putExtra("id_da",detailArea.getId());
-                dsc.putExtra("id_jjt",detailArea.getId_jjt());
-                dsc.putExtra("tt",detailArea.getTitle());
-                dsc.putExtra("fq",detailArea.getFrekuensi());
-                dsc.putExtra("pr",detailArea.getPeriod());
-                dsc.putExtra("post","start");
+                dsc.putExtra("id_da", detailArea.getId());
+                dsc.putExtra("id_jjt", detailArea.getId_jjt());
+                dsc.putExtra("tt", detailArea.getTitle());
+                dsc.putExtra("fq", detailArea.getFrekuensi());
+                dsc.putExtra("pr", detailArea.getPeriod());
+                dsc.putExtra("post", "start");
                 mActivity.startActivity(dsc);
             }
         });
@@ -89,7 +180,7 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
         holder.proses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!detailArea.getImg_start().equalsIgnoreCase("null")){
+                if (!detailArea.getImg_start().equalsIgnoreCase("null")) {
                     Intent dsc = new Intent(mActivity, DialogAddSchedulePicture.class);
                     dsc.putExtra("id_da", detailArea.getId());
                     dsc.putExtra("id_jjt", detailArea.getId_jjt());
@@ -99,7 +190,7 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
                     dsc.putExtra("post", "proses");
                     mActivity.startActivity(dsc);
                 } else {
-                    Toast.makeText(mActivity, "Add The Start Image First",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "Add The Start Image First", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -107,67 +198,23 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
         holder.done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!detailArea.getImg_proses().equalsIgnoreCase("null")){
+                if (!detailArea.getImg_proses().equalsIgnoreCase("null")) {
                     Intent dsc = new Intent(mActivity, DialogAddSchedulePicture.class);
-                    dsc.putExtra("id_da",detailArea.getId());
-                    dsc.putExtra("id_jjt",detailArea.getId_jjt());
-                    dsc.putExtra("tt",detailArea.getTitle());
-                    dsc.putExtra("fq",detailArea.getFrekuensi());
-                    dsc.putExtra("pr",detailArea.getPeriod());
-                    dsc.putExtra("post","done");
+                    dsc.putExtra("id_da", detailArea.getId());
+                    dsc.putExtra("id_jjt", detailArea.getId_jjt());
+                    dsc.putExtra("tt", detailArea.getTitle());
+                    dsc.putExtra("fq", detailArea.getFrekuensi());
+                    dsc.putExtra("pr", detailArea.getPeriod());
+                    dsc.putExtra("post", "done");
                     mActivity.startActivity(dsc);
                 } else {
-                    Toast.makeText(mActivity, "Add The Process Image First",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mActivity, "Add The Process Image First", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-    }
-
-    public void setImagePicasso(MyViewHolder holder, int position, DetailArea detailArea){
-        Log.w("Ezaa",detailArea.getImg_start());
-        Log.w("Ezaa",detailArea.getImg_proses());
-        Log.w("Ezaa",detailArea.getImg_done());///storage/emulated/0/Pictures/application.mobile.iss2/bc-ROOM-20200429-153826.jpeg.jpeg
-        if(!detailArea.getImg_start().equalsIgnoreCase("null")) {
-            if(detailArea.getImg_start().startsWith("/storage")) {
-                Picasso.with(mActivity).load(new File(detailArea.getImg_start()))
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(holder.start);
-            }else {
-                Picasso.with(mActivity).load(link_pic + detailArea.getImg_start())
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(holder.start);
-                holder.cekstart.setVisibility(View.VISIBLE);
-            }
-        }
-
-        if(!detailArea.getImg_proses().equalsIgnoreCase("null")) {
-            if(detailArea.getImg_proses().startsWith("/storage")) {
-                Picasso.with(mActivity).load(new File(detailArea.getImg_proses()))
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(holder.proses);
-            }else {
-                Picasso.with(mActivity).load(link_pic + detailArea.getImg_proses())
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(holder.proses);
-                holder.cekproses.setVisibility(View.VISIBLE);
-            }
-        }
-
-        if(!detailArea.getImg_done().equalsIgnoreCase("null")) {
-            if(detailArea.getImg_done().startsWith("/storage")) {
-                Picasso.with(mActivity).load(new File(detailArea.getImg_done()))
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(holder.done);
-            }else {
-                Picasso.with(mActivity).load(link_pic + detailArea.getImg_done())
-                        .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
-                        .into(holder.done);
-                holder.cekdone.setVisibility(View.VISIBLE);
-            }
-        }
-
 
     }
+
 
     @Override
     public int getItemCount() {

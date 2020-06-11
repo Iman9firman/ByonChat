@@ -42,6 +42,7 @@ import com.byonchat.android.model.ScheduleList;
 import com.byonchat.android.provider.DataBaseDropDown;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
 import com.byonchat.android.utils.ExceptionHandler;
+import com.byonchat.android.utils.GetDropdownFormISS;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.widget.CalendarDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
@@ -61,6 +62,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -804,94 +806,51 @@ public class ByonchatScheduleSLAFragment extends Fragment {
         section.clear();
         subsection.clear();
 
-        DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(mActivity, "sqlite_iss");
+        int jsonForm = new GetDropdownFormISS().getInstance(mActivity).getALL();
+        if (jsonForm == 0) {
 
-        if (mDBDquerySLA.getWritableDatabase() != null) {
+            Intent intent = new Intent(mActivity, DownloadSqliteDinamicActivity.class);
+            intent.putExtra("name_db", "");
+            intent.putExtra("path_db", "https://iss.byonchat.com/list_api_iss/list_pembobotan_jjt.php");
+            startActivity(intent);
 
-            String asiop[] = {"jt.id AS id_jjt", "pb.id AS id_pembobotan", "pb.nama_pembobotan AS nama_pembobotan", "pb.grade AS grade"
-                    , "s.id AS id_section", "s.title AS title_section", "ss.id AS id_subsection", "ss.title AS title_subsection", "p.id AS id_pertanyaan", "p.pertanyaan AS pertanyaan", "jt.pass_grade AS pass_gradeNya"};
+        }
 
-            String asiap = "jjt jt\n" +
-                    "INNER JOIN jjt_checklists jtc ON jt.id=jtc.id_jjt\n" +
-                    "INNER JOIN pembobotan pb ON pb.id=jtc.id_pembobotan\n" +
-                    "INNER JOIN pembobotan_checklists pc ON pb.id=pc.id_pembobotan\n" +
-                    "INNER JOIN section s ON s.id=pc.id_section\n" +
-                    "INNER JOIN section_checklists sc ON s.id=sc.id_section\n" +
-                    "INNER JOIN sub_section ss ON ss.id=sc.id_subsection\n" +
-                    "INNER JOIN subsection_checklists sbc ON ss.id=sbc.id_subsection\n" +
-                    "INNER JOIN pertanyaan p ON p.id=sbc.id_pertanyaan";
+        String jsonFormContext = new GetDropdownFormISS().getInstance(mActivity).getName(kodeJJT);
 
-            final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, asiap, asiop, "jt.kode='" + kodeJJT + "'", null, null, null, null, null);
+        try {
+            JSONObject levelBobot1 = new JSONObject(jsonFormContext);
+            JSONArray level1Array = levelBobot1.getJSONArray("data");
+            for (int oneL = 0; oneL < level1Array.length(); oneL++) {
+                JSONObject objectOne = level1Array.getJSONObject(oneL);
+                JSONArray level2Array = objectOne.getJSONArray("data");
+                String idBobot = objectOne.getString("id");
+                String namaBobot = objectOne.getString("label");
+                ScheduleList bobot = new ScheduleList(idBobot, namaBobot);
+                pembobotan.add(bobot);
+                for (int twoL = 0; twoL < level2Array.length(); twoL++) {
+                    JSONObject objectTwo = level2Array.getJSONObject(twoL);
+                    String idSection = objectTwo.getString("id");
+                    String namaSection = objectTwo.getString("label");
 
-            if (css.moveToFirst()) {
-                String bobotIdOld = "";
-                String sectionOld = "";
-                String subSectionOld = "";
-
-                try {
-
-                    do {
-                        String idBobot = css.getString(1);
-                        String idSection = css.getString(4);
-                        String idSubSection = css.getString(6);
-
-                        String namaBobot = css.getString(2);
-                        String namaSection = css.getString(5);
-                        String namaSubSection = css.getString(7);
-
-                        if (bobotIdOld.equalsIgnoreCase(idBobot)) {
-                            if (sectionOld.equalsIgnoreCase(idSection)) {
-                                if (!subSectionOld.equalsIgnoreCase(idSubSection)) {
-                                    subSectionOld = idSubSection;
-
-                                    ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
-                                    subsection.add(subsectioning);
-                                }
-                            } else {
-                                subSectionOld = idSubSection;
-                                sectionOld = idSection;
-
-                                ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
-                                subsection.add(subsectioning);
-
-                                ScheduleList sectioning = new ScheduleList(idSection, idBobot, namaSection);
-                                section.add(sectioning);
-
-                            }
-                        } else {
-                            bobotIdOld = idBobot;
-                            sectionOld = idSection;
-                            subSectionOld = idSubSection;
-
-                            ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
-                            subsection.add(subsectioning);
-
-                            ScheduleList sectioning = new ScheduleList(idSection, idBobot, namaSection);
-                            section.add(sectioning);
-
-                            ScheduleList bobot = new ScheduleList(idBobot, namaBobot);
-                            pembobotan.add(bobot);
-                        }
-
-                    } while (css.moveToNext());
-
-                } catch (Exception e) {
-
+                    JSONArray level3Array = objectTwo.getJSONArray("data");
+                    ScheduleList sectioning = new ScheduleList(idSection, idBobot, namaSection);
+                    section.add(sectioning);
+                    for (int threeL = 0; threeL < level3Array.length(); threeL++) {
+                        JSONObject objectThree = level3Array.getJSONObject(threeL);
+                        String idSubSection = objectThree.getString("id");
+                        String namaSubSection = objectThree.getString("label");
+                        ScheduleList subsectioning = new ScheduleList(idSubSection, idSection, namaSubSection);
+                        subsection.add(subsectioning);
+                    }
                 }
             }
-        } else {
-            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                Toast.makeText(getContext(), "Please insert memmory card", Toast.LENGTH_LONG).show();
-                getActivity().finish();
-            }
 
-            getActivity().finish();
-            Intent intent = new Intent(getContext(), DownloadSqliteDinamicActivity.class);
-            intent.putExtra("name_db", "sqlite_iss");
-            intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
-            startActivity(intent);
-            return;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
     }
 
     public static String perioRes(String value) {

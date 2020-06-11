@@ -20,14 +20,6 @@ public class VouchersDetailModel {
     public VouchersDetailModel() {
     }
 
-    //    public ItemListVoucher(String id, String name, String value, String type, String sub, String detail) {
-//        this.id = id;
-//        this.name = name;
-//        this.value = value;
-//        this.type = type;
-//        this.sub = sub;
-//        this.detail = detail;
-//    }
     //Lukman-
     public VouchersDetailModel(String serial_number, String pemilik, String judul, String value, String tgl_valid, String icon, String category, String color, String textcolor, String background) {
         //Lukman+

@@ -103,8 +103,9 @@ public class SLAISSAdapter extends MultiLevelAdapter {
         this.idDetailForm = idDetailForm;
         this.mMultiLevelRecyclerView = multiLevelRecyclerView;
         this.listener = counterListener;
-        listener.onChecked(getCountDB(idDetailForm));
         database = new RadioButtonCheckDB(activity);
+        listener.onChecked(getCountDB(idDetailForm));
+
     }
 
     public interface CountCheckerListener {
@@ -113,6 +114,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
 
     public int getCountDB(String idDetailForm) {
         int count = 0;
+
         SQLiteDatabase db = database.getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME,
                 new String[]{COLUMN_OK},
@@ -423,6 +425,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
 
     private String getComment(String idDetail, String id) {
         String ok = "";
+
         SQLiteDatabase db = database.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME,
@@ -439,6 +442,7 @@ public class SLAISSAdapter extends MultiLevelAdapter {
 
 
     public void removeDB() {
+
         database.getWritableDatabase().delete(TABLE_NAME, null, null);
     }
 

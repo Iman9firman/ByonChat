@@ -213,6 +213,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -231,6 +233,10 @@ import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import static com.byonchat.android.utils.PicassoOwnCache.cacheDir;
 
@@ -984,6 +990,21 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
     }
 
 
+    private static TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+
+        public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+
+        }
+
+        public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+
+        }
+    }
+    };
+
     private void xmppOpen() {
         XMPPTCPConnectionConfiguration.Builder configBuilder = XMPPTCPConnectionConfiguration.builder();
         configBuilder.setHost(SERVER_HOST);
@@ -1003,6 +1024,18 @@ public class MessengerConnectionService extends Service implements AllAboutUploa
                         + "cacerts.bks";
             configBuilder.setKeystorePath(path);
         }
+        SSLContext sslContext = null;
+
+        try {
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new SecureRandom());
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        configBuilder.setCustomSSLContext(sslContext);
         configBuilder.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
 
         xmppConnection = new XMPPTCPConnection(configBuilder.build());

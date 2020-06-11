@@ -49,9 +49,16 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Skin;
 import com.byonchat.android.utils.TabsUtils;
 import com.byonchat.android.utils.UploadService;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -95,6 +102,25 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         try {
             super.onCreate(savedInstanceState);
 
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                SSLContext sslContext = null;
+                try {
+                    ProviderInstaller.installIfNeeded(getApplicationContext());
+                    sslContext = SSLContext.getInstance("TLSv1.2");
+                    sslContext.init(null, null, null);
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (KeyManagementException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
+
+                sslContext.createSSLEngine();
+            }
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 ComponentName mServiceComponent = new ComponentName(context, MyJobService.class);

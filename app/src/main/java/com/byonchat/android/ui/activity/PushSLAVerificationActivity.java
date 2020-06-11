@@ -74,6 +74,7 @@ import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.AllAboutUploadTask;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.GetDropdownFormISS;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.widget.ToolbarWithIndicator;
@@ -310,7 +311,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 JSONObject subsection = second.getJSONObject("subsection");
                 idSubSection = second.getString("id");
                 String asiop2[] = {"title"};
-                headerTwo = getNameByIdSLA("section", asiop2, idSubSection);
+                headerTwo = getNameByIdSLA("section", kode_jjt, idSubSection);
                 JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
                 idPertanyaan = subsection.getString("id");
                 for (int v = 0; v < pertanyaan.length(); v++) {
@@ -322,7 +323,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
                         noEmpat = String.valueOf(v + 1);
                         String asiop4[] = {"pertanyaan"};
-                        headerFour = getNameByIdSLA("pertanyaan", asiop4, idItem);
+                        headerFour = getNameByIdSLA("pertanyaan", kode_jjt, idItem);
 
                         String id_task = fifth.getString("id_task");
                         String fotony = fifth.getString("f");
@@ -840,32 +841,72 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         return inSampleSize;
     }
 
-    private String getNameByIdSLA(String table, String asiop[], String id) {
-        String header = "";
-        DataBaseDropDown mDBDquerySLA = new DataBaseDropDown(PushSLAVerificationActivity.this, "sqlite_iss");
-        if (mDBDquerySLA.getWritableDatabase() != null) {
-
-
-            final Cursor css = mDBDquerySLA.getWritableDatabase().query(true, table, asiop,
-                    "id = '" + id + "'", null, null, null, null, null);
-
-            if (css.moveToFirst()) {
-                header = css.getString(0);
-            }
-
-        } else {
-            if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                Toast.makeText(PushSLAVerificationActivity.this, "Please insert memmory card", Toast.LENGTH_LONG).show();
-                finish();
-            }
-
-            finish();
-            Intent intent = new Intent(PushSLAVerificationActivity.this, DownloadSqliteDinamicActivity.class);
-            intent.putExtra("name_db", "sqlite_iss");
-            intent.putExtra("path_db", "https://bb.byonchat.com/bc_voucher_client/public/list_task/dropdown_dinamis/sqlite_iss.sqlite");
-            startActivity(intent);
-            return header;
+    private String getNameByIdSLA(String table, String kode_jjt, String id) {
+        int jsonCek = new GetDropdownFormISS().getInstance(getApplicationContext()).getALL();
+        if (jsonCek == 0) {
+            Toast.makeText(getBaseContext(), "Harap Refresh di tab SLA", Toast.LENGTH_SHORT).show();
+            return "-";
         }
+
+        String header = " - ";
+        String jsonForm = new GetDropdownFormISS().getInstance(getApplicationContext()).getName(kode_jjt);
+        JSONObject levelBobot1 = null;
+        if (table.equalsIgnoreCase("section")) {
+            try {
+                levelBobot1 = new JSONObject(jsonForm);
+                JSONArray level1Array = levelBobot1.getJSONArray("data");
+                for (int oneL = 0; oneL < level1Array.length(); oneL++) {
+                    JSONObject objectOne = level1Array.getJSONObject(oneL);
+                    JSONArray level2Array = objectOne.getJSONArray("data");
+                    for (int twoL = 0; twoL < level2Array.length(); twoL++) {
+                        JSONObject objectTwo = level2Array.getJSONObject(twoL);
+                        String _id = objectTwo.getString("id");
+                        String label = objectTwo.getString("label");
+                        if (id.equalsIgnoreCase(_id)) {
+                            return label;
+
+                        }
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else if (table.equalsIgnoreCase("pertanyaan")) {
+            try {
+                levelBobot1 = new JSONObject(jsonForm);
+                JSONArray level1Array = levelBobot1.getJSONArray("data");
+                for (int oneL = 0; oneL < level1Array.length(); oneL++) {
+                    JSONObject objectOne = level1Array.getJSONObject(oneL);
+                    JSONArray level2Array = objectOne.getJSONArray("data");
+                    for (int twoL = 0; twoL < level2Array.length(); twoL++) {
+                        JSONObject objectTwo = level2Array.getJSONObject(twoL);
+                        JSONArray level3Array = objectTwo.getJSONArray("data");
+                        for (int threeL = 0; threeL < level3Array.length(); threeL++) {
+                            JSONObject objectThree = level3Array.getJSONObject(threeL);
+                            JSONArray level4Array = objectThree.getJSONArray("data");
+                            for (int fourL = 0; fourL < level4Array.length(); fourL++) {
+                                JSONObject objectFour = level4Array.getJSONObject(fourL);
+
+                                String id4 = objectFour.getString("id");
+                                String lb4 = objectFour.getString("label");
+
+                                if (id.equalsIgnoreCase(id4)) {
+                                    return lb4;
+
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.w("Ingin2", e.getMessage());
+            }
+        }
+
         return header;
 
     }

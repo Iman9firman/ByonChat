@@ -29,6 +29,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.DialogFormChildMainRequester;
@@ -40,6 +41,7 @@ import com.byonchat.android.helpers.Constants;
 import com.byonchat.android.provider.Contact;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDB;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.json.JSONArray;
@@ -294,7 +296,7 @@ public class DinamicRoomSearchTaskActivity extends AppCompatActivity {
         ProgressDialog rdialog = new ProgressDialog(DinamicRoomSearchTaskActivity.this);
         rdialog.setMessage("Loading...");
         rdialog.show();
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {

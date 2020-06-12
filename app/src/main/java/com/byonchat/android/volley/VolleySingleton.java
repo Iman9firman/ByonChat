@@ -6,8 +6,10 @@ import android.support.v4.util.LruCache;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 
 public class VolleySingleton {
     private static VolleySingleton mInstance;
@@ -62,7 +64,7 @@ public class VolleySingleton {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
-            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
+            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
         }
         return mRequestQueue;
     }

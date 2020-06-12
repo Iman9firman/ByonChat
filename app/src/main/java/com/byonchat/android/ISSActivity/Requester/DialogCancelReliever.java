@@ -16,9 +16,11 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -114,7 +116,7 @@ public class DialogCancelReliever extends Dialog {
         rdialog.setMessage("Loading...");
         rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue(activity);
+        RequestQueue queue = Volley.newRequestQueue(activity, new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {

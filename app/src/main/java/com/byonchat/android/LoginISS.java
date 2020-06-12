@@ -21,6 +21,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
@@ -29,6 +30,7 @@ import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.Rooms;
 import com.byonchat.android.ui.activity.MainActivityNew;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.Validations;
 import com.google.android.gms.vision.L;
@@ -123,7 +125,7 @@ public class LoginISS extends AppCompatActivity {
     }
 
     private void LoginThis(String Url, Map<String, String> params2, Boolean hide) {
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {

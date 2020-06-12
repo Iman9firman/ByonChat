@@ -26,6 +26,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
@@ -36,6 +37,7 @@ import com.byonchat.android.list.IconItem;
 import com.byonchat.android.ui.adapter.ChildRecyclerView;
 import com.byonchat.android.ui.adapter.HeaderRecyclerView;
 import com.byonchat.android.ui.adapter.NotifikasinoresultView;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mindorks.placeholderview.ExpandablePlaceHolderView;
 import com.stepstone.apprating.AppRatingDialog;
@@ -89,7 +91,7 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
     }
 
     private void getDetail(String Url, Map<String, String> params2) {
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
@@ -349,7 +351,7 @@ public abstract class ByonchatBaseMallKelapaGadingActivity extends AppCompatActi
         rdialog.setMessage("Loading...");
         rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue(ByonchatBaseMallKelapaGadingActivity.this);
+        RequestQueue queue = Volley.newRequestQueue(ByonchatBaseMallKelapaGadingActivity.this, new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {

@@ -8,9 +8,11 @@ import android.util.Log;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.BuildConfig;
 import com.byonchat.android.local.Byonchat;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 
 /**
  * Created by Lukmanpryg on 26/7/2018.
@@ -39,7 +41,7 @@ public class Application extends MultiDexApplication {
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+            mRequestQueue = Volley.newRequestQueue(getApplicationContext(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
         }
 
         return mRequestQueue;

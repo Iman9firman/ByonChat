@@ -3,6 +3,7 @@ package com.byonchat.android.ui.adapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ISSActivity.Requester.ByonchatBaseMallKelapaGadingActivity;
@@ -20,6 +22,7 @@ import com.byonchat.android.R;
 import com.byonchat.android.data.model.MkgServices;
 import com.byonchat.android.tabRequest.MapsViewActivity;
 import com.byonchat.android.tabRequest.RelieverDetailActivity;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
@@ -183,8 +186,7 @@ public class ChildRecyclerView {
         rdialog.setMessage("Loading...");
         rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue(mContext);
-
+        RequestQueue queue = Volley.newRequestQueue(mContext, new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();

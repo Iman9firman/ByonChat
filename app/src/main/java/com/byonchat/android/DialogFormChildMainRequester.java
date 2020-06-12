@@ -33,9 +33,11 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.provider.RoomsDB;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.byonchat.android.widget.CalendarDialog;
 import com.googlecode.mp4parser.authoring.Edit;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
@@ -104,8 +106,7 @@ public class DialogFormChildMainRequester extends Dialog implements View.OnClick
 
     private void getMainPekerjaan(String Url) {
         dialog.show();
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-
+        RequestQueue queue = Volley.newRequestQueue(getContext(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     dialog.dismiss();

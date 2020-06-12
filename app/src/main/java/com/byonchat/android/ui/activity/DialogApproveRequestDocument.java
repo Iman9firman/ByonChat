@@ -32,6 +32,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
@@ -44,6 +45,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.tempSchedule.MyEventDatabase;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -93,10 +95,10 @@ public class DialogApproveRequestDocument extends DialogFragment {
         args.putString("username", username);
         args.putString("requester", requester);
         args.putString("idTab", idTab);
-        args.putLong("id",idFile);
+        args.putLong("id", idFile);
         args.putString("title", title);
         args.putString("description", description);
-        args.putString("date",date);
+        args.putString("date", date);
         args.putString("alasan", reason);
         args.putString("id_hist", id_history);
         f.setArguments(args);
@@ -127,7 +129,7 @@ public class DialogApproveRequestDocument extends DialogFragment {
         databaseHelper = MessengerDatabaseHelper.getInstance((FragmentActivity) getContext());
 
         linearLayout = (LinearLayout) dialog.findViewById(R.id.linear);
-        linearLayout.setPadding(16,16,16,16);
+        linearLayout.setPadding(16, 16, 16, 16);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
         LinearLayout.LayoutParams params0 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -144,8 +146,8 @@ public class DialogApproveRequestDocument extends DialogFragment {
         entryNama.setText(nama_file);
         entryNama.setTypeface(Typeface.DEFAULT_BOLD);
         entryNama.setTextSize(15);
-        linearLayout.addView(fildNama,params0);
-        linearLayout.addView(entryNama,params0);
+        linearLayout.addView(fildNama, params0);
+        linearLayout.addView(entryNama, params0);
 
         //Field 4
 //        LinearLayout layout4 = new LinearLayout(getContext());
@@ -163,8 +165,8 @@ public class DialogApproveRequestDocument extends DialogFragment {
         entryReqs2.setText(reqs_file);
         entryReqs2.setTypeface(Typeface.DEFAULT_BOLD);
         entryReqs2.setTextSize(15);
-        linearLayout.addView(fildReqs,params0);
-        linearLayout.addView(entryReqs,params0);
+        linearLayout.addView(fildReqs, params0);
+        linearLayout.addView(entryReqs, params0);
 
         //Field 3
 //        LinearLayout layout3 = new LinearLayout(getContext());
@@ -178,8 +180,8 @@ public class DialogApproveRequestDocument extends DialogFragment {
         entryDate.setText(date_file);
         entryDate.setTypeface(Typeface.DEFAULT_BOLD);
         entryDate.setTextSize(15);
-        linearLayout.addView(fildDate,params0);
-        linearLayout.addView(entryDate,params0);
+        linearLayout.addView(fildDate, params0);
+        linearLayout.addView(entryDate, params0);
 
         //Field 5
 //        LinearLayout layout5 = new LinearLayout(getContext());
@@ -197,14 +199,14 @@ public class DialogApproveRequestDocument extends DialogFragment {
         entryReason.setTypeface(Typeface.DEFAULT_BOLD);
 //        entryReason.setTextSize(15);
 //        entryReason.setLines(6);
-        entryReason.setPadding(10,10,10,10);
+        entryReason.setPadding(10, 10, 10, 10);
 //        entryReason.setMaxLines(8);
 //        entryReason.setGravity(Gravity.TOP);
         entryReason.setBackground(getActivity().getResources().getDrawable(R.drawable.rounder_editext));
         entryReason.canScrollVertically(View.SCROLL_AXIS_VERTICAL);
         entryReason.setMovementMethod(new ScrollingMovementMethod());
-        linearLayout.addView(fildReason,params0);
-        linearLayout.addView(entryReason,params1);
+        linearLayout.addView(fildReason, params0);
+        linearLayout.addView(entryReason, params1);
 
 
 //        linearLayout.addView(layout1, params1);
@@ -222,30 +224,30 @@ public class DialogApproveRequestDocument extends DialogFragment {
             public void onClick(View v) {
                 Map<String, String> params = new HashMap<>();
                 params.put("id_history", id_history);
-                params.put("status", 1+"");
+                params.put("status", 1 + "");
 
                 getDialog().dismiss();
                 getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Approval/update", params, true);
                 Toast.makeText(getActivity(), "Request Approved", Toast.LENGTH_SHORT).show();
-                if (listener != null){
+                if (listener != null) {
                     listener.onRefreshUp();
                 }
             }
         });
 
-        Log.w("Parking lot prestice AA",id_history);
+        Log.w("Parking lot prestice AA", id_history);
 
         mCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Map<String, String> params = new HashMap<>();
-                params.put("id_history",  id_history);
-                params.put("status", 2+"");
+                params.put("id_history", id_history);
+                params.put("status", 2 + "");
 
                 getDialog().dismiss();
                 getDetail("https://bb.byonchat.com/ApiDocumentControl/index.php/Approval/update", params, true);
                 Toast.makeText(getActivity(), "Request Rejected", Toast.LENGTH_SHORT).show();
-                if (listener != null){
+                if (listener != null) {
                     listener.onRefreshUp();
                 }
             }
@@ -254,7 +256,7 @@ public class DialogApproveRequestDocument extends DialogFragment {
         return dialog;
     }
 
-    private String jsonData(){
+    private String jsonData() {
 
         JSONArray datas = new JSONArray();
         JSONObject approver = new JSONObject();
@@ -273,10 +275,10 @@ public class DialogApproveRequestDocument extends DialogFragment {
                 approver.put("order","2");
                 datas.put(approver);
             }*/
-            approver.put("bc_user_approval",databaseHelper.getMyContact().getJabberId());
-            approver.put("nama",dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
-            approver.put("nik",dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
-            approver.put("order","1");
+            approver.put("bc_user_approval", databaseHelper.getMyContact().getJabberId());
+            approver.put("nama", dbHelper.getColValue(UserDB.EMPLOYEE_NAME));
+            approver.put("nik", dbHelper.getColValue(UserDB.EMPLOYEE_NIK));
+            approver.put("order", "1");
             datas.put(approver);
 
         } catch (Exception e) {
@@ -290,8 +292,7 @@ public class DialogApproveRequestDocument extends DialogFragment {
         rdialog.setMessage("Loading...");
         rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
-
+        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();
@@ -318,7 +319,7 @@ public class DialogApproveRequestDocument extends DialogFragment {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(sr);
     }
-    
+
     public DialogRefreshListener getListener() {
         return listener;
     }
@@ -327,8 +328,8 @@ public class DialogApproveRequestDocument extends DialogFragment {
         this.listener = listener;
     }
 
-    public interface DialogRefreshListener{
+    public interface DialogRefreshListener {
         void onRefreshUp();
     }
-    
+
 }

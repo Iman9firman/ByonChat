@@ -19,10 +19,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.R;
 import com.byonchat.android.createMeme.FilteringImage;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -160,7 +162,7 @@ public class MapsViewActivity extends AppCompatActivity {
             //reliever over
         } else {
 
-            RequestQueue queue = Volley.newRequestQueue(this);
+            RequestQueue queue = Volley.newRequestQueue(this, new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
             handler = new Handler();
             runnable = () -> {
                 getLocation(mapController, queue);

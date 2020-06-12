@@ -23,9 +23,11 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.provider.DataBaseDropDown;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.byonchat.android.utils.HttpHelper;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
@@ -350,8 +352,7 @@ public class DownloadFileByonchat extends AppCompatActivity {
 
     private void getDetail(String Url, Map<String, String> params2, Boolean hide) {
         Log.w("start prestice","FYTSX");
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     Log.w("sukses prestice",response);

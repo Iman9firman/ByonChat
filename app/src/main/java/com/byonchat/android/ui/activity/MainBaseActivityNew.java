@@ -50,6 +50,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.multidex.MultiDex;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -84,6 +85,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.AdvRecy.DraggableGridExampleAdapter;
@@ -115,6 +117,7 @@ import com.byonchat.android.provider.Message;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.sync.BCServiceSyncAdapter;
 import com.byonchat.android.utils.BlurBuilder;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.byonchat.android.utils.DialogUtil;
 import com.byonchat.android.utils.Fonts;
 import com.byonchat.android.utils.HttpHelper;
@@ -2898,8 +2901,7 @@ public abstract class MainBaseActivityNew extends AppCompatActivity implements /
     }
 
     private void LoginThis(String Url, Map<String, String> params2, Boolean hide) {
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     if (dialog != null) {

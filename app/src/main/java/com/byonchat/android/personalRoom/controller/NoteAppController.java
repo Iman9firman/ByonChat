@@ -3,11 +3,13 @@ package com.byonchat.android.personalRoom.controller;
 import android.app.Application;
 import android.text.TextUtils;
 
+import com.android.volley.toolbox.HurlStack;
 import com.byonchat.android.personalRoom.volley.NoteLruBitmapCache;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 
 /**
  * Created by lukma on 3/7/2016.
@@ -34,7 +36,7 @@ public class NoteAppController extends Application {
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+            mRequestQueue = Volley.newRequestQueue(getApplicationContext(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
         }
 
         return mRequestQueue;

@@ -31,6 +31,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.ISSActivity.LoginDB.UserDB;
@@ -42,6 +43,7 @@ import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.tempSchedule.MyEventDatabase;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -252,8 +254,7 @@ public class DialogFormChildRequestDoc extends DialogFragment {
         rdialog.setMessage("Loading...");
         rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
-
+        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
                     rdialog.dismiss();

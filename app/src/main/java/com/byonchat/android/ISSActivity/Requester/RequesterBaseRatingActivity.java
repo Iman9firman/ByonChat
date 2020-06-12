@@ -33,6 +33,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
@@ -45,6 +46,7 @@ import com.byonchat.android.list.IconItem;
 import com.byonchat.android.ui.adapter.ChildRatingRecyclerView;
 import com.byonchat.android.ui.adapter.HeaderRatingRecyclerView;
 import com.byonchat.android.ui.adapter.NotifikasinoresultView;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mindorks.placeholderview.ExpandablePlaceHolderView;
 
@@ -449,7 +451,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
         rdialoeg.setMessage("Request Manual...");
         rdialoeg.show();
 
-        RequestQueue queue = Volley.newRequestQueue(RequesterBaseRatingActivity.this);
+        RequestQueue queue = Volley.newRequestQueue(RequesterBaseRatingActivity.this, new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
@@ -501,7 +503,7 @@ public abstract class RequesterBaseRatingActivity extends AppCompatActivity impl
         rdialog.setMessage("Loading...");
         rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue(RequesterBaseRatingActivity.this);
+        RequestQueue queue = Volley.newRequestQueue(RequesterBaseRatingActivity.this, new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {

@@ -28,6 +28,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.FragmentDinamicRoom.DinamicRoomSearchTaskActivity;
@@ -38,6 +39,7 @@ import com.byonchat.android.listeners.RecyclerItemClickListener;
 import com.byonchat.android.provider.BotListDB;
 import com.byonchat.android.provider.RoomsDetail;
 import com.byonchat.android.utils.AndroidMultiPartEntity;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.ValidationsKey;
 
@@ -183,7 +185,7 @@ public class RelieverListActivity extends AppCompatActivity {
     }
 
     private void getVolley() {
-        RequestQueue queue = Volley.newRequestQueue(this);
+        RequestQueue queue = Volley.newRequestQueue(this, new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/api_submit_relever.php",
                 new Response.Listener<String>() {

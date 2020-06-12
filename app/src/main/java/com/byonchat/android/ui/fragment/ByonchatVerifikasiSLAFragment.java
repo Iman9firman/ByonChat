@@ -28,6 +28,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.byonchat.android.DialogFormChildMainNew;
@@ -56,6 +57,7 @@ import com.byonchat.android.ui.adapter.ByonchatRepairReportAdapter;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
+import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.google.android.gms.vision.L;
 
 import org.apache.http.Consts;
@@ -328,7 +330,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
         rdialog.setMessage("Loading...");
         rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
+        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {
@@ -392,7 +394,7 @@ public class ByonchatVerifikasiSLAFragment extends Fragment implements SwipeRefr
         rdialog.setMessage("Loading...");
         rdialog.show();
 
-        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity());
+        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
 
         StringRequest sr = new StringRequest(Request.Method.POST, Url,
                 response -> {

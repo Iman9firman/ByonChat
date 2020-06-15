@@ -2,7 +2,7 @@
     <string name="hallo">hallo</string>
     <string name="app_name">ByonChat</string>
     <string name="app_version">3.4</string>
-    <string name="app_company">imperial</string>
+    <string name="app_company">byonchat</string>
     <string name="action_settings">Settings</string>
     <string name="str_delete">Delete</string>
     <string name="group_create_info">Please provide group name</string>

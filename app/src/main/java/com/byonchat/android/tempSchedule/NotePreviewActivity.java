@@ -143,6 +143,7 @@ public class NotePreviewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                intent.putExtra("DATE",startDate);
+                Log.w("DISNIKAR", startDate);
                 Intent intent = new Intent(getApplicationContext(), DinamicRoomTaskActivity.class);
                 String id_detail = getRandomString();
                 intent.putExtra("tt", title);

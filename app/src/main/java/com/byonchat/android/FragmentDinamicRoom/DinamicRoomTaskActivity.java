@@ -212,6 +212,7 @@ import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import zharfan.com.cameralibrary.Camera;
 import zharfan.com.cameralibrary.CameraActivity;
 
+import static com.applandeo.materialcalendarview.utils.DateUtils.getCalendar;
 import static com.guna.ocrlibrary.OcrCaptureActivity.TextBlockObject;
 
 public class DinamicRoomTaskActivity extends AppCompatActivity implements LocationAssistant.Listener, TokenCompleteTextView.TokenListener, AllAboutUploadTask.OnTaskCompleted {
@@ -9664,14 +9665,22 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
                                     if (jamMulai != null) {
                                         if (jamSlsai != null) {
-                                            if (checkTime(jamMulai, jamSlsai, idDetail) != true) {
+                                            String errorReport = checkTime(jamMulai, jamSlsai, idDetail);
+                                            if (!errorReport.equalsIgnoreCase("")) {
                                                 ar = new JSONArray();
                                                 final AlertDialog.Builder alertbox = new AlertDialog.Builder(DinamicRoomTaskActivity.this);
                                                 alertbox.setTitle("Error Input");
-                                                alertbox.setMessage("Sudah terdapat aktifitas pada jam tersebut" + "\n");
+                                                alertbox.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                                    @Override
+                                                    public void onDismiss(DialogInterface dialog) {
+                                                        b.setEnabled(true);
+                                                    }
+                                                });
+                                                alertbox.setMessage(errorReport + "\n");
                                                 alertbox.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface arg0, int arg1) {
                                                         b.setEnabled(true);
+
                                                     }
                                                 });
 
@@ -13336,14 +13345,35 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         return directory.getAbsolutePath();
     }
 
-    private boolean checkTime(String stTime, String enTime, String idDetail) {
-        boolean loop = false;
+    private String checkTime(String stTime, String enTime, String idDetail) {
+        Log.w("DISNIKAR", startDate);
+        String loop = "";
         boolean bisa = true;
+
+        Date date = getCalendar().getTime();
+        SimpleDateFormat dd = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat f = new SimpleDateFormat("HH:mm");
+        String thisDate = dd.format(date);
+
+        if (startDate.equalsIgnoreCase(thisDate)) {
+            try {
+
+                Date stDate = f.parse(stTime);
+                if (new Date().after(stDate)) {
+                    loop = "Jam mulai tidak boleh lebih kecil dari jam saat ini";
+                    bisa = false;
+                    return loop;
+                }
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             List<String> starts = new ArrayList<>();
             List<String> ends = new ArrayList<>();
             Date stDate, enDate;
-            SimpleDateFormat f = new SimpleDateFormat("HH:mm");
 
             MyEventDatabase eventDatabase = new MyEventDatabase(getApplicationContext());
             SQLiteDatabase db = eventDatabase.getReadableDatabase();
@@ -13369,33 +13399,35 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                         Date strt = f.parse(starts.get(i));
                         if (stDate.before(strt)) {
                             if (enDate.before(strt)) {
-                                loop = true;
+                                loop = "";
                             } else {
-                                loop = false;
+                                loop = "Sudah terdapat aktifitas pada jam tersebut";
                                 bisa = false;
                             }
                         } else {
                             Date ed = f.parse(ends.get(i));
                             if (ed.before(stDate)) {
-                                loop = true;
+                                loop = "";
                             } else {
-                                loop = false;
+                                loop = "Sudah terdapat aktifitas pada jam tersebut";
                                 bisa = false;
                             }
                         }
                     }
                 } else {
-                    loop = true;
+                    loop = "";
                 }
             } else {
-                loop = false;
+                Log.w("MAMA2", "disnins");
+                loop = "Jam mulai tidak boleh lebih sama dan lebih kecil dari jam selesai";
                 bisa = false;
+                return loop;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (!bisa) {
-            loop = false;
+            loop = "Sudah terdapat aktifitas pada jam tersebut";
         }
         return loop;
     }

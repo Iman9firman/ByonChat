@@ -300,7 +300,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     } else if (mFragment instanceof FragmentMyNewsNew) {
                         FragmentMyNewsNew fragment = (FragmentMyNewsNew) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
-                    } else if (mFragment instanceof  ByonchatDefectListFragment) {
+                    } else if (mFragment instanceof ByonchatDefectListFragment) {
                         ByonchatDefectListFragment fragment = ((ByonchatDefectListFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment));
                         fragment.onActionSearch(s.toString());
                     }
@@ -323,7 +323,7 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     } else if (mFragment instanceof FragmentMyNewsNew) {
                         FragmentMyNewsNew fragment = (FragmentMyNewsNew) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment);
                         fragment.onActionSearch(s.toString());
-                    } else if (mFragment instanceof  ByonchatDefectListFragment) {
+                    } else if (mFragment instanceof ByonchatDefectListFragment) {
                         ByonchatDefectListFragment fragment = ((ByonchatDefectListFragment) getSupportFragmentManager().findFragmentById(R.id.container_open_fragment));
                         fragment.onActionSearch(s.toString());
                     }
@@ -491,6 +491,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                         valSetOne.add(color);
                         valSetOne.add(include_latlong);
                         show = true;
+
+                        Log.w("TOLOTN", jsonRootObject.getString("pull"));
+
                         mFragment = TempScheduleRoom.newInstance(title, jsonRootObject.getString("pull"), username, id_rooms_tab, color, include_latlong, MainByonchatRoomBaseActivity.this, "showMultiple");
                         valSetOne.add("hideMultiple");
                     }

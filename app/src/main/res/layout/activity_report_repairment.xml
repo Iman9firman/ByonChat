@@ -182,7 +182,8 @@
                     android:layout_gravity="center_horizontal|bottom"
                     android:layout_marginBottom="@dimen/margin15"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <Button
                         android:id="@+id/btn_cancel"

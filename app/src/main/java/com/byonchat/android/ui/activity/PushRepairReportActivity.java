@@ -320,7 +320,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, String position, File item, String type) {
+            public void onItemClick(View view, String position, File item, String type, String idts) {
                 if (type.equalsIgnoreCase("before")) {
                     task_id = position + "";
                     Intent intent = new Intent(PushRepairReportActivity.this, ZoomImageViewActivity.class);
@@ -802,7 +802,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                                         fifth.put("a", uploadfoto.get(vi).getAfterString());
                                         if (checkDB(id)) {
                                             deleteFromDB(id);
-                                            db.deleteNoteSLA(id_task, getIntent().getStringExtra("id_rooms_tab"), id, "reportrepair");
+                                            //    db.deleteNoteSLA(id_task, getIntent().getStringExtra("id_rooms_tab"), id, "reportrepair");
                                         }
                                     }
                                 }

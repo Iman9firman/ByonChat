@@ -205,7 +205,7 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
         chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
         mAdapter = new ByonchatRepairReportAdapter(getContext(), files, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, String position, File item, String type) {
+            public void onItemClick(View view, String position, File item, String type,String idts) {
                 Map<String, String> params = new HashMap<>();
                 params.put("username_room", username);
                 params.put("bc_user", databaseHelper.getMyContact().getJabberId());

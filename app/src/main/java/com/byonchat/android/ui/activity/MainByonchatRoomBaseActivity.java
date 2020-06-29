@@ -591,7 +591,6 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                     show = true;
                     mFragment = ByonchatRepairReportFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 } else if (category.equalsIgnoreCase("27")) {
-                    Log.w("BELUM", "JALAN" + title);
                     show = true;
                     mFragment = ByonchatFollowUpSLAFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 } else if (category.equalsIgnoreCase("28")) {

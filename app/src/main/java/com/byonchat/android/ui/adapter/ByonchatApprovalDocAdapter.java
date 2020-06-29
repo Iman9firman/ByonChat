@@ -101,7 +101,7 @@ public class ByonchatApprovalDocAdapter extends RecyclerView.Adapter<RecyclerVie
 
             ((ByonchatApprovalDocViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(view, i+"", (File) getData().get(i), item.type);
+                    onPreviewItemClickListener.onItemClick(view, i+"", (File) getData().get(i), item.type,"");
                 }
             });
             ((ByonchatApprovalDocViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {

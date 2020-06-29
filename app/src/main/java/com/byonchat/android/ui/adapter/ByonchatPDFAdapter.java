@@ -95,12 +95,12 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(((ByonchatPDFViewHolder) viewHolder).vIconView);
             ((ByonchatPDFViewHolder) viewHolder).vMainContent.setOnClickListener(view -> {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(view, i+"", (File) getData().get(i), item.type);
+                    onPreviewItemClickListener.onItemClick(view, i+"", (File) getData().get(i), item.type,"");
                 }
             });
             ((ByonchatPDFViewHolder) viewHolder).vFramePhoto.setOnClickListener(view ->{
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(view, i+"", (File) getData().get(i), item.type);
+                    onPreviewItemClickListener.onItemClick(view, i+"", (File) getData().get(i), item.type,"");
                 }
             });
         }else {
@@ -136,7 +136,7 @@ public class ByonchatPDFAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 ((ByonchatPDFViewHolder) viewHolder).vFramePhoto.setOnClickListener(view -> {
                     if (onPreviewItemClickListener != null) {
-                        onPreviewItemClickListener.onItemClick(view, i+"", (File) getData().get(i), item.type);
+                        onPreviewItemClickListener.onItemClick(view, i+"", (File) getData().get(i), item.type,"");
                     }
                 });
 

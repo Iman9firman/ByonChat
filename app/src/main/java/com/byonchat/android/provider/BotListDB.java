@@ -814,18 +814,6 @@ public class BotListDB extends SQLiteOpenHelper {
         return hasil;
     }
 
-    public Cursor getSingleRoomDetailFormWithFlagContent(String id, String usernameRoom, String tab_id, String Status, String fCo) {
-        Cursor cursor = getDatabase().query(ROOM_DETAIl_TABLE, new String[]
-                {
-                        ROOM_DETAIL_ID, ROOM_DETAIL_ID_TAB, ROOM_DETAIL_ID_ROOM, ROOM_DETAIL_CONTENT, ROOM_DETAIL_FLAG_CONTENT, ROOM_DETAIL_FLAG_TAB, ROOM_DETAIL_FLAG_ROOM
-                }, ROOM_DETAIL_ID + "= '" + id + "' AND " + ROOM_DETAIL_ID_ROOM + "='" + usernameRoom + "' AND " + ROOM_DETAIL_ID_TAB + "= '" + tab_id + "'" + " AND " + ROOM_DETAIL_FLAG_ROOM + "= '" + Status + "'" + " AND " + ROOM_DETAIL_FLAG_CONTENT + "= '" + fCo + "'", null, null, null, null);
-
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        return cursor;
-    }
-
     public Cursor getSingleRoomDetailFormWithFlagContentChild(String id, String idUsrNTb, String idDtlTskOld, String Status, String fCo) {
         Log.w("jabwa", id + "<==>" + idUsrNTb + "<==>" + idDtlTskOld + "<==>" + Status + "<==>" + fCo);
         Cursor cursor = getDatabase().query(ROOM_DETAIl_TABLE, new String[]
@@ -1015,9 +1003,20 @@ public class BotListDB extends SQLiteOpenHelper {
         return getDatabase().delete(ROOM_DETAIl_TABLE, ROOM_DETAIL_ID_ROOM + "= '" + username + "' AND " + ROOM_DETAIL_FLAG_ROOM + "= 'form'" + " AND " + ROOM_DETAIL_ID_TAB + "= '" + tab_id + "'", null) > 0;
     }
 
-    public boolean deleteNoteSLA(String id, String id_tab, String flagContent, String flagRoom) {
-        return getDatabase().delete(ROOM_DETAIl_TABLE, ROOM_DETAIL_ID_ROOM + "= '" + id + "' AND " + ROOM_DETAIL_ID_TAB + "= '" + id_tab + "'" + " AND " + ROOM_DETAIL_FLAG_CONTENT + "= '" + flagContent + "'" + " AND " + ROOM_DETAIL_FLAG_ROOM + "= '" + flagRoom + "'", null) > 0;
+    public boolean deleteNoteSLA(String id, String usernameRoom, String tab_id, String Status, String fCo) {
+        return getDatabase().delete(ROOM_DETAIl_TABLE, ROOM_DETAIL_ID + "= '" + id + "' AND " + ROOM_DETAIL_ID_ROOM + "='" + usernameRoom + "' AND " + ROOM_DETAIL_ID_TAB + "= '" + tab_id + "'" + " AND " + ROOM_DETAIL_FLAG_ROOM + "= '" + Status + "'" + " AND " + ROOM_DETAIL_FLAG_CONTENT + "= '" + fCo + "'", null) > 0;
     }
 
+    public Cursor getSingleRoomDetailFormWithFlagContent(String id, String usernameRoom, String tab_id, String Status, String fCo) {
+        Cursor cursor = getDatabase().query(ROOM_DETAIl_TABLE, new String[]
+                {
+                        ROOM_DETAIL_ID, ROOM_DETAIL_ID_TAB, ROOM_DETAIL_ID_ROOM, ROOM_DETAIL_CONTENT, ROOM_DETAIL_FLAG_CONTENT, ROOM_DETAIL_FLAG_TAB, ROOM_DETAIL_FLAG_ROOM
+                }, ROOM_DETAIL_ID + "= '" + id + "' AND " + ROOM_DETAIL_ID_ROOM + "='" + usernameRoom + "' AND " + ROOM_DETAIL_ID_TAB + "= '" + tab_id + "'" + " AND " + ROOM_DETAIL_FLAG_ROOM + "= '" + Status + "'" + " AND " + ROOM_DETAIL_FLAG_CONTENT + "= '" + fCo + "'", null, null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        return cursor;
+    }
 
 }

@@ -567,7 +567,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, String position, File item, String type) {
+            public void onItemClick(View view, String position, File item, String type,String idts) {
                 task_id = position + "";
                 if (type.equalsIgnoreCase("changeVerif")) {
                     for (int i = 0; i < foto.size(); i++) {

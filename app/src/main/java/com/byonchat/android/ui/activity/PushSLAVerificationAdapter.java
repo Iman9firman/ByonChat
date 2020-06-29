@@ -96,7 +96,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "changeVerif");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "changeVerif","");
                 }
             }
         });
@@ -104,7 +104,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "after");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "after","");
                 }
             }
         });
@@ -112,7 +112,7 @@ public class PushSLAVerificationAdapter extends RecyclerView.Adapter<PushSLAVeri
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "before");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "before","");
                 }
             }
         });

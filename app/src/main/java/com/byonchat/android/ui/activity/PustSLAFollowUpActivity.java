@@ -147,7 +147,9 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
+
         basejson = getIntent().getStringExtra("data");
+
         NoteDB = new SLANoteDB(getApplicationContext());
 
         TextView textTitle = (TextView) findViewById(R.id.title_arr);
@@ -157,6 +159,11 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         textSubtitle.setText(sbttl);
         textTitle.setText(ttl);
 
+        jalanJalan();
+
+    }
+
+    private void jalanJalan() {
         resolveData();
         resolveListFile();
         resolveSend();
@@ -237,6 +244,9 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
                         String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
                         String header = headerTwo + " - " + headerFour;
+
+                        Log.w("HSIAIKS1AA", id);
+                        Log.w("HSIAIKS2BB", id_task);
 
                         Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_task, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id);
                         SLAmodelNew fotonya = null;
@@ -414,7 +424,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, String position, File item, String type) {
+            public void onItemClick(View view, String position, File item, String type, String idTaskDetail) {
                 if (type.equalsIgnoreCase("before")) {
                     task_id = position;
                     Intent intent = new Intent(PustSLAFollowUpActivity.this, ZoomImageViewActivity.class);
@@ -438,6 +448,60 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                         return;
                     }
                     new Camera(start.build()).lauchCamera();
+                } else {
+
+
+                    if (getTheDB(position, "fileupload").length() == 0) {
+
+                        if (getTheDB(position, "comment").length() == 0) {
+                            Toast.makeText(getApplicationContext(), "Mohon tambahkan Keterangan update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (type != null) {
+
+                            rdialog = new ProgressDialog(PustSLAFollowUpActivity.this);
+                            rdialog.setMessage("Upload Photo...");
+                            rdialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                            rdialog.setCancelable(false);
+                            rdialog.show();
+
+                            new UploadFileToServerCild().execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/proses/file_processing.php",
+                                    getIntent().getStringExtra("username_room"),
+                                    id_rooms_tab, id_task_list,
+                                    type,
+                                    position, idTaskDetail);
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Mohon tambahkan foto update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    } else {
+                        if (getTheDB(position, "comment").length() == 0) {
+                            Toast.makeText(getApplicationContext(), "Mohon tambahkan Keterangan update yang terkait masalah tertera!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        String jsonContentItem = jsonUploadItem(idTaskDetail, position);
+                        if (jsonContentItem.length() == 0) {
+                            Toast.makeText(getApplicationContext(), "Mohon cek foto dan keterangan apakah sesuai?", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        rdialog = new ProgressDialog(PustSLAFollowUpActivity.this);
+                        rdialog.setMessage("Upload....");
+                        rdialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        rdialog.setCancelable(false);
+                        rdialog.setIndeterminate(true);
+                        rdialog.show();
+                        new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_sla_per_item.php",
+                                getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
+                                idTaskDetail, jsonContentItem);
+
+
+                    }
+
+
                 }
             }
         });
@@ -445,6 +509,20 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         vListData.setLayoutManager(mLayoutManager);
         vListData.setItemAnimator(new DefaultItemAnimator());
         vListData.setAdapter(mAdapter);
+    }
+
+    private String jsonUploadItem(String idTaskDetail, String id) {
+        JSONObject jsonObject1 = new JSONObject();
+        try {
+            jsonObject1.put("id_task", idTaskDetail);
+            jsonObject1.put("ket", getTheDB(id, "comment"));
+            jsonObject1.put("a", getTheDB(id, "fileupload"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "";
+        }
+
+        return jsonObject1.toString();
     }
 
     private void resolveSend() {
@@ -501,21 +579,12 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         });
     }
 
-    private String fileJson() {
+    private String fileJson(String id_taskd) {
         String stringdong = "";
-        JSONObject byOne = new JSONObject();
         try {
             JSONObject gvcs = new JSONObject(basejson);
+            Log.w("Nangkringbocah1", gvcs.toString());
             JSONArray jar = gvcs.getJSONArray("value_detail");
-
-            String user_room = gvcs.getString("username_room");
-            String bc_user = gvcs.getString("bc_user");
-            String kode_jjt = gvcs.getString("kode_jjt");
-
-            byOne.put("username_room", user_room);
-            byOne.put("bc_user", bc_user);
-            byOne.put("kode_jjt", kode_jjt);
-
             String idSection = "";
             String idSubSection = "";
             String idPertanyaan = "";
@@ -524,44 +593,43 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                 JSONObject first = jar.getJSONObject(i);
 
                 JSONObject pembobotan = first.getJSONObject("pembobotan");
-
                 idSection = pembobotan.getString("id");
-                JSONObject section = pembobotan.getJSONObject("section");
 
+                JSONObject section = pembobotan.getJSONObject("section");
                 idSubSection = section.getString("id");
+
                 JSONObject subsection = section.getJSONObject("subsection");
 
                 JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
-                JSONArray byThree = new JSONArray();
-                for (int v = 0; v < pertanyaan.length(); v++) {
-                    JSONObject fifth = pertanyaan.getJSONObject(v);
-                    JSONObject byTwo = new JSONObject();
-                    idPertanyaan = fifth.getString("id");
-                    String idTask = fifth.getString("id_task");
-                    byTwo.put("id_task", idTask);
-                    String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask;
-                    String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idTask + "-" + v;
 
-                    for (int vi = 0; vi < foto.size(); vi++) {
-                        if (foto.get(vi).getId().equalsIgnoreCase(id_text)) {
-                            if (checkDB(id_text)) {
-                                fifth.put("ket", getTheDB(id_text, "comment"));
-                                byTwo.put("ket", getTheDB(id_text, "comment"));
-                                fifth.put("a", getTheDB(id_text, "fileupload"));
-                                byTwo.put("a", getTheDB(id_text, "fileupload"));
-                            }
+                for (int ia = 0; ia < pertanyaan.length(); ia++) {
+                    idPertanyaan = pertanyaan.getJSONObject(ia).getString("id");
+                    String pp = pertanyaan.getJSONObject(ia).getString("id_task");
+                    if (pp.equalsIgnoreCase(id_taskd)) {
+                        pertanyaan.remove(ia);
+                        String id_text = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + id_taskd + "-" + ia;
 
+                        if (checkDB(id_text)) {
+                            deleteFromDB(id_text);
                         }
-                    }
-                    byThree.put(byTwo);
-                }
-                byOne.put("pertanyaan", byThree);
-            }
 
-            Log.w("Nangkringbocah", byOne.toString());
-            stringdong = byOne.toString();
+                        Cursor cursorCild = db.getSingleRoomDetailFormWithFlagContent(id_taskd, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id_text);
+                        if (cursorCild.getCount() > 0) {
+                            java.io.File f = new java.io.File(cursorCild.getString(cursorCild.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_CONTENT)));
+                            f.delete();
+                        }
+
+                        db.deleteNoteSLA(id_taskd, getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"), "reportrepair", id_text);
+
+                    }
+                }
+                if (pertanyaan.length() == 0) {
+                    return "done";
+                }
+
+            }
+            stringdong = gvcs.toString();
         } catch (JSONException e) {
-            Log.w("ketemmnu", e.getMessage());
         }
         return stringdong;
     }
@@ -599,7 +667,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             fifth.put("a", uploadfoto.get(vi).getAfterString());
                             if (checkDB(id_text)) {
                                 deleteFromDB(id_text);
-                                db.deleteNoteSLA(uploadfoto.get(vi).getId_task(), getIntent().getStringExtra("id_rooms_tab"), id, "reportrepair");
+                                // db.deleteNoteSLA(uploadfoto.get(vi).getId_task(), getIntent().getStringExtra("id_rooms_tab"), id, "reportrepair");
                             }
                         }
                     }
@@ -634,6 +702,10 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
             isExist = cursor.getString(cursor.getColumnIndex(kolom));
         }
         cursor.close();
+
+        if (isExist == null) {
+            isExist = "";
+        }
         return isExist;
     }
 
@@ -651,6 +723,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
         long totalSize = 0;
         String ii;
         String id;
+        String idTaskDetail;
 
         @Override
         protected void onPreExecute() {
@@ -659,18 +732,20 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5]);
+            return uploadFile(params[0], params[1], params[2], params[3], params[4], params[5], params[6]);
         }
 
         protected void onProgressUpdate(Integer... progress) {
+            Log.w("kabalero33", progress[0] + "");
             rdialog.setProgress(progress[0]);
         }
 
         @SuppressWarnings("deprecation")
-        private String uploadFile(String URL, String username, String id_room, String id_list, String value, String ids) {
+        private String uploadFile(String URL, String username, String id_room, String id_list, String value, String ids, String _idTaskDetail) {
             String responseString = null;
             ii = value;
             id = ids;
+            idTaskDetail = _idTaskDetail;
 
             HttpClient httpclient = null;
             try {
@@ -729,34 +804,41 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            Log.w("kabalero44", result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 String message = jsonObject.getString("message");
+                Log.w("kabalero", message);
+
                 if (message.length() == 0) {
                     String fileNameServer = jsonObject.getString("filename");
-                    String filePhott = "https://bb.byonchat.com/bc_voucher_client/images/list_task/" + fileNameServer;
-
-                    for (int i = 0; i < foto.size(); i++) {
-                        if (removePosFromId(foto.get(i).getId()).equalsIgnoreCase(id)) {
-                            SLAmodelNew fotonya = new SLAmodelNew(foto.get(i).getId_task(), "Header", removePosFromId(foto.get(i).getId()), foto.get(i).getTitle(), foto.get(i).getBefore(), foto.get(i).getAfter(), filePhott);
-                            uploadfoto.add(fotonya);
-                            if (checkDB(foto.get(i).getId())) {
-                                updateFoto(foto.get(i).getId(), filePhott);
-                            } else {
-                                insertDBFoto(foto.get(i).getId(), filePhott);
-                            }
-                        }
+                    if (checkDB(id)) {
+                        updateFoto(id, fileNameServer);
+                    } else {
+                        insertDBFoto(id, fileNameServer);
                     }
+
+                    JSONObject jsonObject1 = new JSONObject();
+                    jsonObject1.put("id_task", idTaskDetail);
+                    jsonObject1.put("ket", getTheDB(id, "comment"));
+                    jsonObject1.put("a", getTheDB(id, "fileupload"));
+
+                    new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_sla_per_item.php",
+                            getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
+                            idTaskDetail, jsonObject1.toString());
+
                 } else {
+                    Toast.makeText(getApplicationContext(), "terjadi kesalahan pada koneksi internet, harap ulangi beberapa saat lagi.", Toast.LENGTH_LONG).show();
+                    //terjadi kesalahan harap ulangi beberapa saat lagi
+                    rdialog.dismiss();
                 }
 
-                if (foto.size() == uploadfoto.size()) {
-                    new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_sla_new.php",
-                            getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
-                            getIntent().getStringExtra("id_rooms_tab"));
-                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.w("kabalero77", e.getMessage());
+                Toast.makeText(getApplicationContext(), "terjadi kesalahan pada koneksi internet, harap ulangi beberapa saat lagi..", Toast.LENGTH_LONG).show();
+                rdialog.dismiss();
             }
             super.onPostExecute(result);
         }
@@ -764,6 +846,7 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
     private class UploadJSONSOn extends AsyncTask<String, Integer, String> {
         long totalSize = 0;
+        String idTaskDetail;
 
         @Override
         protected void onPreExecute() {
@@ -772,15 +855,16 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            return uploadFile(params[0], params[1], params[2], params[3]);
+            return uploadFile(params[0], params[1], params[2], params[3], params[4]);
         }
 
         protected void onProgressUpdate(Integer... progress) {
         }
 
         @SuppressWarnings("deprecation")
-        private String uploadFile(String URL, String username, String bc_user, String id_room) {
+        private String uploadFile(String URL, String username, String bc_user, String id_room, String fileJson) {
             String responseString = null;
+            idTaskDetail = id_room;
 
             HttpClient httpclient = null;
             try {
@@ -800,11 +884,10 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
                             }
                         });
 
-                ContentType contentType = ContentType.create("multipart/form-data");
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("bc_user", new StringBody(bc_user));
                 entity.addPart("kode_jjt", new StringBody(kode_jjt));
-                entity.addPart("json", new StringBody(fileJson()));
+                entity.addPart("json", new StringBody(fileJson));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);
@@ -832,10 +915,29 @@ public class PustSLAFollowUpActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            deleteNote();
-            Toast.makeText(getApplicationContext(), "Success Uploading Report", Toast.LENGTH_LONG).show();
             rdialog.dismiss();
-            finish();
+            if (result.contains("Error")) {
+                Toast.makeText(getApplicationContext(), "terjadi kesalahan pada koneksi internet, harap ulangi beberapa saat lagi.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Success Uploading", Toast.LENGTH_LONG).show();
+                basejson = fileJson(idTaskDetail);
+                if (basejson.equalsIgnoreCase("done")) {
+                    finish();
+                } else {
+                    finish();
+                    Intent iii = new Intent(PustSLAFollowUpActivity.this, PustSLAFollowUpActivity.class);
+                    iii.putExtra("data", basejson);
+                    iii.putExtra("username_room", getIntent().getStringExtra("username_room"));
+                    iii.putExtra("bc_user", getIntent().getStringExtra("bc_user"));
+                    iii.putExtra("id_rooms_tab", getIntent().getStringExtra("id_rooms_tab"));
+                    iii.putExtra("title", getIntent().getStringExtra("title"));
+                    iii.putExtra("subtitle", getIntent().getStringExtra("subtitle"));
+                    startActivity(iii);
+
+                }
+            }
+
+
             super.onPostExecute(result);
         }
     }

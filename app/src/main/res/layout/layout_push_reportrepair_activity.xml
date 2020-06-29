@@ -225,6 +225,16 @@
                 </LinearLayout>
 
             </RelativeLayout>
+
+            <Button
+                android:id="@+id/btn_upload"
+                style="@style/btn_submit_v111"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="@dimen/margin10"
+                android:layout_marginBottom="@dimen/margin10"
+                android:text="Submit" />
+
         </LinearLayout>
 
         <View

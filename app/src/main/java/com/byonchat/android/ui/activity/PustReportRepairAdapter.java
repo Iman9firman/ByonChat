@@ -15,9 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.byonchat.android.R;
 
@@ -49,9 +51,11 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView before, after;
         TextView keterangan, note, header;
+        Button btnUpload;
 
         public MyViewHolder(View view) {
             super(view);
+            btnUpload = (Button) view.findViewById(R.id.btn_upload);
             header = (TextView) view.findViewById(R.id.header);
             before = (ImageView) view.findViewById(R.id.imageBefore);
             after = (ImageView) view.findViewById(R.id.imageAfter);
@@ -119,7 +123,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "after");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "after",foto.getId_task());
                 }
             }
         });
@@ -127,10 +131,25 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "before");
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "before",foto.getId_task());
                 }
             }
         });
+
+        holder.btnUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (foto.getAfter() != null) {
+                    if (onPreviewItemClickListener != null) {
+                        onPreviewItemClickListener.onItemClick(v, foto.getId(), null, foto.getAfter().toString(),foto.getId_task());
+                    }
+                } else {
+                    Toast.makeText(context, "Mohon tambahkan foto update yang terkait masalah" + foto.getHeader(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
         holder.note.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,10 +167,8 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
                                     @TargetApi(11)
                                     public void onClick(
                                             DialogInterface dialog, int id) {
+                                        Log.w("kabalero2", foto.getId());
                                         holder.note.setText(edit.getText());
-
-//                                        Log.w("Still jokes",edit.getText().toString() );
-//                                        Log.w("Still jokes ketemmnu",foto.getId() );
                                         if (checkDB(foto.getId())) {
                                             updateDB(foto.getId(), edit.getText().toString());
                                         } else {

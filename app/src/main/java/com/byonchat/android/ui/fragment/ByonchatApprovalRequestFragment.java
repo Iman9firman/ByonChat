@@ -200,7 +200,7 @@ public class ByonchatApprovalRequestFragment extends Fragment implements SwipeRe
         chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
         mAdapter = new ByonchatApprovalDocAdapter(getContext(), files, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, String position, File item, String type) {
+            public void onItemClick(View view, String position, File item, String type,String idts) {
                 FragmentManager fm = activity.getSupportFragmentManager();
                 DialogApproveRequestDocument testDialog = DialogApproveRequestDocument.newInstance(username, idRoomTab, item.id, item.title, "nulll", item.nama_requester, item.timestamp, item.description, item.id_history);
                 testDialog.setRetainInstance(true);

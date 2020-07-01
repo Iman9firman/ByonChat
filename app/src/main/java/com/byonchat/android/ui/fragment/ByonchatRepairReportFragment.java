@@ -206,12 +206,14 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
         mAdapter = new ByonchatRepairReportAdapter(getContext(), files, new OnPreviewItemClickListener() {
             @Override
             public void onItemClick(View view, String position, File item, String type,String idts) {
-                Map<String, String> params = new HashMap<>();
-                params.put("username_room", username);
-                params.put("bc_user", databaseHelper.getMyContact().getJabberId());
-                params.put("id_rooms_tab", idRoomTab);
-                params.put("task_id", item.id + "");
-                getMoreDetail("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/category_tab/push_tobe_repair.php", params, true, item.title, item.timestamp);
+                Intent iii = new Intent(getContext(), PushRepairReportActivity.class);
+                iii.putExtra("task_id", item.id + "");
+                iii.putExtra("username_room", username);
+                iii.putExtra("bc_user", databaseHelper.getMyContact().getJabberId());
+                iii.putExtra("id_rooms_tab", idRoomTab);
+                iii.putExtra("title",  item.title);
+                iii.putExtra("subtitle", item.timestamp);
+                startActivity(iii);
 
             }
         }, new OnRequestItemClickListener() {
@@ -369,45 +371,5 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
         queue.add(sr);
     }
 
-    private void getMoreDetail(String Url, Map<String, String> params2, Boolean hide, String toTitle, String toSubtitle) {
-        ProgressDialog rdialog = new ProgressDialog((FragmentActivity) getActivity());
-        rdialog.setMessage("Loading...");
-        rdialog.show();
-
-        RequestQueue queue = Volley.newRequestQueue((FragmentActivity) getActivity(), new HurlStack(null, ClientSSLSocketFactory.getSocketFactory()));
-
-        StringRequest sr = new StringRequest(Request.Method.POST, Url,
-                response -> {
-                    rdialog.dismiss();
-                    vRefreshList.setRefreshing(false);
-                    if (hide) {
-                        Intent iii = new Intent(getContext(), PushRepairReportActivity.class);
-                        iii.putExtra("data", response);
-                        iii.putExtra("username_room", username);
-                        iii.putExtra("bc_user", databaseHelper.getMyContact().getJabberId());
-                        iii.putExtra("id_rooms_tab", idRoomTab);
-                        iii.putExtra("title", toTitle);
-                        iii.putExtra("subtitle", toSubtitle);
-                        startActivity(iii);
-                    }
-
-                },
-                error -> {
-                    vRefreshList.setRefreshing(false);
-                    rdialog.dismiss();
-                }
-        ) {
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-                return params2;
-            }
-        };
-        sr.setRetryPolicy(new DefaultRetryPolicy(180000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(sr);
-    }
 }
 

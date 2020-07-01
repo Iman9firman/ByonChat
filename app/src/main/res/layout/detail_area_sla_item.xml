@@ -84,6 +84,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"
                                 android:layout_centerVertical="true"
+                                android:layout_margin="@dimen/margin25"
                                 android:visibility="gone" />
 
                             <ImageView
@@ -105,6 +106,16 @@
                     android:gravity="center"
                     android:text="Start"
                     android:textColor="@color/grayDark" />
+
+                <Button
+                    android:id="@+id/button_submit_start"
+                    style="@style/btn_submit_v1"
+                    android:layout_below="@id/square1"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="@dimen/margin15"
+                    android:text="SUBMIT"
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -149,6 +160,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"
                                 android:layout_centerVertical="true"
+                                android:layout_margin="@dimen/margin25"
                                 android:visibility="gone" />
 
                             <ImageView
@@ -170,6 +182,16 @@
                     android:gravity="center"
                     android:text="On Process"
                     android:textColor="@color/grayDark" />
+
+                <Button
+                    android:id="@+id/button_submit_process"
+                    style="@style/btn_submit_v1"
+                    android:layout_below="@id/square2"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="@dimen/margin15"
+                    android:text="SUBMIT"
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -214,6 +236,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerHorizontal="true"
                                 android:layout_centerVertical="true"
+                                android:layout_margin="@dimen/margin25"
                                 android:visibility="gone" />
 
                             <ImageView
@@ -235,6 +258,16 @@
                     android:gravity="center"
                     android:text="Done"
                     android:textColor="@color/grayDark" />
+
+                <Button
+                    android:id="@+id/button_submit_done"
+                    style="@style/btn_submit_v1"
+                    android:layout_below="@id/square3"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="@dimen/margin15"
+                    android:text="SUBMIT"
+                    android:visibility="gone" />
             </RelativeLayout>
         </LinearLayout>
 

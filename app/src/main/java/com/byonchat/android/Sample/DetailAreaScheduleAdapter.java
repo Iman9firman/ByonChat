@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.byonchat.android.R;
 import com.byonchat.android.Sample.Database.ScheduleSLADB;
+import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -30,11 +32,15 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
 
     int colorText, backgroundText;
 
+    protected ClickListener clickListener;
+
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public ImageView start, proses, done;
         public ImageView cekstart, cekproses, cekdone;
         ProgressBar progressBarStart, progressBarProgress, progressBarDone;
+        Button button_submit_start, button_submit_process, button_submit_done;
 
         public MyViewHolder(View view) {
             super(view);
@@ -52,10 +58,17 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
             progressBarProgress = (ProgressBar) itemView.findViewById(R.id.progressBarProgres);
             progressBarDone = (ProgressBar) itemView.findViewById(R.id.progressBarDone);
 
+
+            button_submit_start = (Button) view.findViewById(R.id.button_submit_start);
+            button_submit_process = (Button) view.findViewById(R.id.button_submit_process);
+            button_submit_done = (Button) view.findViewById(R.id.button_submit_done);
+
+
         }
     }
 
-    public DetailAreaScheduleAdapter(Activity activity, ArrayList<DetailArea> detailareaList) {
+    public DetailAreaScheduleAdapter(Activity activity, ArrayList<DetailArea> detailareaList, ClickListener _clickListener) {
+        this.clickListener = _clickListener;
         this.detailareaList = detailareaList;
         this.mActivity = activity;
         this.colorText = activity.getResources().getColor(R.color.grayDark);
@@ -80,6 +93,11 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
         holder.cekdone.setVisibility(View.GONE);
         holder.cekstart.setVisibility(View.GONE);
         holder.cekproses.setVisibility(View.GONE);
+
+        holder.button_submit_start.setVisibility(View.GONE);
+        holder.button_submit_process.setVisibility(View.GONE);
+        holder.button_submit_done.setVisibility(View.GONE);
+
 
         holder.progressBarStart.setVisibility(View.GONE);
         holder.progressBarProgress.setVisibility(View.GONE);
@@ -113,15 +131,13 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
 
 
         if (!detailArea.getImg_start().equalsIgnoreCase("null")) {
-            Log.w("Dinda", detailArea.getImg_start());
             if (detailArea.getImg_start().startsWith("/storage")) {
                 Picasso.with(mActivity).load(new File(detailArea.getImg_start()))
                         .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                         .into(holder.start);
-
+                holder.button_submit_start.setVisibility(View.VISIBLE);
             } else {
                 holder.progressBarStart.setVisibility(View.VISIBLE);
-
                 Picasso.with(mActivity).load(link_pic + detailArea.getImg_start())
                         .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                         .into(holder.start);
@@ -136,6 +152,7 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
                 Picasso.with(mActivity).load(new File(detailArea.getImg_proses()))
                         .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                         .into(holder.proses);
+                holder.button_submit_process.setVisibility(View.VISIBLE);
             } else {
                 holder.progressBarProgress.setVisibility(View.VISIBLE);
                 Picasso.with(mActivity).load(link_pic + detailArea.getImg_proses())
@@ -152,6 +169,7 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
                 Picasso.with(mActivity).load(new File(detailArea.getImg_done()))
                         .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
                         .into(holder.done);
+                holder.button_submit_done.setVisibility(View.VISIBLE);
             } else {
                 holder.progressBarDone.setVisibility(View.VISIBLE);
                 Picasso.with(mActivity).load(link_pic + detailArea.getImg_done())
@@ -213,6 +231,35 @@ public class DetailAreaScheduleAdapter extends RecyclerView.Adapter<DetailAreaSc
             }
         });
 
+        holder.button_submit_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (clickListener != null) {
+                    clickListener.onClick("start");
+                }
+            }
+        });
+        holder.button_submit_process.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (clickListener != null) {
+                    clickListener.onClick("on_proses");
+                }
+            }
+        });
+        holder.button_submit_done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (clickListener != null) {
+                    clickListener.onClick("done");
+                }
+            }
+        });
+
+    }
+
+    public static interface ClickListener {
+        public void onClick(String pos);
     }
 
 

@@ -97,6 +97,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
 
         recyclerView = (RecyclerView) findViewById(R.id.blinded);
         submit = (Button) findViewById(R.id.button_submit);
+        submit.setVisibility(View.GONE);
 
         if (pdialog == null) {
             pdialog = new ProgressDialog(this);
@@ -106,7 +107,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
 
 
         adapterRecyclerView();
-        submitButton();
+        // submitButton();
     }
 
     @Override
@@ -137,7 +138,57 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
 
     public void adapterRecyclerView() {
 
-        adapter = new DetailAreaScheduleAdapter(DetailAreaScheduleSLA.this, detarea_list);
+        adapter = new DetailAreaScheduleAdapter(DetailAreaScheduleSLA.this, detarea_list, new DetailAreaScheduleAdapter.ClickListener() {
+            @Override
+            public void onClick(String pos) {
+                if (pos.equalsIgnoreCase("start")) {
+                    for (int i = 0; i < detarea_list.size(); i++) {
+                        if (!detarea_list.get(i).getImg_start().equalsIgnoreCase("null")) {
+                            if (detarea_list.get(i).getImg_start().startsWith("/storage")) {
+                                Toast.makeText(DetailAreaScheduleSLA.this, "Submit Successfully! : " + detarea_list.get(i).getImg_start(), Toast.LENGTH_LONG).show();
+                                new PostSchedule(DetailAreaScheduleSLA.this).execute(url, detarea_list.get(i).getId(), pos, detarea_list.get(i).getImg_start());
+                            }
+                        }
+                    }
+                } else if (pos.equalsIgnoreCase("on_proses")) {
+
+                    for (int i = 0; i < detarea_list.size(); i++) {
+                        if (!detarea_list.get(i).getImg_proses().equalsIgnoreCase("null")) {
+
+                            if (detarea_list.get(i).getImg_start().startsWith("/storage")) {
+                                Toast.makeText(DetailAreaScheduleSLA.this, "Harap di submit foto Start, terlebih dahulu", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            if (detarea_list.get(i).getImg_proses().startsWith("/storage")) {
+                                new PostSchedule(DetailAreaScheduleSLA.this).execute(url, detarea_list.get(i).getId(), pos, detarea_list.get(i).getImg_proses());
+                            }
+                        }
+                    }
+
+                } else if (pos.equalsIgnoreCase("done")) {
+                    for (int i = 0; i < detarea_list.size(); i++) {
+                        if (!detarea_list.get(i).getImg_done().equalsIgnoreCase("null")) {
+                            if (detarea_list.get(i).getImg_start().startsWith("/storage")) {
+                                Toast.makeText(DetailAreaScheduleSLA.this, "Harap di submit foto Start, terlebih dahulu", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                            if (detarea_list.get(i).getImg_proses().startsWith("/storage")) {
+                                Toast.makeText(DetailAreaScheduleSLA.this, "Harap di submit foto On Process, terlebih dahulu", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            if (detarea_list.get(i).getImg_done().startsWith("/storage")) {
+                                new PostSchedule(DetailAreaScheduleSLA.this).execute(url, detarea_list.get(i).getId(), pos, detarea_list.get(i).getImg_done());
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        });
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -150,7 +201,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
         submit.setVisibility(View.GONE);
 
         detarea_list.clear();
-        url = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data.php";
+        url = "https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/list_api/iss/schedule/schedule_data_new.php";
         if (NetworkInternetConnectionStatus.getInstance(getApplicationContext()).isOnline(getApplicationContext())) {
             new HttpAsyncTask().execute(postParameters(url));
         } else {
@@ -160,24 +211,6 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
         adapter.notifyDataSetChanged();
     }
 
-    private void submitButton() {
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for (int i = 0; i < detarea_list.size(); i++) {
-                    if (!detarea_list.get(i).getImg_start().equalsIgnoreCase("null")) {
-                        if (!detarea_list.get(i).getImg_proses().equalsIgnoreCase("null")) {
-                            if (!detarea_list.get(i).getImg_done().equalsIgnoreCase("null")) {
-                                if (detarea_list.get(i).getImg_start().startsWith("/storage")) {
-                                    new PostSchedule(DetailAreaScheduleSLA.this).execute(url, detarea_list.get(i).getId(), detarea_list.get(i).getImg_start(), detarea_list.get(i).getImg_proses(), detarea_list.get(i).getImg_done());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
 
     protected String postParameters(String url) {
         if (!url.endsWith("?"))
@@ -336,7 +369,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
         @Override
         protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
-            postData(params[0], params[1], params[2], params[3], params[4]);
+            postData(params[0], params[1], params[2], params[3]);
             return null;
         }
 
@@ -349,7 +382,7 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
         protected void onProgressUpdate(String... string) {
         }
 
-        public void postData(String link, String id_area, String file_start, String file_proses, String file_done) {
+        public void postData(String link, String id_area, String nama, String file) {
             try {
                 HttpParams httpParameters = new BasicHttpParams();
                 HttpConnectionParams.setConnectionTimeout(httpParameters, 13000);
@@ -358,23 +391,13 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
                 HttpPost httppost = new HttpPost(link);
 
                 MultipartEntity entities = new MultipartEntity();
-                entities.addPart("action", new StringBody("updateFullDetail", Charset.forName("UTF-8")));
+                entities.addPart("action", new StringBody("updateItemDetail", Charset.forName("UTF-8")));
                 entities.addPart("id", new StringBody(id_area, Charset.forName("UTF-8")));
 
-                //Start
-                File start = new File(file_start);
+                File start = new File(file);
                 FileBody fileBody1 = new FileBody(start);
-                entities.addPart("start", fileBody1);
+                entities.addPart(nama, fileBody1);
 
-                //Proses
-                File proses = new File(file_proses);
-                FileBody fileBody2 = new FileBody(proses);
-                entities.addPart("on_proses", fileBody2);
-
-                //Done
-                File done = new File(file_done);
-                FileBody fileBody3 = new FileBody(done);
-                entities.addPart("done", fileBody3);
 
                 httppost.setEntity(entities);
 
@@ -384,12 +407,18 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
                     HttpEntity entity = response.getEntity();
                     String data = EntityUtils.toString(entity);
 
-                    Log.e("freegg uploada", id_area);
 
                     DetailAreaScheduleSLA.this.runOnUiThread(new Runnable() {
                         public void run() {
+                            File start = new File(file);
+                            if (start.exists()) {
+                                start.delete();
+                            }
+
                             Toast.makeText(DetailAreaScheduleSLA.this, "Submit Successfully!", Toast.LENGTH_LONG).show();
                             finish();
+                            startActivity(getIntent());
+
                         }
                     });
                     progressDialog.dismiss();
@@ -429,8 +458,6 @@ public class DetailAreaScheduleSLA extends AppCompatActivity implements SwipeRef
     protected void onResume() {
         super.onResume();
         toolbar.startScan("forward.byonchat.com", DetailAreaScheduleSLA.this);
-//        prepareDataRecycle();
-
         ScheduleSLADB dbA = ScheduleSLADB.getInstance(DetailAreaScheduleSLA.this);
         Cursor all = dbA.getAllImgSaved();
         if (all.getCount() > 0) {

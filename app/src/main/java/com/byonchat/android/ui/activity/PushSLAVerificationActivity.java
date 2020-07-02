@@ -123,7 +123,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     String kode_jjt;
     String username;
     String name_title;
-    LinearLayout linearLayout;
+    LinearLayout layoutSC;
     ByonchatRecyclerView vListData;
     ArrayList<SLAmodelNew> foto = new ArrayList<>();
     PushSLAVerificationAdapter mAdapter;
@@ -169,6 +169,8 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         vListData = (ByonchatRecyclerView) findViewById(R.id.list_all);
 
         layoutForCheck = (LinearLayout) findViewById(R.id.layoutForCheck);
+        layoutSC = (LinearLayout) findViewById(R.id.layoutSC);
+        layoutSC.setVisibility(View.VISIBLE);
         btnSubmit = (Button) findViewById(R.id.btn_submit);
         btnCancel = (Button) findViewById(R.id.btn_cancel);
         basejson = getIntent().getStringExtra("data");
@@ -180,14 +182,29 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
         textSubtitle.setText(sbttl);
         textTitle.setText(ttl);
 
+
+        TextView textView0 = new TextView(PushSLAVerificationActivity.this);
+        textView0.setText("Type");
+        textView0.setTextSize(15);
+
         TextView textView = new TextView(PushSLAVerificationActivity.this);
         textView.setText("Verified by");
-        textView.setTextSize(15);
+        textView.setTextSize(20);
+        textView.setTextColor(Color.BLACK);
+
+        TextView textView1 = new TextView(PushSLAVerificationActivity.this);
+        textView1.setText("NIK");
+        textView1.setTextSize(15);
+
+        TextView textView2 = new TextView(PushSLAVerificationActivity.this);
+        textView2.setText("NAME");
+        textView2.setTextSize(15);
+
 
         et = (EditText) getLayoutInflater().inflate(R.layout.edit_input_layout, null);
         et.setHint("NIK");
         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params1.setMargins(30, 10, 30, 0);
+        params1.setMargins(30, 10, 30, 10);
         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         params2.setMargins(30, 10, 30, 40);
 
@@ -232,10 +249,14 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
 
             }
         });
-        layoutForCheck.addView(spinner, params1);
+
         layoutForCheck.addView(textView, params1);
+        layoutForCheck.addView(textView1, params1);
         layoutForCheck.addView(et, params2);
+        layoutForCheck.addView(textView2, params1);
         layoutForCheck.addView(et2, params2);
+        layoutForCheck.addView(textView0, params1);
+        layoutForCheck.addView(spinner, params1);
         photoSignLayout.setVisibility(View.VISIBLE);
 
         imageviewPhoto.setOnClickListener(new View.OnClickListener() {
@@ -567,7 +588,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, String position, File item, String type,String idts) {
+            public void onItemClick(View view, String position, File item, String type, String idts) {
                 task_id = position + "";
                 if (type.equalsIgnoreCase("changeVerif")) {
                     for (int i = 0; i < foto.size(); i++) {

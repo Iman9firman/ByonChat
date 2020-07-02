@@ -1,258 +1,177 @@
-<?xml version="1.0" encoding="utf-8"?><!--<LinearLayout--><!--xmlns:android="http://schemas.android.com/apk/res/android"--><!--xmlns:app="http://schemas.android.com/apk/res-auto"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--&gt;-->
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="6dp"
-        android:elevation="5dp"
-        android:innerRadius="0dp"
-        android:padding="10dp"
-        android:shape="ring"
-        android:thicknessRatio="1.9"
-        app:cardCornerRadius="8dp">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="@dimen/margin15"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="@dimen/margin35"
+            android:elevation="5dp"
+            android:innerRadius="0dp"
+            android:padding="10dp"
+            android:paddingBottom="@dimen/margin30"
+            android:shape="ring"
+            android:thicknessRatio="1.9"
+            app:cardCornerRadius="8dp">
 
-            <TextView
-                android:id="@+id/header"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:inputType="text|textMultiLine"
-                android:padding="5dp"
-                android:text="1. Satu dia" />
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/margin20"
+                android:orientation="vertical">
 
-            <RelativeLayout
-                android:id="@+id/main_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:paddingTop="@dimen/margin5"
-                android:paddingBottom="@dimen/margin5">
-
-                <LinearLayout
-                    android:id="@+id/idKanan"
+                <TextView
+                    android:id="@+id/header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="3">
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="@dimen/margin15"
+                    android:layout_weight="1"
+                    android:inputType="text|textMultiLine"
+                    android:padding="5dp"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:orientation="vertical"
-                        android:paddingTop="@dimen/margin5"
-                        android:paddingBottom="@dimen/margin5">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin20"
+                    android:layout_marginRight="@dimen/margin20"
+                    android:orientation="horizontal">
 
-                        <FrameLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentTop="true"
-                            android:layout_marginLeft="@dimen/margin15"
-                            android:layout_marginRight="@dimen/margin5">
+                    <FrameLayout
+                        android:layout_width="105dp"
+                        android:layout_height="105dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginRight="@dimen/margin8">
 
-                            <carbon.widget.LinearLayout
-                                android:id="@+id/frame_before"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/margin1"
-                                android:orientation="vertical"
-                                app:carbon_cornerRadius="10dp">
+                        <RelativeLayout
+                            android:layout_width="@dimen/margin100"
+                            android:layout_height="@dimen/margin100"
+                            android:background="@color/gray">
 
-                                <com.byonchat.android.utils.PicassoView
-                                    android:id="@+id/imageBefore"
-                                    android:layout_width="@dimen/margin50"
-                                    android:layout_height="@dimen/margin50"
-                                    android:background="@android:color/white"
-                                    android:scaleType="centerInside"
-                                    android:src="@drawable/ic_no_photo"
-                                    android:visibility="visible"
-                                    app:carbon_inAnimation="none"
-                                    app:carbon_outAnimation="none" />
-                            </carbon.widget.LinearLayout>
-
-                            <RelativeLayout
-                                android:layout_width="52dp"
-                                android:layout_height="52dp"
-                                android:background="@drawable/profile_rounded_border">
-
-                                <View
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_alignParentLeft="true"
-                                    android:layout_alignParentTop="true" />
-                            </RelativeLayout>
-                        </FrameLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:paddingTop="@dimen/margin5"
-                        android:paddingBottom="@dimen/margin5">
-
-
-                        <carbon.widget.LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/margin1"
-                            android:orientation="vertical"
-                            app:carbon_cornerRadius="10dp">
-
-                            <com.byonchat.android.utils.PicassoView
-                                android:layout_width="@dimen/margin50"
-                                android:layout_height="@dimen/margin50"
-                                android:background="@android:color/white"
-                                android:scaleType="centerInside"
-                                android:src="@drawable/value_kanan"
-                                android:visibility="visible"
-                                app:carbon_inAnimation="none"
-                                app:carbon_outAnimation="none" />
-                        </carbon.widget.LinearLayout>
-
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:paddingTop="@dimen/margin5"
-                        android:paddingBottom="@dimen/margin5">
-
-                        <FrameLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentTop="true"
-                            android:layout_marginLeft="@dimen/margin5"
-                            android:layout_marginRight="@dimen/margin15">
-
-
-                            <RelativeLayout
+                            <ImageView
+                                android:id="@+id/imageBefore"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:layout_weight="4">
+                                android:scaleType="fitXY" />
 
-                                <carbon.widget.LinearLayout
-                                    android:id="@+id/frame_after"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/margin1"
-                                    android:orientation="vertical"
-                                    app:carbon_cornerRadius="10dp">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:scaleType="fitCenter" />
 
-                                    <com.byonchat.android.utils.PicassoView
-                                        android:id="@+id/imageAfter"
-                                        android:layout_width="@dimen/margin50"
-                                        android:layout_height="@dimen/margin50"
-                                        android:background="@android:color/white"
-                                        android:scaleType="centerInside"
-                                        android:src="@drawable/ic_no_photo"
-                                        android:visibility="visible"
-                                        app:carbon_inAnimation="none"
-                                        app:carbon_outAnimation="none" />
-                                </carbon.widget.LinearLayout>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:background="@color/blue"
+                                android:gravity="center"
+                                android:inputType="text|textMultiLine"
+                                android:padding="2dp"
+                                android:text="Before"
+                                android:textColor="@color/white" />
 
-                                <RelativeLayout
-                                    android:layout_width="52dp"
-                                    android:layout_height="52dp"
-                                    android:background="@drawable/profile_rounded_border">
-
-                                    <View
-                                        android:layout_width="match_parent"
-                                        android:layout_height="44dp"
-                                        android:layout_alignParentStart="true"
-                                        android:layout_alignParentLeft="true"
-                                        android:layout_alignParentTop="true"
-                                        android:layout_marginStart="0dp"
-                                        android:layout_marginLeft="0dp"
-                                        android:layout_marginTop="8dp" />
-                                </RelativeLayout>
-
-                                <ImageButton
-                                    android:id="@+id/imgVerif"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_marginRight="@dimen/margin5" />
-                            </RelativeLayout>
-
-
-                        </FrameLayout>
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/idKanan"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
+                        </RelativeLayout>
+                    </FrameLayout>
 
                     <TextView
                         android:id="@+id/keterangan"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="5dp"
-                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/margin5"
                         android:background="@drawable/rounder_editext"
                         android:inputType="text|textMultiLine"
-                        android:minLines="2"
+                        android:maxLines="4"
                         android:padding="5dp"
-                        android:text="Blalslndjlkfbefbl eb fgver gre" />
+                        android:textColor="@color/black" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin20"
+                    android:layout_marginTop="@dimen/margin10"
+                    android:layout_marginRight="@dimen/margin20"
+                    android:layout_marginBottom="@dimen/margin15"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="105dp"
+                        android:layout_height="105dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginRight="@dimen/margin8">
+
+                        <RelativeLayout
+                            android:layout_width="@dimen/margin100"
+                            android:layout_height="@dimen/margin100"
+                            android:background="@drawable/profile_rounded_border">
+
+                            <ImageView
+                                android:id="@+id/imageAfter"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/gray"
+                                android:scaleType="fitXY" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:background="@color/blue"
+                                android:gravity="center"
+                                android:inputType="text|textMultiLine"
+                                android:padding="2dp"
+                                android:text="After"
+                                android:textColor="@color/white" />
+
+                        </RelativeLayout>
+
+                    </FrameLayout>
 
                     <TextView
                         android:id="@+id/notess"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/margin5"
                         android:background="@drawable/rounder_editext"
+                        android:hint="Note..."
                         android:inputType="text|textMultiLine"
-                        android:minLines="2"
+                        android:maxLines="4"
                         android:padding="5dp"
-                        android:text="Blalslndjlkfbefbl eb fgver gre" />
+                        android:textColor="@color/black" />
+
                 </LinearLayout>
 
-            </RelativeLayout>
-        </LinearLayout>
 
-        <View
-            android:id="@+id/relativeLayout2"
-            android:layout_width="fill_parent"
-            android:layout_height="0.5dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="5dp"
-            android:background="@color/full_transparent" />
-    </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+
+        </android.support.v7.widget.CardView>
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/imgVerif"
+        android:layout_width="@dimen/margin65"
+        android:layout_height="@dimen/margin65"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

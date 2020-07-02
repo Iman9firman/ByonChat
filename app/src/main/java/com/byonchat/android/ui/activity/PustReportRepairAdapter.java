@@ -51,11 +51,11 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView before, after;
         TextView keterangan, note, header;
-        Button btnUpload;
+        ImageView btnUpload;
 
         public MyViewHolder(View view) {
             super(view);
-            btnUpload = (Button) view.findViewById(R.id.btn_upload);
+            btnUpload = (ImageView) view.findViewById(R.id.btn_upload);
             header = (TextView) view.findViewById(R.id.header);
             before = (ImageView) view.findViewById(R.id.imageBefore);
             after = (ImageView) view.findViewById(R.id.imageAfter);
@@ -92,7 +92,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
 
         holder.header.setText(foto.getHeader());
 
-        Picasso.with(context).load(R.drawable.ic_att_gallery)
+        Picasso.with(context).load(R.mipmap.ic_camera_sla)
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(holder.after);
 
         Picasso.with(context).load(foto.getBefore())
@@ -123,7 +123,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "after",foto.getId_task());
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "after", foto.getId_task());
                 }
             }
         });
@@ -131,7 +131,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             @Override
             public void onClick(View v) {
                 if (onPreviewItemClickListener != null) {
-                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "before",foto.getId_task());
+                    onPreviewItemClickListener.onItemClick(v, foto.getId(), null, "before", foto.getId_task());
                 }
             }
         });
@@ -141,7 +141,7 @@ public class PustReportRepairAdapter extends RecyclerView.Adapter<PustReportRepa
             public void onClick(View v) {
                 if (foto.getAfter() != null) {
                     if (onPreviewItemClickListener != null) {
-                        onPreviewItemClickListener.onItemClick(v, foto.getId(), null, foto.getAfter().toString(),foto.getId_task());
+                        onPreviewItemClickListener.onItemClick(v, foto.getId(), null, foto.getAfter().toString(), foto.getId_task());
                     }
                 } else {
                     Toast.makeText(context, "Mohon tambahkan foto update yang terkait masalah" + foto.getHeader(), Toast.LENGTH_SHORT).show();

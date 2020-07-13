@@ -9,6 +9,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -41,6 +42,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -99,6 +101,7 @@ import com.byonchat.android.DialogFormChildMainNew;
 import com.byonchat.android.DownloadFileByonchat;
 import com.byonchat.android.DownloadSqliteDinamicActivity;
 import com.byonchat.android.DownloadUtilsActivity;
+import com.byonchat.android.FragmentSetting.AboutSettingFragment;
 import com.byonchat.android.R;
 import com.byonchat.android.ReaderOcr;
 import com.byonchat.android.ZoomImageViewActivity;
@@ -220,6 +223,7 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task_json.php";
     public static String PULLMULIPLEDETAIL = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
     public static String PULLMULIPLEDETAILUPDATE = "/bc_voucher_client/webservice/proses/list_task_pull_multiple_json.php";
+    private static final String SD_CARD_FOLDER = "ByonChatAPK";
     //  public static String PULLMULIPLEDETAILUPDATE = "/bc_voucher_client/webservice/proses/update_list_task_pull_multiple_json.php";
 /*
     public static String POSDETAIL = "/bc_voucher_client/webservice/proses/list_task.php";
@@ -10294,23 +10298,20 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
             LocationManager locManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
             if (locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 try {
-
                     Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(idListTask, type, f));
                     if (cEdit.getCount() == 0) {
                         RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, "", jsonCreateType(idListTask, type, f), name, "cild");
                         db.insertRoomsDetail(orderModel);
                     }
 
-
-                    PlacePicker.IntentBuilder intentBuilder =
-                            new PlacePicker.IntentBuilder();
-                    Intent intent = intentBuilder.build(this);
+                    Intent intent = new Intent("com.example.pickerlocationnearby.MapsActivity");
                     startActivityForResult(intent, PLACE_PICKER_REQUEST);
 
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
+                } catch (ActivityNotFoundException ex) {
+                    ex.printStackTrace();
+                    showProgressDialogDownload();
+                    DownloadAPKmaps taskDownload = new DownloadAPKmaps();
+                    taskDownload.execute("https://app.byonchat.com/download_bc/MapsBC.apk");
                 }
             } else {
                 gps.showSettingsAlert();
@@ -10379,6 +10380,18 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("In progress...");
         progressDialog.setMessage("Uploading...");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMax(100);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+    }
+
+    private void showProgressDialogDownload() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Download...");
+        progressDialog.setMessage("Maps..");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setIndeterminate(true);
         progressDialog.setMax(100);
@@ -11180,18 +11193,20 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                 Toast.makeText(this, " Picture was not taken ", Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == PLACE_PICKER_REQUEST) {
+
             showDialog = true;
             final List value = (List) hashMap.get(dummyIdDate);
             if (resultCode == Activity.RESULT_OK) {
-                final Place place = PlacePicker.getPlace(data, this);
-                final String name = place.getName() != null ? (String) place.getName() : " ";
-                final String address = place.getAddress() != null ? (String) place.getAddress() : " ";
-                final String web = String.valueOf(place.getWebsiteUri() != null ? place.getWebsiteUri() : " ");
 
+                String name = data.getStringExtra("NAMA");
+                String address = data.getStringExtra("ALAMAT");
+                String latitude = data.getStringExtra("LAT");
+                String longitude = data.getStringExtra("LNG");
+                String web = "";
 
                 Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
-                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, place.getLatLng().latitude + ";" + place.getLatLng().longitude + ";" + name + ";" + address + ";" + web + ";", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
+                    RoomsDetail orderModel = new RoomsDetail(idDetail, idTab, username, latitude + ";" + longitude + ";" + name + ";" + address + ";" + web + ";", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()), cEdit.getString(cEdit.getColumnIndexOrThrow(BotListDB.ROOM_DETAIL_FLAG_TAB)), "cild");
                     db.updateDetailRoomWithFlagContent(orderModel);
                 }
 
@@ -13346,7 +13361,6 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
     }
 
     private String checkTime(String stTime, String enTime, String idDetail) {
-        Log.w("DISNIKAR", startDate);
         String loop = "";
         boolean bisa = true;
 
@@ -13460,6 +13474,100 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
 
 
         return show;
+    }
+
+    class DownloadAPKmaps extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... fileUrl) {
+            try {
+                File oldFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER);
+                File dbDownloadPath = new File(oldFolder, "MapsBC.apk");
+                if (!oldFolder.exists()) {
+                    oldFolder.mkdirs();
+                }
+
+                if (dbDownloadPath.exists()) {
+                    dbDownloadPath.delete();
+                }
+
+                HttpParams httpParameters = new BasicHttpParams();
+                HttpConnectionParams.setConnectionTimeout(httpParameters, 15000);
+                HttpConnectionParams.setSoTimeout(httpParameters, 15000);
+                DefaultHttpClient client = new DefaultHttpClient(httpParameters);
+                HttpGet httpGet = new HttpGet(fileUrl[0]);
+                InputStream content = null;
+                try {
+                    HttpResponse execute = client.execute(httpGet);
+                    if (execute.getStatusLine().getStatusCode() != 200) {
+                        return null;
+                    }
+                    content = execute.getEntity().getContent();
+                    long downloadSize = execute.getEntity().getContentLength();
+                    FileOutputStream fos = new FileOutputStream(dbDownloadPath.getAbsolutePath());
+                    byte[] buffer = new byte[256];
+                    int read;
+                    long downloadedAlready = 0;
+                    while ((read = content.read(buffer)) != -1) {
+                        fos.write(buffer, 0, read);
+                        downloadedAlready += read;
+                        publishProgress((int) (downloadedAlready * 100 / downloadSize));
+                    }
+                    fos.flush();
+                    fos.close();
+                    content.close();
+                    return true;
+                } catch (Exception e) {
+                    if (content != null) {
+                        try {
+                            content.close();
+                        } catch (IOException e1) {
+                            return false;
+                        }
+                    }
+                    return false;
+                }
+
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        protected void onProgressUpdate(Integer... values) {
+            progressDialog.show();
+            progressDialog.setProgress(values[0]);
+        }
+
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+            if (result.equals(Boolean.TRUE)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Uri uri = FileProvider.getUriForFile(DinamicRoomTaskActivity.this, DinamicRoomTaskActivity.this.getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/MapsBC.apk"));
+                    intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(intent);
+
+                } else {
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + SD_CARD_FOLDER + "/MapsBC.apk")),
+                            "application/vnd.android.package-archive");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+
+            } else {
+                Toast.makeText(DinamicRoomTaskActivity.this, "failed download, plese try again...", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private class getAuditList extends AsyncTask<String, String, String> {

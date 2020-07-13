@@ -85,7 +85,7 @@ public class AboutSettingFragment extends Fragment {
 
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         textView2 = (TextView) view.findViewById(R.id.textView2);
-        textView2.setText("Version " + getString(R.string.app_version));
+        textView2.setText("Version " + getString(R.string.app_version) + "(cloning)");
         btnCekUpdate = (Button) view.findViewById(R.id.btnCekUpdate);
         btnCekUpdate.setOnClickListener(new View.OnClickListener() {
             @Override

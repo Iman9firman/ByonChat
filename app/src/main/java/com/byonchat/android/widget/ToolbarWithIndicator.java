@@ -246,9 +246,17 @@ public class ToolbarWithIndicator extends Toolbar {
 
             } catch (Exception e) {
                 if (mTitle != null) {
-                    Drawable myDrawable = getResources().getDrawable(R.drawable.ic_gagal);
-                    mTitle.setImageDrawable(myDrawable);
-                    submitCheck = false;
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mTitle != null) {
+                                Drawable myDrawable = AppCompatResources.getDrawable(activity.getApplicationContext(), R.drawable.ic_gagal);
+                                mTitle.setImageDrawable(myDrawable);
+                                submitCheck = false;
+                            }
+                        }
+                    });
+
                 }
                 return "";
             }

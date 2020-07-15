@@ -584,7 +584,7 @@ public class PushSLAVerificationActivity extends AppCompatActivity {
     protected void resolveListFile() {
 
 
-        mAdapter = new PushSLAVerificationAdapter(getApplication(), "",
+        mAdapter = new PushSLAVerificationAdapter(PushSLAVerificationActivity.this, "",
                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("id_rooms_tab"),
                 foto, new OnPreviewItemClickListener() {
             @Override

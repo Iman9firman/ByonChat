@@ -1636,11 +1636,17 @@ public class DinamicRoomTaskActivity extends AppCompatActivity implements Locati
                                                 String[] latlong = valueMap.split(
                                                         Message.LOCATION_DELIMITER);
 
-                                                Log.w("Hau3", latlong.length + "");
-
                                                 if (latlong.length > 4) {
                                                     etV.setText(Html.fromHtml(latlong[3]));
+                                                } else {
+                                                    String text = "<u><b>" + (String) latlong[2] + "</b></u><br/>";
+                                                    if (latlong.length == 4) {
+                                                        etV.setText(Html.fromHtml(text + latlong[3]));
+                                                    } else {
+                                                        etV.setText(Html.fromHtml(text));
+                                                    }
                                                 }
+
 
                                                 final String finalValueMap = valueMap;
                                                 etV.setOnClickListener(new View.OnClickListener() {

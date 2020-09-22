@@ -99,8 +99,6 @@ import com.rockerhieu.emojicon.EmojiconEditText;
 import com.rockerhieu.emojicon.EmojiconGridFragment;
 import com.rockerhieu.emojicon.EmojiconsFragment;
 import com.rockerhieu.emojicon.emoji.Emojicon;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
@@ -134,13 +132,11 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
     Button mButtonSend;
     Toolbar toolbar;
     CircleProgressBar vCircleProgress;
-    private String URL_SEND_COMMENT = "https://bb.byonchat.com/bc_voucher_client/webservice/proses/repost_attachment.php";
-    public final static String URL_LIST_NOTE_COMMENT = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/list_attachment_comment.php";
-    public final static String URL_LIST_NOTE_COMMENT_BRANCH = "https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/list_attachment_comment_branch.php";
 
-    private String URL_SEND_COMMENT_PERSONAL = "https://" + MessengerConnectionService.HTTP_SERVER2 + "/personal_room/webservice/proses/comment.php";
-    private String URL_LIST_NOTE_COMMENT_PERSONAL = "https://" + MessengerConnectionService.HTTP_SERVER2 + "/personal_room/webservice/view/comment.php";
-    private String URL_LIST_COMMENT_IN_COMMENT_PERSONAL = "https://" + MessengerConnectionService.HTTP_SERVER2 + "/personal_room/webservice/view/comment_branch.php";
+    private String URL_SEND_COMMENT = "/bc_voucher_client/webservice/proses/repost_attachment.php";
+    public final static String URL_LIST_NOTE_COMMENT = "/bc_voucher_client/webservice/category_tab/list_attachment_comment.php";
+    public final static String URL_LIST_NOTE_COMMENT_BRANCH = "/bc_voucher_client/webservice/category_tab/list_attachment_comment_branch.php";
+
     SwipeRefreshLayout mswipeRefreshLayout;
     String color;
     Boolean personal;
@@ -1067,10 +1063,10 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 }
 
                 if (Integer.valueOf(this_page) == 1) {
-                    getListComment(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, isRefresh);
+                    getListComment(userid, idRoomTab, id_note, bc_user, new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_LIST_NOTE_COMMENT, isRefresh);
                 } else if (Integer.valueOf(this_page) > 1) {
                     int total_items = (Integer.valueOf(this_page) - 1) * 20;
-                    getListCommentMore(userid, idRoomTab, id_note, bc_user, URL_LIST_NOTE_COMMENT, total_items + "", isRefresh);
+                    getListCommentMore(userid, idRoomTab, id_note, bc_user, new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_LIST_NOTE_COMMENT, total_items + "", isRefresh);
                 }
 
                 vTextThisPage.setOnEditorActionListener(new EditText.OnEditorActionListener() {
@@ -1465,7 +1461,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("bc_user", params[3]);
                 data.put("content", params[4]);
 
-                String result = profileSaveDescription.sendPostRequest(URL_SEND_COMMENT, data);
+                String result = profileSaveDescription.sendPostRequest(new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_SEND_COMMENT, data);
                 return result;
             }
 
@@ -1508,7 +1504,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("bc_user", params[3]);
                 data.put("parent_id", params[4]);
                 data.put("content", params[5]);
-                String result = profileSaveDescription.sendPostRequest(URL_SEND_COMMENT, data);
+                String result = profileSaveDescription.sendPostRequest(new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_SEND_COMMENT, data);
                 return result;
             }
 
@@ -1548,7 +1544,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("id_rooms_tab", params[1]);
                 data.put("attachment_id", params[2]);
                 data.put("bc_user", params[3]);
-                String result = profileSaveDescription.sendPostRequest(URL_LIST_NOTE_COMMENT, data);
+                String result = profileSaveDescription.sendPostRequest(new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_LIST_NOTE_COMMENT, data);
                 return result;
             }
 
@@ -1674,7 +1670,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("attachment_id", params[2]);
                 data.put("bc_user", params[3]);
                 data.put("last_page", params[4]);
-                String result = profileSaveDescription.sendPostRequest(URL_LIST_NOTE_COMMENT, data);
+                String result = profileSaveDescription.sendPostRequest(new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_LIST_NOTE_COMMENT, data);
                 return result;
             }
 
@@ -1799,7 +1795,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("parent_id", params[4]);
                 data.put("bc_user", params[3]);
 
-                String result = profileSaveDescription.sendPostRequest(URL_LIST_NOTE_COMMENT_BRANCH, data);
+                String result = profileSaveDescription.sendPostRequest(new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_LIST_NOTE_COMMENT_BRANCH, data);
                 return result;
             }
 
@@ -1941,7 +1937,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("bc_user", params[3]);
                 data.put("last_page", params[5]);
 
-                String result = profileSaveDescription.sendPostRequest(URL_LIST_NOTE_COMMENT_BRANCH, data);
+                String result = profileSaveDescription.sendPostRequest(new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_LIST_NOTE_COMMENT_BRANCH, data);
                 return result;
             }
 
@@ -2270,7 +2266,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("parent_id", params[2]);
                 data.put("bc_user", params[3]);
                 data.put("id_rooms_tab", params[4]);
-                String result = profileSaveDescription.sendPostRequest(URL_LIST_NOTE_COMMENT_BRANCH, data);
+                String result = profileSaveDescription.sendPostRequest(new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_LIST_NOTE_COMMENT_BRANCH, data);
                 return result;
             }
 
@@ -2397,7 +2393,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                      final String bc_user, final String idRoomTab, final String parent_id,
                      final List<NotesPhoto> photos) {
 
-        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, URL_SEND_COMMENT, new Response.Listener<NetworkResponse>() {
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_SEND_COMMENT, new Response.Listener<NetworkResponse>() {
             @Override
             public void onResponse(NetworkResponse response) {
                 Log.w("berapakali", captions.get(EXTRA_TEXT_CAPTIONS));
@@ -2726,7 +2722,7 @@ public class NoteCommentActivityV2 extends Constants implements EmojiconGridFrag
                 data.put("bc_user", params[3]);
                 data.put("id_rooms_tab", params[4]);
                 data.put("last_page", params[5]);
-                String result = profileSaveDescription.sendPostRequest(URL_LIST_NOTE_COMMENT_BRANCH, data);
+                String result = profileSaveDescription.sendPostRequest(new ValidationsKey().getInstance(NoteCommentActivityV2.this).getTargetUrl()+URL_LIST_NOTE_COMMENT_BRANCH, data);
                 return result;
             }
 

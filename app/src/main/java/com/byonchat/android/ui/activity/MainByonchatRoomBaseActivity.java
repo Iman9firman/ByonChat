@@ -1,6 +1,7 @@
 package com.byonchat.android.ui.activity;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -87,12 +88,9 @@ import com.byonchat.android.ui.fragment.ByonchatVerifikasiSLAFragment;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.nineoldandroids.animation.AnimatorSet;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -602,6 +600,9 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 } else if (category.equalsIgnoreCase("31")) {
                     show = true;
                     mFragment = ByonchatListScheduleFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
+                }else if (category.equalsIgnoreCase("33")) {
+                    show = true;
+                    mFragment = ByonchatVerifikasiSLAFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 }
 
                 if (status.equalsIgnoreCase("1") && show) {
@@ -774,13 +775,13 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
     protected void showSearchBar(float positionFromRight) {
         isSearchView = true;
         AnimatorSet set = new AnimatorSet();
-        set.setDuration(100).addListener(new com.nineoldandroids.animation.Animator.AnimatorListener() {
+        set.setDuration(100).addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationStart(com.nineoldandroids.animation.Animator animation) {
+            public void onAnimationStart(Animator animation) {
             }
 
             @Override
-            public void onAnimationEnd(com.nineoldandroids.animation.Animator animation) {
+            public void onAnimationEnd(Animator animation) {
                 searchEditText.requestFocus();
                 if (searchEditText != null) {
                     InputMethodManager imm = (InputMethodManager)
@@ -790,12 +791,12 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAnimationCancel(com.nineoldandroids.animation.Animator animation) {
+            public void onAnimationCancel(Animator animation) {
 
             }
 
             @Override
-            public void onAnimationRepeat(com.nineoldandroids.animation.Animator animation) {
+            public void onAnimationRepeat(Animator animation) {
 
             }
         });

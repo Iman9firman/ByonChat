@@ -4,14 +4,11 @@ package com.byonchat.android.ui.fragment;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -30,56 +27,35 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.byonchat.android.DialogFormChildMainNew;
-import com.byonchat.android.DialogFormChildRequestDoc;
-import com.byonchat.android.FragmentDinamicRoom.DinamicRoomTaskActivity;
 import com.byonchat.android.R;
 import com.byonchat.android.communication.NetworkInternetConnectionStatus;
 import com.byonchat.android.data.model.File;
-import com.byonchat.android.data.model.Status;
 import com.byonchat.android.data.model.Video;
 import com.byonchat.android.helpers.Constants;
-import com.byonchat.android.list.contact;
 import com.byonchat.android.local.Byonchat;
 import com.byonchat.android.provider.MessengerDatabaseHelper;
 import com.byonchat.android.ui.activity.ByonchatPDFPreviewActivity;
-import com.byonchat.android.ui.activity.DialogApproveRequestDocument;
-import com.byonchat.android.ui.activity.DialogRejectRequest;
 import com.byonchat.android.ui.activity.MainByonchatRoomBaseActivity;
+import com.byonchat.android.ui.activity.PushRTBVerificationActivity;
 import com.byonchat.android.ui.activity.PushRepairReportActivity;
-import com.byonchat.android.ui.adapter.ByonchatApprovalDocAdapter;
+import com.byonchat.android.ui.activity.PushSLAVerificationActivity;
 import com.byonchat.android.ui.adapter.ByonchatRepairReportAdapter;
 import com.byonchat.android.ui.adapter.OnPreviewItemClickListener;
 import com.byonchat.android.ui.adapter.OnRequestItemClickListener;
 import com.byonchat.android.ui.view.ByonchatRecyclerView;
 import com.byonchat.android.utils.ClientSSLSocketFactory;
-import com.google.android.gms.vision.L;
 
-import org.apache.http.Consts;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressLint("ValidFragment")
-public class ByonchatRepairReportFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ByonchatRepairVerifikasiFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     protected List<File> files = new ArrayList<>();
 
@@ -112,16 +88,16 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
     @NonNull
     protected TextView vTextContentError;
 
-    public ByonchatRepairReportFragment() {
+    public ByonchatRepairVerifikasiFragment() {
 
     }
 
-    public ByonchatRepairReportFragment(MainByonchatRoomBaseActivity activity) {
+    public ByonchatRepairVerifikasiFragment(MainByonchatRoomBaseActivity activity) {
         this.activity = activity;
     }
 
-    public static ByonchatRepairReportFragment newInstance(String myc, String tit, String utm, String usr, String idrtab, String color, MainByonchatRoomBaseActivity activity) {
-        ByonchatRepairReportFragment fragment = new ByonchatRepairReportFragment(activity);
+    public static ByonchatRepairVerifikasiFragment newInstance(String myc, String tit, String utm, String usr, String idrtab, String color, MainByonchatRoomBaseActivity activity) {
+        ByonchatRepairVerifikasiFragment fragment = new ByonchatRepairVerifikasiFragment(activity);
         Bundle args = new Bundle();
         args.putString("aa", tit);
         args.putString("bb", utm);
@@ -185,8 +161,7 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
             params.put("username_room", username);
             params.put("bc_user", databaseHelper.getMyContact().getJabberId());
             params.put("id_rooms_tab", idRoomTab);
-
-            getDetail("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/category_tab/report_tobe_repair.php", params, true);
+            getDetail("https://bb.byonchat.com/bc_voucher_client/webservice/category_tab/report_verifikasi_tobe_repair.php", params, true);
         } else {
             vRefreshList.setRefreshing(false);
             Toast.makeText(getContext(), "Please check your internet connection.", Toast.LENGTH_SHORT).show();
@@ -206,15 +181,16 @@ public class ByonchatRepairReportFragment extends Fragment implements SwipeRefre
         chatLayoutManager = (LinearLayoutManager) vListVideoTube.getLayoutManager();
         mAdapter = new ByonchatRepairReportAdapter(getContext(), files, new OnPreviewItemClickListener() {
             @Override
-            public void onItemClick(View view, String position, File item, String type,String idts) {
-                Intent iii = new Intent(getContext(), PushRepairReportActivity.class);
+            public void onItemClick(View view, String position, File item, String type, String idts) {
+                Intent iii = new Intent(getContext(), PushRTBVerificationActivity.class);
                 iii.putExtra("task_id", item.id + "");
                 iii.putExtra("username_room", username);
                 iii.putExtra("bc_user", databaseHelper.getMyContact().getJabberId());
                 iii.putExtra("id_rooms_tab", idRoomTab);
-                iii.putExtra("title",  item.title);
+                iii.putExtra("title", item.title);
                 iii.putExtra("subtitle", item.timestamp);
                 startActivity(iii);
+
 
             }
         }, new OnRequestItemClickListener() {

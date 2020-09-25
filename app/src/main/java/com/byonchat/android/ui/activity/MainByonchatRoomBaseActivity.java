@@ -82,15 +82,18 @@ import com.byonchat.android.ui.fragment.ByonchatFollowUpSLAFragment;
 import com.byonchat.android.ui.fragment.ByonchatListScheduleFragment;
 import com.byonchat.android.ui.fragment.ByonchatPDFFragment;
 import com.byonchat.android.ui.fragment.ByonchatRepairReportFragment;
+import com.byonchat.android.ui.fragment.ByonchatRepairVerifikasiFragment;
 import com.byonchat.android.ui.fragment.ByonchatScheduleSLAFragment;
 import com.byonchat.android.ui.fragment.ByonchatStatusRequestFragment;
 import com.byonchat.android.ui.fragment.ByonchatVerifikasiSLAFragment;
 import com.byonchat.android.ui.fragment.ByonchatVideoFragment;
 import com.byonchat.android.widget.ToolbarWithIndicator;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -600,10 +603,11 @@ public abstract class MainByonchatRoomBaseActivity extends AppCompatActivity {
                 } else if (category.equalsIgnoreCase("31")) {
                     show = true;
                     mFragment = ByonchatListScheduleFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
-                }else if (category.equalsIgnoreCase("33")) {
+                } else if (category.equalsIgnoreCase("33")) {
                     show = true;
-                    mFragment = ByonchatVerifikasiSLAFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
+                    mFragment = ByonchatRepairVerifikasiFragment.newInstance(Byonchat.getMessengerHelper().getMyContact().getJabberId(), title, url_tembak, username, id_rooms_tab, color, MainByonchatRoomBaseActivity.this);
                 }
+
 
                 if (status.equalsIgnoreCase("1") && show) {
 //                    adapter.addFragment(mFragment, title);

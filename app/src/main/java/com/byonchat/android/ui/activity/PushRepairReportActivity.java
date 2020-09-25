@@ -64,8 +64,6 @@ import com.byonchat.android.utils.ClientSSLSocketFactory;
 import com.byonchat.android.utils.HttpHelper;
 import com.byonchat.android.utils.MediaProcessingUtil;
 import com.byonchat.android.widget.ToolbarWithIndicator;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -184,7 +182,11 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 response -> {
                     Log.w("RERE", response);
                     rdialog.dismiss();
-                    resolveData(response);
+                    try {
+                        resolveData(response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     resolveListFile();
                     resolveSend();
 
@@ -212,12 +214,12 @@ public class PushRepairReportActivity extends AppCompatActivity {
         queue.add(sr);
     }
 
-    protected void resolveData(String json) {
+    protected void resolveData(String json) throws JSONException {
 
         try {
             JSONObject gvcs = new JSONObject(json);
             id_task = gvcs.getString("task_id");
-            id_task_list = "68351";//gvcs.getString("id_list_task"); "jargon"
+            id_task_list = gvcs.getString("id_list_task");
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
             name_title = gvcs.getString("title");
             JSONArray jar = gvcs.getJSONArray("value_detail");
@@ -240,7 +242,28 @@ public class PushRepairReportActivity extends AppCompatActivity {
                 foto.add(fotonya);
             }
         } catch (JSONException e) {
+            JSONObject gvcs = new JSONObject(json);
+            id_task = gvcs.getString("task_id");
+            id_task_list = gvcs.getString("id_list_task");
+            id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
+            name_title = gvcs.getString("title");
+            JSONArray jar = gvcs.getJSONArray("value_detail");
+            for (int i = 0; i < jar.length(); i++) {
+                JSONObject basefoto = jar.getJSONObject(i);
 
+                String urutan = basefoto.getString("urutan");
+
+                String id = id_task + "-" + urutan;
+
+                JSONArray dataFoto = basefoto.getJSONArray("data");
+                if (dataFoto.length() == 2) {
+                    String fotony = dataFoto.getJSONObject(0).getString("foto");
+                    String title = dataFoto.getJSONObject(0).getString("keterangan");
+                    SLAmodelNew fotonya = new SLAmodelNew(id_task, "Header", id, title, fotony, (java.io.File) null);
+                    foto.add(fotonya);
+                }
+
+            }
         }
     }
 

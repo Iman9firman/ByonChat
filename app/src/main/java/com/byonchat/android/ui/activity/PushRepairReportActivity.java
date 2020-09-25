@@ -219,7 +219,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
         try {
             JSONObject gvcs = new JSONObject(json);
             id_task = gvcs.getString("task_id");
-            id_task_list = gvcs.getString("id_list_task");
+            id_task_list = "68351";//gvcs.getString("id_list_task"); "jargon"
             id_rooms_tab = gvcs.getString("id_rooms_tab_parent");
             name_title = gvcs.getString("title");
             JSONArray jar = gvcs.getJSONArray("value_detail");
@@ -486,7 +486,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), jsonObject1.toString(), Toast.LENGTH_SHORT).show();
 
 
-                        new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_tobe_repair_per_item.php",
+                        new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_tobe_repair_per_item_new.php",
                                 getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                                 idTaskDetail, jsonObject1.toString());
 
@@ -725,7 +725,7 @@ public class PushRepairReportActivity extends AppCompatActivity {
                     jsonObject1.put("ket", getTheDB(id, "comment"));
                     jsonObject1.put("foto", getTheDB(id, "fileupload"));
 
-                    new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_tobe_repair_per_item.php",
+                    new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_tobe_repair_per_item_new.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
                             idTaskDetail, jsonObject1.toString());
 

@@ -322,31 +322,6 @@ public class PushRTBVerificationActivity extends AppCompatActivity {
 
 
     protected void resolveData(String dataResponse) {
-        //disini get valuenya dlu
-
-
-        Log.w("TnksNext", dataResponse);
-    /*    {
-  {
-  "username_room": "1_345171158admin",
-  "task_id": "1060",
-  "title": "BYONCHAT",
-  "id_list_task": "66986",
-  "keterangan":"", --> kurang ini
-  "id_rooms_tab_parent": "993545",
-  "value_detail": [
-    {
-      "urutan": "0",
-      "data": {
-        "foto_before": "https://bb.byonchat.com/bc_voucher_client/images/list_task/IMG_22092020_102915_c9dP90WjUC.jpg",
-        "ket_before": "lampu redup",
-        "foto_after": "https://bb.byonchat.com/bc_voucher_client/images/list_task/IMG_22092020_134049_r4mGK3cafx.jpg",
-        "ket_after": "udh dbenerin, terang."
-      }
-    }
-  ]
-}
-        */
         try {
             JSONObject gvcs = new JSONObject(dataResponse);
             name_title = gvcs.getString("title");
@@ -366,8 +341,9 @@ public class PushRTBVerificationActivity extends AppCompatActivity {
                 String ketAdter = dataCa.getString("ket_after");
                 String ketBefore = dataCa.getString("ket_before");
 
+                String id = urutan + "-" + task_id;
 
-                SLAmodelNew fotonya = new SLAmodelNew(id_list_task, name_title, task_id, ketBefore, before, after, "", ketAdter);
+                SLAmodelNew fotonya = new SLAmodelNew(id_list_task, name_title, id, ketBefore, before, after, "", ketAdter);
                 foto.add(fotonya);
 
             }
@@ -428,8 +404,8 @@ public class PushRTBVerificationActivity extends AppCompatActivity {
                 ((UploadPhoto) uploadPict).setType("sign");
                 ((UploadPhoto) uploadPict).execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/proses/file_processing.php",
                         username,
-                        "2613",
-                        "66989",
+                        "3043",
+                        "68351",
                         file.getAbsolutePath());
                 /*Cursor cEdit = db.getSingleRoomDetailFormWithFlagContent(idDetail, username, idTab, "cild", jsonCreateType(String.valueOf(dummyIdDate), value.get(2).toString(), value.get(5).toString()));
                 if (cEdit.getCount() > 0) {
@@ -474,8 +450,8 @@ public class PushRTBVerificationActivity extends AppCompatActivity {
                         ((UploadPhoto) uploadPict).setType("image");
                         ((UploadPhoto) uploadPict).execute("https://forward.byonchat.com:37001/1_345171158admin/bc_voucher_client/webservice/proses/file_processing.php",
                                 username,
-                                "2613",
-                                "66989",
+                                "3043",
+                                "68351",
                                 returnString);
                     }
 
@@ -638,14 +614,15 @@ public class PushRTBVerificationActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (!resultImage.equalsIgnoreCase("") && !resultSignature.equalsIgnoreCase("") && resultType != -1) {
                     rdialog = new ProgressDialog(PushRTBVerificationActivity.this);
                     rdialog.setMessage("Loading...");
                     rdialog.show();
 
-                    new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_verifikasi_sla_new.php",
+                    new UploadJSONSOn().execute("https://" + MessengerConnectionService.HTTP_SERVER + "/bc_voucher_client/webservice/category_tab/insert_verifikasi_tobe_repair.php",
                             getIntent().getStringExtra("username_room"), getIntent().getStringExtra("bc_user"),
-                            getIntent().getStringExtra("id_rooms_tab"), kode_jjt);
+                            getIntent().getStringExtra("id_rooms_tab"));
                 } else {
                     Toast.makeText(getApplicationContext(), "Harap isi Type, Photo, dan Signature", Toast.LENGTH_SHORT).show();
                 }
@@ -654,55 +631,48 @@ public class PushRTBVerificationActivity extends AppCompatActivity {
     }
 
     private String fileJson() {
+
         String stringdong = "";
 
         try {
             JSONObject gvcs = new JSONObject(basejson);
+            name_title = gvcs.getString("title");
+            task_id = gvcs.getString("task_id");
+            id_list_task = gvcs.getString("id_list_task");
+            id_rooms_tab_parent = gvcs.getString("id_rooms_tab_parent");
+
             JSONArray jar = gvcs.getJSONArray("value_detail");
 
-            String idSection = "";
-            String idSubSection = "";
-            String idPertanyaan = "";
-            String idItem = "";
-
             for (int i = 0; i < jar.length(); i++) {
+                Log.w("YaIni1", i + "--");
+
                 JSONObject first = jar.getJSONObject(i);
-                JSONObject pembobotan = first.getJSONObject("pembobotan");
+                String urutan = first.getString("urutan");
+                JSONObject dataCa = first.getJSONObject("data");
 
-                idSection = pembobotan.getString("id");
-                JSONObject second = pembobotan.getJSONObject("section");
+                String id = urutan + "-" + task_id;
 
-                idSubSection = second.getString("id");
-                JSONObject subsection = second.getJSONObject("subsection");
-
-                idPertanyaan = subsection.getString("id");
-                JSONArray pertanyaan = subsection.getJSONArray("pertanyaan");
-
-                for (int v = 0; v < pertanyaan.length(); v++) {
-                    JSONObject fifth = pertanyaan.getJSONObject(v);
-                    idItem = fifth.getString("id_task");
-                    String id = idSection + "-" + idSubSection + "-" + idPertanyaan + "-" + idItem;
-
-                    for (int vi = 0; vi < foto.size(); vi++) {
-                        if (foto.get(vi).getId().equalsIgnoreCase(id)) {
-                            fifth.remove("v");
-                            fifth.put("v", foto.get(vi).getVerif());
-                        }
+                for (int vi = 0; vi < foto.size(); vi++) {
+                    Log.w("YaIni2", foto.get(vi).getId() + "--" + id);
+                    if (foto.get(vi).getId().equalsIgnoreCase(id)) {
+                        dataCa.put("v", foto.get(vi).getVerif() != "" ? "1" : "0");
                     }
                 }
 
-                first.put("signature", resultSignature);
-                first.put("photo", resultImage);
-//                type 0 = Daily , type 1 = KPI
-                if (spinner != null) {
-                    first.put("type", resultType);
-                }
-                first.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
-                first.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());
+
             }
+
+            gvcs.put("signature", resultSignature);
+            gvcs.put("photo", resultImage);
+            if (spinner != null) {
+                gvcs.put("type", resultType);
+            }
+            gvcs.put("nik", et.getText().toString() == null ? "" : et.getText().toString());
+            gvcs.put("name", et2.getText().toString() == null ? "" : et2.getText().toString());
 
             stringdong = gvcs.toString();
         } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         return stringdong;
@@ -718,14 +688,14 @@ public class PushRTBVerificationActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            return uploadFile(params[0], params[1], params[2], params[3], params[4]);
+            return uploadFile(params[0], params[1], params[2], params[3]);
         }
 
         protected void onProgressUpdate(Integer... progress) {
         }
 
         @SuppressWarnings("deprecation")
-        private String uploadFile(String URL, String username, String bc_user, String id_room, String kode_jjt) {
+        private String uploadFile(String URL, String username, String bc_user, String id_room) {
             String responseString = null;
 
             HttpClient httpclient = null;
@@ -745,6 +715,7 @@ public class PushRTBVerificationActivity extends AppCompatActivity {
                                 publishProgress((int) ((num / (float) totalSize) * 100));
                             }
                         });
+
 
 
                 java.io.File gpxfile = null;
@@ -771,7 +742,6 @@ public class PushRTBVerificationActivity extends AppCompatActivity {
                 entity.addPart("username_room", new StringBody(username));
                 entity.addPart("bc_user", new StringBody(bc_user));
                 entity.addPart("id_rooms_tab", new StringBody(id_room));
-//                entity.addPart("kode_jjt", new StringBody(kode_jjt));
                 entity.addPart("json", new /*FileBody(gpxfile, contentType, gpxfile.getName())*/StringBody(fileJson()));
 
                 totalSize = entity.getContentLength();
